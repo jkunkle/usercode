@@ -15,6 +15,7 @@ def config_samples(samples) :
     samples.AddSample('diphoton_box_250toInf'        , path='job_summer12_diphoton_box_250toInf',  disableDraw=True, useXSFile=True )
     samples.AddSample('diphoton_box_25to250'         , path='job_summer12_diphoton_box_25to250' ,  disableDraw=True, useXSFile=True )
     samples.AddSample('DYJetsToLL'                   , path='job_summer12_DYJetsToLL'           ,  disableDraw=True, useXSFile=True )
+    #samples.AddSample('DYJetsToLL'                   , path='DYJetsToLLPhOlap'           ,  disableDraw=True, useXSFile=True )
     samples.AddSample('tbar_s'                       , path='job_summer12_tbar_s'               ,  disableDraw=True, useXSFile=True )
     samples.AddSample('tbar_t'                       , path='job_summer12_tbar_t'               ,  disableDraw=True, useXSFile=True )
     samples.AddSample('tbar_tW'                      , path='job_summer12_tbar_tW'              ,  disableDraw=True, useXSFile=True )
@@ -26,9 +27,11 @@ def config_samples(samples) :
     samples.AddSample('t_tW'                         , path='job_summer12_t_tW'                 ,  disableDraw=True, useXSFile=True )
     samples.AddSample('WAA_ISR'                      , path='job_summer12_WAA_ISR'              ,  disableDraw=True, useXSFile=True )
     samples.AddSample('Wg'                           , path='job_summer12_Wg'                   ,  disableDraw=True, useXSFile=True )
+    #samples.AddSample('Wg'                           , path='WgPhOlap'                          ,  disableDraw=True, useXSFile=True )
     samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  disableDraw=True, useXSFile=True )
     samples.AddSample('WH_ZH_125'                    , path='job_summer12_WH_ZH_125'            ,  disableDraw=True, useXSFile=True )
     samples.AddSample('Wjets'                        , path='job_summer12_Wjets'                ,  disableDraw=True, useXSFile=True )
+    #samples.AddSample('Wjets'                        , path='WjetsPhOlap'                       ,  disableDraw=True, useXSFile=True )
     samples.AddSample('WW_2l2nu'                     , path='job_summer12_WW_2l2nu'             ,  disableDraw=True, useXSFile=True )
     samples.AddSample('WWg'                          , path='job_summer12_WWg'                  ,  disableDraw=True, useXSFile=True )
     samples.AddSample('WWW'                          , path='job_summer12_WWW'                  ,  disableDraw=True, useXSFile=True )
@@ -69,7 +72,7 @@ def config_samples(samples) :
     #                    ],
     #                       plotColor=ROOT.kYellow,
     #                      )
-    samples.AddSampleGroup( 'Inclusive W', legend_name='Inclusive W', 
+    samples.AddSampleGroup( 'Inclusive W', legend_name='W+jets', 
                             input_samples = [
                                              'Wjets',
                                             ],
@@ -129,7 +132,7 @@ def config_samples(samples) :
                                              'Wgg_FSR',
                                             ],
                            plotColor=ROOT.kRed,
-                           isSignal=True
+                           isSignal=True,
                           )
 
     samples.AddSampleGroup( 'DiBoson', legend_name='WW/WZ/ZZ', 
@@ -201,7 +204,7 @@ def config_samples(samples) :
                            input_samples = [
                                            'WH_ZH_125'                     ,
                            ],
-                           plotColor=ROOT.kRed+4,
+                           plotColor=ROOT.kRed+2,
                           )
     #samples.AddSampleGroup( 'AllMC', legend_name='AllMC', disableDraw=True,
     #                        input_samples = [

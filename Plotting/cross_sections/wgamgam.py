@@ -10,8 +10,8 @@
                   #'WJetsToLNu2'           : { 'n_evt' : 3052436 , 'cross_section' : 67812.0 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   #'WJetsToLNu1'           : { 'n_evt' : 27185540 , 'cross_section' : 6781.0 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   #'WJetsToLNu2'           : { 'n_evt' : 3052436 , 'cross_section' : 6781.0 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
-                  'WAA_FSR'                : { 'n_evt' : 1000310  , 'cross_section' : 1.84 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
-                  'Wgg_ISR'                : { 'n_evt' : 1003920  , 'cross_section' : 0.319 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
+                  'WAA_ISR'                : { 'n_evt' : 1000310  , 'cross_section' : 1.84 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
+                  'Wgg_FSR'                : { 'n_evt' : 1003920  , 'cross_section' : 0.319 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'WZ_2l2q'                : { 'n_evt' : 3215990  , 'cross_section' : 5.995 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'WZ_3lnu'                : { 'n_evt' : 2017979  , 'cross_section' : 1.057 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'Wg'                     : { 'n_evt' : 4877150  , 'cross_section' : 553.92 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
@@ -40,7 +40,7 @@
                   'ttjets_1l'              : { 'n_evt' : 10629902 , 'cross_section' : 99.44 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'ttjets_2l'              : { 'n_evt' : 12019013 , 'cross_section' : 23.83 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'diphoton_box_25to250'   : { 'n_evt' : 1664550,   'cross_section' : 15.54, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
-                  'WH_ZH_125'              : { 'n_evt' : 100320,   'cross_section' : 1.1199, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
+                  'WH_ZH_125'              : { 'n_evt' : 100320,   'cross_section' : 0.002498161, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
 
 
 }

@@ -43,6 +43,11 @@ samples = None
 def main() :
 
     global samples
+
+    if not options.baseDir.count('/eos/') and not os.path.isdir( options.baseDir ) :
+        print 'baseDir not found!'
+        return
+
     samples = SampleManager(options.baseDir, options.treeName, mcweight=options.mcweight, treeNameModel=options.treeNameModel, filename=options.fileName, base_path_model=options.baseDirModel, xsFile=options.xsFile, lumi=options.lumi, readHists=options.readHists)
 
 
@@ -145,6 +150,7 @@ def DrawFormatted(varexp, selection, histpars=None ) :
     statuslabel.Draw()
     luminosity.Draw()
 
+#---------------------------------------
 def WriteCurrentHists( filename='hist.root') :
     """ write all histograms in samples to a root file """
 
@@ -157,6 +163,32 @@ def WriteCurrentHists( filename='hist.root') :
 
     file.Close()
         
+#---------------------------------------
+
+def MakeTAndPHists( outputfile ) :
+
+    global samples
+
+    print 'FIXFIXFIX'
+    samples.DoTAndP( 'probe_pt', 'probe_isPhoton && probe_pt > 15', '!probe_isPhoton && probe_pt > 15', 'Zgammastar', [15, 5000 ], colors=[ROOT.kBlack], normalize=0 )
+    hist_norm = samples.get_samples(isRatio=True)[0].hist.Clone('norm')
+
+    samples.DoTAndP( 'probe_eta', 'probe_isPhoton && probe_pt > 15', '!probe_isPhoton && probe_pt > 15', 'Zgammastar', [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.900000, -1.800000, -1.700000, -1.566000, -1.479000, -1.400000, -1.300000, -1.200000, -1.100000, -1.000000, -0.800000, -0.600000, -0.400000, -0.200000, 0.000000, 0.200000, 0.400000, 0.600000, 0.800000, 1.000000, 1.100000, 1.200000, 1.300000, 1.400000, 1.479000, 1.566000, 1.700000, 1.800000, 1.900000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5], colors=[ROOT.kBlack], normalize=1 )
+    hist_eta = samples.get_samples(isRatio=True)[0].hist.Clone('eta')
+
+    samples.DoTAndP( 'probe_pt', 'probe_isPhoton && probe_pt > 15', '!probe_isPhoton && probe_pt > 15', 'Zgammastar', [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 150, 200, 500 ], colors=[ROOT.kBlack], normalize=1 )
+    hist_pt = samples.get_samples(isRatio=True)[0].hist.Clone('pt')
+
+
+    file = ROOT.TFile.Open( outputfile, 'RECREATE' )
+
+    hist_eta.Write()
+    hist_pt.Write()
+    hist_norm.Write()
+
+    file.Close()
+
+
 #---------------------------------------
 def MakeTAndPPlots( ) :
 

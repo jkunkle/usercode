@@ -1,6 +1,6 @@
 import os
 #base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaPt25_2013_12_05/'
-base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/DiLepton_2013_12_26/'
+base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/DiLeptonLoosePhLowPtTrigMatch_2014_02_07'
 output_base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 from argparse import ArgumentParser
 
@@ -77,12 +77,12 @@ jobs_mc = [
 top_configs = [ { 
                   'module_mc'   : 'Conf.py',
                   'module_data' : 'Conf.py',
-                  'output_name' : 'DiLeptonFFUpdatePtEta1DNoMassCut_2013_12_26/',
+                  'output_name' : 'DiLeptonFFUpdateEta1D_2014_02_10/',
                   'tag'         : 'll',
                 },
 ]
 
-command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --fileKey tree.root --outputDir %(output_base)s/%(output_name)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 5 --nproc 8 --confFileName %(tag)s_%(job)s.txt --sample %(job)s'
+command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --fileKey tree.root --outputDir %(output_base)s/%(output_name)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc 12 --confFileName %(tag)s_%(job)s.txt --sample %(job)s'
 #command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output_name)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc 8 --confFileName %(tag)s_%(job)s.txt '
 
 first = True

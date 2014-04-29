@@ -44,8 +44,8 @@ def build_photon( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None )
     if evalPID is not None :
         filt.add_var( 'evalPID', evalPID )
 
-    filt.add_var( 'TMVAWeightsFileEB', '/afs/cern.ch/user/r/rslu/public/photonIDMVA_2014/EB_BDT.weights.xml' )
-    filt.add_var( 'TMVAWeightsFileEE', '/afs/cern.ch/user/r/rslu/public/photonIDMVA_2014/EE_BDT.weights.xml' )
+    filt.add_var( 'TMVAWeightsFileEB', '/afs/cern.ch/user/j/jkunkle/usercode/Analysis/TreeFilter/TrainPhotonMVA/weights/photonMVAEB_BDT.weights.xml' )
+    filt.add_var( 'TMVAWeightsFileEE', '/afs/cern.ch/user/j/jkunkle/usercode/Analysis/TreeFilter/TrainPhotonMVA/weights/photonMVAEE_BDT.weights.xml' )
 
     #filt.cut_ph_el_dr = ' > 0.2 '
 

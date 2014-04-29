@@ -7,7 +7,7 @@ def get_remove_filter() :
         If both filters are used, all branches in keep_filter are used
         except for those in remove_filter """
 
-    return []
+    return ['']
 
 def get_keep_filter() :
     """ Define list of regex strings to filter input branches to retain in the output.  
@@ -16,18 +16,22 @@ def get_keep_filter() :
         If both filters are used, all branches in keep_filter are used
         except for those in remove_filter """
 
-    return ['el_n', 'mu_n', 'ph_n', 'jet_n', 'el_pt', 'el_eta', 'el_phi', 'el_e', 'mu_pt', 'mu_eta', 'mu_phi', 'mu_e', 'ph_pt', 'ph_eta', 'ph_phi', 'ph_e']
+    return ['el_n', 'mu_n', 'ph_n', 'jet_n', 'el_pt', 'el_eta', 'el_phi', 'el_e', 'mu_pt', 'mu_eta', 'mu_phi', 'mu_e', 'ph_pt', 'ph_eta', 'ph_phi', 'ph_e','pfMET.*', 'recoPfMET.*','nPU', 'puTrue', 'nVtx', 'nVtxBS']
 
 def config_analysis( alg_list, args ) :
     """ Configure analysis modules. Order is preserved """
 
     # lepton and photon filters must be run 
     # before the jet filter
-    alg_list.append( get_muon_filter( ) )
-    alg_list.append( get_electron_filter( 'medium' ) )
+    alg_list.append( get_muon_filter( ptcut=10 ) )
+    alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=10 ) )
     #alg_list.append( get_electron_filter( 'tightTrig' ) )
-    alg_list.append( get_photon_filter( 'medium' ) )
+    #alg_list.append( get_photon_filter( 'looseNoSIEIE', ptcut=15 ) )
+    alg_list.append( get_photon_filter( None, ptcut=15 ) )
     alg_list.append( get_jet_filter(do_hists=False) )
+
+    # resort photons by the mva score
+    #alg_list.append( Filter( 'SortPhotonByMVAScore' ) )
     
     filter_event = Filter('FilterEvent')
     for cut, val in args.iteritems() :
@@ -36,7 +40,8 @@ def config_analysis( alg_list, args ) :
     alg_list.append( filter_event )
 
     alg_list.append( Filter( 'CalcEventVars' ) )
-    
+    alg_list.append( Filter( 'BuildTruth' ) )
+
 
 def get_jet_filter( do_hists = False ) :
 
@@ -56,28 +61,29 @@ def get_jet_filter( do_hists = False ) :
 
     return filt
 
-def get_electron_filter ( id ) :
+def get_electron_filter ( id, ptcut=10 ) :
 
     filt = Filter( 'FilterElectron' )
-    filt.cut_el_pt = ' > 25' 
+    filt.cut_el_pt = ' > %d'  %ptcut
     setattr( filt, 'cut_el_%s' %id, 'True' )
 
     return filt
 
-def get_photon_filter ( id ) :
+def get_photon_filter ( id=None, ptcut=10 ) :
 
     filt = Filter( 'FilterPhoton' )
-    filt.cut_ph_pt = ' > 15 '
-    #filt.cut_ph_eleVeto = ' == False'
+    filt.cut_ph_pt = ' > %d ' %ptcut
     filt.cut_el_ph_dr = ' > 0.2 '
-    #setattr( filt, 'cut_ph_%s' %id, 'True' )
+    #filt.cut_ph_eleVeto = ' == False '
+    if id is not None :
+        setattr( filt, 'cut_ph_%s' %id, 'True' )
 
     return filt
 
 
-def get_muon_filter( ) :
+def get_muon_filter( ptcut=10 ) :
 
     filt = Filter( 'FilterMuon' )
-    filt.cut_mu_pt = ' > 25 '
+    filt.cut_mu_pt = ' > %d ' %ptcut
     
     return filt

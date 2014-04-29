@@ -38,6 +38,12 @@ const ModuleConfig AnaConfig::getEntry( unsigned int i ) const {
 
 void AnaConfig::Run( RunModuleBase & runmod, const CmdOptions & options ) {
 
+    if( options.files.size() == 0 ) {
+            runmod.initialize( 0, 0, 0, options, getEntries() );
+            runmod.execute( getEntries() );
+            runmod.finalize();
+    }
+
     int total_njobs = 0;
     for( unsigned fidx = 0; fidx < options.files.size(); ++fidx ) {
         total_njobs += options.files[fidx].jobs.size();
@@ -188,7 +194,6 @@ void AnaConfig::Run( RunModuleBase & runmod, const CmdOptions & options ) {
                     std::cout << cpy_cmd << std::endl;
                     system( cpy_cmd.c_str() );
                 }
-                //if( total_njobs > 1 || jobid != 0 ) {}
                 // update the output directory to the job directory
                 // this now happens in all cases.  
                 storage_dir += "/" + jobstr;
@@ -866,7 +871,7 @@ void ReadModuleLine( const std::string & line, AnaConfig & config ) {
     // Split by : character.  The 0th entry is the
     // module name, 1st entry is the configuration
     std::vector<std::string> module_split = Tokenize( line, ":" );
-    if( module_split.size() != 2 ) {
+    if( module_split.size() < 2 ) {
         std::cout << "ParseConfig - ERROR : config file entry does not contain a \":\" "
                   << "character.  Please check the config file" << std::endl;
         return;

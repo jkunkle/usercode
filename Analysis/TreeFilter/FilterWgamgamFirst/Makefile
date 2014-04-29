@@ -52,7 +52,11 @@ OBJECT_ANA = $(OBJ_DIR)/RunAnalysis.o
 BRANCH_INIT = $(OBJ_DIR)/BranchInit.o
 LINKDEF = $(OBJ_DIR)/cintLib.so
 
-EXE = $(EXE_DIR)/RunAnalysis
+ifeq ($(strip ${EXENAME} ), )
+EXENAME=RunAnalysis
+endif
+
+EXE = $(EXE_DIR)/$(EXENAME)
 
 # Main targets
 

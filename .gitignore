@@ -3,3 +3,9 @@
 *.pyc
 *.root
 *.o
+Dict.cxx
+Dict.h
+BranchInit.cxx
+BranchInit.h
+LinkDef.h
+

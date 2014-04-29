@@ -29,9 +29,15 @@ def config_analysis( alg_list ) :
     # There is no restriction on the naming or inputs to these funtions
     filter_event = Filter('FilterEvent')
     filter_event.cut_n_elph = ' == 2 '
+    filter_event.cut_n_el_passtrig = ' > 0 '
 
     alg_list.append( filter_event )
 
-    alg_list.append( Filter( 'MakeNtuple' ) )
+    make_ntuple = Filter( 'MakeNtuple' )
+    make_ntuple.cut_tag_pt = ' > 27 '
+    make_ntuple.cut_tag_triggerMatch = ' == True '
+    make_ntuple.cut_tag_passMvaTrig  = ' == True '
+
+    alg_list.append( make_ntuple )
 
 

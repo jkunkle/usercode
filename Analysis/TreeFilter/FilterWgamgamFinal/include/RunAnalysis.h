@@ -45,8 +45,11 @@ class RunModule : public virtual RunModuleBase {
         void FilterElectron    ( ModuleConfig & config ) const;
         void FilterPhoton      ( ModuleConfig & config ) const;
         void FilterMuon        ( ModuleConfig & config ) const;
+        void SortPhotonByMVAScore( ModuleConfig & config ) const;
+        void BuildTruth        ( ModuleConfig & config ) const;
         void CalcEventVars     ( ModuleConfig & config ) const;
         bool FilterEvent       ( ModuleConfig & config ) const;
+        bool FilterTruth       ( ModuleConfig & config ) const;
 
 };
 
@@ -54,11 +57,40 @@ class RunModule : public virtual RunModuleBase {
 // Declare any output variables that you'll fill here
 namespace OUT {
 
+    Int_t truelep_n        ;
+    Int_t trueph_n         ;
+    Int_t trueph_wmother_n ;
+    Int_t truegenph_n ;
+    Int_t truegenphpt15_n;
+
+    std::vector<float>  *truelep_pt        ;
+    std::vector<float>  *truelep_eta       ;
+    std::vector<float>  *truelep_phi       ;
+    std::vector<float>  *truelep_e       ;
+    std::vector<Bool_t> *truelep_isElec    ;
+    std::vector<Bool_t> *truelep_isMuon   ;
+    std::vector<int>    *truelep_motherPID;
+
+    std::vector<float>  *trueph_pt       ;
+    std::vector<float>  *trueph_eta      ;
+    std::vector<float>  *trueph_phi      ;
+    std::vector<int>    *trueph_motherPID  ;
+
+    Float_t trueleadlep_pt;
+    Float_t truesubllep_pt;
+
+    Float_t trueleadlep_leadPhotDR;
+    Float_t trueleadlep_sublPhotDR;
+    Float_t truesubllep_leadPhotDR;
+    Float_t truesubllep_sublPhotDR;
+
     Bool_t isBlinded;
     Float_t EventWeight;
 
     Int_t   mu_pt25_n;
+    Int_t   mu_passtrig_n;
     Int_t   el_pt25_n;
+    Int_t   el_passtrig_n;
 
     Float_t leadPhot_pt;
     Float_t sublPhot_pt;
@@ -70,6 +102,10 @@ namespace OUT {
     Float_t sublPhot_lepDPhi;
     Float_t ph_phDPhi;
     Float_t phPhot_lepDPhi;
+    Float_t dphi_met_lep1;
+    Float_t dphi_met_lep2;
+    Float_t dphi_met_ph1;
+    Float_t dphi_met_ph2;
     Float_t mt_lep_met;
     Float_t mt_lepph1_met;
     Float_t mt_lepph2_met;
@@ -83,6 +119,7 @@ namespace OUT {
     Float_t m_leplepZ;
     Float_t m_3lep;
     Float_t m_4lep;
+    Float_t pt_phph;
     Float_t pt_leplep;
     Float_t pt_lepph1;
     Float_t pt_lepph2;
@@ -91,7 +128,13 @@ namespace OUT {
     Float_t pt_secondLepton;
     Float_t pt_thirdLepton;
 
+    Float_t            leadPhot_leadLepDR;
+    Float_t            leadPhot_sublLepDR;
+    Float_t            sublPhot_leadLepDR;
+    Float_t            sublPhot_sublLepDR;
+
     Float_t m_nearestToZ;
+    Float_t m_minZdifflepph;
 
     //Examples
 };

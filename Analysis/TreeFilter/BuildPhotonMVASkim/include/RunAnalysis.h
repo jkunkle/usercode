@@ -48,6 +48,7 @@ class RunModule : public virtual RunModuleBase {
         void BuildPhoton         ( ModuleConfig & config ) const;
         bool FilterEvent         ( ModuleConfig & config ) const;
 
+        void calc_corr_iso( float chIso, float phoIso, float neuIso, float rho, float eta, float &chisoCorr, float &phoIsoCorr, float &neuIsoCorr ) const;
         // tmva files for photon mva
         TMVA::Reader *TMVAReaderEB;
         TMVA::Reader *TMVAReaderEE;
@@ -58,9 +59,12 @@ class RunModule : public virtual RunModuleBase {
 // Declare any output variables that you'll fill here
 namespace OUT {
 
-    float  phoMvaScore;
-    Bool_t phoIsEB;
-    Bool_t phoIsEE;
+    //float  phoMvaScore;
+    //Bool_t phoIsEB;
+    //Bool_t phoIsEE;
+    float phoPFChIsoPtRhoCorr;
+    float phoPFNeuIsoPtRhoCorr;
+    float phoPFPhoIsoPtRhoCorr;
 };
 
 namespace MVAVars {

@@ -13,10 +13,12 @@
 
 #include "include/BranchDefs.h"
 #include "include/BranchInit.h"
+#include "include/MuScleFitCorrector.h"
 
 #include "Core/Util.h"
 
 #include "TFile.h"
+#include "TH1D.h"
 
 int main(int argc, char **argv)
 {
@@ -47,168 +49,292 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     // *************************
     // Set defaults for added output variables
     // *************************
-    OUT::el_pt             = 0;
-    OUT::el_eta            = 0;
-    OUT::el_sceta          = 0;
-    OUT::el_phi            = 0;
-    OUT::el_e              = 0;
-    OUT::el_mva            = 0;
-    OUT::el_d0pv           = 0;
-    OUT::el_z0pv           = 0;
-    OUT::el_hasMatchedConv = 0;
-    OUT::el_passTight      = 0;
-    OUT::el_passMedium     = 0;
-    OUT::el_passLoose      = 0;
-    OUT::el_passVeryLoose  = 0;
-    OUT::el_passTightTrig  = 0;
-    OUT::el_truthMatch_el  = 0;
-    OUT::el_truthMinDR_el  = 0;
-    OUT::el_truthMatchPt_el= 0;
-    OUT::mu_pt             = 0;
-    OUT::mu_eta            = 0;
-    OUT::mu_phi            = 0;
-    OUT::mu_e              = 0;
-    OUT::mu_pfIso_ch       = 0;
-    OUT::mu_pfIso_nh       = 0;
-    OUT::mu_pfIso_pho      = 0;
-    OUT::mu_pfIso_pu       = 0;
-    OUT::mu_corrIso        = 0;
-    OUT::mu_truthMatch     = 0;
-    OUT::mu_truthMinDR     = 0;
-    OUT::ph_pt             = 0;
-    OUT::ph_eta            = 0;
-    OUT::ph_phi            = 0;
-    OUT::ph_e              = 0;
-    OUT::ph_HoverE         = 0;
-    OUT::ph_sigmaIEIE      = 0;
-    OUT::ph_chIsoCorr      = 0;
-    OUT::ph_neuIsoCorr     = 0;
-    OUT::ph_phoIsoCorr     = 0;
-    OUT::ph_isConv         = 0;
-    OUT::ph_conv_nTrk      = 0;
-    OUT::ph_conv_vtx_x     = 0;
-    OUT::ph_conv_vtx_y     = 0;
-    OUT::ph_conv_vtx_z     = 0;
-    OUT::ph_conv_ptin1     = 0;
-    OUT::ph_conv_ptin2     = 0;
-    OUT::ph_conv_ptout1    = 0;
-    OUT::ph_conv_ptout2    = 0;
-    OUT::ph_passTight      = 0;
-    OUT::ph_passMedium     = 0;
-    OUT::ph_passLoose      = 0;
-    OUT::ph_truthMatch_ph  = 0;
-    OUT::ph_truthMinDR_ph  = 0;
-    OUT::ph_truthMatchPt_ph= 0;
-    OUT::ph_truthMatch_el  = 0;
-    OUT::ph_truthMinDR_el  = 0;
-    OUT::ph_truthMatchPt_el= 0;
-    OUT::ph_hasSLConv      = 0;
+    OUT::el_pt                     = 0;
+    OUT::el_eta                    = 0;
+    OUT::el_sceta                  = 0;
+    OUT::el_phi                    = 0;
+    OUT::el_e                      = 0;
+    OUT::el_pt_uncorr              = 0;
+    OUT::el_mva_trig               = 0;
+    OUT::el_mva_nontrig            = 0;
+    OUT::el_d0pv                   = 0;
+    OUT::el_z0pv                   = 0;
+    OUT::el_sigmaIEIE              = 0;
+    OUT::el_pfiso30                = 0;
+    OUT::el_pfiso40                = 0;
+    OUT::el_triggerMatch           = 0;
+    OUT::el_hasMatchedConv         = 0;
+    OUT::el_passTight              = 0;
+    OUT::el_passMedium             = 0;
+    OUT::el_passLoose              = 0;
+    OUT::el_passVeryLoose          = 0;
+    OUT::el_passTightTrig          = 0;
+    OUT::el_passMvaNonTrig         = 0;
+    OUT::el_passMvaTrig            = 0;
+    OUT::el_truthMatch_el          = 0;
+    OUT::el_truthMinDR_el          = 0;
+    OUT::el_truthMatchPt_el        = 0;
+    OUT::mu_pt                     = 0;
+    OUT::mu_eta                    = 0;
+    OUT::mu_phi                    = 0;
+    OUT::mu_e                      = 0;
+    OUT::mu_pt_uncorr              = 0;
+    OUT::mu_pfIso_ch               = 0;
+    OUT::mu_pfIso_nh               = 0;
+    OUT::mu_pfIso_pho              = 0;
+    OUT::mu_pfIso_pu               = 0;
+    OUT::mu_corrIso                = 0;
+    OUT::mu_triggerMatch           = 0;
+    OUT::mu_truthMatch             = 0;
+    OUT::mu_truthMinDR             = 0;
+    OUT::ph_pt                     = 0;
+    OUT::ph_eta                    = 0;
+    OUT::ph_sceta                  = 0;
+    OUT::ph_phi                    = 0;
+    OUT::ph_e                      = 0;
+    OUT::ph_HoverE                 = 0;
+    OUT::ph_HoverE12               = 0;
+    OUT::ph_sigmaIEIE              = 0;
+    OUT::ph_sigmaIEIP              = 0;
+    OUT::ph_r9                     = 0;
+    OUT::ph_E1x3                   = 0;
+    OUT::ph_E2x2                   = 0;
+    OUT::ph_E5x5                   = 0;
+    OUT::ph_E2x5Max                = 0;
+    OUT::ph_SCetaWidth             = 0;
+    OUT::ph_SCphiWidth             = 0;
+    OUT::ph_ESEffSigmaRR           = 0;
+    OUT::ph_hcalIsoDR03            = 0;
+    OUT::ph_trkIsoHollowDR03       = 0;
+    OUT::ph_chgpfIsoDR02           = 0;
+    OUT::ph_pfChIsoWorst           = 0;
+    OUT::ph_chIso                  = 0;
+    OUT::ph_neuIso                 = 0;
+    OUT::ph_phoIso                 = 0;
+    OUT::ph_chIsoCorr              = 0;
+    OUT::ph_neuIsoCorr             = 0;
+    OUT::ph_phoIsoCorr             = 0;
+    OUT::ph_eleVeto                = 0;
+    OUT::ph_hasPixSeed             = 0;
+    OUT::ph_drToTrk                = 0;
+    OUT::ph_isConv                 = 0;
+    OUT::ph_conv_nTrk              = 0;
+    OUT::ph_conv_vtx_x             = 0;
+    OUT::ph_conv_vtx_y             = 0;
+    OUT::ph_conv_vtx_z             = 0;
+    OUT::ph_conv_ptin1             = 0;
+    OUT::ph_conv_ptin2             = 0;
+    OUT::ph_conv_ptout1            = 0;
+    OUT::ph_conv_ptout2            = 0;
+    OUT::ph_passTight              = 0;
+    OUT::ph_passMedium             = 0;
+    OUT::ph_passLoose              = 0;
+    OUT::ph_passLooseNoSIEIE       = 0;
+    OUT::ph_passSIEIELoose         = 0;
+    OUT::ph_passSIEIEMedium        = 0;
+    OUT::ph_passSIEIETight         = 0;
+    OUT::ph_passChIsoCorrLoose     = 0;
+    OUT::ph_passChIsoCorrMedium    = 0;
+    OUT::ph_passChIsoCorrTight     = 0;
+    OUT::ph_passNeuIsoCorrLoose    = 0;
+    OUT::ph_passNeuIsoCorrMedium   = 0;
+    OUT::ph_passNeuIsoCorrTight    = 0;
+    OUT::ph_passPhoIsoCorrLoose    = 0;
+    OUT::ph_passPhoIsoCorrMedium   = 0;
+    OUT::ph_passPhoIsoCorrTight    = 0;
+    OUT::ph_truthMatch_ph          = 0;
+    OUT::ph_truthMinDR_ph          = 0;
+    OUT::ph_truthMatchPt_ph        = 0;
+    OUT::ph_truthMatchMotherPID_ph = 0;
+    OUT::ph_truthMatch_el          = 0;
+    OUT::ph_truthMinDR_el          = 0;
+    OUT::ph_truthMatchPt_el        = 0;
+    OUT::ph_hasSLConv              = 0;
+    OUT::ph_pass_mva_presel        = 0;
+    OUT::ph_mvascore               = 0;
+    OUT::ph_IsEB                   = 0;
+    OUT::ph_IsEE                   = 0;
 
-    OUT::jet_pt             = 0;
-    OUT::jet_eta            = 0;
-    OUT::jet_phi            = 0;
-    OUT::jet_e              = 0;
+    OUT::jet_pt                    = 0;
+    OUT::jet_eta                   = 0;
+    OUT::jet_phi                   = 0;
+    OUT::jet_e                     = 0;
 
     // *************************
     // Declare Branches
     // *************************
-    outtree->Branch("el_n"               , &OUT::el_n  , "el_n/I"                        );
-    outtree->Branch("mu_n"               , &OUT::mu_n  , "mu_n/I"                        );
-    outtree->Branch("ph_n"               , &OUT::ph_n , "ph_n/I"                         );
-    outtree->Branch("jet_n"              , &OUT::jet_n , "jet_n/I"                       );
-    outtree->Branch("vtx_n"              , &OUT::vtx_n   , "vtx_n/I"                     );
+    outtree->Branch("el_n"                      , &OUT::el_n  , "el_n/I"          );
+    outtree->Branch("mu_n"                      , &OUT::mu_n  , "mu_n/I"          );
+    outtree->Branch("ph_n"                      , &OUT::ph_n , "ph_n/I"           );
+    outtree->Branch("jet_n"                     , &OUT::jet_n , "jet_n/I"         );
+    outtree->Branch("vtx_n"                     , &OUT::vtx_n   , "vtx_n/I"       );
 
-    outtree->Branch("el_pt"              , &OUT::el_pt                                   );
-    outtree->Branch("el_eta"             , &OUT::el_eta                                  );
-    outtree->Branch("el_sceta"           , &OUT::el_sceta                                );
-    outtree->Branch("el_phi"             , &OUT::el_phi                                  );
-    outtree->Branch("el_e"               , &OUT::el_e                                    );
-    outtree->Branch("el_mva"             , &OUT::el_mva                                  );
-    outtree->Branch("el_d0pv"            , &OUT::el_d0pv                                 );
-    outtree->Branch("el_z0pv"            , &OUT::el_z0pv                                 );
-    outtree->Branch("el_sigmaIEIE"       , &OUT::el_sigmaIEIE                            );
-    outtree->Branch("el_pfiso30"         , &OUT::el_pfiso30                              );
-    outtree->Branch("el_hasMatchedConv"  , &OUT::el_hasMatchedConv                       );
-    outtree->Branch("el_passTight"       , &OUT::el_passTight                            );
-    outtree->Branch("el_passMedium"      , &OUT::el_passMedium                           );
-    outtree->Branch("el_passLoose"       , &OUT::el_passLoose                            );
-    outtree->Branch("el_passVeryLoose"   , &OUT::el_passVeryLoose                        );
-    outtree->Branch("el_passTightTrig"   , &OUT::el_passTightTrig                        );
-    outtree->Branch("el_truthMatch_el"   , &OUT::el_truthMatch_el                        );
-    outtree->Branch("el_truthMinDR_el"   , &OUT::el_truthMinDR_el                        );
-    outtree->Branch("el_truthMatchPt_el" , &OUT::el_truthMatchPt_el                      );
+    outtree->Branch("el_pt"                     , &OUT::el_pt                     );
+    outtree->Branch("el_eta"                    , &OUT::el_eta                    );
+    outtree->Branch("el_sceta"                  , &OUT::el_sceta                  );
+    outtree->Branch("el_phi"                    , &OUT::el_phi                    );
+    outtree->Branch("el_e"                      , &OUT::el_e                      );
+    outtree->Branch("el_pt_uncorr"              , &OUT::el_pt_uncorr              );
+    outtree->Branch("el_mva_trig"               , &OUT::el_mva_trig               );
+    outtree->Branch("el_mva_nontrig"            , &OUT::el_mva_nontrig            );
+    outtree->Branch("el_d0pv"                   , &OUT::el_d0pv                   );
+    outtree->Branch("el_z0pv"                   , &OUT::el_z0pv                   );
+    outtree->Branch("el_sigmaIEIE"              , &OUT::el_sigmaIEIE              );
+    outtree->Branch("el_pfiso30"                , &OUT::el_pfiso30                );
+    outtree->Branch("el_pfiso40"                , &OUT::el_pfiso40                );
+    outtree->Branch("el_triggerMatch"           , &OUT::el_triggerMatch           );
+    outtree->Branch("el_hasMatchedConv"         , &OUT::el_hasMatchedConv         );
+    outtree->Branch("el_passTight"              , &OUT::el_passTight              );
+    outtree->Branch("el_passMedium"             , &OUT::el_passMedium             );
+    outtree->Branch("el_passLoose"              , &OUT::el_passLoose              );
+    outtree->Branch("el_passVeryLoose"          , &OUT::el_passVeryLoose          );
+    outtree->Branch("el_passTightTrig"          , &OUT::el_passTightTrig          );
+    outtree->Branch("el_passMvaTrig"            , &OUT::el_passMvaTrig            );
+    outtree->Branch("el_passMvaNonTrig"         , &OUT::el_passMvaNonTrig         );
+    outtree->Branch("el_truthMatch_el"          , &OUT::el_truthMatch_el          );
+    outtree->Branch("el_truthMinDR_el"          , &OUT::el_truthMinDR_el          );
+    outtree->Branch("el_truthMatchPt_el"        , &OUT::el_truthMatchPt_el        );
     
-    outtree->Branch("mu_pt"              , &OUT::mu_pt                                   );
-    outtree->Branch("mu_eta"             , &OUT::mu_eta                                  );
-    outtree->Branch("mu_phi"             , &OUT::mu_phi                                  );
-    outtree->Branch("mu_e"               , &OUT::mu_e                                    );
-    outtree->Branch("mu_pfIso_ch"        , &OUT::mu_pfIso_ch                             );
-    outtree->Branch("mu_pfIso_nh"        , &OUT::mu_pfIso_nh                             );
-    outtree->Branch("mu_pfIso_pho"       , &OUT::mu_pfIso_pho                            );
-    outtree->Branch("mu_pfIso_pu"        , &OUT::mu_pfIso_pu                             );
-    outtree->Branch("mu_corrIso"         , &OUT::mu_corrIso                              );
-    outtree->Branch("mu_truthMatch"      , &OUT::mu_truthMatch                           );
-    outtree->Branch("mu_truthMinDR"      , &OUT::mu_truthMinDR                           );
+    outtree->Branch("mu_pt"                     , &OUT::mu_pt                     );
+    outtree->Branch("mu_eta"                    , &OUT::mu_eta                    );
+    outtree->Branch("mu_phi"                    , &OUT::mu_phi                    );
+    outtree->Branch("mu_e"                      , &OUT::mu_e                      );
+    outtree->Branch("mu_pt_uncorr"              , &OUT::mu_pt_uncorr              );
+    outtree->Branch("mu_pfIso_ch"               , &OUT::mu_pfIso_ch               );
+    outtree->Branch("mu_pfIso_nh"               , &OUT::mu_pfIso_nh               );
+    outtree->Branch("mu_pfIso_pho"              , &OUT::mu_pfIso_pho              );
+    outtree->Branch("mu_pfIso_pu"               , &OUT::mu_pfIso_pu               );
+    outtree->Branch("mu_corrIso"                , &OUT::mu_corrIso                );
+    outtree->Branch("mu_triggerMatch"           , &OUT::mu_triggerMatch           );
+    outtree->Branch("mu_truthMatch"             , &OUT::mu_truthMatch             );
+    outtree->Branch("mu_truthMinDR"             , &OUT::mu_truthMinDR             );
     
-    outtree->Branch("ph_pt"              , &OUT::ph_pt                                     );
-    outtree->Branch("ph_eta"             , &OUT::ph_eta                                    );
-    outtree->Branch("ph_phi"             , &OUT::ph_phi                                    );
-    outtree->Branch("ph_e"               , &OUT::ph_e                                      );
-    outtree->Branch("ph_HoverE"          , &OUT::ph_HoverE                                 );
-    outtree->Branch("ph_sigmaIEIE"       , &OUT::ph_sigmaIEIE                              );
-    outtree->Branch("ph_chIsoCorr"       , &OUT::ph_chIsoCorr                              );
-    outtree->Branch("ph_neuIsoCorr"      , &OUT::ph_neuIsoCorr                             );
-    outtree->Branch("ph_phoIsoCorr"      , &OUT::ph_phoIsoCorr                             );
-    outtree->Branch("ph_isConv"          , &OUT::ph_isConv                                 );
-    outtree->Branch("ph_conv_nTrk"       , &OUT::ph_conv_nTrk                              );
-    outtree->Branch("ph_conv_vtx_x"      , &OUT::ph_conv_vtx_x                             );
-    outtree->Branch("ph_conv_vtx_y"      , &OUT::ph_conv_vtx_y                             );
-    outtree->Branch("ph_conv_vtx_z"      , &OUT::ph_conv_vtx_z                             );
-    outtree->Branch("ph_conv_ptin1"      , &OUT::ph_conv_ptin1                             );
-    outtree->Branch("ph_conv_ptin2"      , &OUT::ph_conv_ptin2                             );
-    outtree->Branch("ph_conv_ptout1"     , &OUT::ph_conv_ptout1                            );
-    outtree->Branch("ph_conv_ptout2"     , &OUT::ph_conv_ptout2                            );
-    outtree->Branch("ph_passTight"       , &OUT::ph_passTight                              );
-    outtree->Branch("ph_passMedium"      , &OUT::ph_passMedium                             );
-    outtree->Branch("ph_passLoose"       , &OUT::ph_passLoose                              );
-    outtree->Branch("ph_truthMatch_el"   , &OUT::ph_truthMatch_el                          );
-    outtree->Branch("ph_truthMinDR_el"   , &OUT::ph_truthMinDR_el                          );
-    outtree->Branch("ph_truthMatchPt_el" , &OUT::ph_truthMatchPt_el                        );
-    outtree->Branch("ph_truthMatch_ph"   , &OUT::ph_truthMatch_ph                          );
-    outtree->Branch("ph_truthMinDR_ph"   , &OUT::ph_truthMinDR_ph                          );
-    outtree->Branch("ph_truthMatchPt_ph" , &OUT::ph_truthMatchPt_ph                        );
-    outtree->Branch("ph_hasSLConv"       , &OUT::ph_hasSLConv                              );
+    outtree->Branch("ph_pt"                     , &OUT::ph_pt                     );
+    outtree->Branch("ph_eta"                    , &OUT::ph_eta                    );
+    outtree->Branch("ph_sceta"                  , &OUT::ph_sceta                  );
+    outtree->Branch("ph_phi"                    , &OUT::ph_phi                    );
+    outtree->Branch("ph_e"                      , &OUT::ph_e                      );
+    outtree->Branch("ph_HoverE"                 , &OUT::ph_HoverE                 );
+    outtree->Branch("ph_HoverE12"               , &OUT::ph_HoverE12               );
+    outtree->Branch("ph_sigmaIEIE"              , &OUT::ph_sigmaIEIE              );
+    outtree->Branch("ph_sigmaIEIP"              , &OUT::ph_sigmaIEIP              );
+    outtree->Branch("ph_r9"                     , &OUT::ph_r9                     );
+    outtree->Branch("ph_E1x3"                   , &OUT::ph_E1x3                   );
+    outtree->Branch("ph_E2x2"                   , &OUT::ph_E2x2                   );
+    outtree->Branch("ph_E5x5"                   , &OUT::ph_E5x5                   );
+    outtree->Branch("ph_E2x5Max"                , &OUT::ph_E2x5Max                );
+    outtree->Branch("ph_SCetaWidth"             , &OUT::ph_SCetaWidth             );
+    outtree->Branch("ph_SCphiWidth"             , &OUT::ph_SCphiWidth             );
+    outtree->Branch("ph_ESEffSigmaRR"           , &OUT::ph_ESEffSigmaRR           );
+    outtree->Branch("ph_hcalIsoDR03"            , &OUT::ph_hcalIsoDR03            );
+    outtree->Branch("ph_trkIsoHollowDR03"       , &OUT::ph_trkIsoHollowDR03       );
+    outtree->Branch("ph_chgpfIsoDR02"           , &OUT::ph_chgpfIsoDR02           );
+    outtree->Branch("ph_pfChIsoWorst"           , &OUT::ph_pfChIsoWorst           );
+    outtree->Branch("ph_chIso"                  , &OUT::ph_chIso                  );
+    outtree->Branch("ph_neuIso"                 , &OUT::ph_neuIso                 );
+    outtree->Branch("ph_phoIso"                 , &OUT::ph_phoIso                 );
+    outtree->Branch("ph_chIsoCorr"              , &OUT::ph_chIsoCorr              );
+    outtree->Branch("ph_neuIsoCorr"             , &OUT::ph_neuIsoCorr             );
+    outtree->Branch("ph_phoIsoCorr"             , &OUT::ph_phoIsoCorr             );
+    outtree->Branch("ph_eleVeto"                , &OUT::ph_eleVeto                );
+    outtree->Branch("ph_hasPixSeed"             , &OUT::ph_hasPixSeed             );
+    outtree->Branch("ph_drToTrk"                , &OUT::ph_drToTrk                );
+    outtree->Branch("ph_isConv"                 , &OUT::ph_isConv                 );
+    outtree->Branch("ph_conv_nTrk"              , &OUT::ph_conv_nTrk              );
+    outtree->Branch("ph_conv_vtx_x"             , &OUT::ph_conv_vtx_x             );
+    outtree->Branch("ph_conv_vtx_y"             , &OUT::ph_conv_vtx_y             );
+    outtree->Branch("ph_conv_vtx_z"             , &OUT::ph_conv_vtx_z             );
+    outtree->Branch("ph_conv_ptin1"             , &OUT::ph_conv_ptin1             );
+    outtree->Branch("ph_conv_ptin2"             , &OUT::ph_conv_ptin2             );
+    outtree->Branch("ph_conv_ptout1"            , &OUT::ph_conv_ptout1            );
+    outtree->Branch("ph_conv_ptout2"            , &OUT::ph_conv_ptout2            );
+    outtree->Branch("ph_passTight"              , &OUT::ph_passTight              );
+    outtree->Branch("ph_passMedium"             , &OUT::ph_passMedium             );
+    outtree->Branch("ph_passLoose"              , &OUT::ph_passLoose              );
+    outtree->Branch("ph_passLooseNoSIEIE"       , &OUT::ph_passLooseNoSIEIE       );
+    outtree->Branch("ph_passSIEIELoose"         , &OUT::ph_passSIEIELoose         );
+    outtree->Branch("ph_passSIEIEMedium"        , &OUT::ph_passSIEIEMedium        );
+    outtree->Branch("ph_passSIEIETight"         , &OUT::ph_passSIEIETight         );
+    outtree->Branch("ph_passChIsoCorrLoose"     , &OUT::ph_passChIsoCorrLoose     );
+    outtree->Branch("ph_passChIsoCorrMedium"    , &OUT::ph_passChIsoCorrMedium    );
+    outtree->Branch("ph_passChIsoCorrTight"     , &OUT::ph_passChIsoCorrTight     );
+    outtree->Branch("ph_passNeuIsoCorrLoose"    , &OUT::ph_passNeuIsoCorrLoose    );
+    outtree->Branch("ph_passNeuIsoCorrMedium"   , &OUT::ph_passNeuIsoCorrMedium   );
+    outtree->Branch("ph_passNeuIsoCorrTight"    , &OUT::ph_passNeuIsoCorrTight    );
+    outtree->Branch("ph_passPhoIsoCorrLoose"    , &OUT::ph_passPhoIsoCorrLoose    );
+    outtree->Branch("ph_passPhoIsoCorrMedium"   , &OUT::ph_passPhoIsoCorrMedium   );
+    outtree->Branch("ph_passPhoIsoCorrTight"    , &OUT::ph_passPhoIsoCorrTight    );
+    outtree->Branch("ph_truthMatch_el"          , &OUT::ph_truthMatch_el          );
+    outtree->Branch("ph_truthMinDR_el"          , &OUT::ph_truthMinDR_el          );
+    outtree->Branch("ph_truthMatchPt_el"        , &OUT::ph_truthMatchPt_el        );
+    outtree->Branch("ph_truthMatch_ph"          , &OUT::ph_truthMatch_ph          );
+    outtree->Branch("ph_truthMinDR_ph"          , &OUT::ph_truthMinDR_ph          );
+    outtree->Branch("ph_truthMatchPt_ph"        , &OUT::ph_truthMatchPt_ph        );
+    outtree->Branch("ph_truthMatchMotherPID_ph" , &OUT::ph_truthMatchMotherPID_ph );
+    outtree->Branch("ph_hasSLConv"              , &OUT::ph_hasSLConv              );
+    outtree->Branch("ph_pass_mva_presel"        , &OUT::ph_pass_mva_presel        );
+    outtree->Branch("ph_mvascore"               , &OUT::ph_mvascore               );
+    outtree->Branch("ph_IsEB"                   , &OUT::ph_IsEB                   );
+    outtree->Branch("ph_IsEE"                   , &OUT::ph_IsEE                   );
     
-    outtree->Branch("jet_pt"            , &OUT::jet_pt                                   );
-    outtree->Branch("jet_eta"           , &OUT::jet_eta                                  );
-    outtree->Branch("jet_phi"           , &OUT::jet_phi                                  );
-    outtree->Branch("jet_e"             , &OUT::jet_e                                    );
+    outtree->Branch("jet_pt"                    , &OUT::jet_pt                    );
+    outtree->Branch("jet_eta"                   , &OUT::jet_eta                   );
+    outtree->Branch("jet_phi"                   , &OUT::jet_phi                   );
+    outtree->Branch("jet_e"                     , &OUT::jet_e                     );
 
     //outtree->Branch("avgPU"              , &OUT::avgPU, "avgPU/F"                        );
+    outtree->Branch("PUWeight"       , &OUT::PUWeight, "PUWeight/F"                        );
 
-    eval_el_tight     = false;
-    eval_el_medium    = false;
-    eval_el_loose     = false;
-    eval_el_veryloose = false;
-    eval_el_tightTrig = false;
+    eval_el_tight       = false;
+    eval_el_medium      = false;
+    eval_el_loose       = false;
+    eval_el_veryloose   = false;
+    eval_el_tightTrig   = false;
+    eval_el_tightTrig   = false;
+    eval_el_mva_trig    = false;
+    eval_el_mva_nontrig = false;
 
     eval_ph_tight     = false;
     eval_ph_medium    = false;
     eval_ph_loose     = false;
 
+    apply_electron_corrections = false;
+    apply_photon_corrections   = false;
+    apply_muon_corrections     = false;
+    apply_jet_corrections      = false;
+
     BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
     
     
         if( mod_conf.GetName() == "BuildElectron" ) { 
-            std::map<std::string, std::string>::const_iterator itr = mod_conf.GetInitData().find( "evalPID" );
-            if( itr != mod_conf.GetInitData().end() ) {
-                std::string pid = itr->second;
-                if( pid == "tight"     ) eval_el_tight     = true;
-                if( pid == "medium"    ) eval_el_medium    = true;
-                if( pid == "loose"     ) eval_el_loose     = true;
-                if( pid == "veryloose" ) eval_el_veryloose = true;
-                if( pid == "tightTrig" ) eval_el_tightTrig = true;
+            std::map<std::string, std::string>::const_iterator eitr = mod_conf.GetInitData().find( "evalPID" );
+            if( eitr != mod_conf.GetInitData().end() ) {
+                std::string pid = eitr->second;
+                if( pid == "tight"     ) eval_el_tight       = true;
+                if( pid == "medium"    ) eval_el_medium      = true;
+                if( pid == "loose"     ) eval_el_loose       = true;
+                if( pid == "veryloose" ) eval_el_veryloose   = true;
+                if( pid == "tightTrig" ) eval_el_tightTrig   = true;
+                if( pid == "mvaTrig"   ) eval_el_mva_trig    = true;
+                if( pid == "mvaNonTrig") eval_el_mva_nontrig = true;
             }
+
+            std::map<std::string, std::string>::const_iterator citr = mod_conf.GetInitData().find( "applyCorrections" );
+            if( citr != mod_conf.GetInitData().end() && citr->second == "true" ) {
+                apply_electron_corrections=true;
+            }
+            citr = mod_conf.GetInitData().find( "correctionFile" );
+            if( citr != mod_conf.GetInitData().end() ) {
+                const std::string &filename = citr->second;
+                extractElectronCorrections( filename );
+            }
+            citr = mod_conf.GetInitData().find( "linCorrectionFile" );
+            if( citr != mod_conf.GetInitData().end() ) {
+                const std::string &filename = citr->second;
+                extractElectronLinCorrections( filename );
+            }
+
+
         }
         if( mod_conf.GetName() == "BuildPhoton" ) { 
             std::map<std::string, std::string>::const_iterator itr = mod_conf.GetInitData().find( "evalPID" );
@@ -218,8 +344,134 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 if( pid == "medium"    ) eval_ph_medium    = true;
                 if( pid == "loose"     ) eval_ph_loose     = true;
             }
+            std::map<std::string, std::string>::const_iterator citr = mod_conf.GetInitData().find( "applyCorrections" );
+            if( citr != mod_conf.GetInitData().end() && citr->second == "true" ) {
+                apply_photon_corrections=true;
+            }
+            citr = mod_conf.GetInitData().find( "TMVAWeightsFileEB" );
+            if( citr != mod_conf.GetInitData().end() ) {
+                std::string mva_weights_eb = citr->second;  
+                TMVAReaderEB = new TMVA::Reader( "!Color:!Silent:Error" );
+                TMVAReaderEB->SetVerbose(true);
+
+                TMVAReaderEB->AddVariable("phoPhi", &MVAVars::phoPhi);
+                TMVAReaderEB->AddVariable("phoR9", &MVAVars::phoR9);
+                TMVAReaderEB->AddVariable("phoSigmaIEtaIEta", &MVAVars::phoSigmaIEtaIEta  );
+                TMVAReaderEB->AddVariable("phoSigmaIEtaIPhi", &MVAVars::phoSigmaIEtaIPhi );
+                TMVAReaderEB->AddVariable("s13", &MVAVars::s13 );
+                TMVAReaderEB->AddVariable("s4ratio", &MVAVars::s4ratio );
+                TMVAReaderEB->AddVariable("s25", &MVAVars::s25 );
+                TMVAReaderEB->AddVariable("phoSCEta", &MVAVars::phoSCEta );
+                TMVAReaderEB->AddVariable("phoSCRawE", &MVAVars::phoSCRawE );
+                TMVAReaderEB->AddVariable("phoSCEtaWidth", &MVAVars::phoSCEtaWidth );
+                TMVAReaderEB->AddVariable("phoSCPhiWidth", &MVAVars::phoSCPhiWidth );
+                TMVAReaderEB->AddVariable("rho2012", &MVAVars::rho2012 );
+                TMVAReaderEB->AddVariable("phoPFPhoIso", &MVAVars::phoPFPhoIso );
+                TMVAReaderEB->AddVariable("phoPFChIso", &MVAVars::phoPFChIso );
+                TMVAReaderEB->AddVariable("phoPFChIsoWorst", &MVAVars::phoPFChIsoWorst );
+
+                TMVAReaderEB->AddSpectator("phoEt", &MVAVars::phoEt);
+                TMVAReaderEB->AddSpectator("phoEta", &MVAVars::phoEta);
+
+                TMVAReaderEB->BookMVA("BDT", mva_weights_eb);
+
+
+            }
+            citr = mod_conf.GetInitData().find( "TMVAWeightsFileEE" );
+            if( citr != mod_conf.GetInitData().end() ) {
+                std::string mva_weights_ee = citr->second;  
+                TMVAReaderEE = new TMVA::Reader( "!Color:!Silent:Error" );
+                TMVAReaderEE->SetVerbose(true);
+
+                TMVAReaderEE->AddVariable("phoPhi", &MVAVars::phoPhi );
+                TMVAReaderEE->AddVariable("phoR9", &MVAVars::phoR9 );
+                TMVAReaderEE->AddVariable("phoSigmaIEtaIEta", &MVAVars::phoSigmaIEtaIEta );
+                TMVAReaderEE->AddVariable("phoSigmaIEtaIPhi", &MVAVars::phoSigmaIEtaIPhi );
+                TMVAReaderEE->AddVariable("s13", &MVAVars::s13 );
+                TMVAReaderEE->AddVariable("s4ratio", &MVAVars::s4ratio );
+                TMVAReaderEE->AddVariable("s25", &MVAVars::s25 );
+                TMVAReaderEE->AddVariable("phoSCEta", &MVAVars::phoSCEta );
+                TMVAReaderEE->AddVariable("phoSCRawE", &MVAVars::phoSCRawE );
+                TMVAReaderEE->AddVariable("phoSCEtaWidth", &MVAVars::phoSCEtaWidth );
+                TMVAReaderEE->AddVariable("phoSCPhiWidth", &MVAVars::phoSCPhiWidth );
+                TMVAReaderEE->AddVariable("phoESEn/phoSCRawE", &MVAVars::phoESEnToRawE );
+                TMVAReaderEE->AddVariable("phoESEffSigmaRR", &MVAVars::phoESEffSigmaRR );
+                TMVAReaderEE->AddVariable("rho2012", &MVAVars::rho2012 );
+                TMVAReaderEE->AddVariable("phoPFPhoIso", &MVAVars::phoPFPhoIso );
+                TMVAReaderEE->AddVariable("phoPFChIso", &MVAVars::phoPFChIso );
+                TMVAReaderEE->AddVariable("phoPFChIsoWorst", &MVAVars::phoPFChIsoWorst );
+
+                TMVAReaderEE->AddSpectator("phoEt", &MVAVars::phoEt);
+                TMVAReaderEE->AddSpectator("phoEta", &MVAVars::phoEta);
+                TMVAReaderEE->BookMVA("BDT", mva_weights_ee);
+            }
         }
+        if( mod_conf.GetName() == "BuildMuon" ) { 
+            std::map<std::string, std::string>::const_iterator citr = mod_conf.GetInitData().find( "applyCorrections" );
+            if( citr != mod_conf.GetInitData().end() && citr->second == "true" ) {
+                apply_muon_corrections=true;
+            }
+            std::map<std::string, std::string>::const_iterator pitr = mod_conf.GetInitData().find( "path" );
+            if( pitr != mod_conf.GetInitData().end() ) {
+                muon_correction_path=pitr->second;
+            }
+
+        }
+        if( mod_conf.GetName() == "BuildJet" ) { 
+            std::map<std::string, std::string>::const_iterator citr = mod_conf.GetInitData().find( "applyCorrections" );
+            if( citr != mod_conf.GetInitData().end() && citr->second == "true" ) {
+                apply_jet_corrections=true;
+            }
+        }
+        if( mod_conf.GetName() == "WeightEvent" ) { 
+            std::string sample_filename;
+            std::string data_filename;
+            std::string sample_histname;
+            std::string data_histname;
+            std::map<std::string, std::string>::const_iterator sfitr = mod_conf.GetInitData().find( "sample_file" );
+            std::map<std::string, std::string>::const_iterator dfitr = mod_conf.GetInitData().find( "data_file" );
+            std::map<std::string, std::string>::const_iterator shitr = mod_conf.GetInitData().find( "sample_hist" );
+            std::map<std::string, std::string>::const_iterator dhitr = mod_conf.GetInitData().find( "data_hist" );
+
+            if( sfitr != mod_conf.GetInitData().end() ) {
+                sample_filename = sfitr->second;
+            }
+            if( dfitr != mod_conf.GetInitData().end() ) {
+                data_filename = dfitr->second;
+            }
+            if( shitr != mod_conf.GetInitData().end() ) {
+                sample_histname = shitr->second;
+            }
+            if( dhitr != mod_conf.GetInitData().end() ) {
+                data_histname = dhitr->second;
+            }
+
+            puweight_sample_file = TFile::Open( sample_filename.c_str(), "READ" );
+            puweight_data_file = TFile::Open( data_filename.c_str(), "READ" );
+
+            puweight_sample_hist = dynamic_cast<TH1F*>(puweight_sample_file->Get( sample_histname.c_str() ) ) ;
+            puweight_data_hist = dynamic_cast<TH1D*>(puweight_data_file->Get( data_histname.c_str() ) );
+            if( !puweight_sample_hist ) {
+                std::cout << "Could not retrieve histogram " << sample_histname << " from " << sample_filename  << std::endl;
+            }
+            if( !puweight_data_hist ) {
+                std::cout << "Could not retrieve histogram " << data_histname << " from " << data_filename << std::endl;
+            }
+            
+
+
+        }
+
     }
+    _rand.SetSeed( 80385 ); // W mass in MeV
+
+    if( apply_muon_corrections ) {
+        muCorr = new MuScleFitCorrector( muon_correction_path );
+    }
+    else {
+        muCorr = 0;
+    }
+
 
 }
 
@@ -238,7 +490,7 @@ bool RunModule::execute( std::vector<ModuleConfig> & configs ) {
 
 }
 
-bool RunModule::ApplyModule( ModuleConfig & config ) const {
+bool RunModule::ApplyModule( ModuleConfig & config ) {
 
     // This bool is used for filtering
     // If a module implements an event filter
@@ -254,11 +506,9 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     // There are fancy ways to do this, but it
     // would require the code to be much more complicated
     
+    //mcParentage && 0x12 == 0x12
     if( config.GetName() == "BuildElectron" ) {
         BuildElectron( config );
-    }
-    if( config.GetName() == "BuildMediumElectron" ) {
-        BuildMediumElectron( config );
     }
     if( config.GetName() == "BuildMuon" ) {
         BuildMuon( config );
@@ -269,6 +519,9 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     if( config.GetName() == "BuildJet" ) {
         BuildJet( config );
     }
+    if( config.GetName() == "WeightEvent" ) {
+        WeightEvent( config );
+    }
 
     // If the module applies a filter the filter decision
     // is passed back to here.  There is no requirement
@@ -278,10 +531,13 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     if( config.GetName() == "FilterEvent" ) {
         keep_evt &= FilterEvent( config );
     }
+    if( config.GetName() == "FilterTrigger" ) {
+        keep_evt &= FilterTrigger( config );
+    }
 
     return keep_evt;
-
 }
+
 
 // ***********************************
 //  Define modules here
@@ -292,19 +548,22 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
 
 void RunModule::BuildMuon( ModuleConfig & config ) const {
 
-    OUT::mu_pt         -> clear();
-    OUT::mu_eta        -> clear();
-    OUT::mu_phi        -> clear();
-    OUT::mu_e          -> clear();
-    OUT::mu_pfIso_ch   -> clear();
-    OUT::mu_pfIso_nh   -> clear();
-    OUT::mu_pfIso_pho  -> clear();
-    OUT::mu_pfIso_pu   -> clear();
-    OUT::mu_corrIso    -> clear();
-    OUT::mu_truthMatch -> clear();
-    OUT::mu_truthMinDR -> clear();
+    OUT::mu_pt           -> clear();
+    OUT::mu_eta          -> clear();
+    OUT::mu_phi          -> clear();
+    OUT::mu_e            -> clear();
+    OUT::mu_pt_uncorr    -> clear();
+    OUT::mu_pfIso_ch     -> clear();
+    OUT::mu_pfIso_nh     -> clear();
+    OUT::mu_pfIso_pho    -> clear();
+    OUT::mu_pfIso_pu     -> clear();
+    OUT::mu_corrIso      -> clear();
+    OUT::mu_triggerMatch -> clear();
+    OUT::mu_truthMatch   -> clear();
+    OUT::mu_truthMinDR   -> clear();
     OUT::mu_n          = 0;
 
+#ifdef EXISTS_nMu
     for( int idx = 0; idx < IN::nMu; ++idx ) {
        
         float pt = IN::muPt->at(idx);
@@ -327,6 +586,25 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         float muPFIsoNH  = IN::muPFIsoR04_NH->at(idx);
         float muPFIsoPho = IN::muPFIsoR04_Pho->at(idx);
         float muPFIsoPU  = IN::muPFIsoR04_PU->at(idx);
+        float charge     = IN::muCharge->at(idx);
+
+
+        // trigger matching
+        bool trigMatch = false;
+        if( ( (IN::muTrg->at(idx) & 0x1) == 0x1 ) || ( (IN::muTrg->at(idx) & 0x2) == 0x2 ) ) trigMatch = true;
+
+        // muon momentum corrections
+        #ifdef EXISTS_isData
+        if( apply_muon_corrections && !IN::isData ) {
+            TLorentzVector muvec;
+            muvec.SetPtEtaPhiM( pt, eta, phi, 0.105 );
+            muCorr->applyPtCorrection( muvec, charge );
+            muCorr->applyPtSmearing( muvec, charge, false );
+            pt = muvec.Pt();
+            eta = muvec.Eta();
+            phi = muvec.Phi();
+        }
+        #endif
 
         // isolation calculation
         float sum_neu = muPFIsoNH + muPFIsoPho - 0.5*muPFIsoPU;
@@ -354,15 +632,18 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         TLorentzVector muon;
         muon.SetPtEtaPhiM( pt, eta, phi, 0.106 );
 
-        OUT::mu_pt        -> push_back(pt);
-        OUT::mu_eta       -> push_back(eta);
-        OUT::mu_phi       -> push_back(phi);
-        OUT::mu_e         -> push_back(muon.E());
-        OUT::mu_pfIso_ch  -> push_back(muPFIsoCH);
-        OUT::mu_pfIso_nh  -> push_back(muPFIsoNH);
-        OUT::mu_pfIso_pho -> push_back(muPFIsoPho);
-        OUT::mu_pfIso_pu  -> push_back(muPFIsoPU);
-        OUT::mu_corrIso   -> push_back(corriso);
+        OUT::mu_pt           -> push_back(pt);
+        OUT::mu_eta          -> push_back(eta);
+        OUT::mu_phi          -> push_back(phi);
+        OUT::mu_e            -> push_back(muon.E());
+        OUT::mu_pt_uncorr    -> push_back(IN::muPt->at(idx));
+        OUT::mu_pfIso_ch     -> push_back(muPFIsoCH);
+        OUT::mu_pfIso_nh     -> push_back(muPFIsoNH);
+        OUT::mu_pfIso_pho    -> push_back(muPFIsoPho);
+        OUT::mu_pfIso_pu     -> push_back(muPFIsoPU);
+        OUT::mu_corrIso      -> push_back(corriso);
+        OUT::mu_triggerMatch -> push_back( trigMatch );
+
 
         std::vector<int> matchPID;
         matchPID.push_back(13);
@@ -373,157 +654,88 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         OUT::mu_truthMinDR->push_back( truthMinDR );
         OUT::mu_truthMatch->push_back( has_match );
     }
+#endif
 
 }
 
-void RunModule::BuildMediumElectron( ModuleConfig & config ) const {
-
-    OUT::el_pt            -> clear();
-    OUT::el_eta           -> clear();
-    OUT::el_sceta         -> clear();
-    OUT::el_phi           -> clear();
-    OUT::el_e             -> clear();
-    OUT::el_mva           -> clear();
-    OUT::el_passTight     -> clear();
-    OUT::el_passMedium    -> clear();
-    OUT::el_passLoose     -> clear();
-    OUT::el_passVeryLoose -> clear();
-    OUT::el_truthMatch_el -> clear();
-    OUT::el_truthMinDR_el -> clear();
-    OUT::el_truthMatchPt_el -> clear();
-    OUT::el_n             = 0;
-
-    for( int idx = 0; idx < IN::nEle; ++idx ) {
-        float dEtaIn    = fabs(IN::eledEtaAtVtx->at(idx));
-        float dPhiIn    = fabs(IN::eledPhiAtVtx->at(idx));
-        float sigmaIEIE = IN::eleSigmaIEtaIEta->at(idx);
-        float d0        = fabs(IN::eleD0GV->at(idx));
-        float z0        = fabs(IN::eleDzGV->at(idx));
-        float hovere    = IN::eleHoverE->at(idx);
-        //float eoverp    = IN::eleEoverP->at(idx);
-        float pfiso30   = IN::elePFChIso03->at(idx);
-        float convfit   = IN::eleConvVtxFit->at(idx);
-        int misshits    = IN::eleMissHits->at(idx);
-
-        float pt        = IN::elePt->at(idx);
-        float eta       = IN::eleEta->at(idx);
-        float sceta     = IN::eleSCEta->at(idx);
-        float phi       = IN::elePhi->at(idx);
-        float en        = IN::eleEn->at(idx);
-        float p         = en/(IN::eleEoverP->at(idx));
-        float eoverp    = fabs( (1/en) - (1/p) );
-        float mva       = IN::eleIDMVATrig->at(idx);
-
-        if( !config.PassFloat( "cut_pt"  , pt  ) ) continue;
-        if( !config.PassFloat( "cut_abseta"         , fabs(eta) ) ) continue;
-        if( !config.PassFloat( "cut_abseta_crack"   , fabs(eta) ) ) continue;
-        if( !config.PassFloat( "cut_abssceta"       , fabs(sceta) ) ) continue;
-        if( !config.PassFloat( "cut_abssceta_crack" , fabs(sceta) ) ) continue;
-
-        if( fabs(sceta) < 1.479 ) { // barrel
-            
-            // Medium cuts
-            if( !config.PassFloat( "cut_absdEtaIn_barrel"    , dEtaIn       ) ) continue;
-            if( !config.PassFloat( "cut_absdPhiIn_barrel"    , dPhiIn       ) ) continue;
-            if( !config.PassFloat( "cut_sigmaIEIE_barrel" , sigmaIEIE    ) ) continue;
-            if( !config.PassFloat( "cut_d0_barrel"        , d0           ) ) continue;
-            if( !config.PassFloat( "cut_z0_barrel"        , z0           ) ) continue;
-            if( !config.PassFloat( "cut_hovere_barrel"    , hovere       ) ) continue;
-            if( !config.PassFloat( "cut_eoverp_barrel"    , eoverp       ) ) continue;
-            if( !config.PassFloat( "cut_pfIso30_barrel"   , pfiso30/pt   ) ) continue;
-            if( !config.PassFloat( "cut_convfit_barrel"   , convfit      ) ) continue;
-            if( !config.PassInt  ( "cut_misshits_barrel"  , misshits     ) ) continue;
-            
-        }
-        else { // endcap
-
-            // Medium cuts
-            if( !config.PassFloat( "cut_absdEtaIn_endcap"    , dEtaIn       ) ) continue;
-            if( !config.PassFloat( "cut_absdPhiIn_endcap"    , dPhiIn       ) ) continue;
-            if( !config.PassFloat( "cut_sigmaIEIE_endcap" , sigmaIEIE    ) ) continue;
-            if( !config.PassFloat( "cut_d0_endcap"        , d0           ) ) continue;
-            if( !config.PassFloat( "cut_z0_endcap"        , z0           ) ) continue;
-            if( !config.PassFloat( "cut_hovere_endcap"    , hovere       ) ) continue;
-            if( !config.PassFloat( "cut_eoverp_endcap"    , eoverp       ) ) continue;
-            if( !config.PassFloat( "cut_pfIso30_endcap"   , pfiso30/pt   ) ) continue;
-            if( !config.PassFloat( "cut_convfit_endcap"   , convfit      ) ) continue;
-            if( !config.PassInt  ( "cut_misshits_endcap"  , misshits     ) ) continue;
-            
-        }
-
-        OUT::el_n++;
-
-        OUT::el_pt            -> push_back(pt);
-        OUT::el_eta           -> push_back(eta);
-        OUT::el_sceta         -> push_back(sceta);
-        OUT::el_phi           -> push_back(phi);
-        OUT::el_e             -> push_back(pt*cosh(eta));
-        OUT::el_mva           -> push_back(mva);
-
-        // check truth matching
-        TLorentzVector ellv;
-        ellv.SetPtEtaPhiE( pt, eta, phi, en );
-        std::vector<int> matchPID;
-        matchPID.push_back(11);
-        matchPID.push_back(-11);
-
-        float minTruthDR = 100.0;
-        TLorentzVector matchLV;
-        bool match = HasTruthMatch( ellv, matchPID, 0.1, minTruthDR, matchLV );
-        OUT::el_truthMatch_el->push_back( match  );
-        OUT::el_truthMinDR_el->push_back( minTruthDR );
-        OUT::el_truthMatchPt_el->push_back( matchLV.Pt() );
-        
-    }
-
-}        
-void RunModule::BuildElectron( ModuleConfig & config ) const {
+void RunModule::BuildElectron( ModuleConfig & config ) {
 
     OUT::el_pt             -> clear();
     OUT::el_eta            -> clear();
     OUT::el_sceta          -> clear();
     OUT::el_phi            -> clear();
     OUT::el_e              -> clear();
-    OUT::el_mva            -> clear();
+    OUT::el_pt_uncorr      -> clear();
+    OUT::el_mva_nontrig    -> clear();
+    OUT::el_mva_trig       -> clear();
     OUT::el_d0pv           -> clear();
     OUT::el_z0pv           -> clear();
     OUT::el_sigmaIEIE      -> clear();
     OUT::el_pfiso30        -> clear();
+    OUT::el_pfiso40        -> clear();
+    OUT::el_triggerMatch   -> clear();
     OUT::el_hasMatchedConv -> clear();
     OUT::el_passTight      -> clear();
     OUT::el_passMedium     -> clear();
     OUT::el_passLoose      -> clear();
     OUT::el_passVeryLoose  -> clear();
     OUT::el_passTightTrig  -> clear();
+    OUT::el_passMvaNonTrig -> clear();
+    OUT::el_passMvaTrig    -> clear();
     OUT::el_truthMatch_el  -> clear();
     OUT::el_truthMinDR_el  -> clear();
     OUT::el_truthMatchPt_el-> clear();
     OUT::el_n              = 0;
 
+#ifdef EXISTS_nEle
     for( int idx = 0; idx < IN::nEle; ++idx ) {
 
-        float dEtaIn    = fabs(IN::eledEtaAtVtx->at(idx));
-        float dPhiIn    = fabs(IN::eledPhiAtVtx->at(idx));
-        float sigmaIEIE = IN::eleSigmaIEtaIEta->at(idx);
-        float d0        = fabs(IN::eleD0GV->at(idx));
-        float z0        = fabs(IN::eleDzGV->at(idx));
-        float hovere    = IN::eleHoverE->at(idx);
-        //float eoverp    = IN::eleEoverP->at(idx);
-        float pfiso30   = IN::elePFChIso03->at(idx);
-        float convfit   = IN::eleConvVtxFit->at(idx);
-        int misshits    = IN::eleMissHits->at(idx);
+        float dEtaIn       = fabs(IN::eledEtaAtVtx->at(idx));
+        float dPhiIn       = fabs(IN::eledPhiAtVtx->at(idx));
+        float sigmaIEIE    = IN::eleSigmaIEtaIEta->at(idx);
+        float d0           = fabs(IN::eleD0GV->at(idx));
+        float z0           = fabs(IN::eleDzGV->at(idx));
+        float hovere       = IN::eleHoverE->at(idx);
+        //float eoverp       = IN::eleEoverP->at(idx);
+        float pfiso30      = IN::elePFChIso03->at(idx);
+        float pfiso40      = IN::elePFChIso04->at(idx);
+        int convfit      = IN::eleConvVtxFit->at(idx);
+        int misshits       = IN::eleMissHits->at(idx);
+        float ip3d         = IN::eleIP3D->at(idx);
+        float ip3dErr      = IN::eleIP3DErr->at(idx);
+        float sip = -100;
+        if( ip3dErr != 0 ) {
+            sip = ip3d/ip3dErr;
+        }
 
-        float pt        = IN::elePt->at(idx);
-        float eta       = IN::eleEta->at(idx);
-        float sceta     = IN::eleSCEta->at(idx);
-        float phi       = IN::elePhi->at(idx);
-        float en        = IN::eleEn->at(idx);
-        float p         = en/(IN::eleEoverP->at(idx));
-        float eoverp    = fabs( (1/en) - (1/p) );
-        float mva       = IN::eleIDMVATrig->at(idx);
-        float ecalIso30 = IN::eleIsoEcalDR03->at(idx);
-        float hcalIso30 = IN::eleIsoHcalDR03->at(idx);
-        float trkIso30  = IN::eleIsoTrkDR03->at(idx);
+        float pt           = IN::elePt->at(idx);
+        float eta          = IN::eleEta->at(idx);
+        float sceta        = IN::eleSCEta->at(idx);
+        float phi          = IN::elePhi->at(idx);
+        float en           = IN::eleEn->at(idx);
+        float momentum     = en/(IN::eleEoverP->at(idx));
+        float eoverp       = fabs( (1/en) - (1/momentum) );
+        float mva_trig     = IN::eleIDMVATrig->at(idx);
+        float mva_nontrig  = IN::eleIDMVANonTrig->at(idx);
+        float ecalIso30    = IN::eleIsoEcalDR03->at(idx);
+        float hcalIso30    = IN::eleIsoHcalDR03->at(idx);
+        float trkIso30     = IN::eleIsoTrkDR03->at(idx);
+        float r9           = IN::eleR9->at(idx);
+
+        // trigger matching
+        bool trigMatch = false;
+        if( (IN::eleTrg->at(idx) & 0x1) == 0x1 ) trigMatch = true;
+
+        // electron mometum correction
+        #ifdef EXISTS_isData
+        #ifdef EXISTS_run
+        if( apply_electron_corrections ) {
+            float scale = GetElectronMomentumCorrection(pt, sceta, eta, r9, IN::isData, IN::run);
+            pt*=scale;
+            en*=scale;
+        }
+        #endif
+        #endif
 
         if( !config.PassFloat( "cut_pt"  , pt  ) ) continue;
 
@@ -532,15 +744,15 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
         if( !config.PassFloat( "cut_abssceta"       , fabs(eta) ) ) continue;
         if( !config.PassFloat( "cut_abssceta_crack" , fabs(eta) ) ) continue;
 
-        if( !config.PassFloat( "cut_mva" , mva ) ) continue;
+        bool pass_tight       = true;
+        bool pass_medium      = true;
+        bool pass_loose       = true;
+        bool pass_veryloose   = true;
+        bool pass_tightTrig   = true;
+        bool pass_mva_trig    = true;
+        bool pass_mva_nontrig = true;
 
-        bool pass_tight     = true;
-        bool pass_medium    = true;
-        bool pass_loose     = true;
-        bool pass_veryloose = true;
-        bool pass_tightTrig = true;
-
-        bool use_eval = eval_el_tight || eval_el_medium || eval_el_loose || eval_el_veryloose || eval_el_tightTrig;
+        bool use_eval = eval_el_tight || eval_el_medium || eval_el_loose || eval_el_veryloose || eval_el_tightTrig || eval_el_mva_nontrig || eval_el_mva_trig;
 
 
         if( fabs(sceta) < 1.479 ) { // barrel
@@ -580,7 +792,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
                     pass_tight=false;
                     if( eval_el_tight ) continue;
                 }
-                if( !config.PassFloat( "cut_convfit_barrel_tight"   , convfit      ) ) {
+                if( !config.PassInt( "cut_convfit_barrel_tight"   , convfit      ) ) {
                     pass_tight=false;
                     if( eval_el_tight ) continue;
                 }
@@ -624,7 +836,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
                     pass_medium=false;
                     if( eval_el_medium ) continue;
                 }
-                if( !config.PassFloat( "cut_convfit_barrel_medium"   , convfit      ) ) {
+                if( !config.PassInt( "cut_convfit_barrel_medium"   , convfit      ) ) {
                     pass_medium=false;
                     if( eval_el_medium ) continue;
                 }
@@ -668,7 +880,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
                     pass_loose=false;
                     if( eval_el_loose ) continue;
                 }
-                if( !config.PassFloat( "cut_convfit_barrel_loose"   , convfit      ) ) {
+                if( !config.PassInt( "cut_convfit_barrel_loose"   , convfit      ) ) {
                     pass_loose=false;
                     if( eval_el_loose ) continue;
                 }
@@ -712,7 +924,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }
-                if( !config.PassFloat( "cut_convfit_barrel_veryloose"   , convfit      ) ) {
+                if( !config.PassInt( "cut_convfit_barrel_veryloose"   , convfit      ) ) {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }
@@ -753,6 +965,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
                     if( eval_el_tightTrig ) continue;
                 }
             }
+
 
         }
         else { // endcap
@@ -800,7 +1013,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
                   }
                 }
 
-                if( !config.PassFloat( "cut_convfit_endcap_tight"   , convfit      ) ) {
+                if( !config.PassInt( "cut_convfit_endcap_tight"   , convfit      ) ) {
                     pass_tight=false;
                     if( eval_el_tight ) continue;
                 }
@@ -852,7 +1065,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
                     if( eval_el_medium ) continue;
                     }
                 }
-                if( !config.PassFloat( "cut_convfit_endcap_medium"   , convfit      ) ) {
+                if( !config.PassInt( "cut_convfit_endcap_medium"   , convfit      ) ) {
                     pass_medium=false;
                     if( eval_el_medium ) continue;
                 }
@@ -904,7 +1117,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
                     if( eval_el_loose ) continue;
                     }
                 }
-                if( !config.PassFloat( "cut_convfit_endcap_loose"   , convfit      ) ) {
+                if( !config.PassInt( "cut_convfit_endcap_loose"   , convfit      ) ) {
                     pass_loose=false;
                     if( eval_el_loose ) continue;
                 }
@@ -948,7 +1161,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }
-                if( !config.PassFloat( "cut_convfit_endcap_veryloose"   , convfit      ) ) {
+                if( !config.PassInt( "cut_convfit_endcap_veryloose"   , convfit      ) ) {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }
@@ -991,30 +1204,153 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
             }
         }
 
-        if( !config.PassBool( "cut_pid_tightTrig", pass_tightTrig ) ) continue;
-        if( !config.PassBool( "cut_pid_tight"    , pass_tight     ) ) continue;
-        if( !config.PassBool( "cut_pid_medium"   , pass_medium    ) ) continue;
-        if( !config.PassBool( "cut_pid_loose"    , pass_loose     ) ) continue;
-        if( !config.PassBool( "cut_pid_veryloose", pass_veryloose ) ) continue;
+        // non-triggering MVA
+        if( !use_eval || eval_el_mva_nontrig) {
+
+            if( pt < 10 ) {
+                if( fabs(sceta) < 0.8 ) {
+                    if( !config.PassFloat( "cut_mva_central_lowpt_mvanontrig"   , mva_nontrig  ) ) {
+                        pass_mva_nontrig =false;
+                        if( eval_el_mva_nontrig ) continue;
+                    }
+                }
+                else if( fabs(sceta) < 1.479 ) {
+                    if( !config.PassFloat( "cut_mva_crack_lowpt_mvanontrig"   , mva_nontrig  ) ) {
+                        pass_mva_nontrig =false;
+                        if( eval_el_mva_nontrig ) continue;
+                    }
+                }
+                else if( fabs(sceta) < 2.5 ) {
+                    if( !config.PassFloat( "cut_mva_endcap_lowpt_mvanontrig"   , mva_nontrig  ) ) {
+                        pass_mva_nontrig =false;
+                        if( eval_el_mva_nontrig ) continue;
+                    }
+                }
+            } else {
+                if( fabs(sceta) < 0.8 ) {
+                    if( !config.PassFloat( "cut_mva_central_highpt_mvanontrig"   , mva_nontrig  ) ) {
+                        pass_mva_nontrig =false;
+                        if( eval_el_mva_nontrig ) continue;
+                    }
+                }
+                else if( fabs(sceta) < 1.479 ) {
+                    if( !config.PassFloat( "cut_mva_crack_highpt_mvanontrig"   , mva_nontrig  ) ) {
+                        pass_mva_nontrig =false;
+                        if( eval_el_mva_nontrig ) continue;
+                    }
+                }
+                else if( fabs(sceta) < 2.5 ) {
+                    if( !config.PassFloat( "cut_mva_endcap_highpt_mvanontrig"   , mva_nontrig  ) ) {
+                        pass_mva_nontrig =false;
+                        if( eval_el_mva_nontrig ) continue;
+                    }
+                }
+            }
+
+
+            if( !config.PassFloat( "cut_relpfiso_mvanontrig"   , pfiso40/pt      ) ) {
+                pass_mva_nontrig=false;
+                if( eval_el_mva_nontrig ) continue;
+            }
+            if( !config.PassInt( "cut_misshits_mvanontrig"   , misshits      ) ) {
+                pass_mva_nontrig=false;
+                if( eval_el_mva_nontrig ) continue;
+            }
+            if( !config.PassFloat( "cut_sip_mvanontrig"   , sip     ) ) {
+                pass_mva_nontrig=false;
+                if( eval_el_mva_nontrig ) continue;
+            }
+        }
+
+        // triggering MVA
+        if( !use_eval || eval_el_mva_trig) {
+
+            if( pt < 20 ) {
+                if( fabs(sceta) < 0.8 ) {
+                    if( !config.PassFloat( "cut_mva_central_lowpt_mvatrig"   , mva_trig  ) ) {
+                        pass_mva_trig =false;
+                        if( eval_el_mva_trig ) continue;
+                    }
+                }
+                else if( fabs(sceta) < 1.479 ) {
+                    if( !config.PassFloat( "cut_mva_crack_lowpt_mvatrig"   , mva_trig  ) ) {
+                        pass_mva_trig =false;
+                        if( eval_el_mva_trig ) continue;
+                    }
+                }
+                else if( fabs(sceta) < 2.5 ) {
+                    if( !config.PassFloat( "cut_mva_endcap_lowpt_mvatrig"   , mva_trig  ) ) {
+                        pass_mva_trig =false;
+                        if( eval_el_mva_trig ) continue;
+                    }
+                }
+            } else {
+                if( fabs(sceta) < 0.8 ) {
+                    if( !config.PassFloat( "cut_mva_central_highpt_mvatrig"   , mva_trig  ) ) {
+                        pass_mva_trig =false;
+                        if( eval_el_mva_trig ) continue;
+                    }
+                }
+                else if( fabs(sceta) < 1.479 ) {
+                    if( !config.PassFloat( "cut_mva_crack_highpt_mvatrig"   , mva_trig  ) ) {
+                        pass_mva_trig =false;
+                        if( eval_el_mva_trig ) continue;
+                    }
+                }
+                else if( fabs(sceta) < 2.5 ) {
+                    if( !config.PassFloat( "cut_mva_endcap_highpt_mvatrig"   , mva_trig  ) ) {
+                        pass_mva_trig =false;
+                        if( eval_el_mva_trig ) continue;
+                    }
+                }
+            }
+
+            if( !config.PassFloat( "cut_relpfiso_mvatrig"   , pfiso40/pt      ) ) {
+                pass_mva_trig=false;
+                if( eval_el_mva_trig ) continue;
+            }
+            if( !config.PassInt( "cut_misshits_mvatrig"   , misshits      ) ) {
+                pass_mva_trig=false;
+                if( eval_el_mva_trig ) continue;
+            }
+            if( !config.PassInt( "cut_convfit_mvatrig"   , convfit     ) ) {
+                pass_mva_trig=false;
+                if( eval_el_mva_trig ) continue;
+            }
+        }
+
+        if( !config.PassBool( "cut_pid_tightTrig"  , pass_tightTrig   ) ) continue;
+        if( !config.PassBool( "cut_pid_tight"      , pass_tight       ) ) continue;
+        if( !config.PassBool( "cut_pid_medium"     , pass_medium      ) ) continue;
+        if( !config.PassBool( "cut_pid_loose"      , pass_loose       ) ) continue;
+        if( !config.PassBool( "cut_pid_veryloose"  , pass_veryloose   ) ) continue;
+        if( !config.PassBool( "cut_pid_mva_trig"   , pass_mva_trig    ) ) continue;
+        if( !config.PassBool( "cut_pid_mva_nontrig", pass_mva_nontrig ) ) continue;
 
         OUT::el_n++;
 
-        OUT::el_pt            -> push_back(pt);
-        OUT::el_eta           -> push_back(eta);
-        OUT::el_sceta         -> push_back(sceta);
-        OUT::el_phi           -> push_back(phi);
-        OUT::el_e             -> push_back(pt*cosh(eta));
-        OUT::el_mva           -> push_back(mva);
-        OUT::el_d0pv          -> push_back( d0 );
-        OUT::el_z0pv          -> push_back( z0 );
-        OUT::el_sigmaIEIE     -> push_back( sigmaIEIE );
-        OUT::el_pfiso30       -> push_back( pfiso30 );
-        OUT::el_hasMatchedConv-> push_back( convfit );
-        OUT::el_passTight     -> push_back(pass_tight);
-        OUT::el_passMedium    -> push_back(pass_medium);
-        OUT::el_passLoose     -> push_back(pass_loose);
-        OUT::el_passVeryLoose -> push_back(pass_veryloose);
-        OUT::el_passTightTrig -> push_back(pass_tightTrig);
+        OUT::el_pt             -> push_back(pt);
+        OUT::el_eta            -> push_back(eta);
+        OUT::el_sceta          -> push_back(sceta);
+        OUT::el_phi            -> push_back(phi);
+        OUT::el_e              -> push_back(pt*cosh(eta));
+        OUT::el_pt_uncorr      -> push_back(IN::elePt->at(idx));
+        OUT::el_mva_trig       -> push_back(mva_trig);
+        OUT::el_mva_nontrig    -> push_back(mva_nontrig);
+        OUT::el_d0pv           -> push_back( d0 );
+        OUT::el_z0pv           -> push_back( z0 );
+        OUT::el_sigmaIEIE      -> push_back( sigmaIEIE );
+        OUT::el_pfiso30        -> push_back( pfiso30 );
+        OUT::el_pfiso40        -> push_back( pfiso40 );
+        OUT::el_hasMatchedConv -> push_back( convfit );
+        OUT::el_passTight      -> push_back(pass_tight);
+        OUT::el_passMedium     -> push_back(pass_medium);
+        OUT::el_passLoose      -> push_back(pass_loose);
+        OUT::el_passVeryLoose  -> push_back(pass_veryloose);
+        OUT::el_passTightTrig  -> push_back(pass_tightTrig);
+        OUT::el_passMvaTrig    -> push_back(pass_mva_trig);
+        OUT::el_passMvaNonTrig -> push_back(pass_mva_nontrig);
+        OUT::el_triggerMatch   -> push_back( trigMatch );
 
         // check truth matching
         TLorentzVector ellv;
@@ -1040,6 +1376,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) const {
         //OUT::el_truthMatchPt_ph->push_back( matchLV.Pt() );
         
     }
+#endif
 
 }        
 
@@ -1051,6 +1388,7 @@ void RunModule::BuildJet( ModuleConfig & config ) const {
     OUT::jet_e         -> clear();
     OUT::jet_n          = 0;
 
+#ifdef EXISTS_nJet
     for( int idx = 0; idx < IN::nJet; ++idx ) {
         
         float pt  = IN::jetPt->at(idx);
@@ -1067,58 +1405,137 @@ void RunModule::BuildJet( ModuleConfig & config ) const {
         OUT::jet_e         -> push_back(en);
         OUT::jet_n++;
     }
+#endif
             
 }        
 
 void RunModule::BuildPhoton( ModuleConfig & config ) const {
 
-    OUT::ph_pt              -> clear();
-    OUT::ph_eta             -> clear();
-    OUT::ph_phi             -> clear();
-    OUT::ph_e               -> clear();
-    OUT::ph_HoverE          -> clear();
-    OUT::ph_sigmaIEIE       -> clear();
-    OUT::ph_chIsoCorr       -> clear();
-    OUT::ph_neuIsoCorr      -> clear();
-    OUT::ph_phoIsoCorr      -> clear();
-    OUT::ph_isConv          -> clear();
-    OUT::ph_conv_nTrk       -> clear();
-    OUT::ph_conv_vtx_x      -> clear();
-    OUT::ph_conv_vtx_y      -> clear();
-    OUT::ph_conv_vtx_z      -> clear();
-    OUT::ph_conv_ptin1      -> clear();
-    OUT::ph_conv_ptin2      -> clear();
-    OUT::ph_conv_ptout1     -> clear();
-    OUT::ph_conv_ptout2     -> clear();
-    OUT::ph_passLoose       -> clear();
-    OUT::ph_passMedium      -> clear();
-    OUT::ph_passTight       -> clear();
-    OUT::ph_truthMatch_el   -> clear();
-    OUT::ph_truthMinDR_el   -> clear();
-    OUT::ph_truthMatchPt_el -> clear();
-    OUT::ph_truthMatch_ph   -> clear();
-    OUT::ph_truthMinDR_ph   -> clear();
-    OUT::ph_truthMatchPt_ph -> clear();
-    OUT::ph_hasSLConv       -> clear();
+    OUT::ph_pt                     -> clear();
+    OUT::ph_eta                    -> clear();
+    OUT::ph_sceta                  -> clear();
+    OUT::ph_phi                    -> clear();
+    OUT::ph_e                      -> clear();
+    OUT::ph_HoverE                 -> clear();
+    OUT::ph_HoverE12               -> clear();
+    OUT::ph_sigmaIEIE              -> clear();
+    OUT::ph_sigmaIEIP              -> clear();
+    OUT::ph_r9                     -> clear();
+    OUT::ph_E1x3                   -> clear();
+    OUT::ph_E2x2                   -> clear();
+    OUT::ph_E5x5                   -> clear();
+    OUT::ph_E2x5Max                -> clear();
+    OUT::ph_SCetaWidth             -> clear();
+    OUT::ph_SCphiWidth             -> clear();
+    OUT::ph_ESEffSigmaRR           -> clear();
+    OUT::ph_hcalIsoDR03            -> clear();
+    OUT::ph_trkIsoHollowDR03       -> clear();
+    OUT::ph_chgpfIsoDR02           -> clear();
+    OUT::ph_pfChIsoWorst           -> clear();
+    OUT::ph_chIso                  -> clear();
+    OUT::ph_neuIso                 -> clear();
+    OUT::ph_phoIso                 -> clear();
+    OUT::ph_chIsoCorr              -> clear();
+    OUT::ph_neuIsoCorr             -> clear();
+    OUT::ph_phoIsoCorr             -> clear();
+    OUT::ph_eleVeto                -> clear();
+    OUT::ph_hasPixSeed             -> clear();
+    OUT::ph_drToTrk                -> clear();
+    OUT::ph_isConv                 -> clear();
+    OUT::ph_conv_nTrk              -> clear();
+    OUT::ph_conv_vtx_x             -> clear();
+    OUT::ph_conv_vtx_y             -> clear();
+    OUT::ph_conv_vtx_z             -> clear();
+    OUT::ph_conv_ptin1             -> clear();
+    OUT::ph_conv_ptin2             -> clear();
+    OUT::ph_conv_ptout1            -> clear();
+    OUT::ph_conv_ptout2            -> clear();
+    OUT::ph_passLoose              -> clear();
+    OUT::ph_passLooseNoSIEIE       -> clear();
+    OUT::ph_passSIEIELoose         -> clear();
+    OUT::ph_passSIEIEMedium        -> clear();
+    OUT::ph_passSIEIETight         -> clear();
+    OUT::ph_passChIsoCorrLoose     -> clear();
+    OUT::ph_passChIsoCorrMedium    -> clear();
+    OUT::ph_passChIsoCorrTight     -> clear();
+    OUT::ph_passNeuIsoCorrLoose    -> clear();
+    OUT::ph_passNeuIsoCorrMedium   -> clear();
+    OUT::ph_passNeuIsoCorrTight    -> clear();
+    OUT::ph_passPhoIsoCorrLoose    -> clear();
+    OUT::ph_passPhoIsoCorrMedium   -> clear();
+    OUT::ph_passPhoIsoCorrTight    -> clear();
+    OUT::ph_passMedium             -> clear();
+    OUT::ph_passTight              -> clear();
+    OUT::ph_truthMatch_el          -> clear();
+    OUT::ph_truthMinDR_el          -> clear();
+    OUT::ph_truthMatchPt_el        -> clear();
+    OUT::ph_truthMatch_ph          -> clear();
+    OUT::ph_truthMinDR_ph          -> clear();
+    OUT::ph_truthMatchPt_ph        -> clear();
+    OUT::ph_truthMatchMotherPID_ph -> clear();
+    OUT::ph_hasSLConv              -> clear();
+    OUT::ph_pass_mva_presel        -> clear();
+    OUT::ph_mvascore               -> clear();
+    OUT::ph_IsEB                   -> clear();
+    OUT::ph_IsEE                   -> clear();
     OUT::ph_n          = 0;
 
+
+#ifdef EXISTS_nPho
     for( int idx = 0; idx < IN::nPho; ++idx ) {
         float pt        = IN::phoEt->at(idx);
         float eta       = IN::phoEta->at(idx);
         float sceta     = IN::phoSCEta->at(idx);
         float phi       = IN::phoPhi->at(idx);
         float en        = IN::phoE->at(idx);
+        float SCRawE    = IN::phoSCRawE->at(idx);
+        float esE       = IN::phoESEn->at(idx);
 
         float rho = IN::rho2012;
 
-        int   eleVeto   = IN::phoEleVeto->at(idx);
-        float hovere    = IN::phoHoverE->at(idx);
-        float sigmaIEIE = IN::phoSigmaIEtaIEta->at(idx);
-        //int   pixseed   = IN::phohasPixelSeed->at(idx);
+        int   eleVeto      = IN::phoEleVeto->at(idx);
+        float hovere       = IN::phoHoverE->at(idx);
+        float hovere12     = IN::phoHoverE12->at(idx);
+        float sigmaIEIE    = IN::phoSigmaIEtaIEta->at(idx);
+        float sigmaIEIP    = IN::phoSigmaIEtaIPhi->at(idx);
+        float r9           = IN::phoR9->at(idx);
+        int   pixseed      = IN::phohasPixelSeed->at(idx);
+        float drToTrk      = IN::phoCiCdRtoTrk->at(idx);
+        float E1x3         = IN::phoE1x3->at(idx);
+        float E2x2         = IN::phoE2x2->at(idx);
+        float E5x5         = IN::phoE5x5->at(idx);
+        // E2x5Max is duplicated in some ntuples. 
+        // Get the index by checking the relative sizes
+        unsigned dupidx = idx*IN::phoE2x5Max->size()/IN::nPho;
+        float E2x5Max      = IN::phoE2x5Max->at(dupidx);
+        float SCetaWidth   = IN::phoSCEtaWidth->at(idx);
+        float SCphiWidth   = IN::phoSCPhiWidth->at(idx);
+        float ESEffSigmaRR = IN::phoESEffSigmaRR_x->at(idx);
 
-        //float isohollow40 = IN::phoTrkIsoHollowDR04->at(idx);
-        //float ecaliso40   = IN::phoEcalIsoDR04->at(idx);
-        //float hcaliso40   = IN::phoHcalIsoDR04->at(idx);
+
+        // evaluate largest isolation value
+        float phoPFChIsoWorst = 0;
+        for (unsigned k = 0; k < IN::phoCiCPF4chgpfIso03->at(idx).size(); ++k) {
+            if (phoPFChIsoWorst < IN::phoCiCPF4chgpfIso03->at(idx)[k]) {
+                phoPFChIsoWorst = IN::phoCiCPF4chgpfIso03->at(idx)[k];
+            }
+        }
+
+        float hcalIsoDR03      = IN::phoHcalIsoDR03->at(idx);
+        float trkIsoHollowDR03 = IN::phoTrkIsoHollowDR03->at(idx);
+        float chgpfIsoDR02     = IN::phoCiCPF4chgpfIso02->at(idx).at(0);
+
+        float hcalIsoDR03PtCorr      = hcalIsoDR03 - 0.005 * pt;
+        float trkIsoHollowDR03PtCorr = trkIsoHollowDR03  - 0.002 * pt;
+        float r9Corr = r9;
+        if( !IN::isData ) {
+            if( fabs(sceta) < 1.479 ) {
+                r9Corr = 0.000740 + 1.00139*r9;
+            }
+            else {
+                r9Corr = -0.000399 + 1.00016*r9;
+            }
+        }
 
         float pfChIso     = IN::phoPFChIso->at(idx);
         float pfNeuIso    = IN::phoPFNeuIso->at(idx);
@@ -1136,12 +1553,35 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
         if( !config.PassFloat( "cut_pt"    , pt       ) ) continue;
         if( !config.PassFloat( "cut_abseta"    , fabs(sceta)       ) ) continue;
         if( !config.PassFloat( "cut_abseta_crack"    , fabs(sceta)       ) ) continue;
-        if( !config.PassFloat( "cut_emfrac"    , hovere ) ) continue;
+        if( !config.PassFloat( "cut_hovere"    , hovere12 ) ) continue;
         if( !config.PassBool ( "cut_eveto"     , eleVeto) ) continue;
+        if( !config.PassBool ( "cut_drToTrk"     , drToTrk ) ) continue;
 
-        bool pass_loose  = true;
-        bool pass_medium = true;
-        bool pass_tight  = true;
+        bool pass_loose         = true;
+        bool pass_loose_nosieie = true;
+        bool pass_medium        = true;
+        bool pass_tight         = true;
+        bool pass_mva_presel        = true;
+
+        bool pass_sieie_loose   = true;
+        bool pass_sieie_medium   = true;
+        bool pass_sieie_tight   = true;
+
+        bool pass_chIsoCorr_loose   = true;
+        bool pass_chIsoCorr_medium   = true;
+        bool pass_chIsoCorr_tight   = true;
+
+        bool pass_neuIsoCorr_loose   = true;
+        bool pass_neuIsoCorr_medium   = true;
+        bool pass_neuIsoCorr_tight   = true;
+
+        bool pass_phoIsoCorr_loose   = true;
+        bool pass_phoIsoCorr_medium   = true;
+        bool pass_phoIsoCorr_tight   = true;
+
+        bool pass_hovere_loose   = true;
+        bool pass_hovere_medium   = true;
+        bool pass_hovere_tight   = true;
 
         bool use_eval = eval_ph_tight || eval_ph_medium || eval_ph_loose;
 
@@ -1150,39 +1590,62 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
             //loose 
             if( !use_eval || eval_ph_loose ) {
                 if( !config.PassFloat( "cut_sigmaIEIE_barrel_loose"   , sigmaIEIE         ) ) {
-                  pass_loose=false;
-                  if( eval_ph_loose ) continue;
+                    pass_loose=false;
+                    pass_sieie_loose=false;
+                    if( eval_ph_loose ) continue;
                 }
                 if( !config.PassFloat( "cut_chIsoCorr_barrel_loose"   , pfChIsoPtRhoCorr  ) ) {
                     pass_loose=false;
+                    pass_chIsoCorr_loose = false;
+                    pass_loose_nosieie=false;
                     if( eval_ph_loose ) continue;
                 }
                 if( !config.PassFloat( "cut_neuIsoCorr_barrel_loose"  , pfNeuIsoPtRhoCorr ) ) {
                     pass_loose=false;
+                    pass_loose_nosieie=false;
+                    pass_neuIsoCorr_loose = false;
                     if( eval_ph_loose ) continue;
                 }
                 if( !config.PassFloat( "cut_phoIsoCorr_barrel_loose"  , pfPhoIsoPtRhoCorr ) ) {
                     pass_loose=false;
+                    pass_loose_nosieie=false;
+                    pass_phoIsoCorr_loose = false;
                     if( eval_ph_loose ) continue;
                 }
+                if( !config.PassFloat( "cut_hovere_barrel_loose"  , hovere12) ) {
+                    pass_loose=false;
+                    pass_loose_nosieie=false;
+                    pass_hovere_loose = false;
+                    if( eval_ph_loose ) continue;
+                }
+
             }
 
             // medium
             if( !use_eval || eval_ph_medium ) {
                 if( !config.PassFloat( "cut_sigmaIEIE_barrel_medium"  , sigmaIEIE         ) ) {
                     pass_medium=false;
+                    pass_sieie_medium=false;
                     if( eval_ph_medium ) continue;
                 }
                 if( !config.PassFloat( "cut_chIsoCorr_barrel_medium"  , pfChIsoPtRhoCorr  ) ) {
                     pass_medium=false;
+                    pass_chIsoCorr_medium = false;
                     if( eval_ph_medium ) continue;
                 }
                 if( !config.PassFloat( "cut_neuIsoCorr_barrel_medium" , pfNeuIsoPtRhoCorr ) ) {
                     pass_medium=false;
+                    pass_neuIsoCorr_medium = false;
                     if( eval_ph_medium ) continue;
                 }
                 if( !config.PassFloat( "cut_phoIsoCorr_barrel_medium" , pfPhoIsoPtRhoCorr ) ) {
                     pass_medium=false;
+                    pass_phoIsoCorr_medium = false;
+                    if( eval_ph_medium ) continue;
+                }
+                if( !config.PassFloat( "cut_hovere_barrel_medium" , hovere12) ) {
+                    pass_medium=false;
+                    pass_hovere_medium = false;
                     if( eval_ph_medium ) continue;
                 }
             }
@@ -1191,39 +1654,77 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
             if( !use_eval || eval_ph_tight ) {
                 if( !config.PassFloat( "cut_sigmaIEIE_barrel_tight"   , sigmaIEIE         ) ) {
                     pass_tight=false;
+                    pass_sieie_tight=false;
                     if( eval_ph_tight ) continue;
                 }
                 if( !config.PassFloat( "cut_chIsoCorr_barrel_tight"   , pfChIsoPtRhoCorr  ) ) {
                     pass_tight=false;
+                    pass_chIsoCorr_tight = false;
                     if( eval_ph_tight ) continue;
                 }
                 if( !config.PassFloat( "cut_neuIsoCorr_barrel_tight"  , pfNeuIsoPtRhoCorr ) ) {
                     pass_tight=false;
+                    pass_neuIsoCorr_tight = false;
                     if( eval_ph_tight ) continue;
                 }
                 if( !config.PassFloat( "cut_phoIsoCorr_barrel_tight"  , pfPhoIsoPtRhoCorr ) ) {
                     pass_tight=false;
+                    pass_phoIsoCorr_tight = false;
+                    if( eval_ph_tight ) continue;
+                }
+                if( !config.PassFloat( "cut_hovere_barrel_tight"  , hovere12) ) {
+                    pass_tight=false;
+                    pass_hovere_tight = false;
                     if( eval_ph_tight ) continue;
                 }
             }
+
+            // mva
+            if( r9 <= 0.9 ) {
+                if( !config.PassFloat( "cut_hovere12_barrel_mva_presel_smallr9" , hovere12 ) ) pass_mva_presel = false; 
+                if( !config.PassFloat( "cut_hcalIsoEtCorr_barrel_mva_presel_smallr9" , hcalIsoDR03PtCorr) ) pass_mva_presel = false; 
+                if( !config.PassFloat( "cut_trkIsoEtCorr_barrel_mva_presel_smallr9" , trkIsoHollowDR03PtCorr) ) pass_mva_presel = false; 
+            }
+            else {
+                if( !config.PassFloat( "cut_hovere12_barrel_mva_presel_larger9" , hovere12 ) ) pass_mva_presel = false; 
+                if( !config.PassFloat( "cut_hcalIsoEtCorr_barrel_mva_presel_larger9" , hcalIsoDR03PtCorr) ) pass_mva_presel = false; 
+                if( !config.PassFloat( "cut_trkIsoEtCorr_barrel_mva_presel_larger9" , trkIsoHollowDR03PtCorr) ) pass_mva_presel = false; 
+            }
+
+            if( !config.PassFloat( "cut_sigmaIEIE_barrel_mva_presel" , sigmaIEIE ) ) pass_mva_presel = false; 
+            if( !config.PassFloat( "cut_chgpfIso_barrel_mva_presel" , chgpfIsoDR02 ) ) pass_mva_presel = false; 
+
         }
-        else {
+        else { // endcap
             // loose
             if( !use_eval || eval_ph_loose ) {
                 if( !config.PassFloat( "cut_sigmaIEIE_endcap_loose"   , sigmaIEIE         ) ) {
                     pass_loose=false;
+                    pass_sieie_loose=false;
                     if( eval_ph_loose ) continue;
                 }
                 if( !config.PassFloat( "cut_chIsoCorr_endcap_loose"   , pfChIsoPtRhoCorr  ) ) {
                     pass_loose=false;
+                    pass_loose_nosieie=false;
+                    pass_chIsoCorr_loose = false;
                     if( eval_ph_loose ) continue;
                 }
                 if( !config.PassFloat( "cut_neuIsoCorr_endcap_loose"  , pfNeuIsoPtRhoCorr ) ) {
                     pass_loose=false;
+                    pass_loose_nosieie=false;
+                    pass_neuIsoCorr_loose = false;
                     if( eval_ph_loose ) continue;
                 }
                 if( !config.PassFloat( "cut_phoIsoCorr_endcap_loose"  , pfPhoIsoPtRhoCorr ) ) {
                     pass_loose=false;
+                    pass_loose_nosieie=false;
+                    pass_phoIsoCorr_loose = false;
+                    if( eval_ph_loose ) continue;
+                }
+                if( !config.PassFloat( "cut_hovere_endcap_loose"  , hovere12) ) {
+                    pass_loose=false;
+                    pass_loose_nosieie=false;
+                    pass_hovere_loose = false;
                     if( eval_ph_loose ) continue;
                 }
             }
@@ -1232,18 +1733,27 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
             if( !use_eval || eval_ph_medium ) {
                 if( !config.PassFloat( "cut_sigmaIEIE_endcap_medium"  , sigmaIEIE         ) ) {
                     pass_medium=false;
+                    pass_sieie_medium=false;
                     if( eval_ph_medium ) continue;
                 }
                 if( !config.PassFloat( "cut_chIsoCorr_endcap_medium"  , pfChIsoPtRhoCorr  ) ) {
                     pass_medium=false;
+                    pass_chIsoCorr_medium = false;
                     if( eval_ph_medium ) continue;
                 }
                 if( !config.PassFloat( "cut_neuIsoCorr_endcap_medium" , pfNeuIsoPtRhoCorr ) ) {
                     pass_medium=false;
+                    pass_neuIsoCorr_medium = false;
                     if( eval_ph_medium ) continue;
                 }
                 if( !config.PassFloat( "cut_phoIsoCorr_endcap_medium" , pfPhoIsoPtRhoCorr ) ) {
                     pass_medium=false;
+                    pass_phoIsoCorr_medium = false;
+                    if( eval_ph_medium ) continue;
+                }
+                if( !config.PassFloat( "cut_hovere_endcap_medium" , hovere12) ) {
+                    pass_medium=false;
+                    pass_hovere_medium = false;
                     if( eval_ph_medium ) continue;
                 }
             }
@@ -1252,22 +1762,47 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
             if( !use_eval || eval_ph_tight ) {
                 if( !config.PassFloat( "cut_sigmaIEIE_endcap_tight"   , sigmaIEIE         ) ) {
                     pass_tight=false;
+                    pass_sieie_tight=false;
                     if( eval_ph_tight ) continue;
                 }
                 if( !config.PassFloat( "cut_chIsoCorr_endcap_tight"   , pfChIsoPtRhoCorr  ) ) {
                     pass_tight=false;
+                    pass_chIsoCorr_tight = false;
                     if( eval_ph_tight ) continue;
                 }
                 if( !config.PassFloat( "cut_neuIsoCorr_endcap_tight"  , pfNeuIsoPtRhoCorr ) ) {
                     pass_tight=false;
+                    pass_neuIsoCorr_tight = false;
                     if( eval_ph_tight ) continue;
                 }
                 if( !config.PassFloat( "cut_phoIsoCorr_endcap_tight"  , pfPhoIsoPtRhoCorr ) ) {
+                    pass_phoIsoCorr_tight = false;
+                    pass_tight=false;
+                    if( eval_ph_tight ) continue;
+                }
+                if( !config.PassFloat( "cut_hovere_endcap_tight"  , hovere12) ) {
+                    pass_hovere_tight = false;
                     pass_tight=false;
                     if( eval_ph_tight ) continue;
                 }
             }
+            // mva
+            if( r9 <= 0.9 ) {
+                if( !config.PassFloat( "cut_hovere12_endcap_mva_presel_smallr9" , hovere12 ) ) pass_mva_presel = false; 
+                if( !config.PassFloat( "cut_hcalIsoEtCorr_endcap_mva_presel_smallr9" , hcalIsoDR03PtCorr) ) pass_mva_presel = false; 
+                if( !config.PassFloat( "cut_trkIsoEtCorr_endcap_mva_presel_smallr9" , trkIsoHollowDR03PtCorr) ) pass_mva_presel = false; 
+            }
+            else {
+                if( !config.PassFloat( "cut_hovere12_endcap_mva_presel_larger9" , hovere12 ) ) pass_mva_presel = false; 
+                if( !config.PassFloat( "cut_hcalIsoEtCorr_endcap_mva_presel_larger9" , hcalIsoDR03PtCorr) ) pass_mva_presel = false; 
+                if( !config.PassFloat( "cut_trkIsoEtCorr_endcap_mva_presel_larger9" , trkIsoHollowDR03PtCorr) ) pass_mva_presel = false; 
+            }
+
+            if( !config.PassFloat( "cut_sigmaIEIE_endcap_mva_presel" , sigmaIEIE ) ) pass_mva_presel = false; 
+            if( !config.PassFloat( "cut_chgpfIso_endcap_mva_presel" , chgpfIsoDR02 ) ) pass_mva_presel = false; 
+
         }
+
 
         if( !config.PassBool( "cut_pid_tight"    , pass_tight     ) ) continue;
         if( !config.PassBool( "cut_pid_medium"   , pass_medium    ) ) continue;
@@ -1275,29 +1810,113 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
 
         OUT::ph_n++;
 
-        OUT::ph_pt         -> push_back(pt);
-        OUT::ph_eta        -> push_back(eta);
-        OUT::ph_phi        -> push_back(phi);
-        OUT::ph_e          -> push_back(pt*cosh(eta));
-        OUT::ph_HoverE     -> push_back(hovere);
-        OUT::ph_sigmaIEIE  -> push_back(sigmaIEIE);
-        OUT::ph_chIsoCorr  -> push_back(pfChIsoPtRhoCorr);
-        OUT::ph_neuIsoCorr -> push_back(pfNeuIsoPtRhoCorr);
-        OUT::ph_phoIsoCorr -> push_back(pfPhoIsoPtRhoCorr);
-        OUT::ph_passTight  -> push_back(pass_tight);
-        OUT::ph_passMedium -> push_back(pass_medium);
-        OUT::ph_passLoose  -> push_back(pass_loose);
+        OUT::ph_pt                   -> push_back(pt);
+        OUT::ph_eta                  -> push_back(eta);
+        OUT::ph_sceta                -> push_back(sceta);
+        OUT::ph_phi                  -> push_back(phi);
+        OUT::ph_e                    -> push_back(pt*cosh(eta));
+        OUT::ph_HoverE               -> push_back(hovere);
+        OUT::ph_HoverE12             -> push_back(hovere12);
+        OUT::ph_sigmaIEIE            -> push_back(sigmaIEIE);
+        OUT::ph_sigmaIEIP            -> push_back(sigmaIEIP);
+        OUT::ph_r9                   -> push_back(r9);
+        OUT::ph_E1x3                 -> push_back(E1x3);
+        OUT::ph_E2x2                 -> push_back(E2x2);
+        OUT::ph_E5x5                 -> push_back(E5x5);
+        OUT::ph_E2x5Max              -> push_back(E2x5Max);
+        OUT::ph_SCetaWidth           -> push_back(SCetaWidth);
+        OUT::ph_SCphiWidth           -> push_back(SCphiWidth);
+        OUT::ph_ESEffSigmaRR         -> push_back(ESEffSigmaRR);
+        OUT::ph_hcalIsoDR03          -> push_back(hcalIsoDR03);
+        OUT::ph_trkIsoHollowDR03     -> push_back(trkIsoHollowDR03);
+        OUT::ph_chgpfIsoDR02         -> push_back(chgpfIsoDR02);
+        OUT::ph_pfChIsoWorst         -> push_back(phoPFChIsoWorst);
+        OUT::ph_chIso                -> push_back(pfChIso);
+        OUT::ph_neuIso               -> push_back(pfNeuIso);
+        OUT::ph_phoIso               -> push_back(pfPhoIso);
+        OUT::ph_chIsoCorr            -> push_back(pfChIsoPtRhoCorr);
+        OUT::ph_neuIsoCorr           -> push_back(pfNeuIsoPtRhoCorr);
+        OUT::ph_phoIsoCorr           -> push_back(pfPhoIsoPtRhoCorr);
+        OUT::ph_passTight            -> push_back(pass_tight);
+        OUT::ph_passMedium           -> push_back(pass_medium);
+        OUT::ph_passLoose            -> push_back(pass_loose);
+        OUT::ph_passLooseNoSIEIE     -> push_back(pass_loose_nosieie);
+        OUT::ph_passSIEIELoose       -> push_back(pass_sieie_loose);
+        OUT::ph_passSIEIEMedium      -> push_back(pass_sieie_medium);
+        OUT::ph_passSIEIETight       -> push_back(pass_sieie_tight);
+        OUT::ph_passChIsoCorrLoose   -> push_back(pass_chIsoCorr_loose);
+        OUT::ph_passChIsoCorrMedium  -> push_back(pass_chIsoCorr_medium);
+        OUT::ph_passChIsoCorrTight   -> push_back(pass_chIsoCorr_tight);
+        OUT::ph_passNeuIsoCorrLoose  -> push_back(pass_neuIsoCorr_loose);
+        OUT::ph_passNeuIsoCorrMedium -> push_back(pass_neuIsoCorr_medium);
+        OUT::ph_passNeuIsoCorrTight  -> push_back(pass_neuIsoCorr_tight);
+        OUT::ph_passPhoIsoCorrLoose  -> push_back(pass_phoIsoCorr_loose);
+        OUT::ph_passPhoIsoCorrMedium -> push_back(pass_phoIsoCorr_medium);
+        OUT::ph_passPhoIsoCorrTight  -> push_back(pass_phoIsoCorr_tight);
+        OUT::ph_eleVeto              -> push_back(eleVeto);
+        OUT::ph_hasPixSeed           -> push_back(pixseed);
+        OUT::ph_drToTrk              -> push_back(drToTrk);
+
+        bool iseb = false;
+        bool isee = false;
+        if( fabs(sceta) < 1.479 ) {
+            iseb = true;
+        }
+        if( fabs(sceta) > 1.566 ) {
+            isee = true;
+        }
+        OUT::ph_IsEB -> push_back( iseb );
+        OUT::ph_IsEE -> push_back( isee );
+
+        // Evaluate MVA
+        if( TMVAReaderEB != 0 && TMVAReaderEE != 0 && pass_mva_presel ) {
+
+            MVAVars::phoPhi           = phi;
+            MVAVars::phoR9            = r9Corr;
+            MVAVars::phoSigmaIEtaIEta = sigmaIEIE;
+            MVAVars::phoSigmaIEtaIPhi = sigmaIEIP;
+            MVAVars::s4ratio          = E2x2/E5x5;
+            MVAVars::s13              = E1x3/E5x5;
+            MVAVars::s25              = E2x5Max/E5x5;
+            MVAVars::phoSCEta         = sceta;
+            MVAVars::phoSCRawE        = SCRawE;
+            MVAVars::phoSCEtaWidth    = SCetaWidth;
+            MVAVars::phoSCPhiWidth    = SCphiWidth;
+            MVAVars::rho2012          = rho;
+            MVAVars::phoPFPhoIso      = pfPhoIso;
+            MVAVars::phoPFChIso       = pfChIso;
+            MVAVars::phoPFChIsoWorst  = phoPFChIsoWorst;
+            MVAVars::phoESEnToRawE    = esE/SCRawE;
+            MVAVars::phoESEffSigmaRR  = ESEffSigmaRR;
+
+            OUT::ph_pass_mva_presel->push_back(true);
+
+            if( iseb ) {
+                OUT::ph_mvascore->push_back(TMVAReaderEB->EvaluateMVA("BDT"));
+            }
+            else if( isee ){
+                OUT::ph_mvascore->push_back(TMVAReaderEE->EvaluateMVA("BDT"));
+            }
+            else {
+                OUT::ph_mvascore->push_back(-99);
+            }
+        }
+        else {
+            OUT::ph_mvascore->push_back(-99);
+            OUT::ph_pass_mva_presel->push_back(false);
+        }
+
 
         // fill conversion info
         // the ntuples fill default values when the
         // photon is not converted, so just keep that
 
-        OUT::ph_isConv     -> push_back(IN::phoIsConv->at(idx));
-        OUT::ph_conv_nTrk  -> push_back(IN::phoConvNTrks->at(idx));
-        OUT::ph_conv_vtx_x -> push_back(IN::phoConvVtx_x->at(idx));
-        OUT::ph_conv_vtx_y -> push_back(IN::phoConvVtx_y->at(idx));
-        OUT::ph_conv_vtx_z -> push_back(IN::phoConvVtx_z->at(idx));
-        OUT::ph_hasSLConv  -> push_back(IN::pho_hasSLConvPf->at(idx));
+        OUT::ph_isConv           -> push_back(IN::phoIsConv->at(idx));
+        OUT::ph_conv_nTrk        -> push_back(IN::phoConvNTrks->at(idx));
+        OUT::ph_conv_vtx_x       -> push_back(IN::phoConvVtx_x->at(idx));
+        OUT::ph_conv_vtx_y       -> push_back(IN::phoConvVtx_y->at(idx));
+        OUT::ph_conv_vtx_z       -> push_back(IN::phoConvVtx_z->at(idx));
+        OUT::ph_hasSLConv        -> push_back( (IN::SingleLegConv->at(idx) > 0 ) );
         // get the individual track pt
         // i'm not sure if its pt sorted, so lets
         // do that now to be sure
@@ -1329,10 +1948,12 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
 
         float minTruthDR = 100.0;
         TLorentzVector matchLV;
-        bool match = HasTruthMatch( phlv, matchPID, 0.2, minTruthDR, matchLV );
+        int matchMotherPID=0;
+        bool match = HasTruthMatch( phlv, matchPID, 0.2, minTruthDR, matchLV, matchMotherPID );
         OUT::ph_truthMatch_ph->push_back( match  );
         OUT::ph_truthMinDR_ph->push_back( minTruthDR );
         OUT::ph_truthMatchPt_ph->push_back( matchLV.Pt() );
+        OUT::ph_truthMatchMotherPID_ph->push_back( matchMotherPID );
 
         std::vector<int> matchPIDEl;
         matchPIDEl.push_back(11);
@@ -1345,6 +1966,7 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
         OUT::ph_truthMinDR_el->push_back( minTruthDR );
         OUT::ph_truthMatchPt_el->push_back( matchLV.Pt() );
     }
+#endif 
             
 }        
 
@@ -1357,6 +1979,46 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     return keep_event;
 
     
+}
+
+void RunModule::WeightEvent( ModuleConfig & config ) const {
+
+    #ifdef EXISTS_isData
+    if( IN::isData ) {
+        OUT::PUWeight = 1.0;
+        return;
+    }
+    #endif
+
+    if( !puweight_data_hist || !puweight_sample_hist ) {
+        std::cout << "WeightEvent::ERROR - Needed histogram does not exist! " << std::endl;
+        return;
+    }
+    float puval = -1;
+    #ifdef EXISTS_puTrue
+    puval = IN::puTrue->at(0);
+    #endif
+
+    float num = 0;
+    float den = 0;
+
+    float tot_data   = puweight_data_hist->Integral();
+    float tot_sample = puweight_sample_hist->Integral();
+
+    int bin_data = puweight_data_hist->FindBin(puval);
+    int bin_sample = puweight_sample_hist->FindBin(puval);
+
+    float val_data = puweight_data_hist->GetBinContent( bin_data );
+    float val_sample = puweight_sample_hist->GetBinContent( bin_sample );
+
+    num = val_data/tot_data;
+    den = val_sample/tot_sample;
+
+    OUT::PUWeight = num/den;
+
+    if( OUT::PUWeight < 0.05 ) {
+        std::cout << "PUweight is zero" << std::endl;
+    }
 }
 
 bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR ) const {
@@ -1374,7 +2036,14 @@ bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<i
 
 }
 
-bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR, float & minDR, TLorentzVector & matchLV ) const {
+bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR, float &minDR, TLorentzVector &matchLV ) const {
+    
+    int motherPID = 0;
+    return HasTruthMatch( objlv, matchPID, maxDR, minDR, matchLV, motherPID );
+
+}
+
+bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR, float & minDR, TLorentzVector & matchLV, int &matchMotherPID ) const {
    
     minDR = 100.0;
     matchLV.SetPxPyPzE(0.0, 0.0, 0.0, 0.0);
@@ -1397,6 +2066,7 @@ bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<i
         //std::cout << "dr = " << dr << std::endl;
         if( dr < maxDR) {
             match = true;
+            matchMotherPID = IN::mcMomPID->at(mcidx);
         }
         // store the minimum delta R
         if( dr < minDR ) {
@@ -1469,3 +2139,180 @@ void RunModule::calc_corr_iso( float chIso, float phoIso, float neuIso, float rh
 
 }
 
+float RunModule::GetElectronMomentumCorrection( float pt, float sceta, float eta, float r9, bool isData, int run ) {
+
+    bool isEB = (fabs(sceta) < 1.479);
+
+    if( isData ) {
+
+        if( !electron_corr_vals.size() ) {
+            std::cout << "No values loaded for data corrections " << std::endl;
+            return 1.0;
+        }
+
+        float scale = -1;
+        bool set_scale = false;
+        BOOST_FOREACH( const correctionValues & vals, electron_corr_vals ) {
+
+            if ( (run >= vals.nRunMin ) && ( run <= vals.nRunMax ) ) {
+
+                if ( isEB  && fabs(eta) < 1  && r9 <  0.94 ) scale = vals.corrCat0;
+                if ( isEB  && fabs(eta) < 1  && r9 >= 0.94 ) scale = vals.corrCat1;
+                if ( isEB  && fabs(eta) >= 1 && r9 <  0.94 ) scale = vals.corrCat2;
+                if ( isEB  && fabs(eta) >= 1 && r9 >= 0.94 ) scale = vals.corrCat3;
+                if ( !isEB && fabs(eta) < 2  && r9 <  0.94 ) scale = vals.corrCat4;
+                if ( !isEB && fabs(eta) < 2  && r9 >= 0.94 ) scale = vals.corrCat5;
+                if ( !isEB && fabs(eta) >= 2 && r9 <  0.94 ) scale = vals.corrCat6;
+                if ( !isEB && fabs(eta) >= 2 && r9 >= 0.94 ) scale = vals.corrCat7;
+
+                if( scale < 0 ) {
+                    std::cout << "Did not get a scale " << std::endl;
+                    break;
+                }
+
+                set_scale = true;
+            }
+        }
+
+        if( !set_scale ) {
+            std::cout << "Did not set a scale, check input vals " << std::endl;
+            return 1.0;
+        }
+        else {
+            return scale;
+        }
+    }
+    else {
+
+        float dsigMC = 0;
+        if ( isEB  && fabs(eta) <  1 && r9 <  0.94 ) dsigMC = 0.0099;
+        if ( isEB  && fabs(eta) <  1 && r9 >= 0.94 ) dsigMC = 0.0103;
+        if ( isEB  && fabs(eta) >= 1 && r9 <  0.94 ) dsigMC = 0.0219;
+        if ( isEB  && fabs(eta) >= 1 && r9 >= 0.94 ) dsigMC = 0.0158;
+        if ( !isEB && fabs(eta) <  2 && r9 <  0.94 ) dsigMC = 0.0222;
+        if ( !isEB && fabs(eta) <  2 && r9 >= 0.94 ) dsigMC = 0.0298;
+        if ( !isEB && fabs(eta) >= 2 && r9 <  0.94 ) dsigMC = 0.0318;
+        if ( !isEB && fabs(eta) >= 2 && r9 >= 0.94 ) dsigMC = 0.0302;   
+
+        float corr = _rand.Gaus( 1.0, dsigMC );
+        return corr; 
+    }
+
+}
+
+void RunModule::extractElectronCorrections( const std::string & filename ) {
+
+    ifstream file( filename.c_str() );
+
+    if( !file ) {
+        std::cout << "Could not open file " << filename << std::endl;
+        return;
+    }
+
+    electron_corr_vals.clear();
+
+    while( !file.eof() ) {
+
+        std::string line;
+        getline( file, line );
+        if( line.empty() ) continue;
+        std::vector<std::string> line_tok = Tokenize( line, ", " );
+        if( line_tok.size() != 10 ) {
+            std::cout << "Did not read the correct number of lines! " << std::endl;
+            continue;
+        }
+
+        correctionValues vals;
+        bool all_success = true;
+        all_success &= Utils::stringToInt(line_tok[0], vals.nRunMin);
+        all_success &= Utils::stringToInt(line_tok[1], vals.nRunMax);
+        all_success &= Utils::stringToDouble(line_tok[2], vals.corrCat0);
+        all_success &= Utils::stringToDouble(line_tok[3], vals.corrCat1);
+        all_success &= Utils::stringToDouble(line_tok[4], vals.corrCat2);
+        all_success &= Utils::stringToDouble(line_tok[5], vals.corrCat3);
+        all_success &= Utils::stringToDouble(line_tok[6], vals.corrCat4);
+        all_success &= Utils::stringToDouble(line_tok[7], vals.corrCat5);
+        all_success &= Utils::stringToDouble(line_tok[8], vals.corrCat6);
+        all_success &= Utils::stringToDouble(line_tok[9], vals.corrCat7);
+
+        if( !all_success ) {
+            std::cout << "Failed to set at least some electron correction values" << std::endl;
+        }
+
+        electron_corr_vals.push_back(vals);
+
+    }
+
+    file.close();
+
+}
+
+
+void RunModule::extractElectronLinCorrections( const std::string & filename ) {
+
+    ifstream file( filename.c_str() );
+
+    if( !file ) {
+        std::cout << "Could not open file " << filename << std::endl;
+        return;
+    }
+
+    electron_lincorr_vals.clear();
+    while( !file.eof() ) {
+
+        std::string line;
+        getline( file, line );
+        if( line.empty() ) continue;
+        std::vector<std::string> line_tok = Tokenize( line, ", " );
+        if( line_tok.size() != 8 ) {
+            std::cout << "Did not read the correct number of lines! " << std::endl;
+            continue;
+        }
+
+        linearityCorrectionValues vals;
+        bool all_success=true;
+        all_success &= Utils::stringToDouble(line_tok[0], vals.ptMin);
+        all_success &= Utils::stringToDouble(line_tok[1], vals.ptMax);
+        all_success &= Utils::stringToDouble(line_tok[2], vals.corrCat0);
+        all_success &= Utils::stringToDouble(line_tok[3], vals.corrCat1);
+        all_success &= Utils::stringToDouble(line_tok[4], vals.corrCat2);
+        all_success &= Utils::stringToDouble(line_tok[5], vals.corrCat3);
+        all_success &= Utils::stringToDouble(line_tok[6], vals.corrCat4);
+        all_success &= Utils::stringToDouble(line_tok[7], vals.corrCat5);
+
+        if( !all_success ) {
+            std::cout << "Failed to set at least some electron linear correction values" << std::endl;
+        }
+        electron_lincorr_vals.push_back(vals);
+
+    }
+
+    file.close();
+
+}
+
+bool RunModule::FilterTrigger( ModuleConfig & config ) const {
+    
+#ifdef EXISTS_HLT
+    bool keep_evt = false;
+    BOOST_FOREACH( const Cut & cut, config.GetCut("cut_trigger").GetCuts() ) {
+       if( IN::HLT[IN::HLTIndex[cut.val_int] ] > 0 ) keep_evt = true;
+    }
+
+    return keep_evt;
+#else 
+    return true;
+#endif
+}
+
+void RunModule::finalize() {
+    if( muCorr ) {
+        delete muCorr;
+        muCorr = 0;
+   }
+}
+
+RunModule::RunModule() : TMVAReaderEB(0), TMVAReaderEE(0)
+{
+} 
+    

@@ -8,56 +8,6 @@ base_mc = '/eos/cms/store/group/phys_egamma/cmkuo'
 base_skim = '/eos/cms/store/group/phys_egamma/cmkuo/skim_gg'
 
 jobs = [
-        #(base_data, 'job_muon_2012a_Jan22rereco', 50),
-        #(base_data, 'job_muon_2012b_Jan22rereco', 100),
-        #(base_data, 'job_muon_2012c_Jan22rereco', 200),
-        #(base_data, 'job_muon_2012d_Jan22rereco', 200),
-        #(base_data, 'job_electron_2012a_Jan22rereco', 100),
-        #(base_data, 'job_electron_2012b_Jan22rereco', 200),
-        #(base_data, 'job_electron_2012c_Jan2012rereco', 400),
-        #(base_data, 'job_electron_2012d_Jan22rereco', 400),
-        #(base_mc, 'job_summer12_DiPhotonBorn_Pt-10To25', 10),
-        #(base_mc2, 'job_summer12_DYJetsToLL', 100 ),
-        #(base_mc, 'job_summer12_Wjets', 100),
-        #(base_mc, 'job_summer12_Wg', 50),
-        #(base_mc, 'job_summer12_Zg', 50),
-        #(base_mc, 'job_summer12_Wgg_FSR', 20),
-        #(base_mc, 'job_summer12_WAA_ISR', 20),
-        #(base_mc, 'job_summer12_ttjets_1l', 100),
-        #(base_mc, 'job_summer12_ttjets_2l', 100),
-        #(base_mc, 'job_summer12_ttg', 20),
-        ##(base_mc, 'job_summer12_WH_ZH_125', 10),
-        ##(base_mc, 'job_summer12_WWW', 10),
-        ##(base_mc, 'job_summer12_WWZ', 10),
-        ##(base_mc, 'job_summer12_WW_2l2nu', 10),
-        ##(base_mc, 'job_summer12_WWg', 10),
-        ##(base_mc, 'job_summer12_WZZ', 10),
-        ##(base_mc, 'job_summer12_WZ_2l2q', 10),
-        ##(base_mc, 'job_summer12_WZ_3lnu', 10),
-        ##(base_mc, 'job_summer12_ZZZ', 10),
-        ##(base_mc, 'job_summer12_ZZ_2e2mu', 10),
-        ##(base_mc, 'job_summer12_ZZ_2e2tau', 10),
-        ##(base_mc, 'job_summer12_ZZ_2l2nu', 10),
-        ##(base_mc, 'job_summer12_ZZ_2l2q', 10),
-        ##(base_mc, 'job_summer12_ZZ_2mu2tau', 10),
-        ##(base_mc, 'job_summer12_ZZ_2q2nu', 10),
-        ##(base_mc, 'job_summer12_ZZ_4e', 10),
-        ##(base_mc, 'job_summer12_ZZ_4mu', 10),
-        ##(base_mc, 'job_summer12_ZZ_4tau', 10),
-        ##(base_mc, 'job_summer12_diphoton_box_10to25', 10),
-        ##(base_mc, 'job_summer12_diphoton_box_250toInf', 10),
-        ##(base_mc, 'job_summer12_diphoton_box_25to250', 10),
-        ##(base_mc, 'job_summer12_ggZZ_2l2l', 10),
-        ##(base_mc, 'job_summer12_ggZZ_4l', 10),
-        ##(base_mc, 'job_summer12_t_s', 20),
-        ##(base_mc, 'job_summer12_t_t', 20),
-        ##(base_mc, 'job_summer12_t_tW', 20),
-        ##(base_mc, 'job_summer12_tbar_s', 20),
-        ##(base_mc, 'job_summer12_tbar_t', 20),
-        ##(base_mc, 'job_summer12_tbar_tW', 20),
-        ##(base_mc, 'job_summer12_ttW', 20),
-        ##(base_mc, 'job_summer12_ttZ', 20),
-        ##(base_mc, 'job_summer12_ttinclusive', 100),
 
         (base_skim, 'job_summer12_gjet_pt20to40_doubleEM', 10),
         (base_skim, 'job_summer12_gjet_pt40_doubleEM', 10),
@@ -73,7 +23,7 @@ command_base = 'python scripts/filter.py  --files root://eoscms/%(base)s/%(job)s
 
 #command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /tmp/jkunkle/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/ConfWgamgamReco.py --enableKeepFilter --nFilesPerJob 1 --nproc %(nproc)s --confFileName %(job)s.txt '
 
-output = 'PhMVAOutput_2014_03_27'
+output = 'PhSkimMod_2014_04_15'
 nFilesPerJob = 1
 nProc = 6
 exename='RunAnalysis'

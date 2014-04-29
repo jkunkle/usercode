@@ -10,6 +10,7 @@ import inspect
 import subprocess
 import multiprocessing
 import logging
+import time
 from argparse import ArgumentParser
 import eos_utilities as eosutil
 
@@ -17,49 +18,86 @@ def ParseArgs() :
 
     parser = ArgumentParser(description='')
     
+    #-----------------------------
+    # input files
+    #-----------------------------
     parser.add_argument('--files', dest='files', default=None, help='list of input files (comma separated).  If not provided, --filesDir must be provided')
     
     parser.add_argument('--filesDir', dest='filesDir', default=None, help='Directory to search for files.  If not provided, --files must be provided')
+
+    parser.add_argument('--noInputFiles', dest='noInputFiles', default=False, action='store_true', help='Do not expect any files')
+
+    #-----------------------------
+    # Output locations
+    #-----------------------------
     
     parser.add_argument('--outputDir', dest='outputDir', default=None, help='<Required> Output sample path.  If nproc is set to > 1 a job directory is appended')
     
     parser.add_argument('--outputFile', dest='outputFile', default=None, help='Name of output file.  If none given it will assume the name of one if the input files')
     
+    parser.add_argument('--storagePath', dest='storagePath', default='None', help='After the output file is written, transfer it to storage.  Use --outputDir to give the local output from where the file is transferred.  Local files are removed after the copy')
+
+    parser.add_argument('--confFileName', dest='confFileName', default='analysis_config.txt', help='Name of the configuration file.  Default : analysis_config.txt')
+
+    parser.add_argument('--exeName', dest='exeName', default='RunAnalysis', help='Name of the executable file.  Use to avoid overwriting an executable that is in use')
+
+    #-----------------------------
+    # Important additional input info
+    #-----------------------------
+     
     parser.add_argument('--treeName', dest='treeName', default=None, help='<Required> name of tree to process')
 
     parser.add_argument('--fileKey', dest='fileKey', default='.root', help='key to match root files')
     
     parser.add_argument('--module', dest='module', default=None, help='<Required> name of the module to import')
-    
-    parser.add_argument('--confFileName', dest='confFileName', default='analysis_config.txt', help='Name of the configuration file.  Default : analysis_config.txt')
 
-    parser.add_argument('--exeName', dest='exeName', default='RunAnalysis', help='Name of the executable file.  Use to avoid overwriting an executable that is in use')
+    #-----------------------------
+    # Logging
+    #-----------------------------
 
-    parser.add_argument('--sample', dest='sample', default=None, help='Name of sample.  May be used in cases where the sample name must be known to the c++ code')
-    
-    parser.add_argument('--nproc', dest='nproc', type=int, default=1, help='Number of processors to use.  If set to > 1, use multiprocessing')
+    parser.add_argument('--loglevel', dest='loglevel', default='INFO', help='Log level, DEBUG, INFO, WARNING, ERROR, CRITICAL. Default is INFO')
+
+    #-----------------------------
+    # Configure job splitting
+    #-----------------------------
     
     parser.add_argument('--nsplit', dest='nsplit', type=int, default=0, help='Split into nsplit subjobs.  If --nFilesPerJob is set instead, nsplit will be computed.  Jobs are first split by the number of input files.  If there are fewer input files than jobs requested the input files are further split.  Also set nproc > 1 to use multiprocessing.  However multiprocessing is only used by file')
 
     parser.add_argument('--nJobs', dest='nJobs', type=int, default=0, help='Equivalent to --nsplit')
     
     parser.add_argument('--nFilesPerJob', dest='nFilesPerJob', type=int, default=0, help='Number of files to run in each job.  If --nsplit is defined, then this is ignored')
+
+    parser.add_argument('--totalEvents', dest='totalEvents', type=int, default=0, help='Total number of events to run over.  Only use to run over fewer than all events')
+
+    parser.add_argument('--nproc', dest='nproc', type=int, default=1, help='Number of processors to use.  If set to > 1, use multiprocessing')
     
-    parser.add_argument('--noRun', dest='noRun', default=False, action='store_true', help='Just generate and compile, do not run the merging')
-    
-    parser.add_argument('--noCompile', dest='noCompile', default=False, action='store_true', help='Just run the merging.  Do not recompile')
-    
-    parser.add_argument('--storagePath', dest='storagePath', default='None', help='After the output file is written, transfer it to storage.  Use --outputDir to give the local output from where the file is transferred')
-    
+    #-----------------------------
+    # Filter flags
+    #-----------------------------
+
     parser.add_argument('--enableRemoveFilter', dest='enableRemoveFilter', default=False, action='store_true', help='Do not write out branches in the remove filter in the analysis module')
     
     parser.add_argument('--enableKeepFilter', dest='enableKeepFilter', default=False, action='store_true', help='Only write out branches in the remove filter in the analysis module.  Can specify branches to remove within the keep filter by enabling the remove filter')
 
-    parser.add_argument('--disableOutputTree', dest='disableOutputTree', default=False, action='store_true', help='Do not write events to the output tree')
+    #-----------------------------
+    # Control flags
+    #-----------------------------
+
+    parser.add_argument('--noRun', dest='noRun', default=False, action='store_true', help='Just generate and compile, do not run the merging')
+    
+    parser.add_argument('--noCompile', dest='noCompile', default=False, action='store_true', help='Just run the merging.  Do not recompile')
     
     parser.add_argument('--debugCode', dest='debugCode', default=False, action='store_true', help='Place debugging statements in the written code')
     
-    parser.add_argument('--loglevel', dest='loglevel', default='INFO', help='Log level, DEBUG, INFO, WARNING, ERROR, CRITICAL. Default is INFO')
+    parser.add_argument('--writeExpertCode', dest='writeExpertCode', default=False, action='store_true', help='Write additional functions for expert debugging')
+    
+    parser.add_argument('--disableOutputTree', dest='disableOutputTree', default=False, action='store_true', help='Do not write events to the output tree')
+    
+    #-----------------------------
+    # Occasionally used
+    #-----------------------------
+
+    parser.add_argument('--sample', dest='sample', default=None, help='Name of sample.  May be used in cases where the sample name must be known to the c++ code')
     
     parser.add_argument('--moduleArgs', dest='moduleArgs', default=None, help='Arguments to pass to module.  Should be in the form of a dictionary')
     
@@ -67,9 +105,9 @@ def ParseArgs() :
 
 def config_and_run( options, package_name ) :
 
-    assert options.files is not None or options.filesDir is not None , 'Must provide a file list via --files or a search directory via --filesDir'
+    assert options.noInputFiles or options.files is not None or options.filesDir is not None , 'Must provide a file list via --files or a search directory via --filesDir'
     assert options.outputDir is not None, 'Must provide an output directory via --outputDir'
-    assert options.treeName is not None, 'Must provide a tree name via --treeName'
+    assert options.noInputFiles or options.treeName is not None, 'Must provide a tree name via --treeName'
 
     if options.loglevel.upper() not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] :
         print 'Loglevel must be one of DEBUG, INFO, WARNING, ERROR, CRITICAL.  Default to INFO'
@@ -83,7 +121,15 @@ def config_and_run( options, package_name ) :
 
     input_files = []
     if options.files is not None :
-        input_files = options.files.split(',')
+        if options.files.count('root://') > 0 :
+            split_files = options.files.split(',')
+            for file in split_files :
+                dir_base = '/'.join(file.split('/')[0:-1])
+                filename = file.split('/')[-1]
+                input_files += collect_input_files_eos( dir_base, filename)
+        else :
+            input_files = options.files.split(',')
+            input_files = filter( lambda s: os.path.isfile( s ), input_files )
     elif options.filesDir is not None :
         for eachdir in options.filesDir.split(',') :
             input_files += collect_input_files( eachdir, options.fileKey )
@@ -92,9 +138,16 @@ def config_and_run( options, package_name ) :
     while '' in input_files :
         input_files.remove('')
 
+    input_files = check_and_filter_input_files( input_files, options.treeName )
+
+    if not options.noInputFiles and not input_files :
+        print 'Did not locate any input files with the path and file name given!  Check the inputs.'
+        return False
+
     # if output file name is not given grab the name from one of the input files
     if options.outputFile is None :
-        options.outputFile = input_files[0].split('/')[-1]
+        if input_files :
+            options.outputFile = input_files[0].split('/')[-1]
 
     branches = get_branch_mapping(input_files, options.treeName )
 
@@ -113,6 +166,16 @@ def config_and_run( options, package_name ) :
 
     if not options.noCompile :
 
+        lockfile = '.compile.lock'
+        lockname = '%s/TreeFilter/%s/%s' %( workarea, package_name, lockfile )
+        while os.path.isfile( lockname ) :
+            print 'Waiting for other compilation to finish.  If this is not expected, do ctrl-z; rm %s; fg ' %lockfile
+            time.sleep(10)
+
+        file=open(lockname, 'w')
+        file.write('lock')
+        file.close()
+
         brdef_file_name = '%s/TreeFilter/%s/include/BranchDefs.h' %( workarea, package_name )
         header_file_name = '%s/TreeFilter/%s/include/BranchInit.h' %( workarea, package_name )
         source_file_name = '%s/TreeFilter/%s/src/BranchInit.cxx' %(workarea, package_name )
@@ -122,11 +185,11 @@ def config_and_run( options, package_name ) :
         # SetBranchAddress calls
         write_header_files(brdef_file_name, linkdef_file_name, branches, branches_to_keep )
 
-        write_source_file(source_file_name, header_file_name, branches, branches_to_keep )
+        write_source_file(source_file_name, header_file_name, branches, branches_to_keep, write_expert_code=options.writeExpertCode )
 
         # compile
         logging.info('********************************')
-        logging.info('  Begin Complilation ' )
+        logging.info('  Begin Compilation ' )
         logging.info('********************************')
         proc = subprocess.Popen(['make', 'clean'])
         proc.wait()
@@ -136,10 +199,14 @@ def config_and_run( options, package_name ) :
         # abort if non-zero return code
         if retcode :
             logging.error( 'Compilation failed.  Will not run' )
+            os.system('rm %s' %lockname)
+
             return
         logging.info('********************************')
-        logging.info('  Complilation Finished ')
+        logging.info('  Compilation Finished ')
         logging.info('********************************')
+
+        os.system('rm %s' %lockname)
 
 
     # Get the path of the executable.  First try the
@@ -171,7 +238,7 @@ def config_and_run( options, package_name ) :
     if options.nJobs > 0 and options.nsplit == 0 :
         options.nsplit = options.nJobs
 
-    file_evt_list = get_file_evt_map( input_files, options.nsplit, options.nFilesPerJob, options.treeName )
+    file_evt_list = get_file_evt_map( input_files, options.nsplit, options.nFilesPerJob, options.totalEvents, options.treeName )
 
     #if options.nproc > 1 and options.nproc > len(file_evt_list) :
     #    options.nproc = len(file_evt_list)
@@ -180,27 +247,28 @@ def config_and_run( options, package_name ) :
     logging.info('Will run a total of %d processes, %d at a time' %(len(file_evt_list), options.nproc) )
     logging.info('********************************')
 
-    if options.nproc > 1 : #multiprocessing!
+    if options.nproc > 1 and file_evt_list > 1: #multiprocessing!
 
         commands = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
 
         # Stop here if not running
+        logging.info('********************************')
+        for cmd in commands :
+            logging.info( 'Executing ' + cmd )
+        logging.info('********************************')
+
         if options.noRun :
             logging.info('Not runnning.  Stop here')
             return
 
         pool = multiprocessing.Pool(options.nproc)
-        logging.info('********************************')
-        for cmd in commands :
-            logging.info( 'Executing ' + cmd )
-        logging.info('********************************')
         pool.map( os.system, commands)
 
     else :
 
         output_file = '%s/%s' %(options.outputDir, options.outputFile )
         write_config( alg_list, options.confFileName, options.treeName, options.outputDir, options.outputFile, file_evt_list, options.storagePath, options.sample, options.disableOutputTree ) 
-        command = make_exe_command( exe_path, options.confFileName )
+        command = make_exe_command( exe_path, options.confFileName, options.outputDir  )
 
         # Stop here if not running
         if options.noRun :
@@ -231,7 +299,7 @@ def collect_input_files_local( filesDir, filekey='.root' ) :
     input_files = []
     for top, dirs, files in os.walk(filesDir) :
         for f in files :
-            if f.count(filekey) > 0 :
+            if f.count(filekey) > 0 and os.path.isfile( top+'/'+f ) :
                 input_files.append(top+'/'+f)
 
     return input_files
@@ -256,6 +324,9 @@ def get_branch_mapping( files, treename ) :
         files = [files]
 
     files_all_branches = []
+
+    if not files :
+        return []
 
     for filename in files :
         file = ROOT.TFile.Open( filename )
@@ -381,6 +452,30 @@ def get_branch_mapping( files, treename ) :
 
     return all_branches_max
 
+#-----------------------------------------------------------
+def check_and_filter_input_files( input_files, treename ) :
+
+    filtered_files = []
+    if not isinstance(input_files, list) :
+        input_files = [input_files]
+
+    for filename in input_files :
+
+        pass_filter = True
+
+        file = ROOT.TFile.Open( filename )
+        tree = file.Get( treename )
+        
+        if tree == None :
+            pass_filter = False
+            print 'Removed file %s that did not contain the input tree' %filename
+
+        if pass_filter :
+            filtered_files.append(filename)
+
+        file.Close()
+
+    return filtered_files
 
 def import_module( module ) :
 
@@ -435,10 +530,11 @@ def get_keep_branches( module, branches, enable_keep_filter, enable_remove_filte
             
     return branches_to_keep
 
-def make_exe_command( exe_path, conf_file ) :
+def make_exe_command( exe_path, conf_file, output_loc ) :
 
     command = [exe_path,
                ' --conf_file %s' %conf_file,
+               ' | tee %s/stdout' %(output_loc),
               ]
 
     return ' '.join(command)
@@ -467,12 +563,15 @@ def generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, option
             os.makedirs( outputDir )
         
         write_config(alg_list, conf_file, options.treeName, outputDir, options.outputFile, [file_split], options.storagePath, options.sample, options.disableOutputTree, idx )
-        commands.append( make_exe_command( exe_path, conf_file ) )
+        commands.append( make_exe_command( exe_path, conf_file, outputDir+'/'+jobid ) )
 
     return commands
 
 
-def get_file_evt_map( input_files, nsplit, nFilesPerJob, treeName ) :
+def get_file_evt_map( input_files, nsplit, nFilesPerJob, totalEvents, treeName ) :
+
+    if not input_files :
+        return []
 
     nFilesPerSplit = 0
     if nFilesPerJob > 0 and nsplit == 0 :
@@ -520,8 +619,13 @@ def get_file_evt_map( input_files, nsplit, nFilesPerJob, treeName ) :
             tmp.Close()
 
     # for each file get the range to use
-    for files, nsplit, totevt in zip(split_files, files_nsplit, files_nevt) :
+    for files, nsplit, filetotevt in zip(split_files, files_nsplit, files_nevt) :
 
+        if totalEvents > 0 :
+            totevt = totalEvents
+        else :
+            totevt = filetotevt
+        
         splitlist = []
         split_base = int(totevt)/int(nsplit)
         prev_val = 0
@@ -697,7 +801,7 @@ def write_header_files( brdefname, linkdefname, branches, keep_branches=[] ) :
 
 
 
-def write_source_file(source_file_name, header_file_name, branches, keep_branches=[], debugCode=False) :
+def write_source_file(source_file_name, header_file_name, branches, keep_branches=[], debugCode=False, write_expert_code=False) :
 
     branch_header = open(header_file_name, 'w')
     branch_header.write('#ifndef BRANCHINIT_H\n')
@@ -710,6 +814,9 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
     branch_header.write('void CopyPrefixBranchesInToOut( const std::string & prefix );\n' )
     branch_header.write('void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index );\n')
     branch_header.write('void ClearOutputPrefix ( const std::string & prefix );\n')
+    if write_expert_code:
+        branch_header.write('void CheckVectorSize ( const std::string & prefix, unsigned expected );\n')
+
     for br in branches :
         name = br['name']
         if name not in keep_branches :
@@ -719,6 +826,9 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
         if br['type'].count('vector') :
             branch_header.write('void Copy%sInToOutIndex( unsigned index, std::string prefix = std::string() ); \n' %name)
             branch_header.write('void ClearOutput%s( std::string prefix ); \n' %name)
+            if write_expert_code:
+                branch_header.write('void Check%sVectorSize( std::string prefix, unsigned expected  ); \n' %name)
+
 
     branch_header.write('#endif\n')
     branch_header.close()
@@ -858,6 +968,21 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
             branch_setting.write( '    ClearOutput%s( prefix );\n' %name)
 
     branch_setting.write('}; \n\n' )
+
+    if write_expert_code :
+        branch_setting.write('void CheckVectorSize( const std::string & prefix, unsigned expected ) { \n\n')
+
+        branch_setting.write('// Just call each function with the prefix \n\n')
+
+        for conf in branches :
+            name = conf['name']
+            if name not in keep_branches :
+                continue
+
+            if conf['type'].count('vector') :
+                branch_setting.write( '    Check%sVectorSize( prefix, expected);\n' %name)
+
+        branch_setting.write('}; \n\n' )
     
     for conf in branches :
         name = conf['name']
@@ -919,6 +1044,19 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
             branch_setting.write('    //std::cout << "Clear varaible %s, prefix = " << prefix << std::endl; \n ' %name)
             branch_setting.write('    OUT::%s->clear(); \n ' %name)
             branch_setting.write('}; \n\n ')
+
+            if write_expert_code :
+                branch_setting.write('void Check%sVectorSize( std::string  prefix, unsigned expected ) { \n\n' %name)
+                branch_setting.write('    std::string my_name = "%s";\n' %name)
+                branch_setting.write('    std::size_t pos = my_name.find( prefix ); \n')
+                branch_setting.write('    // if the filter is given only continue if its matched at the beginning \n' )
+                branch_setting.write('    if( prefix != "" &&  pos != 0 ) return; \n' )
+                branch_setting.write('    if( IN::%s->size() != expected ) { \n'  %name)
+                branch_setting.write('        std::cout << "Vector size for branch %s is not as expected.  Got " << IN::%s->size() << ", expected " << expected << std::endl; \n'%(name, name) )
+                branch_setting.write('    } \n' )
+                branch_setting.write('}; \n\n ')
+
+
 
     branch_setting.close()
 

@@ -19,16 +19,17 @@ def get_remove_filter() :
                 'jetWPLevelsExt_full',
                 'jetWPLevelsExt_cutBased',
                 'CA8.*',
+                'jetLowPt.*',
                ]
     vtx_filt = ['vtx_x', 'vtx_y', 'vtx_z', 'vtxbs_x', 'vtxbs_y', 'vtxbs_z']
     objvtx_filt = ['phoPhiVtx', 'phoEtaVtx', 'phoEtVtx', 'eleEtVtx', 'elePhiVtx', 'eleEtaVtx', 'muEtVtx', 'muPhiVtx', 'muEtaVtx']
     #objvtx_filt = []
-    pho_filt = ['phoCiCTrkIsoDR04', 'phoCiCTrkIsoDR03', 'phoCiCPF4chgpfIso04', 'phoCiCPF4chgpfIso03', 'phoCiCPF4chgpfIso02']
+    pho_filt = ['phoCiCTrkIsoDR04', 'phoCiCTrkIsoDR03', 'phoCiCPF4chgpfIso04', ]
     tau_filt = ['tau.*']
     
     jet_filt_addtl = [
                 'jetDR2Mean',
-                'jetNEF',
+                #'jetNEF',
                 'jetFrac04',
                 'jetFrac05',
                 'jetFrac03',
@@ -43,7 +44,7 @@ def get_remove_filter() :
                 'jetBetaStarClassic',
                 'jetBetaStarCMG',
                 'jetBeta',
-                'jetNHF',
+                #'jetNHF',
                 'jetJetBProbabilityBJetTags',
                 'jetCombinedSecondaryVtxBJetTags',
                 'jetJetProbabilityBJetTags',
@@ -54,7 +55,7 @@ def get_remove_filter() :
                 'jetSoftLeptPt',
                 'jetFrac06',
                 'jetCEF',
-                'jetNConstituents',
+                #'jetNConstituents',
                 'jetArea',
                 'jetHFEME',
                 'jetHFHAE',
@@ -98,19 +99,18 @@ def get_remove_filter() :
                 'phoRegrE',
                 'phoSCRPhoIso',
                 'phoHcalIsoDR0412',
-                'phoCiCdRtoTrk',
+                #'phoCiCdRtoTrk',
                 'phoCrysPhi',
                 'phoCrysEta',
                 'phoSeedDetId1',
                 'phoSeedDetId2',
                 'phoCrysIEta',
-                'phoESEffSigmaRR_x',
+                #'phoESEffSigmaRR_x',
                 'phoESEffSigmaRR_y',
                 'phoESEffSigmaRR_z',
                 'phoCrysIPhi',
     ]
     ele_filt_addtl = [
-                'eleIP3D',
                 'eleConvDcot',
                 'eleSeedPhi',
                 'eleSeedEta',
@@ -134,10 +134,9 @@ def get_remove_filter() :
                 'elePhoRegrE',
                 'eleRegrE',
                 'eleSCRawEn',
-                'eleIP3DErr',
+                #'eleIP3D',
+                #'eleIP3DErr',
                 'eleTrkMomErr',
-                'elePFPhoIso03',
-                'eleIDMVANonTrig',
                 'eleCrysPhi',
                 'eleCrysEta',
                 'eleModIsoHcal',
@@ -149,8 +148,8 @@ def get_remove_filter() :
                 'eleESEffSigmaRR_y',
                 'eleESEffSigmaRR_z',
                 'eleClass',
-                'eleDzVtx',
-                'eleD0Vtx',
+                #'eleDzVtx',
+                #'eleD0Vtx',
     ]
     conv_filt = [
                 'conv.*',
@@ -192,12 +191,12 @@ def get_remove_filter() :
                 'phoConvTrkdzErr_x',
                 'phoConvLikeLihood',
                 'phoConvZofPVfromTrks',
-                'phoPFConvMom_z',
-                'phoPFConvMom_y',
-                'phoPFConvMom_x',
-                'phoPFConvVtx_x',
-                'phoPFConvVtx_y',
-                'phoPFConvVtx_z',
+                #'phoPFConvMom_z',
+                #'phoPFConvMom_y',
+                #'phoPFConvMom_x',
+                #'phoPFConvVtx_x',
+                #'phoPFConvVtx_y',
+                #'phoPFConvVtx_z',
                 'phoConvCharge1',
                 'phoConvCharge2',
                 'phoConvRefittedMomentum_z',
@@ -214,20 +213,20 @@ def get_remove_filter() :
     ]
 
     mu_filt_addtl = [
-                     'muIP3D',
                      'mucktdz',
                      'mucktdxy',
                      'muVtxGlb_z',
                      'mucktPhi',
                      'mucktEta',
                      'muInnerPtErr',
-                     'muIP3DErr',
+                     #'muIP3D',
+                     #'muIP3DErr',
                      'mucktPtErr',
                      'mucktPt',
                      'muVtxGlb_y',
                      'muVtxGlb_x',
-                     'muDzVtx',
-                     'muD0Vtx',
+                     #'muDzVtx',
+                     #'muD0Vtx',
     ]
 
     met_filt = [ 'trkMET', 'trkMETPhi', 'trkMETx', 'trkMETy'] 
@@ -256,30 +255,38 @@ def get_keep_filter() :
 def config_analysis( alg_list, args ) :
     """ Configure analysis modules. Order is preserved """
 
-    #jet_filt = Filter('FilterJet')
-    #jet_filt.cut_pt = '> 15'
-    #alg_list.append(jet_filt)
+    jet_filt = Filter('FilterJet')
+    jet_filt.cut_pt = '> 15'
+    alg_list.append(jet_filt)
 
-    ##ele_filt = Filter('FilterElec') 
-    ##ele_filt.cut_pt = '> 10'
-    ##alg_list.append(ele_filt)
+    #ele_filt = Filter('FilterElec') 
+    #ele_filt.cut_pt = '> 10'
+    #alg_list.append(ele_filt)
 
-    ##mu_filt = Filter('FilterMuon') 
-    ##mu_filt.cut_pt = '> 10'
-    ##alg_list.append(mu_filt)
+    #mu_filt = Filter('FilterMuon') 
+    #mu_filt.cut_pt = '> 10'
+    #alg_list.append(mu_filt)
 
-    #evt_filt = Filter('FilterEvent')
-    #evt_filt.cut_nLep = '> 0'
-    ###evt_filt.cut_nPho = '> 0'
+    # should work in general, but only using for diphoton data
+    evt_filt = Filter('FilterEvent')
+    evt_filt.cut_el_ph_mindr = '< 0.1'
+    evt_filt.cut_nMunElOlapPt5 = ' > 0 '
+    #evt_filt.add_hist( 'cut_el_ph_mindr', 50, 0, 1 )
+    #evt_filt.do_cutflow=True
+    
 
-    ##alg_list.append(evt_filt)
+    ##evt_filt.cut_nPho = '> 0'
 
-    #trig_filt = Filter('FilterTrigger')
-    ##trig_filt.cut_trigger = '==1 | ==17 | == 18 | == 19' #diphoton | electron | muon
+    alg_list.append(evt_filt)
+
+    trig_filt = Filter('FilterTrigger')
+    #trig_filt.cut_trigger = '==1 | ==17 | == 18 | == 19' #diphoton | electron | muon
     #trig_filt.cut_trigger = '==17 | == 18 | == 19' # electron | muon
-    ##trig_filt.cut_trigger = '== 18 | == 19' #muon
-    ##trig_filt.cut_trigger = '==17' #electron
-    #alg_list.append(trig_filt)
+    #trig_filt.cut_trigger = '== 18 | == 19' #muon
+    #trig_filt.cut_trigger = '==17' #electron
+    trig_filt.cut_trigger = '==17 | == 18 | == 19 | ==1 | ==4 | == 8 | ==23 | ==48 | ==49 | ==50 | == 51 ' # electron | muon | photon
+
+    alg_list.append(trig_filt)
 
     #alg_list.append(Filter('CalcLeptonVtxVars'))
 

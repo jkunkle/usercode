@@ -53,10 +53,10 @@ class RunModule : public virtual RunModuleBase {
 // Declare any output variables that you'll fill here
 namespace OUT {
 
-    std::vector<float>  *eleD0LepVtx;
-    std::vector<float>  *eleDzLepVtx;
-    std::vector<float>  *muD0LepVtx;
-    std::vector<float>  *muDzLepVtx;
+    //std::vector<float>  *eleD0LepVtx;
+    //std::vector<float>  *eleDzLepVtx;
+    //std::vector<float>  *muD0LepVtx;
+    //std::vector<float>  *muDzLepVtx;
 
 };
 

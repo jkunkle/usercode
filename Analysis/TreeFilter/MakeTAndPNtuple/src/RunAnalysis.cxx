@@ -56,18 +56,19 @@ void RunModule::initialize( TChain * chain, TTree * _outtree, TFile *outfile,
     // Declare Branches
     // *************************
 
-    outtree->Branch("tag_pt"         , &OUT::tag_pt          );
-    outtree->Branch("tag_eta"        , &OUT::tag_eta         );
-    outtree->Branch("tag_eta_sc"      , &OUT::tag_eta_sc         );
-    outtree->Branch("tag_phi"        , &OUT::tag_phi         );
-    outtree->Branch("probe_pt"       , &OUT::probe_pt        );
-    outtree->Branch("probe_eta"      , &OUT::probe_eta       );
-    outtree->Branch("probe_eta_sc"    , &OUT::probe_eta_sc       );
-    outtree->Branch("probe_phi"      , &OUT::probe_phi       );
-    outtree->Branch("probe_isPhoton" , &OUT::probe_isPhoton  );
-    outtree->Branch("probe_nConvTrk" , &OUT::probe_nConvTrk  );
-    outtree->Branch("m_tagprobe"     , &OUT::m_tagprobe    );
-    outtree->Branch("m_tagprobe_sceta"   , &OUT::m_tagprobe_sceta    );
+    outtree->Branch("tag_pt"           , &OUT::tag_pt           );
+    outtree->Branch("tag_eta"          , &OUT::tag_eta          );
+    outtree->Branch("tag_eta_sc"       , &OUT::tag_eta_sc       );
+    outtree->Branch("tag_phi"          , &OUT::tag_phi          );
+    outtree->Branch("probe_pt"         , &OUT::probe_pt         );
+    outtree->Branch("probe_eta"        , &OUT::probe_eta        );
+    outtree->Branch("probe_eta_sc"     , &OUT::probe_eta_sc     );
+    outtree->Branch("probe_phi"        , &OUT::probe_phi        );
+    outtree->Branch("probe_isPhoton"   , &OUT::probe_isPhoton   );
+    outtree->Branch("probe_nConvTrk"   , &OUT::probe_nConvTrk   );
+    outtree->Branch("probe_passtrig"   , &OUT::probe_passtrig   );
+    outtree->Branch("m_tagprobe"       , &OUT::m_tagprobe       );
+    outtree->Branch("m_tagprobe_sceta" , &OUT::m_tagprobe_sceta );
 
 
 }
@@ -141,6 +142,15 @@ void RunModule::MakeNtuple( ModuleConfig & config ) const {
         for( unsigned i = 0; i < objects.size(); ++i) {
             OUT::probe_nConvTrk = -1;
             if( obj_isElec[i] ) { // if its an electron
+                bool pass_tag_cuts = true;
+                if( !config.PassFloat( "cut_tag_pt", objects[i].Pt() ) ) pass_tag_cuts = false;
+                if( !config.PassBool( "cut_tag_triggerMatch", IN::el_triggerMatch->at(obj_index[i]) ) ) pass_tag_cuts = false;
+                if( !config.PassBool( "cut_tag_passMvaTrig", IN::el_passMvaTrig->at(obj_index[i]) ) ) pass_tag_cuts = false;
+
+                if( !pass_tag_cuts ) {
+                    continue;
+                }
+
                 // fill tag info
                 OUT::tag_pt = objects[i].Pt();
                 OUT::tag_eta = objects[i].Eta();
@@ -156,9 +166,17 @@ void RunModule::MakeNtuple( ModuleConfig & config ) const {
                     OUT::probe_phi = objects[j].Phi();
                     //OUT::probe_eta_sc = objects_sceta[j].Eta();
                     OUT::probe_isPhoton = !obj_isElec[j];
-                    if( OUT::probe_isPhoton ) {
-                        OUT::probe_nConvTrk = IN::ph_conv_nTrk->at(obj_index[j]);
+                    //if( OUT::probe_isPhoton ) {
+                    //    OUT::probe_nConvTrk = IN::ph_conv_nTrk->at(obj_index[j]);
+                    //}
+                    OUT::probe_passtrig=false;
+                    if( !OUT::probe_isPhoton   && 
+                        objects[j].Pt() > 27   && 
+                        IN::el_triggerMatch->at(obj_index[j])    && 
+                        IN::el_passMvaTrig->at(obj_index[j])      ) {
+                            OUT::probe_passtrig = true;
                     }
+
                     OUT::m_tagprobe = (objects[i] + objects[j]).M();
                     //OUT::m_tagprobe_sceta = ( objects_sceta[i] + objects_sceta[j] ).M();
                 }
@@ -184,6 +202,7 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     int nEl  = IN::el_n;
 
     if( !config.PassInt("cut_n_elph", nPh+nEl ) ) keep_event = false;
+    if( !config.PassInt("cut_n_el_passtrig", IN::el_passtrig_n ) ) keep_event = false;
 
     return keep_event;
     

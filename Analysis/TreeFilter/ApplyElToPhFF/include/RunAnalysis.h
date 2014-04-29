@@ -11,6 +11,7 @@
 #include "TH2F.h"
 #include "TTree.h"
 #include "TChain.h"
+#include "TRandom3.h"
 #include "TLorentzVector.h"
 
 // The RunModule inherits from RunModuleBase (an Abstract Base Class )
@@ -45,6 +46,7 @@ class RunModule : public virtual RunModuleBase {
         std::string nconv;
         CmdOptions options;
 
+        TRandom3 *rand;
 };
 
 // Ouput namespace 

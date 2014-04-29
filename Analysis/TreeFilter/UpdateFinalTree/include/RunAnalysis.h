@@ -27,7 +27,7 @@ class RunModule : public virtual RunModuleBase {
         // The run function must exist and be defined exactly as this
         // because it is defined in RunModuleBase 
         // in src/RunModule.cxx all the analysis is defind in this RunModule function
-        void initialize( TChain * chain, TTree *outtree, TFile *outfile, const CmdOptions & options) ;
+        void initialize( TChain * chain, TTree *outtree, TFile *outfile, const CmdOptions & options, std::vector<ModuleConfig> & config) ;
         bool execute( std::vector<ModuleConfig> & config ) ;
         void finalize( ) {};
 
@@ -60,13 +60,13 @@ namespace OUT {
     //Examples
     //Int_t              mu_pt25_n;
     //Int_t              el_pt25_n;
-    Float_t            EventWeight;
+    //Float_t            EventWeight;
     Bool_t             HasElToPhFF;
 
-    Float_t            m_1nearestToZ;
-    Float_t            m_2nearestToZ;
-    Float_t            m_3nearestToZ;
-    Float_t            m_4nearestToZ;
+    Float_t            leadPhot_leadLepDR;
+    Float_t            leadPhot_sublLepDR;
+    Float_t            sublPhot_leadLepDR;
+    Float_t            sublPhot_sublLepDR;
 };
 
 #endif

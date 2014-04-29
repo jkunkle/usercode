@@ -45,21 +45,21 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     InitINTree(chain);
     InitOUTTree( outtree );
     
-    // *************************
-    // Set defaults for added output variables
-    // *************************
-    OUT::eleD0LepVtx = 0;
-    OUT::eleDzLepVtx = 0;
-    OUT::muD0LepVtx = 0;
-    OUT::muDzLepVtx = 0;
+    //// *************************
+    //// Set defaults for added output variables
+    //// *************************
+    //OUT::eleD0LepVtx = 0;
+    //OUT::eleDzLepVtx = 0;
+    //OUT::muD0LepVtx = 0;
+    //OUT::muDzLepVtx = 0;
 
-    // *************************
-    // Declare Branches
-    // *************************
-    outtree->Branch("eleD0LepVtx", &OUT::eleD0LepVtx);
-    outtree->Branch("eleDzLepVtx", &OUT::eleDzLepVtx);
-    outtree->Branch("muD0LepVtx",  &OUT::muD0LepVtx);
-    outtree->Branch("muDzLepVtx",  &OUT::muDzLepVtx);
+    //// *************************
+    //// Declare Branches
+    //// *************************
+    //outtree->Branch("eleD0LepVtx", &OUT::eleD0LepVtx);
+    //outtree->Branch("eleDzLepVtx", &OUT::eleDzLepVtx);
+    //outtree->Branch("muD0LepVtx",  &OUT::muD0LepVtx);
+    //outtree->Branch("muDzLepVtx",  &OUT::muDzLepVtx);
   
 }
 bool RunModule::execute( std::vector<ModuleConfig> & configs ) {
@@ -144,58 +144,58 @@ void RunModule::FilterElec( ModuleConfig & config ) const {
 
 void RunModule::CalcLeptonVtxVars( ModuleConfig & /*config*/ ) const { 
 
-    OUT::eleD0LepVtx->clear();
-    OUT::eleDzLepVtx->clear();
-    OUT::muD0LepVtx->clear();
-    OUT::muDzLepVtx->clear();
+    //OUT::eleD0LepVtx->clear();
+    //OUT::eleDzLepVtx->clear();
+    //OUT::muD0LepVtx->clear();
+    //OUT::muDzLepVtx->clear();
 
-    for( int idx = 0; idx < IN::nEle; ++idx ) {
-        bool found_nearest = false;
-        unsigned nearestIdx=0;
-        float mindz = 1000;
-        for( int vidx = 0; vidx < IN::nVtxBS; ++vidx ) {
-            float dz = fabs(IN::vtxbs_z->at(vidx)-IN::eleVtx_z->at(idx));
-            if( dz < mindz ) {
-                mindz = dz;
-                nearestIdx = vidx;
-                found_nearest = true;
-            }
-        }
-        if( !found_nearest ) {
-            std::cout << "WARNING -- no nearest vertex found" << std::endl;
-        }
-        if( IN::eleD0Vtx->at(idx).size() ) {
-            OUT::eleD0LepVtx->push_back(IN::eleD0Vtx->at(idx).at(nearestIdx));
-        }
-        if( IN::eleDzVtx->at(idx).size() ) {
-            OUT::eleDzLepVtx->push_back(IN::eleDzVtx->at(idx).at(nearestIdx));
-        }
-        
-    }
+    //for( int idx = 0; idx < IN::nEle; ++idx ) {
+    //    bool found_nearest = false;
+    //    unsigned nearestIdx=0;
+    //    float mindz = 1000;
+    //    for( int vidx = 0; vidx < IN::nVtxBS; ++vidx ) {
+    //        float dz = fabs(IN::vtxbs_z->at(vidx)-IN::eleVtx_z->at(idx));
+    //        if( dz < mindz ) {
+    //            mindz = dz;
+    //            nearestIdx = vidx;
+    //            found_nearest = true;
+    //        }
+    //    }
+    //    if( !found_nearest ) {
+    //        std::cout << "WARNING -- no nearest vertex found" << std::endl;
+    //    }
+    //    if( IN::eleD0Vtx->at(idx).size() ) {
+    //        OUT::eleD0LepVtx->push_back(IN::eleD0Vtx->at(idx).at(nearestIdx));
+    //    }
+    //    if( IN::eleDzVtx->at(idx).size() ) {
+    //        OUT::eleDzLepVtx->push_back(IN::eleDzVtx->at(idx).at(nearestIdx));
+    //    }
+    //    
+    //}
 
-    for( int idx = 0; idx < IN::nMu; ++idx ) {
-        bool found_nearest = false;
-        unsigned nearestIdx=0;
-        float mindz = 1000;
-        for( int vidx = 0; vidx < IN::nVtxBS; ++vidx ) {
-            float dz = fabs(IN::vtxbs_z->at(vidx)-IN::muVtx_z->at(idx));
-            if( dz < mindz ) {
-                mindz = dz;
-                nearestIdx = vidx;
-                found_nearest = true;
-            }
-        }
-        if( !found_nearest ) {
-            std::cout << "WARNING -- no nearest vertex found" << std::endl;
-        }
-        if( IN::muD0Vtx->at(idx).size() ) {
-            OUT::muD0LepVtx->push_back(IN::muD0Vtx->at(idx).at(nearestIdx));
-        }
-        if( IN::muDzVtx->at(idx).size() ) {
-            OUT::muDzLepVtx->push_back(IN::muDzVtx->at(idx).at(nearestIdx));
-        }
-        
-    }
+    //for( int idx = 0; idx < IN::nMu; ++idx ) {
+    //    bool found_nearest = false;
+    //    unsigned nearestIdx=0;
+    //    float mindz = 1000;
+    //    for( int vidx = 0; vidx < IN::nVtxBS; ++vidx ) {
+    //        float dz = fabs(IN::vtxbs_z->at(vidx)-IN::muVtx_z->at(idx));
+    //        if( dz < mindz ) {
+    //            mindz = dz;
+    //            nearestIdx = vidx;
+    //            found_nearest = true;
+    //        }
+    //    }
+    //    if( !found_nearest ) {
+    //        std::cout << "WARNING -- no nearest vertex found" << std::endl;
+    //    }
+    //    if( IN::muD0Vtx->at(idx).size() ) {
+    //        OUT::muD0LepVtx->push_back(IN::muD0Vtx->at(idx).at(nearestIdx));
+    //    }
+    //    if( IN::muDzVtx->at(idx).size() ) {
+    //        OUT::muDzLepVtx->push_back(IN::muDzVtx->at(idx).at(nearestIdx));
+    //    }
+    //    
+    //}
 
 }
 
@@ -256,6 +256,43 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     if( !config.PassInt( "cut_nPho", nPho ) ) keep_evt = false;
     if( !config.PassInt( "cut_nLep", nLep ) ) keep_evt = false;
     if( !config.PassInt( "cut_nLepPho", nLepPho ) ) keep_evt = false;
+    
+
+    if( config.HasCut( "cut_el_ph_mindr" ) ) {
+       
+        std::vector<TLorentzVector> electrons;
+        std::vector<TLorentzVector> photons;
+
+        int nElOlap = 0;
+        int nElOlapPt5 = 0;
+        for( int eidx = 0 ; eidx < nEl; ++eidx) {
+            TLorentzVector el;
+            el.SetPtEtaPhiE( OUT::elePt->at(eidx), OUT::eleEta->at(eidx), OUT::elePhi->at(eidx), OUT::eleEn->at(eidx) );
+
+            float min_dr = 100.0;
+            for( int pidx = 0 ; pidx < nPho; ++pidx) {
+
+                TLorentzVector ph;
+                ph.SetPtEtaPhiM( OUT::phoEt->at(pidx), OUT::phoEta->at(pidx), OUT::phoPhi->at(pidx), 0.0 );
+
+                float dr = el.DeltaR(ph);
+                if( dr < min_dr  ) min_dr = dr;
+            }
+
+            if( !config.PassFloat( "cut_el_ph_mindr", min_dr ) ) {
+                nElOlap++;
+                if( el.Pt() > 5 ) {
+                    nElOlapPt5++;
+                }
+            }
+        }
+
+        if( !config.PassInt( "cut_nElOlap", nElOlap ) ) keep_evt = false;
+        if( !config.PassInt( "cut_nMunElOlap", nElOlap+nMu ) ) keep_evt = false;
+        if( !config.PassInt( "cut_nMunElOlapPt5", nElOlapPt5+nMu ) ) keep_evt = false;
+
+    }
+
 
     return keep_evt;
 

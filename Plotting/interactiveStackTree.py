@@ -23,6 +23,8 @@ p.add_argument('--mcweight',     default=None,  type=float ,        dest='mcweig
 p.add_argument('--outputDir',     default=None,  type=str ,        dest='outputDir',         help='output directory for histograms')
 p.add_argument('--readHists',     default=False,action='store_true',   dest='readHists',         help='read histograms from root files instead of trees')
 
+p.add_argument('--quiet',     default=False,action='store_true',   dest='quiet',         help='disable information messages')
+
 options = p.parse_args()
 
 import sys
@@ -33,6 +35,7 @@ import uuid
 import copy
 import imp
 import ROOT
+from array import array
 
 from SampleManager import SampleManager
 
@@ -48,7 +51,7 @@ def main() :
         print 'baseDir not found!'
         return
 
-    samples = SampleManager(options.baseDir, options.treeName, mcweight=options.mcweight, treeNameModel=options.treeNameModel, filename=options.fileName, base_path_model=options.baseDirModel, xsFile=options.xsFile, lumi=options.lumi, readHists=options.readHists)
+    samples = SampleManager(options.baseDir, options.treeName, mcweight=options.mcweight, treeNameModel=options.treeNameModel, filename=options.fileName, base_path_model=options.baseDirModel, xsFile=options.xsFile, lumi=options.lumi, readHists=options.readHists, quiet=options.quiet)
 
 
     if options.samplesConf is not None :
@@ -165,26 +168,34 @@ def WriteCurrentHists( filename='hist.root') :
         
 #---------------------------------------
 
-def MakeTAndPHists( outputfile ) :
+def MakeTAndPHists( outputfile, tagprobe_min=0, tagprobe_max=1e9, normalize=1 ) :
 
     global samples
+    vals_norm = [15, 5000]
+    ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 150, 200, 500 ]
+    ptvals_2d = [15, 20, 25, 30, 35, 40, 45, 50, 500 ]
+    etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.900000, -1.800000, -1.700000, -1.566000, -1.479000, -1.400000, -1.300000, -1.200000, -1.100000, -1.000000, -0.800000, -0.600000, -0.400000, -0.200000, 0.000000, 0.200000, 0.400000, 0.600000, 0.800000, 1.000000, 1.100000, 1.200000, 1.300000, 1.400000, 1.479000, 1.566000, 1.700000, 1.800000, 1.900000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
+    etavals_2d = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, -1.200000, -0.800000, -0.200000, 0.000000, 0.200000, 0.800000, 1.200000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
+    #etavals_2d = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, 0.000000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
 
-    print 'FIXFIXFIX'
-    samples.DoTAndP( 'probe_pt', 'probe_isPhoton && probe_pt > 15', '!probe_isPhoton && probe_pt > 15', 'Zgammastar', [15, 5000 ], colors=[ROOT.kBlack], normalize=0 )
+    samples.DoTAndP( 'probe_pt', 'probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), '!probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), 'DYJetsToLL', vals_norm, colors=[ROOT.kBlack], normalize=0 )
     hist_norm = samples.get_samples(isRatio=True)[0].hist.Clone('norm')
 
-    samples.DoTAndP( 'probe_eta', 'probe_isPhoton && probe_pt > 15', '!probe_isPhoton && probe_pt > 15', 'Zgammastar', [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.900000, -1.800000, -1.700000, -1.566000, -1.479000, -1.400000, -1.300000, -1.200000, -1.100000, -1.000000, -0.800000, -0.600000, -0.400000, -0.200000, 0.000000, 0.200000, 0.400000, 0.600000, 0.800000, 1.000000, 1.100000, 1.200000, 1.300000, 1.400000, 1.479000, 1.566000, 1.700000, 1.800000, 1.900000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5], colors=[ROOT.kBlack], normalize=1 )
+    samples.DoTAndP( 'probe_eta', 'probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), '!probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), 'DYJetsToLL',etavals , colors=[ROOT.kBlack], normalize=normalize )
     hist_eta = samples.get_samples(isRatio=True)[0].hist.Clone('eta')
 
-    samples.DoTAndP( 'probe_pt', 'probe_isPhoton && probe_pt > 15', '!probe_isPhoton && probe_pt > 15', 'Zgammastar', [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 150, 200, 500 ], colors=[ROOT.kBlack], normalize=1 )
+    samples.DoTAndP( 'probe_pt', 'probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), '!probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), 'DYJetsToLL', ptvals, colors=[ROOT.kBlack], normalize=normalize )
     hist_pt = samples.get_samples(isRatio=True)[0].hist.Clone('pt')
 
+    samples.DoTAndP( 'probe_pt:probe_eta', 'probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), '!probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), 'DYJetsToLL', (etavals_2d,ptvals_2d), colors=[ROOT.kBlack], normalize=0 )
+    hist_pt_eta = samples.get_samples(isRatio=True)[0].hist.Clone('pteta')
 
     file = ROOT.TFile.Open( outputfile, 'RECREATE' )
 
     hist_eta.Write()
     hist_pt.Write()
     hist_norm.Write()
+    hist_pt_eta.Write()
 
     file.Close()
 
@@ -221,9 +232,56 @@ def MakeTAndPPlots( ) :
     DoTAndP( 'probe_eta', 'EventWeight * ( probe_passTight && probe_isPhot && probe_nConvTrk==2 && passcut_mll && sqrt(2*met_et*tag_pt*( 1 - cos( met_phi-tag_phi) ) ) < 50 )', 'EventWeight * ( tag_isElec && !probe_isPhot && passcut_mll && sqrt(2*met_et*tag_pt*( 1 - cos( met_phi-tag_phi) ) ) < 50 )',  ['DataMCSubtracted', 'Z + Jets'], (50, -2.5, 2.5 ), xlabel='Electron #eta', ylabel='Electron to photon fake factor', label='2 track conversion photons' )
     SaveStack('probe_eta_electron_to_photon_ff_mtcut_mcsub_2conv', 'ratiocan')
 
-
-
 #---------------------------------------
+def MakePhotonCompPlots( ) :
+
+    global samples
+
+    samples.CompareSelections('ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2 , ['Wgamma','Inclusive W'], (100, 0, 0.1), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.00001, ymax = 0.5, logy=1, xlabel='#sigma i#eta i#eta', extra_label='Endcap photons', ylabel='Normalized Events / 0.001'  )
+    SaveStack('ph_sigmaIEIE_EE_comp_wg_wjets', 'base')
+
+    samples.CompareSelections('ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2 , ['Wgamma','Inclusive W'], (100, 0, 0.03), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.00001, ymax = 0.8, logy=1, xlabel='#sigma i#eta i#eta', extra_label='Barrel photons', ylabel='Normalized Events / 0.0003'  ) 
+    SaveStack('ph_sigmaIEIE_EB_comp_wg_wjets', 'base')
+
+    samples.CompareSelections('ph_chIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2 , ['Wgamma','Inclusive W'], (100, 0, 100), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected charged hadron isolation [GeV]', extra_label='Barrel photons', ylabel='Normalized Events / GeV'  )
+    SaveStack('ph_chIsoCorr_EB_comp_wg_wjets', 'base')
+
+    samples.CompareSelections('ph_chIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2 , ['Wgamma','Inclusive W'], (100, 0, 100), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected charged hadron isolation [GeV]', extra_label='Endcap photons', ylabel='Normalized Events / GeV'  )
+    SaveStack('ph_chIsoCorr_EE_comp_wg_wjets', 'base')
+
+    samples.CompareSelections('ph_neuIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2 , ['Wgamma', 'Inclusive W'], (80, -20, 20), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected neutral hadron isolation [GeV]', extra_label='Endcap photons', ylabel='Normalized Events / 0.5 GeV'  )
+    SaveStack('ph_neuIsoCorr_EE_comp_wg_wjets', 'base')
+
+    samples.CompareSelections('ph_neuIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2 , ['Wgamma', 'Inclusive W'], (80, -20, 20), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected neutral hadron isolation [GeV]', extra_label='Barrel photons', ylabel='Normalized Events / 0.5 GeV'  )
+    SaveStack('ph_neuIsoCorr_EB_comp_wg_wjets', 'base')
+
+    samples.CompareSelections('ph_phoIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2 , ['Wgamma', 'Inclusive W'], (100, -5, 45), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected photon isolation [GeV]', extra_label='Endcap photons', ylabel='Normalized Events / 0.5 GeV'  )
+    SaveStack('ph_phoIsoCorr_EE_comp_wg_wjets', 'base')
+
+    samples.CompareSelections('ph_phoIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2 , ['Wgamma', 'Inclusive W'], (100, -5, 45), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected photon isolation [GeV]', extra_label='Barrel photons', ylabel='Normalized Events / 0.5 GeV'  )
+    SaveStack('ph_phoIsoCorr_EB_comp_wg_wjets', 'base')
+
+    samples.MakeRocCurve(['ph_sigmaIEIE[0]', 'ph_passSIEIEMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, 0, 0.1), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['#sigma i#eta i#eta ROC curve', 'Medium working point'], extra_label='Endcap Photons', extra_label_loc="BottomLeft" )
+    SaveStack('ph_sigmaIEIE_EE_roc_comp_medium', 'base')
+    samples.MakeRocCurve(['ph_sigmaIEIE[0]', 'ph_passSIEIEMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, 0, 0.03), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['#sigma i#eta i#eta ROC curve', 'Medium working point'], extra_label='Barrel Photons', extra_label_loc="BottomLeft" )
+    SaveStack('ph_sigmaIEIE_EB_roc_comp_medium', 'base')
+
+    samples.MakeRocCurve(['ph_chIsoCorr[0]', 'ph_passChIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, 0, 100), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr ch iso ROC curve', 'Medium working point'], extra_label='Endcap Photons', extra_label_loc="BottomLeft" )
+    SaveStack('ph_chIsoCorr_EE_roc_comp_medium', 'base')
+    samples.MakeRocCurve(['ph_chIsoCorr[0]', 'ph_passChIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, 0, 100), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr ch iso ROC curve', 'Medium working point'], extra_label='Barrel Photons', extra_label_loc="BottomLeft" )
+    SaveStack('ph_chIsoCorr_EB_roc_comp_medium', 'base')
+
+    samples.MakeRocCurve(['ph_neuIsoCorr[0]', 'ph_passNeuIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, -20, 20), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr neu iso ROC curve', 'Medium working point'], extra_label='Endcap Photons', extra_label_loc="BottomLeft" )
+    SaveStack('ph_neuIsoCorr_EE_roc_comp_medium', 'base')
+    samples.MakeRocCurve(['ph_neuIsoCorr[0]', 'ph_passNeuIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, -20, 20), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr neu iso ROC curve', 'Medium working point'], extra_label='Barrel Photons', extra_label_loc="BottomLeft" )
+    SaveStack('ph_neuIsoCorr_EB_roc_comp_medium', 'base')
+
+    samples.MakeRocCurve(['ph_phoIsoCorr[0]', 'ph_passPhoIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, -5, 45), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr pho iso ROC curve', 'Medium working point'], extra_label='Endcap Photons', extra_label_loc="BottomLeft" )
+    SaveStack('ph_phoIsoCorr_EE_roc_comp_medium', 'base')
+    samples.MakeRocCurve(['ph_phoIsoCorr[0]', 'ph_passPhoIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, -5, 45), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr pho iso ROC curve', 'Medium working point'], extra_label='Barrel Photons', extra_label_loc="BottomLeft" )
+    SaveStack('ph_phoIsoCorr_EB_roc_comp_medium', 'base')
+
+#--- ------------------------------------
 def MakeZHCutFlowTables( channel='EE' ) :
 
     global samples
@@ -276,6 +334,98 @@ def MakeQCDCRPlots() :
 
     #samples.Draw('ph_corriso_30/1000.0', 'EventWeight * ( ph_n == 1 && ph_pt > 30.0 && ph_nConvTrk == 0  && ph_pass_tight ) ', ( 64, -2, 30 ), xlabel='Photon Calorimeter Isolation [GeV]', ylabel='Events / 0.5 GeV', noAtlasLabel=True, doratio=0, logy=True, ymax=1e13, ymin=100 )
     #SaveStack('ph_corriso_30_tightnoiso', 'base')
+
+
+def MakeTAndPCompPlots( ) :
+    global samples
+    #ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 150, 500 ]
+    #etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.900000, -1.800000, -1.700000, -1.566000, -1.479000, -1.400000, -1.300000, -1.200000, -1.100000, -1.000000, -0.800000, -0.600000, -0.400000, -0.200000, 0.000000, 0.200000, 0.400000, 0.600000, 0.800000, 1.000000, 1.100000, 1.200000, 1.300000, 1.400000, 1.479000, 1.566000, 1.700000, 1.800000, 1.900000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
+    ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 500 ]
+    #etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, 0.000000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
+    etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, -1.200000, -0.800000, -0.200000, 0.000000, 0.200000, 0.800000, 1.200000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
+    for pidx, pmin in enumerate(ptvals[:-1]) :
+        pmax = ptvals[pidx+1]
+        for eidx, emin in enumerate(etavals[:-1]) :
+            emax = etavals[eidx+1]
+            eta_precision = 1
+            eta_precisionm = 1
+            if math.fabs(int(emin*10)-emin) != 0 : 
+                eta_precision = 3
+            if math.fabs(int(emax*10)-emax) != 0 :
+                eta_precisionm=3
+            samples.CompareSelections('m_tagprobe', ['!probe_isPhoton && probe_pt > %d && probe_pt < %d && probe_eta > %f && probe_eta < %f ' %( pmin, pmax, emin, emax), 'probe_isPhoton && probe_pt > %d && probe_pt < %d && probe_eta > %f && probe_eta < %f ' %( pmin, pmax, emin, emax)], ['DYJetsToLL', 'DYJetsToLL'], (100, 0, 500), colors=[ROOT.kBlack, ROOT.kRed], doratio=0, logy=1, legend_entries=['Probe electrons', 'Probe photons'], ymax_scale=10, xlabel='M_{tag, probe} [GeV]', extra_label='#splitline{%d < p_{T} < %d}{%.*f < #eta < %.*f}' %( pmin, pmax, eta_precision, emin, eta_precisionm, emax ) )
+            SaveStack( 'm_tagprobe_pt_%d_%d_eta_%f_%f' %( pmin, pmax, emin, emax), 'base' )
+          
+def MakeTAndPCompPlotsFull( ) :
+    global samples
+
+    #ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 150, 500 ]
+    #etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.900000, -1.800000, -1.700000, -1.566000, -1.479000, -1.400000, -1.300000, -1.200000, -1.100000, -1.000000, -0.800000, -0.600000, -0.400000, -0.200000, 0.000000, 0.200000, 0.400000, 0.600000, 0.800000, 1.000000, 1.100000, 1.200000, 1.300000, 1.400000, 1.479000, 1.566000, 1.700000, 1.800000, 1.900000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
+    ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 500 ]
+    #ptvals = [25, 30, 35, 40, 45, 50, 500 ]
+    etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, -1.200000, -0.800000, -0.200000, 0.000000, 0.200000, 0.800000, 1.200000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
+
+    for pidx, pmin in enumerate(ptvals[:-1]) :
+        pmax = ptvals[pidx+1]
+        for eidx, emin in enumerate(etavals[:-1]) :
+            emax = etavals[eidx+1]
+            eta_precision = 1
+            eta_precisionm = 1
+            if math.fabs(int(emin*10)-emin) != 0 : 
+                eta_precision = 3
+            if math.fabs(int(emax*10)-emax) != 0 :
+                eta_precisionm=3
+
+            samples.Draw('m_tagprobe', '!probe_isPhoton && probe_pt > %d && probe_pt < %d && probe_eta > %f && probe_eta < %f ' %( pmin, pmax, emin, emax),  (100, 0, 200), ymin=10, ymax_scale=10, xlabel='M_{tag, probe} [GeV]', extra_label='#splitline{Probe Electrons}{#splitline{%d < p_{T} < %d}{%.*f < #eta < %.*f}}' %( pmin, pmax, eta_precision, emin, eta_precisionm, emax), extra_label_loc='TopLeft', logy=1, noAtlasLabel=True  )
+            SaveStack( 'm_tagprobe_probeEl_pt_%d_%d_eta_%f_%f' %( pmin, pmax, emin, emax), 'base' )
+
+            samples.Draw('m_tagprobe', 'probe_isPhoton && probe_pt > %d && probe_pt < %d && probe_eta > %f && probe_eta < %f ' %( pmin, pmax, emin, emax),  (100, 0, 200), ymin=10, ymax_scale=10, xlabel='M_{tag, probe} [GeV]', extra_label='#splitline{Probe Photons}{#splitline{%d < p_{T} < %d}{%.*f < #eta < %.*f}}' %( pmin, pmax, eta_precision, emin, eta_precisionm, emax ), extra_label_loc='TopLeft', logy=1, noAtlasLabel=True )
+            SaveStack( 'm_tagprobe_probePh_pt_%d_%d_eta_%f_%f' %( pmin, pmax, emin, emax), 'base' )
+          
+def FitTAndPComp( ) :
+    global samples
+
+    #ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 500 ]
+    ptvals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, -1.200000, -0.800000, -0.200000, 0.000000, 0.200000, 0.800000, 1.200000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
+    meanhist = ROOT.TH1F( 'mean', '', len(ptvals)-1, array('f', ptvals))
+    widthhist = ROOT.TH1F( 'width', '', len(ptvals)-1, array('f', ptvals))
+    for pidx, pmin in enumerate(ptvals[:-1]) :
+        pmax = ptvals[pidx+1]
+
+        #samples.CompareSelections('m_lepph1', ['EventWeight * (el_n==1 && ph_n==1 && ph_pt[0] > %d && ph_pt[0] < %d)' %(pmin, pmax)]*2, ['DYJetsToLL', 'DYJetsToLLFF'], (500, 0, 500), doratio=0 )
+        samples.CompareSelections('m_lepph1', ['EventWeight * (el_n==1 && ph_n==1 && ph_eta[0] > %f && ph_eta[0] < %f)' %(pmin, pmax)]*2, ['DYJetsToLL', 'DYJetsToLLFF'], (500, 0, 500), doratio=0 )
+
+        hist_lg = samples.get_samples(name='DYJetsToLL0')[0].hist
+        hist_ff = samples.get_samples(name='DYJetsToLLFF1')[0].hist
+
+        func = ROOT.TF1( 'gaus', 'gaus(0)', 86, 96 )
+        func.SetParameter(0, hist_lg.GetBinContent( hist_lg.FindBin( 91) ) )
+        func.SetParameter(1, 91)
+        func.SetParameter(2, 3)
+
+        hist_lg.Fit( func, 'R')
+        mean_lg = func.GetParameter(1)
+        width_lg = func.GetParameter(2)
+
+        func.SetParameter(0, hist_ff.GetBinContent( hist_ff.FindBin( 91) ) )
+        func.SetParameter(1, 91)
+        func.SetParameter(2, 3)
+        hist_ff.Fit( func, 'R' )
+        mean_ff = func.GetParameter(1)
+        width_ff = func.GetParameter(2)
+
+        meanhist.SetBinContent( pidx+1, mean_lg - mean_ff )
+        widthhist.SetBinContent( pidx+1, width_lg - width_ff )
+
+        print 'Pt range = %d - %d' %( pmin, pmax )
+        print 'Delta mean = %f' %(mean_lg - mean_ff)
+        print 'Delta width = %f' %(width_lg - width_ff)
+
+    meanhist.Draw()
+    raw_input('continue')
+    widthhist.Draw()
+    raw_input('continue')
+
 
 
 #

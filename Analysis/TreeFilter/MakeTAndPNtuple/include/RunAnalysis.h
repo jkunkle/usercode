@@ -59,6 +59,7 @@ namespace OUT {
     float              probe_phi;
     Bool_t             probe_isPhoton;
     int                probe_nConvTrk;
+    Bool_t             probe_passtrig;
     float              m_tagprobe;
     float              m_tagprobe_sceta;
 

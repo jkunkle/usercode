@@ -217,6 +217,19 @@ namespace OUT {
     std::vector<float>  *ph_chIsoCorr;
     std::vector<float>  *ph_neuIsoCorr;
     std::vector<float>  *ph_phoIsoCorr;
+    std::vector<float>  *ph_SCRChIso;
+    std::vector<float>  *ph_SCRPhoIso;
+    std::vector<float>  *ph_SCRNeuIso;
+    std::vector<float>  *ph_SCRChIso04;
+    std::vector<float>  *ph_SCRPhoIso04;
+    std::vector<float>  *ph_SCRNeuIso04;
+    std::vector<float>  *ph_RandConeChIso;
+    std::vector<float>  *ph_RandConePhoIso;
+    std::vector<float>  *ph_RandConeNeuIso;
+    std::vector<float>  *ph_RandConeChIso04;
+    std::vector<float>  *ph_RandConePhoIso04;
+    std::vector<float>  *ph_RandConeNeuIso04;
+
     std::vector<Bool_t> *ph_eleVeto;
     std::vector<Bool_t> *ph_hasPixSeed;
     std::vector<float>  *ph_drToTrk;
@@ -233,6 +246,9 @@ namespace OUT {
     std::vector<Bool_t> *ph_passMedium;
     std::vector<Bool_t> *ph_passLoose;
     std::vector<Bool_t> *ph_passLooseNoSIEIE;
+    std::vector<Bool_t> *ph_passHOverELoose;
+    std::vector<Bool_t> *ph_passHOverEMedium;
+    std::vector<Bool_t> *ph_passHOverETight;
     std::vector<Bool_t> *ph_passSIEIELoose;
     std::vector<Bool_t> *ph_passSIEIEMedium;
     std::vector<Bool_t> *ph_passSIEIETight;

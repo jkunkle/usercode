@@ -1,20 +1,21 @@
 import os
 
-base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoEleVetoNewVar_2014_04_28'
+base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNom_2014_06_16'
 jobs = [
-        #(base_data, 'job_muon_2012a_Jan22rereco', 50),
-        #(base_data, 'job_muon_2012b_Jan22rereco', 100),
-        #(base_data, 'job_muon_2012c_Jan22rereco', 200),
-        #(base_data, 'job_muon_2012d_Jan22rereco', 200),
-        #(base_data, 'job_electron_2012a_Jan22rereco', 100),
-        #(base_data, 'job_electron_2012b_Jan22rereco', 200),
-        #(base_data, 'job_electron_2012c_Jan2012rereco', 400),
-        #(base_data, 'job_electron_2012d_Jan22rereco', 400),
+        #(base, 'job_muon_2012a_Jan22rereco'),
+        #(base, 'job_muon_2012b_Jan22rereco'),
+        #(base, 'job_muon_2012c_Jan22rereco'),
+        #(base, 'job_muon_2012d_Jan22rereco'),
+        #(base, 'job_electron_2012a_Jan22rereco'),
+        #(base, 'job_electron_2012b_Jan22rereco'),
+        #(base, 'job_electron_2012c_Jan2012rereco'),
+        #(base, 'job_electron_2012d_Jan22rereco'),
         #(base_mc, 'job_summer12_DiPhotonBorn_Pt-10To25', 10),
         #(base_mc2, 'job_summer12_DYJetsToLL', 50 ),
         #(base_mc, 'job_summer12_Wjets', 100),
         #(base_mc, 'job_summer12_Wg', 50),
-        (base, 'job_summer12_Zg'),
+        #(base, 'job_summer12_DYJetsToLL'),
+        #(base, 'job_summer12_Zg'),
         (base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_WAA_ISR'),
         #(base_mc, 'job_summer12_ttjets_1l', 50),
@@ -61,9 +62,10 @@ jobs = [
 
 ]
 
-output = 'LepGammaNoEleVetoNewVarForMVA_2014_04_29'
+output = 'LepGammaGammaForZMva1EleVeto_2014_06_19'
 
-command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s/ --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s/ --module scripts/Conf.py  --treeName ggNtuplizer/EventTree --nFilesPerJob 1 --nproc %(nproc)d'
+#command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s/ --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s/ --module scripts/Conf.py  --treeName ggNtuplizer/EventTree --nFilesPerJob 1 --nproc %(nproc)d'
+command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s/ --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s/ --module scripts/Conf.py  --treeName ggNtuplizer/EventTree '
 
 nProc = 8
 

@@ -22,6 +22,7 @@ def config_analysis( alg_list ) :
     alg_list.append( build_lep )
 
     build_phot = Filter( 'BuildPhoton' )
+    build_phot.cut_motherPID = ' < 25 '
     #build_phot.cut_pt  = ' > 15'
     #build_phot.cut_abseta = ' < 2.5'
 

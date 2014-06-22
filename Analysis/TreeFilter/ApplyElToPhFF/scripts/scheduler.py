@@ -1,6 +1,6 @@
 import os
 #base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaPt25_2013_12_05/'
-base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/DiLeptonLoosePhLowPtTrigMatch_2014_02_07'
+base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoEleVeto_2014_04_27'
 output_base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 from argparse import ArgumentParser
 
@@ -33,7 +33,7 @@ jobs_data = [
         #(base, 'job_muon_2012d_PRv11'),
 ]
 jobs_mc = [
-        (base, 'job_summer12_DYJetsToLL'),
+        #(base, 'job_summer12_DYJetsToLL'),
         #(base, 'job_summer12_LNuGG_FSR'),
         #(base, 'job_summer12_LNuGG_ISR'),
         #(base, 'job_summer12_WJetsToLNu1'),
@@ -53,7 +53,7 @@ jobs_mc = [
         #(base, 'job_summer12_ZZ_4e'),
         #(base, 'job_summer12_ZZ_4mu'),
         #(base, 'job_summer12_ZZ_4tau'),
-        #(base, 'job_summer12_Zg'),
+        (base, 'job_summer12_Zg'),
         #(base, 'job_summer12_gjet_pt20to40_doubleEM'),
         #(base, 'job_summer12_gjet_pt40_doubleEM'),
         #(base, 'job_summer12_t_s'),
@@ -75,9 +75,9 @@ jobs_mc = [
 #output_name = 'LepGamma_2013_11_04'
 
 top_configs = [ { 
-                  'module_mc'   : 'Conf.py',
-                  'module_data' : 'Conf.py',
-                  'output_name' : 'DiLeptonFFUpdateEta1D_2014_02_10/',
+                  'module_mc'   : 'ConfBasicConv.py',
+                  'module_data' : 'ConfBasicConv.py',
+                  'output_name' : 'LepGammaElToPhConv_2014_05_02',
                   'tag'         : 'll',
                 },
 ]
@@ -91,8 +91,8 @@ for config in top_configs :
     for base, job in jobs_data :
     
         command = command_base %{ 'base' : base, 'job' : job, 'output_base' : output_base, 'output_name' : config['output_name'], 'module' : config['module_data'], 'tag' : config['tag']  }
-        if not first :
-            command += ' --noCompile '
+        #if not first :
+        #    command += ' --noCompile '
 
         if options.test :
             print command
@@ -103,8 +103,8 @@ for config in top_configs :
     for base, job in jobs_mc :
     
         command = command_base %{ 'base' : base, 'job' : job, 'output_base' : output_base, 'output_name' : config['output_name'], 'module' : config['module_mc'], 'tag' : config['tag']  }
-        if not first :
-            command += ' --noCompile '
+        #if not first :
+        #    command += ' --noCompile '
     
         if options.test :
             print command
@@ -112,5 +112,3 @@ for config in top_configs :
             os.system(command)
         first = False
 
-for config in top_configs :
-    print 'Wrote output to %s/%s' %( output_base, config['output_name'] )

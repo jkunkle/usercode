@@ -87,7 +87,7 @@ def ListBranches( key=None ) :
 
 
 #---------------------------------------
-def SaveStack( filename, canname=None  ) :
+def SaveStack( filename, canname=None, inDirs=''  ) :
     """ Save current plot to filename.  Must supply --outputDir  """
 
     global samples
@@ -96,14 +96,13 @@ def SaveStack( filename, canname=None  ) :
         print 'No output directory provided.  Will not save.'
     else :
 
-        if not os.path.isdir( options.outputDir ) :
-            print 'Creating directory %s' %options.outputDir
-            os.mkdir(options.outputDir)
+        outDir = options.outputDir + '/' + inDirs
+        if not os.path.isdir( outDir ) :
+            print 'Creating directory %s' %outDir
+            os.makedirs(outDir)
 
-        #histnamepdf = options.outputDir + '/' + filename.split('.')[0]+'.pdf'
-        #histnameeps = options.outputDir + '/' + filename.split('.')[0]+'.eps'
-        histnamepdf = options.outputDir + '/' + filename+'.pdf'
-        histnameeps = options.outputDir + '/' + filename+'.eps'
+        histnamepdf = outDir + '/' + filename+'.pdf'
+        histnameeps = outDir + '/' + filename+'.eps'
 
         if len( samples.curr_canvases ) == 0 :
             print 'No canvases to save'
@@ -127,6 +126,101 @@ def SaveStack( filename, canname=None  ) :
             selkey = keys[selidx]
             samples.curr_canvases[selkey].SaveAs(histnamepdf)
             samples.curr_canvases[selkey].SaveAs(histnameeps)
+
+#---------------------------------------
+def DumpStack( txtname=None ) :
+
+    global samples
+
+    stack_entries = {}
+    signal_entries = {}
+
+    samp_list = samples.get_samples(name=samples.stack_order) + samples.get_samples(isData=True) + samples.get_samples(isSignal=True)
+
+    for samp in samp_list :
+        if samp.hist == None :
+            continue
+        err = ROOT.Double()
+        integral = samp.hist.IntegralAndError( 1, samp.hist.GetNbinsX(), err )
+        if samp.isSignal : 
+            signal_entries[samp.name] = (integral, err*err)
+        else :
+            stack_entries[samp.name] = (integral, err*err )
+    
+    order = list(samples.stack_order)
+    if 'Data' in stack_entries :
+        order.insert(0, 'Data')
+
+    bkg_sum = 0.0
+    bkg_err = 0.9
+    for name, vals in stack_entries.iteritems() :
+        if name != 'Data' :
+            bkg_sum += vals[0]
+            bkg_err += vals[1]
+
+
+    lines = []
+    for nm in order :
+        lines.append('%s : \t %f +- %f' %( nm, stack_entries[nm][0], math.sqrt(stack_entries[nm][1]) ))
+
+    for sig in signal_entries :
+        lines.append('%s : \t %f +- %f' %( sig, signal_entries[sig][0], math.sqrt(signal_entries[sig][1]) ))
+
+    lines.append('MC Sum : \t %f +- %f' %(bkg_sum, math.sqrt(bkg_err)))
+
+    for sig in signal_entries :
+        lines.append('S/sqrt(S+B) (%s/All Bkg) : %f' %( sig, signal_entries[sig][0]/math.sqrt(signal_entries[sig][0] + bkg_sum ) ))
+
+    for sig in signal_entries :
+        for st in stack_entries :
+            den = math.sqrt(signal_entries[sig][0] + stack_entries[st][0] )
+            if den != 0 :
+                lines.append('S/sqrt(S+B) (%s/%s) : %f' %( sig, st,  signal_entries[sig][0]/ den ))
+            else :
+                lines.append('S/sqrt(S+B) (%s/%s) : NAN' %( sig, st  ))
+
+    for line in lines :
+        print line
+
+    if txtname is not None and options.outputDir is not None  :
+
+        if txtname.count('.txt') == 0 :
+            txtname += '.txt'
+        txtfile = open( options.outputDir + '/' + txtname, 'w')
+        for line in lines :
+            txtfile.write( line + '\n' )
+        txtfile.close()
+
+    return
+
+#---------------------------------------
+def DumpRoc( txtname=None, inDirs='' ) :
+
+    global samples
+
+    output = []
+    for title, entries in samples.transient_data.iteritems() :
+        output.append( title )
+        print output[-1]
+        for entry in entries :
+            output.append('Cutval=%(CutVal)f, nSig=%(nSig)f, nBkg=%(nBkg)f, sigEff=%(sigEff)f, bkgEff=%(bkgEff)f, S/sqrt(S+B)=%(SoverRootSplusB)f ' %entry )
+            print output[-1]
+
+    if txtname is not None and options.outputDir is not None  :
+
+        outdir = options.outputDir + '/' + inDirs
+
+        if not os.path.isdir( outdir ) :
+            print 'Making directory : ', outdir
+            os.makedirs( outdir )
+
+        if txtname.count('.txt') == 0 :
+            txtname += '.txt'
+
+        txtfile = open( outdir + '/' + txtname, 'w' )
+        for out in output :
+            txtfile.write( out + '\n' )
+        txtfile.close()
 
 #---------------------------------------
 # User functions
@@ -167,70 +261,372 @@ def WriteCurrentHists( filename='hist.root') :
     file.Close()
         
 #---------------------------------------
+#graveyard.py
+#def MakeTAndPHists( outputfile, tagprobe_min=0, tagprobe_max=1e9, normalize=1 ) :
+#def MakeTAndPPlots( ) :
+#---------------------------------------
+def MakeWggEventPlots( save=False ) :
 
-def MakeTAndPHists( outputfile, tagprobe_min=0, tagprobe_max=1e9, normalize=1 ) :
+    subdir='WggEventPlots'
 
-    global samples
-    vals_norm = [15, 5000]
-    ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 150, 200, 500 ]
-    ptvals_2d = [15, 20, 25, 30, 35, 40, 45, 50, 500 ]
-    etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.900000, -1.800000, -1.700000, -1.566000, -1.479000, -1.400000, -1.300000, -1.200000, -1.100000, -1.000000, -0.800000, -0.600000, -0.400000, -0.200000, 0.000000, 0.200000, 0.400000, 0.600000, 0.800000, 1.000000, 1.100000, 1.200000, 1.300000, 1.400000, 1.479000, 1.566000, 1.700000, 1.800000, 1.900000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
-    etavals_2d = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, -1.200000, -0.800000, -0.200000, 0.000000, 0.200000, 0.800000, 1.200000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
-    #etavals_2d = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, 0.000000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
+    if save and options.outputDir is None :
+        print 'Must provide an outputDir to save plots'
+        save=False
 
-    samples.DoTAndP( 'probe_pt', 'probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), '!probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), 'DYJetsToLL', vals_norm, colors=[ROOT.kBlack], normalize=0 )
-    hist_norm = samples.get_samples(isRatio=True)[0].hist.Clone('norm')
+    #ph_cuts = ' && ph_IsEB[0] && ph_IsEB[1]'
+    ph_cuts = ''
 
-    samples.DoTAndP( 'probe_eta', 'probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), '!probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), 'DYJetsToLL',etavals , colors=[ROOT.kBlack], normalize=normalize )
-    hist_eta = samples.get_samples(isRatio=True)[0].hist.Clone('eta')
+    samples.activate_sample( 'ISR')
+    samples.activate_sample( 'FSR')
+    samples.deactivate_sample( 'Wgg')
 
-    samples.DoTAndP( 'probe_pt', 'probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), '!probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), 'DYJetsToLL', ptvals, colors=[ROOT.kBlack], normalize=normalize )
-    hist_pt = samples.get_samples(isRatio=True)[0].hist.Clone('pt')
+    samples.Draw('leadPhot_leadLepDR', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && el_n==0 %s )' %ph_cuts, (25, 0, 5 ) , ymin=0.1, ymax=10000, logy=1, xlabel='#Delta R( l, lead #gamma)', ylabel='Events / 0.2', labelStyle='fancy', extra_label='Muon Channel', extra_label_loc=(0.73, 0.87), legendConfig=samples.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double' ) )
 
-    samples.DoTAndP( 'probe_pt:probe_eta', 'probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), '!probe_isPhoton && probe_pt > 15 && m_tagprobe > %d && m_tagprobe < %d' %(tagprobe_min, tagprobe_max), 'DYJetsToLL', (etavals_2d,ptvals_2d), colors=[ROOT.kBlack], normalize=0 )
-    hist_pt_eta = samples.get_samples(isRatio=True)[0].hist.Clone('pteta')
+    if save :
+        name = 'leadPhot_leadLepDR__mgg__noLepPhDRCuts__splitWggISRFSR'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
 
-    file = ROOT.TFile.Open( outputfile, 'RECREATE' )
+    samples.Draw('sublPhot_leadLepDR', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && el_n==0  %s )' %ph_cuts, (25, 0, 5 ) , ymin=0.1, ymax=10000, logy=1, xlabel='#Delta R( l, sublead #gamma)', ylabel='Events / 0.2', labelStyle='fancy', extra_label='Muon Channel', extra_label_loc=(0.73, 0.87), legendConfig=samples.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double'  ) )
 
-    hist_eta.Write()
-    hist_pt.Write()
-    hist_norm.Write()
-    hist_pt_eta.Write()
+    if save :
+        name = 'sublPhot_leadLepDR__mgg__noLepPhDRCuts__splitWggISRFSR'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
 
-    file.Close()
+    samples.Draw('sublPhot_leadLepDR', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && mu_n==0  %s )' %ph_cuts, (25, 0, 5 ) , ymin=0.1, ymax=50000, logy=1, xlabel='#Delta R( l, sublead #gamma)', ylabel='Events / 0.2', labelStyle='fancy', extra_label='Electron Channel', extra_label_loc=(0.7, 0.87), legendConfig=samples.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double'  )  )
+
+    if save :
+        name = 'sublPhot_leadLepDR__egg__noLepPhDRCuts__splitWggISRFSR'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
+
+    samples.Draw('leadPhot_leadLepDR', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && mu_n==0  %s )' %ph_cuts, (25, 0, 5 ) , ymin=0.1, ymax=80000, logy=1, xlabel='#Delta R( l, lead #gamma)', ylabel='Events / 0.2', labelStyle='fancy', extra_label='Electron Channel', extra_label_loc=(0.7, 0.87), legendConfig=samples.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double'  )  )
+
+    if save :
+        name = 'leadPhot_leadLepDR__egg__noLepPhDRCuts__splitWggISRFSR'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
+
+
+    samples.deactivate_sample( 'ISR')
+    samples.deactivate_sample( 'FSR')
+    samples.activate_sample( 'Wgg')
+
+    samples.Draw('m_lepphph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %ph_cuts, (60, 0, 300 ) , logy=0,  xlabel='M_{l,#gamma,#gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86), legendConfig=samples.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+
+    if save :
+        name = 'm_lepphph__egg__baselineCuts'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
+
+    samples.Draw('m_lepphph', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %ph_cuts, (60, 0, 300 ) , logy=0,  xlabel='M_{l,#gamma,#gamma} [GeV]', labelStyle='fancy', extra_label='Muon Channel',   extra_label_loc=(0.3, 0.86) , legendConfig=samples.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+
+
+    if save :
+        name = 'm_lepphph__mgg__baselineCuts'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
+
+    samples.Draw('m_lepph1', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %ph_cuts, (40, 0, 200 ) , logy=0,  xlabel='M_{l, lead #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86), legendTranslateX=0.05 , legendConfig=samples.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+
+    if save :
+        name = 'm_lepph1__egg__baselineCuts'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
+
+    samples.Draw('m_lepph1', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %ph_cuts, (40, 0, 200 ) , logy=0,  xlabel='M_{l, lead #gamma} [GeV]', labelStyle='fancy', extra_label='Muon Channel',   extra_label_loc=(0.3, 0.86) , ymin=0, ymax=55, legendConfig=samples.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+
+
+    if save :
+        name = 'm_lepph1__mgg__baselineCuts'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
+
+    samples.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %ph_cuts, (40, 0, 200 ) , logy=0,  xlabel='M_{l, sublead #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86) , legendConfig=samples.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+
+    if save :
+        name = 'm_lepph2__egg__baselineCuts'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
+
+    samples.Draw('m_lepph2', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %ph_cuts, (40, 0, 200 ) , logy=0,  xlabel='M_{l, sublead #gamma} [GeV]', labelStyle='fancy', extra_label='Muon Channel',   extra_label_loc=(0.3, 0.86) , legendConfig=samples.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+
+
+    if save :
+        name = 'm_lepph2__mgg__baselineCuts'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
+
+    samples.Draw('m_phph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %ph_cuts, (50, 0, 200 ) , logy=1,  xlabel='M_{#gamma, #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',  extra_label_loc=(0.3, 0.86),  legendWiden=1.2, ymin=0.1, ymax=1000 , legendConfig=samples.config_legend(legendLoc=None,legendCompress=1.2, ) )
+
+    if save :
+        name = 'm_phph__egg__baselineCuts'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
+
+    samples.Draw('m_phph', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %ph_cuts, (50, 0, 200 ) , logy=1,  xlabel='M_{#gamma, #gamma} [GeV]', labelStyle='fancy', extra_label='Muon Channel',  extra_label_loc=(0.3, 0.86),  legendWiden=1.2 , ymin=0.1, ymax=1000 , legendConfig=samples.config_legend(legendLoc=None,legendCompress=1.2, ) )
+
+    if save :
+        name = 'm_phph__mgg__baselineCuts'
+        SaveStack( name, 'base', inDirs=subdir )
+        DumpStack(name)
+    else :
+        raw_input('continue')
+
+
+    samples.Draw('m_lepph1', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5)  %s)' %ph_cuts, (40, 0, 200 ) , logy=0,  xlabel='M_{l, lead #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86) , legendConfig=samples.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    if save :
+        name = 'm_lepph1__egg__Cut_m_lepphph_10gevWindow'
+        DumpStack(name)
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        DumpStack()
+        raw_input('continue')
+
+
+    samples.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5)  %s)' %ph_cuts, (40, 0, 200 ) , logy=0,  xlabel='M_{l, sublead #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86) , legendConfig=samples.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+
+    if save :
+        name = 'm_lepph2__egg__Cut_m_lepphph_10gevWindow'
+        DumpStack(name)
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        DumpStack()
+        raw_input('continue')
+
+    samples.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  %s)' %ph_cuts, (40, 0, 200 ) , logy=0,  xlabel='M_{l, sublead #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86) , legendConfig=samples.config_legend(legendWiden=1.3,legendCompress=1.4, ) )
+    if save :
+        name = 'm_lepph2__egg__Cut_m_lepphph_10gevWindow__Cut_m_lepph1_10gevWindow'
+        DumpStack(name)
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        DumpStack()
+        raw_input('continue')
+
+
+    samples.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  && !(fabs(m_lepph2-91.2) < 5)  %s)' %ph_cuts, (40, 0, 200 ) , logy=0,  xlabel='M_{#gamma, #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86) , legendConfig=samples.config_legend(legendWiden=1.3,legendCompress=1.4, ) )
+
+    if save :
+        name = 'm_lepph2__egg__Cut_m_lepphph_10gevWindow__Cut_m_lepph1_10gevWindow__Cut_m_lepph2_10gevWindow'
+        DumpStack(name)
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        DumpStack()
+        raw_input('continue')
+
+    samples.Draw('m_phph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  && !(fabs(m_lepph2-91.2) < 5)  %s)' %ph_cuts, (50, 0, 200 ) , logy=1,  xlabel='M_{#gamma, #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel', extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legendConfig=samples.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    if save :
+        name = 'm_phph__egg__Cut_m_lepphph_10gevWindow__Cut_m_lepph1_10gevWindow__Cut_m_lepph2_10gevWindow'
+        DumpStack(name)
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        DumpStack()
+        raw_input('continue')
+
+
+    samples.Draw('m_phph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  && !(fabs(m_lepph2-91.2) < 5) && m_phph>15  %s)' %ph_cuts, (50, 0, 200 ) , logy=1,  xlabel='M_{#gamma, #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel', extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legendConfig=samples.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    if save :
+        name = 'm_phph__egg__Cut_m_lepphph_10gevWindow__Cut_m_lepph1_10gevWindow__Cut_m_lepph2_10gevWindow__Cut_m_phph_15'
+        DumpStack(name)
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        DumpStack()
+        raw_input('continue')
+
+    samples.MakeRocCurve( ['m_phph', 'm_phph'], ['PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && (fabs(m_lepphph-91.2) > 5) && (fabs(m_lepph1-91.2) > 5)  && (fabs(m_lepph2-91.2) > 5))']*2, ['Wgg', 'Wgg'], ['AllBkg', 'Zgamma'], [(50, 0, 200 )]*2, doSoverB=1, less_than=[0,0], colors=[ROOT.kRed, ROOT.kBlue], legend_entries=['B = All MC backgrounds', 'B = Zjets + Z#gamma'], ymin=0.5, ymax=4.5, legendConfig=samples.config_legend( legendWiden=1.3, legendCompress=1.4, legendTranslateX=-0.4 ) )
+
+    if save :
+        name = 'm_phph__egg__Cut_m_lepphph_10gevWindow__Cut_m_lepph1_10gevWindow__Cut_m_lepph2_10gevWindow__RocCurve'
+        DumpRoc(name, inDirs=subdir)
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        DumpRoc()
+        raw_input('continue')
+
+    #samples.MakeRocCurve( ['m_phph', 'm_phph'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %ph_cuts]*2, ['Wgg', 'Wgg'], ['AllBkg', 'ZjetsZgamma'], [(50, 0, 200 )]*2, doSoverB=1, debug=1, less_than=[0,0], colors=[ROOT.kRed, ROOT.kBlue], legend_entries=['B = All MC backgrounds', 'B = Zjets + Z#gamma'] )
+
+    #raw_input('continue')
 
 
 #---------------------------------------
-def MakeTAndPPlots( ) :
+def MakeWggMvaPlots( save=False ) :
 
-    if options.outputDir is None :
-        print 'Must provide an output directory via --outputDir.  Will not make plots'
-        return
-    
-    DoTAndP( 'probe_pt', 'EventWeight * ( probe_passTight && probe_isPhot && probe_nConvTrk==0 && passcut_mll )', 'EventWeight * ( tag_isElec && !probe_isPhot && passcut_mll )',  ['DataMCSubtracted', 'Z + Jets'], (60, 0, 300, 250 ), xlabel='Electron p_{T} [GeV]', ylabel='Electron to photon fake factor', ymin=0.01, ymax=0.022, label='unconverted photons' )
-    SaveStack('probe_pt_electron_to_photon_ff_mcsub_0conv', 'ratiocan')
+    global samples
 
-    DoTAndP( 'probe_pt', 'EventWeight * ( probe_passTight && probe_isPhot && probe_nConvTrk==2 && passcut_mll )', 'EventWeight * ( tag_isElec && !probe_isPhot && passcut_mll )',  ['DataMCSubtracted', 'Z + Jets'], (60, 0, 300, 250 ), xlabel='Electron p_{T} [GeV]', ylabel='Electron to photon fake factor', ymin=0.006, ymax=0.018, label='2 track conversion photons' )
-    SaveStack('probe_pt_electron_to_photon_ff_mcsub_2conv', 'ratiocan')
-    
-    DoTAndP( 'probe_eta', 'EventWeight * ( probe_passTight && probe_isPhot && probe_nConvTrk==0 && passcut_mll )', 'EventWeight * ( tag_isElec && !probe_isPhot && passcut_mll )',  ['DataMCSubtracted', 'Z + Jets'], (50, -2.5, 2.5 ), xlabel='Electron #eta', ylabel='Electron to photon fake factor', ymin=0.005, ymax=0.042, label='unconverted photons' )
-    SaveStack('probe_eta_electron_to_photon_ff_mcsub_0conv', 'ratiocan')
+    subdir = 'WggMvaPlots'
 
-    DoTAndP( 'probe_eta', 'EventWeight * ( probe_passTight && probe_isPhot && probe_nConvTrk==2 && passcut_mll )', 'EventWeight * ( tag_isElec && !probe_isPhot && passcut_mll )',  ['DataMCSubtracted', 'Z + Jets'], (50, -2.5, 2.5 ), xlabel='Electron #eta', ylabel='Electron to photon fake factor', label='2 track conversion photons' )
-    SaveStack('probe_eta_electron_to_photon_ff_mcsub_2conv', 'ratiocan')
+    selection = 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && m_phph>15  )'
+    binning = ( 40, -0.3, 0.5)
+
+    samples.MakeRocCurve( ['zrej_mvascore']*2, [ selection ]*2, ['Wgg', 'Wgg'], ['AllBkg', 'ZjetsZgamma'], [binning]*2, doSoverB=1, debug=1, less_than=[0,0], colors=[ROOT.kRed, ROOT.kBlue], legend_entries=['B = All MC backgrounds', 'B = Zjets + Z#gamma'], ymin=0, ymax=6, legendConfig=samples.config_legend( legendWiden=1.4, legendCompress=1.4, legendTranslateX=-0.35 ) )
+
+    if save :
+        name = 'zrej_mvascore__egg__baselineCuts__RocCurve1EleVetoData'
+        DumpRoc(name, inDirs=subdir)
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        DumpRoc()
+        raw_input('continue')
+
+    samples.Draw( 'zrej_mvascore', selection, binning, xlabel='BDT score', ylabel='Events / 0.2', legendConfig=samples.config_legend( legendWiden=1.1, legendCompress=1.2 ), labelStyle='fancy'  )
+
+    if save :
+        name = 'zrej_mvascore__egg__baselineCuts__1EleVetoData'
+        DumpRoc(name, inDirs=subdir)
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        DumpRoc()
+        raw_input('continue')
+
+#---------------------------------------
+def MakeWggEleVetoCompPlots( save=False ) :
+
+    global samples
+
+    subdir = 'WggEleVetoCompPlots'
+
+    selection = ['PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && ph_phDR>0.3 && m_phph>15 ) '] +  ['PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ( (ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 ) || ( ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 ) ) && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && ph_phDR>0.3 && m_phph>15 )']*2
+    #jselection = ['PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && ph_phDR>0.3 && m_phph>15 ) '] +  ['PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ( ( ph_passMedium[0] && ph_hasPixSeed[0]==1 ) || ( !ph_passMedium[0] ) ) && && leadPhot_leadLepDR>0.7 && sublPhot_leadLepDR>0.7 && ph_phDR>0.3 && m_phph>15 )']*2
+
+    sample_names = ['ZjetsZgamma', 'ZjetsZgamma', 'Data']
+    colors = [ROOT.kBlack, ROOT.kRed, ROOT.kBlue]
+    legend_entries = ['Z MC -- 2 eleVeto photons', 'Z MC -- 1 eleVeto photon', 'Data -- 1 eleVeto photon']
+
+    samples.CompareSelections( 'm_phph', selection , sample_names , (20, 0, 200 ),  colors=colors, normalize=1, doratio=1, legend_entries=legend_entries, xlabel='M_{#gamma #gamma} [GeV]', ymin=0, ymax=0.3 )
+
+    if save :
+        name = 'm_phph__egg__nPhPassEleVetoComp'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
+    samples.Draw('m_phph', selection[2], ( 20, 0, 200 ), xlabel='M_{#gamma #gamma} [GeV]' )
+
+    if save :
+        name = 'm_phph__egg__Cut_invertEleVeto1Ph'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
+    samples.CompareSelections( 'm_lepphph', selection , sample_names ,(40, 0, 400 ) ,  colors=colors, normalize=1, doratio=1, legend_entries=legend_entries, xlabel='M_{l #gamma #gamma} [GeV]', ymin=0, ymax=0.3  )
+    if save :
+        name = 'm_lepphph__egg__nPhPassEleVetoComp'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
+    samples.Draw( 'm_lepphph', selection[2],(40, 0, 400 ), xlabel='M_{l #gamma #gamma} [GeV]'  )
+
+    if save :
+        name = 'm_lepphph__egg__Cut_invertEleVeto1Ph'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
 
 
-    DoTAndP( 'probe_pt', 'EventWeight * ( probe_passTight && probe_isPhot && probe_nConvTrk==0 && passcut_mll && sqrt(2*met_et*tag_pt*( 1 - cos( met_phi-tag_phi) ) ) < 50  )', 'EventWeight * ( tag_isElec && !probe_isPhot && passcut_mll  && sqrt(2*met_et*tag_pt*( 1 - cos( met_phi-tag_phi) ) ) < 50)',  ['DataMCSubtracted', 'Z + Jets'], (60, 0, 300, 250 ), xlabel='Electron p_{T} [GeV]', ylabel='Electron to photon fake factor', ymin=0.01, ymax=0.022, label='unconverted photons' )
-    SaveStack('probe_pt_electron_to_photon_ff_mtcut_mcsub_0conv', 'ratiocan')
+    samples.CompareSelections( 'm_lepph1', selection , sample_names , (20, 0, 200 ),  colors=colors, normalize=1, doratio=1, legend_entries=legend_entries, xlabel='M_{l lead #gamma} [GeV]', ymin=0, ymax=0.3   )
 
-    DoTAndP( 'probe_pt', 'EventWeight * ( probe_passTight && probe_isPhot && probe_nConvTrk==2 && passcut_mll && sqrt(2*met_et*tag_pt*( 1 - cos( met_phi-tag_phi) ) ) < 50 )', 'EventWeight * ( tag_isElec && !probe_isPhot && passcut_mll && sqrt(2*met_et*tag_pt*( 1 - cos( met_phi-tag_phi) ) ) < 50 )',  ['DataMCSubtracted', 'Z + Jets'], (60, 0, 300, 250 ), xlabel='Electron p_{T} [GeV]', ylabel='Electron to photon fake factor', ymin=0.006, ymax=0.018, label='2 track conversion photons' )
-    SaveStack('probe_pt_electron_to_photon_ff_mtcut_mcsub_2conv', 'ratiocan')
-    
-    DoTAndP( 'probe_eta', 'EventWeight * ( probe_passTight && probe_isPhot && probe_nConvTrk==0 && passcut_mll && sqrt(2*met_et*tag_pt*( 1 - cos( met_phi-tag_phi) ) ) < 50 )', 'EventWeight * ( tag_isElec && !probe_isPhot && passcut_mll && sqrt(2*met_et*tag_pt*( 1 - cos( met_phi-tag_phi) ) ) < 50 )',  ['DataMCSubtracted', 'Z + Jets'], (50, -2.5, 2.5 ), xlabel='Electron #eta', ylabel='Electron to photon fake factor', ymin=0.005, ymax=0.042, label='unconverted photons' )
-    SaveStack('probe_eta_electron_to_photon_ff_mtcut_mcsub_0conv', 'ratiocan')
+    if save :
+        name = 'm_lepph1__egg__nPhPassEleVetoComp'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
 
-    DoTAndP( 'probe_eta', 'EventWeight * ( probe_passTight && probe_isPhot && probe_nConvTrk==2 && passcut_mll && sqrt(2*met_et*tag_pt*( 1 - cos( met_phi-tag_phi) ) ) < 50 )', 'EventWeight * ( tag_isElec && !probe_isPhot && passcut_mll && sqrt(2*met_et*tag_pt*( 1 - cos( met_phi-tag_phi) ) ) < 50 )',  ['DataMCSubtracted', 'Z + Jets'], (50, -2.5, 2.5 ), xlabel='Electron #eta', ylabel='Electron to photon fake factor', label='2 track conversion photons' )
-    SaveStack('probe_eta_electron_to_photon_ff_mtcut_mcsub_2conv', 'ratiocan')
+    samples.Draw( 'm_lepph1', selection[2], (20, 0, 200 ), xlabel='M_{l lead #gamma} [GeV]')
+
+    if save :
+        name = 'm_lepph1__egg__Cut_invertEleVeto1Ph'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
+    samples.CompareSelections( 'm_lepph2', selection , sample_names , (20, 0, 200 ),  colors=colors, normalize=1, doratio=1, legend_entries=legend_entries, xlabel='M_{l sublead #gamma} [GeV]', ymin=0, ymax=0.3  )
+
+    if save :
+        name = 'm_lepph2__egg__nPhPassEleVetoComp'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
+    samples.Draw( 'm_lepph2', selection[2], (20, 0, 200 ), xlabel='M_{l sublead #gamma} [GeV]' )
+
+    if save :
+        name = 'm_lepph2__egg__Cut_invertEleVeto1Ph'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
+    samples.CompareSelections( 'leadPhot_leadLepDR', selection , sample_names , (20, 0, 5 ),  colors=colors, normalize=1, doratio=1, legend_entries=legend_entries, xlabel='#Delta R( l, lead #gamma) ', ylabel='Normalized Events / 0.25', ymin=0, ymax=0.3   )
+
+    if save :
+        name = 'leadPhot_leadLepDR__egg__nPhPassEleVetoComp'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
+    samples.Draw( 'leadPhot_leadLepDR', selection[2], (20, 0, 5 ), xlabel='#Delta R( l, lead #gamma) ', ylabel='Events / 0.25' )
+
+    if save :
+        name = 'leadPhot_leadLepDR__egg__Cut_invertEleVeto1Ph'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
+    samples.CompareSelections( 'sublPhot_leadLepDR', selection , sample_names , (20, 0, 5 ),  colors=colors, normalize=1, doratio=1, legend_entries=legend_entries, xlabel='#Delta R( l, sublead #gamma)', ylabel='Normalized Events / 0.25', ymin=0, ymax=0.3   )
+
+    if save :
+        name = 'sublPhot_leadLepDR__egg__nPhPassEleVetoComp'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
+    samples.Draw( 'sublPhot_leadLepDR', selection[2], (20, 0, 5 ), xlabel='#Delta R( l, sublead #gamma)', ylabel='Events / 0.25' )
+
+    if save :
+        name = 'sublPhot_leadLepDR__egg__Cut_invertEleVeto1Ph'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
+    samples.CompareSelections( 'ph_phDR', selection , sample_names , (20, 0, 5 ),  colors=colors, normalize=1, doratio=1, legend_entries=legend_entries, xlabel='#Delta R( #gamma, #gamma)', ylabel='Normalized Events / 0.25', ymin=0, ymax=0.3  )
+
+    if save :
+        name = 'ph_phDr__egg__nPhPassEleVetoComp'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
+    samples.Draw( 'ph_phDR', selection[2], (20, 0, 5 ), xlabel='#Delta R( #gamma, #gamma)', ylabel='Events / 0.25')
+
+    if save :
+        name = 'ph_phDr__egg__Cut_invertEleVeto1Ph'
+        SaveStack( name, 'base', inDirs=subdir )
+    else :
+        raw_input('continue')
+
 
 #---------------------------------------
 def MakePhotonCompPlots( ) :
@@ -281,152 +677,208 @@ def MakePhotonCompPlots( ) :
     samples.MakeRocCurve(['ph_phoIsoCorr[0]', 'ph_passPhoIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, -5, 45), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr pho iso ROC curve', 'Medium working point'], extra_label='Barrel Photons', extra_label_loc="BottomLeft" )
     SaveStack('ph_phoIsoCorr_EB_roc_comp_medium', 'base')
 
-#--- ------------------------------------
-def MakeZHCutFlowTables( channel='EE' ) :
+def MakePhotonJetFakePlots(save=False ) :
 
-    global samples
+    #------------------------------
+    # signal template
+    #------------------------------
+    #samples.Draw('leadPhot_sublLepDR', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ) ', (50, 0, 5), xlabel='#Delta R(sublead #mu, #gamma)', ylabel='Events / 0.1' )
+    #raw_input('continue')
+    #samples.Draw('leadPhot_leadLepDR', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ) ', (50, 0, 5), xlabel='#Delta R(lead #mu, #gamma)', ylabel='Events / 0.1', legendLoc='TopLeft' )
+    #raw_input('continue')
+    #samples.Draw('m_leplepph', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]  && leadPhot_sublLepDR>0.4 ) ', (100, 0, 500), xlabel='M_{#mu#mu#gamma} [GeV]', logy=1, ymin=1, ymax=1000000, legendCompress=0.8 )
+    #raw_input('continue')
+    #samples.Draw('m_leplepph+m_leplep', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]  && leadPhot_sublLepDR>0.4 ) ', (100, 0, 500), xlabel='M_{#mu#mu}+M_{#mu#mu#gamma} [GeV]', logy=1, ymin=1, ymax=1000000, legendCompress=0.8  )
+    #raw_input('continue')
+    ##samples.Draw('leadPhot_leadLepDR', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && leadPhot_sublLepDR>0.4 && ( m_leplepph+m_leplep ) < 185  ) ', (50, 0, 5), xlabel='#Delta R(lead #mu, #gamma)', ylabel='Events / 0.1' )
+    ##raw_input('continue')
+    #samples.CompareSelections('ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && leadPhot_sublLepDR>0.4 && fabs( m_leplepph-91.2 ) < 5 && ph_IsEB[0] ) ', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && leadPhot_sublLepDR>0.4 && ( m_leplepph+m_leplep ) < 185 && ph_IsEB[0]  ) '], ['Data']*2, (60, 0, 0.03), xlabel='#sigma i#etai#eta', ylabel='Events / 0.0005', colors=[ROOT.kBlue, ROOT.kRed], legend_entries=[ '|M_{#mu#mu#gamma} - M_{Z}| < 5', 'M_{#mu#mu} + M_{#mu#mu#gamma} < 185 '])
+    #raw_input('continue')
+    #samples.CompareSelections('ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && leadPhot_sublLepDR>0.4 && fabs( m_leplepph-91.2 ) < 5 && ph_IsEE[0] ) ', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && leadPhot_sublLepDR>0.4 && ( m_leplepph+m_leplep ) < 185 && ph_IsEE[0]  ) '], ['Data']*2, (50, 0, 0.1), xlabel='#sigma i#etai#eta', ylabel='Events / 0.002', colors=[ROOT.kBlue, ROOT.kRed], legend_entries=[ '|M_{#mu#mu#gamma} - M_{Z}| < 5', 'M_{#mu#mu} + M_{#mu#mu#gamma} < 185 '])
+    #raw_input('continue')
+    #samples.Draw('ph_sigmaIEIE[0]', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && leadPhot_sublLepDR>0.4 && fabs( m_leplepph-91.2 ) < 5 && ph_IsEB[0] )', ( 60, 0, 0.03), xlabel='#sigma i#etai#eta', ylabel='Events / 0.0005', logy=1 )
+    #raw_input('continue')
+    #samples.Draw('ph_sigmaIEIE[0]', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && leadPhot_sublLepDR>0.4 && fabs( m_leplepph-91.2 ) < 5 && ph_IsEE[0] )', ( 50, 0, 0.1), xlabel='#sigma i#etai#eta', ylabel='Events / 0.002', logy=1  )
+    #raw_input('continue')
+    #samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4 && ph_IsEE[0])']*2 + ['PUWeight * (ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_IsEE[0] )'], ['Data', 'Zgamma', 'Wgamma'], (50, 0, 0.1 ), normalize=1, colors=[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], doratio=1, xlabel='#sigma i#etai#eta', ylabel='Normalized Events / 0.002', rlabel='MC / Data', legend_entries=['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'], ymin=0.00001, ymax=5, logy=1, rmin=0.2, rmax=1.8 )
+    #raw_input('continue')
+    #samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4 && ph_IsEB[0])']*2 + ['PUWeight * (ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_IsEB[0] )'], ['Data', 'Zgamma', 'Wgamma'], (60, 0, 0.03 ), normalize=1, colors=[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], doratio=1, xlabel='#sigma i#etai#eta', ylabel='Normalized Events / 0.0005', rlabel='MC / Data', legend_entries=['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'], ymin=0.00001, ymax=5, logy=1, rmin=0.2, rmax=1.8 )
+    #raw_input('continue')
+    #samples.CompareSelections( 'ph_pt[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4 )']*2 + ['PUWeight * (ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 )'], ['Data', 'Zgamma', 'Wgamma'], (50, 0, 200 ), normalize=1, colors=[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], doratio=1, xlabel='photon p_{T} [GeV]', rlabel='MC / Data', legend_entries=['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'], ymin=0.00001, ymax=5, logy=1, rmin=0.2, rmax=1.8, legendWiden=1.5 )
+    #raw_input('continue')
 
-    cut_flow = ['']
-    if channel == 'EE' :
-        cut_base = 'EventWeight * ( passtrig_electron %s)'
-        cut_flow.append('IsEE')
-    if channel == 'MM' :
-        cut_base = 'EventWeight * ( passtrig_muon %s)'
-        cut_flow.append('IsMM')
+    #samples.Draw('leadPhot_sublLepDR', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 ) ' , (50, 0, 5), xlabel='#Delta R(sublead #mu, #gamma)', ylabel='Events / 0.1', legendCompress=0.8 )
+    #raw_input('continue')
 
-    cut_flow += ['passcut_os', 'passcut_thirdlepveto', 'passcut_mll', 'passcut_met', 'passcut_dphill', 'passcut_ll_dphi_met', 'passcut_fracdiff', 'passcut_met_dphi_trackmet', 'passcut_jetveto']
+    #samples.Draw('leadPhot_leadLepDR', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 )', ( 50, 0, 5), xlabel='#Delta R(lead #mu, #gamma)', ylabel='Events / 0.1', legendLoc='TopLeft', legendCompress=0.8 )
+    #raw_input('continue')
+    #samples.Draw('ph_sigmaIEIE[0]', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR > 1 && ph_IsEB[0])', ( 60, 0, 0.03), xlabel='#sigma i#etai#eta', ylabel='Events / 0.0005' )
+    #raw_input('continue')
+    #samples.Draw('ph_sigmaIEIE[0]', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0] )', ( 50, 0, 0.1), xlabel='#sigma i#etai#eta', ylabel='Events / 0.002')
+    #raw_input('continue')
 
-    cut_selections = []
-    for idx in range(1, len(cut_flow)+1 ) :
-        cut_selections.append( cut_base%( ' && '.join(cut_flow[0:idx]) ) )
+    #samples.Draw('ph_SCRChIso[0]', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ) ', (50, 0, 50), xlabel='ch Had Iso (footprint subtracted) [GeV]', logy=1  )
+    #raw_input('continue')
+    #samples.Draw('ph_SCRNeuIso[0]', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ) ', (50, 0, 50), xlabel='neu Had Iso (footprint subtracted) [GeV]', logy=1  )
+    #raw_input('continue')
+    #samples.Draw('ph_SCRNeuIso[0]', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ) ', (40, 0, 20), xlabel='neu Had Iso (footprint subtracted) [GeV]', logy=1  )
+    #raw_input('continue')
+    #samples.Draw('ph_neuIsoCorr[0]', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ) ', (40, 0, 20), xlabel='neu Had Iso (p_{T}, #rho corr) [GeV]', logy=1  )
+    #raw_input('continue')
+    #samples.Draw('ph_phoIsoCorr[0]', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ) ', (40, 0, 20), xlabel='Pho Iso (p_{T}, #rho corr) [GeV]', logy=1  )
+    #raw_input('continue')
+    #samples.Draw('ph_phoIsoCorr[0]', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ) ', (40, 0, 20), xlabel='Pho Iso (p_{T}, #rho corr) [GeV]', logy=1  )
+    #raw_input('continue')
+    #samples.Draw('ph_SCRPhoIso[0]', 'PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ) ', (40, 0, 20), xlabel='Pho Iso (footprint subtracted) [GeV]', logy=1  )
+    #raw_input('continue')
 
-    print cut_selections
-    print len(cut_selections)
-    cut_labels = ['Trigger', 'DiLep', 'OS', 'ThirdLep', 'Mll', 'Met', 'DPhill', 'ZMetDphi', 'FracDiff', 'MetTrkDPhi', 'JetVeto']
+    #--------------------------------------
+    # Charged Iso
+    #--------------------------------------
 
-    samples.MakeCutflowTable('met_et', cut_selections, cut_labels, (50, 0, 5000))
+    bins_eb = (10, 0, 0.03)
+    bins_ee = (10, 0, 0.1)
+
+    cutname = 'ph_chIsoCorr'
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passChIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 2 && %s < 5 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 5 && %s < 10 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 5 && %s < 20 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 5 && %s < 30 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 5 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_eb, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Ch Iso cut', ' 2 < Iso < 5', '5 < Iso < 10', '5 < Iso < 20', '5 < Iso < 30', 'Iso > 5'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_eb_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
     
-#---------------------------------------
-def MakeQCDCRPlots() :
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passChIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 2 && %s < 5 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 5 && %s < 10 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 5 && %s < 20 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 5 && %s < 30 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 5 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_ee, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Ch Iso cut', ' 2 < Iso < 5', '5 < Iso < 10', '5 < Iso < 20', '5 < Iso < 30', 'Iso > 5'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_ee_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
+    
+    cutname = 'ph_SCRChIso'
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passChIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 2 && %s < 5 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 5 && %s < 10 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 5 && %s < 20 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 5 && %s < 30 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 5 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_eb, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Ch Iso cut', ' 2 < Iso < 5', '5 < Iso < 10', '5 < Iso < 20', '5 < Iso < 30', 'Iso > 5'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_eb_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
 
-    global samples
-    if options.outputDir is None :
-        print 'Must provide an output directory via --outputDir.  Will not make plots'
-        return
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passChIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 2 && %s < 5 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 5 && %s < 10 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 5 && %s < 20 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 5 && %s < 30 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 5 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_ee, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Ch Iso cut', ' 2 < Iso < 5', '5 < Iso < 10', '5 < Iso < 20', '5 < Iso < 30', 'Iso > 5'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_ee_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
 
-    #samples.Draw('ph_corriso_30/1000.0', 'EventWeight * ( ph_n == 1 && ph_pt > 30.0 && ph_nConvTrk == 0  && ph_pass_hadleak && ph_pass_middle && ph_pass_middle && ph_pass_wstot && ph_pass_weta1 && ph_pass_ar && ph_pass_demax2 && ph_pass_f1 && ( !ph_pass_eratio && !ph_pass_fside && !ph_pass_deltae ) ) ', ( 64, -2, 30 ), xlabel='Calorimeter Isolation [GeV]', ylabel='Events / 0.5 GeV', noAtlasLabel=True, doratio=0, logy=True, ymax=1e12, ymin=1 )
-    #SaveStack('ph_corriso_30_invertall', 'base')
+    #--------------------------------------
+    # Neutral Iso
+    #--------------------------------------
 
-    samples.Draw('ph_corriso_30/1000.0', 'EventWeight * ( ph_n == 1 && ph_pt > 30.0 && ph_nConvTrk == 0  && ph_pass_hadleak && ph_pass_middle && ph_pass_middle && ph_pass_wstot && ph_pass_weta1 && ph_pass_ar && ph_pass_demax2 && ph_pass_f1 && ( !ph_pass_eratio || !ph_pass_fside || !ph_pass_deltae ) ) ', ( 64, -2, 30 ), xlabel='Calorimeter Isolation [GeV]', ylabel='Events / 0.5 GeV', noAtlasLabel=True, doratio=0, logy=True, ymax=1e13, ymin=1 )
-    SaveStack('ph_corriso_30_invertany', 'base')
+    cutname = 'ph_neuIsoCorr'
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 1 && %s < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 && %s < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_eb, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_eb_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
+    
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 1 && %s < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 && %s < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_ee, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_ee_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
+    
+    cutname = 'ph_SCRNeuIso'
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 1 && %s < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 && %s < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_eb, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_eb_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
 
-    samples.Draw('ph_corriso_30/1000.0', 'EventWeight * ( ph_n == 1 && ph_pt > 30.0 && ph_nConvTrk == 0  && ph_pass_hadleak && ph_pass_middle && ph_pass_middle && ph_pass_wstot && ph_pass_weta1 && ph_pass_ar && ph_pass_demax2 && ph_pass_f1 && ( ( !ph_pass_eratio && !ph_pass_fside ) || ( !ph_pass_eratio && !ph_pass_deltae ) || ( !ph_pass_fside && !ph_pass_deltae ) ) )', ( 64, -2, 30 ), xlabel='Calorimeter Isolation [GeV]', ylabel='Events / 0.5 GeV', noAtlasLabel=True, doratio=0, logy=True, ymax=5e12, ymin=1 )
-    SaveStack('ph_corriso_30_invertmaj', 'base')
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 1 && %s < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 && %s < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_ee, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_ee_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
 
-    samples.Draw('ph_pt', 'EventWeight * ( ph_n == 1 && ph_pt > 30.0 && ph_nConvTrk == 0  && ph_corriso_30 > 10000 && ph_pass_hadleak && ph_pass_middle && ph_pass_middle && ph_pass_wstot && ph_pass_weta1 && ph_pass_ar && ph_pass_demax2 && ph_pass_f1 && ( !ph_pass_eratio && !ph_pass_fside && !ph_pass_deltae ) ) ', ( 100, 0, 500, 25 ), xlabel='p_{T} [GeV]', noAtlasLabel=True, doratio=0, logy=True, ymax=1e9, ymin=0.01 )
-    SaveStack('ph_pt_invertall_noniso', 'base')
+    #--------------------------------------
+    # Photon Iso
+    #--------------------------------------
 
-    samples.Draw('ph_corriso_30/1000.0', 'EventWeight * ( ph_n == 1 && ph_pt > 30.0 && ph_nConvTrk == 0 && ph_corriso_30 > 10000  && ph_pass_hadleak && ph_pass_middle && ph_pass_middle && ph_pass_wstot && ph_pass_weta1 && ph_pass_ar && ph_pass_demax2 && ph_pass_f1 && ( !ph_pass_eratio || !ph_pass_fside || !ph_pass_deltae ) ) ', ( 100, 0, 500, 25 ), xlabel='p_{T} [GeV]', noAtlasLabel=True, doratio=0, logy=True, ymax=1e9, ymin=0.01 )
-    SaveStack('ph_pt_invertany_noniso', 'base')
+    cutname = 'ph_phoIsoCorr'
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passPhoIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 1 && %s < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 && %s < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_eb, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_eb_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
+    
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passPhoIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 1 && %s < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 && %s < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_ee, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_ee_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
+    
+    cutname = 'ph_SCRPhoIso'
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 1 && %s < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 && %s < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_eb, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_eb_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
 
-    samples.Draw('ph_corriso_30/1000.0', 'EventWeight * ( ph_n == 1 && ph_pt > 30.0 && ph_nConvTrk == 0 && ph_corriso_30 > 10000  && ph_pass_hadleak && ph_pass_middle && ph_pass_middle && ph_pass_wstot && ph_pass_weta1 && ph_pass_ar && ph_pass_demax2 && ph_pass_f1 && ( ( !ph_pass_eratio && !ph_pass_fside ) || ( !ph_pass_eratio && !ph_pass_deltae ) || ( !ph_pass_fside && !ph_pass_deltae ) ) )', ( 100, 0, 500, 25 ), xlabel='p_{T} [GeV]', noAtlasLabel=True, doratio=0, logy=True, ymax=1e9, ymin=0.01 )
-    SaveStack('ph_pt_invertmaj_noniso', 'base')
-
-    #samples.Draw('ph_corriso_30/1000.0', 'EventWeight * ( ph_n == 1 && ph_pt > 30.0 && ph_nConvTrk == 0  && ph_pass_tight ) ', ( 64, -2, 30 ), xlabel='Photon Calorimeter Isolation [GeV]', ylabel='Events / 0.5 GeV', noAtlasLabel=True, doratio=0, logy=True, ymax=1e13, ymin=100 )
-    #SaveStack('ph_corriso_30_tightnoiso', 'base')
-
-
-def MakeTAndPCompPlots( ) :
-    global samples
-    #ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 150, 500 ]
-    #etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.900000, -1.800000, -1.700000, -1.566000, -1.479000, -1.400000, -1.300000, -1.200000, -1.100000, -1.000000, -0.800000, -0.600000, -0.400000, -0.200000, 0.000000, 0.200000, 0.400000, 0.600000, 0.800000, 1.000000, 1.100000, 1.200000, 1.300000, 1.400000, 1.479000, 1.566000, 1.700000, 1.800000, 1.900000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
-    ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 500 ]
-    #etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, 0.000000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
-    etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, -1.200000, -0.800000, -0.200000, 0.000000, 0.200000, 0.800000, 1.200000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
-    for pidx, pmin in enumerate(ptvals[:-1]) :
-        pmax = ptvals[pidx+1]
-        for eidx, emin in enumerate(etavals[:-1]) :
-            emax = etavals[eidx+1]
-            eta_precision = 1
-            eta_precisionm = 1
-            if math.fabs(int(emin*10)-emin) != 0 : 
-                eta_precision = 3
-            if math.fabs(int(emax*10)-emax) != 0 :
-                eta_precisionm=3
-            samples.CompareSelections('m_tagprobe', ['!probe_isPhoton && probe_pt > %d && probe_pt < %d && probe_eta > %f && probe_eta < %f ' %( pmin, pmax, emin, emax), 'probe_isPhoton && probe_pt > %d && probe_pt < %d && probe_eta > %f && probe_eta < %f ' %( pmin, pmax, emin, emax)], ['DYJetsToLL', 'DYJetsToLL'], (100, 0, 500), colors=[ROOT.kBlack, ROOT.kRed], doratio=0, logy=1, legend_entries=['Probe electrons', 'Probe photons'], ymax_scale=10, xlabel='M_{tag, probe} [GeV]', extra_label='#splitline{%d < p_{T} < %d}{%.*f < #eta < %.*f}' %( pmin, pmax, eta_precision, emin, eta_precisionm, emax ) )
-            SaveStack( 'm_tagprobe_pt_%d_%d_eta_%f_%f' %( pmin, pmax, emin, emax), 'base' )
-          
-def MakeTAndPCompPlotsFull( ) :
-    global samples
-
-    #ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 150, 500 ]
-    #etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.900000, -1.800000, -1.700000, -1.566000, -1.479000, -1.400000, -1.300000, -1.200000, -1.100000, -1.000000, -0.800000, -0.600000, -0.400000, -0.200000, 0.000000, 0.200000, 0.400000, 0.600000, 0.800000, 1.000000, 1.100000, 1.200000, 1.300000, 1.400000, 1.479000, 1.566000, 1.700000, 1.800000, 1.900000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
-    ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 500 ]
-    #ptvals = [25, 30, 35, 40, 45, 50, 500 ]
-    etavals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, -1.200000, -0.800000, -0.200000, 0.000000, 0.200000, 0.800000, 1.200000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
-
-    for pidx, pmin in enumerate(ptvals[:-1]) :
-        pmax = ptvals[pidx+1]
-        for eidx, emin in enumerate(etavals[:-1]) :
-            emax = etavals[eidx+1]
-            eta_precision = 1
-            eta_precisionm = 1
-            if math.fabs(int(emin*10)-emin) != 0 : 
-                eta_precision = 3
-            if math.fabs(int(emax*10)-emax) != 0 :
-                eta_precisionm=3
-
-            samples.Draw('m_tagprobe', '!probe_isPhoton && probe_pt > %d && probe_pt < %d && probe_eta > %f && probe_eta < %f ' %( pmin, pmax, emin, emax),  (100, 0, 200), ymin=10, ymax_scale=10, xlabel='M_{tag, probe} [GeV]', extra_label='#splitline{Probe Electrons}{#splitline{%d < p_{T} < %d}{%.*f < #eta < %.*f}}' %( pmin, pmax, eta_precision, emin, eta_precisionm, emax), extra_label_loc='TopLeft', logy=1, noAtlasLabel=True  )
-            SaveStack( 'm_tagprobe_probeEl_pt_%d_%d_eta_%f_%f' %( pmin, pmax, emin, emax), 'base' )
-
-            samples.Draw('m_tagprobe', 'probe_isPhoton && probe_pt > %d && probe_pt < %d && probe_eta > %f && probe_eta < %f ' %( pmin, pmax, emin, emax),  (100, 0, 200), ymin=10, ymax_scale=10, xlabel='M_{tag, probe} [GeV]', extra_label='#splitline{Probe Photons}{#splitline{%d < p_{T} < %d}{%.*f < #eta < %.*f}}' %( pmin, pmax, eta_precision, emin, eta_precisionm, emax ), extra_label_loc='TopLeft', logy=1, noAtlasLabel=True )
-            SaveStack( 'm_tagprobe_probePh_pt_%d_%d_eta_%f_%f' %( pmin, pmax, emin, emax), 'base' )
-          
-def FitTAndPComp( ) :
-    global samples
-
-    #ptvals = [15, 20, 25, 30, 35, 40, 45, 50, 500 ]
-    ptvals = [-2.500000, -2.450000, -2.400000, -2.350000, -2.300000, -2.200000, -2.100000, -2.000000, -1.566000, -1.479000, -1.200000, -0.800000, -0.200000, 0.000000, 0.200000, 0.800000, 1.200000, 1.479000, 1.566000, 2.000000, 2.100000, 2.200000, 2.300000, 2.350000, 2.400000, 2.450000,2.5]
-    meanhist = ROOT.TH1F( 'mean', '', len(ptvals)-1, array('f', ptvals))
-    widthhist = ROOT.TH1F( 'width', '', len(ptvals)-1, array('f', ptvals))
-    for pidx, pmin in enumerate(ptvals[:-1]) :
-        pmax = ptvals[pidx+1]
-
-        #samples.CompareSelections('m_lepph1', ['EventWeight * (el_n==1 && ph_n==1 && ph_pt[0] > %d && ph_pt[0] < %d)' %(pmin, pmax)]*2, ['DYJetsToLL', 'DYJetsToLLFF'], (500, 0, 500), doratio=0 )
-        samples.CompareSelections('m_lepph1', ['EventWeight * (el_n==1 && ph_n==1 && ph_eta[0] > %f && ph_eta[0] < %f)' %(pmin, pmax)]*2, ['DYJetsToLL', 'DYJetsToLLFF'], (500, 0, 500), doratio=0 )
-
-        hist_lg = samples.get_samples(name='DYJetsToLL0')[0].hist
-        hist_ff = samples.get_samples(name='DYJetsToLLFF1')[0].hist
-
-        func = ROOT.TF1( 'gaus', 'gaus(0)', 86, 96 )
-        func.SetParameter(0, hist_lg.GetBinContent( hist_lg.FindBin( 91) ) )
-        func.SetParameter(1, 91)
-        func.SetParameter(2, 3)
-
-        hist_lg.Fit( func, 'R')
-        mean_lg = func.GetParameter(1)
-        width_lg = func.GetParameter(2)
-
-        func.SetParameter(0, hist_ff.GetBinContent( hist_ff.FindBin( 91) ) )
-        func.SetParameter(1, 91)
-        func.SetParameter(2, 3)
-        hist_ff.Fit( func, 'R' )
-        mean_ff = func.GetParameter(1)
-        width_ff = func.GetParameter(2)
-
-        meanhist.SetBinContent( pidx+1, mean_lg - mean_ff )
-        widthhist.SetBinContent( pidx+1, width_lg - width_ff )
-
-        print 'Pt range = %d - %d' %( pmin, pmax )
-        print 'Delta mean = %f' %(mean_lg - mean_ff)
-        print 'Delta width = %f' %(width_lg - width_ff)
-
-    meanhist.Draw()
-    raw_input('continue')
-    widthhist.Draw()
-    raw_input('continue')
+    common_selection = 'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
+    samples.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s > 1 && %s < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s > 2 && %s < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 && %s < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s > 2 )' %( common_selection, cutname)], ['Zgammastar']*6, bins_ee, normalize=1, colors=[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,doratio=2, xlabel='#sigma i#eta i#eta', ylabel='Normalized Events / 0.002', legend_entries=['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1'], rlabel='Inverted Cut / Nominal cut', rmin=0.6, rmax=1.4, ymin=0, ymax=0.4)
+    if save :
+        SaveStack('sieie_ee_mmg_comp%scuts' %cutname, 'base')
+    else :
+        raw_input('continue')
 
 
+    #samples.CompareSelections('ph_sigmaIEIE[0]', ['PUWeight * (mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && leadPhot_leadLepDR>0.4 && ph_IsEB[0] && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25)', ' PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_IsEB[0] && ph_passChIsoCorrMedium[0] )', ' PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_IsEB[0] )', ], ['Wgamma', 'DataRealPhotonSub', 'Data'], (60, 0, 0.03), normalize=1, legend_entries=['Real photon template', 'Fake photon template', 'Target, #mu + #gamma '], colors=[ROOT.kBlue-3, ROOT.kRed+2, ROOT.kBlack], drawHist=[0, 0, 0], logy=1, ymin=0.00001, ymax=3 )
+    ##samples.CompareSelections('ph_sigmaIEIE[0]', ['PUWeight * (mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && leadPhot_leadLepDR>0.4 && ph_IsEB[0] && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25)', ' PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_IsEB[0] && ph_passChIsoCorrMedium[0] )', ], ['Wgamma', 'DataRealPhotonSub'], (60, 0, 0.03), normalize=1, legend_entries=['Real photon template', 'Fake photon template'], colors=[ROOT.kBlue-3, ROOT.kRed+2], drawHist=[1, 1], logy=1, ymin=0.00001, ymax=3 )
+    #if save :
+    #    SaveStack('sieie_eb_comp_templates_mcsigtemp', 'base')
+    #else :
+    #    raw_input('continue')
+
+    ##samples.CompareSelections('ph_sigmaIEIE[0]', ['PUWeight * (mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4 && ph_IsEB[0] )', ' PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_IsEB[0] && ph_passChIsoCorrMedium[0] )', ' PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_IsEB[0] )', ], ['Data', 'DataRealPhotonSub', 'Data'], (60, 0, 0.03), normalize=1, legend_entries=['Real photon template', 'Fake photon template', 'Target, #mu + #gamma '], colors=[ROOT.kBlue-3, ROOT.kRed+2, ROOT.kBlack], drawHist=[1, 1, 0], logy=1, ymin=0.00001, ymax=3 )
+    #samples.CompareSelections('ph_sigmaIEIE[0]', ['PUWeight * (mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4 && ph_IsEB[0] )', ' PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_IsEB[0] && ph_passChIsoCorrMedium[0] )'], ['Data', 'DataRealPhotonSub'], (60, 0, 0.03), normalize=1, legend_entries=['Real photon template', 'Fake photon template'], colors=[ROOT.kBlue-3, ROOT.kRed+2], drawHist=[1, 1], logy=1, ymin=0.00001, ymax=3 )
+    #if save :
+    #    SaveStack('sieie_eb_comp_templates_datasigtemp', 'base')
+    #else :
+    #    raw_input('continue')
+
+    #selection_base = 'mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12<0.05 && ph_IsEB[0] && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]'
+    #selections = [
+    #              'PUWeight * ( %s )' %selection_base, 
+    #              'PUWeight * ( %s && ph_pt[0]<20 )' %selection_base , 
+    #              'PUWeight * ( %s && ph_pt[0]<25 && ph_pt[0]>20 )' %selection_base , 
+    #              'PUWeight * ( %s && ph_pt[0]>25 && ph_pt[0]<30 )' %selection_base , 
+    #              'PUWeight * ( %s && ph_pt[0]>30 && ph_pt[0]<40 )' %selection_base , 
+    #              'PUWeight * ( %s && ph_pt[0]>40 && ph_pt[0]<60 )' %selection_base , 
+    #              'PUWeight * ( %s && ph_pt[0]>60 && ph_pt[0]<90 )' %selection_base , 
+    #              'PUWeight * ( %s && ph_pt[0]>90 )'%selection_base
+    #             ]
+    #samples.CompareSelections('ph_sigmaIEIE[0]', selections , ['Wgamma']*8, (15, 0, 0.03), xlabel='#sigma i#eta i#eta', ylabel = 'Events / %f' %(0.03/15), normalize=1 , colors=[ROOT.kBlack, ROOT.kOrange+5, ROOT.kBlue, ROOT.kRed, ROOT.kMagenta, ROOT.kGreen, ROOT.kGray, ROOT.kOrange], legend_entries=['Inclusive', '15 < p_{T} < 20', '20 < p_{T} < 25', '25 < p_{T} < 30', '30 < p_{T} < 40', '40 < p_{T} < 60', '60 < p_{T} < 90', 'p_{T} > 90'], doratio=2 )
+    #raw_input('continue')
+    #selection_base = 'mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12<0.05 && ph_IsEB[0] && !(ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25) && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]'
+    #samples.CompareSelections('ph_sigmaIEIE[0]', selections , ['Wjets']*8, (15, 0, 0.03), xlabel='#sigma i#eta i#eta', ylabel = 'Events / %f' %(0.03/15), normalize=1 , colors=[ROOT.kBlack, ROOT.kOrange+5, ROOT.kBlue, ROOT.kRed, ROOT.kMagenta, ROOT.kGreen, ROOT.kGray, ROOT.kOrange], legend_entries=['Inclusive', '15 < p_{T} < 20', '20 < p_{T} < 25', '25 < p_{T} < 30', '30 < p_{T} < 40', '40 < p_{T} < 60', '60 < p_{T} < 90', 'p_{T} > 90'], doratio=2 )
+
+
+
+#graveyard.py
+#def MakeDiPhotonTemplatePlots() :
+#def MakeZHCutFlowTables( channel='EE' ) :
+    
+#def MakeQCDCRPlots() :
+
+#def MakeTAndPCompPlots( ) :
+#def MakeTAndPCompPlotsFull( ) :
+#def FitTAndPComp( ) :
 
 #
 # The following is to get the history 

@@ -8,7 +8,7 @@ def get_remove_filter() :
 
 def get_keep_filter() :
 
-    return ['pfMET.*', 'recoPfMET.*', 'nVtxBS', 'nMC', 'mcPID', 'mcParentage', 'mcStatus', 'mcMomPID', 'mcGMomPID', 'mcPt', 'mcEta', 'mcPhi', 'mcE', 'nPU', 'puTrue', 'nVtx', 'nVtxBS', 'rho2012', 'isData']
+    return ['pfMET.*', 'recoPfMET.*', 'nVtxBS', 'nMC', 'mcPID', 'mcParentage', 'mcStatus', 'mcMomPID', 'mcGMomPID', 'mcPt', 'mcEta', 'mcPhi', 'mcE', 'nPU', 'puTrue', 'nVtx', 'nVtxBS', 'rho2012']
 
 def config_analysis( alg_list, args ) :
 
@@ -30,7 +30,7 @@ def config_analysis( alg_list, args ) :
     trig_filt = Filter('FilterTrigger')
     ##trig_filt.cut_trigger = ' ==48 ' #HLT_Photon36_CaloId10_Iso50_Photon22_CaloId10_Iso50_v 
     trig_filt.cut_trigger = '==17 | == 18 | == 19' # electron | muon
-    alg_list.append(trig_filt)
+    #alg_list.append(trig_filt)
 
 def build_muon( do_cutflow=False, do_hists=False, applyCorrections=False ) :
 

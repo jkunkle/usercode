@@ -171,17 +171,17 @@ void RunModule::EvalMVA( ModuleConfig & config ) const {
         MVAVars::leadPhot_leadLepDR = IN::leadPhot_leadLepDR;
         MVAVars::sublPhot_leadLepDR  = IN::sublPhot_leadLepDR ;
         MVAVars::ph_phDR = IN::ph_phDR;
-        MVAVars::dphi_met_lep1 = IN::dphi_met_lep1 ;
-        MVAVars::dphi_met_ph1 = IN::dphi_met_ph1 ;
-        MVAVars::dphi_met_ph2 = IN::dphi_met_ph2 ;
+        //MVAVars::dphi_met_lep1 = IN::dphi_met_lep1 ;
+        //MVAVars::dphi_met_ph1 = IN::dphi_met_ph1 ;
+        //MVAVars::dphi_met_ph2 = IN::dphi_met_ph2 ;
 
 
         if( IN::el_passtrig_n>0 && IN::el_n==1 && TMVAReaderEl ) {
             OUT::zrej_mvascore = TMVAReaderEl->EvaluateMVA("BDT");
         }
-        if( IN::mu_passtrig_n>0 && IN::mu_n==1 && TMVAReaderMu ) {
-            OUT::zrej_mvascore = TMVAReaderMu->EvaluateMVA("BDT");
-        }
+        //if( IN::mu_passtrig_n>0 && IN::mu_n==1 && TMVAReaderMu ) {
+        //    OUT::zrej_mvascore = TMVAReaderMu->EvaluateMVA("BDT");
+        //}
     }
     
 }

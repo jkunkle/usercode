@@ -49,7 +49,10 @@ def parse_eos_dir(path, DEBUG=False) :
     # get directory contents
     cmd = [eos, 'ls -l', path+'/']
     #cmd = '%s ls -l %s' %(eos, path)
-    result = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, bufsize=-1)
+    p.wait()
+    result = p.communicate()[0]
+    p.stdout.close()
 
     result_lines = result.rstrip('\n').split('\n')
 

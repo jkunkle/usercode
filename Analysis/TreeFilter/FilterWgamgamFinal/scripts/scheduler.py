@@ -1,16 +1,15 @@
 import os
-#base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputPhMVA_2014_03_27'
-#base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputPhMVA_2014_04_02'
-base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoEleVeto_2014_04_25'
+base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoEleVetoSCRVars_2014_04_30'
+#base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoTrig_2014_06_11'
 jobs_data = [
         #(base, 'job_electron_2012a_Jan22rereco'),
         #(base, 'job_electron_2012b_Jan22rereco'),
         #(base, 'job_electron_2012c_Jan2012rereco'),
         #(base, 'job_electron_2012d_Jan22rereco'),
-        #(base, 'job_muon_2012a_Jan22rereco'),
-        #(base, 'job_muon_2012b_Jan22rereco'),
-        #(base, 'job_muon_2012c_Jan22rereco'),
-        #(base, 'job_muon_2012d_Jan22rereco'),
+        (base, 'job_muon_2012a_Jan22rereco'),
+        (base, 'job_muon_2012b_Jan22rereco'),
+        (base, 'job_muon_2012c_Jan22rereco'),
+        (base, 'job_muon_2012d_Jan22rereco'),
 
         #(base, 'job_2photon_2012d_Jan22rereco_2of4'),
         #(base, 'job_2photon_2012d_Jan22rereco_3of4'),
@@ -38,12 +37,15 @@ jobs_data = [
         #(base, 'job_fall13_photonRunB2012_8'),
         #(base, 'job_fall13_photonRunB2012_9'),
         #(base, 'job_photon_2012a_Jan22rereco'),
+        #(base, 'job_MultiJet_2012a_Jan22rereco'),
+        #(base, 'job_jetmon_2012c_Jan22rereco'),
 ]
+
 jobs_mc = [
         #(base, 'job_summer12_DYJetsToLL'),
-        (base, 'job_summer12_Zg'),
-        (base, 'job_summer12_WAA_ISR'),
-        (base, 'job_summer12_Wgg_FSR'),
+        #(base, 'job_summer12_Zg'),
+        #(base, 'job_summer12_WAA_ISR'),
+        #(base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_Wg'),
         #(base, 'job_summer12_Wjets'),
         #(base, 'job_summer12_ttjets_1l'),
@@ -83,9 +85,10 @@ jobs_mc = [
         #(base, 'job_summer12_tbar_t'),
         #(base, 'job_summer12_tbar_tW'),
         #(base, 'job_summer12_ttinclusive'),
-        ####(base_tmp, 'DYJetsToLLPhOlap' )
-        ####(base_tmp, 'WjetsPhOlap' )
-        ####(base_tmp, 'WgPhOlap' )
+        ###(base, 'QCD_Pt-40_doubleEMEnriched')
+        ###(base_tmp, 'DYJetsToLLPhOlap' )
+        ###(base_tmp, 'WjetsPhOlap' )
+        ###(base_tmp, 'WgPhOlap' )
 ]
 
 #module_mc   = 'ConfLepGammaFilter.py'
@@ -97,23 +100,23 @@ top_configs = [
                 #  'module'      : 'ConfObjFilter.py',
                 #  'args_mc'     : '{ \'cut_nLep\' : \' > 1 \', \'cut_nLepTrigMatch\' : \' > 0 \' }',
                 #  'args_data'   : '{ \'cut_nLep\' : \' > 1 \', \'cut_nLepTrigMatch\' : \' > 0 \' }',
-                #  'output_name' : 'DiLeptonLoosePh_2014_03_12',
-                #  'tag'         : 'll',
+                #  'output_name' : 'DiLeptonNoPhId_2014_06_09',
+                #  'tag'         : 'llData',
+                #},
+                #{ 
+                #  'module'      : 'ConfObjFilter.py',
+                #  'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\' }',
+                #  'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\' }',
+                #  'output_name' : 'LepGammaNoTrigNoEleIDNoPhID_2014_06_09',
+                #  'tag'         : 'lgMC',
                 #},
                 { 
                   'module'      : 'ConfObjFilter.py',
-                  'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\'}',
-                  'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'== 1\' }',
-                  'output_name' : 'LepGammaNoEleVetoNewVar_2014_04_28',
-                  'tag'         : 'lg',
+                  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPhPassMediumNoEleVeto\' : \'> 1\'}',
+                  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPhPassMediumNoEleVeto\' : \'> 1\', \'isData\' : \'True\'}',
+                  'output_name' : 'LepGammaGammaTESTLowMlgg_2014_06_16',
+                 'tag'         : 'lgMu',
                 },
-                #{ 
-                #  'module'      : 'ConfObjFilter.py',
-                #  'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nPh\' : \'> 1\'}',
-                #  'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nPh\' : \'== 1\' }',
-                #  'output_name' : 'LepGammaGammaPhMVAID2_2014_03_28',
-                # 'tag'         : 'lg',
-                #},
                 #{ 
                 #  'module'      : 'ConfObjFilter.py',
                 #  'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \',  \'cut_nPh\' : \'> 2\'}',
@@ -123,9 +126,9 @@ top_configs = [
                 #},
                 #{ 
                 #  'module'      : 'ConfObjFilter.py',
-                #  'args_mc'     : '{}',
-                #  'args_data'   : '{}',
-                #  'output_name' : 'ZgammaWithTruth_2014_02_26',
+                #  'args_mc'     : '{\'cut_nPh\' : \'>1\' }',
+                #  'args_data'   : '{\'cut_nPh\' : \'>1\' }',
+                #  'output_name' : 'QCD_2014_06_11',
                 # 'tag'         : 'lg',
                 #},
                 #{ 
@@ -165,11 +168,12 @@ top_configs = [
                 #},
 ]
 
-command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob %(nFilesPerJob)d --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s'
+command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob %(nFilesPerJob)d --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s '
+
 #command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob 5 --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s'
 
 nFilesPerJob = 1
-nproc=10
+nproc=8
 treename='ggNtuplizer/EventTree'
 
 for config in top_configs :

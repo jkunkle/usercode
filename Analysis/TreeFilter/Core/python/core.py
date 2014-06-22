@@ -142,6 +142,10 @@ def config_and_run( options, package_name ) :
 
     if not options.noInputFiles and not input_files :
         print 'Did not locate any input files with the path and file name given!  Check the inputs.'
+        if options.files is not None :
+            print options.files
+        else :
+            print options.filesDir
         return False
 
     # if output file name is not given grab the name from one of the input files
@@ -221,6 +225,8 @@ def config_and_run( options, package_name ) :
     modargs = {}
     if options.moduleArgs is not None :
         modargs = eval( options.moduleArgs )
+    if 'outputDir' not in modargs :
+        modargs['outputDir'] = options.outputDir
 
     alg_list = []
     try :
@@ -574,7 +580,7 @@ def get_file_evt_map( input_files, nsplit, nFilesPerJob, totalEvents, treeName )
         return []
 
     nFilesPerSplit = 0
-    if nFilesPerJob > 0 and nsplit == 0 :
+    if nFilesPerJob > 0 :
         nFilesPerSplit = nFilesPerJob
     elif nFilesPerJob == 0 and nsplit > 0 :
         # split by the number of files

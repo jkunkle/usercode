@@ -130,6 +130,9 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::ph_passMedium             = 0;
     OUT::ph_passLoose              = 0;
     OUT::ph_passLooseNoSIEIE       = 0;
+    OUT::ph_passHOverELoose        = 0;
+    OUT::ph_passHOverEMedium       = 0;
+    OUT::ph_passHOverETight        = 0;
     OUT::ph_passSIEIELoose         = 0;
     OUT::ph_passSIEIEMedium        = 0;
     OUT::ph_passSIEIETight         = 0;
@@ -236,6 +239,18 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("ph_chIsoCorr"              , &OUT::ph_chIsoCorr              );
     outtree->Branch("ph_neuIsoCorr"             , &OUT::ph_neuIsoCorr             );
     outtree->Branch("ph_phoIsoCorr"             , &OUT::ph_phoIsoCorr             );
+    outtree->Branch("ph_SCRChIso"               , &OUT::ph_SCRChIso               );
+    outtree->Branch("ph_SCRPhoIso"              , &OUT::ph_SCRPhoIso              );
+    outtree->Branch("ph_SCRNeuIso"              , &OUT::ph_SCRNeuIso              );
+    outtree->Branch("ph_SCRChIso04"             , &OUT::ph_SCRChIso04             );
+    outtree->Branch("ph_SCRPhoIso04"            , &OUT::ph_SCRPhoIso04            );
+    outtree->Branch("ph_SCRNeuIso04"            , &OUT::ph_SCRNeuIso04            );
+    outtree->Branch("ph_RandConeChIso"          , &OUT::ph_RandConeChIso          );
+    outtree->Branch("ph_RandConePhoIso"         , &OUT::ph_RandConePhoIso         );
+    outtree->Branch("ph_RandConeNeuIso"         , &OUT::ph_RandConeNeuIso         );
+    outtree->Branch("ph_RandConeChIso04"        , &OUT::ph_RandConeChIso04        );
+    outtree->Branch("ph_RandConePhoIso04"       , &OUT::ph_RandConePhoIso04       );
+    outtree->Branch("ph_RandConeNeuIso04"       , &OUT::ph_RandConeNeuIso04       );
     outtree->Branch("ph_eleVeto"                , &OUT::ph_eleVeto                );
     outtree->Branch("ph_hasPixSeed"             , &OUT::ph_hasPixSeed             );
     outtree->Branch("ph_drToTrk"                , &OUT::ph_drToTrk                );
@@ -252,6 +267,9 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("ph_passMedium"             , &OUT::ph_passMedium             );
     outtree->Branch("ph_passLoose"              , &OUT::ph_passLoose              );
     outtree->Branch("ph_passLooseNoSIEIE"       , &OUT::ph_passLooseNoSIEIE       );
+    outtree->Branch("ph_passHOverELoose"        , &OUT::ph_passHOverELoose        );
+    outtree->Branch("ph_passHOverEMedium"       , &OUT::ph_passHOverEMedium       );
+    outtree->Branch("ph_passHOverETight"        , &OUT::ph_passHOverETight        );
     outtree->Branch("ph_passSIEIELoose"         , &OUT::ph_passSIEIELoose         );
     outtree->Branch("ph_passSIEIEMedium"        , &OUT::ph_passSIEIEMedium        );
     outtree->Branch("ph_passSIEIETight"         , &OUT::ph_passSIEIETight         );
@@ -1438,6 +1456,18 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
     OUT::ph_chIsoCorr              -> clear();
     OUT::ph_neuIsoCorr             -> clear();
     OUT::ph_phoIsoCorr             -> clear();
+    OUT::ph_SCRChIso               -> clear();
+    OUT::ph_SCRPhoIso              -> clear();
+    OUT::ph_SCRNeuIso              -> clear();
+    OUT::ph_SCRChIso04             -> clear();
+    OUT::ph_SCRPhoIso04            -> clear();
+    OUT::ph_SCRNeuIso04            -> clear();
+    OUT::ph_RandConeChIso          -> clear();
+    OUT::ph_RandConePhoIso         -> clear();
+    OUT::ph_RandConeNeuIso         -> clear();
+    OUT::ph_RandConeChIso04        -> clear();
+    OUT::ph_RandConePhoIso04       -> clear();
+    OUT::ph_RandConeNeuIso04       -> clear();
     OUT::ph_eleVeto                -> clear();
     OUT::ph_hasPixSeed             -> clear();
     OUT::ph_drToTrk                -> clear();
@@ -1452,6 +1482,9 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
     OUT::ph_conv_ptout2            -> clear();
     OUT::ph_passLoose              -> clear();
     OUT::ph_passLooseNoSIEIE       -> clear();
+    OUT::ph_passHOverELoose         -> clear();
+    OUT::ph_passHOverEMedium        -> clear();
+    OUT::ph_passHOverETight         -> clear();
     OUT::ph_passSIEIELoose         -> clear();
     OUT::ph_passSIEIEMedium        -> clear();
     OUT::ph_passSIEIETight         -> clear();
@@ -1550,15 +1583,16 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
         float pfNeuIsoPtRhoCorr = pfNeuIsoRhoCorr-0.04*pt;
         float pfPhoIsoPtRhoCorr = pfPhoIsoRhoCorr-0.005*pt;
 
+
         if( !config.PassFloat( "cut_pt"    , pt       ) ) continue;
         if( !config.PassFloat( "cut_abseta"    , fabs(sceta)       ) ) continue;
         if( !config.PassFloat( "cut_abseta_crack"    , fabs(sceta)       ) ) continue;
-        if( !config.PassFloat( "cut_hovere"    , hovere12 ) ) continue;
         if( !config.PassBool ( "cut_eveto"     , eleVeto) ) continue;
         if( !config.PassBool ( "cut_drToTrk"     , drToTrk ) ) continue;
 
         bool pass_loose         = true;
         bool pass_loose_nosieie = true;
+        bool pass_hovere        = true;
         bool pass_medium        = true;
         bool pass_tight         = true;
         bool pass_mva_presel        = true;
@@ -1837,10 +1871,26 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
         OUT::ph_chIsoCorr            -> push_back(pfChIsoPtRhoCorr);
         OUT::ph_neuIsoCorr           -> push_back(pfNeuIsoPtRhoCorr);
         OUT::ph_phoIsoCorr           -> push_back(pfPhoIsoPtRhoCorr);
+        OUT::ph_SCRChIso             -> push_back(IN::phoSCRChIso->at(idx));
+        OUT::ph_SCRPhoIso            -> push_back(IN::phoSCRPhoIso->at(idx));
+        OUT::ph_SCRNeuIso            -> push_back(IN::phoSCRNeuIso->at(idx));
+        OUT::ph_SCRChIso04           -> push_back(IN::phoSCRChIso04->at(idx));
+        OUT::ph_SCRPhoIso04          -> push_back(IN::phoSCRPhoIso04->at(idx));
+        OUT::ph_SCRNeuIso04          -> push_back(IN::phoSCRNeuIso04->at(idx));
+        OUT::ph_RandConeChIso        -> push_back(IN::phoRandConeChIso->at(idx));
+        OUT::ph_RandConePhoIso       -> push_back(IN::phoRandConePhoIso->at(idx));
+        OUT::ph_RandConeNeuIso       -> push_back(IN::phoRandConeNeuIso->at(idx));
+        OUT::ph_RandConeChIso04      -> push_back(IN::phoRandConeChIso04->at(idx));
+        OUT::ph_RandConePhoIso04     -> push_back(IN::phoRandConePhoIso04->at(idx));
+        OUT::ph_RandConeNeuIso04     -> push_back(IN::phoRandConeNeuIso04->at(idx));
+
         OUT::ph_passTight            -> push_back(pass_tight);
         OUT::ph_passMedium           -> push_back(pass_medium);
         OUT::ph_passLoose            -> push_back(pass_loose);
         OUT::ph_passLooseNoSIEIE     -> push_back(pass_loose_nosieie);
+        OUT::ph_passHOverELoose      -> push_back(pass_hovere_loose);
+        OUT::ph_passHOverEMedium     -> push_back(pass_hovere_medium);
+        OUT::ph_passHOverETight      -> push_back(pass_hovere_tight);
         OUT::ph_passSIEIELoose       -> push_back(pass_sieie_loose);
         OUT::ph_passSIEIEMedium      -> push_back(pass_sieie_medium);
         OUT::ph_passSIEIETight       -> push_back(pass_sieie_tight);

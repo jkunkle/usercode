@@ -44,11 +44,14 @@ class RunModule : public virtual RunModuleBase {
         // Examples :
         void CalcEventVars ( ModuleConfig & config ) const;
         bool AddEventWeight( ModuleConfig & config, const CmdOptions & options );
+        bool ApplyPUBiasWeight( ModuleConfig & config );
 
     private :
 
         TFile * rfile;
         TH1F * rhist;
+        TH1F * whist_eb;
+        TH1F * whist_ee;
         TRandom3 * rand;
         CmdOptions options;
 };
@@ -61,12 +64,15 @@ namespace OUT {
     //Int_t              mu_pt25_n;
     //Int_t              el_pt25_n;
     //Float_t            EventWeight;
-    Bool_t             HasElToPhFF;
+    //Bool_t             HasElToPhFF;
 
-    Float_t            leadPhot_leadLepDR;
-    Float_t            leadPhot_sublLepDR;
-    Float_t            sublPhot_leadLepDR;
-    Float_t            sublPhot_sublLepDR;
+    //Float_t            leadPhot_leadLepDR;
+    //Float_t            leadPhot_sublLepDR;
+    //Float_t            sublPhot_leadLepDR;
+    //Float_t            sublPhot_sublLepDR;
+
+    Float_t              PUBiasWeight_ee;
+    Float_t              PUBiasWeight_eb;
 };
 
 #endif

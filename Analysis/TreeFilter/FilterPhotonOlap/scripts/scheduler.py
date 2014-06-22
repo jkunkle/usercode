@@ -6,15 +6,15 @@ import os
 base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 
 jobs = [
-        #(base, 'job_summer12_Wg'),
+        (base, 'job_summer12_Wg'),
         #(base, 'job_summer12_WgPt20-30'),
         #(base, 'job_summer12_WgPt30-50'),
         #(base, 'job_summer12_WgPt50-130'),
         #(base, 'job_summer12_WgPt130'),
-        (base, 'job_summer12_DYJetsToLL'),
-        (base, 'job_summer12_Wjets'),
-        (base, 'job_summer12_ttjets_1l'),
-        (base, 'job_summer12_ttjets_2l'),
+        #(base, 'job_summer12_DYJetsToLL'),
+        #(base, 'job_summer12_Wjets'),
+        #(base, 'job_summer12_ttjets_1l'),
+        #(base, 'job_summer12_ttjets_2l'),
         #(base, 'job_summer12_WAA_ISR'),
         #(base, 'job_summer12_DiPhotonBorn_Pt-10To25'),
         #(base, 'job_summer12_WH_ZH_125'),
@@ -59,7 +59,7 @@ jobs = [
 #output_name = 'LepGamma_2013_11_04'
 #sub_base = ['LepGammaLoosePh_2014_03_06', 'DiLeptonLoosePh_2014_03_06']
 #sub_base = ['LepGammaPhMVAID_2014_03_28']
-sub_base = ['LepGammaNoEleVeto_2014_04_27']
+sub_base = ['LepGammaGammaNom_2014_06_16']
 
 command_base = 'python scripts/filter.py  --filesDir %(base)s/%(sub_base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(sub_base)s/%(job)s%(suffix)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc %(nproc)d '
 

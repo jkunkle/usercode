@@ -14,10 +14,10 @@ jobs_data = [
         #(base, 'job_electron_2012b_Jan22rereco'),
         #(base, 'job_electron_2012c_Jan2012rereco'),
         #(base, 'job_electron_2012d_Jan22rereco'),
-        #(base, 'job_muon_2012a_Jan22rereco'),
-        #(base, 'job_muon_2012b_Jan22rereco'),
-        #(base, 'job_muon_2012c_Jan22rereco'),
-        #(base, 'job_muon_2012d_Jan22rereco'),
+        (base, 'job_muon_2012a_Jan22rerecoTightBlind'),
+        (base, 'job_muon_2012b_Jan22rerecoTightBlind'),
+        (base, 'job_muon_2012c_Jan22rerecoTightBlind'),
+        (base, 'job_muon_2012d_Jan22rerecoTightBlind'),
 ]
 jobs_mc = [
         #(base, 'job_summer12_DYJetsToLL'),
@@ -59,9 +59,9 @@ jobs_mc = [
         #(base, 'job_summer12_ttinclusive'),
         #(base, 'job_summer12_ttjets_1l'),
         #(base, 'job_summer12_ttjets_2l'),
-        (base, 'job_summer12_DYJetsToLLPhOlap' ),
-        (base, 'job_summer12_WjetsPhOlap' ),
-        (base, 'job_summer12_WgPhOlap' ),
+        #(base, 'job_summer12_DYJetsToLLPhOlap' ),
+        #(base, 'job_summer12_WjetsPhOlap' ),
+        #(base, 'job_summer12_WgPhOlap' ),
 
 ]
 
@@ -73,17 +73,17 @@ top_configs = [
                 { 
                   'module_mc'   : 'ConfUpdate.py',
                   'module_data' : 'ConfUpdate.py',
-                  'output_name' : 'DiLeptonLoosePhUpdate_2014_02_25',
-                  'input_name'  : 'DiLeptonLoosePh_2014_02_24',
+                  'output_name' : 'LepGammaNoEleVetoNewVarPUBiasWt_2014_05_02',
+                  'input_name'  : 'LepGammaNoEleVetoNewVar_2014_05_02',
                   'tag'         : 'll',
                 },
-                { 
-                  'module_mc'   : 'ConfUpdate.py',
-                  'module_data' : 'ConfUpdate.py',
-                  'output_name' : 'LepGammaLoosePhUpdate_2014_02_25',
-                  'input_name'  : 'LepGammaLoosePh_2014_02_24',
-                  'tag'         : 'll',
-                },
+                #{ 
+                #  'module_mc'   : 'ConfUpdate.py',
+                #  'module_data' : 'ConfUpdate.py',
+                #  'output_name' : 'LepGammaLoosePhUpdate_2014_02_25',
+                #  'input_name'  : 'LepGammaLoosePh_2014_02_24',
+                #  'tag'         : 'll',
+                #},
 ]
 
 command_base = 'python scripts/filter.py  --filesDir %(base)s/%(input)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output_name)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc 8 --confFileName %(tag)s_%(job)s.txt --sample %(job)s'
@@ -95,8 +95,8 @@ for config in top_configs :
     for base, job in jobs_data :
     
         command = command_base %{ 'base' : base, 'job' : job, 'input' : config['input_name'], 'output_name' : config['output_name'], 'module' : config['module_data'], 'tag' : config['tag']  }
-        if not first :
-            command += ' --noCompile '
+        #if not first :
+        #    command += ' --noCompile '
 
         if options.test :
             print command

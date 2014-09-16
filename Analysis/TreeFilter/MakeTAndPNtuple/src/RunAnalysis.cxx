@@ -68,6 +68,7 @@ void RunModule::initialize( TChain * chain, TTree * _outtree, TFile *outfile,
     outtree->Branch("probe_nConvTrk"   , &OUT::probe_nConvTrk   );
     outtree->Branch("probe_passtrig"   , &OUT::probe_passtrig   );
     outtree->Branch("m_tagprobe"       , &OUT::m_tagprobe       );
+    outtree->Branch("dr_tagprobe"       , &OUT::dr_tagprobe       );
     outtree->Branch("m_tagprobe_sceta" , &OUT::m_tagprobe_sceta );
 
 
@@ -87,6 +88,9 @@ bool RunModule::execute( std::vector<ModuleConfig> & configs ) {
         BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
             if( mod_conf.GetName() == "MakeNtuple" ) {
                 MakeNtuple( mod_conf );
+            }
+            if( mod_conf.GetName() == "MakeGGNtuple" ) {
+                MakeGGNtuple( mod_conf );
             }
         }
     }
@@ -188,11 +192,83 @@ void RunModule::MakeNtuple( ModuleConfig & config ) const {
 
 }
 
-// This is an example of a module that applies an
-// event filter.  Note that it returns a bool instead
-// of a void.  In principle the modules can return any
-// type of variable, you just have to handle it
-// in the ApplyModule function
+void RunModule::MakeGGNtuple( ModuleConfig & config ) const {
+
+
+    // collect objects
+    std::vector< TLorentzVector> objects;
+    std::vector<int> obj_index;
+    std::vector<bool> obj_hasPixSeed;
+    std::vector<bool> obj_hasTriggerMatch;
+    for( int pidx = 0; pidx < IN::ph_n; ++pidx ) {
+        TLorentzVector phlv;
+        phlv.SetPtEtaPhiM( IN::ph_pt->at(pidx),
+                           IN::ph_sceta->at(pidx),
+                           IN::ph_phi->at(pidx),
+                           0.0    );
+        objects.push_back( phlv );
+        obj_hasPixSeed.push_back( IN::ph_hasPixSeed->at(pidx) ); 
+        obj_index.push_back( pidx );
+
+        bool ph_has_trig_match = false;
+        for( int eidx = 0 ; eidx < IN::el_n; ++eidx ) {
+
+            TLorentzVector ellv;
+            ellv.SetPtEtaPhiE( IN::el_pt->at(eidx),
+                               IN::el_eta->at(eidx),
+                               IN::el_phi->at(eidx),
+                               IN::el_e->at(eidx)    );
+
+            if( ( IN::el_triggerMatch->at(eidx) ) && ( ellv.DeltaR( phlv ) < 0.2 ) ) {
+                ph_has_trig_match=true;
+                break;
+            }
+        }
+
+        obj_hasTriggerMatch.push_back( ph_has_trig_match );
+                
+
+    }
+
+    if( objects.size() == 2 ) {
+        for( unsigned i = 0; i < objects.size(); ++i) {
+            bool pass_tag_cuts = true;
+            if( !config.PassFloat( "cut_tag_pt", objects[i].Pt() ) ) pass_tag_cuts = false;
+            if( !config.PassBool( "cut_tag_triggerMatch", obj_hasTriggerMatch[i] ) ) pass_tag_cuts = false;
+
+            if( !pass_tag_cuts ) {
+                continue;
+            }
+
+            // fill tag info
+            OUT::tag_pt = objects[i].Pt();
+            OUT::tag_eta = objects[i].Eta();
+            OUT::tag_phi = objects[i].Phi();
+            //OUT::tag_eta_sc = objects_sceta[i].Eta();
+
+            // now loop over the objects again
+            for( unsigned j = 0; j < objects.size(); ++j) {
+                if( j == i ) continue; // but don't  use the same object
+                //this is a probe
+                OUT::probe_pt  = objects[j].Pt();
+                OUT::probe_eta = objects[j].Eta();
+                OUT::probe_phi = objects[j].Phi();
+                //OUT::probe_eta_sc = objects_sceta[j].Eta();
+                OUT::probe_isPhoton = (obj_hasPixSeed[j]==0);
+                //if( OUT::probe_isPhoton ) {
+                //    OUT::probe_nConvTrk = IN::ph_conv_nTrk->at(obj_index[j]);
+                //}
+
+                OUT::m_tagprobe = (objects[i] + objects[j]).M();
+                OUT::dr_tagprobe = objects[i].DeltaR(objects[j]);
+            }
+
+            outtree->Fill();
+        
+        }
+    }
+
+}
 
 bool RunModule::FilterEvent( ModuleConfig & config ) const {
 
@@ -201,6 +277,7 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     int nPh = IN::ph_n;
     int nEl  = IN::el_n;
 
+    if( !config.PassInt("cut_n_ph", nPh ) ) keep_event = false;
     if( !config.PassInt("cut_n_elph", nPh+nEl ) ) keep_event = false;
     if( !config.PassInt("cut_n_el_passtrig", IN::el_passtrig_n ) ) keep_event = false;
 

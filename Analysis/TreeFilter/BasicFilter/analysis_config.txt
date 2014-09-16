@@ -1,5 +1,5 @@
-files : [root://eoscms//eos/cms/store/group/phys_egamma/ymaravin/ggNtuples/V05-03-07-11/job_summer12_LNuGG_FSR.root][0:(0-1000),];
+files : [root://eoscms//eos/cms/store/group/phys_smp/ggNtuples/mc/job_summer12_DYJetsToLL.root][0:(0-100000),];
 treeName : ggNtuplizer/EventTree
-outputDir : .
+outputDir : /tmp/jkunkle/mcfilter/job_summer12_DYJetsToLL
 outputFile : tree.root
 __Modules__

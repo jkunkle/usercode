@@ -23,8 +23,8 @@ def config_analysis( alg_list ) :
 
     
     filter_event = Filter('FilterEvent')
-    filter_event.cut_n_gen_photons = ' < 2 ' #for Wg
-    #filter_event.cut_n_gen_photons = ' < 1 ' #for DYJets, WJets, top
+    #filter_event.cut_n_gen_photons = ' < 2 ' #for Wg
+    filter_event.cut_n_gen_photons = ' < 1 ' #for DYJets, WJets, top
     #filter_event.cut_n_gen_photons = ' > 1 ' # to make Zgg
 
     filter_event.add_hist( 'cut_n_gen_photons', 10, 0, 10 )

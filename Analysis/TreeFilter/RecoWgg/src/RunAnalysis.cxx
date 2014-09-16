@@ -14,6 +14,7 @@
 #include "include/BranchDefs.h"
 #include "include/BranchInit.h"
 #include "include/MuScleFitCorrector.h"
+#include "include/EnergyScaleCorrection_class.h"
 
 #include "Core/Util.h"
 

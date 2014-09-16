@@ -2,19 +2,20 @@ import os
 #base = '/eos/cms/store/user/jkunkle/Wgamgam/OutputS2TestNoPhJetOlap_2013_11_03'
 #base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputOnlyDYNoTrigFilt_2014_02_03'
 #base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2013_12_07'
+#base = '/eos/cms/store/user/jkunkle/Wgamgam/GammaGammaMediumNoEleVetoNoEleIDOlapWithTrig_2014_07_31/'
 #base_tmp = '/tmp/tEST/RecoOutputTESTNoCorr_2014_02_05/'
 base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 
 jobs = [
-        (base, 'job_summer12_Wg'),
+        #(base, 'job_summer12_Wg'),
         #(base, 'job_summer12_WgPt20-30'),
         #(base, 'job_summer12_WgPt30-50'),
         #(base, 'job_summer12_WgPt50-130'),
         #(base, 'job_summer12_WgPt130'),
-        #(base, 'job_summer12_DYJetsToLL'),
-        #(base, 'job_summer12_Wjets'),
-        #(base, 'job_summer12_ttjets_1l'),
-        #(base, 'job_summer12_ttjets_2l'),
+        (base, 'job_summer12_DYJetsToLL'),
+        (base, 'job_summer12_Wjets'),
+        (base, 'job_summer12_ttjets_1l'),
+        (base, 'job_summer12_ttjets_2l'),
         #(base, 'job_summer12_WAA_ISR'),
         #(base, 'job_summer12_DiPhotonBorn_Pt-10To25'),
         #(base, 'job_summer12_WH_ZH_125'),
@@ -59,7 +60,8 @@ jobs = [
 #output_name = 'LepGamma_2013_11_04'
 #sub_base = ['LepGammaLoosePh_2014_03_06', 'DiLeptonLoosePh_2014_03_06']
 #sub_base = ['LepGammaPhMVAID_2014_03_28']
-sub_base = ['LepGammaGammaNom_2014_06_16']
+#sub_base = ['LepGammaGamma_2014_07_14']
+sub_base = ['DiLepton_2014_08_25']
 
 command_base = 'python scripts/filter.py  --filesDir %(base)s/%(sub_base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(sub_base)s/%(job)s%(suffix)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc %(nproc)d '
 

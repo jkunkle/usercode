@@ -3,14 +3,14 @@
 def config_samples(samples) :
 
     import ROOT
-    samples.AddSample('electron_2012a_Jan22rereco'   , path='job_electron_2012a_Jan22rerecoTightBlind'    ,  isActive=False, scale=1.0 )
-    samples.AddSample('electron_2012b_Jan22rereco'   , path='job_electron_2012b_Jan22rerecoTightBlind'    ,  isActive=False, scale=1.0 )
-    samples.AddSample('electron_2012c_Jan2012rereco' , path='job_electron_2012c_Jan2012rerecoTightBlind'  ,  isActive=False, scale=1.0 )
-    samples.AddSample('electron_2012d_Jan22rereco'   , path='job_electron_2012d_Jan22rerecoTightBlind'    ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012a_Jan22rereco'       , path='job_muon_2012a_Jan22rerecoTightBlind'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012b_Jan22rereco'       , path='job_muon_2012b_Jan22rerecoTightBlind'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012c_Jan22rereco'       , path='job_muon_2012c_Jan22rerecoTightBlind'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012d_Jan22rereco'       , path='job_muon_2012d_Jan22rerecoTightBlind'        ,  isActive=False, scale=1.0 )
+    samples.AddSample('electron_2012a_Jan22rereco'   , path='job_electron_2012a_Jan22rereco'    ,  isActive=False, scale=1.0 )
+    samples.AddSample('electron_2012b_Jan22rereco'   , path='job_electron_2012b_Jan22rereco'    ,  isActive=False, scale=1.0 )
+    samples.AddSample('electron_2012c_Jan2012rereco' , path='job_electron_2012c_Jan2012rereco'  ,  isActive=False, scale=1.0 )
+    samples.AddSample('electron_2012d_Jan22rereco'   , path='job_electron_2012d_Jan22rereco'    ,  isActive=False, scale=1.0 )
+    samples.AddSample('muon_2012a_Jan22rereco'       , path='job_muon_2012a_Jan22rereco'        ,  isActive=False, scale=1.0 )
+    samples.AddSample('muon_2012b_Jan22rereco'       , path='job_muon_2012b_Jan22rereco'        ,  isActive=False, scale=1.0 )
+    samples.AddSample('muon_2012c_Jan22rereco'       , path='job_muon_2012c_Jan22rereco'        ,  isActive=False, scale=1.0 )
+    samples.AddSample('muon_2012d_Jan22rereco'       , path='job_muon_2012d_Jan22rereco'        ,  isActive=False, scale=1.0 )
     samples.AddSample('ttjets_1l'                    , path='job_summer12_ttjets_1lPhOlap'            ,  isActive=False, useXSFile=True )
     samples.AddSample('ttjets_2l'                    , path='job_summer12_ttjets_2lPhOlap'            ,  isActive=False, useXSFile=True )
     samples.AddSample('Wg'                           , path='job_summer12_Wg'                  ,  isActive=False, useXSFile=True )
@@ -24,18 +24,34 @@ def config_samples(samples) :
     samples.AddSample('WZZ'                          , path='job_summer12_WZZ'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('Zg'                           , path='job_summer12_Zg'                   ,  isActive=False, useXSFile=True )
 
-    samples.AddSample( 'jetmon', path='job_jetmon_2012c_Jan22rereco', isActive=True )
+    samples.AddSample('job_jetmon_2012b_Jan22rereco_pfJet40', path='job_jetmon_2012b_Jan22rereco_pfJet40', isActive=False )
+    samples.AddSample('job_jetmon_2012c_Jan22rereco_pfJet40', path='job_jetmon_2012c_Jan22rereco_pfJet40', isActive=False )
+    samples.AddSample('job_jetmon_2012d_Jan22rereco_pfJet40', path='job_jetmon_2012d_Jan22rereco_pfJet40', isActive=False )
 
-    samples.AddSampleGroup( 'Data', legend_name='Data', 
+    samples.AddSampleGroup( 'jetmon', legend_name='JetMon',
+                           input_samples = [
+                                            'job_jetmon_2012b_Jan22rereco_pfJet40',
+                                            'job_jetmon_2012c_Jan22rereco_pfJet40',
+                                            'job_jetmon_2012d_Jan22rereco_pfJet40',
+                           ],
+                               plotColor=ROOT.kBlack )
+
+    samples.AddSampleGroup( 'Muon', legend_name='Muon Data', 
                             input_samples = [
-                                             #'electron_2012a_Jan22rereco',
-                                             #'electron_2012b_Jan22rereco',
-                                             #'electron_2012c_Jan2012rereco',
-                                             #'electron_2012d_Jan22rereco',
                                              'muon_2012a_Jan22rereco',
                                              'muon_2012b_Jan22rereco',
                                              'muon_2012c_Jan22rereco',
                                              'muon_2012d_Jan22rereco',
+                                            ],
+                           plotColor=ROOT.kBlack,
+                           isData=True,
+                          )
+    samples.AddSampleGroup( 'Electron', legend_name='Electron Data', 
+                            input_samples = [
+                                             'electron_2012a_Jan22rereco',
+                                             'electron_2012b_Jan22rereco',
+                                             'electron_2012c_Jan2012rereco',
+                                             'electron_2012d_Jan22rereco',
                                             ],
                            plotColor=ROOT.kBlack,
                            isData=True,
@@ -70,9 +86,9 @@ def config_samples(samples) :
                            scale=-1,
                           )
 
-    samples.AddSampleGroup( 'DataRealPhotonZgSub', legend_name='Fake photons', 
+    samples.AddSampleGroup( 'MuonRealPhotonZgSub', legend_name='Fake photons', 
                         input_samples = [
-                            'Data',
+                            'Muon',
                             'RealPhotonsZg',
                         ],
                            plotColor=ROOT.kYellow,
@@ -80,7 +96,7 @@ def config_samples(samples) :
 
     samples.AddSampleGroup( 'DataRealPhotonWgSub', legend_name='Fake photons', 
                         input_samples = [
-                            'Data',
+                            'Muon',
                             'RealPhotonsWg',
                             'RealPhotonsZg',
                         ],
@@ -281,6 +297,16 @@ def config_samples(samples) :
                             input_samples = ['Data', 'MCBkg'],
                             plotColor=ROOT.kGreen,isSignal=True
                           )
+    
+    samples.AddSampleGroup( 'WjetsZjets', legend_name = 'W+jets + Z+jets',
+                           input_samples=[
+                           'DYJetsToLLPhOlap', 
+                           'WjetsPhOlap',
+                           ],
+                           plotColor=ROOT.kSpring,
+                           isActive=False,
+                          )
+
                                             
 
     #samples.AddSampleGroup( 'Data', legend_name='Data (generated)', 

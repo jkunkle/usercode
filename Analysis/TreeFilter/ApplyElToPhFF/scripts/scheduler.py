@@ -1,38 +1,12 @@
 import os
 #base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaPt25_2013_12_05/'
-base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoEleVeto_2014_04_27'
-output_base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
-from argparse import ArgumentParser
+base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNom_2014_06_16/'
 
-parser = ArgumentParser()
-parser.add_argument('--test', default=False, action='store_true', dest='test', help='do not run, just print commands' )
-
-options = parser.parse_args()
-
-
-jobs_data = [
-        #(base, 'job_1electron_2012b_Jul13rereco_run1'),
-        #(base, 'job_1electron_2012b_Jul13rereco_run2'),
-        #(base, 'job_1electron_2012c_Aug24rereco'),
-        #(base, 'job_1electron_2012c_Dec11rereco'),
-        #(base, 'job_1electron_2012c_PRv2_part1'),
-        #(base, 'job_1electron_2012c_PRv2_part2'),
-        #(base, 'job_1electron_2012c_PRv2_part3'),
-        #(base, 'job_1electron_2012d_PRv1_part1'),
-        #(base, 'job_1electron_2012d_PRv1_part2'),
-        #(base, 'job_electron_2012a_Aug6rereco'),
-        #(base, 'job_electron_2012a_Jul13rereco'),
-        #(base, 'job_muon_2012a_Aug6rereco'),
-        #(base, 'job_muon_2012a_Jul13rereco'),
-        #(base, 'job_muon_2012b_Jul13rereco'),
-        #(base, 'job_muon_2012c_Aug24rereco'),
-        #(base, 'job_muon_2012c_Dec11rereco'),
-        #(base, 'job_muon_2012c_PRv2'),
-        #(base, 'job_muon_2012c_PRv21'),
-        #(base, 'job_muon_2012d_PRv1'),
-        #(base, 'job_muon_2012d_PRv11'),
-]
-jobs_mc = [
+jobs= [
+        (base, 'job_electron_2012a_Jan22rereco'),
+        (base, 'job_electron_2012b_Jan22rereco'),
+        (base, 'job_electron_2012c_Jan2012rereco'),
+        (base, 'job_electron_2012d_Jan22rereco'),
         #(base, 'job_summer12_DYJetsToLL'),
         #(base, 'job_summer12_LNuGG_FSR'),
         #(base, 'job_summer12_LNuGG_ISR'),
@@ -53,7 +27,7 @@ jobs_mc = [
         #(base, 'job_summer12_ZZ_4e'),
         #(base, 'job_summer12_ZZ_4mu'),
         #(base, 'job_summer12_ZZ_4tau'),
-        (base, 'job_summer12_Zg'),
+        #(base, 'job_summer12_Zg'),
         #(base, 'job_summer12_gjet_pt20to40_doubleEM'),
         #(base, 'job_summer12_gjet_pt40_doubleEM'),
         #(base, 'job_summer12_t_s'),
@@ -74,41 +48,27 @@ jobs_mc = [
 #module_data = 'ConfLepGammaFilter_Data.py'
 #output_name = 'LepGamma_2013_11_04'
 
-top_configs = [ { 
-                  'module_mc'   : 'ConfBasicConv.py',
-                  'module_data' : 'ConfBasicConv.py',
-                  'output_name' : 'LepGammaElToPhConv_2014_05_02',
-                  'tag'         : 'll',
+top_configs = [ 
+                { 
+                  'module' : 'Conf.py',
+                  'output_name' : 'LeadWeight',
+                  'args'        : '{ \'DoLeadWeight\' : True, \'DoSublWeight\' : False } '
+                },
+                { 
+                  'module' : 'Conf.py',
+                  'output_name' : 'SublWeight',
+                  'args'        : '{ \'DoLeadWeight\' : False, \'DoSublWeight\' : True } '
                 },
 ]
 
-command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --fileKey tree.root --outputDir %(output_base)s/%(output_name)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc 12 --confFileName %(tag)s_%(job)s.txt --sample %(job)s'
-#command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output_name)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc 8 --confFileName %(tag)s_%(job)s.txt '
+command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --fileKey tree.root --outputDir %(base)s/%(job)s_%(output_name)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nsplit 1 --moduleArgs "%(args)s" '
 
-first = True
 for config in top_configs :
 
-    for base, job in jobs_data :
+    for base, job in jobs :
     
-        command = command_base %{ 'base' : base, 'job' : job, 'output_base' : output_base, 'output_name' : config['output_name'], 'module' : config['module_data'], 'tag' : config['tag']  }
-        #if not first :
-        #    command += ' --noCompile '
+        command = command_base %{ 'base' : base, 'job' : job, 'output_name' : config['output_name'], 'module' : config['module'], 'args' : config['args'] }
+        print command
+        os.system(command)
 
-        if options.test :
-            print command
-        else :
-            os.system(command)
-        first = False
-    
-    for base, job in jobs_mc :
-    
-        command = command_base %{ 'base' : base, 'job' : job, 'output_base' : output_base, 'output_name' : config['output_name'], 'module' : config['module_mc'], 'tag' : config['tag']  }
-        #if not first :
-        #    command += ' --noCompile '
-    
-        if options.test :
-            print command
-        else :
-            os.system(command)
-        first = False
 

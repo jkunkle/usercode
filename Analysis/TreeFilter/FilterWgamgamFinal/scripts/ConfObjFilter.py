@@ -29,10 +29,10 @@ def config_analysis( alg_list, args ) :
     #alg_list.append( get_electron_filter( None ) )
     #alg_list.append( get_photon_filter( 'looseNoSIEIE', ptcut=15 ) )
     alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15 ) )
-    #alg_list.append( get_photon_filter( id='medium', eVeto='hasPixSeed', ptcut=15 ) )
+    #alg_list.append( get_photon_filter( id=None, eVeto='hasPixSeed', ptcut=15 ) )
     alg_list.append( get_jet_filter(do_hists=False) )
-    print 'SAVING MEDIUM NO ELE VETO PHOTONS'
-    print 'SAVING MEDIUM ELECTRONS'
+    print 'SAVING MEDIUM ELE VETO PHOTONS, NO ELE OLAP'
+    print 'SAVING NOID ELECTRONS'
 
     # resort photons by the mva score
     #alg_list.append( Filter( 'SortPhotonByMVAScore' ) )
@@ -50,7 +50,7 @@ def config_analysis( alg_list, args ) :
 
     filter_blind = Filter( 'FilterBlind' )
     #filter_blind.cut_nPhPassMedium = ' < 2 '
-    filter_blind.cut_m_lepphph= ' < 100  '
+    #filter_blind.cut_m_lepphph= ' < 100  '
     filter_blind.add_var( 'isData', isData )
     alg_list.append(filter_blind)
 

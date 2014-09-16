@@ -16,6 +16,7 @@
 #include "TMVA/Reader.h"
 
 class MuScleFitCorrector;
+class EnergyScaleCorrection_class;
 
 // The RunModule inherits from RunModuleBase (an Abstract Base Class )
 // defined in the Core package so that all
@@ -131,6 +132,7 @@ class RunModule : public virtual RunModuleBase {
 
         TRandom3 _rand;
         MuScleFitCorrector * muCorr;
+        EnergyScaleCorrection_class * eleCorr;
 
         TFile *puweight_sample_file;
         TFile *puweight_data_file;

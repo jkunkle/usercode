@@ -24,6 +24,25 @@ namespace IN {
  std::vector<float>				*vtxbs_x;
  std::vector<float>				*vtxbs_y;
  std::vector<float>				*vtxbs_z;
+ std::vector<float>				*vtxbsPtMod;
+ std::vector<float>				*vtxbsSumPt2;
+ std::vector<std::vector<int> >				*vtxbsTkIndex;
+ std::vector<std::vector<float> >				*vtxbsTkWeight;
+ Int_t				nTrk;
+ std::vector<float>				*trkP_x;
+ std::vector<float>				*trkP_y;
+ std::vector<float>				*trkP_z;
+ std::vector<float>				*trkVtx_x;
+ std::vector<float>				*trkVtx_y;
+ std::vector<float>				*trkVtx_z;
+ std::vector<float>				*trkd0;
+ std::vector<float>				*trkd0Err;
+ std::vector<float>				*trkdz;
+ std::vector<float>				*trkdzErr;
+ std::vector<float>				*trkPtErr;
+ std::vector<int>				*trkQuality;
+ Int_t				nGoodTrk;
+ Int_t				IsTracksGood;
  Float_t				pfMET;
  Float_t				pfMETPhi;
  Float_t				pfMETsumEt;
@@ -117,6 +136,11 @@ namespace IN {
  std::vector<float>				*elePhoRegrE;
  std::vector<float>				*elePhoRegrEerr;
  std::vector<float>				*eleSeedTime;
+ std::vector<std::vector<float> >				*eleGSFPt;
+ std::vector<std::vector<float> >				*eleGSFEta;
+ std::vector<std::vector<float> >				*eleGSFPhi;
+ std::vector<std::vector<float> >				*eleGSFCharge;
+ std::vector<std::vector<float> >				*eleGSFChi2NDF;
  std::vector<int>				*eleRecoFlag;
  std::vector<int>				*elePos;
  std::vector<float>				*eleIsoTrkDR03;
@@ -499,6 +523,16 @@ namespace IN {
  std::vector<float>				*jetPuJetIdL;
  std::vector<float>				*jetPuJetIdM;
  std::vector<float>				*jetPuJetIdT;
+ Int_t				nLowPtJet;
+ std::vector<float>				*jetLowPtEn;
+ std::vector<float>				*jetLowPtPt;
+ std::vector<float>				*jetLowPtEta;
+ std::vector<float>				*jetLowPtPhi;
+ std::vector<float>				*jetLowPtCharge;
+ std::vector<float>				*jetLowPtEt;
+ std::vector<float>				*jetLowPtRawPt;
+ std::vector<float>				*jetLowPtRawEn;
+ std::vector<float>				*jetLowPtArea;
  Int_t				nConv;
  std::vector<float>				*convP4_x;
  std::vector<float>				*convP4_y;
@@ -558,15 +592,28 @@ namespace OUT {
  Int_t				HLTIndex[70];
  Float_t				bspotPos[3];
  Int_t				nVtx;
- std::vector<float>				*vtx_x;
- std::vector<float>				*vtx_y;
- std::vector<float>				*vtx_z;
  Int_t				IsVtxGood;
  Int_t				nGoodVtx;
  Int_t				nVtxBS;
- std::vector<float>				*vtxbs_x;
- std::vector<float>				*vtxbs_y;
- std::vector<float>				*vtxbs_z;
+ std::vector<float>				*vtxbsPtMod;
+ std::vector<float>				*vtxbsSumPt2;
+ std::vector<std::vector<int> >				*vtxbsTkIndex;
+ std::vector<std::vector<float> >				*vtxbsTkWeight;
+ Int_t				nTrk;
+ std::vector<float>				*trkP_x;
+ std::vector<float>				*trkP_y;
+ std::vector<float>				*trkP_z;
+ std::vector<float>				*trkVtx_x;
+ std::vector<float>				*trkVtx_y;
+ std::vector<float>				*trkVtx_z;
+ std::vector<float>				*trkd0;
+ std::vector<float>				*trkd0Err;
+ std::vector<float>				*trkdz;
+ std::vector<float>				*trkdzErr;
+ std::vector<float>				*trkPtErr;
+ std::vector<int>				*trkQuality;
+ Int_t				nGoodTrk;
+ Int_t				IsTracksGood;
  Float_t				pfMET;
  Float_t				pfMETPhi;
  Float_t				pfMETsumEt;
@@ -586,29 +633,18 @@ namespace OUT {
  Float_t				trkMETyPV;
  Float_t				trkMETPhiPV;
  Float_t				trkMETPV;
- std::vector<float>				*trkMETx;
- std::vector<float>				*trkMETy;
- std::vector<float>				*trkMETPhi;
- std::vector<float>				*trkMET;
  Int_t				metFilters[10];
  Int_t				nEle;
  std::vector<unsigned long>				*eleTrg;
- std::vector<int>				*eleClass;
  std::vector<int>				*eleIsEcalDriven;
  std::vector<int>				*eleCharge;
  std::vector<int>				*eleChargeConsistent;
  std::vector<float>				*eleEn;
- std::vector<float>				*eleEcalEn;
- std::vector<float>				*eleSCRawEn;
  std::vector<float>				*eleSCEn;
- std::vector<float>				*eleESEn;
  std::vector<float>				*elePt;
  std::vector<float>				*eleEta;
  std::vector<float>				*elePhi;
  std::vector<float>				*eleR9;
- std::vector<std::vector<float> >				*eleEtaVtx;
- std::vector<std::vector<float> >				*elePhiVtx;
- std::vector<std::vector<float> >				*eleEtVtx;
  std::vector<float>				*eleSCEta;
  std::vector<float>				*eleSCPhi;
  std::vector<float>				*eleSCEtaWidth;
@@ -625,10 +661,6 @@ namespace OUT {
  std::vector<float>				*eleHoverE;
  std::vector<float>				*eleHoverE12;
  std::vector<float>				*eleEoverP;
- std::vector<float>				*elePin;
- std::vector<float>				*elePout;
- std::vector<float>				*eleTrkMomErr;
- std::vector<float>				*eleBrem;
  std::vector<float>				*eledEtaAtVtx;
  std::vector<float>				*eledPhiAtVtx;
  std::vector<float>				*eleSigmaIEtaIEta;
@@ -636,30 +668,15 @@ namespace OUT {
  std::vector<float>				*eleSigmaIPhiIPhi;
  std::vector<float>				*eleEmax;
  std::vector<float>				*eleE2ndMax;
- std::vector<float>				*eleETop;
- std::vector<float>				*eleEBottom;
- std::vector<float>				*eleELeft;
- std::vector<float>				*eleERight;
  std::vector<float>				*eleE1x5;
  std::vector<float>				*eleE3x3;
  std::vector<float>				*eleE5x5;
  std::vector<float>				*eleE2x5Max;
- std::vector<float>				*eleE2x5Top;
- std::vector<float>				*eleE2x5Bottom;
- std::vector<float>				*eleE2x5Left;
- std::vector<float>				*eleE2x5Right;
- std::vector<float>				*eleSeedEta;
- std::vector<float>				*eleSeedE;
- std::vector<float>				*eleSeedPhi;
- std::vector<float>				*eleCrysEta;
- std::vector<float>				*eleCrysPhi;
- std::vector<int>				*eleCrysIEta;
- std::vector<int>				*eleCrysIPhi;
- std::vector<float>				*eleRegrE;
- std::vector<float>				*eleRegrEerr;
- std::vector<float>				*elePhoRegrE;
- std::vector<float>				*elePhoRegrEerr;
- std::vector<float>				*eleSeedTime;
+ std::vector<std::vector<float> >				*eleGSFPt;
+ std::vector<std::vector<float> >				*eleGSFEta;
+ std::vector<std::vector<float> >				*eleGSFPhi;
+ std::vector<std::vector<float> >				*eleGSFCharge;
+ std::vector<std::vector<float> >				*eleGSFChi2NDF;
  std::vector<int>				*eleRecoFlag;
  std::vector<int>				*elePos;
  std::vector<float>				*eleIsoTrkDR03;
@@ -670,12 +687,8 @@ namespace OUT {
  std::vector<float>				*eleIsoEcalDR04;
  std::vector<float>				*eleIsoHcalDR04;
  std::vector<float>				*eleIsoHcalDR0412;
- std::vector<float>				*eleModIsoTrk;
- std::vector<float>				*eleModIsoEcal;
- std::vector<float>				*eleModIsoHcal;
  std::vector<int>				*eleMissHits;
  std::vector<float>				*eleConvDist;
- std::vector<float>				*eleConvDcot;
  std::vector<int>				*eleConvVtxFit;
  std::vector<float>				*eleIP3D;
  std::vector<float>				*eleIP3DErr;
@@ -687,19 +700,10 @@ namespace OUT {
  std::vector<float>				*elePFChIso04;
  std::vector<float>				*elePFPhoIso04;
  std::vector<float>				*elePFNeuIso04;
- std::vector<float>				*eleESEffSigmaRR_x;
- std::vector<float>				*eleESEffSigmaRR_y;
- std::vector<float>				*eleESEffSigmaRR_z;
  Int_t				nPho;
  std::vector<unsigned long>				*phoTrg;
  std::vector<unsigned long>				*phoTrgFilter;
  std::vector<bool>				*phoIsPhoton;
- std::vector<float>				*phoSCPos_x;
- std::vector<float>				*phoSCPos_y;
- std::vector<float>				*phoSCPos_z;
- std::vector<float>				*phoCaloPos_x;
- std::vector<float>				*phoCaloPos_y;
- std::vector<float>				*phoCaloPos_z;
  std::vector<float>				*phoE;
  std::vector<float>				*phoEt;
  std::vector<float>				*phoEta;
@@ -707,9 +711,6 @@ namespace OUT {
  std::vector<float>				*phoVtx_y;
  std::vector<float>				*phoVtx_z;
  std::vector<float>				*phoPhi;
- std::vector<std::vector<float> >				*phoEtVtx;
- std::vector<std::vector<float> >				*phoEtaVtx;
- std::vector<std::vector<float> >				*phoPhiVtx;
  std::vector<float>				*phoR9;
  std::vector<int>				*phoNClus;
  std::vector<float>				*phoTrkIsoHollowDR03;
@@ -720,7 +721,6 @@ namespace OUT {
  std::vector<float>				*phoCiCdRtoTrk;
  std::vector<float>				*phoEcalIsoDR04;
  std::vector<float>				*phoHcalIsoDR04;
- std::vector<float>				*phoHcalIsoDR0412;
  std::vector<float>				*phoHoverE;
  std::vector<float>				*phoHoverE12;
  std::vector<int>				*phoEleVeto;
@@ -728,12 +728,7 @@ namespace OUT {
  std::vector<float>				*phoSigmaIEtaIPhi;
  std::vector<float>				*phoSigmaIPhiIPhi;
  std::vector<float>				*phoCiCPF4phopfIso03;
- std::vector<float>				*phoCiCPF4phopfIso04;
  std::vector<float>				*phoEmax;
- std::vector<float>				*phoETop;
- std::vector<float>				*phoEBottom;
- std::vector<float>				*phoELeft;
- std::vector<float>				*phoERight;
  std::vector<float>				*phoE2ndMax;
  std::vector<float>				*phoE3x3;
  std::vector<float>				*phoE3x1;
@@ -742,22 +737,10 @@ namespace OUT {
  std::vector<float>				*phoE1x5;
  std::vector<float>				*phoE2x2;
  std::vector<float>				*phoE2x5Max;
- std::vector<float>				*phoE2x5Top;
- std::vector<float>				*phoE2x5Bottom;
- std::vector<float>				*phoE2x5Left;
- std::vector<float>				*phoE2x5Right;
- std::vector<float>				*phoSeedE;
- std::vector<float>				*phoSeedEta;
- std::vector<float>				*phoSeedPhi;
- std::vector<float>				*phoCrysEta;
- std::vector<float>				*phoCrysPhi;
- std::vector<int>				*phoCrysIEta;
- std::vector<int>				*phoCrysIPhi;
  std::vector<float>				*phoPFChIso;
  std::vector<float>				*phoPFPhoIso;
  std::vector<float>				*phoPFNeuIso;
  std::vector<float>				*phoSCRChIso;
- std::vector<float>				*phoSCRPhoIso;
  std::vector<float>				*phoSCRNeuIso;
  std::vector<float>				*phoSCRChIso04;
  std::vector<float>				*phoSCRPhoIso04;
@@ -768,12 +751,6 @@ namespace OUT {
  std::vector<float>				*phoRandConeChIso04;
  std::vector<float>				*phoRandConePhoIso04;
  std::vector<float>				*phoRandConeNeuIso04;
- std::vector<float>				*phoRegrE;
- std::vector<float>				*phoRegrEerr;
- std::vector<float>				*phoSeedTime;
- std::vector<int>				*phoSeedDetId1;
- std::vector<int>				*phoSeedDetId2;
- std::vector<float>				*phoLICTD;
  std::vector<int>				*phoRecoFlag;
  std::vector<int>				*phoPos;
  std::vector<float>				*phoSCE;
@@ -784,7 +761,6 @@ namespace OUT {
  std::vector<float>				*phoSCPhi;
  std::vector<float>				*phoSCEtaWidth;
  std::vector<float>				*phoSCPhiWidth;
- std::vector<float>				*phoSCBrem;
  std::vector<int>				*phoOverlap;
  std::vector<int>				*phohasPixelSeed;
  std::vector<int>				*pho_hasConvPf;
@@ -801,44 +777,23 @@ namespace OUT {
  std::vector<float>				*phoConvInvMass;
  std::vector<float>				*phoConvCotTheta;
  std::vector<float>				*phoConvEoverP;
- std::vector<float>				*phoConvZofPVfromTrks;
  std::vector<float>				*phoConvMinDist;
  std::vector<float>				*phoConvdPhiAtVtx;
  std::vector<float>				*phoConvdPhiAtCalo;
  std::vector<float>				*phoConvdEtaAtCalo;
- std::vector<float>				*phoConvTrkd0_x;
- std::vector<float>				*phoConvTrkd0_y;
  std::vector<float>				*phoConvTrkPin_x;
  std::vector<float>				*phoConvTrkPin_y;
  std::vector<float>				*phoConvTrkPout_x;
  std::vector<float>				*phoConvTrkPout_y;
- std::vector<float>				*phoConvTrkdz_x;
- std::vector<float>				*phoConvTrkdz_y;
- std::vector<float>				*phoConvTrkdzErr_x;
- std::vector<float>				*phoConvTrkdzErr_y;
  std::vector<float>				*phoConvChi2;
  std::vector<float>				*phoConvChi2Prob;
  std::vector<int>				*phoConvNTrks;
- std::vector<float>				*phoConvCharge1;
- std::vector<float>				*phoConvCharge2;
- std::vector<int>				*phoConvValidVtx;
- std::vector<float>				*phoConvLikeLihood;
- std::vector<float>				*phoConvP4_0;
- std::vector<float>				*phoConvP4_1;
- std::vector<float>				*phoConvP4_2;
- std::vector<float>				*phoConvP4_3;
  std::vector<float>				*phoConvVtx_x;
  std::vector<float>				*phoConvVtx_y;
  std::vector<float>				*phoConvVtx_z;
- std::vector<float>				*phoConvVtxErr_x;
- std::vector<float>				*phoConvVtxErr_y;
- std::vector<float>				*phoConvVtxErr_z;
  std::vector<float>				*phoConvPairMomentum_x;
  std::vector<float>				*phoConvPairMomentum_y;
  std::vector<float>				*phoConvPairMomentum_z;
- std::vector<float>				*phoConvRefittedMomentum_x;
- std::vector<float>				*phoConvRefittedMomentum_y;
- std::vector<float>				*phoConvRefittedMomentum_z;
  std::vector<int>				*SingleLegConv;
  std::vector<std::vector<float> >				*phoPFConvVtx_x;
  std::vector<std::vector<float> >				*phoPFConvVtx_y;
@@ -846,9 +801,6 @@ namespace OUT {
  std::vector<std::vector<float> >				*phoPFConvMom_x;
  std::vector<std::vector<float> >				*phoPFConvMom_y;
  std::vector<std::vector<float> >				*phoPFConvMom_z;
- std::vector<float>				*phoESEffSigmaRR_x;
- std::vector<float>				*phoESEffSigmaRR_y;
- std::vector<float>				*phoESEffSigmaRR_z;
  Int_t				nMu;
  std::vector<unsigned long>				*muTrg;
  std::vector<float>				*muEta;
@@ -859,15 +811,6 @@ namespace OUT {
  std::vector<float>				*muVtx_x;
  std::vector<float>				*muVtx_y;
  std::vector<float>				*muVtx_z;
- std::vector<float>				*muVtxGlb_x;
- std::vector<float>				*muVtxGlb_y;
- std::vector<float>				*muVtxGlb_z;
- std::vector<float>				*mucktPt;
- std::vector<float>				*mucktPtErr;
- std::vector<float>				*mucktEta;
- std::vector<float>				*mucktPhi;
- std::vector<float>				*mucktdxy;
- std::vector<float>				*mucktdz;
  std::vector<float>				*muIsoTrk;
  std::vector<float>				*muIsoCalo;
  std::vector<float>				*muIsoEcal;
@@ -900,7 +843,6 @@ namespace OUT {
  std::vector<float>				*muInnerD0GV;
  std::vector<float>				*muInnerDzGV;
  std::vector<float>				*muInnerPt;
- std::vector<float>				*muInnerPtErr;
  std::vector<int>				*muNumberOfValidTrkLayers;
  std::vector<int>				*muNumberOfValidTrkHits;
  std::vector<int>				*muNumberOfValidPixelLayers;
@@ -911,36 +853,6 @@ namespace OUT {
  std::vector<float>				*muIP3D;
  std::vector<float>				*muIP3DErr;
  Int_t				nTau;
- std::vector<bool>				*tauDecayModeFinding;
- std::vector<bool>				*tauAgainstElectronLooseMVA3;
- std::vector<bool>				*tauAgainstElectronMediumMVA3;
- std::vector<bool>				*tauAgainstElectronTightMVA3;
- std::vector<bool>				*tauAgainstElectronVTightMVA3;
- std::vector<bool>				*tauAgainstElectronDeadECAL;
- std::vector<bool>				*tauAgainstMuonLoose2;
- std::vector<bool>				*tauAgainstMuonMedium2;
- std::vector<bool>				*tauAgainstMuonTight2;
- std::vector<bool>				*tauCombinedIsolationDeltaBetaCorrRaw3Hits;
- std::vector<bool>				*tauLooseCombinedIsolationDeltaBetaCorr3Hits;
- std::vector<bool>				*tauMediumCombinedIsolationDeltaBetaCorr3Hits;
- std::vector<bool>				*tauTightCombinedIsolationDeltaBetaCorr3Hits;
- std::vector<float>				*tauEta;
- std::vector<float>				*tauPhi;
- std::vector<float>				*tauPt;
- std::vector<float>				*tauEt;
- std::vector<float>				*tauCharge;
- std::vector<int>				*tauDecayMode;
- std::vector<float>				*tauEMFraction;
- std::vector<float>				*tauHCAL3x3OverPLead;
- std::vector<float>				*tauHCALMaxOverPLead;
- std::vector<float>				*tauHCALTotOverPLead;
- std::vector<float>				*tauIsolationPFChargedHadrCandsPtSum;
- std::vector<float>				*tauIsolationPFGammaCandsEtSum;
- std::vector<float>				*tauLeadPFChargedHadrCandsignedSipt;
- std::vector<bool>				*tauLeadChargedHadronExists;
- std::vector<float>				*tauLeadChargedHadronEta;
- std::vector<float>				*tauLeadChargedHadronPhi;
- std::vector<float>				*tauLeadChargedHadronPt;
  Float_t				rho25;
  Float_t				rho25_neu;
  Float_t				rho25_muPFiso;
@@ -958,105 +870,18 @@ namespace OUT {
  std::vector<float>				*jetPhi;
  std::vector<float>				*jetCharge;
  std::vector<float>				*jetEt;
- std::vector<float>				*jetRawPt;
  std::vector<float>				*jetRawEn;
- std::vector<float>				*jetArea;
  std::vector<float>				*jetCHF;
  std::vector<float>				*jetNHF;
- std::vector<float>				*jetCEF;
  std::vector<float>				*jetNEF;
  std::vector<int>				*jetNCH;
- std::vector<float>				*jetHFHAE;
- std::vector<float>				*jetHFEME;
  std::vector<int>				*jetNConstituents;
- std::vector<float>				*jetCombinedSecondaryVtxBJetTags;
- std::vector<float>				*jetCombinedSecondaryVtxMVABJetTags;
- std::vector<float>				*jetJetProbabilityBJetTags;
- std::vector<float>				*jetJetBProbabilityBJetTags;
- std::vector<bool>				*jetPFLooseId;
- std::vector<float>				*jetDRMean;
- std::vector<float>				*jetDR2Mean;
- std::vector<float>				*jetDZ;
- std::vector<float>				*jetFrac01;
- std::vector<float>				*jetFrac02;
- std::vector<float>				*jetFrac03;
- std::vector<float>				*jetFrac04;
- std::vector<float>				*jetFrac05;
- std::vector<float>				*jetFrac06;
- std::vector<float>				*jetFrac07;
- std::vector<float>				*jetBeta;
- std::vector<float>				*jetBetaStarCMG;
- std::vector<float>				*jetBetaStarClassic;
  std::vector<float>				*jetNNeutrals;
  std::vector<float>				*jetNCharged;
- std::vector<std::vector<int> >				*jetWPLevels;
- std::vector<std::vector<float> >				*jetMVAsExt_cutBased;
- std::vector<std::vector<float> >				*jetMVAsExt_philv1;
- std::vector<std::vector<int> >				*jetWPLevelsExt_philv1;
- std::vector<float>				*jetMt;
- std::vector<float>				*jetJECUnc;
  std::vector<float>				*jetLeadTrackPt;
  std::vector<float>				*jetVtxPt;
- std::vector<float>				*jetVtxMass;
- std::vector<float>				*jetVtx3dL;
- std::vector<float>				*jetVtx3deL;
- std::vector<float>				*jetSoftLeptPt;
- std::vector<float>				*jetSoftLeptPtRel;
- std::vector<float>				*jetSoftLeptdR;
- std::vector<float>				*jetSoftLeptIdlooseMu;
- std::vector<float>				*jetSoftLeptIdEle95;
- std::vector<float>				*jetDPhiMETJet;
- std::vector<float>				*jetPuJetIdL;
- std::vector<float>				*jetPuJetIdM;
- std::vector<float>				*jetPuJetIdT;
+ Int_t				nLowPtJet;
  Int_t				nConv;
- std::vector<float>				*convP4_x;
- std::vector<float>				*convP4_y;
- std::vector<float>				*convP4_z;
- std::vector<float>				*convP4_E;
- std::vector<float>				*convVtx_x;
- std::vector<float>				*convVtx_y;
- std::vector<float>				*convVtx_z;
- std::vector<float>				*convVtxErr_x;
- std::vector<float>				*convVtxErr_y;
- std::vector<float>				*convVtxErr_z;
- std::vector<float>				*convPairMomentum_x;
- std::vector<float>				*convPairMomentum_y;
- std::vector<float>				*convPairMomentum_z;
- std::vector<float>				*convRefittedMomentum_x;
- std::vector<float>				*convRefittedMomentum_y;
- std::vector<float>				*convRefittedMomentum_z;
- std::vector<int>				*convNTracks;
- std::vector<float>				*convPairInvMass;
- std::vector<float>				*convPairCotThetaSep;
- std::vector<float>				*convEoverP;
- std::vector<float>				*convDistOfMinApproach;
- std::vector<float>				*convDPhiTrksAtVtx;
- std::vector<float>				*convDPhiTrksAtEcal;
- std::vector<float>				*convDEtaTrksAtEcal;
- std::vector<float>				*convDxy;
- std::vector<float>				*convDz;
- std::vector<float>				*convLxy;
- std::vector<float>				*convLz;
- std::vector<float>				*convZofPrimVtxFromTrks;
- std::vector<int>				*convNHitsBeforeVtx_0;
- std::vector<int>				*convNHitsBeforeVtx_1;
- std::vector<int>				*convNSharedHits;
- std::vector<int>				*convValidVtx;
- std::vector<float>				*convMVALikelihood;
- std::vector<float>				*convChi2;
- std::vector<float>				*convChi2Probability;
- std::vector<float>				*convTk1Dz;
- std::vector<float>				*convTk2Dz;
- std::vector<float>				*convTk1DzErr;
- std::vector<float>				*convTk2DzErr;
- std::vector<int>				*convCh1Ch2;
- std::vector<float>				*convTk1D0;
- std::vector<float>				*convTk1Pout;
- std::vector<float>				*convTk1Pin;
- std::vector<float>				*convTk2D0;
- std::vector<float>				*convTk2Pout;
- std::vector<float>				*convTk2Pin;
 };
 void InitINTree( TChain * tree) {
 
@@ -1078,6 +903,25 @@ void InitINTree( TChain * tree) {
   tree->SetBranchAddress("vtxbs_x", &IN::vtxbs_x);
   tree->SetBranchAddress("vtxbs_y", &IN::vtxbs_y);
   tree->SetBranchAddress("vtxbs_z", &IN::vtxbs_z);
+  tree->SetBranchAddress("vtxbsPtMod", &IN::vtxbsPtMod);
+  tree->SetBranchAddress("vtxbsSumPt2", &IN::vtxbsSumPt2);
+  tree->SetBranchAddress("vtxbsTkIndex", &IN::vtxbsTkIndex);
+  tree->SetBranchAddress("vtxbsTkWeight", &IN::vtxbsTkWeight);
+  tree->SetBranchAddress("nTrk", &IN::nTrk);
+  tree->SetBranchAddress("trkP_x", &IN::trkP_x);
+  tree->SetBranchAddress("trkP_y", &IN::trkP_y);
+  tree->SetBranchAddress("trkP_z", &IN::trkP_z);
+  tree->SetBranchAddress("trkVtx_x", &IN::trkVtx_x);
+  tree->SetBranchAddress("trkVtx_y", &IN::trkVtx_y);
+  tree->SetBranchAddress("trkVtx_z", &IN::trkVtx_z);
+  tree->SetBranchAddress("trkd0", &IN::trkd0);
+  tree->SetBranchAddress("trkd0Err", &IN::trkd0Err);
+  tree->SetBranchAddress("trkdz", &IN::trkdz);
+  tree->SetBranchAddress("trkdzErr", &IN::trkdzErr);
+  tree->SetBranchAddress("trkPtErr", &IN::trkPtErr);
+  tree->SetBranchAddress("trkQuality", &IN::trkQuality);
+  tree->SetBranchAddress("nGoodTrk", &IN::nGoodTrk);
+  tree->SetBranchAddress("IsTracksGood", &IN::IsTracksGood);
   tree->SetBranchAddress("pfMET", &IN::pfMET);
   tree->SetBranchAddress("pfMETPhi", &IN::pfMETPhi);
   tree->SetBranchAddress("pfMETsumEt", &IN::pfMETsumEt);
@@ -1171,6 +1015,11 @@ void InitINTree( TChain * tree) {
   tree->SetBranchAddress("elePhoRegrE", &IN::elePhoRegrE);
   tree->SetBranchAddress("elePhoRegrEerr", &IN::elePhoRegrEerr);
   tree->SetBranchAddress("eleSeedTime", &IN::eleSeedTime);
+  tree->SetBranchAddress("eleGSFPt", &IN::eleGSFPt);
+  tree->SetBranchAddress("eleGSFEta", &IN::eleGSFEta);
+  tree->SetBranchAddress("eleGSFPhi", &IN::eleGSFPhi);
+  tree->SetBranchAddress("eleGSFCharge", &IN::eleGSFCharge);
+  tree->SetBranchAddress("eleGSFChi2NDF", &IN::eleGSFChi2NDF);
   tree->SetBranchAddress("eleRecoFlag", &IN::eleRecoFlag);
   tree->SetBranchAddress("elePos", &IN::elePos);
   tree->SetBranchAddress("eleIsoTrkDR03", &IN::eleIsoTrkDR03);
@@ -1553,6 +1402,16 @@ void InitINTree( TChain * tree) {
   tree->SetBranchAddress("jetPuJetIdL", &IN::jetPuJetIdL);
   tree->SetBranchAddress("jetPuJetIdM", &IN::jetPuJetIdM);
   tree->SetBranchAddress("jetPuJetIdT", &IN::jetPuJetIdT);
+  tree->SetBranchAddress("nLowPtJet", &IN::nLowPtJet);
+  tree->SetBranchAddress("jetLowPtEn", &IN::jetLowPtEn);
+  tree->SetBranchAddress("jetLowPtPt", &IN::jetLowPtPt);
+  tree->SetBranchAddress("jetLowPtEta", &IN::jetLowPtEta);
+  tree->SetBranchAddress("jetLowPtPhi", &IN::jetLowPtPhi);
+  tree->SetBranchAddress("jetLowPtCharge", &IN::jetLowPtCharge);
+  tree->SetBranchAddress("jetLowPtEt", &IN::jetLowPtEt);
+  tree->SetBranchAddress("jetLowPtRawPt", &IN::jetLowPtRawPt);
+  tree->SetBranchAddress("jetLowPtRawEn", &IN::jetLowPtRawEn);
+  tree->SetBranchAddress("jetLowPtArea", &IN::jetLowPtArea);
   tree->SetBranchAddress("nConv", &IN::nConv);
   tree->SetBranchAddress("convP4_x", &IN::convP4_x);
   tree->SetBranchAddress("convP4_y", &IN::convP4_y);
@@ -1613,15 +1472,28 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("HLTIndex", &OUT::HLTIndex, "HLTIndex[70]/I");
   tree->Branch("bspotPos", &OUT::bspotPos, "bspotPos[3]/F");
   tree->Branch("nVtx", &OUT::nVtx, "nVtx/I");
-  tree->Branch("vtx_x", &OUT::vtx_x);
-  tree->Branch("vtx_y", &OUT::vtx_y);
-  tree->Branch("vtx_z", &OUT::vtx_z);
   tree->Branch("IsVtxGood", &OUT::IsVtxGood, "IsVtxGood/I");
   tree->Branch("nGoodVtx", &OUT::nGoodVtx, "nGoodVtx/I");
   tree->Branch("nVtxBS", &OUT::nVtxBS, "nVtxBS/I");
-  tree->Branch("vtxbs_x", &OUT::vtxbs_x);
-  tree->Branch("vtxbs_y", &OUT::vtxbs_y);
-  tree->Branch("vtxbs_z", &OUT::vtxbs_z);
+  tree->Branch("vtxbsPtMod", &OUT::vtxbsPtMod);
+  tree->Branch("vtxbsSumPt2", &OUT::vtxbsSumPt2);
+  tree->Branch("vtxbsTkIndex", &OUT::vtxbsTkIndex);
+  tree->Branch("vtxbsTkWeight", &OUT::vtxbsTkWeight);
+  tree->Branch("nTrk", &OUT::nTrk, "nTrk/I");
+  tree->Branch("trkP_x", &OUT::trkP_x);
+  tree->Branch("trkP_y", &OUT::trkP_y);
+  tree->Branch("trkP_z", &OUT::trkP_z);
+  tree->Branch("trkVtx_x", &OUT::trkVtx_x);
+  tree->Branch("trkVtx_y", &OUT::trkVtx_y);
+  tree->Branch("trkVtx_z", &OUT::trkVtx_z);
+  tree->Branch("trkd0", &OUT::trkd0);
+  tree->Branch("trkd0Err", &OUT::trkd0Err);
+  tree->Branch("trkdz", &OUT::trkdz);
+  tree->Branch("trkdzErr", &OUT::trkdzErr);
+  tree->Branch("trkPtErr", &OUT::trkPtErr);
+  tree->Branch("trkQuality", &OUT::trkQuality);
+  tree->Branch("nGoodTrk", &OUT::nGoodTrk, "nGoodTrk/I");
+  tree->Branch("IsTracksGood", &OUT::IsTracksGood, "IsTracksGood/I");
   tree->Branch("pfMET", &OUT::pfMET, "pfMET/F");
   tree->Branch("pfMETPhi", &OUT::pfMETPhi, "pfMETPhi/F");
   tree->Branch("pfMETsumEt", &OUT::pfMETsumEt, "pfMETsumEt/F");
@@ -1641,29 +1513,18 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("trkMETyPV", &OUT::trkMETyPV, "trkMETyPV/F");
   tree->Branch("trkMETPhiPV", &OUT::trkMETPhiPV, "trkMETPhiPV/F");
   tree->Branch("trkMETPV", &OUT::trkMETPV, "trkMETPV/F");
-  tree->Branch("trkMETx", &OUT::trkMETx);
-  tree->Branch("trkMETy", &OUT::trkMETy);
-  tree->Branch("trkMETPhi", &OUT::trkMETPhi);
-  tree->Branch("trkMET", &OUT::trkMET);
   tree->Branch("metFilters", &OUT::metFilters, "metFilters[10]/I");
   tree->Branch("nEle", &OUT::nEle, "nEle/I");
   tree->Branch("eleTrg", &OUT::eleTrg);
-  tree->Branch("eleClass", &OUT::eleClass);
   tree->Branch("eleIsEcalDriven", &OUT::eleIsEcalDriven);
   tree->Branch("eleCharge", &OUT::eleCharge);
   tree->Branch("eleChargeConsistent", &OUT::eleChargeConsistent);
   tree->Branch("eleEn", &OUT::eleEn);
-  tree->Branch("eleEcalEn", &OUT::eleEcalEn);
-  tree->Branch("eleSCRawEn", &OUT::eleSCRawEn);
   tree->Branch("eleSCEn", &OUT::eleSCEn);
-  tree->Branch("eleESEn", &OUT::eleESEn);
   tree->Branch("elePt", &OUT::elePt);
   tree->Branch("eleEta", &OUT::eleEta);
   tree->Branch("elePhi", &OUT::elePhi);
   tree->Branch("eleR9", &OUT::eleR9);
-  tree->Branch("eleEtaVtx", &OUT::eleEtaVtx);
-  tree->Branch("elePhiVtx", &OUT::elePhiVtx);
-  tree->Branch("eleEtVtx", &OUT::eleEtVtx);
   tree->Branch("eleSCEta", &OUT::eleSCEta);
   tree->Branch("eleSCPhi", &OUT::eleSCPhi);
   tree->Branch("eleSCEtaWidth", &OUT::eleSCEtaWidth);
@@ -1680,10 +1541,6 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("eleHoverE", &OUT::eleHoverE);
   tree->Branch("eleHoverE12", &OUT::eleHoverE12);
   tree->Branch("eleEoverP", &OUT::eleEoverP);
-  tree->Branch("elePin", &OUT::elePin);
-  tree->Branch("elePout", &OUT::elePout);
-  tree->Branch("eleTrkMomErr", &OUT::eleTrkMomErr);
-  tree->Branch("eleBrem", &OUT::eleBrem);
   tree->Branch("eledEtaAtVtx", &OUT::eledEtaAtVtx);
   tree->Branch("eledPhiAtVtx", &OUT::eledPhiAtVtx);
   tree->Branch("eleSigmaIEtaIEta", &OUT::eleSigmaIEtaIEta);
@@ -1691,30 +1548,15 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("eleSigmaIPhiIPhi", &OUT::eleSigmaIPhiIPhi);
   tree->Branch("eleEmax", &OUT::eleEmax);
   tree->Branch("eleE2ndMax", &OUT::eleE2ndMax);
-  tree->Branch("eleETop", &OUT::eleETop);
-  tree->Branch("eleEBottom", &OUT::eleEBottom);
-  tree->Branch("eleELeft", &OUT::eleELeft);
-  tree->Branch("eleERight", &OUT::eleERight);
   tree->Branch("eleE1x5", &OUT::eleE1x5);
   tree->Branch("eleE3x3", &OUT::eleE3x3);
   tree->Branch("eleE5x5", &OUT::eleE5x5);
   tree->Branch("eleE2x5Max", &OUT::eleE2x5Max);
-  tree->Branch("eleE2x5Top", &OUT::eleE2x5Top);
-  tree->Branch("eleE2x5Bottom", &OUT::eleE2x5Bottom);
-  tree->Branch("eleE2x5Left", &OUT::eleE2x5Left);
-  tree->Branch("eleE2x5Right", &OUT::eleE2x5Right);
-  tree->Branch("eleSeedEta", &OUT::eleSeedEta);
-  tree->Branch("eleSeedE", &OUT::eleSeedE);
-  tree->Branch("eleSeedPhi", &OUT::eleSeedPhi);
-  tree->Branch("eleCrysEta", &OUT::eleCrysEta);
-  tree->Branch("eleCrysPhi", &OUT::eleCrysPhi);
-  tree->Branch("eleCrysIEta", &OUT::eleCrysIEta);
-  tree->Branch("eleCrysIPhi", &OUT::eleCrysIPhi);
-  tree->Branch("eleRegrE", &OUT::eleRegrE);
-  tree->Branch("eleRegrEerr", &OUT::eleRegrEerr);
-  tree->Branch("elePhoRegrE", &OUT::elePhoRegrE);
-  tree->Branch("elePhoRegrEerr", &OUT::elePhoRegrEerr);
-  tree->Branch("eleSeedTime", &OUT::eleSeedTime);
+  tree->Branch("eleGSFPt", &OUT::eleGSFPt);
+  tree->Branch("eleGSFEta", &OUT::eleGSFEta);
+  tree->Branch("eleGSFPhi", &OUT::eleGSFPhi);
+  tree->Branch("eleGSFCharge", &OUT::eleGSFCharge);
+  tree->Branch("eleGSFChi2NDF", &OUT::eleGSFChi2NDF);
   tree->Branch("eleRecoFlag", &OUT::eleRecoFlag);
   tree->Branch("elePos", &OUT::elePos);
   tree->Branch("eleIsoTrkDR03", &OUT::eleIsoTrkDR03);
@@ -1725,12 +1567,8 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("eleIsoEcalDR04", &OUT::eleIsoEcalDR04);
   tree->Branch("eleIsoHcalDR04", &OUT::eleIsoHcalDR04);
   tree->Branch("eleIsoHcalDR0412", &OUT::eleIsoHcalDR0412);
-  tree->Branch("eleModIsoTrk", &OUT::eleModIsoTrk);
-  tree->Branch("eleModIsoEcal", &OUT::eleModIsoEcal);
-  tree->Branch("eleModIsoHcal", &OUT::eleModIsoHcal);
   tree->Branch("eleMissHits", &OUT::eleMissHits);
   tree->Branch("eleConvDist", &OUT::eleConvDist);
-  tree->Branch("eleConvDcot", &OUT::eleConvDcot);
   tree->Branch("eleConvVtxFit", &OUT::eleConvVtxFit);
   tree->Branch("eleIP3D", &OUT::eleIP3D);
   tree->Branch("eleIP3DErr", &OUT::eleIP3DErr);
@@ -1742,19 +1580,10 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("elePFChIso04", &OUT::elePFChIso04);
   tree->Branch("elePFPhoIso04", &OUT::elePFPhoIso04);
   tree->Branch("elePFNeuIso04", &OUT::elePFNeuIso04);
-  tree->Branch("eleESEffSigmaRR_x", &OUT::eleESEffSigmaRR_x);
-  tree->Branch("eleESEffSigmaRR_y", &OUT::eleESEffSigmaRR_y);
-  tree->Branch("eleESEffSigmaRR_z", &OUT::eleESEffSigmaRR_z);
   tree->Branch("nPho", &OUT::nPho, "nPho/I");
   tree->Branch("phoTrg", &OUT::phoTrg);
   tree->Branch("phoTrgFilter", &OUT::phoTrgFilter);
   tree->Branch("phoIsPhoton", &OUT::phoIsPhoton);
-  tree->Branch("phoSCPos_x", &OUT::phoSCPos_x);
-  tree->Branch("phoSCPos_y", &OUT::phoSCPos_y);
-  tree->Branch("phoSCPos_z", &OUT::phoSCPos_z);
-  tree->Branch("phoCaloPos_x", &OUT::phoCaloPos_x);
-  tree->Branch("phoCaloPos_y", &OUT::phoCaloPos_y);
-  tree->Branch("phoCaloPos_z", &OUT::phoCaloPos_z);
   tree->Branch("phoE", &OUT::phoE);
   tree->Branch("phoEt", &OUT::phoEt);
   tree->Branch("phoEta", &OUT::phoEta);
@@ -1762,9 +1591,6 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("phoVtx_y", &OUT::phoVtx_y);
   tree->Branch("phoVtx_z", &OUT::phoVtx_z);
   tree->Branch("phoPhi", &OUT::phoPhi);
-  tree->Branch("phoEtVtx", &OUT::phoEtVtx);
-  tree->Branch("phoEtaVtx", &OUT::phoEtaVtx);
-  tree->Branch("phoPhiVtx", &OUT::phoPhiVtx);
   tree->Branch("phoR9", &OUT::phoR9);
   tree->Branch("phoNClus", &OUT::phoNClus);
   tree->Branch("phoTrkIsoHollowDR03", &OUT::phoTrkIsoHollowDR03);
@@ -1775,7 +1601,6 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("phoCiCdRtoTrk", &OUT::phoCiCdRtoTrk);
   tree->Branch("phoEcalIsoDR04", &OUT::phoEcalIsoDR04);
   tree->Branch("phoHcalIsoDR04", &OUT::phoHcalIsoDR04);
-  tree->Branch("phoHcalIsoDR0412", &OUT::phoHcalIsoDR0412);
   tree->Branch("phoHoverE", &OUT::phoHoverE);
   tree->Branch("phoHoverE12", &OUT::phoHoverE12);
   tree->Branch("phoEleVeto", &OUT::phoEleVeto);
@@ -1783,12 +1608,7 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("phoSigmaIEtaIPhi", &OUT::phoSigmaIEtaIPhi);
   tree->Branch("phoSigmaIPhiIPhi", &OUT::phoSigmaIPhiIPhi);
   tree->Branch("phoCiCPF4phopfIso03", &OUT::phoCiCPF4phopfIso03);
-  tree->Branch("phoCiCPF4phopfIso04", &OUT::phoCiCPF4phopfIso04);
   tree->Branch("phoEmax", &OUT::phoEmax);
-  tree->Branch("phoETop", &OUT::phoETop);
-  tree->Branch("phoEBottom", &OUT::phoEBottom);
-  tree->Branch("phoELeft", &OUT::phoELeft);
-  tree->Branch("phoERight", &OUT::phoERight);
   tree->Branch("phoE2ndMax", &OUT::phoE2ndMax);
   tree->Branch("phoE3x3", &OUT::phoE3x3);
   tree->Branch("phoE3x1", &OUT::phoE3x1);
@@ -1797,22 +1617,10 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("phoE1x5", &OUT::phoE1x5);
   tree->Branch("phoE2x2", &OUT::phoE2x2);
   tree->Branch("phoE2x5Max", &OUT::phoE2x5Max);
-  tree->Branch("phoE2x5Top", &OUT::phoE2x5Top);
-  tree->Branch("phoE2x5Bottom", &OUT::phoE2x5Bottom);
-  tree->Branch("phoE2x5Left", &OUT::phoE2x5Left);
-  tree->Branch("phoE2x5Right", &OUT::phoE2x5Right);
-  tree->Branch("phoSeedE", &OUT::phoSeedE);
-  tree->Branch("phoSeedEta", &OUT::phoSeedEta);
-  tree->Branch("phoSeedPhi", &OUT::phoSeedPhi);
-  tree->Branch("phoCrysEta", &OUT::phoCrysEta);
-  tree->Branch("phoCrysPhi", &OUT::phoCrysPhi);
-  tree->Branch("phoCrysIEta", &OUT::phoCrysIEta);
-  tree->Branch("phoCrysIPhi", &OUT::phoCrysIPhi);
   tree->Branch("phoPFChIso", &OUT::phoPFChIso);
   tree->Branch("phoPFPhoIso", &OUT::phoPFPhoIso);
   tree->Branch("phoPFNeuIso", &OUT::phoPFNeuIso);
   tree->Branch("phoSCRChIso", &OUT::phoSCRChIso);
-  tree->Branch("phoSCRPhoIso", &OUT::phoSCRPhoIso);
   tree->Branch("phoSCRNeuIso", &OUT::phoSCRNeuIso);
   tree->Branch("phoSCRChIso04", &OUT::phoSCRChIso04);
   tree->Branch("phoSCRPhoIso04", &OUT::phoSCRPhoIso04);
@@ -1823,12 +1631,6 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("phoRandConeChIso04", &OUT::phoRandConeChIso04);
   tree->Branch("phoRandConePhoIso04", &OUT::phoRandConePhoIso04);
   tree->Branch("phoRandConeNeuIso04", &OUT::phoRandConeNeuIso04);
-  tree->Branch("phoRegrE", &OUT::phoRegrE);
-  tree->Branch("phoRegrEerr", &OUT::phoRegrEerr);
-  tree->Branch("phoSeedTime", &OUT::phoSeedTime);
-  tree->Branch("phoSeedDetId1", &OUT::phoSeedDetId1);
-  tree->Branch("phoSeedDetId2", &OUT::phoSeedDetId2);
-  tree->Branch("phoLICTD", &OUT::phoLICTD);
   tree->Branch("phoRecoFlag", &OUT::phoRecoFlag);
   tree->Branch("phoPos", &OUT::phoPos);
   tree->Branch("phoSCE", &OUT::phoSCE);
@@ -1839,7 +1641,6 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("phoSCPhi", &OUT::phoSCPhi);
   tree->Branch("phoSCEtaWidth", &OUT::phoSCEtaWidth);
   tree->Branch("phoSCPhiWidth", &OUT::phoSCPhiWidth);
-  tree->Branch("phoSCBrem", &OUT::phoSCBrem);
   tree->Branch("phoOverlap", &OUT::phoOverlap);
   tree->Branch("phohasPixelSeed", &OUT::phohasPixelSeed);
   tree->Branch("pho_hasConvPf", &OUT::pho_hasConvPf);
@@ -1856,44 +1657,23 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("phoConvInvMass", &OUT::phoConvInvMass);
   tree->Branch("phoConvCotTheta", &OUT::phoConvCotTheta);
   tree->Branch("phoConvEoverP", &OUT::phoConvEoverP);
-  tree->Branch("phoConvZofPVfromTrks", &OUT::phoConvZofPVfromTrks);
   tree->Branch("phoConvMinDist", &OUT::phoConvMinDist);
   tree->Branch("phoConvdPhiAtVtx", &OUT::phoConvdPhiAtVtx);
   tree->Branch("phoConvdPhiAtCalo", &OUT::phoConvdPhiAtCalo);
   tree->Branch("phoConvdEtaAtCalo", &OUT::phoConvdEtaAtCalo);
-  tree->Branch("phoConvTrkd0_x", &OUT::phoConvTrkd0_x);
-  tree->Branch("phoConvTrkd0_y", &OUT::phoConvTrkd0_y);
   tree->Branch("phoConvTrkPin_x", &OUT::phoConvTrkPin_x);
   tree->Branch("phoConvTrkPin_y", &OUT::phoConvTrkPin_y);
   tree->Branch("phoConvTrkPout_x", &OUT::phoConvTrkPout_x);
   tree->Branch("phoConvTrkPout_y", &OUT::phoConvTrkPout_y);
-  tree->Branch("phoConvTrkdz_x", &OUT::phoConvTrkdz_x);
-  tree->Branch("phoConvTrkdz_y", &OUT::phoConvTrkdz_y);
-  tree->Branch("phoConvTrkdzErr_x", &OUT::phoConvTrkdzErr_x);
-  tree->Branch("phoConvTrkdzErr_y", &OUT::phoConvTrkdzErr_y);
   tree->Branch("phoConvChi2", &OUT::phoConvChi2);
   tree->Branch("phoConvChi2Prob", &OUT::phoConvChi2Prob);
   tree->Branch("phoConvNTrks", &OUT::phoConvNTrks);
-  tree->Branch("phoConvCharge1", &OUT::phoConvCharge1);
-  tree->Branch("phoConvCharge2", &OUT::phoConvCharge2);
-  tree->Branch("phoConvValidVtx", &OUT::phoConvValidVtx);
-  tree->Branch("phoConvLikeLihood", &OUT::phoConvLikeLihood);
-  tree->Branch("phoConvP4_0", &OUT::phoConvP4_0);
-  tree->Branch("phoConvP4_1", &OUT::phoConvP4_1);
-  tree->Branch("phoConvP4_2", &OUT::phoConvP4_2);
-  tree->Branch("phoConvP4_3", &OUT::phoConvP4_3);
   tree->Branch("phoConvVtx_x", &OUT::phoConvVtx_x);
   tree->Branch("phoConvVtx_y", &OUT::phoConvVtx_y);
   tree->Branch("phoConvVtx_z", &OUT::phoConvVtx_z);
-  tree->Branch("phoConvVtxErr_x", &OUT::phoConvVtxErr_x);
-  tree->Branch("phoConvVtxErr_y", &OUT::phoConvVtxErr_y);
-  tree->Branch("phoConvVtxErr_z", &OUT::phoConvVtxErr_z);
   tree->Branch("phoConvPairMomentum_x", &OUT::phoConvPairMomentum_x);
   tree->Branch("phoConvPairMomentum_y", &OUT::phoConvPairMomentum_y);
   tree->Branch("phoConvPairMomentum_z", &OUT::phoConvPairMomentum_z);
-  tree->Branch("phoConvRefittedMomentum_x", &OUT::phoConvRefittedMomentum_x);
-  tree->Branch("phoConvRefittedMomentum_y", &OUT::phoConvRefittedMomentum_y);
-  tree->Branch("phoConvRefittedMomentum_z", &OUT::phoConvRefittedMomentum_z);
   tree->Branch("SingleLegConv", &OUT::SingleLegConv);
   tree->Branch("phoPFConvVtx_x", &OUT::phoPFConvVtx_x);
   tree->Branch("phoPFConvVtx_y", &OUT::phoPFConvVtx_y);
@@ -1901,9 +1681,6 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("phoPFConvMom_x", &OUT::phoPFConvMom_x);
   tree->Branch("phoPFConvMom_y", &OUT::phoPFConvMom_y);
   tree->Branch("phoPFConvMom_z", &OUT::phoPFConvMom_z);
-  tree->Branch("phoESEffSigmaRR_x", &OUT::phoESEffSigmaRR_x);
-  tree->Branch("phoESEffSigmaRR_y", &OUT::phoESEffSigmaRR_y);
-  tree->Branch("phoESEffSigmaRR_z", &OUT::phoESEffSigmaRR_z);
   tree->Branch("nMu", &OUT::nMu, "nMu/I");
   tree->Branch("muTrg", &OUT::muTrg);
   tree->Branch("muEta", &OUT::muEta);
@@ -1914,15 +1691,6 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("muVtx_x", &OUT::muVtx_x);
   tree->Branch("muVtx_y", &OUT::muVtx_y);
   tree->Branch("muVtx_z", &OUT::muVtx_z);
-  tree->Branch("muVtxGlb_x", &OUT::muVtxGlb_x);
-  tree->Branch("muVtxGlb_y", &OUT::muVtxGlb_y);
-  tree->Branch("muVtxGlb_z", &OUT::muVtxGlb_z);
-  tree->Branch("mucktPt", &OUT::mucktPt);
-  tree->Branch("mucktPtErr", &OUT::mucktPtErr);
-  tree->Branch("mucktEta", &OUT::mucktEta);
-  tree->Branch("mucktPhi", &OUT::mucktPhi);
-  tree->Branch("mucktdxy", &OUT::mucktdxy);
-  tree->Branch("mucktdz", &OUT::mucktdz);
   tree->Branch("muIsoTrk", &OUT::muIsoTrk);
   tree->Branch("muIsoCalo", &OUT::muIsoCalo);
   tree->Branch("muIsoEcal", &OUT::muIsoEcal);
@@ -1955,7 +1723,6 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("muInnerD0GV", &OUT::muInnerD0GV);
   tree->Branch("muInnerDzGV", &OUT::muInnerDzGV);
   tree->Branch("muInnerPt", &OUT::muInnerPt);
-  tree->Branch("muInnerPtErr", &OUT::muInnerPtErr);
   tree->Branch("muNumberOfValidTrkLayers", &OUT::muNumberOfValidTrkLayers);
   tree->Branch("muNumberOfValidTrkHits", &OUT::muNumberOfValidTrkHits);
   tree->Branch("muNumberOfValidPixelLayers", &OUT::muNumberOfValidPixelLayers);
@@ -1966,36 +1733,6 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("muIP3D", &OUT::muIP3D);
   tree->Branch("muIP3DErr", &OUT::muIP3DErr);
   tree->Branch("nTau", &OUT::nTau, "nTau/I");
-  tree->Branch("tauDecayModeFinding", &OUT::tauDecayModeFinding);
-  tree->Branch("tauAgainstElectronLooseMVA3", &OUT::tauAgainstElectronLooseMVA3);
-  tree->Branch("tauAgainstElectronMediumMVA3", &OUT::tauAgainstElectronMediumMVA3);
-  tree->Branch("tauAgainstElectronTightMVA3", &OUT::tauAgainstElectronTightMVA3);
-  tree->Branch("tauAgainstElectronVTightMVA3", &OUT::tauAgainstElectronVTightMVA3);
-  tree->Branch("tauAgainstElectronDeadECAL", &OUT::tauAgainstElectronDeadECAL);
-  tree->Branch("tauAgainstMuonLoose2", &OUT::tauAgainstMuonLoose2);
-  tree->Branch("tauAgainstMuonMedium2", &OUT::tauAgainstMuonMedium2);
-  tree->Branch("tauAgainstMuonTight2", &OUT::tauAgainstMuonTight2);
-  tree->Branch("tauCombinedIsolationDeltaBetaCorrRaw3Hits", &OUT::tauCombinedIsolationDeltaBetaCorrRaw3Hits);
-  tree->Branch("tauLooseCombinedIsolationDeltaBetaCorr3Hits", &OUT::tauLooseCombinedIsolationDeltaBetaCorr3Hits);
-  tree->Branch("tauMediumCombinedIsolationDeltaBetaCorr3Hits", &OUT::tauMediumCombinedIsolationDeltaBetaCorr3Hits);
-  tree->Branch("tauTightCombinedIsolationDeltaBetaCorr3Hits", &OUT::tauTightCombinedIsolationDeltaBetaCorr3Hits);
-  tree->Branch("tauEta", &OUT::tauEta);
-  tree->Branch("tauPhi", &OUT::tauPhi);
-  tree->Branch("tauPt", &OUT::tauPt);
-  tree->Branch("tauEt", &OUT::tauEt);
-  tree->Branch("tauCharge", &OUT::tauCharge);
-  tree->Branch("tauDecayMode", &OUT::tauDecayMode);
-  tree->Branch("tauEMFraction", &OUT::tauEMFraction);
-  tree->Branch("tauHCAL3x3OverPLead", &OUT::tauHCAL3x3OverPLead);
-  tree->Branch("tauHCALMaxOverPLead", &OUT::tauHCALMaxOverPLead);
-  tree->Branch("tauHCALTotOverPLead", &OUT::tauHCALTotOverPLead);
-  tree->Branch("tauIsolationPFChargedHadrCandsPtSum", &OUT::tauIsolationPFChargedHadrCandsPtSum);
-  tree->Branch("tauIsolationPFGammaCandsEtSum", &OUT::tauIsolationPFGammaCandsEtSum);
-  tree->Branch("tauLeadPFChargedHadrCandsignedSipt", &OUT::tauLeadPFChargedHadrCandsignedSipt);
-  tree->Branch("tauLeadChargedHadronExists", &OUT::tauLeadChargedHadronExists);
-  tree->Branch("tauLeadChargedHadronEta", &OUT::tauLeadChargedHadronEta);
-  tree->Branch("tauLeadChargedHadronPhi", &OUT::tauLeadChargedHadronPhi);
-  tree->Branch("tauLeadChargedHadronPt", &OUT::tauLeadChargedHadronPt);
   tree->Branch("rho25", &OUT::rho25, "rho25/F");
   tree->Branch("rho25_neu", &OUT::rho25_neu, "rho25_neu/F");
   tree->Branch("rho25_muPFiso", &OUT::rho25_muPFiso, "rho25_muPFiso/F");
@@ -2013,105 +1750,18 @@ void InitOUTTree( TTree * tree ) {
   tree->Branch("jetPhi", &OUT::jetPhi);
   tree->Branch("jetCharge", &OUT::jetCharge);
   tree->Branch("jetEt", &OUT::jetEt);
-  tree->Branch("jetRawPt", &OUT::jetRawPt);
   tree->Branch("jetRawEn", &OUT::jetRawEn);
-  tree->Branch("jetArea", &OUT::jetArea);
   tree->Branch("jetCHF", &OUT::jetCHF);
   tree->Branch("jetNHF", &OUT::jetNHF);
-  tree->Branch("jetCEF", &OUT::jetCEF);
   tree->Branch("jetNEF", &OUT::jetNEF);
   tree->Branch("jetNCH", &OUT::jetNCH);
-  tree->Branch("jetHFHAE", &OUT::jetHFHAE);
-  tree->Branch("jetHFEME", &OUT::jetHFEME);
   tree->Branch("jetNConstituents", &OUT::jetNConstituents);
-  tree->Branch("jetCombinedSecondaryVtxBJetTags", &OUT::jetCombinedSecondaryVtxBJetTags);
-  tree->Branch("jetCombinedSecondaryVtxMVABJetTags", &OUT::jetCombinedSecondaryVtxMVABJetTags);
-  tree->Branch("jetJetProbabilityBJetTags", &OUT::jetJetProbabilityBJetTags);
-  tree->Branch("jetJetBProbabilityBJetTags", &OUT::jetJetBProbabilityBJetTags);
-  tree->Branch("jetPFLooseId", &OUT::jetPFLooseId);
-  tree->Branch("jetDRMean", &OUT::jetDRMean);
-  tree->Branch("jetDR2Mean", &OUT::jetDR2Mean);
-  tree->Branch("jetDZ", &OUT::jetDZ);
-  tree->Branch("jetFrac01", &OUT::jetFrac01);
-  tree->Branch("jetFrac02", &OUT::jetFrac02);
-  tree->Branch("jetFrac03", &OUT::jetFrac03);
-  tree->Branch("jetFrac04", &OUT::jetFrac04);
-  tree->Branch("jetFrac05", &OUT::jetFrac05);
-  tree->Branch("jetFrac06", &OUT::jetFrac06);
-  tree->Branch("jetFrac07", &OUT::jetFrac07);
-  tree->Branch("jetBeta", &OUT::jetBeta);
-  tree->Branch("jetBetaStarCMG", &OUT::jetBetaStarCMG);
-  tree->Branch("jetBetaStarClassic", &OUT::jetBetaStarClassic);
   tree->Branch("jetNNeutrals", &OUT::jetNNeutrals);
   tree->Branch("jetNCharged", &OUT::jetNCharged);
-  tree->Branch("jetWPLevels", &OUT::jetWPLevels);
-  tree->Branch("jetMVAsExt_cutBased", &OUT::jetMVAsExt_cutBased);
-  tree->Branch("jetMVAsExt_philv1", &OUT::jetMVAsExt_philv1);
-  tree->Branch("jetWPLevelsExt_philv1", &OUT::jetWPLevelsExt_philv1);
-  tree->Branch("jetMt", &OUT::jetMt);
-  tree->Branch("jetJECUnc", &OUT::jetJECUnc);
   tree->Branch("jetLeadTrackPt", &OUT::jetLeadTrackPt);
   tree->Branch("jetVtxPt", &OUT::jetVtxPt);
-  tree->Branch("jetVtxMass", &OUT::jetVtxMass);
-  tree->Branch("jetVtx3dL", &OUT::jetVtx3dL);
-  tree->Branch("jetVtx3deL", &OUT::jetVtx3deL);
-  tree->Branch("jetSoftLeptPt", &OUT::jetSoftLeptPt);
-  tree->Branch("jetSoftLeptPtRel", &OUT::jetSoftLeptPtRel);
-  tree->Branch("jetSoftLeptdR", &OUT::jetSoftLeptdR);
-  tree->Branch("jetSoftLeptIdlooseMu", &OUT::jetSoftLeptIdlooseMu);
-  tree->Branch("jetSoftLeptIdEle95", &OUT::jetSoftLeptIdEle95);
-  tree->Branch("jetDPhiMETJet", &OUT::jetDPhiMETJet);
-  tree->Branch("jetPuJetIdL", &OUT::jetPuJetIdL);
-  tree->Branch("jetPuJetIdM", &OUT::jetPuJetIdM);
-  tree->Branch("jetPuJetIdT", &OUT::jetPuJetIdT);
+  tree->Branch("nLowPtJet", &OUT::nLowPtJet, "nLowPtJet/I");
   tree->Branch("nConv", &OUT::nConv, "nConv/I");
-  tree->Branch("convP4_x", &OUT::convP4_x);
-  tree->Branch("convP4_y", &OUT::convP4_y);
-  tree->Branch("convP4_z", &OUT::convP4_z);
-  tree->Branch("convP4_E", &OUT::convP4_E);
-  tree->Branch("convVtx_x", &OUT::convVtx_x);
-  tree->Branch("convVtx_y", &OUT::convVtx_y);
-  tree->Branch("convVtx_z", &OUT::convVtx_z);
-  tree->Branch("convVtxErr_x", &OUT::convVtxErr_x);
-  tree->Branch("convVtxErr_y", &OUT::convVtxErr_y);
-  tree->Branch("convVtxErr_z", &OUT::convVtxErr_z);
-  tree->Branch("convPairMomentum_x", &OUT::convPairMomentum_x);
-  tree->Branch("convPairMomentum_y", &OUT::convPairMomentum_y);
-  tree->Branch("convPairMomentum_z", &OUT::convPairMomentum_z);
-  tree->Branch("convRefittedMomentum_x", &OUT::convRefittedMomentum_x);
-  tree->Branch("convRefittedMomentum_y", &OUT::convRefittedMomentum_y);
-  tree->Branch("convRefittedMomentum_z", &OUT::convRefittedMomentum_z);
-  tree->Branch("convNTracks", &OUT::convNTracks);
-  tree->Branch("convPairInvMass", &OUT::convPairInvMass);
-  tree->Branch("convPairCotThetaSep", &OUT::convPairCotThetaSep);
-  tree->Branch("convEoverP", &OUT::convEoverP);
-  tree->Branch("convDistOfMinApproach", &OUT::convDistOfMinApproach);
-  tree->Branch("convDPhiTrksAtVtx", &OUT::convDPhiTrksAtVtx);
-  tree->Branch("convDPhiTrksAtEcal", &OUT::convDPhiTrksAtEcal);
-  tree->Branch("convDEtaTrksAtEcal", &OUT::convDEtaTrksAtEcal);
-  tree->Branch("convDxy", &OUT::convDxy);
-  tree->Branch("convDz", &OUT::convDz);
-  tree->Branch("convLxy", &OUT::convLxy);
-  tree->Branch("convLz", &OUT::convLz);
-  tree->Branch("convZofPrimVtxFromTrks", &OUT::convZofPrimVtxFromTrks);
-  tree->Branch("convNHitsBeforeVtx_0", &OUT::convNHitsBeforeVtx_0);
-  tree->Branch("convNHitsBeforeVtx_1", &OUT::convNHitsBeforeVtx_1);
-  tree->Branch("convNSharedHits", &OUT::convNSharedHits);
-  tree->Branch("convValidVtx", &OUT::convValidVtx);
-  tree->Branch("convMVALikelihood", &OUT::convMVALikelihood);
-  tree->Branch("convChi2", &OUT::convChi2);
-  tree->Branch("convChi2Probability", &OUT::convChi2Probability);
-  tree->Branch("convTk1Dz", &OUT::convTk1Dz);
-  tree->Branch("convTk2Dz", &OUT::convTk2Dz);
-  tree->Branch("convTk1DzErr", &OUT::convTk1DzErr);
-  tree->Branch("convTk2DzErr", &OUT::convTk2DzErr);
-  tree->Branch("convCh1Ch2", &OUT::convCh1Ch2);
-  tree->Branch("convTk1D0", &OUT::convTk1D0);
-  tree->Branch("convTk1Pout", &OUT::convTk1Pout);
-  tree->Branch("convTk1Pin", &OUT::convTk1Pin);
-  tree->Branch("convTk2D0", &OUT::convTk2D0);
-  tree->Branch("convTk2Pout", &OUT::convTk2Pout);
-  tree->Branch("convTk2Pin", &OUT::convTk2Pin);
 }
 void CopyInputVarsToOutput( std::string prefix) {
     CopynHLTInToOut( prefix ); 
@@ -2123,15 +1773,28 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyHLTIndexInToOut( prefix ); 
     CopybspotPosInToOut( prefix ); 
     CopynVtxInToOut( prefix ); 
-    Copyvtx_xInToOut( prefix ); 
-    Copyvtx_yInToOut( prefix ); 
-    Copyvtx_zInToOut( prefix ); 
     CopyIsVtxGoodInToOut( prefix ); 
     CopynGoodVtxInToOut( prefix ); 
     CopynVtxBSInToOut( prefix ); 
-    Copyvtxbs_xInToOut( prefix ); 
-    Copyvtxbs_yInToOut( prefix ); 
-    Copyvtxbs_zInToOut( prefix ); 
+    CopyvtxbsPtModInToOut( prefix ); 
+    CopyvtxbsSumPt2InToOut( prefix ); 
+    CopyvtxbsTkIndexInToOut( prefix ); 
+    CopyvtxbsTkWeightInToOut( prefix ); 
+    CopynTrkInToOut( prefix ); 
+    CopytrkP_xInToOut( prefix ); 
+    CopytrkP_yInToOut( prefix ); 
+    CopytrkP_zInToOut( prefix ); 
+    CopytrkVtx_xInToOut( prefix ); 
+    CopytrkVtx_yInToOut( prefix ); 
+    CopytrkVtx_zInToOut( prefix ); 
+    Copytrkd0InToOut( prefix ); 
+    Copytrkd0ErrInToOut( prefix ); 
+    CopytrkdzInToOut( prefix ); 
+    CopytrkdzErrInToOut( prefix ); 
+    CopytrkPtErrInToOut( prefix ); 
+    CopytrkQualityInToOut( prefix ); 
+    CopynGoodTrkInToOut( prefix ); 
+    CopyIsTracksGoodInToOut( prefix ); 
     CopypfMETInToOut( prefix ); 
     CopypfMETPhiInToOut( prefix ); 
     CopypfMETsumEtInToOut( prefix ); 
@@ -2151,29 +1814,18 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopytrkMETyPVInToOut( prefix ); 
     CopytrkMETPhiPVInToOut( prefix ); 
     CopytrkMETPVInToOut( prefix ); 
-    CopytrkMETxInToOut( prefix ); 
-    CopytrkMETyInToOut( prefix ); 
-    CopytrkMETPhiInToOut( prefix ); 
-    CopytrkMETInToOut( prefix ); 
     CopymetFiltersInToOut( prefix ); 
     CopynEleInToOut( prefix ); 
     CopyeleTrgInToOut( prefix ); 
-    CopyeleClassInToOut( prefix ); 
     CopyeleIsEcalDrivenInToOut( prefix ); 
     CopyeleChargeInToOut( prefix ); 
     CopyeleChargeConsistentInToOut( prefix ); 
     CopyeleEnInToOut( prefix ); 
-    CopyeleEcalEnInToOut( prefix ); 
-    CopyeleSCRawEnInToOut( prefix ); 
     CopyeleSCEnInToOut( prefix ); 
-    CopyeleESEnInToOut( prefix ); 
     CopyelePtInToOut( prefix ); 
     CopyeleEtaInToOut( prefix ); 
     CopyelePhiInToOut( prefix ); 
     CopyeleR9InToOut( prefix ); 
-    CopyeleEtaVtxInToOut( prefix ); 
-    CopyelePhiVtxInToOut( prefix ); 
-    CopyeleEtVtxInToOut( prefix ); 
     CopyeleSCEtaInToOut( prefix ); 
     CopyeleSCPhiInToOut( prefix ); 
     CopyeleSCEtaWidthInToOut( prefix ); 
@@ -2190,10 +1842,6 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyeleHoverEInToOut( prefix ); 
     CopyeleHoverE12InToOut( prefix ); 
     CopyeleEoverPInToOut( prefix ); 
-    CopyelePinInToOut( prefix ); 
-    CopyelePoutInToOut( prefix ); 
-    CopyeleTrkMomErrInToOut( prefix ); 
-    CopyeleBremInToOut( prefix ); 
     CopyeledEtaAtVtxInToOut( prefix ); 
     CopyeledPhiAtVtxInToOut( prefix ); 
     CopyeleSigmaIEtaIEtaInToOut( prefix ); 
@@ -2201,30 +1849,15 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyeleSigmaIPhiIPhiInToOut( prefix ); 
     CopyeleEmaxInToOut( prefix ); 
     CopyeleE2ndMaxInToOut( prefix ); 
-    CopyeleETopInToOut( prefix ); 
-    CopyeleEBottomInToOut( prefix ); 
-    CopyeleELeftInToOut( prefix ); 
-    CopyeleERightInToOut( prefix ); 
     CopyeleE1x5InToOut( prefix ); 
     CopyeleE3x3InToOut( prefix ); 
     CopyeleE5x5InToOut( prefix ); 
     CopyeleE2x5MaxInToOut( prefix ); 
-    CopyeleE2x5TopInToOut( prefix ); 
-    CopyeleE2x5BottomInToOut( prefix ); 
-    CopyeleE2x5LeftInToOut( prefix ); 
-    CopyeleE2x5RightInToOut( prefix ); 
-    CopyeleSeedEtaInToOut( prefix ); 
-    CopyeleSeedEInToOut( prefix ); 
-    CopyeleSeedPhiInToOut( prefix ); 
-    CopyeleCrysEtaInToOut( prefix ); 
-    CopyeleCrysPhiInToOut( prefix ); 
-    CopyeleCrysIEtaInToOut( prefix ); 
-    CopyeleCrysIPhiInToOut( prefix ); 
-    CopyeleRegrEInToOut( prefix ); 
-    CopyeleRegrEerrInToOut( prefix ); 
-    CopyelePhoRegrEInToOut( prefix ); 
-    CopyelePhoRegrEerrInToOut( prefix ); 
-    CopyeleSeedTimeInToOut( prefix ); 
+    CopyeleGSFPtInToOut( prefix ); 
+    CopyeleGSFEtaInToOut( prefix ); 
+    CopyeleGSFPhiInToOut( prefix ); 
+    CopyeleGSFChargeInToOut( prefix ); 
+    CopyeleGSFChi2NDFInToOut( prefix ); 
     CopyeleRecoFlagInToOut( prefix ); 
     CopyelePosInToOut( prefix ); 
     CopyeleIsoTrkDR03InToOut( prefix ); 
@@ -2235,12 +1868,8 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyeleIsoEcalDR04InToOut( prefix ); 
     CopyeleIsoHcalDR04InToOut( prefix ); 
     CopyeleIsoHcalDR0412InToOut( prefix ); 
-    CopyeleModIsoTrkInToOut( prefix ); 
-    CopyeleModIsoEcalInToOut( prefix ); 
-    CopyeleModIsoHcalInToOut( prefix ); 
     CopyeleMissHitsInToOut( prefix ); 
     CopyeleConvDistInToOut( prefix ); 
-    CopyeleConvDcotInToOut( prefix ); 
     CopyeleConvVtxFitInToOut( prefix ); 
     CopyeleIP3DInToOut( prefix ); 
     CopyeleIP3DErrInToOut( prefix ); 
@@ -2252,19 +1881,10 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyelePFChIso04InToOut( prefix ); 
     CopyelePFPhoIso04InToOut( prefix ); 
     CopyelePFNeuIso04InToOut( prefix ); 
-    CopyeleESEffSigmaRR_xInToOut( prefix ); 
-    CopyeleESEffSigmaRR_yInToOut( prefix ); 
-    CopyeleESEffSigmaRR_zInToOut( prefix ); 
     CopynPhoInToOut( prefix ); 
     CopyphoTrgInToOut( prefix ); 
     CopyphoTrgFilterInToOut( prefix ); 
     CopyphoIsPhotonInToOut( prefix ); 
-    CopyphoSCPos_xInToOut( prefix ); 
-    CopyphoSCPos_yInToOut( prefix ); 
-    CopyphoSCPos_zInToOut( prefix ); 
-    CopyphoCaloPos_xInToOut( prefix ); 
-    CopyphoCaloPos_yInToOut( prefix ); 
-    CopyphoCaloPos_zInToOut( prefix ); 
     CopyphoEInToOut( prefix ); 
     CopyphoEtInToOut( prefix ); 
     CopyphoEtaInToOut( prefix ); 
@@ -2272,9 +1892,6 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyphoVtx_yInToOut( prefix ); 
     CopyphoVtx_zInToOut( prefix ); 
     CopyphoPhiInToOut( prefix ); 
-    CopyphoEtVtxInToOut( prefix ); 
-    CopyphoEtaVtxInToOut( prefix ); 
-    CopyphoPhiVtxInToOut( prefix ); 
     CopyphoR9InToOut( prefix ); 
     CopyphoNClusInToOut( prefix ); 
     CopyphoTrkIsoHollowDR03InToOut( prefix ); 
@@ -2285,7 +1902,6 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyphoCiCdRtoTrkInToOut( prefix ); 
     CopyphoEcalIsoDR04InToOut( prefix ); 
     CopyphoHcalIsoDR04InToOut( prefix ); 
-    CopyphoHcalIsoDR0412InToOut( prefix ); 
     CopyphoHoverEInToOut( prefix ); 
     CopyphoHoverE12InToOut( prefix ); 
     CopyphoEleVetoInToOut( prefix ); 
@@ -2293,12 +1909,7 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyphoSigmaIEtaIPhiInToOut( prefix ); 
     CopyphoSigmaIPhiIPhiInToOut( prefix ); 
     CopyphoCiCPF4phopfIso03InToOut( prefix ); 
-    CopyphoCiCPF4phopfIso04InToOut( prefix ); 
     CopyphoEmaxInToOut( prefix ); 
-    CopyphoETopInToOut( prefix ); 
-    CopyphoEBottomInToOut( prefix ); 
-    CopyphoELeftInToOut( prefix ); 
-    CopyphoERightInToOut( prefix ); 
     CopyphoE2ndMaxInToOut( prefix ); 
     CopyphoE3x3InToOut( prefix ); 
     CopyphoE3x1InToOut( prefix ); 
@@ -2307,22 +1918,10 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyphoE1x5InToOut( prefix ); 
     CopyphoE2x2InToOut( prefix ); 
     CopyphoE2x5MaxInToOut( prefix ); 
-    CopyphoE2x5TopInToOut( prefix ); 
-    CopyphoE2x5BottomInToOut( prefix ); 
-    CopyphoE2x5LeftInToOut( prefix ); 
-    CopyphoE2x5RightInToOut( prefix ); 
-    CopyphoSeedEInToOut( prefix ); 
-    CopyphoSeedEtaInToOut( prefix ); 
-    CopyphoSeedPhiInToOut( prefix ); 
-    CopyphoCrysEtaInToOut( prefix ); 
-    CopyphoCrysPhiInToOut( prefix ); 
-    CopyphoCrysIEtaInToOut( prefix ); 
-    CopyphoCrysIPhiInToOut( prefix ); 
     CopyphoPFChIsoInToOut( prefix ); 
     CopyphoPFPhoIsoInToOut( prefix ); 
     CopyphoPFNeuIsoInToOut( prefix ); 
     CopyphoSCRChIsoInToOut( prefix ); 
-    CopyphoSCRPhoIsoInToOut( prefix ); 
     CopyphoSCRNeuIsoInToOut( prefix ); 
     CopyphoSCRChIso04InToOut( prefix ); 
     CopyphoSCRPhoIso04InToOut( prefix ); 
@@ -2333,12 +1932,6 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyphoRandConeChIso04InToOut( prefix ); 
     CopyphoRandConePhoIso04InToOut( prefix ); 
     CopyphoRandConeNeuIso04InToOut( prefix ); 
-    CopyphoRegrEInToOut( prefix ); 
-    CopyphoRegrEerrInToOut( prefix ); 
-    CopyphoSeedTimeInToOut( prefix ); 
-    CopyphoSeedDetId1InToOut( prefix ); 
-    CopyphoSeedDetId2InToOut( prefix ); 
-    CopyphoLICTDInToOut( prefix ); 
     CopyphoRecoFlagInToOut( prefix ); 
     CopyphoPosInToOut( prefix ); 
     CopyphoSCEInToOut( prefix ); 
@@ -2349,7 +1942,6 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyphoSCPhiInToOut( prefix ); 
     CopyphoSCEtaWidthInToOut( prefix ); 
     CopyphoSCPhiWidthInToOut( prefix ); 
-    CopyphoSCBremInToOut( prefix ); 
     CopyphoOverlapInToOut( prefix ); 
     CopyphohasPixelSeedInToOut( prefix ); 
     Copypho_hasConvPfInToOut( prefix ); 
@@ -2366,44 +1958,23 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyphoConvInvMassInToOut( prefix ); 
     CopyphoConvCotThetaInToOut( prefix ); 
     CopyphoConvEoverPInToOut( prefix ); 
-    CopyphoConvZofPVfromTrksInToOut( prefix ); 
     CopyphoConvMinDistInToOut( prefix ); 
     CopyphoConvdPhiAtVtxInToOut( prefix ); 
     CopyphoConvdPhiAtCaloInToOut( prefix ); 
     CopyphoConvdEtaAtCaloInToOut( prefix ); 
-    CopyphoConvTrkd0_xInToOut( prefix ); 
-    CopyphoConvTrkd0_yInToOut( prefix ); 
     CopyphoConvTrkPin_xInToOut( prefix ); 
     CopyphoConvTrkPin_yInToOut( prefix ); 
     CopyphoConvTrkPout_xInToOut( prefix ); 
     CopyphoConvTrkPout_yInToOut( prefix ); 
-    CopyphoConvTrkdz_xInToOut( prefix ); 
-    CopyphoConvTrkdz_yInToOut( prefix ); 
-    CopyphoConvTrkdzErr_xInToOut( prefix ); 
-    CopyphoConvTrkdzErr_yInToOut( prefix ); 
     CopyphoConvChi2InToOut( prefix ); 
     CopyphoConvChi2ProbInToOut( prefix ); 
     CopyphoConvNTrksInToOut( prefix ); 
-    CopyphoConvCharge1InToOut( prefix ); 
-    CopyphoConvCharge2InToOut( prefix ); 
-    CopyphoConvValidVtxInToOut( prefix ); 
-    CopyphoConvLikeLihoodInToOut( prefix ); 
-    CopyphoConvP4_0InToOut( prefix ); 
-    CopyphoConvP4_1InToOut( prefix ); 
-    CopyphoConvP4_2InToOut( prefix ); 
-    CopyphoConvP4_3InToOut( prefix ); 
     CopyphoConvVtx_xInToOut( prefix ); 
     CopyphoConvVtx_yInToOut( prefix ); 
     CopyphoConvVtx_zInToOut( prefix ); 
-    CopyphoConvVtxErr_xInToOut( prefix ); 
-    CopyphoConvVtxErr_yInToOut( prefix ); 
-    CopyphoConvVtxErr_zInToOut( prefix ); 
     CopyphoConvPairMomentum_xInToOut( prefix ); 
     CopyphoConvPairMomentum_yInToOut( prefix ); 
     CopyphoConvPairMomentum_zInToOut( prefix ); 
-    CopyphoConvRefittedMomentum_xInToOut( prefix ); 
-    CopyphoConvRefittedMomentum_yInToOut( prefix ); 
-    CopyphoConvRefittedMomentum_zInToOut( prefix ); 
     CopySingleLegConvInToOut( prefix ); 
     CopyphoPFConvVtx_xInToOut( prefix ); 
     CopyphoPFConvVtx_yInToOut( prefix ); 
@@ -2411,9 +1982,6 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyphoPFConvMom_xInToOut( prefix ); 
     CopyphoPFConvMom_yInToOut( prefix ); 
     CopyphoPFConvMom_zInToOut( prefix ); 
-    CopyphoESEffSigmaRR_xInToOut( prefix ); 
-    CopyphoESEffSigmaRR_yInToOut( prefix ); 
-    CopyphoESEffSigmaRR_zInToOut( prefix ); 
     CopynMuInToOut( prefix ); 
     CopymuTrgInToOut( prefix ); 
     CopymuEtaInToOut( prefix ); 
@@ -2424,15 +1992,6 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopymuVtx_xInToOut( prefix ); 
     CopymuVtx_yInToOut( prefix ); 
     CopymuVtx_zInToOut( prefix ); 
-    CopymuVtxGlb_xInToOut( prefix ); 
-    CopymuVtxGlb_yInToOut( prefix ); 
-    CopymuVtxGlb_zInToOut( prefix ); 
-    CopymucktPtInToOut( prefix ); 
-    CopymucktPtErrInToOut( prefix ); 
-    CopymucktEtaInToOut( prefix ); 
-    CopymucktPhiInToOut( prefix ); 
-    CopymucktdxyInToOut( prefix ); 
-    CopymucktdzInToOut( prefix ); 
     CopymuIsoTrkInToOut( prefix ); 
     CopymuIsoCaloInToOut( prefix ); 
     CopymuIsoEcalInToOut( prefix ); 
@@ -2465,7 +2024,6 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopymuInnerD0GVInToOut( prefix ); 
     CopymuInnerDzGVInToOut( prefix ); 
     CopymuInnerPtInToOut( prefix ); 
-    CopymuInnerPtErrInToOut( prefix ); 
     CopymuNumberOfValidTrkLayersInToOut( prefix ); 
     CopymuNumberOfValidTrkHitsInToOut( prefix ); 
     CopymuNumberOfValidPixelLayersInToOut( prefix ); 
@@ -2476,36 +2034,6 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopymuIP3DInToOut( prefix ); 
     CopymuIP3DErrInToOut( prefix ); 
     CopynTauInToOut( prefix ); 
-    CopytauDecayModeFindingInToOut( prefix ); 
-    CopytauAgainstElectronLooseMVA3InToOut( prefix ); 
-    CopytauAgainstElectronMediumMVA3InToOut( prefix ); 
-    CopytauAgainstElectronTightMVA3InToOut( prefix ); 
-    CopytauAgainstElectronVTightMVA3InToOut( prefix ); 
-    CopytauAgainstElectronDeadECALInToOut( prefix ); 
-    CopytauAgainstMuonLoose2InToOut( prefix ); 
-    CopytauAgainstMuonMedium2InToOut( prefix ); 
-    CopytauAgainstMuonTight2InToOut( prefix ); 
-    CopytauCombinedIsolationDeltaBetaCorrRaw3HitsInToOut( prefix ); 
-    CopytauLooseCombinedIsolationDeltaBetaCorr3HitsInToOut( prefix ); 
-    CopytauMediumCombinedIsolationDeltaBetaCorr3HitsInToOut( prefix ); 
-    CopytauTightCombinedIsolationDeltaBetaCorr3HitsInToOut( prefix ); 
-    CopytauEtaInToOut( prefix ); 
-    CopytauPhiInToOut( prefix ); 
-    CopytauPtInToOut( prefix ); 
-    CopytauEtInToOut( prefix ); 
-    CopytauChargeInToOut( prefix ); 
-    CopytauDecayModeInToOut( prefix ); 
-    CopytauEMFractionInToOut( prefix ); 
-    CopytauHCAL3x3OverPLeadInToOut( prefix ); 
-    CopytauHCALMaxOverPLeadInToOut( prefix ); 
-    CopytauHCALTotOverPLeadInToOut( prefix ); 
-    CopytauIsolationPFChargedHadrCandsPtSumInToOut( prefix ); 
-    CopytauIsolationPFGammaCandsEtSumInToOut( prefix ); 
-    CopytauLeadPFChargedHadrCandsignedSiptInToOut( prefix ); 
-    CopytauLeadChargedHadronExistsInToOut( prefix ); 
-    CopytauLeadChargedHadronEtaInToOut( prefix ); 
-    CopytauLeadChargedHadronPhiInToOut( prefix ); 
-    CopytauLeadChargedHadronPtInToOut( prefix ); 
     Copyrho25InToOut( prefix ); 
     Copyrho25_neuInToOut( prefix ); 
     Copyrho25_muPFisoInToOut( prefix ); 
@@ -2523,105 +2051,18 @@ void CopyInputVarsToOutput( std::string prefix) {
     CopyjetPhiInToOut( prefix ); 
     CopyjetChargeInToOut( prefix ); 
     CopyjetEtInToOut( prefix ); 
-    CopyjetRawPtInToOut( prefix ); 
     CopyjetRawEnInToOut( prefix ); 
-    CopyjetAreaInToOut( prefix ); 
     CopyjetCHFInToOut( prefix ); 
     CopyjetNHFInToOut( prefix ); 
-    CopyjetCEFInToOut( prefix ); 
     CopyjetNEFInToOut( prefix ); 
     CopyjetNCHInToOut( prefix ); 
-    CopyjetHFHAEInToOut( prefix ); 
-    CopyjetHFEMEInToOut( prefix ); 
     CopyjetNConstituentsInToOut( prefix ); 
-    CopyjetCombinedSecondaryVtxBJetTagsInToOut( prefix ); 
-    CopyjetCombinedSecondaryVtxMVABJetTagsInToOut( prefix ); 
-    CopyjetJetProbabilityBJetTagsInToOut( prefix ); 
-    CopyjetJetBProbabilityBJetTagsInToOut( prefix ); 
-    CopyjetPFLooseIdInToOut( prefix ); 
-    CopyjetDRMeanInToOut( prefix ); 
-    CopyjetDR2MeanInToOut( prefix ); 
-    CopyjetDZInToOut( prefix ); 
-    CopyjetFrac01InToOut( prefix ); 
-    CopyjetFrac02InToOut( prefix ); 
-    CopyjetFrac03InToOut( prefix ); 
-    CopyjetFrac04InToOut( prefix ); 
-    CopyjetFrac05InToOut( prefix ); 
-    CopyjetFrac06InToOut( prefix ); 
-    CopyjetFrac07InToOut( prefix ); 
-    CopyjetBetaInToOut( prefix ); 
-    CopyjetBetaStarCMGInToOut( prefix ); 
-    CopyjetBetaStarClassicInToOut( prefix ); 
     CopyjetNNeutralsInToOut( prefix ); 
     CopyjetNChargedInToOut( prefix ); 
-    CopyjetWPLevelsInToOut( prefix ); 
-    CopyjetMVAsExt_cutBasedInToOut( prefix ); 
-    CopyjetMVAsExt_philv1InToOut( prefix ); 
-    CopyjetWPLevelsExt_philv1InToOut( prefix ); 
-    CopyjetMtInToOut( prefix ); 
-    CopyjetJECUncInToOut( prefix ); 
     CopyjetLeadTrackPtInToOut( prefix ); 
     CopyjetVtxPtInToOut( prefix ); 
-    CopyjetVtxMassInToOut( prefix ); 
-    CopyjetVtx3dLInToOut( prefix ); 
-    CopyjetVtx3deLInToOut( prefix ); 
-    CopyjetSoftLeptPtInToOut( prefix ); 
-    CopyjetSoftLeptPtRelInToOut( prefix ); 
-    CopyjetSoftLeptdRInToOut( prefix ); 
-    CopyjetSoftLeptIdlooseMuInToOut( prefix ); 
-    CopyjetSoftLeptIdEle95InToOut( prefix ); 
-    CopyjetDPhiMETJetInToOut( prefix ); 
-    CopyjetPuJetIdLInToOut( prefix ); 
-    CopyjetPuJetIdMInToOut( prefix ); 
-    CopyjetPuJetIdTInToOut( prefix ); 
+    CopynLowPtJetInToOut( prefix ); 
     CopynConvInToOut( prefix ); 
-    CopyconvP4_xInToOut( prefix ); 
-    CopyconvP4_yInToOut( prefix ); 
-    CopyconvP4_zInToOut( prefix ); 
-    CopyconvP4_EInToOut( prefix ); 
-    CopyconvVtx_xInToOut( prefix ); 
-    CopyconvVtx_yInToOut( prefix ); 
-    CopyconvVtx_zInToOut( prefix ); 
-    CopyconvVtxErr_xInToOut( prefix ); 
-    CopyconvVtxErr_yInToOut( prefix ); 
-    CopyconvVtxErr_zInToOut( prefix ); 
-    CopyconvPairMomentum_xInToOut( prefix ); 
-    CopyconvPairMomentum_yInToOut( prefix ); 
-    CopyconvPairMomentum_zInToOut( prefix ); 
-    CopyconvRefittedMomentum_xInToOut( prefix ); 
-    CopyconvRefittedMomentum_yInToOut( prefix ); 
-    CopyconvRefittedMomentum_zInToOut( prefix ); 
-    CopyconvNTracksInToOut( prefix ); 
-    CopyconvPairInvMassInToOut( prefix ); 
-    CopyconvPairCotThetaSepInToOut( prefix ); 
-    CopyconvEoverPInToOut( prefix ); 
-    CopyconvDistOfMinApproachInToOut( prefix ); 
-    CopyconvDPhiTrksAtVtxInToOut( prefix ); 
-    CopyconvDPhiTrksAtEcalInToOut( prefix ); 
-    CopyconvDEtaTrksAtEcalInToOut( prefix ); 
-    CopyconvDxyInToOut( prefix ); 
-    CopyconvDzInToOut( prefix ); 
-    CopyconvLxyInToOut( prefix ); 
-    CopyconvLzInToOut( prefix ); 
-    CopyconvZofPrimVtxFromTrksInToOut( prefix ); 
-    CopyconvNHitsBeforeVtx_0InToOut( prefix ); 
-    CopyconvNHitsBeforeVtx_1InToOut( prefix ); 
-    CopyconvNSharedHitsInToOut( prefix ); 
-    CopyconvValidVtxInToOut( prefix ); 
-    CopyconvMVALikelihoodInToOut( prefix ); 
-    CopyconvChi2InToOut( prefix ); 
-    CopyconvChi2ProbabilityInToOut( prefix ); 
-    CopyconvTk1DzInToOut( prefix ); 
-    CopyconvTk2DzInToOut( prefix ); 
-    CopyconvTk1DzErrInToOut( prefix ); 
-    CopyconvTk2DzErrInToOut( prefix ); 
-    CopyconvCh1Ch2InToOut( prefix ); 
-    CopyconvTk1D0InToOut( prefix ); 
-    CopyconvTk1PoutInToOut( prefix ); 
-    CopyconvTk1PinInToOut( prefix ); 
-    CopyconvTk2D0InToOut( prefix ); 
-    CopyconvTk2PoutInToOut( prefix ); 
-    CopyconvTk2PinInToOut( prefix ); 
 }
 
 // The next set of functions allows one to copy 
@@ -2644,15 +2085,28 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyHLTIndexInToOut( prefix );
     CopybspotPosInToOut( prefix );
     CopynVtxInToOut( prefix );
-    Copyvtx_xInToOut( prefix );
-    Copyvtx_yInToOut( prefix );
-    Copyvtx_zInToOut( prefix );
     CopyIsVtxGoodInToOut( prefix );
     CopynGoodVtxInToOut( prefix );
     CopynVtxBSInToOut( prefix );
-    Copyvtxbs_xInToOut( prefix );
-    Copyvtxbs_yInToOut( prefix );
-    Copyvtxbs_zInToOut( prefix );
+    CopyvtxbsPtModInToOut( prefix );
+    CopyvtxbsSumPt2InToOut( prefix );
+    CopyvtxbsTkIndexInToOut( prefix );
+    CopyvtxbsTkWeightInToOut( prefix );
+    CopynTrkInToOut( prefix );
+    CopytrkP_xInToOut( prefix );
+    CopytrkP_yInToOut( prefix );
+    CopytrkP_zInToOut( prefix );
+    CopytrkVtx_xInToOut( prefix );
+    CopytrkVtx_yInToOut( prefix );
+    CopytrkVtx_zInToOut( prefix );
+    Copytrkd0InToOut( prefix );
+    Copytrkd0ErrInToOut( prefix );
+    CopytrkdzInToOut( prefix );
+    CopytrkdzErrInToOut( prefix );
+    CopytrkPtErrInToOut( prefix );
+    CopytrkQualityInToOut( prefix );
+    CopynGoodTrkInToOut( prefix );
+    CopyIsTracksGoodInToOut( prefix );
     CopypfMETInToOut( prefix );
     CopypfMETPhiInToOut( prefix );
     CopypfMETsumEtInToOut( prefix );
@@ -2672,29 +2126,18 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopytrkMETyPVInToOut( prefix );
     CopytrkMETPhiPVInToOut( prefix );
     CopytrkMETPVInToOut( prefix );
-    CopytrkMETxInToOut( prefix );
-    CopytrkMETyInToOut( prefix );
-    CopytrkMETPhiInToOut( prefix );
-    CopytrkMETInToOut( prefix );
     CopymetFiltersInToOut( prefix );
     CopynEleInToOut( prefix );
     CopyeleTrgInToOut( prefix );
-    CopyeleClassInToOut( prefix );
     CopyeleIsEcalDrivenInToOut( prefix );
     CopyeleChargeInToOut( prefix );
     CopyeleChargeConsistentInToOut( prefix );
     CopyeleEnInToOut( prefix );
-    CopyeleEcalEnInToOut( prefix );
-    CopyeleSCRawEnInToOut( prefix );
     CopyeleSCEnInToOut( prefix );
-    CopyeleESEnInToOut( prefix );
     CopyelePtInToOut( prefix );
     CopyeleEtaInToOut( prefix );
     CopyelePhiInToOut( prefix );
     CopyeleR9InToOut( prefix );
-    CopyeleEtaVtxInToOut( prefix );
-    CopyelePhiVtxInToOut( prefix );
-    CopyeleEtVtxInToOut( prefix );
     CopyeleSCEtaInToOut( prefix );
     CopyeleSCPhiInToOut( prefix );
     CopyeleSCEtaWidthInToOut( prefix );
@@ -2711,10 +2154,6 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyeleHoverEInToOut( prefix );
     CopyeleHoverE12InToOut( prefix );
     CopyeleEoverPInToOut( prefix );
-    CopyelePinInToOut( prefix );
-    CopyelePoutInToOut( prefix );
-    CopyeleTrkMomErrInToOut( prefix );
-    CopyeleBremInToOut( prefix );
     CopyeledEtaAtVtxInToOut( prefix );
     CopyeledPhiAtVtxInToOut( prefix );
     CopyeleSigmaIEtaIEtaInToOut( prefix );
@@ -2722,30 +2161,15 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyeleSigmaIPhiIPhiInToOut( prefix );
     CopyeleEmaxInToOut( prefix );
     CopyeleE2ndMaxInToOut( prefix );
-    CopyeleETopInToOut( prefix );
-    CopyeleEBottomInToOut( prefix );
-    CopyeleELeftInToOut( prefix );
-    CopyeleERightInToOut( prefix );
     CopyeleE1x5InToOut( prefix );
     CopyeleE3x3InToOut( prefix );
     CopyeleE5x5InToOut( prefix );
     CopyeleE2x5MaxInToOut( prefix );
-    CopyeleE2x5TopInToOut( prefix );
-    CopyeleE2x5BottomInToOut( prefix );
-    CopyeleE2x5LeftInToOut( prefix );
-    CopyeleE2x5RightInToOut( prefix );
-    CopyeleSeedEtaInToOut( prefix );
-    CopyeleSeedEInToOut( prefix );
-    CopyeleSeedPhiInToOut( prefix );
-    CopyeleCrysEtaInToOut( prefix );
-    CopyeleCrysPhiInToOut( prefix );
-    CopyeleCrysIEtaInToOut( prefix );
-    CopyeleCrysIPhiInToOut( prefix );
-    CopyeleRegrEInToOut( prefix );
-    CopyeleRegrEerrInToOut( prefix );
-    CopyelePhoRegrEInToOut( prefix );
-    CopyelePhoRegrEerrInToOut( prefix );
-    CopyeleSeedTimeInToOut( prefix );
+    CopyeleGSFPtInToOut( prefix );
+    CopyeleGSFEtaInToOut( prefix );
+    CopyeleGSFPhiInToOut( prefix );
+    CopyeleGSFChargeInToOut( prefix );
+    CopyeleGSFChi2NDFInToOut( prefix );
     CopyeleRecoFlagInToOut( prefix );
     CopyelePosInToOut( prefix );
     CopyeleIsoTrkDR03InToOut( prefix );
@@ -2756,12 +2180,8 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyeleIsoEcalDR04InToOut( prefix );
     CopyeleIsoHcalDR04InToOut( prefix );
     CopyeleIsoHcalDR0412InToOut( prefix );
-    CopyeleModIsoTrkInToOut( prefix );
-    CopyeleModIsoEcalInToOut( prefix );
-    CopyeleModIsoHcalInToOut( prefix );
     CopyeleMissHitsInToOut( prefix );
     CopyeleConvDistInToOut( prefix );
-    CopyeleConvDcotInToOut( prefix );
     CopyeleConvVtxFitInToOut( prefix );
     CopyeleIP3DInToOut( prefix );
     CopyeleIP3DErrInToOut( prefix );
@@ -2773,19 +2193,10 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyelePFChIso04InToOut( prefix );
     CopyelePFPhoIso04InToOut( prefix );
     CopyelePFNeuIso04InToOut( prefix );
-    CopyeleESEffSigmaRR_xInToOut( prefix );
-    CopyeleESEffSigmaRR_yInToOut( prefix );
-    CopyeleESEffSigmaRR_zInToOut( prefix );
     CopynPhoInToOut( prefix );
     CopyphoTrgInToOut( prefix );
     CopyphoTrgFilterInToOut( prefix );
     CopyphoIsPhotonInToOut( prefix );
-    CopyphoSCPos_xInToOut( prefix );
-    CopyphoSCPos_yInToOut( prefix );
-    CopyphoSCPos_zInToOut( prefix );
-    CopyphoCaloPos_xInToOut( prefix );
-    CopyphoCaloPos_yInToOut( prefix );
-    CopyphoCaloPos_zInToOut( prefix );
     CopyphoEInToOut( prefix );
     CopyphoEtInToOut( prefix );
     CopyphoEtaInToOut( prefix );
@@ -2793,9 +2204,6 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyphoVtx_yInToOut( prefix );
     CopyphoVtx_zInToOut( prefix );
     CopyphoPhiInToOut( prefix );
-    CopyphoEtVtxInToOut( prefix );
-    CopyphoEtaVtxInToOut( prefix );
-    CopyphoPhiVtxInToOut( prefix );
     CopyphoR9InToOut( prefix );
     CopyphoNClusInToOut( prefix );
     CopyphoTrkIsoHollowDR03InToOut( prefix );
@@ -2806,7 +2214,6 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyphoCiCdRtoTrkInToOut( prefix );
     CopyphoEcalIsoDR04InToOut( prefix );
     CopyphoHcalIsoDR04InToOut( prefix );
-    CopyphoHcalIsoDR0412InToOut( prefix );
     CopyphoHoverEInToOut( prefix );
     CopyphoHoverE12InToOut( prefix );
     CopyphoEleVetoInToOut( prefix );
@@ -2814,12 +2221,7 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyphoSigmaIEtaIPhiInToOut( prefix );
     CopyphoSigmaIPhiIPhiInToOut( prefix );
     CopyphoCiCPF4phopfIso03InToOut( prefix );
-    CopyphoCiCPF4phopfIso04InToOut( prefix );
     CopyphoEmaxInToOut( prefix );
-    CopyphoETopInToOut( prefix );
-    CopyphoEBottomInToOut( prefix );
-    CopyphoELeftInToOut( prefix );
-    CopyphoERightInToOut( prefix );
     CopyphoE2ndMaxInToOut( prefix );
     CopyphoE3x3InToOut( prefix );
     CopyphoE3x1InToOut( prefix );
@@ -2828,22 +2230,10 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyphoE1x5InToOut( prefix );
     CopyphoE2x2InToOut( prefix );
     CopyphoE2x5MaxInToOut( prefix );
-    CopyphoE2x5TopInToOut( prefix );
-    CopyphoE2x5BottomInToOut( prefix );
-    CopyphoE2x5LeftInToOut( prefix );
-    CopyphoE2x5RightInToOut( prefix );
-    CopyphoSeedEInToOut( prefix );
-    CopyphoSeedEtaInToOut( prefix );
-    CopyphoSeedPhiInToOut( prefix );
-    CopyphoCrysEtaInToOut( prefix );
-    CopyphoCrysPhiInToOut( prefix );
-    CopyphoCrysIEtaInToOut( prefix );
-    CopyphoCrysIPhiInToOut( prefix );
     CopyphoPFChIsoInToOut( prefix );
     CopyphoPFPhoIsoInToOut( prefix );
     CopyphoPFNeuIsoInToOut( prefix );
     CopyphoSCRChIsoInToOut( prefix );
-    CopyphoSCRPhoIsoInToOut( prefix );
     CopyphoSCRNeuIsoInToOut( prefix );
     CopyphoSCRChIso04InToOut( prefix );
     CopyphoSCRPhoIso04InToOut( prefix );
@@ -2854,12 +2244,6 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyphoRandConeChIso04InToOut( prefix );
     CopyphoRandConePhoIso04InToOut( prefix );
     CopyphoRandConeNeuIso04InToOut( prefix );
-    CopyphoRegrEInToOut( prefix );
-    CopyphoRegrEerrInToOut( prefix );
-    CopyphoSeedTimeInToOut( prefix );
-    CopyphoSeedDetId1InToOut( prefix );
-    CopyphoSeedDetId2InToOut( prefix );
-    CopyphoLICTDInToOut( prefix );
     CopyphoRecoFlagInToOut( prefix );
     CopyphoPosInToOut( prefix );
     CopyphoSCEInToOut( prefix );
@@ -2870,7 +2254,6 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyphoSCPhiInToOut( prefix );
     CopyphoSCEtaWidthInToOut( prefix );
     CopyphoSCPhiWidthInToOut( prefix );
-    CopyphoSCBremInToOut( prefix );
     CopyphoOverlapInToOut( prefix );
     CopyphohasPixelSeedInToOut( prefix );
     Copypho_hasConvPfInToOut( prefix );
@@ -2887,44 +2270,23 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyphoConvInvMassInToOut( prefix );
     CopyphoConvCotThetaInToOut( prefix );
     CopyphoConvEoverPInToOut( prefix );
-    CopyphoConvZofPVfromTrksInToOut( prefix );
     CopyphoConvMinDistInToOut( prefix );
     CopyphoConvdPhiAtVtxInToOut( prefix );
     CopyphoConvdPhiAtCaloInToOut( prefix );
     CopyphoConvdEtaAtCaloInToOut( prefix );
-    CopyphoConvTrkd0_xInToOut( prefix );
-    CopyphoConvTrkd0_yInToOut( prefix );
     CopyphoConvTrkPin_xInToOut( prefix );
     CopyphoConvTrkPin_yInToOut( prefix );
     CopyphoConvTrkPout_xInToOut( prefix );
     CopyphoConvTrkPout_yInToOut( prefix );
-    CopyphoConvTrkdz_xInToOut( prefix );
-    CopyphoConvTrkdz_yInToOut( prefix );
-    CopyphoConvTrkdzErr_xInToOut( prefix );
-    CopyphoConvTrkdzErr_yInToOut( prefix );
     CopyphoConvChi2InToOut( prefix );
     CopyphoConvChi2ProbInToOut( prefix );
     CopyphoConvNTrksInToOut( prefix );
-    CopyphoConvCharge1InToOut( prefix );
-    CopyphoConvCharge2InToOut( prefix );
-    CopyphoConvValidVtxInToOut( prefix );
-    CopyphoConvLikeLihoodInToOut( prefix );
-    CopyphoConvP4_0InToOut( prefix );
-    CopyphoConvP4_1InToOut( prefix );
-    CopyphoConvP4_2InToOut( prefix );
-    CopyphoConvP4_3InToOut( prefix );
     CopyphoConvVtx_xInToOut( prefix );
     CopyphoConvVtx_yInToOut( prefix );
     CopyphoConvVtx_zInToOut( prefix );
-    CopyphoConvVtxErr_xInToOut( prefix );
-    CopyphoConvVtxErr_yInToOut( prefix );
-    CopyphoConvVtxErr_zInToOut( prefix );
     CopyphoConvPairMomentum_xInToOut( prefix );
     CopyphoConvPairMomentum_yInToOut( prefix );
     CopyphoConvPairMomentum_zInToOut( prefix );
-    CopyphoConvRefittedMomentum_xInToOut( prefix );
-    CopyphoConvRefittedMomentum_yInToOut( prefix );
-    CopyphoConvRefittedMomentum_zInToOut( prefix );
     CopySingleLegConvInToOut( prefix );
     CopyphoPFConvVtx_xInToOut( prefix );
     CopyphoPFConvVtx_yInToOut( prefix );
@@ -2932,9 +2294,6 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyphoPFConvMom_xInToOut( prefix );
     CopyphoPFConvMom_yInToOut( prefix );
     CopyphoPFConvMom_zInToOut( prefix );
-    CopyphoESEffSigmaRR_xInToOut( prefix );
-    CopyphoESEffSigmaRR_yInToOut( prefix );
-    CopyphoESEffSigmaRR_zInToOut( prefix );
     CopynMuInToOut( prefix );
     CopymuTrgInToOut( prefix );
     CopymuEtaInToOut( prefix );
@@ -2945,15 +2304,6 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopymuVtx_xInToOut( prefix );
     CopymuVtx_yInToOut( prefix );
     CopymuVtx_zInToOut( prefix );
-    CopymuVtxGlb_xInToOut( prefix );
-    CopymuVtxGlb_yInToOut( prefix );
-    CopymuVtxGlb_zInToOut( prefix );
-    CopymucktPtInToOut( prefix );
-    CopymucktPtErrInToOut( prefix );
-    CopymucktEtaInToOut( prefix );
-    CopymucktPhiInToOut( prefix );
-    CopymucktdxyInToOut( prefix );
-    CopymucktdzInToOut( prefix );
     CopymuIsoTrkInToOut( prefix );
     CopymuIsoCaloInToOut( prefix );
     CopymuIsoEcalInToOut( prefix );
@@ -2986,7 +2336,6 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopymuInnerD0GVInToOut( prefix );
     CopymuInnerDzGVInToOut( prefix );
     CopymuInnerPtInToOut( prefix );
-    CopymuInnerPtErrInToOut( prefix );
     CopymuNumberOfValidTrkLayersInToOut( prefix );
     CopymuNumberOfValidTrkHitsInToOut( prefix );
     CopymuNumberOfValidPixelLayersInToOut( prefix );
@@ -2997,36 +2346,6 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopymuIP3DInToOut( prefix );
     CopymuIP3DErrInToOut( prefix );
     CopynTauInToOut( prefix );
-    CopytauDecayModeFindingInToOut( prefix );
-    CopytauAgainstElectronLooseMVA3InToOut( prefix );
-    CopytauAgainstElectronMediumMVA3InToOut( prefix );
-    CopytauAgainstElectronTightMVA3InToOut( prefix );
-    CopytauAgainstElectronVTightMVA3InToOut( prefix );
-    CopytauAgainstElectronDeadECALInToOut( prefix );
-    CopytauAgainstMuonLoose2InToOut( prefix );
-    CopytauAgainstMuonMedium2InToOut( prefix );
-    CopytauAgainstMuonTight2InToOut( prefix );
-    CopytauCombinedIsolationDeltaBetaCorrRaw3HitsInToOut( prefix );
-    CopytauLooseCombinedIsolationDeltaBetaCorr3HitsInToOut( prefix );
-    CopytauMediumCombinedIsolationDeltaBetaCorr3HitsInToOut( prefix );
-    CopytauTightCombinedIsolationDeltaBetaCorr3HitsInToOut( prefix );
-    CopytauEtaInToOut( prefix );
-    CopytauPhiInToOut( prefix );
-    CopytauPtInToOut( prefix );
-    CopytauEtInToOut( prefix );
-    CopytauChargeInToOut( prefix );
-    CopytauDecayModeInToOut( prefix );
-    CopytauEMFractionInToOut( prefix );
-    CopytauHCAL3x3OverPLeadInToOut( prefix );
-    CopytauHCALMaxOverPLeadInToOut( prefix );
-    CopytauHCALTotOverPLeadInToOut( prefix );
-    CopytauIsolationPFChargedHadrCandsPtSumInToOut( prefix );
-    CopytauIsolationPFGammaCandsEtSumInToOut( prefix );
-    CopytauLeadPFChargedHadrCandsignedSiptInToOut( prefix );
-    CopytauLeadChargedHadronExistsInToOut( prefix );
-    CopytauLeadChargedHadronEtaInToOut( prefix );
-    CopytauLeadChargedHadronPhiInToOut( prefix );
-    CopytauLeadChargedHadronPtInToOut( prefix );
     Copyrho25InToOut( prefix );
     Copyrho25_neuInToOut( prefix );
     Copyrho25_muPFisoInToOut( prefix );
@@ -3044,138 +2363,50 @@ void CopyPrefixBranchesInToOut( const std::string & prefix ) {
     CopyjetPhiInToOut( prefix );
     CopyjetChargeInToOut( prefix );
     CopyjetEtInToOut( prefix );
-    CopyjetRawPtInToOut( prefix );
     CopyjetRawEnInToOut( prefix );
-    CopyjetAreaInToOut( prefix );
     CopyjetCHFInToOut( prefix );
     CopyjetNHFInToOut( prefix );
-    CopyjetCEFInToOut( prefix );
     CopyjetNEFInToOut( prefix );
     CopyjetNCHInToOut( prefix );
-    CopyjetHFHAEInToOut( prefix );
-    CopyjetHFEMEInToOut( prefix );
     CopyjetNConstituentsInToOut( prefix );
-    CopyjetCombinedSecondaryVtxBJetTagsInToOut( prefix );
-    CopyjetCombinedSecondaryVtxMVABJetTagsInToOut( prefix );
-    CopyjetJetProbabilityBJetTagsInToOut( prefix );
-    CopyjetJetBProbabilityBJetTagsInToOut( prefix );
-    CopyjetPFLooseIdInToOut( prefix );
-    CopyjetDRMeanInToOut( prefix );
-    CopyjetDR2MeanInToOut( prefix );
-    CopyjetDZInToOut( prefix );
-    CopyjetFrac01InToOut( prefix );
-    CopyjetFrac02InToOut( prefix );
-    CopyjetFrac03InToOut( prefix );
-    CopyjetFrac04InToOut( prefix );
-    CopyjetFrac05InToOut( prefix );
-    CopyjetFrac06InToOut( prefix );
-    CopyjetFrac07InToOut( prefix );
-    CopyjetBetaInToOut( prefix );
-    CopyjetBetaStarCMGInToOut( prefix );
-    CopyjetBetaStarClassicInToOut( prefix );
     CopyjetNNeutralsInToOut( prefix );
     CopyjetNChargedInToOut( prefix );
-    CopyjetWPLevelsInToOut( prefix );
-    CopyjetMVAsExt_cutBasedInToOut( prefix );
-    CopyjetMVAsExt_philv1InToOut( prefix );
-    CopyjetWPLevelsExt_philv1InToOut( prefix );
-    CopyjetMtInToOut( prefix );
-    CopyjetJECUncInToOut( prefix );
     CopyjetLeadTrackPtInToOut( prefix );
     CopyjetVtxPtInToOut( prefix );
-    CopyjetVtxMassInToOut( prefix );
-    CopyjetVtx3dLInToOut( prefix );
-    CopyjetVtx3deLInToOut( prefix );
-    CopyjetSoftLeptPtInToOut( prefix );
-    CopyjetSoftLeptPtRelInToOut( prefix );
-    CopyjetSoftLeptdRInToOut( prefix );
-    CopyjetSoftLeptIdlooseMuInToOut( prefix );
-    CopyjetSoftLeptIdEle95InToOut( prefix );
-    CopyjetDPhiMETJetInToOut( prefix );
-    CopyjetPuJetIdLInToOut( prefix );
-    CopyjetPuJetIdMInToOut( prefix );
-    CopyjetPuJetIdTInToOut( prefix );
+    CopynLowPtJetInToOut( prefix );
     CopynConvInToOut( prefix );
-    CopyconvP4_xInToOut( prefix );
-    CopyconvP4_yInToOut( prefix );
-    CopyconvP4_zInToOut( prefix );
-    CopyconvP4_EInToOut( prefix );
-    CopyconvVtx_xInToOut( prefix );
-    CopyconvVtx_yInToOut( prefix );
-    CopyconvVtx_zInToOut( prefix );
-    CopyconvVtxErr_xInToOut( prefix );
-    CopyconvVtxErr_yInToOut( prefix );
-    CopyconvVtxErr_zInToOut( prefix );
-    CopyconvPairMomentum_xInToOut( prefix );
-    CopyconvPairMomentum_yInToOut( prefix );
-    CopyconvPairMomentum_zInToOut( prefix );
-    CopyconvRefittedMomentum_xInToOut( prefix );
-    CopyconvRefittedMomentum_yInToOut( prefix );
-    CopyconvRefittedMomentum_zInToOut( prefix );
-    CopyconvNTracksInToOut( prefix );
-    CopyconvPairInvMassInToOut( prefix );
-    CopyconvPairCotThetaSepInToOut( prefix );
-    CopyconvEoverPInToOut( prefix );
-    CopyconvDistOfMinApproachInToOut( prefix );
-    CopyconvDPhiTrksAtVtxInToOut( prefix );
-    CopyconvDPhiTrksAtEcalInToOut( prefix );
-    CopyconvDEtaTrksAtEcalInToOut( prefix );
-    CopyconvDxyInToOut( prefix );
-    CopyconvDzInToOut( prefix );
-    CopyconvLxyInToOut( prefix );
-    CopyconvLzInToOut( prefix );
-    CopyconvZofPrimVtxFromTrksInToOut( prefix );
-    CopyconvNHitsBeforeVtx_0InToOut( prefix );
-    CopyconvNHitsBeforeVtx_1InToOut( prefix );
-    CopyconvNSharedHitsInToOut( prefix );
-    CopyconvValidVtxInToOut( prefix );
-    CopyconvMVALikelihoodInToOut( prefix );
-    CopyconvChi2InToOut( prefix );
-    CopyconvChi2ProbabilityInToOut( prefix );
-    CopyconvTk1DzInToOut( prefix );
-    CopyconvTk2DzInToOut( prefix );
-    CopyconvTk1DzErrInToOut( prefix );
-    CopyconvTk2DzErrInToOut( prefix );
-    CopyconvCh1Ch2InToOut( prefix );
-    CopyconvTk1D0InToOut( prefix );
-    CopyconvTk1PoutInToOut( prefix );
-    CopyconvTk1PinInToOut( prefix );
-    CopyconvTk2D0InToOut( prefix );
-    CopyconvTk2PoutInToOut( prefix );
-    CopyconvTk2PinInToOut( prefix );
 }; 
 
 void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index ) { 
 
 // Just call each copy function with the prefix 
 
-    Copyvtx_xInToOutIndex( index, prefix );
-    Copyvtx_yInToOutIndex( index, prefix );
-    Copyvtx_zInToOutIndex( index, prefix );
-    Copyvtxbs_xInToOutIndex( index, prefix );
-    Copyvtxbs_yInToOutIndex( index, prefix );
-    Copyvtxbs_zInToOutIndex( index, prefix );
-    CopytrkMETxInToOutIndex( index, prefix );
-    CopytrkMETyInToOutIndex( index, prefix );
-    CopytrkMETPhiInToOutIndex( index, prefix );
-    CopytrkMETInToOutIndex( index, prefix );
+    CopyvtxbsPtModInToOutIndex( index, prefix );
+    CopyvtxbsSumPt2InToOutIndex( index, prefix );
+    CopyvtxbsTkIndexInToOutIndex( index, prefix );
+    CopyvtxbsTkWeightInToOutIndex( index, prefix );
+    CopytrkP_xInToOutIndex( index, prefix );
+    CopytrkP_yInToOutIndex( index, prefix );
+    CopytrkP_zInToOutIndex( index, prefix );
+    CopytrkVtx_xInToOutIndex( index, prefix );
+    CopytrkVtx_yInToOutIndex( index, prefix );
+    CopytrkVtx_zInToOutIndex( index, prefix );
+    Copytrkd0InToOutIndex( index, prefix );
+    Copytrkd0ErrInToOutIndex( index, prefix );
+    CopytrkdzInToOutIndex( index, prefix );
+    CopytrkdzErrInToOutIndex( index, prefix );
+    CopytrkPtErrInToOutIndex( index, prefix );
+    CopytrkQualityInToOutIndex( index, prefix );
     CopyeleTrgInToOutIndex( index, prefix );
-    CopyeleClassInToOutIndex( index, prefix );
     CopyeleIsEcalDrivenInToOutIndex( index, prefix );
     CopyeleChargeInToOutIndex( index, prefix );
     CopyeleChargeConsistentInToOutIndex( index, prefix );
     CopyeleEnInToOutIndex( index, prefix );
-    CopyeleEcalEnInToOutIndex( index, prefix );
-    CopyeleSCRawEnInToOutIndex( index, prefix );
     CopyeleSCEnInToOutIndex( index, prefix );
-    CopyeleESEnInToOutIndex( index, prefix );
     CopyelePtInToOutIndex( index, prefix );
     CopyeleEtaInToOutIndex( index, prefix );
     CopyelePhiInToOutIndex( index, prefix );
     CopyeleR9InToOutIndex( index, prefix );
-    CopyeleEtaVtxInToOutIndex( index, prefix );
-    CopyelePhiVtxInToOutIndex( index, prefix );
-    CopyeleEtVtxInToOutIndex( index, prefix );
     CopyeleSCEtaInToOutIndex( index, prefix );
     CopyeleSCPhiInToOutIndex( index, prefix );
     CopyeleSCEtaWidthInToOutIndex( index, prefix );
@@ -3192,10 +2423,6 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyeleHoverEInToOutIndex( index, prefix );
     CopyeleHoverE12InToOutIndex( index, prefix );
     CopyeleEoverPInToOutIndex( index, prefix );
-    CopyelePinInToOutIndex( index, prefix );
-    CopyelePoutInToOutIndex( index, prefix );
-    CopyeleTrkMomErrInToOutIndex( index, prefix );
-    CopyeleBremInToOutIndex( index, prefix );
     CopyeledEtaAtVtxInToOutIndex( index, prefix );
     CopyeledPhiAtVtxInToOutIndex( index, prefix );
     CopyeleSigmaIEtaIEtaInToOutIndex( index, prefix );
@@ -3203,30 +2430,15 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyeleSigmaIPhiIPhiInToOutIndex( index, prefix );
     CopyeleEmaxInToOutIndex( index, prefix );
     CopyeleE2ndMaxInToOutIndex( index, prefix );
-    CopyeleETopInToOutIndex( index, prefix );
-    CopyeleEBottomInToOutIndex( index, prefix );
-    CopyeleELeftInToOutIndex( index, prefix );
-    CopyeleERightInToOutIndex( index, prefix );
     CopyeleE1x5InToOutIndex( index, prefix );
     CopyeleE3x3InToOutIndex( index, prefix );
     CopyeleE5x5InToOutIndex( index, prefix );
     CopyeleE2x5MaxInToOutIndex( index, prefix );
-    CopyeleE2x5TopInToOutIndex( index, prefix );
-    CopyeleE2x5BottomInToOutIndex( index, prefix );
-    CopyeleE2x5LeftInToOutIndex( index, prefix );
-    CopyeleE2x5RightInToOutIndex( index, prefix );
-    CopyeleSeedEtaInToOutIndex( index, prefix );
-    CopyeleSeedEInToOutIndex( index, prefix );
-    CopyeleSeedPhiInToOutIndex( index, prefix );
-    CopyeleCrysEtaInToOutIndex( index, prefix );
-    CopyeleCrysPhiInToOutIndex( index, prefix );
-    CopyeleCrysIEtaInToOutIndex( index, prefix );
-    CopyeleCrysIPhiInToOutIndex( index, prefix );
-    CopyeleRegrEInToOutIndex( index, prefix );
-    CopyeleRegrEerrInToOutIndex( index, prefix );
-    CopyelePhoRegrEInToOutIndex( index, prefix );
-    CopyelePhoRegrEerrInToOutIndex( index, prefix );
-    CopyeleSeedTimeInToOutIndex( index, prefix );
+    CopyeleGSFPtInToOutIndex( index, prefix );
+    CopyeleGSFEtaInToOutIndex( index, prefix );
+    CopyeleGSFPhiInToOutIndex( index, prefix );
+    CopyeleGSFChargeInToOutIndex( index, prefix );
+    CopyeleGSFChi2NDFInToOutIndex( index, prefix );
     CopyeleRecoFlagInToOutIndex( index, prefix );
     CopyelePosInToOutIndex( index, prefix );
     CopyeleIsoTrkDR03InToOutIndex( index, prefix );
@@ -3237,12 +2449,8 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyeleIsoEcalDR04InToOutIndex( index, prefix );
     CopyeleIsoHcalDR04InToOutIndex( index, prefix );
     CopyeleIsoHcalDR0412InToOutIndex( index, prefix );
-    CopyeleModIsoTrkInToOutIndex( index, prefix );
-    CopyeleModIsoEcalInToOutIndex( index, prefix );
-    CopyeleModIsoHcalInToOutIndex( index, prefix );
     CopyeleMissHitsInToOutIndex( index, prefix );
     CopyeleConvDistInToOutIndex( index, prefix );
-    CopyeleConvDcotInToOutIndex( index, prefix );
     CopyeleConvVtxFitInToOutIndex( index, prefix );
     CopyeleIP3DInToOutIndex( index, prefix );
     CopyeleIP3DErrInToOutIndex( index, prefix );
@@ -3254,18 +2462,9 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyelePFChIso04InToOutIndex( index, prefix );
     CopyelePFPhoIso04InToOutIndex( index, prefix );
     CopyelePFNeuIso04InToOutIndex( index, prefix );
-    CopyeleESEffSigmaRR_xInToOutIndex( index, prefix );
-    CopyeleESEffSigmaRR_yInToOutIndex( index, prefix );
-    CopyeleESEffSigmaRR_zInToOutIndex( index, prefix );
     CopyphoTrgInToOutIndex( index, prefix );
     CopyphoTrgFilterInToOutIndex( index, prefix );
     CopyphoIsPhotonInToOutIndex( index, prefix );
-    CopyphoSCPos_xInToOutIndex( index, prefix );
-    CopyphoSCPos_yInToOutIndex( index, prefix );
-    CopyphoSCPos_zInToOutIndex( index, prefix );
-    CopyphoCaloPos_xInToOutIndex( index, prefix );
-    CopyphoCaloPos_yInToOutIndex( index, prefix );
-    CopyphoCaloPos_zInToOutIndex( index, prefix );
     CopyphoEInToOutIndex( index, prefix );
     CopyphoEtInToOutIndex( index, prefix );
     CopyphoEtaInToOutIndex( index, prefix );
@@ -3273,9 +2472,6 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyphoVtx_yInToOutIndex( index, prefix );
     CopyphoVtx_zInToOutIndex( index, prefix );
     CopyphoPhiInToOutIndex( index, prefix );
-    CopyphoEtVtxInToOutIndex( index, prefix );
-    CopyphoEtaVtxInToOutIndex( index, prefix );
-    CopyphoPhiVtxInToOutIndex( index, prefix );
     CopyphoR9InToOutIndex( index, prefix );
     CopyphoNClusInToOutIndex( index, prefix );
     CopyphoTrkIsoHollowDR03InToOutIndex( index, prefix );
@@ -3286,7 +2482,6 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyphoCiCdRtoTrkInToOutIndex( index, prefix );
     CopyphoEcalIsoDR04InToOutIndex( index, prefix );
     CopyphoHcalIsoDR04InToOutIndex( index, prefix );
-    CopyphoHcalIsoDR0412InToOutIndex( index, prefix );
     CopyphoHoverEInToOutIndex( index, prefix );
     CopyphoHoverE12InToOutIndex( index, prefix );
     CopyphoEleVetoInToOutIndex( index, prefix );
@@ -3294,12 +2489,7 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyphoSigmaIEtaIPhiInToOutIndex( index, prefix );
     CopyphoSigmaIPhiIPhiInToOutIndex( index, prefix );
     CopyphoCiCPF4phopfIso03InToOutIndex( index, prefix );
-    CopyphoCiCPF4phopfIso04InToOutIndex( index, prefix );
     CopyphoEmaxInToOutIndex( index, prefix );
-    CopyphoETopInToOutIndex( index, prefix );
-    CopyphoEBottomInToOutIndex( index, prefix );
-    CopyphoELeftInToOutIndex( index, prefix );
-    CopyphoERightInToOutIndex( index, prefix );
     CopyphoE2ndMaxInToOutIndex( index, prefix );
     CopyphoE3x3InToOutIndex( index, prefix );
     CopyphoE3x1InToOutIndex( index, prefix );
@@ -3308,22 +2498,10 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyphoE1x5InToOutIndex( index, prefix );
     CopyphoE2x2InToOutIndex( index, prefix );
     CopyphoE2x5MaxInToOutIndex( index, prefix );
-    CopyphoE2x5TopInToOutIndex( index, prefix );
-    CopyphoE2x5BottomInToOutIndex( index, prefix );
-    CopyphoE2x5LeftInToOutIndex( index, prefix );
-    CopyphoE2x5RightInToOutIndex( index, prefix );
-    CopyphoSeedEInToOutIndex( index, prefix );
-    CopyphoSeedEtaInToOutIndex( index, prefix );
-    CopyphoSeedPhiInToOutIndex( index, prefix );
-    CopyphoCrysEtaInToOutIndex( index, prefix );
-    CopyphoCrysPhiInToOutIndex( index, prefix );
-    CopyphoCrysIEtaInToOutIndex( index, prefix );
-    CopyphoCrysIPhiInToOutIndex( index, prefix );
     CopyphoPFChIsoInToOutIndex( index, prefix );
     CopyphoPFPhoIsoInToOutIndex( index, prefix );
     CopyphoPFNeuIsoInToOutIndex( index, prefix );
     CopyphoSCRChIsoInToOutIndex( index, prefix );
-    CopyphoSCRPhoIsoInToOutIndex( index, prefix );
     CopyphoSCRNeuIsoInToOutIndex( index, prefix );
     CopyphoSCRChIso04InToOutIndex( index, prefix );
     CopyphoSCRPhoIso04InToOutIndex( index, prefix );
@@ -3334,12 +2512,6 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyphoRandConeChIso04InToOutIndex( index, prefix );
     CopyphoRandConePhoIso04InToOutIndex( index, prefix );
     CopyphoRandConeNeuIso04InToOutIndex( index, prefix );
-    CopyphoRegrEInToOutIndex( index, prefix );
-    CopyphoRegrEerrInToOutIndex( index, prefix );
-    CopyphoSeedTimeInToOutIndex( index, prefix );
-    CopyphoSeedDetId1InToOutIndex( index, prefix );
-    CopyphoSeedDetId2InToOutIndex( index, prefix );
-    CopyphoLICTDInToOutIndex( index, prefix );
     CopyphoRecoFlagInToOutIndex( index, prefix );
     CopyphoPosInToOutIndex( index, prefix );
     CopyphoSCEInToOutIndex( index, prefix );
@@ -3350,7 +2522,6 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyphoSCPhiInToOutIndex( index, prefix );
     CopyphoSCEtaWidthInToOutIndex( index, prefix );
     CopyphoSCPhiWidthInToOutIndex( index, prefix );
-    CopyphoSCBremInToOutIndex( index, prefix );
     CopyphoOverlapInToOutIndex( index, prefix );
     CopyphohasPixelSeedInToOutIndex( index, prefix );
     Copypho_hasConvPfInToOutIndex( index, prefix );
@@ -3367,44 +2538,23 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyphoConvInvMassInToOutIndex( index, prefix );
     CopyphoConvCotThetaInToOutIndex( index, prefix );
     CopyphoConvEoverPInToOutIndex( index, prefix );
-    CopyphoConvZofPVfromTrksInToOutIndex( index, prefix );
     CopyphoConvMinDistInToOutIndex( index, prefix );
     CopyphoConvdPhiAtVtxInToOutIndex( index, prefix );
     CopyphoConvdPhiAtCaloInToOutIndex( index, prefix );
     CopyphoConvdEtaAtCaloInToOutIndex( index, prefix );
-    CopyphoConvTrkd0_xInToOutIndex( index, prefix );
-    CopyphoConvTrkd0_yInToOutIndex( index, prefix );
     CopyphoConvTrkPin_xInToOutIndex( index, prefix );
     CopyphoConvTrkPin_yInToOutIndex( index, prefix );
     CopyphoConvTrkPout_xInToOutIndex( index, prefix );
     CopyphoConvTrkPout_yInToOutIndex( index, prefix );
-    CopyphoConvTrkdz_xInToOutIndex( index, prefix );
-    CopyphoConvTrkdz_yInToOutIndex( index, prefix );
-    CopyphoConvTrkdzErr_xInToOutIndex( index, prefix );
-    CopyphoConvTrkdzErr_yInToOutIndex( index, prefix );
     CopyphoConvChi2InToOutIndex( index, prefix );
     CopyphoConvChi2ProbInToOutIndex( index, prefix );
     CopyphoConvNTrksInToOutIndex( index, prefix );
-    CopyphoConvCharge1InToOutIndex( index, prefix );
-    CopyphoConvCharge2InToOutIndex( index, prefix );
-    CopyphoConvValidVtxInToOutIndex( index, prefix );
-    CopyphoConvLikeLihoodInToOutIndex( index, prefix );
-    CopyphoConvP4_0InToOutIndex( index, prefix );
-    CopyphoConvP4_1InToOutIndex( index, prefix );
-    CopyphoConvP4_2InToOutIndex( index, prefix );
-    CopyphoConvP4_3InToOutIndex( index, prefix );
     CopyphoConvVtx_xInToOutIndex( index, prefix );
     CopyphoConvVtx_yInToOutIndex( index, prefix );
     CopyphoConvVtx_zInToOutIndex( index, prefix );
-    CopyphoConvVtxErr_xInToOutIndex( index, prefix );
-    CopyphoConvVtxErr_yInToOutIndex( index, prefix );
-    CopyphoConvVtxErr_zInToOutIndex( index, prefix );
     CopyphoConvPairMomentum_xInToOutIndex( index, prefix );
     CopyphoConvPairMomentum_yInToOutIndex( index, prefix );
     CopyphoConvPairMomentum_zInToOutIndex( index, prefix );
-    CopyphoConvRefittedMomentum_xInToOutIndex( index, prefix );
-    CopyphoConvRefittedMomentum_yInToOutIndex( index, prefix );
-    CopyphoConvRefittedMomentum_zInToOutIndex( index, prefix );
     CopySingleLegConvInToOutIndex( index, prefix );
     CopyphoPFConvVtx_xInToOutIndex( index, prefix );
     CopyphoPFConvVtx_yInToOutIndex( index, prefix );
@@ -3412,9 +2562,6 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyphoPFConvMom_xInToOutIndex( index, prefix );
     CopyphoPFConvMom_yInToOutIndex( index, prefix );
     CopyphoPFConvMom_zInToOutIndex( index, prefix );
-    CopyphoESEffSigmaRR_xInToOutIndex( index, prefix );
-    CopyphoESEffSigmaRR_yInToOutIndex( index, prefix );
-    CopyphoESEffSigmaRR_zInToOutIndex( index, prefix );
     CopymuTrgInToOutIndex( index, prefix );
     CopymuEtaInToOutIndex( index, prefix );
     CopymuPhiInToOutIndex( index, prefix );
@@ -3424,15 +2571,6 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopymuVtx_xInToOutIndex( index, prefix );
     CopymuVtx_yInToOutIndex( index, prefix );
     CopymuVtx_zInToOutIndex( index, prefix );
-    CopymuVtxGlb_xInToOutIndex( index, prefix );
-    CopymuVtxGlb_yInToOutIndex( index, prefix );
-    CopymuVtxGlb_zInToOutIndex( index, prefix );
-    CopymucktPtInToOutIndex( index, prefix );
-    CopymucktPtErrInToOutIndex( index, prefix );
-    CopymucktEtaInToOutIndex( index, prefix );
-    CopymucktPhiInToOutIndex( index, prefix );
-    CopymucktdxyInToOutIndex( index, prefix );
-    CopymucktdzInToOutIndex( index, prefix );
     CopymuIsoTrkInToOutIndex( index, prefix );
     CopymuIsoCaloInToOutIndex( index, prefix );
     CopymuIsoEcalInToOutIndex( index, prefix );
@@ -3465,7 +2603,6 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopymuInnerD0GVInToOutIndex( index, prefix );
     CopymuInnerDzGVInToOutIndex( index, prefix );
     CopymuInnerPtInToOutIndex( index, prefix );
-    CopymuInnerPtErrInToOutIndex( index, prefix );
     CopymuNumberOfValidTrkLayersInToOutIndex( index, prefix );
     CopymuNumberOfValidTrkHitsInToOutIndex( index, prefix );
     CopymuNumberOfValidPixelLayersInToOutIndex( index, prefix );
@@ -3475,36 +2612,6 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopymuChambersInToOutIndex( index, prefix );
     CopymuIP3DInToOutIndex( index, prefix );
     CopymuIP3DErrInToOutIndex( index, prefix );
-    CopytauDecayModeFindingInToOutIndex( index, prefix );
-    CopytauAgainstElectronLooseMVA3InToOutIndex( index, prefix );
-    CopytauAgainstElectronMediumMVA3InToOutIndex( index, prefix );
-    CopytauAgainstElectronTightMVA3InToOutIndex( index, prefix );
-    CopytauAgainstElectronVTightMVA3InToOutIndex( index, prefix );
-    CopytauAgainstElectronDeadECALInToOutIndex( index, prefix );
-    CopytauAgainstMuonLoose2InToOutIndex( index, prefix );
-    CopytauAgainstMuonMedium2InToOutIndex( index, prefix );
-    CopytauAgainstMuonTight2InToOutIndex( index, prefix );
-    CopytauCombinedIsolationDeltaBetaCorrRaw3HitsInToOutIndex( index, prefix );
-    CopytauLooseCombinedIsolationDeltaBetaCorr3HitsInToOutIndex( index, prefix );
-    CopytauMediumCombinedIsolationDeltaBetaCorr3HitsInToOutIndex( index, prefix );
-    CopytauTightCombinedIsolationDeltaBetaCorr3HitsInToOutIndex( index, prefix );
-    CopytauEtaInToOutIndex( index, prefix );
-    CopytauPhiInToOutIndex( index, prefix );
-    CopytauPtInToOutIndex( index, prefix );
-    CopytauEtInToOutIndex( index, prefix );
-    CopytauChargeInToOutIndex( index, prefix );
-    CopytauDecayModeInToOutIndex( index, prefix );
-    CopytauEMFractionInToOutIndex( index, prefix );
-    CopytauHCAL3x3OverPLeadInToOutIndex( index, prefix );
-    CopytauHCALMaxOverPLeadInToOutIndex( index, prefix );
-    CopytauHCALTotOverPLeadInToOutIndex( index, prefix );
-    CopytauIsolationPFChargedHadrCandsPtSumInToOutIndex( index, prefix );
-    CopytauIsolationPFGammaCandsEtSumInToOutIndex( index, prefix );
-    CopytauLeadPFChargedHadrCandsignedSiptInToOutIndex( index, prefix );
-    CopytauLeadChargedHadronExistsInToOutIndex( index, prefix );
-    CopytauLeadChargedHadronEtaInToOutIndex( index, prefix );
-    CopytauLeadChargedHadronPhiInToOutIndex( index, prefix );
-    CopytauLeadChargedHadronPtInToOutIndex( index, prefix );
     CopyjetTrgInToOutIndex( index, prefix );
     CopyjetEnInToOutIndex( index, prefix );
     CopyjetPtInToOutIndex( index, prefix );
@@ -3512,134 +2619,45 @@ void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index 
     CopyjetPhiInToOutIndex( index, prefix );
     CopyjetChargeInToOutIndex( index, prefix );
     CopyjetEtInToOutIndex( index, prefix );
-    CopyjetRawPtInToOutIndex( index, prefix );
     CopyjetRawEnInToOutIndex( index, prefix );
-    CopyjetAreaInToOutIndex( index, prefix );
     CopyjetCHFInToOutIndex( index, prefix );
     CopyjetNHFInToOutIndex( index, prefix );
-    CopyjetCEFInToOutIndex( index, prefix );
     CopyjetNEFInToOutIndex( index, prefix );
     CopyjetNCHInToOutIndex( index, prefix );
-    CopyjetHFHAEInToOutIndex( index, prefix );
-    CopyjetHFEMEInToOutIndex( index, prefix );
     CopyjetNConstituentsInToOutIndex( index, prefix );
-    CopyjetCombinedSecondaryVtxBJetTagsInToOutIndex( index, prefix );
-    CopyjetCombinedSecondaryVtxMVABJetTagsInToOutIndex( index, prefix );
-    CopyjetJetProbabilityBJetTagsInToOutIndex( index, prefix );
-    CopyjetJetBProbabilityBJetTagsInToOutIndex( index, prefix );
-    CopyjetPFLooseIdInToOutIndex( index, prefix );
-    CopyjetDRMeanInToOutIndex( index, prefix );
-    CopyjetDR2MeanInToOutIndex( index, prefix );
-    CopyjetDZInToOutIndex( index, prefix );
-    CopyjetFrac01InToOutIndex( index, prefix );
-    CopyjetFrac02InToOutIndex( index, prefix );
-    CopyjetFrac03InToOutIndex( index, prefix );
-    CopyjetFrac04InToOutIndex( index, prefix );
-    CopyjetFrac05InToOutIndex( index, prefix );
-    CopyjetFrac06InToOutIndex( index, prefix );
-    CopyjetFrac07InToOutIndex( index, prefix );
-    CopyjetBetaInToOutIndex( index, prefix );
-    CopyjetBetaStarCMGInToOutIndex( index, prefix );
-    CopyjetBetaStarClassicInToOutIndex( index, prefix );
     CopyjetNNeutralsInToOutIndex( index, prefix );
     CopyjetNChargedInToOutIndex( index, prefix );
-    CopyjetWPLevelsInToOutIndex( index, prefix );
-    CopyjetMVAsExt_cutBasedInToOutIndex( index, prefix );
-    CopyjetMVAsExt_philv1InToOutIndex( index, prefix );
-    CopyjetWPLevelsExt_philv1InToOutIndex( index, prefix );
-    CopyjetMtInToOutIndex( index, prefix );
-    CopyjetJECUncInToOutIndex( index, prefix );
     CopyjetLeadTrackPtInToOutIndex( index, prefix );
     CopyjetVtxPtInToOutIndex( index, prefix );
-    CopyjetVtxMassInToOutIndex( index, prefix );
-    CopyjetVtx3dLInToOutIndex( index, prefix );
-    CopyjetVtx3deLInToOutIndex( index, prefix );
-    CopyjetSoftLeptPtInToOutIndex( index, prefix );
-    CopyjetSoftLeptPtRelInToOutIndex( index, prefix );
-    CopyjetSoftLeptdRInToOutIndex( index, prefix );
-    CopyjetSoftLeptIdlooseMuInToOutIndex( index, prefix );
-    CopyjetSoftLeptIdEle95InToOutIndex( index, prefix );
-    CopyjetDPhiMETJetInToOutIndex( index, prefix );
-    CopyjetPuJetIdLInToOutIndex( index, prefix );
-    CopyjetPuJetIdMInToOutIndex( index, prefix );
-    CopyjetPuJetIdTInToOutIndex( index, prefix );
-    CopyconvP4_xInToOutIndex( index, prefix );
-    CopyconvP4_yInToOutIndex( index, prefix );
-    CopyconvP4_zInToOutIndex( index, prefix );
-    CopyconvP4_EInToOutIndex( index, prefix );
-    CopyconvVtx_xInToOutIndex( index, prefix );
-    CopyconvVtx_yInToOutIndex( index, prefix );
-    CopyconvVtx_zInToOutIndex( index, prefix );
-    CopyconvVtxErr_xInToOutIndex( index, prefix );
-    CopyconvVtxErr_yInToOutIndex( index, prefix );
-    CopyconvVtxErr_zInToOutIndex( index, prefix );
-    CopyconvPairMomentum_xInToOutIndex( index, prefix );
-    CopyconvPairMomentum_yInToOutIndex( index, prefix );
-    CopyconvPairMomentum_zInToOutIndex( index, prefix );
-    CopyconvRefittedMomentum_xInToOutIndex( index, prefix );
-    CopyconvRefittedMomentum_yInToOutIndex( index, prefix );
-    CopyconvRefittedMomentum_zInToOutIndex( index, prefix );
-    CopyconvNTracksInToOutIndex( index, prefix );
-    CopyconvPairInvMassInToOutIndex( index, prefix );
-    CopyconvPairCotThetaSepInToOutIndex( index, prefix );
-    CopyconvEoverPInToOutIndex( index, prefix );
-    CopyconvDistOfMinApproachInToOutIndex( index, prefix );
-    CopyconvDPhiTrksAtVtxInToOutIndex( index, prefix );
-    CopyconvDPhiTrksAtEcalInToOutIndex( index, prefix );
-    CopyconvDEtaTrksAtEcalInToOutIndex( index, prefix );
-    CopyconvDxyInToOutIndex( index, prefix );
-    CopyconvDzInToOutIndex( index, prefix );
-    CopyconvLxyInToOutIndex( index, prefix );
-    CopyconvLzInToOutIndex( index, prefix );
-    CopyconvZofPrimVtxFromTrksInToOutIndex( index, prefix );
-    CopyconvNHitsBeforeVtx_0InToOutIndex( index, prefix );
-    CopyconvNHitsBeforeVtx_1InToOutIndex( index, prefix );
-    CopyconvNSharedHitsInToOutIndex( index, prefix );
-    CopyconvValidVtxInToOutIndex( index, prefix );
-    CopyconvMVALikelihoodInToOutIndex( index, prefix );
-    CopyconvChi2InToOutIndex( index, prefix );
-    CopyconvChi2ProbabilityInToOutIndex( index, prefix );
-    CopyconvTk1DzInToOutIndex( index, prefix );
-    CopyconvTk2DzInToOutIndex( index, prefix );
-    CopyconvTk1DzErrInToOutIndex( index, prefix );
-    CopyconvTk2DzErrInToOutIndex( index, prefix );
-    CopyconvCh1Ch2InToOutIndex( index, prefix );
-    CopyconvTk1D0InToOutIndex( index, prefix );
-    CopyconvTk1PoutInToOutIndex( index, prefix );
-    CopyconvTk1PinInToOutIndex( index, prefix );
-    CopyconvTk2D0InToOutIndex( index, prefix );
-    CopyconvTk2PoutInToOutIndex( index, prefix );
-    CopyconvTk2PinInToOutIndex( index, prefix );
 }; 
 
 void ClearOutputPrefix ( const std::string & prefix ) {
-    ClearOutputvtx_x( prefix );
-    ClearOutputvtx_y( prefix );
-    ClearOutputvtx_z( prefix );
-    ClearOutputvtxbs_x( prefix );
-    ClearOutputvtxbs_y( prefix );
-    ClearOutputvtxbs_z( prefix );
-    ClearOutputtrkMETx( prefix );
-    ClearOutputtrkMETy( prefix );
-    ClearOutputtrkMETPhi( prefix );
-    ClearOutputtrkMET( prefix );
+    ClearOutputvtxbsPtMod( prefix );
+    ClearOutputvtxbsSumPt2( prefix );
+    ClearOutputvtxbsTkIndex( prefix );
+    ClearOutputvtxbsTkWeight( prefix );
+    ClearOutputtrkP_x( prefix );
+    ClearOutputtrkP_y( prefix );
+    ClearOutputtrkP_z( prefix );
+    ClearOutputtrkVtx_x( prefix );
+    ClearOutputtrkVtx_y( prefix );
+    ClearOutputtrkVtx_z( prefix );
+    ClearOutputtrkd0( prefix );
+    ClearOutputtrkd0Err( prefix );
+    ClearOutputtrkdz( prefix );
+    ClearOutputtrkdzErr( prefix );
+    ClearOutputtrkPtErr( prefix );
+    ClearOutputtrkQuality( prefix );
     ClearOutputeleTrg( prefix );
-    ClearOutputeleClass( prefix );
     ClearOutputeleIsEcalDriven( prefix );
     ClearOutputeleCharge( prefix );
     ClearOutputeleChargeConsistent( prefix );
     ClearOutputeleEn( prefix );
-    ClearOutputeleEcalEn( prefix );
-    ClearOutputeleSCRawEn( prefix );
     ClearOutputeleSCEn( prefix );
-    ClearOutputeleESEn( prefix );
     ClearOutputelePt( prefix );
     ClearOutputeleEta( prefix );
     ClearOutputelePhi( prefix );
     ClearOutputeleR9( prefix );
-    ClearOutputeleEtaVtx( prefix );
-    ClearOutputelePhiVtx( prefix );
-    ClearOutputeleEtVtx( prefix );
     ClearOutputeleSCEta( prefix );
     ClearOutputeleSCPhi( prefix );
     ClearOutputeleSCEtaWidth( prefix );
@@ -3656,10 +2674,6 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputeleHoverE( prefix );
     ClearOutputeleHoverE12( prefix );
     ClearOutputeleEoverP( prefix );
-    ClearOutputelePin( prefix );
-    ClearOutputelePout( prefix );
-    ClearOutputeleTrkMomErr( prefix );
-    ClearOutputeleBrem( prefix );
     ClearOutputeledEtaAtVtx( prefix );
     ClearOutputeledPhiAtVtx( prefix );
     ClearOutputeleSigmaIEtaIEta( prefix );
@@ -3667,30 +2681,15 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputeleSigmaIPhiIPhi( prefix );
     ClearOutputeleEmax( prefix );
     ClearOutputeleE2ndMax( prefix );
-    ClearOutputeleETop( prefix );
-    ClearOutputeleEBottom( prefix );
-    ClearOutputeleELeft( prefix );
-    ClearOutputeleERight( prefix );
     ClearOutputeleE1x5( prefix );
     ClearOutputeleE3x3( prefix );
     ClearOutputeleE5x5( prefix );
     ClearOutputeleE2x5Max( prefix );
-    ClearOutputeleE2x5Top( prefix );
-    ClearOutputeleE2x5Bottom( prefix );
-    ClearOutputeleE2x5Left( prefix );
-    ClearOutputeleE2x5Right( prefix );
-    ClearOutputeleSeedEta( prefix );
-    ClearOutputeleSeedE( prefix );
-    ClearOutputeleSeedPhi( prefix );
-    ClearOutputeleCrysEta( prefix );
-    ClearOutputeleCrysPhi( prefix );
-    ClearOutputeleCrysIEta( prefix );
-    ClearOutputeleCrysIPhi( prefix );
-    ClearOutputeleRegrE( prefix );
-    ClearOutputeleRegrEerr( prefix );
-    ClearOutputelePhoRegrE( prefix );
-    ClearOutputelePhoRegrEerr( prefix );
-    ClearOutputeleSeedTime( prefix );
+    ClearOutputeleGSFPt( prefix );
+    ClearOutputeleGSFEta( prefix );
+    ClearOutputeleGSFPhi( prefix );
+    ClearOutputeleGSFCharge( prefix );
+    ClearOutputeleGSFChi2NDF( prefix );
     ClearOutputeleRecoFlag( prefix );
     ClearOutputelePos( prefix );
     ClearOutputeleIsoTrkDR03( prefix );
@@ -3701,12 +2700,8 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputeleIsoEcalDR04( prefix );
     ClearOutputeleIsoHcalDR04( prefix );
     ClearOutputeleIsoHcalDR0412( prefix );
-    ClearOutputeleModIsoTrk( prefix );
-    ClearOutputeleModIsoEcal( prefix );
-    ClearOutputeleModIsoHcal( prefix );
     ClearOutputeleMissHits( prefix );
     ClearOutputeleConvDist( prefix );
-    ClearOutputeleConvDcot( prefix );
     ClearOutputeleConvVtxFit( prefix );
     ClearOutputeleIP3D( prefix );
     ClearOutputeleIP3DErr( prefix );
@@ -3718,18 +2713,9 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputelePFChIso04( prefix );
     ClearOutputelePFPhoIso04( prefix );
     ClearOutputelePFNeuIso04( prefix );
-    ClearOutputeleESEffSigmaRR_x( prefix );
-    ClearOutputeleESEffSigmaRR_y( prefix );
-    ClearOutputeleESEffSigmaRR_z( prefix );
     ClearOutputphoTrg( prefix );
     ClearOutputphoTrgFilter( prefix );
     ClearOutputphoIsPhoton( prefix );
-    ClearOutputphoSCPos_x( prefix );
-    ClearOutputphoSCPos_y( prefix );
-    ClearOutputphoSCPos_z( prefix );
-    ClearOutputphoCaloPos_x( prefix );
-    ClearOutputphoCaloPos_y( prefix );
-    ClearOutputphoCaloPos_z( prefix );
     ClearOutputphoE( prefix );
     ClearOutputphoEt( prefix );
     ClearOutputphoEta( prefix );
@@ -3737,9 +2723,6 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputphoVtx_y( prefix );
     ClearOutputphoVtx_z( prefix );
     ClearOutputphoPhi( prefix );
-    ClearOutputphoEtVtx( prefix );
-    ClearOutputphoEtaVtx( prefix );
-    ClearOutputphoPhiVtx( prefix );
     ClearOutputphoR9( prefix );
     ClearOutputphoNClus( prefix );
     ClearOutputphoTrkIsoHollowDR03( prefix );
@@ -3750,7 +2733,6 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputphoCiCdRtoTrk( prefix );
     ClearOutputphoEcalIsoDR04( prefix );
     ClearOutputphoHcalIsoDR04( prefix );
-    ClearOutputphoHcalIsoDR0412( prefix );
     ClearOutputphoHoverE( prefix );
     ClearOutputphoHoverE12( prefix );
     ClearOutputphoEleVeto( prefix );
@@ -3758,12 +2740,7 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputphoSigmaIEtaIPhi( prefix );
     ClearOutputphoSigmaIPhiIPhi( prefix );
     ClearOutputphoCiCPF4phopfIso03( prefix );
-    ClearOutputphoCiCPF4phopfIso04( prefix );
     ClearOutputphoEmax( prefix );
-    ClearOutputphoETop( prefix );
-    ClearOutputphoEBottom( prefix );
-    ClearOutputphoELeft( prefix );
-    ClearOutputphoERight( prefix );
     ClearOutputphoE2ndMax( prefix );
     ClearOutputphoE3x3( prefix );
     ClearOutputphoE3x1( prefix );
@@ -3772,22 +2749,10 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputphoE1x5( prefix );
     ClearOutputphoE2x2( prefix );
     ClearOutputphoE2x5Max( prefix );
-    ClearOutputphoE2x5Top( prefix );
-    ClearOutputphoE2x5Bottom( prefix );
-    ClearOutputphoE2x5Left( prefix );
-    ClearOutputphoE2x5Right( prefix );
-    ClearOutputphoSeedE( prefix );
-    ClearOutputphoSeedEta( prefix );
-    ClearOutputphoSeedPhi( prefix );
-    ClearOutputphoCrysEta( prefix );
-    ClearOutputphoCrysPhi( prefix );
-    ClearOutputphoCrysIEta( prefix );
-    ClearOutputphoCrysIPhi( prefix );
     ClearOutputphoPFChIso( prefix );
     ClearOutputphoPFPhoIso( prefix );
     ClearOutputphoPFNeuIso( prefix );
     ClearOutputphoSCRChIso( prefix );
-    ClearOutputphoSCRPhoIso( prefix );
     ClearOutputphoSCRNeuIso( prefix );
     ClearOutputphoSCRChIso04( prefix );
     ClearOutputphoSCRPhoIso04( prefix );
@@ -3798,12 +2763,6 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputphoRandConeChIso04( prefix );
     ClearOutputphoRandConePhoIso04( prefix );
     ClearOutputphoRandConeNeuIso04( prefix );
-    ClearOutputphoRegrE( prefix );
-    ClearOutputphoRegrEerr( prefix );
-    ClearOutputphoSeedTime( prefix );
-    ClearOutputphoSeedDetId1( prefix );
-    ClearOutputphoSeedDetId2( prefix );
-    ClearOutputphoLICTD( prefix );
     ClearOutputphoRecoFlag( prefix );
     ClearOutputphoPos( prefix );
     ClearOutputphoSCE( prefix );
@@ -3814,7 +2773,6 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputphoSCPhi( prefix );
     ClearOutputphoSCEtaWidth( prefix );
     ClearOutputphoSCPhiWidth( prefix );
-    ClearOutputphoSCBrem( prefix );
     ClearOutputphoOverlap( prefix );
     ClearOutputphohasPixelSeed( prefix );
     ClearOutputpho_hasConvPf( prefix );
@@ -3831,44 +2789,23 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputphoConvInvMass( prefix );
     ClearOutputphoConvCotTheta( prefix );
     ClearOutputphoConvEoverP( prefix );
-    ClearOutputphoConvZofPVfromTrks( prefix );
     ClearOutputphoConvMinDist( prefix );
     ClearOutputphoConvdPhiAtVtx( prefix );
     ClearOutputphoConvdPhiAtCalo( prefix );
     ClearOutputphoConvdEtaAtCalo( prefix );
-    ClearOutputphoConvTrkd0_x( prefix );
-    ClearOutputphoConvTrkd0_y( prefix );
     ClearOutputphoConvTrkPin_x( prefix );
     ClearOutputphoConvTrkPin_y( prefix );
     ClearOutputphoConvTrkPout_x( prefix );
     ClearOutputphoConvTrkPout_y( prefix );
-    ClearOutputphoConvTrkdz_x( prefix );
-    ClearOutputphoConvTrkdz_y( prefix );
-    ClearOutputphoConvTrkdzErr_x( prefix );
-    ClearOutputphoConvTrkdzErr_y( prefix );
     ClearOutputphoConvChi2( prefix );
     ClearOutputphoConvChi2Prob( prefix );
     ClearOutputphoConvNTrks( prefix );
-    ClearOutputphoConvCharge1( prefix );
-    ClearOutputphoConvCharge2( prefix );
-    ClearOutputphoConvValidVtx( prefix );
-    ClearOutputphoConvLikeLihood( prefix );
-    ClearOutputphoConvP4_0( prefix );
-    ClearOutputphoConvP4_1( prefix );
-    ClearOutputphoConvP4_2( prefix );
-    ClearOutputphoConvP4_3( prefix );
     ClearOutputphoConvVtx_x( prefix );
     ClearOutputphoConvVtx_y( prefix );
     ClearOutputphoConvVtx_z( prefix );
-    ClearOutputphoConvVtxErr_x( prefix );
-    ClearOutputphoConvVtxErr_y( prefix );
-    ClearOutputphoConvVtxErr_z( prefix );
     ClearOutputphoConvPairMomentum_x( prefix );
     ClearOutputphoConvPairMomentum_y( prefix );
     ClearOutputphoConvPairMomentum_z( prefix );
-    ClearOutputphoConvRefittedMomentum_x( prefix );
-    ClearOutputphoConvRefittedMomentum_y( prefix );
-    ClearOutputphoConvRefittedMomentum_z( prefix );
     ClearOutputSingleLegConv( prefix );
     ClearOutputphoPFConvVtx_x( prefix );
     ClearOutputphoPFConvVtx_y( prefix );
@@ -3876,9 +2813,6 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputphoPFConvMom_x( prefix );
     ClearOutputphoPFConvMom_y( prefix );
     ClearOutputphoPFConvMom_z( prefix );
-    ClearOutputphoESEffSigmaRR_x( prefix );
-    ClearOutputphoESEffSigmaRR_y( prefix );
-    ClearOutputphoESEffSigmaRR_z( prefix );
     ClearOutputmuTrg( prefix );
     ClearOutputmuEta( prefix );
     ClearOutputmuPhi( prefix );
@@ -3888,15 +2822,6 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputmuVtx_x( prefix );
     ClearOutputmuVtx_y( prefix );
     ClearOutputmuVtx_z( prefix );
-    ClearOutputmuVtxGlb_x( prefix );
-    ClearOutputmuVtxGlb_y( prefix );
-    ClearOutputmuVtxGlb_z( prefix );
-    ClearOutputmucktPt( prefix );
-    ClearOutputmucktPtErr( prefix );
-    ClearOutputmucktEta( prefix );
-    ClearOutputmucktPhi( prefix );
-    ClearOutputmucktdxy( prefix );
-    ClearOutputmucktdz( prefix );
     ClearOutputmuIsoTrk( prefix );
     ClearOutputmuIsoCalo( prefix );
     ClearOutputmuIsoEcal( prefix );
@@ -3929,7 +2854,6 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputmuInnerD0GV( prefix );
     ClearOutputmuInnerDzGV( prefix );
     ClearOutputmuInnerPt( prefix );
-    ClearOutputmuInnerPtErr( prefix );
     ClearOutputmuNumberOfValidTrkLayers( prefix );
     ClearOutputmuNumberOfValidTrkHits( prefix );
     ClearOutputmuNumberOfValidPixelLayers( prefix );
@@ -3939,36 +2863,6 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputmuChambers( prefix );
     ClearOutputmuIP3D( prefix );
     ClearOutputmuIP3DErr( prefix );
-    ClearOutputtauDecayModeFinding( prefix );
-    ClearOutputtauAgainstElectronLooseMVA3( prefix );
-    ClearOutputtauAgainstElectronMediumMVA3( prefix );
-    ClearOutputtauAgainstElectronTightMVA3( prefix );
-    ClearOutputtauAgainstElectronVTightMVA3( prefix );
-    ClearOutputtauAgainstElectronDeadECAL( prefix );
-    ClearOutputtauAgainstMuonLoose2( prefix );
-    ClearOutputtauAgainstMuonMedium2( prefix );
-    ClearOutputtauAgainstMuonTight2( prefix );
-    ClearOutputtauCombinedIsolationDeltaBetaCorrRaw3Hits( prefix );
-    ClearOutputtauLooseCombinedIsolationDeltaBetaCorr3Hits( prefix );
-    ClearOutputtauMediumCombinedIsolationDeltaBetaCorr3Hits( prefix );
-    ClearOutputtauTightCombinedIsolationDeltaBetaCorr3Hits( prefix );
-    ClearOutputtauEta( prefix );
-    ClearOutputtauPhi( prefix );
-    ClearOutputtauPt( prefix );
-    ClearOutputtauEt( prefix );
-    ClearOutputtauCharge( prefix );
-    ClearOutputtauDecayMode( prefix );
-    ClearOutputtauEMFraction( prefix );
-    ClearOutputtauHCAL3x3OverPLead( prefix );
-    ClearOutputtauHCALMaxOverPLead( prefix );
-    ClearOutputtauHCALTotOverPLead( prefix );
-    ClearOutputtauIsolationPFChargedHadrCandsPtSum( prefix );
-    ClearOutputtauIsolationPFGammaCandsEtSum( prefix );
-    ClearOutputtauLeadPFChargedHadrCandsignedSipt( prefix );
-    ClearOutputtauLeadChargedHadronExists( prefix );
-    ClearOutputtauLeadChargedHadronEta( prefix );
-    ClearOutputtauLeadChargedHadronPhi( prefix );
-    ClearOutputtauLeadChargedHadronPt( prefix );
     ClearOutputjetTrg( prefix );
     ClearOutputjetEn( prefix );
     ClearOutputjetPt( prefix );
@@ -3976,104 +2870,16 @@ void ClearOutputPrefix ( const std::string & prefix ) {
     ClearOutputjetPhi( prefix );
     ClearOutputjetCharge( prefix );
     ClearOutputjetEt( prefix );
-    ClearOutputjetRawPt( prefix );
     ClearOutputjetRawEn( prefix );
-    ClearOutputjetArea( prefix );
     ClearOutputjetCHF( prefix );
     ClearOutputjetNHF( prefix );
-    ClearOutputjetCEF( prefix );
     ClearOutputjetNEF( prefix );
     ClearOutputjetNCH( prefix );
-    ClearOutputjetHFHAE( prefix );
-    ClearOutputjetHFEME( prefix );
     ClearOutputjetNConstituents( prefix );
-    ClearOutputjetCombinedSecondaryVtxBJetTags( prefix );
-    ClearOutputjetCombinedSecondaryVtxMVABJetTags( prefix );
-    ClearOutputjetJetProbabilityBJetTags( prefix );
-    ClearOutputjetJetBProbabilityBJetTags( prefix );
-    ClearOutputjetPFLooseId( prefix );
-    ClearOutputjetDRMean( prefix );
-    ClearOutputjetDR2Mean( prefix );
-    ClearOutputjetDZ( prefix );
-    ClearOutputjetFrac01( prefix );
-    ClearOutputjetFrac02( prefix );
-    ClearOutputjetFrac03( prefix );
-    ClearOutputjetFrac04( prefix );
-    ClearOutputjetFrac05( prefix );
-    ClearOutputjetFrac06( prefix );
-    ClearOutputjetFrac07( prefix );
-    ClearOutputjetBeta( prefix );
-    ClearOutputjetBetaStarCMG( prefix );
-    ClearOutputjetBetaStarClassic( prefix );
     ClearOutputjetNNeutrals( prefix );
     ClearOutputjetNCharged( prefix );
-    ClearOutputjetWPLevels( prefix );
-    ClearOutputjetMVAsExt_cutBased( prefix );
-    ClearOutputjetMVAsExt_philv1( prefix );
-    ClearOutputjetWPLevelsExt_philv1( prefix );
-    ClearOutputjetMt( prefix );
-    ClearOutputjetJECUnc( prefix );
     ClearOutputjetLeadTrackPt( prefix );
     ClearOutputjetVtxPt( prefix );
-    ClearOutputjetVtxMass( prefix );
-    ClearOutputjetVtx3dL( prefix );
-    ClearOutputjetVtx3deL( prefix );
-    ClearOutputjetSoftLeptPt( prefix );
-    ClearOutputjetSoftLeptPtRel( prefix );
-    ClearOutputjetSoftLeptdR( prefix );
-    ClearOutputjetSoftLeptIdlooseMu( prefix );
-    ClearOutputjetSoftLeptIdEle95( prefix );
-    ClearOutputjetDPhiMETJet( prefix );
-    ClearOutputjetPuJetIdL( prefix );
-    ClearOutputjetPuJetIdM( prefix );
-    ClearOutputjetPuJetIdT( prefix );
-    ClearOutputconvP4_x( prefix );
-    ClearOutputconvP4_y( prefix );
-    ClearOutputconvP4_z( prefix );
-    ClearOutputconvP4_E( prefix );
-    ClearOutputconvVtx_x( prefix );
-    ClearOutputconvVtx_y( prefix );
-    ClearOutputconvVtx_z( prefix );
-    ClearOutputconvVtxErr_x( prefix );
-    ClearOutputconvVtxErr_y( prefix );
-    ClearOutputconvVtxErr_z( prefix );
-    ClearOutputconvPairMomentum_x( prefix );
-    ClearOutputconvPairMomentum_y( prefix );
-    ClearOutputconvPairMomentum_z( prefix );
-    ClearOutputconvRefittedMomentum_x( prefix );
-    ClearOutputconvRefittedMomentum_y( prefix );
-    ClearOutputconvRefittedMomentum_z( prefix );
-    ClearOutputconvNTracks( prefix );
-    ClearOutputconvPairInvMass( prefix );
-    ClearOutputconvPairCotThetaSep( prefix );
-    ClearOutputconvEoverP( prefix );
-    ClearOutputconvDistOfMinApproach( prefix );
-    ClearOutputconvDPhiTrksAtVtx( prefix );
-    ClearOutputconvDPhiTrksAtEcal( prefix );
-    ClearOutputconvDEtaTrksAtEcal( prefix );
-    ClearOutputconvDxy( prefix );
-    ClearOutputconvDz( prefix );
-    ClearOutputconvLxy( prefix );
-    ClearOutputconvLz( prefix );
-    ClearOutputconvZofPrimVtxFromTrks( prefix );
-    ClearOutputconvNHitsBeforeVtx_0( prefix );
-    ClearOutputconvNHitsBeforeVtx_1( prefix );
-    ClearOutputconvNSharedHits( prefix );
-    ClearOutputconvValidVtx( prefix );
-    ClearOutputconvMVALikelihood( prefix );
-    ClearOutputconvChi2( prefix );
-    ClearOutputconvChi2Probability( prefix );
-    ClearOutputconvTk1Dz( prefix );
-    ClearOutputconvTk2Dz( prefix );
-    ClearOutputconvTk1DzErr( prefix );
-    ClearOutputconvTk2DzErr( prefix );
-    ClearOutputconvCh1Ch2( prefix );
-    ClearOutputconvTk1D0( prefix );
-    ClearOutputconvTk1Pout( prefix );
-    ClearOutputconvTk1Pin( prefix );
-    ClearOutputconvTk2D0( prefix );
-    ClearOutputconvTk2Pout( prefix );
-    ClearOutputconvTk2Pin( prefix );
 }; 
 
 void CopynHLTInToOut( std::string prefix ) { 
@@ -4609,120 +3415,6 @@ void CopynHLTInToOut( std::string prefix ) {
   OUT::nVtx = IN::nVtx;
 }; 
 
- void Copyvtx_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "vtx_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::vtx_x = std::vector<float>(*IN::vtx_x);
-}; 
-
- void Copyvtx_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "vtx_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::vtx_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::vtx_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible vtx_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::vtx_x->push_back( IN::vtx_x->at(index) ); 
- }; 
-
- void ClearOutputvtx_x( std::string  prefix ) { 
-
-    std::string my_name = "vtx_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible vtx_x, prefix = " << prefix << std::endl; 
-     OUT::vtx_x->clear(); 
- }; 
-
- void Copyvtx_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "vtx_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::vtx_y = std::vector<float>(*IN::vtx_y);
-}; 
-
- void Copyvtx_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "vtx_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::vtx_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::vtx_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible vtx_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::vtx_y->push_back( IN::vtx_y->at(index) ); 
- }; 
-
- void ClearOutputvtx_y( std::string  prefix ) { 
-
-    std::string my_name = "vtx_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible vtx_y, prefix = " << prefix << std::endl; 
-     OUT::vtx_y->clear(); 
- }; 
-
- void Copyvtx_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "vtx_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::vtx_z = std::vector<float>(*IN::vtx_z);
-}; 
-
- void Copyvtx_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "vtx_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::vtx_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::vtx_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible vtx_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::vtx_z->push_back( IN::vtx_z->at(index) ); 
- }; 
-
- void ClearOutputvtx_z( std::string  prefix ) { 
-
-    std::string my_name = "vtx_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible vtx_z, prefix = " << prefix << std::endl; 
-     OUT::vtx_z->clear(); 
- }; 
-
  void CopyIsVtxGoodInToOut( std::string prefix ) { 
 
     std::string my_name = "IsVtxGood";
@@ -4750,119 +3442,576 @@ void CopynHLTInToOut( std::string prefix ) {
   OUT::nVtxBS = IN::nVtxBS;
 }; 
 
- void Copyvtxbs_xInToOut( std::string prefix ) { 
+ void CopyvtxbsPtModInToOut( std::string prefix ) { 
 
-    std::string my_name = "vtxbs_x";
+    std::string my_name = "vtxbsPtMod";
     std::size_t pos = my_name.find( prefix ); 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::vtxbs_x = std::vector<float>(*IN::vtxbs_x);
+  *OUT::vtxbsPtMod = std::vector<float>(*IN::vtxbsPtMod);
 }; 
 
- void Copyvtxbs_xInToOutIndex( unsigned index, std::string  prefix ) { 
+ void CopyvtxbsPtModInToOutIndex( unsigned index, std::string  prefix ) { 
 
-    std::string my_name = "vtxbs_x";
+    std::string my_name = "vtxbsPtMod";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::vtxbs_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::vtxbs_x" << std::endl;
+    if( index >= IN::vtxbsPtMod->size() ) {
+         std::cout << "Vector size exceeded for branch IN::vtxbsPtMod" << std::endl;
          return; 
      }; 
 
-     //std::cout << "Copy varaible vtxbs_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::vtxbs_x->push_back( IN::vtxbs_x->at(index) ); 
+     //std::cout << "Copy varaible vtxbsPtMod" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::vtxbsPtMod->push_back( IN::vtxbsPtMod->at(index) ); 
  }; 
 
- void ClearOutputvtxbs_x( std::string  prefix ) { 
+ void ClearOutputvtxbsPtMod( std::string  prefix ) { 
 
-    std::string my_name = "vtxbs_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible vtxbs_x, prefix = " << prefix << std::endl; 
-     OUT::vtxbs_x->clear(); 
- }; 
-
- void Copyvtxbs_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "vtxbs_y";
+    std::string my_name = "vtxbsPtMod";
     std::size_t pos = my_name.find( prefix ); 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::vtxbs_y = std::vector<float>(*IN::vtxbs_y);
+    //std::cout << "Clear varaible vtxbsPtMod, prefix = " << prefix << std::endl; 
+     OUT::vtxbsPtMod->clear(); 
+ }; 
+
+ void CopyvtxbsSumPt2InToOut( std::string prefix ) { 
+
+    std::string my_name = "vtxbsSumPt2";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::vtxbsSumPt2 = std::vector<float>(*IN::vtxbsSumPt2);
 }; 
 
- void Copyvtxbs_yInToOutIndex( unsigned index, std::string  prefix ) { 
+ void CopyvtxbsSumPt2InToOutIndex( unsigned index, std::string  prefix ) { 
 
-    std::string my_name = "vtxbs_y";
+    std::string my_name = "vtxbsSumPt2";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::vtxbs_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::vtxbs_y" << std::endl;
+    if( index >= IN::vtxbsSumPt2->size() ) {
+         std::cout << "Vector size exceeded for branch IN::vtxbsSumPt2" << std::endl;
          return; 
      }; 
 
-     //std::cout << "Copy varaible vtxbs_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::vtxbs_y->push_back( IN::vtxbs_y->at(index) ); 
+     //std::cout << "Copy varaible vtxbsSumPt2" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::vtxbsSumPt2->push_back( IN::vtxbsSumPt2->at(index) ); 
  }; 
 
- void ClearOutputvtxbs_y( std::string  prefix ) { 
+ void ClearOutputvtxbsSumPt2( std::string  prefix ) { 
 
-    std::string my_name = "vtxbs_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible vtxbs_y, prefix = " << prefix << std::endl; 
-     OUT::vtxbs_y->clear(); 
- }; 
-
- void Copyvtxbs_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "vtxbs_z";
+    std::string my_name = "vtxbsSumPt2";
     std::size_t pos = my_name.find( prefix ); 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::vtxbs_z = std::vector<float>(*IN::vtxbs_z);
+    //std::cout << "Clear varaible vtxbsSumPt2, prefix = " << prefix << std::endl; 
+     OUT::vtxbsSumPt2->clear(); 
+ }; 
+
+ void CopyvtxbsTkIndexInToOut( std::string prefix ) { 
+
+    std::string my_name = "vtxbsTkIndex";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::vtxbsTkIndex = std::vector<std::vector<int> >(*IN::vtxbsTkIndex);
 }; 
 
- void Copyvtxbs_zInToOutIndex( unsigned index, std::string  prefix ) { 
+ void CopyvtxbsTkIndexInToOutIndex( unsigned index, std::string  prefix ) { 
 
-    std::string my_name = "vtxbs_z";
+    std::string my_name = "vtxbsTkIndex";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::vtxbs_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::vtxbs_z" << std::endl;
+    if( index >= IN::vtxbsTkIndex->size() ) {
+         std::cout << "Vector size exceeded for branch IN::vtxbsTkIndex" << std::endl;
          return; 
      }; 
 
-     //std::cout << "Copy varaible vtxbs_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::vtxbs_z->push_back( IN::vtxbs_z->at(index) ); 
+     //std::cout << "Copy varaible vtxbsTkIndex" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::vtxbsTkIndex->push_back( IN::vtxbsTkIndex->at(index) ); 
  }; 
 
- void ClearOutputvtxbs_z( std::string  prefix ) { 
+ void ClearOutputvtxbsTkIndex( std::string  prefix ) { 
 
-    std::string my_name = "vtxbs_z";
+    std::string my_name = "vtxbsTkIndex";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible vtxbs_z, prefix = " << prefix << std::endl; 
-     OUT::vtxbs_z->clear(); 
+    //std::cout << "Clear varaible vtxbsTkIndex, prefix = " << prefix << std::endl; 
+     OUT::vtxbsTkIndex->clear(); 
  }; 
+
+ void CopyvtxbsTkWeightInToOut( std::string prefix ) { 
+
+    std::string my_name = "vtxbsTkWeight";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::vtxbsTkWeight = std::vector<std::vector<float> >(*IN::vtxbsTkWeight);
+}; 
+
+ void CopyvtxbsTkWeightInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "vtxbsTkWeight";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::vtxbsTkWeight->size() ) {
+         std::cout << "Vector size exceeded for branch IN::vtxbsTkWeight" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible vtxbsTkWeight" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::vtxbsTkWeight->push_back( IN::vtxbsTkWeight->at(index) ); 
+ }; 
+
+ void ClearOutputvtxbsTkWeight( std::string  prefix ) { 
+
+    std::string my_name = "vtxbsTkWeight";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible vtxbsTkWeight, prefix = " << prefix << std::endl; 
+     OUT::vtxbsTkWeight->clear(); 
+ }; 
+
+ void CopynTrkInToOut( std::string prefix ) { 
+
+    std::string my_name = "nTrk";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  OUT::nTrk = IN::nTrk;
+}; 
+
+ void CopytrkP_xInToOut( std::string prefix ) { 
+
+    std::string my_name = "trkP_x";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkP_x = std::vector<float>(*IN::trkP_x);
+}; 
+
+ void CopytrkP_xInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkP_x";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkP_x->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkP_x" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkP_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkP_x->push_back( IN::trkP_x->at(index) ); 
+ }; 
+
+ void ClearOutputtrkP_x( std::string  prefix ) { 
+
+    std::string my_name = "trkP_x";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkP_x, prefix = " << prefix << std::endl; 
+     OUT::trkP_x->clear(); 
+ }; 
+
+ void CopytrkP_yInToOut( std::string prefix ) { 
+
+    std::string my_name = "trkP_y";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkP_y = std::vector<float>(*IN::trkP_y);
+}; 
+
+ void CopytrkP_yInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkP_y";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkP_y->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkP_y" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkP_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkP_y->push_back( IN::trkP_y->at(index) ); 
+ }; 
+
+ void ClearOutputtrkP_y( std::string  prefix ) { 
+
+    std::string my_name = "trkP_y";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkP_y, prefix = " << prefix << std::endl; 
+     OUT::trkP_y->clear(); 
+ }; 
+
+ void CopytrkP_zInToOut( std::string prefix ) { 
+
+    std::string my_name = "trkP_z";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkP_z = std::vector<float>(*IN::trkP_z);
+}; 
+
+ void CopytrkP_zInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkP_z";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkP_z->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkP_z" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkP_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkP_z->push_back( IN::trkP_z->at(index) ); 
+ }; 
+
+ void ClearOutputtrkP_z( std::string  prefix ) { 
+
+    std::string my_name = "trkP_z";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkP_z, prefix = " << prefix << std::endl; 
+     OUT::trkP_z->clear(); 
+ }; 
+
+ void CopytrkVtx_xInToOut( std::string prefix ) { 
+
+    std::string my_name = "trkVtx_x";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkVtx_x = std::vector<float>(*IN::trkVtx_x);
+}; 
+
+ void CopytrkVtx_xInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkVtx_x";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkVtx_x->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkVtx_x" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkVtx_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkVtx_x->push_back( IN::trkVtx_x->at(index) ); 
+ }; 
+
+ void ClearOutputtrkVtx_x( std::string  prefix ) { 
+
+    std::string my_name = "trkVtx_x";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkVtx_x, prefix = " << prefix << std::endl; 
+     OUT::trkVtx_x->clear(); 
+ }; 
+
+ void CopytrkVtx_yInToOut( std::string prefix ) { 
+
+    std::string my_name = "trkVtx_y";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkVtx_y = std::vector<float>(*IN::trkVtx_y);
+}; 
+
+ void CopytrkVtx_yInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkVtx_y";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkVtx_y->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkVtx_y" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkVtx_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkVtx_y->push_back( IN::trkVtx_y->at(index) ); 
+ }; 
+
+ void ClearOutputtrkVtx_y( std::string  prefix ) { 
+
+    std::string my_name = "trkVtx_y";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkVtx_y, prefix = " << prefix << std::endl; 
+     OUT::trkVtx_y->clear(); 
+ }; 
+
+ void CopytrkVtx_zInToOut( std::string prefix ) { 
+
+    std::string my_name = "trkVtx_z";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkVtx_z = std::vector<float>(*IN::trkVtx_z);
+}; 
+
+ void CopytrkVtx_zInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkVtx_z";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkVtx_z->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkVtx_z" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkVtx_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkVtx_z->push_back( IN::trkVtx_z->at(index) ); 
+ }; 
+
+ void ClearOutputtrkVtx_z( std::string  prefix ) { 
+
+    std::string my_name = "trkVtx_z";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkVtx_z, prefix = " << prefix << std::endl; 
+     OUT::trkVtx_z->clear(); 
+ }; 
+
+ void Copytrkd0InToOut( std::string prefix ) { 
+
+    std::string my_name = "trkd0";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkd0 = std::vector<float>(*IN::trkd0);
+}; 
+
+ void Copytrkd0InToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkd0";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkd0->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkd0" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkd0" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkd0->push_back( IN::trkd0->at(index) ); 
+ }; 
+
+ void ClearOutputtrkd0( std::string  prefix ) { 
+
+    std::string my_name = "trkd0";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkd0, prefix = " << prefix << std::endl; 
+     OUT::trkd0->clear(); 
+ }; 
+
+ void Copytrkd0ErrInToOut( std::string prefix ) { 
+
+    std::string my_name = "trkd0Err";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkd0Err = std::vector<float>(*IN::trkd0Err);
+}; 
+
+ void Copytrkd0ErrInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkd0Err";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkd0Err->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkd0Err" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkd0Err" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkd0Err->push_back( IN::trkd0Err->at(index) ); 
+ }; 
+
+ void ClearOutputtrkd0Err( std::string  prefix ) { 
+
+    std::string my_name = "trkd0Err";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkd0Err, prefix = " << prefix << std::endl; 
+     OUT::trkd0Err->clear(); 
+ }; 
+
+ void CopytrkdzInToOut( std::string prefix ) { 
+
+    std::string my_name = "trkdz";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkdz = std::vector<float>(*IN::trkdz);
+}; 
+
+ void CopytrkdzInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkdz";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkdz->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkdz" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkdz" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkdz->push_back( IN::trkdz->at(index) ); 
+ }; 
+
+ void ClearOutputtrkdz( std::string  prefix ) { 
+
+    std::string my_name = "trkdz";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkdz, prefix = " << prefix << std::endl; 
+     OUT::trkdz->clear(); 
+ }; 
+
+ void CopytrkdzErrInToOut( std::string prefix ) { 
+
+    std::string my_name = "trkdzErr";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkdzErr = std::vector<float>(*IN::trkdzErr);
+}; 
+
+ void CopytrkdzErrInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkdzErr";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkdzErr->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkdzErr" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkdzErr" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkdzErr->push_back( IN::trkdzErr->at(index) ); 
+ }; 
+
+ void ClearOutputtrkdzErr( std::string  prefix ) { 
+
+    std::string my_name = "trkdzErr";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkdzErr, prefix = " << prefix << std::endl; 
+     OUT::trkdzErr->clear(); 
+ }; 
+
+ void CopytrkPtErrInToOut( std::string prefix ) { 
+
+    std::string my_name = "trkPtErr";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkPtErr = std::vector<float>(*IN::trkPtErr);
+}; 
+
+ void CopytrkPtErrInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkPtErr";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkPtErr->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkPtErr" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkPtErr" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkPtErr->push_back( IN::trkPtErr->at(index) ); 
+ }; 
+
+ void ClearOutputtrkPtErr( std::string  prefix ) { 
+
+    std::string my_name = "trkPtErr";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkPtErr, prefix = " << prefix << std::endl; 
+     OUT::trkPtErr->clear(); 
+ }; 
+
+ void CopytrkQualityInToOut( std::string prefix ) { 
+
+    std::string my_name = "trkQuality";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::trkQuality = std::vector<int>(*IN::trkQuality);
+}; 
+
+ void CopytrkQualityInToOutIndex( unsigned index, std::string  prefix ) { 
+
+    std::string my_name = "trkQuality";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    if( index >= IN::trkQuality->size() ) {
+         std::cout << "Vector size exceeded for branch IN::trkQuality" << std::endl;
+         return; 
+     }; 
+
+     //std::cout << "Copy varaible trkQuality" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::trkQuality->push_back( IN::trkQuality->at(index) ); 
+ }; 
+
+ void ClearOutputtrkQuality( std::string  prefix ) { 
+
+    std::string my_name = "trkQuality";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+    //std::cout << "Clear varaible trkQuality, prefix = " << prefix << std::endl; 
+     OUT::trkQuality->clear(); 
+ }; 
+
+ void CopynGoodTrkInToOut( std::string prefix ) { 
+
+    std::string my_name = "nGoodTrk";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  OUT::nGoodTrk = IN::nGoodTrk;
+}; 
+
+ void CopyIsTracksGoodInToOut( std::string prefix ) { 
+
+    std::string my_name = "IsTracksGood";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  OUT::IsTracksGood = IN::IsTracksGood;
+}; 
 
  void CopypfMETInToOut( std::string prefix ) { 
 
@@ -5035,158 +4184,6 @@ void CopynHLTInToOut( std::string prefix ) {
   OUT::trkMETPV = IN::trkMETPV;
 }; 
 
- void CopytrkMETxInToOut( std::string prefix ) { 
-
-    std::string my_name = "trkMETx";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::trkMETx = std::vector<float>(*IN::trkMETx);
-}; 
-
- void CopytrkMETxInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "trkMETx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::trkMETx->size() ) {
-         std::cout << "Vector size exceeded for branch IN::trkMETx" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible trkMETx" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::trkMETx->push_back( IN::trkMETx->at(index) ); 
- }; 
-
- void ClearOutputtrkMETx( std::string  prefix ) { 
-
-    std::string my_name = "trkMETx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible trkMETx, prefix = " << prefix << std::endl; 
-     OUT::trkMETx->clear(); 
- }; 
-
- void CopytrkMETyInToOut( std::string prefix ) { 
-
-    std::string my_name = "trkMETy";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::trkMETy = std::vector<float>(*IN::trkMETy);
-}; 
-
- void CopytrkMETyInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "trkMETy";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::trkMETy->size() ) {
-         std::cout << "Vector size exceeded for branch IN::trkMETy" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible trkMETy" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::trkMETy->push_back( IN::trkMETy->at(index) ); 
- }; 
-
- void ClearOutputtrkMETy( std::string  prefix ) { 
-
-    std::string my_name = "trkMETy";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible trkMETy, prefix = " << prefix << std::endl; 
-     OUT::trkMETy->clear(); 
- }; 
-
- void CopytrkMETPhiInToOut( std::string prefix ) { 
-
-    std::string my_name = "trkMETPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::trkMETPhi = std::vector<float>(*IN::trkMETPhi);
-}; 
-
- void CopytrkMETPhiInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "trkMETPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::trkMETPhi->size() ) {
-         std::cout << "Vector size exceeded for branch IN::trkMETPhi" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible trkMETPhi" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::trkMETPhi->push_back( IN::trkMETPhi->at(index) ); 
- }; 
-
- void ClearOutputtrkMETPhi( std::string  prefix ) { 
-
-    std::string my_name = "trkMETPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible trkMETPhi, prefix = " << prefix << std::endl; 
-     OUT::trkMETPhi->clear(); 
- }; 
-
- void CopytrkMETInToOut( std::string prefix ) { 
-
-    std::string my_name = "trkMET";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::trkMET = std::vector<float>(*IN::trkMET);
-}; 
-
- void CopytrkMETInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "trkMET";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::trkMET->size() ) {
-         std::cout << "Vector size exceeded for branch IN::trkMET" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible trkMET" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::trkMET->push_back( IN::trkMET->at(index) ); 
- }; 
-
- void ClearOutputtrkMET( std::string  prefix ) { 
-
-    std::string my_name = "trkMET";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible trkMET, prefix = " << prefix << std::endl; 
-     OUT::trkMET->clear(); 
- }; 
-
  void CopymetFiltersInToOut( std::string prefix ) { 
 
     std::string my_name = "metFilters";
@@ -5218,8 +4215,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleTrg";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleTrg->size() ) {
@@ -5235,50 +4230,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleTrg";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleTrg, prefix = " << prefix << std::endl; 
      OUT::eleTrg->clear(); 
- }; 
-
- void CopyeleClassInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleClass";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleClass = std::vector<int>(*IN::eleClass);
-}; 
-
- void CopyeleClassInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleClass";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleClass->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleClass" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleClass" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleClass->push_back( IN::eleClass->at(index) ); 
- }; 
-
- void ClearOutputeleClass( std::string  prefix ) { 
-
-    std::string my_name = "eleClass";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleClass, prefix = " << prefix << std::endl; 
-     OUT::eleClass->clear(); 
  }; 
 
  void CopyeleIsEcalDrivenInToOut( std::string prefix ) { 
@@ -5294,8 +4249,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsEcalDriven";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIsEcalDriven->size() ) {
@@ -5311,8 +4264,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsEcalDriven";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIsEcalDriven, prefix = " << prefix << std::endl; 
@@ -5332,8 +4283,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleCharge";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleCharge->size() ) {
@@ -5349,8 +4298,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleCharge";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleCharge, prefix = " << prefix << std::endl; 
@@ -5370,8 +4317,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleChargeConsistent";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleChargeConsistent->size() ) {
@@ -5387,8 +4332,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleChargeConsistent";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleChargeConsistent, prefix = " << prefix << std::endl; 
@@ -5408,8 +4351,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleEn";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleEn->size() ) {
@@ -5425,88 +4366,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleEn";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleEn, prefix = " << prefix << std::endl; 
      OUT::eleEn->clear(); 
- }; 
-
- void CopyeleEcalEnInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleEcalEn";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleEcalEn = std::vector<float>(*IN::eleEcalEn);
-}; 
-
- void CopyeleEcalEnInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleEcalEn";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleEcalEn->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleEcalEn" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleEcalEn" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleEcalEn->push_back( IN::eleEcalEn->at(index) ); 
- }; 
-
- void ClearOutputeleEcalEn( std::string  prefix ) { 
-
-    std::string my_name = "eleEcalEn";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleEcalEn, prefix = " << prefix << std::endl; 
-     OUT::eleEcalEn->clear(); 
- }; 
-
- void CopyeleSCRawEnInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleSCRawEn";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleSCRawEn = std::vector<float>(*IN::eleSCRawEn);
-}; 
-
- void CopyeleSCRawEnInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleSCRawEn";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleSCRawEn->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleSCRawEn" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleSCRawEn" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleSCRawEn->push_back( IN::eleSCRawEn->at(index) ); 
- }; 
-
- void ClearOutputeleSCRawEn( std::string  prefix ) { 
-
-    std::string my_name = "eleSCRawEn";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleSCRawEn, prefix = " << prefix << std::endl; 
-     OUT::eleSCRawEn->clear(); 
  }; 
 
  void CopyeleSCEnInToOut( std::string prefix ) { 
@@ -5522,8 +4385,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSCEn";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleSCEn->size() ) {
@@ -5539,50 +4400,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSCEn";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleSCEn, prefix = " << prefix << std::endl; 
      OUT::eleSCEn->clear(); 
- }; 
-
- void CopyeleESEnInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleESEn";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleESEn = std::vector<float>(*IN::eleESEn);
-}; 
-
- void CopyeleESEnInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleESEn";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleESEn->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleESEn" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleESEn" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleESEn->push_back( IN::eleESEn->at(index) ); 
- }; 
-
- void ClearOutputeleESEn( std::string  prefix ) { 
-
-    std::string my_name = "eleESEn";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleESEn, prefix = " << prefix << std::endl; 
-     OUT::eleESEn->clear(); 
  }; 
 
  void CopyelePtInToOut( std::string prefix ) { 
@@ -5598,8 +4419,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::elePt->size() ) {
@@ -5615,8 +4434,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible elePt, prefix = " << prefix << std::endl; 
@@ -5636,8 +4453,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleEta->size() ) {
@@ -5653,8 +4468,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleEta, prefix = " << prefix << std::endl; 
@@ -5674,8 +4487,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::elePhi->size() ) {
@@ -5691,8 +4502,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible elePhi, prefix = " << prefix << std::endl; 
@@ -5712,8 +4521,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleR9";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleR9->size() ) {
@@ -5729,126 +4536,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleR9";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleR9, prefix = " << prefix << std::endl; 
      OUT::eleR9->clear(); 
- }; 
-
- void CopyeleEtaVtxInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleEtaVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleEtaVtx = std::vector<std::vector<float> >(*IN::eleEtaVtx);
-}; 
-
- void CopyeleEtaVtxInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleEtaVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleEtaVtx->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleEtaVtx" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleEtaVtx" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleEtaVtx->push_back( IN::eleEtaVtx->at(index) ); 
- }; 
-
- void ClearOutputeleEtaVtx( std::string  prefix ) { 
-
-    std::string my_name = "eleEtaVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleEtaVtx, prefix = " << prefix << std::endl; 
-     OUT::eleEtaVtx->clear(); 
- }; 
-
- void CopyelePhiVtxInToOut( std::string prefix ) { 
-
-    std::string my_name = "elePhiVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::elePhiVtx = std::vector<std::vector<float> >(*IN::elePhiVtx);
-}; 
-
- void CopyelePhiVtxInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "elePhiVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::elePhiVtx->size() ) {
-         std::cout << "Vector size exceeded for branch IN::elePhiVtx" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible elePhiVtx" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::elePhiVtx->push_back( IN::elePhiVtx->at(index) ); 
- }; 
-
- void ClearOutputelePhiVtx( std::string  prefix ) { 
-
-    std::string my_name = "elePhiVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible elePhiVtx, prefix = " << prefix << std::endl; 
-     OUT::elePhiVtx->clear(); 
- }; 
-
- void CopyeleEtVtxInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleEtVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleEtVtx = std::vector<std::vector<float> >(*IN::eleEtVtx);
-}; 
-
- void CopyeleEtVtxInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleEtVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleEtVtx->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleEtVtx" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleEtVtx" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleEtVtx->push_back( IN::eleEtVtx->at(index) ); 
- }; 
-
- void ClearOutputeleEtVtx( std::string  prefix ) { 
-
-    std::string my_name = "eleEtVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleEtVtx, prefix = " << prefix << std::endl; 
-     OUT::eleEtVtx->clear(); 
  }; 
 
  void CopyeleSCEtaInToOut( std::string prefix ) { 
@@ -5864,8 +4555,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSCEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleSCEta->size() ) {
@@ -5881,8 +4570,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSCEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleSCEta, prefix = " << prefix << std::endl; 
@@ -5902,8 +4589,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSCPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleSCPhi->size() ) {
@@ -5919,8 +4604,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSCPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleSCPhi, prefix = " << prefix << std::endl; 
@@ -5940,8 +4623,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSCEtaWidth";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleSCEtaWidth->size() ) {
@@ -5957,8 +4638,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSCEtaWidth";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleSCEtaWidth, prefix = " << prefix << std::endl; 
@@ -5978,8 +4657,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSCPhiWidth";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleSCPhiWidth->size() ) {
@@ -5995,8 +4672,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSCPhiWidth";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleSCPhiWidth, prefix = " << prefix << std::endl; 
@@ -6016,8 +4691,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleVtx_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleVtx_x->size() ) {
@@ -6033,8 +4706,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleVtx_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleVtx_x, prefix = " << prefix << std::endl; 
@@ -6054,8 +4725,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleVtx_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleVtx_y->size() ) {
@@ -6071,8 +4740,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleVtx_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleVtx_y, prefix = " << prefix << std::endl; 
@@ -6092,8 +4759,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleVtx_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleVtx_z->size() ) {
@@ -6109,8 +4774,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleVtx_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleVtx_z, prefix = " << prefix << std::endl; 
@@ -6130,8 +4793,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleD0";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleD0->size() ) {
@@ -6147,8 +4808,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleD0";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleD0, prefix = " << prefix << std::endl; 
@@ -6168,8 +4827,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleDz";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleDz->size() ) {
@@ -6185,8 +4842,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleDz";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleDz, prefix = " << prefix << std::endl; 
@@ -6206,8 +4861,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleD0GV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleD0GV->size() ) {
@@ -6223,8 +4876,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleD0GV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleD0GV, prefix = " << prefix << std::endl; 
@@ -6244,8 +4895,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleDzGV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleDzGV->size() ) {
@@ -6261,8 +4910,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleDzGV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleDzGV, prefix = " << prefix << std::endl; 
@@ -6282,8 +4929,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleD0Vtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleD0Vtx->size() ) {
@@ -6299,8 +4944,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleD0Vtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleD0Vtx, prefix = " << prefix << std::endl; 
@@ -6320,8 +4963,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleDzVtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleDzVtx->size() ) {
@@ -6337,8 +4978,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleDzVtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleDzVtx, prefix = " << prefix << std::endl; 
@@ -6358,8 +4997,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleHoverE";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleHoverE->size() ) {
@@ -6375,8 +5012,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleHoverE";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleHoverE, prefix = " << prefix << std::endl; 
@@ -6396,8 +5031,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleHoverE12";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleHoverE12->size() ) {
@@ -6413,8 +5046,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleHoverE12";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleHoverE12, prefix = " << prefix << std::endl; 
@@ -6434,8 +5065,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleEoverP";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleEoverP->size() ) {
@@ -6451,164 +5080,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleEoverP";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleEoverP, prefix = " << prefix << std::endl; 
      OUT::eleEoverP->clear(); 
- }; 
-
- void CopyelePinInToOut( std::string prefix ) { 
-
-    std::string my_name = "elePin";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::elePin = std::vector<float>(*IN::elePin);
-}; 
-
- void CopyelePinInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "elePin";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::elePin->size() ) {
-         std::cout << "Vector size exceeded for branch IN::elePin" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible elePin" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::elePin->push_back( IN::elePin->at(index) ); 
- }; 
-
- void ClearOutputelePin( std::string  prefix ) { 
-
-    std::string my_name = "elePin";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible elePin, prefix = " << prefix << std::endl; 
-     OUT::elePin->clear(); 
- }; 
-
- void CopyelePoutInToOut( std::string prefix ) { 
-
-    std::string my_name = "elePout";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::elePout = std::vector<float>(*IN::elePout);
-}; 
-
- void CopyelePoutInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "elePout";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::elePout->size() ) {
-         std::cout << "Vector size exceeded for branch IN::elePout" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible elePout" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::elePout->push_back( IN::elePout->at(index) ); 
- }; 
-
- void ClearOutputelePout( std::string  prefix ) { 
-
-    std::string my_name = "elePout";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible elePout, prefix = " << prefix << std::endl; 
-     OUT::elePout->clear(); 
- }; 
-
- void CopyeleTrkMomErrInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleTrkMomErr";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleTrkMomErr = std::vector<float>(*IN::eleTrkMomErr);
-}; 
-
- void CopyeleTrkMomErrInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleTrkMomErr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleTrkMomErr->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleTrkMomErr" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleTrkMomErr" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleTrkMomErr->push_back( IN::eleTrkMomErr->at(index) ); 
- }; 
-
- void ClearOutputeleTrkMomErr( std::string  prefix ) { 
-
-    std::string my_name = "eleTrkMomErr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleTrkMomErr, prefix = " << prefix << std::endl; 
-     OUT::eleTrkMomErr->clear(); 
- }; 
-
- void CopyeleBremInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleBrem";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleBrem = std::vector<float>(*IN::eleBrem);
-}; 
-
- void CopyeleBremInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleBrem";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleBrem->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleBrem" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleBrem" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleBrem->push_back( IN::eleBrem->at(index) ); 
- }; 
-
- void ClearOutputeleBrem( std::string  prefix ) { 
-
-    std::string my_name = "eleBrem";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleBrem, prefix = " << prefix << std::endl; 
-     OUT::eleBrem->clear(); 
  }; 
 
  void CopyeledEtaAtVtxInToOut( std::string prefix ) { 
@@ -6624,8 +5099,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eledEtaAtVtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eledEtaAtVtx->size() ) {
@@ -6641,8 +5114,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eledEtaAtVtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eledEtaAtVtx, prefix = " << prefix << std::endl; 
@@ -6662,8 +5133,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eledPhiAtVtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eledPhiAtVtx->size() ) {
@@ -6679,8 +5148,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eledPhiAtVtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eledPhiAtVtx, prefix = " << prefix << std::endl; 
@@ -6700,8 +5167,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSigmaIEtaIEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleSigmaIEtaIEta->size() ) {
@@ -6717,8 +5182,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSigmaIEtaIEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleSigmaIEtaIEta, prefix = " << prefix << std::endl; 
@@ -6738,8 +5201,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSigmaIEtaIPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleSigmaIEtaIPhi->size() ) {
@@ -6755,8 +5216,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSigmaIEtaIPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleSigmaIEtaIPhi, prefix = " << prefix << std::endl; 
@@ -6776,8 +5235,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSigmaIPhiIPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleSigmaIPhiIPhi->size() ) {
@@ -6793,8 +5250,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleSigmaIPhiIPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleSigmaIPhiIPhi, prefix = " << prefix << std::endl; 
@@ -6814,8 +5269,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleEmax";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleEmax->size() ) {
@@ -6831,8 +5284,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleEmax";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleEmax, prefix = " << prefix << std::endl; 
@@ -6852,8 +5303,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleE2ndMax";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleE2ndMax->size() ) {
@@ -6869,164 +5318,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleE2ndMax";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleE2ndMax, prefix = " << prefix << std::endl; 
      OUT::eleE2ndMax->clear(); 
- }; 
-
- void CopyeleETopInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleETop";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleETop = std::vector<float>(*IN::eleETop);
-}; 
-
- void CopyeleETopInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleETop";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleETop->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleETop" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleETop" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleETop->push_back( IN::eleETop->at(index) ); 
- }; 
-
- void ClearOutputeleETop( std::string  prefix ) { 
-
-    std::string my_name = "eleETop";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleETop, prefix = " << prefix << std::endl; 
-     OUT::eleETop->clear(); 
- }; 
-
- void CopyeleEBottomInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleEBottom";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleEBottom = std::vector<float>(*IN::eleEBottom);
-}; 
-
- void CopyeleEBottomInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleEBottom";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleEBottom->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleEBottom" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleEBottom" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleEBottom->push_back( IN::eleEBottom->at(index) ); 
- }; 
-
- void ClearOutputeleEBottom( std::string  prefix ) { 
-
-    std::string my_name = "eleEBottom";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleEBottom, prefix = " << prefix << std::endl; 
-     OUT::eleEBottom->clear(); 
- }; 
-
- void CopyeleELeftInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleELeft";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleELeft = std::vector<float>(*IN::eleELeft);
-}; 
-
- void CopyeleELeftInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleELeft";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleELeft->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleELeft" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleELeft" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleELeft->push_back( IN::eleELeft->at(index) ); 
- }; 
-
- void ClearOutputeleELeft( std::string  prefix ) { 
-
-    std::string my_name = "eleELeft";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleELeft, prefix = " << prefix << std::endl; 
-     OUT::eleELeft->clear(); 
- }; 
-
- void CopyeleERightInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleERight";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleERight = std::vector<float>(*IN::eleERight);
-}; 
-
- void CopyeleERightInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleERight";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleERight->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleERight" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleERight" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleERight->push_back( IN::eleERight->at(index) ); 
- }; 
-
- void ClearOutputeleERight( std::string  prefix ) { 
-
-    std::string my_name = "eleERight";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleERight, prefix = " << prefix << std::endl; 
-     OUT::eleERight->clear(); 
  }; 
 
  void CopyeleE1x5InToOut( std::string prefix ) { 
@@ -7042,8 +5337,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleE1x5";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleE1x5->size() ) {
@@ -7059,8 +5352,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleE1x5";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleE1x5, prefix = " << prefix << std::endl; 
@@ -7080,8 +5371,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleE3x3";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleE3x3->size() ) {
@@ -7097,8 +5386,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleE3x3";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleE3x3, prefix = " << prefix << std::endl; 
@@ -7118,8 +5405,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleE5x5";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleE5x5->size() ) {
@@ -7135,8 +5420,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleE5x5";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleE5x5, prefix = " << prefix << std::endl; 
@@ -7156,8 +5439,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleE2x5Max";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleE2x5Max->size() ) {
@@ -7173,620 +5454,180 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleE2x5Max";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleE2x5Max, prefix = " << prefix << std::endl; 
      OUT::eleE2x5Max->clear(); 
  }; 
 
- void CopyeleE2x5TopInToOut( std::string prefix ) { 
+ void CopyeleGSFPtInToOut( std::string prefix ) { 
 
-    std::string my_name = "eleE2x5Top";
+    std::string my_name = "eleGSFPt";
     std::size_t pos = my_name.find( prefix ); 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleE2x5Top = std::vector<float>(*IN::eleE2x5Top);
+  *OUT::eleGSFPt = std::vector<std::vector<float> >(*IN::eleGSFPt);
 }; 
 
- void CopyeleE2x5TopInToOutIndex( unsigned index, std::string  prefix ) { 
+ void CopyeleGSFPtInToOutIndex( unsigned index, std::string  prefix ) { 
 
-    std::string my_name = "eleE2x5Top";
+    std::string my_name = "eleGSFPt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleE2x5Top->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleE2x5Top" << std::endl;
+    if( index >= IN::eleGSFPt->size() ) {
+         std::cout << "Vector size exceeded for branch IN::eleGSFPt" << std::endl;
          return; 
      }; 
 
-     //std::cout << "Copy varaible eleE2x5Top" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleE2x5Top->push_back( IN::eleE2x5Top->at(index) ); 
+     //std::cout << "Copy varaible eleGSFPt" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::eleGSFPt->push_back( IN::eleGSFPt->at(index) ); 
  }; 
 
- void ClearOutputeleE2x5Top( std::string  prefix ) { 
+ void ClearOutputeleGSFPt( std::string  prefix ) { 
 
-    std::string my_name = "eleE2x5Top";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleE2x5Top, prefix = " << prefix << std::endl; 
-     OUT::eleE2x5Top->clear(); 
- }; 
-
- void CopyeleE2x5BottomInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleE2x5Bottom";
+    std::string my_name = "eleGSFPt";
     std::size_t pos = my_name.find( prefix ); 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleE2x5Bottom = std::vector<float>(*IN::eleE2x5Bottom);
+    //std::cout << "Clear varaible eleGSFPt, prefix = " << prefix << std::endl; 
+     OUT::eleGSFPt->clear(); 
+ }; 
+
+ void CopyeleGSFEtaInToOut( std::string prefix ) { 
+
+    std::string my_name = "eleGSFEta";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::eleGSFEta = std::vector<std::vector<float> >(*IN::eleGSFEta);
 }; 
 
- void CopyeleE2x5BottomInToOutIndex( unsigned index, std::string  prefix ) { 
+ void CopyeleGSFEtaInToOutIndex( unsigned index, std::string  prefix ) { 
 
-    std::string my_name = "eleE2x5Bottom";
+    std::string my_name = "eleGSFEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleE2x5Bottom->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleE2x5Bottom" << std::endl;
+    if( index >= IN::eleGSFEta->size() ) {
+         std::cout << "Vector size exceeded for branch IN::eleGSFEta" << std::endl;
          return; 
      }; 
 
-     //std::cout << "Copy varaible eleE2x5Bottom" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleE2x5Bottom->push_back( IN::eleE2x5Bottom->at(index) ); 
+     //std::cout << "Copy varaible eleGSFEta" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::eleGSFEta->push_back( IN::eleGSFEta->at(index) ); 
  }; 
 
- void ClearOutputeleE2x5Bottom( std::string  prefix ) { 
+ void ClearOutputeleGSFEta( std::string  prefix ) { 
 
-    std::string my_name = "eleE2x5Bottom";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleE2x5Bottom, prefix = " << prefix << std::endl; 
-     OUT::eleE2x5Bottom->clear(); 
- }; 
-
- void CopyeleE2x5LeftInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleE2x5Left";
+    std::string my_name = "eleGSFEta";
     std::size_t pos = my_name.find( prefix ); 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleE2x5Left = std::vector<float>(*IN::eleE2x5Left);
+    //std::cout << "Clear varaible eleGSFEta, prefix = " << prefix << std::endl; 
+     OUT::eleGSFEta->clear(); 
+ }; 
+
+ void CopyeleGSFPhiInToOut( std::string prefix ) { 
+
+    std::string my_name = "eleGSFPhi";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::eleGSFPhi = std::vector<std::vector<float> >(*IN::eleGSFPhi);
 }; 
 
- void CopyeleE2x5LeftInToOutIndex( unsigned index, std::string  prefix ) { 
+ void CopyeleGSFPhiInToOutIndex( unsigned index, std::string  prefix ) { 
 
-    std::string my_name = "eleE2x5Left";
+    std::string my_name = "eleGSFPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleE2x5Left->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleE2x5Left" << std::endl;
+    if( index >= IN::eleGSFPhi->size() ) {
+         std::cout << "Vector size exceeded for branch IN::eleGSFPhi" << std::endl;
          return; 
      }; 
 
-     //std::cout << "Copy varaible eleE2x5Left" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleE2x5Left->push_back( IN::eleE2x5Left->at(index) ); 
+     //std::cout << "Copy varaible eleGSFPhi" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::eleGSFPhi->push_back( IN::eleGSFPhi->at(index) ); 
  }; 
 
- void ClearOutputeleE2x5Left( std::string  prefix ) { 
+ void ClearOutputeleGSFPhi( std::string  prefix ) { 
 
-    std::string my_name = "eleE2x5Left";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleE2x5Left, prefix = " << prefix << std::endl; 
-     OUT::eleE2x5Left->clear(); 
- }; 
-
- void CopyeleE2x5RightInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleE2x5Right";
+    std::string my_name = "eleGSFPhi";
     std::size_t pos = my_name.find( prefix ); 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleE2x5Right = std::vector<float>(*IN::eleE2x5Right);
+    //std::cout << "Clear varaible eleGSFPhi, prefix = " << prefix << std::endl; 
+     OUT::eleGSFPhi->clear(); 
+ }; 
+
+ void CopyeleGSFChargeInToOut( std::string prefix ) { 
+
+    std::string my_name = "eleGSFCharge";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::eleGSFCharge = std::vector<std::vector<float> >(*IN::eleGSFCharge);
 }; 
 
- void CopyeleE2x5RightInToOutIndex( unsigned index, std::string  prefix ) { 
+ void CopyeleGSFChargeInToOutIndex( unsigned index, std::string  prefix ) { 
 
-    std::string my_name = "eleE2x5Right";
+    std::string my_name = "eleGSFCharge";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleE2x5Right->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleE2x5Right" << std::endl;
+    if( index >= IN::eleGSFCharge->size() ) {
+         std::cout << "Vector size exceeded for branch IN::eleGSFCharge" << std::endl;
          return; 
      }; 
 
-     //std::cout << "Copy varaible eleE2x5Right" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleE2x5Right->push_back( IN::eleE2x5Right->at(index) ); 
+     //std::cout << "Copy varaible eleGSFCharge" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::eleGSFCharge->push_back( IN::eleGSFCharge->at(index) ); 
  }; 
 
- void ClearOutputeleE2x5Right( std::string  prefix ) { 
+ void ClearOutputeleGSFCharge( std::string  prefix ) { 
 
-    std::string my_name = "eleE2x5Right";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleE2x5Right, prefix = " << prefix << std::endl; 
-     OUT::eleE2x5Right->clear(); 
- }; 
-
- void CopyeleSeedEtaInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleSeedEta";
+    std::string my_name = "eleGSFCharge";
     std::size_t pos = my_name.find( prefix ); 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleSeedEta = std::vector<float>(*IN::eleSeedEta);
+    //std::cout << "Clear varaible eleGSFCharge, prefix = " << prefix << std::endl; 
+     OUT::eleGSFCharge->clear(); 
+ }; 
+
+ void CopyeleGSFChi2NDFInToOut( std::string prefix ) { 
+
+    std::string my_name = "eleGSFChi2NDF";
+    std::size_t pos = my_name.find( prefix ); 
+    // if the filter is given only continue if its matched at the beginning 
+    if( prefix != "" &&  pos != 0 ) return; 
+  *OUT::eleGSFChi2NDF = std::vector<std::vector<float> >(*IN::eleGSFChi2NDF);
 }; 
 
- void CopyeleSeedEtaInToOutIndex( unsigned index, std::string  prefix ) { 
+ void CopyeleGSFChi2NDFInToOutIndex( unsigned index, std::string  prefix ) { 
 
-    std::string my_name = "eleSeedEta";
+    std::string my_name = "eleGSFChi2NDF";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleSeedEta->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleSeedEta" << std::endl;
+    if( index >= IN::eleGSFChi2NDF->size() ) {
+         std::cout << "Vector size exceeded for branch IN::eleGSFChi2NDF" << std::endl;
          return; 
      }; 
 
-     //std::cout << "Copy varaible eleSeedEta" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleSeedEta->push_back( IN::eleSeedEta->at(index) ); 
+     //std::cout << "Copy varaible eleGSFChi2NDF" << " at index " << index << ", prefix = " << prefix << std::endl; 
+     OUT::eleGSFChi2NDF->push_back( IN::eleGSFChi2NDF->at(index) ); 
  }; 
 
- void ClearOutputeleSeedEta( std::string  prefix ) { 
+ void ClearOutputeleGSFChi2NDF( std::string  prefix ) { 
 
-    std::string my_name = "eleSeedEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleSeedEta, prefix = " << prefix << std::endl; 
-     OUT::eleSeedEta->clear(); 
- }; 
-
- void CopyeleSeedEInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleSeedE";
+    std::string my_name = "eleGSFChi2NDF";
     std::size_t pos = my_name.find( prefix ); 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleSeedE = std::vector<float>(*IN::eleSeedE);
-}; 
-
- void CopyeleSeedEInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleSeedE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleSeedE->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleSeedE" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleSeedE" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleSeedE->push_back( IN::eleSeedE->at(index) ); 
- }; 
-
- void ClearOutputeleSeedE( std::string  prefix ) { 
-
-    std::string my_name = "eleSeedE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleSeedE, prefix = " << prefix << std::endl; 
-     OUT::eleSeedE->clear(); 
- }; 
-
- void CopyeleSeedPhiInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleSeedPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleSeedPhi = std::vector<float>(*IN::eleSeedPhi);
-}; 
-
- void CopyeleSeedPhiInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleSeedPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleSeedPhi->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleSeedPhi" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleSeedPhi" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleSeedPhi->push_back( IN::eleSeedPhi->at(index) ); 
- }; 
-
- void ClearOutputeleSeedPhi( std::string  prefix ) { 
-
-    std::string my_name = "eleSeedPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleSeedPhi, prefix = " << prefix << std::endl; 
-     OUT::eleSeedPhi->clear(); 
- }; 
-
- void CopyeleCrysEtaInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleCrysEta";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleCrysEta = std::vector<float>(*IN::eleCrysEta);
-}; 
-
- void CopyeleCrysEtaInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleCrysEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleCrysEta->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleCrysEta" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleCrysEta" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleCrysEta->push_back( IN::eleCrysEta->at(index) ); 
- }; 
-
- void ClearOutputeleCrysEta( std::string  prefix ) { 
-
-    std::string my_name = "eleCrysEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleCrysEta, prefix = " << prefix << std::endl; 
-     OUT::eleCrysEta->clear(); 
- }; 
-
- void CopyeleCrysPhiInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleCrysPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleCrysPhi = std::vector<float>(*IN::eleCrysPhi);
-}; 
-
- void CopyeleCrysPhiInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleCrysPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleCrysPhi->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleCrysPhi" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleCrysPhi" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleCrysPhi->push_back( IN::eleCrysPhi->at(index) ); 
- }; 
-
- void ClearOutputeleCrysPhi( std::string  prefix ) { 
-
-    std::string my_name = "eleCrysPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleCrysPhi, prefix = " << prefix << std::endl; 
-     OUT::eleCrysPhi->clear(); 
- }; 
-
- void CopyeleCrysIEtaInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleCrysIEta";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleCrysIEta = std::vector<int>(*IN::eleCrysIEta);
-}; 
-
- void CopyeleCrysIEtaInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleCrysIEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleCrysIEta->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleCrysIEta" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleCrysIEta" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleCrysIEta->push_back( IN::eleCrysIEta->at(index) ); 
- }; 
-
- void ClearOutputeleCrysIEta( std::string  prefix ) { 
-
-    std::string my_name = "eleCrysIEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleCrysIEta, prefix = " << prefix << std::endl; 
-     OUT::eleCrysIEta->clear(); 
- }; 
-
- void CopyeleCrysIPhiInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleCrysIPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleCrysIPhi = std::vector<int>(*IN::eleCrysIPhi);
-}; 
-
- void CopyeleCrysIPhiInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleCrysIPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleCrysIPhi->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleCrysIPhi" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleCrysIPhi" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleCrysIPhi->push_back( IN::eleCrysIPhi->at(index) ); 
- }; 
-
- void ClearOutputeleCrysIPhi( std::string  prefix ) { 
-
-    std::string my_name = "eleCrysIPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleCrysIPhi, prefix = " << prefix << std::endl; 
-     OUT::eleCrysIPhi->clear(); 
- }; 
-
- void CopyeleRegrEInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleRegrE";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleRegrE = std::vector<float>(*IN::eleRegrE);
-}; 
-
- void CopyeleRegrEInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleRegrE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleRegrE->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleRegrE" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleRegrE" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleRegrE->push_back( IN::eleRegrE->at(index) ); 
- }; 
-
- void ClearOutputeleRegrE( std::string  prefix ) { 
-
-    std::string my_name = "eleRegrE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleRegrE, prefix = " << prefix << std::endl; 
-     OUT::eleRegrE->clear(); 
- }; 
-
- void CopyeleRegrEerrInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleRegrEerr";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleRegrEerr = std::vector<float>(*IN::eleRegrEerr);
-}; 
-
- void CopyeleRegrEerrInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleRegrEerr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleRegrEerr->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleRegrEerr" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleRegrEerr" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleRegrEerr->push_back( IN::eleRegrEerr->at(index) ); 
- }; 
-
- void ClearOutputeleRegrEerr( std::string  prefix ) { 
-
-    std::string my_name = "eleRegrEerr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleRegrEerr, prefix = " << prefix << std::endl; 
-     OUT::eleRegrEerr->clear(); 
- }; 
-
- void CopyelePhoRegrEInToOut( std::string prefix ) { 
-
-    std::string my_name = "elePhoRegrE";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::elePhoRegrE = std::vector<float>(*IN::elePhoRegrE);
-}; 
-
- void CopyelePhoRegrEInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "elePhoRegrE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::elePhoRegrE->size() ) {
-         std::cout << "Vector size exceeded for branch IN::elePhoRegrE" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible elePhoRegrE" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::elePhoRegrE->push_back( IN::elePhoRegrE->at(index) ); 
- }; 
-
- void ClearOutputelePhoRegrE( std::string  prefix ) { 
-
-    std::string my_name = "elePhoRegrE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible elePhoRegrE, prefix = " << prefix << std::endl; 
-     OUT::elePhoRegrE->clear(); 
- }; 
-
- void CopyelePhoRegrEerrInToOut( std::string prefix ) { 
-
-    std::string my_name = "elePhoRegrEerr";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::elePhoRegrEerr = std::vector<float>(*IN::elePhoRegrEerr);
-}; 
-
- void CopyelePhoRegrEerrInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "elePhoRegrEerr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::elePhoRegrEerr->size() ) {
-         std::cout << "Vector size exceeded for branch IN::elePhoRegrEerr" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible elePhoRegrEerr" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::elePhoRegrEerr->push_back( IN::elePhoRegrEerr->at(index) ); 
- }; 
-
- void ClearOutputelePhoRegrEerr( std::string  prefix ) { 
-
-    std::string my_name = "elePhoRegrEerr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible elePhoRegrEerr, prefix = " << prefix << std::endl; 
-     OUT::elePhoRegrEerr->clear(); 
- }; 
-
- void CopyeleSeedTimeInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleSeedTime";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleSeedTime = std::vector<float>(*IN::eleSeedTime);
-}; 
-
- void CopyeleSeedTimeInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleSeedTime";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleSeedTime->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleSeedTime" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleSeedTime" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleSeedTime->push_back( IN::eleSeedTime->at(index) ); 
- }; 
-
- void ClearOutputeleSeedTime( std::string  prefix ) { 
-
-    std::string my_name = "eleSeedTime";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleSeedTime, prefix = " << prefix << std::endl; 
-     OUT::eleSeedTime->clear(); 
+    //std::cout << "Clear varaible eleGSFChi2NDF, prefix = " << prefix << std::endl; 
+     OUT::eleGSFChi2NDF->clear(); 
  }; 
 
  void CopyeleRecoFlagInToOut( std::string prefix ) { 
@@ -7802,8 +5643,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleRecoFlag";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleRecoFlag->size() ) {
@@ -7819,8 +5658,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleRecoFlag";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleRecoFlag, prefix = " << prefix << std::endl; 
@@ -7840,8 +5677,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePos";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::elePos->size() ) {
@@ -7857,8 +5692,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePos";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible elePos, prefix = " << prefix << std::endl; 
@@ -7878,8 +5711,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoTrkDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIsoTrkDR03->size() ) {
@@ -7895,8 +5726,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoTrkDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIsoTrkDR03, prefix = " << prefix << std::endl; 
@@ -7916,8 +5745,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoEcalDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIsoEcalDR03->size() ) {
@@ -7933,8 +5760,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoEcalDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIsoEcalDR03, prefix = " << prefix << std::endl; 
@@ -7954,8 +5779,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoHcalDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIsoHcalDR03->size() ) {
@@ -7971,8 +5794,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoHcalDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIsoHcalDR03, prefix = " << prefix << std::endl; 
@@ -7992,8 +5813,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoHcalDR0312";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIsoHcalDR0312->size() ) {
@@ -8009,8 +5828,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoHcalDR0312";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIsoHcalDR0312, prefix = " << prefix << std::endl; 
@@ -8030,8 +5847,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoTrkDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIsoTrkDR04->size() ) {
@@ -8047,8 +5862,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoTrkDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIsoTrkDR04, prefix = " << prefix << std::endl; 
@@ -8068,8 +5881,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoEcalDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIsoEcalDR04->size() ) {
@@ -8085,8 +5896,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoEcalDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIsoEcalDR04, prefix = " << prefix << std::endl; 
@@ -8106,8 +5915,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoHcalDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIsoHcalDR04->size() ) {
@@ -8123,8 +5930,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoHcalDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIsoHcalDR04, prefix = " << prefix << std::endl; 
@@ -8144,8 +5949,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoHcalDR0412";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIsoHcalDR0412->size() ) {
@@ -8161,126 +5964,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIsoHcalDR0412";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIsoHcalDR0412, prefix = " << prefix << std::endl; 
      OUT::eleIsoHcalDR0412->clear(); 
- }; 
-
- void CopyeleModIsoTrkInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleModIsoTrk";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleModIsoTrk = std::vector<float>(*IN::eleModIsoTrk);
-}; 
-
- void CopyeleModIsoTrkInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleModIsoTrk";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleModIsoTrk->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleModIsoTrk" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleModIsoTrk" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleModIsoTrk->push_back( IN::eleModIsoTrk->at(index) ); 
- }; 
-
- void ClearOutputeleModIsoTrk( std::string  prefix ) { 
-
-    std::string my_name = "eleModIsoTrk";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleModIsoTrk, prefix = " << prefix << std::endl; 
-     OUT::eleModIsoTrk->clear(); 
- }; 
-
- void CopyeleModIsoEcalInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleModIsoEcal";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleModIsoEcal = std::vector<float>(*IN::eleModIsoEcal);
-}; 
-
- void CopyeleModIsoEcalInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleModIsoEcal";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleModIsoEcal->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleModIsoEcal" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleModIsoEcal" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleModIsoEcal->push_back( IN::eleModIsoEcal->at(index) ); 
- }; 
-
- void ClearOutputeleModIsoEcal( std::string  prefix ) { 
-
-    std::string my_name = "eleModIsoEcal";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleModIsoEcal, prefix = " << prefix << std::endl; 
-     OUT::eleModIsoEcal->clear(); 
- }; 
-
- void CopyeleModIsoHcalInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleModIsoHcal";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleModIsoHcal = std::vector<float>(*IN::eleModIsoHcal);
-}; 
-
- void CopyeleModIsoHcalInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleModIsoHcal";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleModIsoHcal->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleModIsoHcal" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleModIsoHcal" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleModIsoHcal->push_back( IN::eleModIsoHcal->at(index) ); 
- }; 
-
- void ClearOutputeleModIsoHcal( std::string  prefix ) { 
-
-    std::string my_name = "eleModIsoHcal";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleModIsoHcal, prefix = " << prefix << std::endl; 
-     OUT::eleModIsoHcal->clear(); 
  }; 
 
  void CopyeleMissHitsInToOut( std::string prefix ) { 
@@ -8296,8 +5983,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleMissHits";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleMissHits->size() ) {
@@ -8313,8 +5998,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleMissHits";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleMissHits, prefix = " << prefix << std::endl; 
@@ -8334,8 +6017,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleConvDist";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleConvDist->size() ) {
@@ -8351,50 +6032,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleConvDist";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleConvDist, prefix = " << prefix << std::endl; 
      OUT::eleConvDist->clear(); 
- }; 
-
- void CopyeleConvDcotInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleConvDcot";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleConvDcot = std::vector<float>(*IN::eleConvDcot);
-}; 
-
- void CopyeleConvDcotInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleConvDcot";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleConvDcot->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleConvDcot" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleConvDcot" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleConvDcot->push_back( IN::eleConvDcot->at(index) ); 
- }; 
-
- void ClearOutputeleConvDcot( std::string  prefix ) { 
-
-    std::string my_name = "eleConvDcot";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleConvDcot, prefix = " << prefix << std::endl; 
-     OUT::eleConvDcot->clear(); 
  }; 
 
  void CopyeleConvVtxFitInToOut( std::string prefix ) { 
@@ -8410,8 +6051,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleConvVtxFit";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleConvVtxFit->size() ) {
@@ -8427,8 +6066,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleConvVtxFit";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleConvVtxFit, prefix = " << prefix << std::endl; 
@@ -8448,8 +6085,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIP3D";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIP3D->size() ) {
@@ -8465,8 +6100,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIP3D";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIP3D, prefix = " << prefix << std::endl; 
@@ -8486,8 +6119,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIP3DErr";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIP3DErr->size() ) {
@@ -8503,8 +6134,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIP3DErr";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIP3DErr, prefix = " << prefix << std::endl; 
@@ -8524,8 +6153,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIDMVANonTrig";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIDMVANonTrig->size() ) {
@@ -8541,8 +6168,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIDMVANonTrig";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIDMVANonTrig, prefix = " << prefix << std::endl; 
@@ -8562,8 +6187,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIDMVATrig";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::eleIDMVATrig->size() ) {
@@ -8579,8 +6202,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "eleIDMVATrig";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible eleIDMVATrig, prefix = " << prefix << std::endl; 
@@ -8600,8 +6221,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFChIso03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::elePFChIso03->size() ) {
@@ -8617,8 +6236,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFChIso03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible elePFChIso03, prefix = " << prefix << std::endl; 
@@ -8638,8 +6255,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFPhoIso03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::elePFPhoIso03->size() ) {
@@ -8655,8 +6270,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFPhoIso03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible elePFPhoIso03, prefix = " << prefix << std::endl; 
@@ -8676,8 +6289,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFNeuIso03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::elePFNeuIso03->size() ) {
@@ -8693,8 +6304,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFNeuIso03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible elePFNeuIso03, prefix = " << prefix << std::endl; 
@@ -8714,8 +6323,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFChIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::elePFChIso04->size() ) {
@@ -8731,8 +6338,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFChIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible elePFChIso04, prefix = " << prefix << std::endl; 
@@ -8752,8 +6357,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFPhoIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::elePFPhoIso04->size() ) {
@@ -8769,8 +6372,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFPhoIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible elePFPhoIso04, prefix = " << prefix << std::endl; 
@@ -8790,8 +6391,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFNeuIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::elePFNeuIso04->size() ) {
@@ -8807,126 +6406,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "elePFNeuIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible elePFNeuIso04, prefix = " << prefix << std::endl; 
      OUT::elePFNeuIso04->clear(); 
- }; 
-
- void CopyeleESEffSigmaRR_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleESEffSigmaRR_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleESEffSigmaRR_x = std::vector<float>(*IN::eleESEffSigmaRR_x);
-}; 
-
- void CopyeleESEffSigmaRR_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleESEffSigmaRR_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleESEffSigmaRR_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleESEffSigmaRR_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleESEffSigmaRR_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleESEffSigmaRR_x->push_back( IN::eleESEffSigmaRR_x->at(index) ); 
- }; 
-
- void ClearOutputeleESEffSigmaRR_x( std::string  prefix ) { 
-
-    std::string my_name = "eleESEffSigmaRR_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleESEffSigmaRR_x, prefix = " << prefix << std::endl; 
-     OUT::eleESEffSigmaRR_x->clear(); 
- }; 
-
- void CopyeleESEffSigmaRR_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleESEffSigmaRR_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleESEffSigmaRR_y = std::vector<float>(*IN::eleESEffSigmaRR_y);
-}; 
-
- void CopyeleESEffSigmaRR_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleESEffSigmaRR_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleESEffSigmaRR_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleESEffSigmaRR_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleESEffSigmaRR_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleESEffSigmaRR_y->push_back( IN::eleESEffSigmaRR_y->at(index) ); 
- }; 
-
- void ClearOutputeleESEffSigmaRR_y( std::string  prefix ) { 
-
-    std::string my_name = "eleESEffSigmaRR_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleESEffSigmaRR_y, prefix = " << prefix << std::endl; 
-     OUT::eleESEffSigmaRR_y->clear(); 
- }; 
-
- void CopyeleESEffSigmaRR_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "eleESEffSigmaRR_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::eleESEffSigmaRR_z = std::vector<float>(*IN::eleESEffSigmaRR_z);
-}; 
-
- void CopyeleESEffSigmaRR_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "eleESEffSigmaRR_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::eleESEffSigmaRR_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::eleESEffSigmaRR_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible eleESEffSigmaRR_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::eleESEffSigmaRR_z->push_back( IN::eleESEffSigmaRR_z->at(index) ); 
- }; 
-
- void ClearOutputeleESEffSigmaRR_z( std::string  prefix ) { 
-
-    std::string my_name = "eleESEffSigmaRR_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible eleESEffSigmaRR_z, prefix = " << prefix << std::endl; 
-     OUT::eleESEffSigmaRR_z->clear(); 
  }; 
 
  void CopynPhoInToOut( std::string prefix ) { 
@@ -8951,8 +6434,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoTrg";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoTrg->size() ) {
@@ -8968,8 +6449,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoTrg";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoTrg, prefix = " << prefix << std::endl; 
@@ -8989,8 +6468,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoTrgFilter";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoTrgFilter->size() ) {
@@ -9006,8 +6483,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoTrgFilter";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoTrgFilter, prefix = " << prefix << std::endl; 
@@ -9027,8 +6502,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoIsPhoton";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoIsPhoton->size() ) {
@@ -9044,240 +6517,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoIsPhoton";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoIsPhoton, prefix = " << prefix << std::endl; 
      OUT::phoIsPhoton->clear(); 
- }; 
-
- void CopyphoSCPos_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoSCPos_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoSCPos_x = std::vector<float>(*IN::phoSCPos_x);
-}; 
-
- void CopyphoSCPos_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoSCPos_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoSCPos_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoSCPos_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoSCPos_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoSCPos_x->push_back( IN::phoSCPos_x->at(index) ); 
- }; 
-
- void ClearOutputphoSCPos_x( std::string  prefix ) { 
-
-    std::string my_name = "phoSCPos_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoSCPos_x, prefix = " << prefix << std::endl; 
-     OUT::phoSCPos_x->clear(); 
- }; 
-
- void CopyphoSCPos_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoSCPos_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoSCPos_y = std::vector<float>(*IN::phoSCPos_y);
-}; 
-
- void CopyphoSCPos_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoSCPos_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoSCPos_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoSCPos_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoSCPos_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoSCPos_y->push_back( IN::phoSCPos_y->at(index) ); 
- }; 
-
- void ClearOutputphoSCPos_y( std::string  prefix ) { 
-
-    std::string my_name = "phoSCPos_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoSCPos_y, prefix = " << prefix << std::endl; 
-     OUT::phoSCPos_y->clear(); 
- }; 
-
- void CopyphoSCPos_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoSCPos_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoSCPos_z = std::vector<float>(*IN::phoSCPos_z);
-}; 
-
- void CopyphoSCPos_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoSCPos_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoSCPos_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoSCPos_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoSCPos_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoSCPos_z->push_back( IN::phoSCPos_z->at(index) ); 
- }; 
-
- void ClearOutputphoSCPos_z( std::string  prefix ) { 
-
-    std::string my_name = "phoSCPos_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoSCPos_z, prefix = " << prefix << std::endl; 
-     OUT::phoSCPos_z->clear(); 
- }; 
-
- void CopyphoCaloPos_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoCaloPos_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoCaloPos_x = std::vector<float>(*IN::phoCaloPos_x);
-}; 
-
- void CopyphoCaloPos_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoCaloPos_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoCaloPos_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoCaloPos_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoCaloPos_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoCaloPos_x->push_back( IN::phoCaloPos_x->at(index) ); 
- }; 
-
- void ClearOutputphoCaloPos_x( std::string  prefix ) { 
-
-    std::string my_name = "phoCaloPos_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoCaloPos_x, prefix = " << prefix << std::endl; 
-     OUT::phoCaloPos_x->clear(); 
- }; 
-
- void CopyphoCaloPos_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoCaloPos_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoCaloPos_y = std::vector<float>(*IN::phoCaloPos_y);
-}; 
-
- void CopyphoCaloPos_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoCaloPos_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoCaloPos_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoCaloPos_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoCaloPos_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoCaloPos_y->push_back( IN::phoCaloPos_y->at(index) ); 
- }; 
-
- void ClearOutputphoCaloPos_y( std::string  prefix ) { 
-
-    std::string my_name = "phoCaloPos_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoCaloPos_y, prefix = " << prefix << std::endl; 
-     OUT::phoCaloPos_y->clear(); 
- }; 
-
- void CopyphoCaloPos_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoCaloPos_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoCaloPos_z = std::vector<float>(*IN::phoCaloPos_z);
-}; 
-
- void CopyphoCaloPos_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoCaloPos_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoCaloPos_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoCaloPos_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoCaloPos_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoCaloPos_z->push_back( IN::phoCaloPos_z->at(index) ); 
- }; 
-
- void ClearOutputphoCaloPos_z( std::string  prefix ) { 
-
-    std::string my_name = "phoCaloPos_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoCaloPos_z, prefix = " << prefix << std::endl; 
-     OUT::phoCaloPos_z->clear(); 
  }; 
 
  void CopyphoEInToOut( std::string prefix ) { 
@@ -9293,8 +6536,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoE->size() ) {
@@ -9310,8 +6551,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoE, prefix = " << prefix << std::endl; 
@@ -9331,8 +6570,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoEt->size() ) {
@@ -9348,8 +6585,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoEt, prefix = " << prefix << std::endl; 
@@ -9369,8 +6604,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoEta->size() ) {
@@ -9386,8 +6619,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoEta, prefix = " << prefix << std::endl; 
@@ -9407,8 +6638,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoVtx_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoVtx_x->size() ) {
@@ -9424,8 +6653,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoVtx_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoVtx_x, prefix = " << prefix << std::endl; 
@@ -9445,8 +6672,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoVtx_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoVtx_y->size() ) {
@@ -9462,8 +6687,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoVtx_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoVtx_y, prefix = " << prefix << std::endl; 
@@ -9483,8 +6706,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoVtx_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoVtx_z->size() ) {
@@ -9500,8 +6721,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoVtx_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoVtx_z, prefix = " << prefix << std::endl; 
@@ -9521,8 +6740,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoPhi->size() ) {
@@ -9538,126 +6755,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoPhi, prefix = " << prefix << std::endl; 
      OUT::phoPhi->clear(); 
- }; 
-
- void CopyphoEtVtxInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoEtVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoEtVtx = std::vector<std::vector<float> >(*IN::phoEtVtx);
-}; 
-
- void CopyphoEtVtxInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoEtVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoEtVtx->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoEtVtx" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoEtVtx" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoEtVtx->push_back( IN::phoEtVtx->at(index) ); 
- }; 
-
- void ClearOutputphoEtVtx( std::string  prefix ) { 
-
-    std::string my_name = "phoEtVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoEtVtx, prefix = " << prefix << std::endl; 
-     OUT::phoEtVtx->clear(); 
- }; 
-
- void CopyphoEtaVtxInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoEtaVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoEtaVtx = std::vector<std::vector<float> >(*IN::phoEtaVtx);
-}; 
-
- void CopyphoEtaVtxInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoEtaVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoEtaVtx->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoEtaVtx" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoEtaVtx" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoEtaVtx->push_back( IN::phoEtaVtx->at(index) ); 
- }; 
-
- void ClearOutputphoEtaVtx( std::string  prefix ) { 
-
-    std::string my_name = "phoEtaVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoEtaVtx, prefix = " << prefix << std::endl; 
-     OUT::phoEtaVtx->clear(); 
- }; 
-
- void CopyphoPhiVtxInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoPhiVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoPhiVtx = std::vector<std::vector<float> >(*IN::phoPhiVtx);
-}; 
-
- void CopyphoPhiVtxInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoPhiVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoPhiVtx->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoPhiVtx" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoPhiVtx" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoPhiVtx->push_back( IN::phoPhiVtx->at(index) ); 
- }; 
-
- void ClearOutputphoPhiVtx( std::string  prefix ) { 
-
-    std::string my_name = "phoPhiVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoPhiVtx, prefix = " << prefix << std::endl; 
-     OUT::phoPhiVtx->clear(); 
  }; 
 
  void CopyphoR9InToOut( std::string prefix ) { 
@@ -9673,8 +6774,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoR9";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoR9->size() ) {
@@ -9690,8 +6789,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoR9";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoR9, prefix = " << prefix << std::endl; 
@@ -9711,8 +6808,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoNClus";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoNClus->size() ) {
@@ -9728,8 +6823,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoNClus";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoNClus, prefix = " << prefix << std::endl; 
@@ -9749,8 +6842,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoTrkIsoHollowDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoTrkIsoHollowDR03->size() ) {
@@ -9766,8 +6857,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoTrkIsoHollowDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoTrkIsoHollowDR03, prefix = " << prefix << std::endl; 
@@ -9787,8 +6876,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEcalIsoDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoEcalIsoDR03->size() ) {
@@ -9804,8 +6891,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEcalIsoDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoEcalIsoDR03, prefix = " << prefix << std::endl; 
@@ -9825,8 +6910,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoHcalIsoDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoHcalIsoDR03->size() ) {
@@ -9842,8 +6925,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoHcalIsoDR03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoHcalIsoDR03, prefix = " << prefix << std::endl; 
@@ -9863,8 +6944,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoHcalIsoDR0312";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoHcalIsoDR0312->size() ) {
@@ -9880,8 +6959,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoHcalIsoDR0312";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoHcalIsoDR0312, prefix = " << prefix << std::endl; 
@@ -9901,8 +6978,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoTrkIsoHollowDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoTrkIsoHollowDR04->size() ) {
@@ -9918,8 +6993,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoTrkIsoHollowDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoTrkIsoHollowDR04, prefix = " << prefix << std::endl; 
@@ -9939,8 +7012,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoCiCdRtoTrk";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoCiCdRtoTrk->size() ) {
@@ -9956,8 +7027,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoCiCdRtoTrk";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoCiCdRtoTrk, prefix = " << prefix << std::endl; 
@@ -9977,8 +7046,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEcalIsoDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoEcalIsoDR04->size() ) {
@@ -9994,8 +7061,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEcalIsoDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoEcalIsoDR04, prefix = " << prefix << std::endl; 
@@ -10015,8 +7080,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoHcalIsoDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoHcalIsoDR04->size() ) {
@@ -10032,50 +7095,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoHcalIsoDR04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoHcalIsoDR04, prefix = " << prefix << std::endl; 
      OUT::phoHcalIsoDR04->clear(); 
- }; 
-
- void CopyphoHcalIsoDR0412InToOut( std::string prefix ) { 
-
-    std::string my_name = "phoHcalIsoDR0412";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoHcalIsoDR0412 = std::vector<float>(*IN::phoHcalIsoDR0412);
-}; 
-
- void CopyphoHcalIsoDR0412InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoHcalIsoDR0412";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoHcalIsoDR0412->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoHcalIsoDR0412" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoHcalIsoDR0412" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoHcalIsoDR0412->push_back( IN::phoHcalIsoDR0412->at(index) ); 
- }; 
-
- void ClearOutputphoHcalIsoDR0412( std::string  prefix ) { 
-
-    std::string my_name = "phoHcalIsoDR0412";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoHcalIsoDR0412, prefix = " << prefix << std::endl; 
-     OUT::phoHcalIsoDR0412->clear(); 
  }; 
 
  void CopyphoHoverEInToOut( std::string prefix ) { 
@@ -10091,8 +7114,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoHoverE";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoHoverE->size() ) {
@@ -10108,8 +7129,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoHoverE";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoHoverE, prefix = " << prefix << std::endl; 
@@ -10129,8 +7148,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoHoverE12";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoHoverE12->size() ) {
@@ -10146,8 +7163,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoHoverE12";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoHoverE12, prefix = " << prefix << std::endl; 
@@ -10167,8 +7182,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEleVeto";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoEleVeto->size() ) {
@@ -10184,8 +7197,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEleVeto";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoEleVeto, prefix = " << prefix << std::endl; 
@@ -10205,8 +7216,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSigmaIEtaIEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSigmaIEtaIEta->size() ) {
@@ -10222,8 +7231,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSigmaIEtaIEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSigmaIEtaIEta, prefix = " << prefix << std::endl; 
@@ -10243,8 +7250,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSigmaIEtaIPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSigmaIEtaIPhi->size() ) {
@@ -10260,8 +7265,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSigmaIEtaIPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSigmaIEtaIPhi, prefix = " << prefix << std::endl; 
@@ -10281,8 +7284,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSigmaIPhiIPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSigmaIPhiIPhi->size() ) {
@@ -10298,8 +7299,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSigmaIPhiIPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSigmaIPhiIPhi, prefix = " << prefix << std::endl; 
@@ -10319,8 +7318,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoCiCPF4phopfIso03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoCiCPF4phopfIso03->size() ) {
@@ -10336,50 +7333,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoCiCPF4phopfIso03";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoCiCPF4phopfIso03, prefix = " << prefix << std::endl; 
      OUT::phoCiCPF4phopfIso03->clear(); 
- }; 
-
- void CopyphoCiCPF4phopfIso04InToOut( std::string prefix ) { 
-
-    std::string my_name = "phoCiCPF4phopfIso04";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoCiCPF4phopfIso04 = std::vector<float>(*IN::phoCiCPF4phopfIso04);
-}; 
-
- void CopyphoCiCPF4phopfIso04InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoCiCPF4phopfIso04";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoCiCPF4phopfIso04->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoCiCPF4phopfIso04" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoCiCPF4phopfIso04" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoCiCPF4phopfIso04->push_back( IN::phoCiCPF4phopfIso04->at(index) ); 
- }; 
-
- void ClearOutputphoCiCPF4phopfIso04( std::string  prefix ) { 
-
-    std::string my_name = "phoCiCPF4phopfIso04";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoCiCPF4phopfIso04, prefix = " << prefix << std::endl; 
-     OUT::phoCiCPF4phopfIso04->clear(); 
  }; 
 
  void CopyphoEmaxInToOut( std::string prefix ) { 
@@ -10395,8 +7352,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEmax";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoEmax->size() ) {
@@ -10412,164 +7367,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoEmax";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoEmax, prefix = " << prefix << std::endl; 
      OUT::phoEmax->clear(); 
- }; 
-
- void CopyphoETopInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoETop";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoETop = std::vector<float>(*IN::phoETop);
-}; 
-
- void CopyphoETopInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoETop";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoETop->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoETop" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoETop" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoETop->push_back( IN::phoETop->at(index) ); 
- }; 
-
- void ClearOutputphoETop( std::string  prefix ) { 
-
-    std::string my_name = "phoETop";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoETop, prefix = " << prefix << std::endl; 
-     OUT::phoETop->clear(); 
- }; 
-
- void CopyphoEBottomInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoEBottom";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoEBottom = std::vector<float>(*IN::phoEBottom);
-}; 
-
- void CopyphoEBottomInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoEBottom";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoEBottom->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoEBottom" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoEBottom" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoEBottom->push_back( IN::phoEBottom->at(index) ); 
- }; 
-
- void ClearOutputphoEBottom( std::string  prefix ) { 
-
-    std::string my_name = "phoEBottom";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoEBottom, prefix = " << prefix << std::endl; 
-     OUT::phoEBottom->clear(); 
- }; 
-
- void CopyphoELeftInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoELeft";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoELeft = std::vector<float>(*IN::phoELeft);
-}; 
-
- void CopyphoELeftInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoELeft";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoELeft->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoELeft" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoELeft" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoELeft->push_back( IN::phoELeft->at(index) ); 
- }; 
-
- void ClearOutputphoELeft( std::string  prefix ) { 
-
-    std::string my_name = "phoELeft";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoELeft, prefix = " << prefix << std::endl; 
-     OUT::phoELeft->clear(); 
- }; 
-
- void CopyphoERightInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoERight";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoERight = std::vector<float>(*IN::phoERight);
-}; 
-
- void CopyphoERightInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoERight";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoERight->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoERight" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoERight" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoERight->push_back( IN::phoERight->at(index) ); 
- }; 
-
- void ClearOutputphoERight( std::string  prefix ) { 
-
-    std::string my_name = "phoERight";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoERight, prefix = " << prefix << std::endl; 
-     OUT::phoERight->clear(); 
  }; 
 
  void CopyphoE2ndMaxInToOut( std::string prefix ) { 
@@ -10585,8 +7386,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE2ndMax";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoE2ndMax->size() ) {
@@ -10602,8 +7401,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE2ndMax";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoE2ndMax, prefix = " << prefix << std::endl; 
@@ -10623,8 +7420,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE3x3";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoE3x3->size() ) {
@@ -10640,8 +7435,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE3x3";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoE3x3, prefix = " << prefix << std::endl; 
@@ -10661,8 +7454,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE3x1";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoE3x1->size() ) {
@@ -10678,8 +7469,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE3x1";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoE3x1, prefix = " << prefix << std::endl; 
@@ -10699,8 +7488,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE1x3";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoE1x3->size() ) {
@@ -10716,8 +7503,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE1x3";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoE1x3, prefix = " << prefix << std::endl; 
@@ -10737,8 +7522,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE5x5";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoE5x5->size() ) {
@@ -10754,8 +7537,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE5x5";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoE5x5, prefix = " << prefix << std::endl; 
@@ -10775,8 +7556,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE1x5";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoE1x5->size() ) {
@@ -10792,8 +7571,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE1x5";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoE1x5, prefix = " << prefix << std::endl; 
@@ -10813,8 +7590,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE2x2";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoE2x2->size() ) {
@@ -10830,8 +7605,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE2x2";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoE2x2, prefix = " << prefix << std::endl; 
@@ -10851,8 +7624,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE2x5Max";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoE2x5Max->size() ) {
@@ -10868,430 +7639,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoE2x5Max";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoE2x5Max, prefix = " << prefix << std::endl; 
      OUT::phoE2x5Max->clear(); 
- }; 
-
- void CopyphoE2x5TopInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoE2x5Top";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoE2x5Top = std::vector<float>(*IN::phoE2x5Top);
-}; 
-
- void CopyphoE2x5TopInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoE2x5Top";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoE2x5Top->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoE2x5Top" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoE2x5Top" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoE2x5Top->push_back( IN::phoE2x5Top->at(index) ); 
- }; 
-
- void ClearOutputphoE2x5Top( std::string  prefix ) { 
-
-    std::string my_name = "phoE2x5Top";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoE2x5Top, prefix = " << prefix << std::endl; 
-     OUT::phoE2x5Top->clear(); 
- }; 
-
- void CopyphoE2x5BottomInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoE2x5Bottom";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoE2x5Bottom = std::vector<float>(*IN::phoE2x5Bottom);
-}; 
-
- void CopyphoE2x5BottomInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoE2x5Bottom";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoE2x5Bottom->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoE2x5Bottom" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoE2x5Bottom" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoE2x5Bottom->push_back( IN::phoE2x5Bottom->at(index) ); 
- }; 
-
- void ClearOutputphoE2x5Bottom( std::string  prefix ) { 
-
-    std::string my_name = "phoE2x5Bottom";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoE2x5Bottom, prefix = " << prefix << std::endl; 
-     OUT::phoE2x5Bottom->clear(); 
- }; 
-
- void CopyphoE2x5LeftInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoE2x5Left";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoE2x5Left = std::vector<float>(*IN::phoE2x5Left);
-}; 
-
- void CopyphoE2x5LeftInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoE2x5Left";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoE2x5Left->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoE2x5Left" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoE2x5Left" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoE2x5Left->push_back( IN::phoE2x5Left->at(index) ); 
- }; 
-
- void ClearOutputphoE2x5Left( std::string  prefix ) { 
-
-    std::string my_name = "phoE2x5Left";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoE2x5Left, prefix = " << prefix << std::endl; 
-     OUT::phoE2x5Left->clear(); 
- }; 
-
- void CopyphoE2x5RightInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoE2x5Right";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoE2x5Right = std::vector<float>(*IN::phoE2x5Right);
-}; 
-
- void CopyphoE2x5RightInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoE2x5Right";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoE2x5Right->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoE2x5Right" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoE2x5Right" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoE2x5Right->push_back( IN::phoE2x5Right->at(index) ); 
- }; 
-
- void ClearOutputphoE2x5Right( std::string  prefix ) { 
-
-    std::string my_name = "phoE2x5Right";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoE2x5Right, prefix = " << prefix << std::endl; 
-     OUT::phoE2x5Right->clear(); 
- }; 
-
- void CopyphoSeedEInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoSeedE";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoSeedE = std::vector<float>(*IN::phoSeedE);
-}; 
-
- void CopyphoSeedEInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoSeedE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoSeedE->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoSeedE" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoSeedE" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoSeedE->push_back( IN::phoSeedE->at(index) ); 
- }; 
-
- void ClearOutputphoSeedE( std::string  prefix ) { 
-
-    std::string my_name = "phoSeedE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoSeedE, prefix = " << prefix << std::endl; 
-     OUT::phoSeedE->clear(); 
- }; 
-
- void CopyphoSeedEtaInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoSeedEta";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoSeedEta = std::vector<float>(*IN::phoSeedEta);
-}; 
-
- void CopyphoSeedEtaInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoSeedEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoSeedEta->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoSeedEta" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoSeedEta" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoSeedEta->push_back( IN::phoSeedEta->at(index) ); 
- }; 
-
- void ClearOutputphoSeedEta( std::string  prefix ) { 
-
-    std::string my_name = "phoSeedEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoSeedEta, prefix = " << prefix << std::endl; 
-     OUT::phoSeedEta->clear(); 
- }; 
-
- void CopyphoSeedPhiInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoSeedPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoSeedPhi = std::vector<float>(*IN::phoSeedPhi);
-}; 
-
- void CopyphoSeedPhiInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoSeedPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoSeedPhi->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoSeedPhi" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoSeedPhi" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoSeedPhi->push_back( IN::phoSeedPhi->at(index) ); 
- }; 
-
- void ClearOutputphoSeedPhi( std::string  prefix ) { 
-
-    std::string my_name = "phoSeedPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoSeedPhi, prefix = " << prefix << std::endl; 
-     OUT::phoSeedPhi->clear(); 
- }; 
-
- void CopyphoCrysEtaInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoCrysEta";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoCrysEta = std::vector<float>(*IN::phoCrysEta);
-}; 
-
- void CopyphoCrysEtaInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoCrysEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoCrysEta->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoCrysEta" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoCrysEta" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoCrysEta->push_back( IN::phoCrysEta->at(index) ); 
- }; 
-
- void ClearOutputphoCrysEta( std::string  prefix ) { 
-
-    std::string my_name = "phoCrysEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoCrysEta, prefix = " << prefix << std::endl; 
-     OUT::phoCrysEta->clear(); 
- }; 
-
- void CopyphoCrysPhiInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoCrysPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoCrysPhi = std::vector<float>(*IN::phoCrysPhi);
-}; 
-
- void CopyphoCrysPhiInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoCrysPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoCrysPhi->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoCrysPhi" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoCrysPhi" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoCrysPhi->push_back( IN::phoCrysPhi->at(index) ); 
- }; 
-
- void ClearOutputphoCrysPhi( std::string  prefix ) { 
-
-    std::string my_name = "phoCrysPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoCrysPhi, prefix = " << prefix << std::endl; 
-     OUT::phoCrysPhi->clear(); 
- }; 
-
- void CopyphoCrysIEtaInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoCrysIEta";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoCrysIEta = std::vector<int>(*IN::phoCrysIEta);
-}; 
-
- void CopyphoCrysIEtaInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoCrysIEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoCrysIEta->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoCrysIEta" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoCrysIEta" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoCrysIEta->push_back( IN::phoCrysIEta->at(index) ); 
- }; 
-
- void ClearOutputphoCrysIEta( std::string  prefix ) { 
-
-    std::string my_name = "phoCrysIEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoCrysIEta, prefix = " << prefix << std::endl; 
-     OUT::phoCrysIEta->clear(); 
- }; 
-
- void CopyphoCrysIPhiInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoCrysIPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoCrysIPhi = std::vector<int>(*IN::phoCrysIPhi);
-}; 
-
- void CopyphoCrysIPhiInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoCrysIPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoCrysIPhi->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoCrysIPhi" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoCrysIPhi" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoCrysIPhi->push_back( IN::phoCrysIPhi->at(index) ); 
- }; 
-
- void ClearOutputphoCrysIPhi( std::string  prefix ) { 
-
-    std::string my_name = "phoCrysIPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoCrysIPhi, prefix = " << prefix << std::endl; 
-     OUT::phoCrysIPhi->clear(); 
  }; 
 
  void CopyphoPFChIsoInToOut( std::string prefix ) { 
@@ -11307,8 +7658,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFChIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoPFChIso->size() ) {
@@ -11324,8 +7673,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFChIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoPFChIso, prefix = " << prefix << std::endl; 
@@ -11345,8 +7692,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFPhoIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoPFPhoIso->size() ) {
@@ -11362,8 +7707,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFPhoIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoPFPhoIso, prefix = " << prefix << std::endl; 
@@ -11383,8 +7726,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFNeuIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoPFNeuIso->size() ) {
@@ -11400,8 +7741,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFNeuIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoPFNeuIso, prefix = " << prefix << std::endl; 
@@ -11421,8 +7760,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRChIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCRChIso->size() ) {
@@ -11438,50 +7775,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRChIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCRChIso, prefix = " << prefix << std::endl; 
      OUT::phoSCRChIso->clear(); 
- }; 
-
- void CopyphoSCRPhoIsoInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoSCRPhoIso";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoSCRPhoIso = std::vector<float>(*IN::phoSCRPhoIso);
-}; 
-
- void CopyphoSCRPhoIsoInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoSCRPhoIso";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoSCRPhoIso->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoSCRPhoIso" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoSCRPhoIso" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoSCRPhoIso->push_back( IN::phoSCRPhoIso->at(index) ); 
- }; 
-
- void ClearOutputphoSCRPhoIso( std::string  prefix ) { 
-
-    std::string my_name = "phoSCRPhoIso";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoSCRPhoIso, prefix = " << prefix << std::endl; 
-     OUT::phoSCRPhoIso->clear(); 
  }; 
 
  void CopyphoSCRNeuIsoInToOut( std::string prefix ) { 
@@ -11497,8 +7794,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRNeuIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCRNeuIso->size() ) {
@@ -11514,8 +7809,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRNeuIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCRNeuIso, prefix = " << prefix << std::endl; 
@@ -11535,8 +7828,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRChIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCRChIso04->size() ) {
@@ -11552,8 +7843,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRChIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCRChIso04, prefix = " << prefix << std::endl; 
@@ -11573,8 +7862,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRPhoIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCRPhoIso04->size() ) {
@@ -11590,8 +7877,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRPhoIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCRPhoIso04, prefix = " << prefix << std::endl; 
@@ -11611,8 +7896,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRNeuIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCRNeuIso04->size() ) {
@@ -11628,8 +7911,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRNeuIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCRNeuIso04, prefix = " << prefix << std::endl; 
@@ -11649,8 +7930,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConeChIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoRandConeChIso->size() ) {
@@ -11666,8 +7945,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConeChIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoRandConeChIso, prefix = " << prefix << std::endl; 
@@ -11687,8 +7964,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConePhoIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoRandConePhoIso->size() ) {
@@ -11704,8 +7979,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConePhoIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoRandConePhoIso, prefix = " << prefix << std::endl; 
@@ -11725,8 +7998,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConeNeuIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoRandConeNeuIso->size() ) {
@@ -11742,8 +8013,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConeNeuIso";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoRandConeNeuIso, prefix = " << prefix << std::endl; 
@@ -11763,8 +8032,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConeChIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoRandConeChIso04->size() ) {
@@ -11780,8 +8047,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConeChIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoRandConeChIso04, prefix = " << prefix << std::endl; 
@@ -11801,8 +8066,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConePhoIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoRandConePhoIso04->size() ) {
@@ -11818,8 +8081,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConePhoIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoRandConePhoIso04, prefix = " << prefix << std::endl; 
@@ -11839,8 +8100,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConeNeuIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoRandConeNeuIso04->size() ) {
@@ -11856,240 +8115,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRandConeNeuIso04";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoRandConeNeuIso04, prefix = " << prefix << std::endl; 
      OUT::phoRandConeNeuIso04->clear(); 
- }; 
-
- void CopyphoRegrEInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoRegrE";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoRegrE = std::vector<float>(*IN::phoRegrE);
-}; 
-
- void CopyphoRegrEInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoRegrE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoRegrE->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoRegrE" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoRegrE" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoRegrE->push_back( IN::phoRegrE->at(index) ); 
- }; 
-
- void ClearOutputphoRegrE( std::string  prefix ) { 
-
-    std::string my_name = "phoRegrE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoRegrE, prefix = " << prefix << std::endl; 
-     OUT::phoRegrE->clear(); 
- }; 
-
- void CopyphoRegrEerrInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoRegrEerr";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoRegrEerr = std::vector<float>(*IN::phoRegrEerr);
-}; 
-
- void CopyphoRegrEerrInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoRegrEerr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoRegrEerr->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoRegrEerr" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoRegrEerr" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoRegrEerr->push_back( IN::phoRegrEerr->at(index) ); 
- }; 
-
- void ClearOutputphoRegrEerr( std::string  prefix ) { 
-
-    std::string my_name = "phoRegrEerr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoRegrEerr, prefix = " << prefix << std::endl; 
-     OUT::phoRegrEerr->clear(); 
- }; 
-
- void CopyphoSeedTimeInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoSeedTime";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoSeedTime = std::vector<float>(*IN::phoSeedTime);
-}; 
-
- void CopyphoSeedTimeInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoSeedTime";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoSeedTime->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoSeedTime" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoSeedTime" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoSeedTime->push_back( IN::phoSeedTime->at(index) ); 
- }; 
-
- void ClearOutputphoSeedTime( std::string  prefix ) { 
-
-    std::string my_name = "phoSeedTime";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoSeedTime, prefix = " << prefix << std::endl; 
-     OUT::phoSeedTime->clear(); 
- }; 
-
- void CopyphoSeedDetId1InToOut( std::string prefix ) { 
-
-    std::string my_name = "phoSeedDetId1";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoSeedDetId1 = std::vector<int>(*IN::phoSeedDetId1);
-}; 
-
- void CopyphoSeedDetId1InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoSeedDetId1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoSeedDetId1->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoSeedDetId1" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoSeedDetId1" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoSeedDetId1->push_back( IN::phoSeedDetId1->at(index) ); 
- }; 
-
- void ClearOutputphoSeedDetId1( std::string  prefix ) { 
-
-    std::string my_name = "phoSeedDetId1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoSeedDetId1, prefix = " << prefix << std::endl; 
-     OUT::phoSeedDetId1->clear(); 
- }; 
-
- void CopyphoSeedDetId2InToOut( std::string prefix ) { 
-
-    std::string my_name = "phoSeedDetId2";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoSeedDetId2 = std::vector<int>(*IN::phoSeedDetId2);
-}; 
-
- void CopyphoSeedDetId2InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoSeedDetId2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoSeedDetId2->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoSeedDetId2" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoSeedDetId2" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoSeedDetId2->push_back( IN::phoSeedDetId2->at(index) ); 
- }; 
-
- void ClearOutputphoSeedDetId2( std::string  prefix ) { 
-
-    std::string my_name = "phoSeedDetId2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoSeedDetId2, prefix = " << prefix << std::endl; 
-     OUT::phoSeedDetId2->clear(); 
- }; 
-
- void CopyphoLICTDInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoLICTD";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoLICTD = std::vector<float>(*IN::phoLICTD);
-}; 
-
- void CopyphoLICTDInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoLICTD";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoLICTD->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoLICTD" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoLICTD" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoLICTD->push_back( IN::phoLICTD->at(index) ); 
- }; 
-
- void ClearOutputphoLICTD( std::string  prefix ) { 
-
-    std::string my_name = "phoLICTD";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoLICTD, prefix = " << prefix << std::endl; 
-     OUT::phoLICTD->clear(); 
  }; 
 
  void CopyphoRecoFlagInToOut( std::string prefix ) { 
@@ -12105,8 +8134,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRecoFlag";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoRecoFlag->size() ) {
@@ -12122,8 +8149,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoRecoFlag";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoRecoFlag, prefix = " << prefix << std::endl; 
@@ -12143,8 +8168,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPos";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoPos->size() ) {
@@ -12160,8 +8183,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPos";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoPos, prefix = " << prefix << std::endl; 
@@ -12181,8 +8202,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCE";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCE->size() ) {
@@ -12198,8 +8217,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCE";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCE, prefix = " << prefix << std::endl; 
@@ -12219,8 +8236,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRawE";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCRawE->size() ) {
@@ -12236,8 +8251,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCRawE";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCRawE, prefix = " << prefix << std::endl; 
@@ -12257,8 +8270,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoESEn";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoESEn->size() ) {
@@ -12274,8 +8285,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoESEn";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoESEn, prefix = " << prefix << std::endl; 
@@ -12295,8 +8304,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCEt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCEt->size() ) {
@@ -12312,8 +8319,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCEt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCEt, prefix = " << prefix << std::endl; 
@@ -12333,8 +8338,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCEta->size() ) {
@@ -12350,8 +8353,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCEta, prefix = " << prefix << std::endl; 
@@ -12371,8 +8372,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCPhi->size() ) {
@@ -12388,8 +8387,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCPhi, prefix = " << prefix << std::endl; 
@@ -12409,8 +8406,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCEtaWidth";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCEtaWidth->size() ) {
@@ -12426,8 +8421,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCEtaWidth";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCEtaWidth, prefix = " << prefix << std::endl; 
@@ -12447,8 +8440,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCPhiWidth";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoSCPhiWidth->size() ) {
@@ -12464,50 +8455,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoSCPhiWidth";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoSCPhiWidth, prefix = " << prefix << std::endl; 
      OUT::phoSCPhiWidth->clear(); 
- }; 
-
- void CopyphoSCBremInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoSCBrem";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoSCBrem = std::vector<float>(*IN::phoSCBrem);
-}; 
-
- void CopyphoSCBremInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoSCBrem";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoSCBrem->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoSCBrem" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoSCBrem" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoSCBrem->push_back( IN::phoSCBrem->at(index) ); 
- }; 
-
- void ClearOutputphoSCBrem( std::string  prefix ) { 
-
-    std::string my_name = "phoSCBrem";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoSCBrem, prefix = " << prefix << std::endl; 
-     OUT::phoSCBrem->clear(); 
  }; 
 
  void CopyphoOverlapInToOut( std::string prefix ) { 
@@ -12523,8 +8474,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoOverlap";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoOverlap->size() ) {
@@ -12540,8 +8489,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoOverlap";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoOverlap, prefix = " << prefix << std::endl; 
@@ -12561,8 +8508,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phohasPixelSeed";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phohasPixelSeed->size() ) {
@@ -12578,8 +8523,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phohasPixelSeed";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phohasPixelSeed, prefix = " << prefix << std::endl; 
@@ -12599,8 +8542,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_hasConvPf";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::pho_hasConvPf->size() ) {
@@ -12616,8 +8557,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_hasConvPf";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible pho_hasConvPf, prefix = " << prefix << std::endl; 
@@ -12637,8 +8576,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_hasSLConvPf";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::pho_hasSLConvPf->size() ) {
@@ -12654,8 +8591,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_hasSLConvPf";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible pho_hasSLConvPf, prefix = " << prefix << std::endl; 
@@ -12675,8 +8610,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfconvVtxZ";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::pho_pfconvVtxZ->size() ) {
@@ -12692,8 +8625,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfconvVtxZ";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible pho_pfconvVtxZ, prefix = " << prefix << std::endl; 
@@ -12713,8 +8644,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfconvVtxZErr";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::pho_pfconvVtxZErr->size() ) {
@@ -12730,8 +8659,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfconvVtxZErr";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible pho_pfconvVtxZErr, prefix = " << prefix << std::endl; 
@@ -12751,8 +8678,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_nSLConv";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::pho_nSLConv->size() ) {
@@ -12768,8 +8693,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_nSLConv";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible pho_nSLConv, prefix = " << prefix << std::endl; 
@@ -12789,8 +8712,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfSLConvPos_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::pho_pfSLConvPos_x->size() ) {
@@ -12806,8 +8727,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfSLConvPos_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible pho_pfSLConvPos_x, prefix = " << prefix << std::endl; 
@@ -12827,8 +8746,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfSLConvPos_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::pho_pfSLConvPos_y->size() ) {
@@ -12844,8 +8761,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfSLConvPos_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible pho_pfSLConvPos_y, prefix = " << prefix << std::endl; 
@@ -12865,8 +8780,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfSLConvPos_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::pho_pfSLConvPos_z->size() ) {
@@ -12882,8 +8795,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfSLConvPos_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible pho_pfSLConvPos_z, prefix = " << prefix << std::endl; 
@@ -12903,8 +8814,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfSLConvVtxZ";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::pho_pfSLConvVtxZ->size() ) {
@@ -12920,8 +8829,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "pho_pfSLConvVtxZ";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible pho_pfSLConvVtxZ, prefix = " << prefix << std::endl; 
@@ -12941,8 +8848,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoIsConv";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoIsConv->size() ) {
@@ -12958,8 +8863,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoIsConv";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoIsConv, prefix = " << prefix << std::endl; 
@@ -12979,8 +8882,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoNConv";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoNConv->size() ) {
@@ -12996,8 +8897,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoNConv";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoNConv, prefix = " << prefix << std::endl; 
@@ -13017,8 +8916,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvInvMass";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvInvMass->size() ) {
@@ -13034,8 +8931,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvInvMass";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvInvMass, prefix = " << prefix << std::endl; 
@@ -13055,8 +8950,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvCotTheta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvCotTheta->size() ) {
@@ -13072,8 +8965,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvCotTheta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvCotTheta, prefix = " << prefix << std::endl; 
@@ -13093,8 +8984,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvEoverP";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvEoverP->size() ) {
@@ -13110,50 +8999,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvEoverP";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvEoverP, prefix = " << prefix << std::endl; 
      OUT::phoConvEoverP->clear(); 
- }; 
-
- void CopyphoConvZofPVfromTrksInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvZofPVfromTrks";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvZofPVfromTrks = std::vector<float>(*IN::phoConvZofPVfromTrks);
-}; 
-
- void CopyphoConvZofPVfromTrksInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvZofPVfromTrks";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvZofPVfromTrks->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvZofPVfromTrks" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvZofPVfromTrks" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvZofPVfromTrks->push_back( IN::phoConvZofPVfromTrks->at(index) ); 
- }; 
-
- void ClearOutputphoConvZofPVfromTrks( std::string  prefix ) { 
-
-    std::string my_name = "phoConvZofPVfromTrks";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvZofPVfromTrks, prefix = " << prefix << std::endl; 
-     OUT::phoConvZofPVfromTrks->clear(); 
  }; 
 
  void CopyphoConvMinDistInToOut( std::string prefix ) { 
@@ -13169,8 +9018,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvMinDist";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvMinDist->size() ) {
@@ -13186,8 +9033,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvMinDist";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvMinDist, prefix = " << prefix << std::endl; 
@@ -13207,8 +9052,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvdPhiAtVtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvdPhiAtVtx->size() ) {
@@ -13224,8 +9067,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvdPhiAtVtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvdPhiAtVtx, prefix = " << prefix << std::endl; 
@@ -13245,8 +9086,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvdPhiAtCalo";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvdPhiAtCalo->size() ) {
@@ -13262,8 +9101,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvdPhiAtCalo";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvdPhiAtCalo, prefix = " << prefix << std::endl; 
@@ -13283,8 +9120,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvdEtaAtCalo";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvdEtaAtCalo->size() ) {
@@ -13300,88 +9135,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvdEtaAtCalo";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvdEtaAtCalo, prefix = " << prefix << std::endl; 
      OUT::phoConvdEtaAtCalo->clear(); 
- }; 
-
- void CopyphoConvTrkd0_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvTrkd0_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvTrkd0_x = std::vector<float>(*IN::phoConvTrkd0_x);
-}; 
-
- void CopyphoConvTrkd0_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkd0_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvTrkd0_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvTrkd0_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvTrkd0_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkd0_x->push_back( IN::phoConvTrkd0_x->at(index) ); 
- }; 
-
- void ClearOutputphoConvTrkd0_x( std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkd0_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvTrkd0_x, prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkd0_x->clear(); 
- }; 
-
- void CopyphoConvTrkd0_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvTrkd0_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvTrkd0_y = std::vector<float>(*IN::phoConvTrkd0_y);
-}; 
-
- void CopyphoConvTrkd0_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkd0_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvTrkd0_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvTrkd0_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvTrkd0_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkd0_y->push_back( IN::phoConvTrkd0_y->at(index) ); 
- }; 
-
- void ClearOutputphoConvTrkd0_y( std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkd0_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvTrkd0_y, prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkd0_y->clear(); 
  }; 
 
  void CopyphoConvTrkPin_xInToOut( std::string prefix ) { 
@@ -13397,8 +9154,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvTrkPin_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvTrkPin_x->size() ) {
@@ -13414,8 +9169,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvTrkPin_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvTrkPin_x, prefix = " << prefix << std::endl; 
@@ -13435,8 +9188,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvTrkPin_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvTrkPin_y->size() ) {
@@ -13452,8 +9203,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvTrkPin_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvTrkPin_y, prefix = " << prefix << std::endl; 
@@ -13473,8 +9222,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvTrkPout_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvTrkPout_x->size() ) {
@@ -13490,8 +9237,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvTrkPout_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvTrkPout_x, prefix = " << prefix << std::endl; 
@@ -13511,8 +9256,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvTrkPout_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvTrkPout_y->size() ) {
@@ -13528,164 +9271,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvTrkPout_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvTrkPout_y, prefix = " << prefix << std::endl; 
      OUT::phoConvTrkPout_y->clear(); 
- }; 
-
- void CopyphoConvTrkdz_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvTrkdz_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvTrkdz_x = std::vector<float>(*IN::phoConvTrkdz_x);
-}; 
-
- void CopyphoConvTrkdz_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkdz_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvTrkdz_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvTrkdz_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvTrkdz_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkdz_x->push_back( IN::phoConvTrkdz_x->at(index) ); 
- }; 
-
- void ClearOutputphoConvTrkdz_x( std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkdz_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvTrkdz_x, prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkdz_x->clear(); 
- }; 
-
- void CopyphoConvTrkdz_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvTrkdz_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvTrkdz_y = std::vector<float>(*IN::phoConvTrkdz_y);
-}; 
-
- void CopyphoConvTrkdz_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkdz_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvTrkdz_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvTrkdz_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvTrkdz_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkdz_y->push_back( IN::phoConvTrkdz_y->at(index) ); 
- }; 
-
- void ClearOutputphoConvTrkdz_y( std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkdz_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvTrkdz_y, prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkdz_y->clear(); 
- }; 
-
- void CopyphoConvTrkdzErr_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvTrkdzErr_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvTrkdzErr_x = std::vector<float>(*IN::phoConvTrkdzErr_x);
-}; 
-
- void CopyphoConvTrkdzErr_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkdzErr_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvTrkdzErr_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvTrkdzErr_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvTrkdzErr_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkdzErr_x->push_back( IN::phoConvTrkdzErr_x->at(index) ); 
- }; 
-
- void ClearOutputphoConvTrkdzErr_x( std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkdzErr_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvTrkdzErr_x, prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkdzErr_x->clear(); 
- }; 
-
- void CopyphoConvTrkdzErr_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvTrkdzErr_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvTrkdzErr_y = std::vector<float>(*IN::phoConvTrkdzErr_y);
-}; 
-
- void CopyphoConvTrkdzErr_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkdzErr_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvTrkdzErr_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvTrkdzErr_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvTrkdzErr_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkdzErr_y->push_back( IN::phoConvTrkdzErr_y->at(index) ); 
- }; 
-
- void ClearOutputphoConvTrkdzErr_y( std::string  prefix ) { 
-
-    std::string my_name = "phoConvTrkdzErr_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvTrkdzErr_y, prefix = " << prefix << std::endl; 
-     OUT::phoConvTrkdzErr_y->clear(); 
  }; 
 
  void CopyphoConvChi2InToOut( std::string prefix ) { 
@@ -13701,8 +9290,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvChi2";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvChi2->size() ) {
@@ -13718,8 +9305,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvChi2";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvChi2, prefix = " << prefix << std::endl; 
@@ -13739,8 +9324,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvChi2Prob";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvChi2Prob->size() ) {
@@ -13756,8 +9339,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvChi2Prob";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvChi2Prob, prefix = " << prefix << std::endl; 
@@ -13777,8 +9358,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvNTrks";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvNTrks->size() ) {
@@ -13794,316 +9373,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvNTrks";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvNTrks, prefix = " << prefix << std::endl; 
      OUT::phoConvNTrks->clear(); 
- }; 
-
- void CopyphoConvCharge1InToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvCharge1";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvCharge1 = std::vector<float>(*IN::phoConvCharge1);
-}; 
-
- void CopyphoConvCharge1InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvCharge1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvCharge1->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvCharge1" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvCharge1" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvCharge1->push_back( IN::phoConvCharge1->at(index) ); 
- }; 
-
- void ClearOutputphoConvCharge1( std::string  prefix ) { 
-
-    std::string my_name = "phoConvCharge1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvCharge1, prefix = " << prefix << std::endl; 
-     OUT::phoConvCharge1->clear(); 
- }; 
-
- void CopyphoConvCharge2InToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvCharge2";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvCharge2 = std::vector<float>(*IN::phoConvCharge2);
-}; 
-
- void CopyphoConvCharge2InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvCharge2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvCharge2->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvCharge2" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvCharge2" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvCharge2->push_back( IN::phoConvCharge2->at(index) ); 
- }; 
-
- void ClearOutputphoConvCharge2( std::string  prefix ) { 
-
-    std::string my_name = "phoConvCharge2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvCharge2, prefix = " << prefix << std::endl; 
-     OUT::phoConvCharge2->clear(); 
- }; 
-
- void CopyphoConvValidVtxInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvValidVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvValidVtx = std::vector<int>(*IN::phoConvValidVtx);
-}; 
-
- void CopyphoConvValidVtxInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvValidVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvValidVtx->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvValidVtx" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvValidVtx" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvValidVtx->push_back( IN::phoConvValidVtx->at(index) ); 
- }; 
-
- void ClearOutputphoConvValidVtx( std::string  prefix ) { 
-
-    std::string my_name = "phoConvValidVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvValidVtx, prefix = " << prefix << std::endl; 
-     OUT::phoConvValidVtx->clear(); 
- }; 
-
- void CopyphoConvLikeLihoodInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvLikeLihood";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvLikeLihood = std::vector<float>(*IN::phoConvLikeLihood);
-}; 
-
- void CopyphoConvLikeLihoodInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvLikeLihood";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvLikeLihood->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvLikeLihood" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvLikeLihood" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvLikeLihood->push_back( IN::phoConvLikeLihood->at(index) ); 
- }; 
-
- void ClearOutputphoConvLikeLihood( std::string  prefix ) { 
-
-    std::string my_name = "phoConvLikeLihood";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvLikeLihood, prefix = " << prefix << std::endl; 
-     OUT::phoConvLikeLihood->clear(); 
- }; 
-
- void CopyphoConvP4_0InToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvP4_0";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvP4_0 = std::vector<float>(*IN::phoConvP4_0);
-}; 
-
- void CopyphoConvP4_0InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvP4_0";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvP4_0->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvP4_0" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvP4_0" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvP4_0->push_back( IN::phoConvP4_0->at(index) ); 
- }; 
-
- void ClearOutputphoConvP4_0( std::string  prefix ) { 
-
-    std::string my_name = "phoConvP4_0";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvP4_0, prefix = " << prefix << std::endl; 
-     OUT::phoConvP4_0->clear(); 
- }; 
-
- void CopyphoConvP4_1InToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvP4_1";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvP4_1 = std::vector<float>(*IN::phoConvP4_1);
-}; 
-
- void CopyphoConvP4_1InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvP4_1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvP4_1->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvP4_1" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvP4_1" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvP4_1->push_back( IN::phoConvP4_1->at(index) ); 
- }; 
-
- void ClearOutputphoConvP4_1( std::string  prefix ) { 
-
-    std::string my_name = "phoConvP4_1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvP4_1, prefix = " << prefix << std::endl; 
-     OUT::phoConvP4_1->clear(); 
- }; 
-
- void CopyphoConvP4_2InToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvP4_2";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvP4_2 = std::vector<float>(*IN::phoConvP4_2);
-}; 
-
- void CopyphoConvP4_2InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvP4_2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvP4_2->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvP4_2" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvP4_2" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvP4_2->push_back( IN::phoConvP4_2->at(index) ); 
- }; 
-
- void ClearOutputphoConvP4_2( std::string  prefix ) { 
-
-    std::string my_name = "phoConvP4_2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvP4_2, prefix = " << prefix << std::endl; 
-     OUT::phoConvP4_2->clear(); 
- }; 
-
- void CopyphoConvP4_3InToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvP4_3";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvP4_3 = std::vector<float>(*IN::phoConvP4_3);
-}; 
-
- void CopyphoConvP4_3InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvP4_3";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvP4_3->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvP4_3" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvP4_3" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvP4_3->push_back( IN::phoConvP4_3->at(index) ); 
- }; 
-
- void ClearOutputphoConvP4_3( std::string  prefix ) { 
-
-    std::string my_name = "phoConvP4_3";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvP4_3, prefix = " << prefix << std::endl; 
-     OUT::phoConvP4_3->clear(); 
  }; 
 
  void CopyphoConvVtx_xInToOut( std::string prefix ) { 
@@ -14119,8 +9392,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvVtx_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvVtx_x->size() ) {
@@ -14136,8 +9407,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvVtx_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvVtx_x, prefix = " << prefix << std::endl; 
@@ -14157,8 +9426,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvVtx_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvVtx_y->size() ) {
@@ -14174,8 +9441,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvVtx_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvVtx_y, prefix = " << prefix << std::endl; 
@@ -14195,8 +9460,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvVtx_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvVtx_z->size() ) {
@@ -14212,126 +9475,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvVtx_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvVtx_z, prefix = " << prefix << std::endl; 
      OUT::phoConvVtx_z->clear(); 
- }; 
-
- void CopyphoConvVtxErr_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvVtxErr_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvVtxErr_x = std::vector<float>(*IN::phoConvVtxErr_x);
-}; 
-
- void CopyphoConvVtxErr_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvVtxErr_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvVtxErr_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvVtxErr_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvVtxErr_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvVtxErr_x->push_back( IN::phoConvVtxErr_x->at(index) ); 
- }; 
-
- void ClearOutputphoConvVtxErr_x( std::string  prefix ) { 
-
-    std::string my_name = "phoConvVtxErr_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvVtxErr_x, prefix = " << prefix << std::endl; 
-     OUT::phoConvVtxErr_x->clear(); 
- }; 
-
- void CopyphoConvVtxErr_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvVtxErr_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvVtxErr_y = std::vector<float>(*IN::phoConvVtxErr_y);
-}; 
-
- void CopyphoConvVtxErr_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvVtxErr_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvVtxErr_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvVtxErr_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvVtxErr_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvVtxErr_y->push_back( IN::phoConvVtxErr_y->at(index) ); 
- }; 
-
- void ClearOutputphoConvVtxErr_y( std::string  prefix ) { 
-
-    std::string my_name = "phoConvVtxErr_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvVtxErr_y, prefix = " << prefix << std::endl; 
-     OUT::phoConvVtxErr_y->clear(); 
- }; 
-
- void CopyphoConvVtxErr_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvVtxErr_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvVtxErr_z = std::vector<float>(*IN::phoConvVtxErr_z);
-}; 
-
- void CopyphoConvVtxErr_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvVtxErr_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvVtxErr_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvVtxErr_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvVtxErr_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvVtxErr_z->push_back( IN::phoConvVtxErr_z->at(index) ); 
- }; 
-
- void ClearOutputphoConvVtxErr_z( std::string  prefix ) { 
-
-    std::string my_name = "phoConvVtxErr_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvVtxErr_z, prefix = " << prefix << std::endl; 
-     OUT::phoConvVtxErr_z->clear(); 
  }; 
 
  void CopyphoConvPairMomentum_xInToOut( std::string prefix ) { 
@@ -14347,8 +9494,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvPairMomentum_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvPairMomentum_x->size() ) {
@@ -14364,8 +9509,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvPairMomentum_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvPairMomentum_x, prefix = " << prefix << std::endl; 
@@ -14385,8 +9528,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvPairMomentum_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvPairMomentum_y->size() ) {
@@ -14402,8 +9543,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvPairMomentum_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvPairMomentum_y, prefix = " << prefix << std::endl; 
@@ -14423,8 +9562,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvPairMomentum_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoConvPairMomentum_z->size() ) {
@@ -14440,126 +9577,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoConvPairMomentum_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoConvPairMomentum_z, prefix = " << prefix << std::endl; 
      OUT::phoConvPairMomentum_z->clear(); 
- }; 
-
- void CopyphoConvRefittedMomentum_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvRefittedMomentum_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvRefittedMomentum_x = std::vector<float>(*IN::phoConvRefittedMomentum_x);
-}; 
-
- void CopyphoConvRefittedMomentum_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvRefittedMomentum_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvRefittedMomentum_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvRefittedMomentum_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvRefittedMomentum_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvRefittedMomentum_x->push_back( IN::phoConvRefittedMomentum_x->at(index) ); 
- }; 
-
- void ClearOutputphoConvRefittedMomentum_x( std::string  prefix ) { 
-
-    std::string my_name = "phoConvRefittedMomentum_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvRefittedMomentum_x, prefix = " << prefix << std::endl; 
-     OUT::phoConvRefittedMomentum_x->clear(); 
- }; 
-
- void CopyphoConvRefittedMomentum_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvRefittedMomentum_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvRefittedMomentum_y = std::vector<float>(*IN::phoConvRefittedMomentum_y);
-}; 
-
- void CopyphoConvRefittedMomentum_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvRefittedMomentum_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvRefittedMomentum_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvRefittedMomentum_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvRefittedMomentum_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvRefittedMomentum_y->push_back( IN::phoConvRefittedMomentum_y->at(index) ); 
- }; 
-
- void ClearOutputphoConvRefittedMomentum_y( std::string  prefix ) { 
-
-    std::string my_name = "phoConvRefittedMomentum_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvRefittedMomentum_y, prefix = " << prefix << std::endl; 
-     OUT::phoConvRefittedMomentum_y->clear(); 
- }; 
-
- void CopyphoConvRefittedMomentum_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoConvRefittedMomentum_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoConvRefittedMomentum_z = std::vector<float>(*IN::phoConvRefittedMomentum_z);
-}; 
-
- void CopyphoConvRefittedMomentum_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoConvRefittedMomentum_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoConvRefittedMomentum_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoConvRefittedMomentum_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoConvRefittedMomentum_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoConvRefittedMomentum_z->push_back( IN::phoConvRefittedMomentum_z->at(index) ); 
- }; 
-
- void ClearOutputphoConvRefittedMomentum_z( std::string  prefix ) { 
-
-    std::string my_name = "phoConvRefittedMomentum_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoConvRefittedMomentum_z, prefix = " << prefix << std::endl; 
-     OUT::phoConvRefittedMomentum_z->clear(); 
  }; 
 
  void CopySingleLegConvInToOut( std::string prefix ) { 
@@ -14575,8 +9596,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "SingleLegConv";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::SingleLegConv->size() ) {
@@ -14592,8 +9611,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "SingleLegConv";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible SingleLegConv, prefix = " << prefix << std::endl; 
@@ -14613,8 +9630,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvVtx_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoPFConvVtx_x->size() ) {
@@ -14630,8 +9645,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvVtx_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoPFConvVtx_x, prefix = " << prefix << std::endl; 
@@ -14651,8 +9664,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvVtx_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoPFConvVtx_y->size() ) {
@@ -14668,8 +9679,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvVtx_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoPFConvVtx_y, prefix = " << prefix << std::endl; 
@@ -14689,8 +9698,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvVtx_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoPFConvVtx_z->size() ) {
@@ -14706,8 +9713,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvVtx_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoPFConvVtx_z, prefix = " << prefix << std::endl; 
@@ -14727,8 +9732,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvMom_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoPFConvMom_x->size() ) {
@@ -14744,8 +9747,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvMom_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoPFConvMom_x, prefix = " << prefix << std::endl; 
@@ -14765,8 +9766,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvMom_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoPFConvMom_y->size() ) {
@@ -14782,8 +9781,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvMom_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoPFConvMom_y, prefix = " << prefix << std::endl; 
@@ -14803,8 +9800,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvMom_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::phoPFConvMom_z->size() ) {
@@ -14820,126 +9815,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "phoPFConvMom_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible phoPFConvMom_z, prefix = " << prefix << std::endl; 
      OUT::phoPFConvMom_z->clear(); 
- }; 
-
- void CopyphoESEffSigmaRR_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoESEffSigmaRR_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoESEffSigmaRR_x = std::vector<float>(*IN::phoESEffSigmaRR_x);
-}; 
-
- void CopyphoESEffSigmaRR_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoESEffSigmaRR_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoESEffSigmaRR_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoESEffSigmaRR_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoESEffSigmaRR_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoESEffSigmaRR_x->push_back( IN::phoESEffSigmaRR_x->at(index) ); 
- }; 
-
- void ClearOutputphoESEffSigmaRR_x( std::string  prefix ) { 
-
-    std::string my_name = "phoESEffSigmaRR_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoESEffSigmaRR_x, prefix = " << prefix << std::endl; 
-     OUT::phoESEffSigmaRR_x->clear(); 
- }; 
-
- void CopyphoESEffSigmaRR_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoESEffSigmaRR_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoESEffSigmaRR_y = std::vector<float>(*IN::phoESEffSigmaRR_y);
-}; 
-
- void CopyphoESEffSigmaRR_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoESEffSigmaRR_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoESEffSigmaRR_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoESEffSigmaRR_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoESEffSigmaRR_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoESEffSigmaRR_y->push_back( IN::phoESEffSigmaRR_y->at(index) ); 
- }; 
-
- void ClearOutputphoESEffSigmaRR_y( std::string  prefix ) { 
-
-    std::string my_name = "phoESEffSigmaRR_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoESEffSigmaRR_y, prefix = " << prefix << std::endl; 
-     OUT::phoESEffSigmaRR_y->clear(); 
- }; 
-
- void CopyphoESEffSigmaRR_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "phoESEffSigmaRR_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::phoESEffSigmaRR_z = std::vector<float>(*IN::phoESEffSigmaRR_z);
-}; 
-
- void CopyphoESEffSigmaRR_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "phoESEffSigmaRR_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::phoESEffSigmaRR_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::phoESEffSigmaRR_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible phoESEffSigmaRR_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::phoESEffSigmaRR_z->push_back( IN::phoESEffSigmaRR_z->at(index) ); 
- }; 
-
- void ClearOutputphoESEffSigmaRR_z( std::string  prefix ) { 
-
-    std::string my_name = "phoESEffSigmaRR_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible phoESEffSigmaRR_z, prefix = " << prefix << std::endl; 
-     OUT::phoESEffSigmaRR_z->clear(); 
  }; 
 
  void CopynMuInToOut( std::string prefix ) { 
@@ -14964,8 +9843,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muTrg";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muTrg->size() ) {
@@ -14981,8 +9858,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muTrg";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muTrg, prefix = " << prefix << std::endl; 
@@ -15002,8 +9877,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muEta->size() ) {
@@ -15019,8 +9892,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muEta, prefix = " << prefix << std::endl; 
@@ -15040,8 +9911,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPhi->size() ) {
@@ -15057,8 +9926,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPhi, prefix = " << prefix << std::endl; 
@@ -15078,8 +9945,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muCharge";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muCharge->size() ) {
@@ -15095,8 +9960,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muCharge";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muCharge, prefix = " << prefix << std::endl; 
@@ -15116,8 +9979,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPt->size() ) {
@@ -15133,8 +9994,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPt, prefix = " << prefix << std::endl; 
@@ -15154,8 +10013,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPz";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPz->size() ) {
@@ -15171,8 +10028,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPz";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPz, prefix = " << prefix << std::endl; 
@@ -15192,8 +10047,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muVtx_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muVtx_x->size() ) {
@@ -15209,8 +10062,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muVtx_x";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muVtx_x, prefix = " << prefix << std::endl; 
@@ -15230,8 +10081,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muVtx_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muVtx_y->size() ) {
@@ -15247,8 +10096,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muVtx_y";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muVtx_y, prefix = " << prefix << std::endl; 
@@ -15268,8 +10115,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muVtx_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muVtx_z->size() ) {
@@ -15285,354 +10130,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muVtx_z";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muVtx_z, prefix = " << prefix << std::endl; 
      OUT::muVtx_z->clear(); 
- }; 
-
- void CopymuVtxGlb_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "muVtxGlb_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::muVtxGlb_x = std::vector<float>(*IN::muVtxGlb_x);
-}; 
-
- void CopymuVtxGlb_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "muVtxGlb_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::muVtxGlb_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::muVtxGlb_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible muVtxGlb_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::muVtxGlb_x->push_back( IN::muVtxGlb_x->at(index) ); 
- }; 
-
- void ClearOutputmuVtxGlb_x( std::string  prefix ) { 
-
-    std::string my_name = "muVtxGlb_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible muVtxGlb_x, prefix = " << prefix << std::endl; 
-     OUT::muVtxGlb_x->clear(); 
- }; 
-
- void CopymuVtxGlb_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "muVtxGlb_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::muVtxGlb_y = std::vector<float>(*IN::muVtxGlb_y);
-}; 
-
- void CopymuVtxGlb_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "muVtxGlb_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::muVtxGlb_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::muVtxGlb_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible muVtxGlb_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::muVtxGlb_y->push_back( IN::muVtxGlb_y->at(index) ); 
- }; 
-
- void ClearOutputmuVtxGlb_y( std::string  prefix ) { 
-
-    std::string my_name = "muVtxGlb_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible muVtxGlb_y, prefix = " << prefix << std::endl; 
-     OUT::muVtxGlb_y->clear(); 
- }; 
-
- void CopymuVtxGlb_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "muVtxGlb_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::muVtxGlb_z = std::vector<float>(*IN::muVtxGlb_z);
-}; 
-
- void CopymuVtxGlb_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "muVtxGlb_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::muVtxGlb_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::muVtxGlb_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible muVtxGlb_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::muVtxGlb_z->push_back( IN::muVtxGlb_z->at(index) ); 
- }; 
-
- void ClearOutputmuVtxGlb_z( std::string  prefix ) { 
-
-    std::string my_name = "muVtxGlb_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible muVtxGlb_z, prefix = " << prefix << std::endl; 
-     OUT::muVtxGlb_z->clear(); 
- }; 
-
- void CopymucktPtInToOut( std::string prefix ) { 
-
-    std::string my_name = "mucktPt";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::mucktPt = std::vector<float>(*IN::mucktPt);
-}; 
-
- void CopymucktPtInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "mucktPt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::mucktPt->size() ) {
-         std::cout << "Vector size exceeded for branch IN::mucktPt" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible mucktPt" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::mucktPt->push_back( IN::mucktPt->at(index) ); 
- }; 
-
- void ClearOutputmucktPt( std::string  prefix ) { 
-
-    std::string my_name = "mucktPt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible mucktPt, prefix = " << prefix << std::endl; 
-     OUT::mucktPt->clear(); 
- }; 
-
- void CopymucktPtErrInToOut( std::string prefix ) { 
-
-    std::string my_name = "mucktPtErr";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::mucktPtErr = std::vector<float>(*IN::mucktPtErr);
-}; 
-
- void CopymucktPtErrInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "mucktPtErr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::mucktPtErr->size() ) {
-         std::cout << "Vector size exceeded for branch IN::mucktPtErr" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible mucktPtErr" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::mucktPtErr->push_back( IN::mucktPtErr->at(index) ); 
- }; 
-
- void ClearOutputmucktPtErr( std::string  prefix ) { 
-
-    std::string my_name = "mucktPtErr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible mucktPtErr, prefix = " << prefix << std::endl; 
-     OUT::mucktPtErr->clear(); 
- }; 
-
- void CopymucktEtaInToOut( std::string prefix ) { 
-
-    std::string my_name = "mucktEta";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::mucktEta = std::vector<float>(*IN::mucktEta);
-}; 
-
- void CopymucktEtaInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "mucktEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::mucktEta->size() ) {
-         std::cout << "Vector size exceeded for branch IN::mucktEta" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible mucktEta" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::mucktEta->push_back( IN::mucktEta->at(index) ); 
- }; 
-
- void ClearOutputmucktEta( std::string  prefix ) { 
-
-    std::string my_name = "mucktEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible mucktEta, prefix = " << prefix << std::endl; 
-     OUT::mucktEta->clear(); 
- }; 
-
- void CopymucktPhiInToOut( std::string prefix ) { 
-
-    std::string my_name = "mucktPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::mucktPhi = std::vector<float>(*IN::mucktPhi);
-}; 
-
- void CopymucktPhiInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "mucktPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::mucktPhi->size() ) {
-         std::cout << "Vector size exceeded for branch IN::mucktPhi" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible mucktPhi" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::mucktPhi->push_back( IN::mucktPhi->at(index) ); 
- }; 
-
- void ClearOutputmucktPhi( std::string  prefix ) { 
-
-    std::string my_name = "mucktPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible mucktPhi, prefix = " << prefix << std::endl; 
-     OUT::mucktPhi->clear(); 
- }; 
-
- void CopymucktdxyInToOut( std::string prefix ) { 
-
-    std::string my_name = "mucktdxy";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::mucktdxy = std::vector<float>(*IN::mucktdxy);
-}; 
-
- void CopymucktdxyInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "mucktdxy";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::mucktdxy->size() ) {
-         std::cout << "Vector size exceeded for branch IN::mucktdxy" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible mucktdxy" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::mucktdxy->push_back( IN::mucktdxy->at(index) ); 
- }; 
-
- void ClearOutputmucktdxy( std::string  prefix ) { 
-
-    std::string my_name = "mucktdxy";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible mucktdxy, prefix = " << prefix << std::endl; 
-     OUT::mucktdxy->clear(); 
- }; 
-
- void CopymucktdzInToOut( std::string prefix ) { 
-
-    std::string my_name = "mucktdz";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::mucktdz = std::vector<float>(*IN::mucktdz);
-}; 
-
- void CopymucktdzInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "mucktdz";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::mucktdz->size() ) {
-         std::cout << "Vector size exceeded for branch IN::mucktdz" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible mucktdz" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::mucktdz->push_back( IN::mucktdz->at(index) ); 
- }; 
-
- void ClearOutputmucktdz( std::string  prefix ) { 
-
-    std::string my_name = "mucktdz";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible mucktdz, prefix = " << prefix << std::endl; 
-     OUT::mucktdz->clear(); 
  }; 
 
  void CopymuIsoTrkInToOut( std::string prefix ) { 
@@ -15648,8 +10149,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIsoTrk";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muIsoTrk->size() ) {
@@ -15665,8 +10164,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIsoTrk";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muIsoTrk, prefix = " << prefix << std::endl; 
@@ -15686,8 +10183,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIsoCalo";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muIsoCalo->size() ) {
@@ -15703,8 +10198,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIsoCalo";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muIsoCalo, prefix = " << prefix << std::endl; 
@@ -15724,8 +10217,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIsoEcal";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muIsoEcal->size() ) {
@@ -15741,8 +10232,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIsoEcal";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muIsoEcal, prefix = " << prefix << std::endl; 
@@ -15762,8 +10251,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIsoHcal";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muIsoHcal->size() ) {
@@ -15779,8 +10266,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIsoHcal";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muIsoHcal, prefix = " << prefix << std::endl; 
@@ -15800,8 +10285,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muChi2NDF";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muChi2NDF->size() ) {
@@ -15817,8 +10300,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muChi2NDF";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muChi2NDF, prefix = " << prefix << std::endl; 
@@ -15838,8 +10319,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerChi2NDF";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muInnerChi2NDF->size() ) {
@@ -15855,8 +10334,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerChi2NDF";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muInnerChi2NDF, prefix = " << prefix << std::endl; 
@@ -15876,8 +10353,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_CH";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR04_CH->size() ) {
@@ -15893,8 +10368,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_CH";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR04_CH, prefix = " << prefix << std::endl; 
@@ -15914,8 +10387,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_NH";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR04_NH->size() ) {
@@ -15931,8 +10402,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_NH";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR04_NH, prefix = " << prefix << std::endl; 
@@ -15952,8 +10421,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_Pho";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR04_Pho->size() ) {
@@ -15969,8 +10436,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_Pho";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR04_Pho, prefix = " << prefix << std::endl; 
@@ -15990,8 +10455,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_PU";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR04_PU->size() ) {
@@ -16007,8 +10470,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_PU";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR04_PU, prefix = " << prefix << std::endl; 
@@ -16028,8 +10489,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_CPart";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR04_CPart->size() ) {
@@ -16045,8 +10504,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_CPart";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR04_CPart, prefix = " << prefix << std::endl; 
@@ -16066,8 +10523,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_NHHT";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR04_NHHT->size() ) {
@@ -16083,8 +10538,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_NHHT";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR04_NHHT, prefix = " << prefix << std::endl; 
@@ -16104,8 +10557,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_PhoHT";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR04_PhoHT->size() ) {
@@ -16121,8 +10572,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR04_PhoHT";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR04_PhoHT, prefix = " << prefix << std::endl; 
@@ -16142,8 +10591,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_CH";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR03_CH->size() ) {
@@ -16159,8 +10606,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_CH";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR03_CH, prefix = " << prefix << std::endl; 
@@ -16180,8 +10625,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_NH";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR03_NH->size() ) {
@@ -16197,8 +10640,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_NH";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR03_NH, prefix = " << prefix << std::endl; 
@@ -16218,8 +10659,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_Pho";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR03_Pho->size() ) {
@@ -16235,8 +10674,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_Pho";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR03_Pho, prefix = " << prefix << std::endl; 
@@ -16256,8 +10693,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_PU";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR03_PU->size() ) {
@@ -16273,8 +10708,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_PU";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR03_PU, prefix = " << prefix << std::endl; 
@@ -16294,8 +10727,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_CPart";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR03_CPart->size() ) {
@@ -16311,8 +10742,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_CPart";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR03_CPart, prefix = " << prefix << std::endl; 
@@ -16332,8 +10761,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_NHHT";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR03_NHHT->size() ) {
@@ -16349,8 +10776,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_NHHT";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR03_NHHT, prefix = " << prefix << std::endl; 
@@ -16370,8 +10795,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_PhoHT";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muPFIsoR03_PhoHT->size() ) {
@@ -16387,8 +10810,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muPFIsoR03_PhoHT";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muPFIsoR03_PhoHT, prefix = " << prefix << std::endl; 
@@ -16408,8 +10829,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muType";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muType->size() ) {
@@ -16425,8 +10844,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muType";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muType, prefix = " << prefix << std::endl; 
@@ -16446,8 +10863,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muD0";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muD0->size() ) {
@@ -16463,8 +10878,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muD0";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muD0, prefix = " << prefix << std::endl; 
@@ -16484,8 +10897,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muDz";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muDz->size() ) {
@@ -16501,8 +10912,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muDz";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muDz, prefix = " << prefix << std::endl; 
@@ -16522,8 +10931,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muD0GV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muD0GV->size() ) {
@@ -16539,8 +10946,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muD0GV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muD0GV, prefix = " << prefix << std::endl; 
@@ -16560,8 +10965,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muDzGV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muDzGV->size() ) {
@@ -16577,8 +10980,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muDzGV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muDzGV, prefix = " << prefix << std::endl; 
@@ -16598,8 +10999,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muD0Vtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muD0Vtx->size() ) {
@@ -16615,8 +11014,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muD0Vtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muD0Vtx, prefix = " << prefix << std::endl; 
@@ -16636,8 +11033,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muDzVtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muDzVtx->size() ) {
@@ -16653,8 +11048,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muDzVtx";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muDzVtx, prefix = " << prefix << std::endl; 
@@ -16674,8 +11067,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerD0";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muInnerD0->size() ) {
@@ -16691,8 +11082,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerD0";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muInnerD0, prefix = " << prefix << std::endl; 
@@ -16712,8 +11101,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerDz";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muInnerDz->size() ) {
@@ -16729,8 +11116,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerDz";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muInnerDz, prefix = " << prefix << std::endl; 
@@ -16750,8 +11135,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerD0GV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muInnerD0GV->size() ) {
@@ -16767,8 +11150,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerD0GV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muInnerD0GV, prefix = " << prefix << std::endl; 
@@ -16788,8 +11169,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerDzGV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muInnerDzGV->size() ) {
@@ -16805,8 +11184,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerDzGV";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muInnerDzGV, prefix = " << prefix << std::endl; 
@@ -16826,8 +11203,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerPt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muInnerPt->size() ) {
@@ -16843,50 +11218,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muInnerPt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muInnerPt, prefix = " << prefix << std::endl; 
      OUT::muInnerPt->clear(); 
- }; 
-
- void CopymuInnerPtErrInToOut( std::string prefix ) { 
-
-    std::string my_name = "muInnerPtErr";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::muInnerPtErr = std::vector<float>(*IN::muInnerPtErr);
-}; 
-
- void CopymuInnerPtErrInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "muInnerPtErr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::muInnerPtErr->size() ) {
-         std::cout << "Vector size exceeded for branch IN::muInnerPtErr" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible muInnerPtErr" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::muInnerPtErr->push_back( IN::muInnerPtErr->at(index) ); 
- }; 
-
- void ClearOutputmuInnerPtErr( std::string  prefix ) { 
-
-    std::string my_name = "muInnerPtErr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible muInnerPtErr, prefix = " << prefix << std::endl; 
-     OUT::muInnerPtErr->clear(); 
  }; 
 
  void CopymuNumberOfValidTrkLayersInToOut( std::string prefix ) { 
@@ -16902,8 +11237,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muNumberOfValidTrkLayers";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muNumberOfValidTrkLayers->size() ) {
@@ -16919,8 +11252,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muNumberOfValidTrkLayers";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muNumberOfValidTrkLayers, prefix = " << prefix << std::endl; 
@@ -16940,8 +11271,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muNumberOfValidTrkHits";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muNumberOfValidTrkHits->size() ) {
@@ -16957,8 +11286,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muNumberOfValidTrkHits";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muNumberOfValidTrkHits, prefix = " << prefix << std::endl; 
@@ -16978,8 +11305,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muNumberOfValidPixelLayers";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muNumberOfValidPixelLayers->size() ) {
@@ -16995,8 +11320,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muNumberOfValidPixelLayers";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muNumberOfValidPixelLayers, prefix = " << prefix << std::endl; 
@@ -17016,8 +11339,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muNumberOfValidPixelHits";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muNumberOfValidPixelHits->size() ) {
@@ -17033,8 +11354,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muNumberOfValidPixelHits";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muNumberOfValidPixelHits, prefix = " << prefix << std::endl; 
@@ -17054,8 +11373,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muNumberOfValidMuonHits";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muNumberOfValidMuonHits->size() ) {
@@ -17071,8 +11388,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muNumberOfValidMuonHits";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muNumberOfValidMuonHits, prefix = " << prefix << std::endl; 
@@ -17092,8 +11407,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muStations";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muStations->size() ) {
@@ -17109,8 +11422,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muStations";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muStations, prefix = " << prefix << std::endl; 
@@ -17130,8 +11441,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muChambers";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muChambers->size() ) {
@@ -17147,8 +11456,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muChambers";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muChambers, prefix = " << prefix << std::endl; 
@@ -17168,8 +11475,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIP3D";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muIP3D->size() ) {
@@ -17185,8 +11490,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIP3D";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muIP3D, prefix = " << prefix << std::endl; 
@@ -17206,8 +11509,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIP3DErr";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::muIP3DErr->size() ) {
@@ -17223,8 +11524,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "muIP3DErr";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible muIP3DErr, prefix = " << prefix << std::endl; 
@@ -17239,1146 +11538,6 @@ void CopynHLTInToOut( std::string prefix ) {
     if( prefix != "" &&  pos != 0 ) return; 
   OUT::nTau = IN::nTau;
 }; 
-
- void CopytauDecayModeFindingInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauDecayModeFinding";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauDecayModeFinding = std::vector<bool>(*IN::tauDecayModeFinding);
-}; 
-
- void CopytauDecayModeFindingInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauDecayModeFinding";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauDecayModeFinding->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauDecayModeFinding" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauDecayModeFinding" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauDecayModeFinding->push_back( IN::tauDecayModeFinding->at(index) ); 
- }; 
-
- void ClearOutputtauDecayModeFinding( std::string  prefix ) { 
-
-    std::string my_name = "tauDecayModeFinding";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauDecayModeFinding, prefix = " << prefix << std::endl; 
-     OUT::tauDecayModeFinding->clear(); 
- }; 
-
- void CopytauAgainstElectronLooseMVA3InToOut( std::string prefix ) { 
-
-    std::string my_name = "tauAgainstElectronLooseMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauAgainstElectronLooseMVA3 = std::vector<bool>(*IN::tauAgainstElectronLooseMVA3);
-}; 
-
- void CopytauAgainstElectronLooseMVA3InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstElectronLooseMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauAgainstElectronLooseMVA3->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauAgainstElectronLooseMVA3" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauAgainstElectronLooseMVA3" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauAgainstElectronLooseMVA3->push_back( IN::tauAgainstElectronLooseMVA3->at(index) ); 
- }; 
-
- void ClearOutputtauAgainstElectronLooseMVA3( std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstElectronLooseMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauAgainstElectronLooseMVA3, prefix = " << prefix << std::endl; 
-     OUT::tauAgainstElectronLooseMVA3->clear(); 
- }; 
-
- void CopytauAgainstElectronMediumMVA3InToOut( std::string prefix ) { 
-
-    std::string my_name = "tauAgainstElectronMediumMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauAgainstElectronMediumMVA3 = std::vector<bool>(*IN::tauAgainstElectronMediumMVA3);
-}; 
-
- void CopytauAgainstElectronMediumMVA3InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstElectronMediumMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauAgainstElectronMediumMVA3->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauAgainstElectronMediumMVA3" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauAgainstElectronMediumMVA3" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauAgainstElectronMediumMVA3->push_back( IN::tauAgainstElectronMediumMVA3->at(index) ); 
- }; 
-
- void ClearOutputtauAgainstElectronMediumMVA3( std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstElectronMediumMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauAgainstElectronMediumMVA3, prefix = " << prefix << std::endl; 
-     OUT::tauAgainstElectronMediumMVA3->clear(); 
- }; 
-
- void CopytauAgainstElectronTightMVA3InToOut( std::string prefix ) { 
-
-    std::string my_name = "tauAgainstElectronTightMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauAgainstElectronTightMVA3 = std::vector<bool>(*IN::tauAgainstElectronTightMVA3);
-}; 
-
- void CopytauAgainstElectronTightMVA3InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstElectronTightMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauAgainstElectronTightMVA3->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauAgainstElectronTightMVA3" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauAgainstElectronTightMVA3" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauAgainstElectronTightMVA3->push_back( IN::tauAgainstElectronTightMVA3->at(index) ); 
- }; 
-
- void ClearOutputtauAgainstElectronTightMVA3( std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstElectronTightMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauAgainstElectronTightMVA3, prefix = " << prefix << std::endl; 
-     OUT::tauAgainstElectronTightMVA3->clear(); 
- }; 
-
- void CopytauAgainstElectronVTightMVA3InToOut( std::string prefix ) { 
-
-    std::string my_name = "tauAgainstElectronVTightMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauAgainstElectronVTightMVA3 = std::vector<bool>(*IN::tauAgainstElectronVTightMVA3);
-}; 
-
- void CopytauAgainstElectronVTightMVA3InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstElectronVTightMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauAgainstElectronVTightMVA3->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauAgainstElectronVTightMVA3" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauAgainstElectronVTightMVA3" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauAgainstElectronVTightMVA3->push_back( IN::tauAgainstElectronVTightMVA3->at(index) ); 
- }; 
-
- void ClearOutputtauAgainstElectronVTightMVA3( std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstElectronVTightMVA3";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauAgainstElectronVTightMVA3, prefix = " << prefix << std::endl; 
-     OUT::tauAgainstElectronVTightMVA3->clear(); 
- }; 
-
- void CopytauAgainstElectronDeadECALInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauAgainstElectronDeadECAL";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauAgainstElectronDeadECAL = std::vector<bool>(*IN::tauAgainstElectronDeadECAL);
-}; 
-
- void CopytauAgainstElectronDeadECALInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstElectronDeadECAL";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauAgainstElectronDeadECAL->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauAgainstElectronDeadECAL" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauAgainstElectronDeadECAL" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauAgainstElectronDeadECAL->push_back( IN::tauAgainstElectronDeadECAL->at(index) ); 
- }; 
-
- void ClearOutputtauAgainstElectronDeadECAL( std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstElectronDeadECAL";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauAgainstElectronDeadECAL, prefix = " << prefix << std::endl; 
-     OUT::tauAgainstElectronDeadECAL->clear(); 
- }; 
-
- void CopytauAgainstMuonLoose2InToOut( std::string prefix ) { 
-
-    std::string my_name = "tauAgainstMuonLoose2";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauAgainstMuonLoose2 = std::vector<bool>(*IN::tauAgainstMuonLoose2);
-}; 
-
- void CopytauAgainstMuonLoose2InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstMuonLoose2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauAgainstMuonLoose2->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauAgainstMuonLoose2" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauAgainstMuonLoose2" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauAgainstMuonLoose2->push_back( IN::tauAgainstMuonLoose2->at(index) ); 
- }; 
-
- void ClearOutputtauAgainstMuonLoose2( std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstMuonLoose2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauAgainstMuonLoose2, prefix = " << prefix << std::endl; 
-     OUT::tauAgainstMuonLoose2->clear(); 
- }; 
-
- void CopytauAgainstMuonMedium2InToOut( std::string prefix ) { 
-
-    std::string my_name = "tauAgainstMuonMedium2";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauAgainstMuonMedium2 = std::vector<bool>(*IN::tauAgainstMuonMedium2);
-}; 
-
- void CopytauAgainstMuonMedium2InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstMuonMedium2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauAgainstMuonMedium2->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauAgainstMuonMedium2" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauAgainstMuonMedium2" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauAgainstMuonMedium2->push_back( IN::tauAgainstMuonMedium2->at(index) ); 
- }; 
-
- void ClearOutputtauAgainstMuonMedium2( std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstMuonMedium2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauAgainstMuonMedium2, prefix = " << prefix << std::endl; 
-     OUT::tauAgainstMuonMedium2->clear(); 
- }; 
-
- void CopytauAgainstMuonTight2InToOut( std::string prefix ) { 
-
-    std::string my_name = "tauAgainstMuonTight2";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauAgainstMuonTight2 = std::vector<bool>(*IN::tauAgainstMuonTight2);
-}; 
-
- void CopytauAgainstMuonTight2InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstMuonTight2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauAgainstMuonTight2->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauAgainstMuonTight2" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauAgainstMuonTight2" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauAgainstMuonTight2->push_back( IN::tauAgainstMuonTight2->at(index) ); 
- }; 
-
- void ClearOutputtauAgainstMuonTight2( std::string  prefix ) { 
-
-    std::string my_name = "tauAgainstMuonTight2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauAgainstMuonTight2, prefix = " << prefix << std::endl; 
-     OUT::tauAgainstMuonTight2->clear(); 
- }; 
-
- void CopytauCombinedIsolationDeltaBetaCorrRaw3HitsInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauCombinedIsolationDeltaBetaCorrRaw3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauCombinedIsolationDeltaBetaCorrRaw3Hits = std::vector<bool>(*IN::tauCombinedIsolationDeltaBetaCorrRaw3Hits);
-}; 
-
- void CopytauCombinedIsolationDeltaBetaCorrRaw3HitsInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauCombinedIsolationDeltaBetaCorrRaw3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauCombinedIsolationDeltaBetaCorrRaw3Hits->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauCombinedIsolationDeltaBetaCorrRaw3Hits" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauCombinedIsolationDeltaBetaCorrRaw3Hits" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauCombinedIsolationDeltaBetaCorrRaw3Hits->push_back( IN::tauCombinedIsolationDeltaBetaCorrRaw3Hits->at(index) ); 
- }; 
-
- void ClearOutputtauCombinedIsolationDeltaBetaCorrRaw3Hits( std::string  prefix ) { 
-
-    std::string my_name = "tauCombinedIsolationDeltaBetaCorrRaw3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauCombinedIsolationDeltaBetaCorrRaw3Hits, prefix = " << prefix << std::endl; 
-     OUT::tauCombinedIsolationDeltaBetaCorrRaw3Hits->clear(); 
- }; 
-
- void CopytauLooseCombinedIsolationDeltaBetaCorr3HitsInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauLooseCombinedIsolationDeltaBetaCorr3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauLooseCombinedIsolationDeltaBetaCorr3Hits = std::vector<bool>(*IN::tauLooseCombinedIsolationDeltaBetaCorr3Hits);
-}; 
-
- void CopytauLooseCombinedIsolationDeltaBetaCorr3HitsInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauLooseCombinedIsolationDeltaBetaCorr3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauLooseCombinedIsolationDeltaBetaCorr3Hits->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauLooseCombinedIsolationDeltaBetaCorr3Hits" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauLooseCombinedIsolationDeltaBetaCorr3Hits" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauLooseCombinedIsolationDeltaBetaCorr3Hits->push_back( IN::tauLooseCombinedIsolationDeltaBetaCorr3Hits->at(index) ); 
- }; 
-
- void ClearOutputtauLooseCombinedIsolationDeltaBetaCorr3Hits( std::string  prefix ) { 
-
-    std::string my_name = "tauLooseCombinedIsolationDeltaBetaCorr3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauLooseCombinedIsolationDeltaBetaCorr3Hits, prefix = " << prefix << std::endl; 
-     OUT::tauLooseCombinedIsolationDeltaBetaCorr3Hits->clear(); 
- }; 
-
- void CopytauMediumCombinedIsolationDeltaBetaCorr3HitsInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauMediumCombinedIsolationDeltaBetaCorr3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauMediumCombinedIsolationDeltaBetaCorr3Hits = std::vector<bool>(*IN::tauMediumCombinedIsolationDeltaBetaCorr3Hits);
-}; 
-
- void CopytauMediumCombinedIsolationDeltaBetaCorr3HitsInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauMediumCombinedIsolationDeltaBetaCorr3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauMediumCombinedIsolationDeltaBetaCorr3Hits->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauMediumCombinedIsolationDeltaBetaCorr3Hits" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauMediumCombinedIsolationDeltaBetaCorr3Hits" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauMediumCombinedIsolationDeltaBetaCorr3Hits->push_back( IN::tauMediumCombinedIsolationDeltaBetaCorr3Hits->at(index) ); 
- }; 
-
- void ClearOutputtauMediumCombinedIsolationDeltaBetaCorr3Hits( std::string  prefix ) { 
-
-    std::string my_name = "tauMediumCombinedIsolationDeltaBetaCorr3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauMediumCombinedIsolationDeltaBetaCorr3Hits, prefix = " << prefix << std::endl; 
-     OUT::tauMediumCombinedIsolationDeltaBetaCorr3Hits->clear(); 
- }; 
-
- void CopytauTightCombinedIsolationDeltaBetaCorr3HitsInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauTightCombinedIsolationDeltaBetaCorr3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauTightCombinedIsolationDeltaBetaCorr3Hits = std::vector<bool>(*IN::tauTightCombinedIsolationDeltaBetaCorr3Hits);
-}; 
-
- void CopytauTightCombinedIsolationDeltaBetaCorr3HitsInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauTightCombinedIsolationDeltaBetaCorr3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauTightCombinedIsolationDeltaBetaCorr3Hits->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauTightCombinedIsolationDeltaBetaCorr3Hits" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauTightCombinedIsolationDeltaBetaCorr3Hits" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauTightCombinedIsolationDeltaBetaCorr3Hits->push_back( IN::tauTightCombinedIsolationDeltaBetaCorr3Hits->at(index) ); 
- }; 
-
- void ClearOutputtauTightCombinedIsolationDeltaBetaCorr3Hits( std::string  prefix ) { 
-
-    std::string my_name = "tauTightCombinedIsolationDeltaBetaCorr3Hits";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauTightCombinedIsolationDeltaBetaCorr3Hits, prefix = " << prefix << std::endl; 
-     OUT::tauTightCombinedIsolationDeltaBetaCorr3Hits->clear(); 
- }; 
-
- void CopytauEtaInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauEta";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauEta = std::vector<float>(*IN::tauEta);
-}; 
-
- void CopytauEtaInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauEta->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauEta" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauEta" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauEta->push_back( IN::tauEta->at(index) ); 
- }; 
-
- void ClearOutputtauEta( std::string  prefix ) { 
-
-    std::string my_name = "tauEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauEta, prefix = " << prefix << std::endl; 
-     OUT::tauEta->clear(); 
- }; 
-
- void CopytauPhiInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauPhi = std::vector<float>(*IN::tauPhi);
-}; 
-
- void CopytauPhiInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauPhi->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauPhi" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauPhi" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauPhi->push_back( IN::tauPhi->at(index) ); 
- }; 
-
- void ClearOutputtauPhi( std::string  prefix ) { 
-
-    std::string my_name = "tauPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauPhi, prefix = " << prefix << std::endl; 
-     OUT::tauPhi->clear(); 
- }; 
-
- void CopytauPtInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauPt";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauPt = std::vector<float>(*IN::tauPt);
-}; 
-
- void CopytauPtInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauPt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauPt->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauPt" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauPt" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauPt->push_back( IN::tauPt->at(index) ); 
- }; 
-
- void ClearOutputtauPt( std::string  prefix ) { 
-
-    std::string my_name = "tauPt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauPt, prefix = " << prefix << std::endl; 
-     OUT::tauPt->clear(); 
- }; 
-
- void CopytauEtInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauEt";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauEt = std::vector<float>(*IN::tauEt);
-}; 
-
- void CopytauEtInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauEt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauEt->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauEt" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauEt" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauEt->push_back( IN::tauEt->at(index) ); 
- }; 
-
- void ClearOutputtauEt( std::string  prefix ) { 
-
-    std::string my_name = "tauEt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauEt, prefix = " << prefix << std::endl; 
-     OUT::tauEt->clear(); 
- }; 
-
- void CopytauChargeInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauCharge";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauCharge = std::vector<float>(*IN::tauCharge);
-}; 
-
- void CopytauChargeInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauCharge";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauCharge->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauCharge" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauCharge" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauCharge->push_back( IN::tauCharge->at(index) ); 
- }; 
-
- void ClearOutputtauCharge( std::string  prefix ) { 
-
-    std::string my_name = "tauCharge";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauCharge, prefix = " << prefix << std::endl; 
-     OUT::tauCharge->clear(); 
- }; 
-
- void CopytauDecayModeInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauDecayMode";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauDecayMode = std::vector<int>(*IN::tauDecayMode);
-}; 
-
- void CopytauDecayModeInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauDecayMode";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauDecayMode->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauDecayMode" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauDecayMode" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauDecayMode->push_back( IN::tauDecayMode->at(index) ); 
- }; 
-
- void ClearOutputtauDecayMode( std::string  prefix ) { 
-
-    std::string my_name = "tauDecayMode";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauDecayMode, prefix = " << prefix << std::endl; 
-     OUT::tauDecayMode->clear(); 
- }; 
-
- void CopytauEMFractionInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauEMFraction";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauEMFraction = std::vector<float>(*IN::tauEMFraction);
-}; 
-
- void CopytauEMFractionInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauEMFraction";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauEMFraction->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauEMFraction" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauEMFraction" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauEMFraction->push_back( IN::tauEMFraction->at(index) ); 
- }; 
-
- void ClearOutputtauEMFraction( std::string  prefix ) { 
-
-    std::string my_name = "tauEMFraction";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauEMFraction, prefix = " << prefix << std::endl; 
-     OUT::tauEMFraction->clear(); 
- }; 
-
- void CopytauHCAL3x3OverPLeadInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauHCAL3x3OverPLead";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauHCAL3x3OverPLead = std::vector<float>(*IN::tauHCAL3x3OverPLead);
-}; 
-
- void CopytauHCAL3x3OverPLeadInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauHCAL3x3OverPLead";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauHCAL3x3OverPLead->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauHCAL3x3OverPLead" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauHCAL3x3OverPLead" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauHCAL3x3OverPLead->push_back( IN::tauHCAL3x3OverPLead->at(index) ); 
- }; 
-
- void ClearOutputtauHCAL3x3OverPLead( std::string  prefix ) { 
-
-    std::string my_name = "tauHCAL3x3OverPLead";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauHCAL3x3OverPLead, prefix = " << prefix << std::endl; 
-     OUT::tauHCAL3x3OverPLead->clear(); 
- }; 
-
- void CopytauHCALMaxOverPLeadInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauHCALMaxOverPLead";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauHCALMaxOverPLead = std::vector<float>(*IN::tauHCALMaxOverPLead);
-}; 
-
- void CopytauHCALMaxOverPLeadInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauHCALMaxOverPLead";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauHCALMaxOverPLead->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauHCALMaxOverPLead" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauHCALMaxOverPLead" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauHCALMaxOverPLead->push_back( IN::tauHCALMaxOverPLead->at(index) ); 
- }; 
-
- void ClearOutputtauHCALMaxOverPLead( std::string  prefix ) { 
-
-    std::string my_name = "tauHCALMaxOverPLead";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauHCALMaxOverPLead, prefix = " << prefix << std::endl; 
-     OUT::tauHCALMaxOverPLead->clear(); 
- }; 
-
- void CopytauHCALTotOverPLeadInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauHCALTotOverPLead";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauHCALTotOverPLead = std::vector<float>(*IN::tauHCALTotOverPLead);
-}; 
-
- void CopytauHCALTotOverPLeadInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauHCALTotOverPLead";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauHCALTotOverPLead->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauHCALTotOverPLead" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauHCALTotOverPLead" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauHCALTotOverPLead->push_back( IN::tauHCALTotOverPLead->at(index) ); 
- }; 
-
- void ClearOutputtauHCALTotOverPLead( std::string  prefix ) { 
-
-    std::string my_name = "tauHCALTotOverPLead";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauHCALTotOverPLead, prefix = " << prefix << std::endl; 
-     OUT::tauHCALTotOverPLead->clear(); 
- }; 
-
- void CopytauIsolationPFChargedHadrCandsPtSumInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauIsolationPFChargedHadrCandsPtSum";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauIsolationPFChargedHadrCandsPtSum = std::vector<float>(*IN::tauIsolationPFChargedHadrCandsPtSum);
-}; 
-
- void CopytauIsolationPFChargedHadrCandsPtSumInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauIsolationPFChargedHadrCandsPtSum";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauIsolationPFChargedHadrCandsPtSum->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauIsolationPFChargedHadrCandsPtSum" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauIsolationPFChargedHadrCandsPtSum" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauIsolationPFChargedHadrCandsPtSum->push_back( IN::tauIsolationPFChargedHadrCandsPtSum->at(index) ); 
- }; 
-
- void ClearOutputtauIsolationPFChargedHadrCandsPtSum( std::string  prefix ) { 
-
-    std::string my_name = "tauIsolationPFChargedHadrCandsPtSum";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauIsolationPFChargedHadrCandsPtSum, prefix = " << prefix << std::endl; 
-     OUT::tauIsolationPFChargedHadrCandsPtSum->clear(); 
- }; 
-
- void CopytauIsolationPFGammaCandsEtSumInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauIsolationPFGammaCandsEtSum";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauIsolationPFGammaCandsEtSum = std::vector<float>(*IN::tauIsolationPFGammaCandsEtSum);
-}; 
-
- void CopytauIsolationPFGammaCandsEtSumInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauIsolationPFGammaCandsEtSum";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauIsolationPFGammaCandsEtSum->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauIsolationPFGammaCandsEtSum" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauIsolationPFGammaCandsEtSum" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauIsolationPFGammaCandsEtSum->push_back( IN::tauIsolationPFGammaCandsEtSum->at(index) ); 
- }; 
-
- void ClearOutputtauIsolationPFGammaCandsEtSum( std::string  prefix ) { 
-
-    std::string my_name = "tauIsolationPFGammaCandsEtSum";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauIsolationPFGammaCandsEtSum, prefix = " << prefix << std::endl; 
-     OUT::tauIsolationPFGammaCandsEtSum->clear(); 
- }; 
-
- void CopytauLeadPFChargedHadrCandsignedSiptInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauLeadPFChargedHadrCandsignedSipt";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauLeadPFChargedHadrCandsignedSipt = std::vector<float>(*IN::tauLeadPFChargedHadrCandsignedSipt);
-}; 
-
- void CopytauLeadPFChargedHadrCandsignedSiptInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauLeadPFChargedHadrCandsignedSipt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauLeadPFChargedHadrCandsignedSipt->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauLeadPFChargedHadrCandsignedSipt" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauLeadPFChargedHadrCandsignedSipt" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauLeadPFChargedHadrCandsignedSipt->push_back( IN::tauLeadPFChargedHadrCandsignedSipt->at(index) ); 
- }; 
-
- void ClearOutputtauLeadPFChargedHadrCandsignedSipt( std::string  prefix ) { 
-
-    std::string my_name = "tauLeadPFChargedHadrCandsignedSipt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauLeadPFChargedHadrCandsignedSipt, prefix = " << prefix << std::endl; 
-     OUT::tauLeadPFChargedHadrCandsignedSipt->clear(); 
- }; 
-
- void CopytauLeadChargedHadronExistsInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronExists";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauLeadChargedHadronExists = std::vector<bool>(*IN::tauLeadChargedHadronExists);
-}; 
-
- void CopytauLeadChargedHadronExistsInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronExists";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauLeadChargedHadronExists->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauLeadChargedHadronExists" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauLeadChargedHadronExists" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauLeadChargedHadronExists->push_back( IN::tauLeadChargedHadronExists->at(index) ); 
- }; 
-
- void ClearOutputtauLeadChargedHadronExists( std::string  prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronExists";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauLeadChargedHadronExists, prefix = " << prefix << std::endl; 
-     OUT::tauLeadChargedHadronExists->clear(); 
- }; 
-
- void CopytauLeadChargedHadronEtaInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronEta";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauLeadChargedHadronEta = std::vector<float>(*IN::tauLeadChargedHadronEta);
-}; 
-
- void CopytauLeadChargedHadronEtaInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauLeadChargedHadronEta->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauLeadChargedHadronEta" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauLeadChargedHadronEta" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauLeadChargedHadronEta->push_back( IN::tauLeadChargedHadronEta->at(index) ); 
- }; 
-
- void ClearOutputtauLeadChargedHadronEta( std::string  prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronEta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauLeadChargedHadronEta, prefix = " << prefix << std::endl; 
-     OUT::tauLeadChargedHadronEta->clear(); 
- }; 
-
- void CopytauLeadChargedHadronPhiInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauLeadChargedHadronPhi = std::vector<float>(*IN::tauLeadChargedHadronPhi);
-}; 
-
- void CopytauLeadChargedHadronPhiInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauLeadChargedHadronPhi->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauLeadChargedHadronPhi" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauLeadChargedHadronPhi" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauLeadChargedHadronPhi->push_back( IN::tauLeadChargedHadronPhi->at(index) ); 
- }; 
-
- void ClearOutputtauLeadChargedHadronPhi( std::string  prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronPhi";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauLeadChargedHadronPhi, prefix = " << prefix << std::endl; 
-     OUT::tauLeadChargedHadronPhi->clear(); 
- }; 
-
- void CopytauLeadChargedHadronPtInToOut( std::string prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronPt";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::tauLeadChargedHadronPt = std::vector<float>(*IN::tauLeadChargedHadronPt);
-}; 
-
- void CopytauLeadChargedHadronPtInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronPt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::tauLeadChargedHadronPt->size() ) {
-         std::cout << "Vector size exceeded for branch IN::tauLeadChargedHadronPt" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible tauLeadChargedHadronPt" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::tauLeadChargedHadronPt->push_back( IN::tauLeadChargedHadronPt->at(index) ); 
- }; 
-
- void ClearOutputtauLeadChargedHadronPt( std::string  prefix ) { 
-
-    std::string my_name = "tauLeadChargedHadronPt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible tauLeadChargedHadronPt, prefix = " << prefix << std::endl; 
-     OUT::tauLeadChargedHadronPt->clear(); 
- }; 
 
  void Copyrho25InToOut( std::string prefix ) { 
 
@@ -18483,8 +11642,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetTrg";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetTrg->size() ) {
@@ -18500,8 +11657,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetTrg";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetTrg, prefix = " << prefix << std::endl; 
@@ -18521,8 +11676,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetEn";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetEn->size() ) {
@@ -18538,8 +11691,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetEn";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetEn, prefix = " << prefix << std::endl; 
@@ -18559,8 +11710,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetPt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetPt->size() ) {
@@ -18576,8 +11725,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetPt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetPt, prefix = " << prefix << std::endl; 
@@ -18597,8 +11744,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetEta->size() ) {
@@ -18614,8 +11759,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetEta";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetEta, prefix = " << prefix << std::endl; 
@@ -18635,8 +11778,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetPhi->size() ) {
@@ -18652,8 +11793,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetPhi";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetPhi, prefix = " << prefix << std::endl; 
@@ -18673,8 +11812,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetCharge";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetCharge->size() ) {
@@ -18690,8 +11827,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetCharge";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetCharge, prefix = " << prefix << std::endl; 
@@ -18711,8 +11846,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetEt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetEt->size() ) {
@@ -18728,50 +11861,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetEt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetEt, prefix = " << prefix << std::endl; 
      OUT::jetEt->clear(); 
- }; 
-
- void CopyjetRawPtInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetRawPt";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetRawPt = std::vector<float>(*IN::jetRawPt);
-}; 
-
- void CopyjetRawPtInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetRawPt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetRawPt->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetRawPt" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetRawPt" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetRawPt->push_back( IN::jetRawPt->at(index) ); 
- }; 
-
- void ClearOutputjetRawPt( std::string  prefix ) { 
-
-    std::string my_name = "jetRawPt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetRawPt, prefix = " << prefix << std::endl; 
-     OUT::jetRawPt->clear(); 
  }; 
 
  void CopyjetRawEnInToOut( std::string prefix ) { 
@@ -18787,8 +11880,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetRawEn";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetRawEn->size() ) {
@@ -18804,50 +11895,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetRawEn";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetRawEn, prefix = " << prefix << std::endl; 
      OUT::jetRawEn->clear(); 
- }; 
-
- void CopyjetAreaInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetArea";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetArea = std::vector<float>(*IN::jetArea);
-}; 
-
- void CopyjetAreaInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetArea";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetArea->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetArea" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetArea" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetArea->push_back( IN::jetArea->at(index) ); 
- }; 
-
- void ClearOutputjetArea( std::string  prefix ) { 
-
-    std::string my_name = "jetArea";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetArea, prefix = " << prefix << std::endl; 
-     OUT::jetArea->clear(); 
  }; 
 
  void CopyjetCHFInToOut( std::string prefix ) { 
@@ -18863,8 +11914,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetCHF";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetCHF->size() ) {
@@ -18880,8 +11929,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetCHF";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetCHF, prefix = " << prefix << std::endl; 
@@ -18901,8 +11948,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNHF";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetNHF->size() ) {
@@ -18918,50 +11963,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNHF";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetNHF, prefix = " << prefix << std::endl; 
      OUT::jetNHF->clear(); 
- }; 
-
- void CopyjetCEFInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetCEF";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetCEF = std::vector<float>(*IN::jetCEF);
-}; 
-
- void CopyjetCEFInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetCEF";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetCEF->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetCEF" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetCEF" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetCEF->push_back( IN::jetCEF->at(index) ); 
- }; 
-
- void ClearOutputjetCEF( std::string  prefix ) { 
-
-    std::string my_name = "jetCEF";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetCEF, prefix = " << prefix << std::endl; 
-     OUT::jetCEF->clear(); 
  }; 
 
  void CopyjetNEFInToOut( std::string prefix ) { 
@@ -18977,8 +11982,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNEF";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetNEF->size() ) {
@@ -18994,8 +11997,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNEF";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetNEF, prefix = " << prefix << std::endl; 
@@ -19015,8 +12016,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNCH";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetNCH->size() ) {
@@ -19032,88 +12031,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNCH";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetNCH, prefix = " << prefix << std::endl; 
      OUT::jetNCH->clear(); 
- }; 
-
- void CopyjetHFHAEInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetHFHAE";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetHFHAE = std::vector<float>(*IN::jetHFHAE);
-}; 
-
- void CopyjetHFHAEInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetHFHAE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetHFHAE->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetHFHAE" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetHFHAE" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetHFHAE->push_back( IN::jetHFHAE->at(index) ); 
- }; 
-
- void ClearOutputjetHFHAE( std::string  prefix ) { 
-
-    std::string my_name = "jetHFHAE";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetHFHAE, prefix = " << prefix << std::endl; 
-     OUT::jetHFHAE->clear(); 
- }; 
-
- void CopyjetHFEMEInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetHFEME";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetHFEME = std::vector<float>(*IN::jetHFEME);
-}; 
-
- void CopyjetHFEMEInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetHFEME";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetHFEME->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetHFEME" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetHFEME" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetHFEME->push_back( IN::jetHFEME->at(index) ); 
- }; 
-
- void ClearOutputjetHFEME( std::string  prefix ) { 
-
-    std::string my_name = "jetHFEME";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetHFEME, prefix = " << prefix << std::endl; 
-     OUT::jetHFEME->clear(); 
  }; 
 
  void CopyjetNConstituentsInToOut( std::string prefix ) { 
@@ -19129,8 +12050,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNConstituents";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetNConstituents->size() ) {
@@ -19146,696 +12065,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNConstituents";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetNConstituents, prefix = " << prefix << std::endl; 
      OUT::jetNConstituents->clear(); 
- }; 
-
- void CopyjetCombinedSecondaryVtxBJetTagsInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetCombinedSecondaryVtxBJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetCombinedSecondaryVtxBJetTags = std::vector<float>(*IN::jetCombinedSecondaryVtxBJetTags);
-}; 
-
- void CopyjetCombinedSecondaryVtxBJetTagsInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetCombinedSecondaryVtxBJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetCombinedSecondaryVtxBJetTags->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetCombinedSecondaryVtxBJetTags" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetCombinedSecondaryVtxBJetTags" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetCombinedSecondaryVtxBJetTags->push_back( IN::jetCombinedSecondaryVtxBJetTags->at(index) ); 
- }; 
-
- void ClearOutputjetCombinedSecondaryVtxBJetTags( std::string  prefix ) { 
-
-    std::string my_name = "jetCombinedSecondaryVtxBJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetCombinedSecondaryVtxBJetTags, prefix = " << prefix << std::endl; 
-     OUT::jetCombinedSecondaryVtxBJetTags->clear(); 
- }; 
-
- void CopyjetCombinedSecondaryVtxMVABJetTagsInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetCombinedSecondaryVtxMVABJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetCombinedSecondaryVtxMVABJetTags = std::vector<float>(*IN::jetCombinedSecondaryVtxMVABJetTags);
-}; 
-
- void CopyjetCombinedSecondaryVtxMVABJetTagsInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetCombinedSecondaryVtxMVABJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetCombinedSecondaryVtxMVABJetTags->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetCombinedSecondaryVtxMVABJetTags" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetCombinedSecondaryVtxMVABJetTags" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetCombinedSecondaryVtxMVABJetTags->push_back( IN::jetCombinedSecondaryVtxMVABJetTags->at(index) ); 
- }; 
-
- void ClearOutputjetCombinedSecondaryVtxMVABJetTags( std::string  prefix ) { 
-
-    std::string my_name = "jetCombinedSecondaryVtxMVABJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetCombinedSecondaryVtxMVABJetTags, prefix = " << prefix << std::endl; 
-     OUT::jetCombinedSecondaryVtxMVABJetTags->clear(); 
- }; 
-
- void CopyjetJetProbabilityBJetTagsInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetJetProbabilityBJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetJetProbabilityBJetTags = std::vector<float>(*IN::jetJetProbabilityBJetTags);
-}; 
-
- void CopyjetJetProbabilityBJetTagsInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetJetProbabilityBJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetJetProbabilityBJetTags->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetJetProbabilityBJetTags" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetJetProbabilityBJetTags" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetJetProbabilityBJetTags->push_back( IN::jetJetProbabilityBJetTags->at(index) ); 
- }; 
-
- void ClearOutputjetJetProbabilityBJetTags( std::string  prefix ) { 
-
-    std::string my_name = "jetJetProbabilityBJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetJetProbabilityBJetTags, prefix = " << prefix << std::endl; 
-     OUT::jetJetProbabilityBJetTags->clear(); 
- }; 
-
- void CopyjetJetBProbabilityBJetTagsInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetJetBProbabilityBJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetJetBProbabilityBJetTags = std::vector<float>(*IN::jetJetBProbabilityBJetTags);
-}; 
-
- void CopyjetJetBProbabilityBJetTagsInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetJetBProbabilityBJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetJetBProbabilityBJetTags->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetJetBProbabilityBJetTags" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetJetBProbabilityBJetTags" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetJetBProbabilityBJetTags->push_back( IN::jetJetBProbabilityBJetTags->at(index) ); 
- }; 
-
- void ClearOutputjetJetBProbabilityBJetTags( std::string  prefix ) { 
-
-    std::string my_name = "jetJetBProbabilityBJetTags";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetJetBProbabilityBJetTags, prefix = " << prefix << std::endl; 
-     OUT::jetJetBProbabilityBJetTags->clear(); 
- }; 
-
- void CopyjetPFLooseIdInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetPFLooseId";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetPFLooseId = std::vector<bool>(*IN::jetPFLooseId);
-}; 
-
- void CopyjetPFLooseIdInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetPFLooseId";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetPFLooseId->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetPFLooseId" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetPFLooseId" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetPFLooseId->push_back( IN::jetPFLooseId->at(index) ); 
- }; 
-
- void ClearOutputjetPFLooseId( std::string  prefix ) { 
-
-    std::string my_name = "jetPFLooseId";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetPFLooseId, prefix = " << prefix << std::endl; 
-     OUT::jetPFLooseId->clear(); 
- }; 
-
- void CopyjetDRMeanInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetDRMean";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetDRMean = std::vector<float>(*IN::jetDRMean);
-}; 
-
- void CopyjetDRMeanInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetDRMean";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetDRMean->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetDRMean" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetDRMean" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetDRMean->push_back( IN::jetDRMean->at(index) ); 
- }; 
-
- void ClearOutputjetDRMean( std::string  prefix ) { 
-
-    std::string my_name = "jetDRMean";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetDRMean, prefix = " << prefix << std::endl; 
-     OUT::jetDRMean->clear(); 
- }; 
-
- void CopyjetDR2MeanInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetDR2Mean";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetDR2Mean = std::vector<float>(*IN::jetDR2Mean);
-}; 
-
- void CopyjetDR2MeanInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetDR2Mean";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetDR2Mean->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetDR2Mean" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetDR2Mean" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetDR2Mean->push_back( IN::jetDR2Mean->at(index) ); 
- }; 
-
- void ClearOutputjetDR2Mean( std::string  prefix ) { 
-
-    std::string my_name = "jetDR2Mean";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetDR2Mean, prefix = " << prefix << std::endl; 
-     OUT::jetDR2Mean->clear(); 
- }; 
-
- void CopyjetDZInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetDZ";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetDZ = std::vector<float>(*IN::jetDZ);
-}; 
-
- void CopyjetDZInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetDZ";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetDZ->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetDZ" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetDZ" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetDZ->push_back( IN::jetDZ->at(index) ); 
- }; 
-
- void ClearOutputjetDZ( std::string  prefix ) { 
-
-    std::string my_name = "jetDZ";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetDZ, prefix = " << prefix << std::endl; 
-     OUT::jetDZ->clear(); 
- }; 
-
- void CopyjetFrac01InToOut( std::string prefix ) { 
-
-    std::string my_name = "jetFrac01";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetFrac01 = std::vector<float>(*IN::jetFrac01);
-}; 
-
- void CopyjetFrac01InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetFrac01";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetFrac01->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetFrac01" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetFrac01" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetFrac01->push_back( IN::jetFrac01->at(index) ); 
- }; 
-
- void ClearOutputjetFrac01( std::string  prefix ) { 
-
-    std::string my_name = "jetFrac01";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetFrac01, prefix = " << prefix << std::endl; 
-     OUT::jetFrac01->clear(); 
- }; 
-
- void CopyjetFrac02InToOut( std::string prefix ) { 
-
-    std::string my_name = "jetFrac02";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetFrac02 = std::vector<float>(*IN::jetFrac02);
-}; 
-
- void CopyjetFrac02InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetFrac02";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetFrac02->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetFrac02" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetFrac02" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetFrac02->push_back( IN::jetFrac02->at(index) ); 
- }; 
-
- void ClearOutputjetFrac02( std::string  prefix ) { 
-
-    std::string my_name = "jetFrac02";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetFrac02, prefix = " << prefix << std::endl; 
-     OUT::jetFrac02->clear(); 
- }; 
-
- void CopyjetFrac03InToOut( std::string prefix ) { 
-
-    std::string my_name = "jetFrac03";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetFrac03 = std::vector<float>(*IN::jetFrac03);
-}; 
-
- void CopyjetFrac03InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetFrac03";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetFrac03->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetFrac03" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetFrac03" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetFrac03->push_back( IN::jetFrac03->at(index) ); 
- }; 
-
- void ClearOutputjetFrac03( std::string  prefix ) { 
-
-    std::string my_name = "jetFrac03";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetFrac03, prefix = " << prefix << std::endl; 
-     OUT::jetFrac03->clear(); 
- }; 
-
- void CopyjetFrac04InToOut( std::string prefix ) { 
-
-    std::string my_name = "jetFrac04";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetFrac04 = std::vector<float>(*IN::jetFrac04);
-}; 
-
- void CopyjetFrac04InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetFrac04";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetFrac04->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetFrac04" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetFrac04" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetFrac04->push_back( IN::jetFrac04->at(index) ); 
- }; 
-
- void ClearOutputjetFrac04( std::string  prefix ) { 
-
-    std::string my_name = "jetFrac04";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetFrac04, prefix = " << prefix << std::endl; 
-     OUT::jetFrac04->clear(); 
- }; 
-
- void CopyjetFrac05InToOut( std::string prefix ) { 
-
-    std::string my_name = "jetFrac05";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetFrac05 = std::vector<float>(*IN::jetFrac05);
-}; 
-
- void CopyjetFrac05InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetFrac05";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetFrac05->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetFrac05" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetFrac05" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetFrac05->push_back( IN::jetFrac05->at(index) ); 
- }; 
-
- void ClearOutputjetFrac05( std::string  prefix ) { 
-
-    std::string my_name = "jetFrac05";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetFrac05, prefix = " << prefix << std::endl; 
-     OUT::jetFrac05->clear(); 
- }; 
-
- void CopyjetFrac06InToOut( std::string prefix ) { 
-
-    std::string my_name = "jetFrac06";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetFrac06 = std::vector<float>(*IN::jetFrac06);
-}; 
-
- void CopyjetFrac06InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetFrac06";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetFrac06->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetFrac06" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetFrac06" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetFrac06->push_back( IN::jetFrac06->at(index) ); 
- }; 
-
- void ClearOutputjetFrac06( std::string  prefix ) { 
-
-    std::string my_name = "jetFrac06";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetFrac06, prefix = " << prefix << std::endl; 
-     OUT::jetFrac06->clear(); 
- }; 
-
- void CopyjetFrac07InToOut( std::string prefix ) { 
-
-    std::string my_name = "jetFrac07";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetFrac07 = std::vector<float>(*IN::jetFrac07);
-}; 
-
- void CopyjetFrac07InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetFrac07";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetFrac07->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetFrac07" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetFrac07" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetFrac07->push_back( IN::jetFrac07->at(index) ); 
- }; 
-
- void ClearOutputjetFrac07( std::string  prefix ) { 
-
-    std::string my_name = "jetFrac07";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetFrac07, prefix = " << prefix << std::endl; 
-     OUT::jetFrac07->clear(); 
- }; 
-
- void CopyjetBetaInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetBeta";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetBeta = std::vector<float>(*IN::jetBeta);
-}; 
-
- void CopyjetBetaInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetBeta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetBeta->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetBeta" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetBeta" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetBeta->push_back( IN::jetBeta->at(index) ); 
- }; 
-
- void ClearOutputjetBeta( std::string  prefix ) { 
-
-    std::string my_name = "jetBeta";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetBeta, prefix = " << prefix << std::endl; 
-     OUT::jetBeta->clear(); 
- }; 
-
- void CopyjetBetaStarCMGInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetBetaStarCMG";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetBetaStarCMG = std::vector<float>(*IN::jetBetaStarCMG);
-}; 
-
- void CopyjetBetaStarCMGInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetBetaStarCMG";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetBetaStarCMG->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetBetaStarCMG" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetBetaStarCMG" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetBetaStarCMG->push_back( IN::jetBetaStarCMG->at(index) ); 
- }; 
-
- void ClearOutputjetBetaStarCMG( std::string  prefix ) { 
-
-    std::string my_name = "jetBetaStarCMG";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetBetaStarCMG, prefix = " << prefix << std::endl; 
-     OUT::jetBetaStarCMG->clear(); 
- }; 
-
- void CopyjetBetaStarClassicInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetBetaStarClassic";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetBetaStarClassic = std::vector<float>(*IN::jetBetaStarClassic);
-}; 
-
- void CopyjetBetaStarClassicInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetBetaStarClassic";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetBetaStarClassic->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetBetaStarClassic" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetBetaStarClassic" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetBetaStarClassic->push_back( IN::jetBetaStarClassic->at(index) ); 
- }; 
-
- void ClearOutputjetBetaStarClassic( std::string  prefix ) { 
-
-    std::string my_name = "jetBetaStarClassic";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetBetaStarClassic, prefix = " << prefix << std::endl; 
-     OUT::jetBetaStarClassic->clear(); 
  }; 
 
  void CopyjetNNeutralsInToOut( std::string prefix ) { 
@@ -19851,8 +12084,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNNeutrals";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetNNeutrals->size() ) {
@@ -19868,8 +12099,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNNeutrals";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetNNeutrals, prefix = " << prefix << std::endl; 
@@ -19889,8 +12118,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNCharged";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetNCharged->size() ) {
@@ -19906,240 +12133,10 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetNCharged";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetNCharged, prefix = " << prefix << std::endl; 
      OUT::jetNCharged->clear(); 
- }; 
-
- void CopyjetWPLevelsInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetWPLevels";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetWPLevels = std::vector<std::vector<int> >(*IN::jetWPLevels);
-}; 
-
- void CopyjetWPLevelsInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetWPLevels";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetWPLevels->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetWPLevels" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetWPLevels" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetWPLevels->push_back( IN::jetWPLevels->at(index) ); 
- }; 
-
- void ClearOutputjetWPLevels( std::string  prefix ) { 
-
-    std::string my_name = "jetWPLevels";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetWPLevels, prefix = " << prefix << std::endl; 
-     OUT::jetWPLevels->clear(); 
- }; 
-
- void CopyjetMVAsExt_cutBasedInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetMVAsExt_cutBased";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetMVAsExt_cutBased = std::vector<std::vector<float> >(*IN::jetMVAsExt_cutBased);
-}; 
-
- void CopyjetMVAsExt_cutBasedInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetMVAsExt_cutBased";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetMVAsExt_cutBased->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetMVAsExt_cutBased" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetMVAsExt_cutBased" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetMVAsExt_cutBased->push_back( IN::jetMVAsExt_cutBased->at(index) ); 
- }; 
-
- void ClearOutputjetMVAsExt_cutBased( std::string  prefix ) { 
-
-    std::string my_name = "jetMVAsExt_cutBased";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetMVAsExt_cutBased, prefix = " << prefix << std::endl; 
-     OUT::jetMVAsExt_cutBased->clear(); 
- }; 
-
- void CopyjetMVAsExt_philv1InToOut( std::string prefix ) { 
-
-    std::string my_name = "jetMVAsExt_philv1";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetMVAsExt_philv1 = std::vector<std::vector<float> >(*IN::jetMVAsExt_philv1);
-}; 
-
- void CopyjetMVAsExt_philv1InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetMVAsExt_philv1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetMVAsExt_philv1->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetMVAsExt_philv1" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetMVAsExt_philv1" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetMVAsExt_philv1->push_back( IN::jetMVAsExt_philv1->at(index) ); 
- }; 
-
- void ClearOutputjetMVAsExt_philv1( std::string  prefix ) { 
-
-    std::string my_name = "jetMVAsExt_philv1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetMVAsExt_philv1, prefix = " << prefix << std::endl; 
-     OUT::jetMVAsExt_philv1->clear(); 
- }; 
-
- void CopyjetWPLevelsExt_philv1InToOut( std::string prefix ) { 
-
-    std::string my_name = "jetWPLevelsExt_philv1";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetWPLevelsExt_philv1 = std::vector<std::vector<int> >(*IN::jetWPLevelsExt_philv1);
-}; 
-
- void CopyjetWPLevelsExt_philv1InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetWPLevelsExt_philv1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetWPLevelsExt_philv1->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetWPLevelsExt_philv1" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetWPLevelsExt_philv1" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetWPLevelsExt_philv1->push_back( IN::jetWPLevelsExt_philv1->at(index) ); 
- }; 
-
- void ClearOutputjetWPLevelsExt_philv1( std::string  prefix ) { 
-
-    std::string my_name = "jetWPLevelsExt_philv1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetWPLevelsExt_philv1, prefix = " << prefix << std::endl; 
-     OUT::jetWPLevelsExt_philv1->clear(); 
- }; 
-
- void CopyjetMtInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetMt";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetMt = std::vector<float>(*IN::jetMt);
-}; 
-
- void CopyjetMtInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetMt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetMt->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetMt" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetMt" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetMt->push_back( IN::jetMt->at(index) ); 
- }; 
-
- void ClearOutputjetMt( std::string  prefix ) { 
-
-    std::string my_name = "jetMt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetMt, prefix = " << prefix << std::endl; 
-     OUT::jetMt->clear(); 
- }; 
-
- void CopyjetJECUncInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetJECUnc";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetJECUnc = std::vector<float>(*IN::jetJECUnc);
-}; 
-
- void CopyjetJECUncInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetJECUnc";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetJECUnc->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetJECUnc" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetJECUnc" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetJECUnc->push_back( IN::jetJECUnc->at(index) ); 
- }; 
-
- void ClearOutputjetJECUnc( std::string  prefix ) { 
-
-    std::string my_name = "jetJECUnc";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetJECUnc, prefix = " << prefix << std::endl; 
-     OUT::jetJECUnc->clear(); 
  }; 
 
  void CopyjetLeadTrackPtInToOut( std::string prefix ) { 
@@ -20155,8 +12152,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetLeadTrackPt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetLeadTrackPt->size() ) {
@@ -20172,8 +12167,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetLeadTrackPt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetLeadTrackPt, prefix = " << prefix << std::endl; 
@@ -20193,8 +12186,6 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetVtxPt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     if( index >= IN::jetVtxPt->size() ) {
@@ -20210,469 +12201,20 @@ void CopynHLTInToOut( std::string prefix ) {
 
     std::string my_name = "jetVtxPt";
     std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
     //std::cout << "Clear varaible jetVtxPt, prefix = " << prefix << std::endl; 
      OUT::jetVtxPt->clear(); 
  }; 
 
- void CopyjetVtxMassInToOut( std::string prefix ) { 
+ void CopynLowPtJetInToOut( std::string prefix ) { 
 
-    std::string my_name = "jetVtxMass";
+    std::string my_name = "nLowPtJet";
     std::size_t pos = my_name.find( prefix ); 
     // if the filter is given only continue if its matched at the beginning 
     if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetVtxMass = std::vector<float>(*IN::jetVtxMass);
+  OUT::nLowPtJet = IN::nLowPtJet;
 }; 
-
- void CopyjetVtxMassInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetVtxMass";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetVtxMass->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetVtxMass" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetVtxMass" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetVtxMass->push_back( IN::jetVtxMass->at(index) ); 
- }; 
-
- void ClearOutputjetVtxMass( std::string  prefix ) { 
-
-    std::string my_name = "jetVtxMass";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetVtxMass, prefix = " << prefix << std::endl; 
-     OUT::jetVtxMass->clear(); 
- }; 
-
- void CopyjetVtx3dLInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetVtx3dL";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetVtx3dL = std::vector<float>(*IN::jetVtx3dL);
-}; 
-
- void CopyjetVtx3dLInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetVtx3dL";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetVtx3dL->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetVtx3dL" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetVtx3dL" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetVtx3dL->push_back( IN::jetVtx3dL->at(index) ); 
- }; 
-
- void ClearOutputjetVtx3dL( std::string  prefix ) { 
-
-    std::string my_name = "jetVtx3dL";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetVtx3dL, prefix = " << prefix << std::endl; 
-     OUT::jetVtx3dL->clear(); 
- }; 
-
- void CopyjetVtx3deLInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetVtx3deL";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetVtx3deL = std::vector<float>(*IN::jetVtx3deL);
-}; 
-
- void CopyjetVtx3deLInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetVtx3deL";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetVtx3deL->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetVtx3deL" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetVtx3deL" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetVtx3deL->push_back( IN::jetVtx3deL->at(index) ); 
- }; 
-
- void ClearOutputjetVtx3deL( std::string  prefix ) { 
-
-    std::string my_name = "jetVtx3deL";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetVtx3deL, prefix = " << prefix << std::endl; 
-     OUT::jetVtx3deL->clear(); 
- }; 
-
- void CopyjetSoftLeptPtInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetSoftLeptPt";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetSoftLeptPt = std::vector<float>(*IN::jetSoftLeptPt);
-}; 
-
- void CopyjetSoftLeptPtInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetSoftLeptPt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetSoftLeptPt->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetSoftLeptPt" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetSoftLeptPt" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetSoftLeptPt->push_back( IN::jetSoftLeptPt->at(index) ); 
- }; 
-
- void ClearOutputjetSoftLeptPt( std::string  prefix ) { 
-
-    std::string my_name = "jetSoftLeptPt";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetSoftLeptPt, prefix = " << prefix << std::endl; 
-     OUT::jetSoftLeptPt->clear(); 
- }; 
-
- void CopyjetSoftLeptPtRelInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetSoftLeptPtRel";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetSoftLeptPtRel = std::vector<float>(*IN::jetSoftLeptPtRel);
-}; 
-
- void CopyjetSoftLeptPtRelInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetSoftLeptPtRel";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetSoftLeptPtRel->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetSoftLeptPtRel" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetSoftLeptPtRel" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetSoftLeptPtRel->push_back( IN::jetSoftLeptPtRel->at(index) ); 
- }; 
-
- void ClearOutputjetSoftLeptPtRel( std::string  prefix ) { 
-
-    std::string my_name = "jetSoftLeptPtRel";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetSoftLeptPtRel, prefix = " << prefix << std::endl; 
-     OUT::jetSoftLeptPtRel->clear(); 
- }; 
-
- void CopyjetSoftLeptdRInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetSoftLeptdR";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetSoftLeptdR = std::vector<float>(*IN::jetSoftLeptdR);
-}; 
-
- void CopyjetSoftLeptdRInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetSoftLeptdR";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetSoftLeptdR->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetSoftLeptdR" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetSoftLeptdR" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetSoftLeptdR->push_back( IN::jetSoftLeptdR->at(index) ); 
- }; 
-
- void ClearOutputjetSoftLeptdR( std::string  prefix ) { 
-
-    std::string my_name = "jetSoftLeptdR";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetSoftLeptdR, prefix = " << prefix << std::endl; 
-     OUT::jetSoftLeptdR->clear(); 
- }; 
-
- void CopyjetSoftLeptIdlooseMuInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetSoftLeptIdlooseMu";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetSoftLeptIdlooseMu = std::vector<float>(*IN::jetSoftLeptIdlooseMu);
-}; 
-
- void CopyjetSoftLeptIdlooseMuInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetSoftLeptIdlooseMu";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetSoftLeptIdlooseMu->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetSoftLeptIdlooseMu" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetSoftLeptIdlooseMu" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetSoftLeptIdlooseMu->push_back( IN::jetSoftLeptIdlooseMu->at(index) ); 
- }; 
-
- void ClearOutputjetSoftLeptIdlooseMu( std::string  prefix ) { 
-
-    std::string my_name = "jetSoftLeptIdlooseMu";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetSoftLeptIdlooseMu, prefix = " << prefix << std::endl; 
-     OUT::jetSoftLeptIdlooseMu->clear(); 
- }; 
-
- void CopyjetSoftLeptIdEle95InToOut( std::string prefix ) { 
-
-    std::string my_name = "jetSoftLeptIdEle95";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetSoftLeptIdEle95 = std::vector<float>(*IN::jetSoftLeptIdEle95);
-}; 
-
- void CopyjetSoftLeptIdEle95InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetSoftLeptIdEle95";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetSoftLeptIdEle95->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetSoftLeptIdEle95" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetSoftLeptIdEle95" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetSoftLeptIdEle95->push_back( IN::jetSoftLeptIdEle95->at(index) ); 
- }; 
-
- void ClearOutputjetSoftLeptIdEle95( std::string  prefix ) { 
-
-    std::string my_name = "jetSoftLeptIdEle95";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetSoftLeptIdEle95, prefix = " << prefix << std::endl; 
-     OUT::jetSoftLeptIdEle95->clear(); 
- }; 
-
- void CopyjetDPhiMETJetInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetDPhiMETJet";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetDPhiMETJet = std::vector<float>(*IN::jetDPhiMETJet);
-}; 
-
- void CopyjetDPhiMETJetInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetDPhiMETJet";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetDPhiMETJet->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetDPhiMETJet" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetDPhiMETJet" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetDPhiMETJet->push_back( IN::jetDPhiMETJet->at(index) ); 
- }; 
-
- void ClearOutputjetDPhiMETJet( std::string  prefix ) { 
-
-    std::string my_name = "jetDPhiMETJet";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetDPhiMETJet, prefix = " << prefix << std::endl; 
-     OUT::jetDPhiMETJet->clear(); 
- }; 
-
- void CopyjetPuJetIdLInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetPuJetIdL";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetPuJetIdL = std::vector<float>(*IN::jetPuJetIdL);
-}; 
-
- void CopyjetPuJetIdLInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetPuJetIdL";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetPuJetIdL->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetPuJetIdL" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetPuJetIdL" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetPuJetIdL->push_back( IN::jetPuJetIdL->at(index) ); 
- }; 
-
- void ClearOutputjetPuJetIdL( std::string  prefix ) { 
-
-    std::string my_name = "jetPuJetIdL";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetPuJetIdL, prefix = " << prefix << std::endl; 
-     OUT::jetPuJetIdL->clear(); 
- }; 
-
- void CopyjetPuJetIdMInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetPuJetIdM";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetPuJetIdM = std::vector<float>(*IN::jetPuJetIdM);
-}; 
-
- void CopyjetPuJetIdMInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetPuJetIdM";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetPuJetIdM->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetPuJetIdM" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetPuJetIdM" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetPuJetIdM->push_back( IN::jetPuJetIdM->at(index) ); 
- }; 
-
- void ClearOutputjetPuJetIdM( std::string  prefix ) { 
-
-    std::string my_name = "jetPuJetIdM";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetPuJetIdM, prefix = " << prefix << std::endl; 
-     OUT::jetPuJetIdM->clear(); 
- }; 
-
- void CopyjetPuJetIdTInToOut( std::string prefix ) { 
-
-    std::string my_name = "jetPuJetIdT";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::jetPuJetIdT = std::vector<float>(*IN::jetPuJetIdT);
-}; 
-
- void CopyjetPuJetIdTInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "jetPuJetIdT";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::jetPuJetIdT->size() ) {
-         std::cout << "Vector size exceeded for branch IN::jetPuJetIdT" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible jetPuJetIdT" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::jetPuJetIdT->push_back( IN::jetPuJetIdT->at(index) ); 
- }; 
-
- void ClearOutputjetPuJetIdT( std::string  prefix ) { 
-
-    std::string my_name = "jetPuJetIdT";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible jetPuJetIdT, prefix = " << prefix << std::endl; 
-     OUT::jetPuJetIdT->clear(); 
- }; 
 
  void CopynConvInToOut( std::string prefix ) { 
 
@@ -20682,1791 +12224,5 @@ void CopynHLTInToOut( std::string prefix ) {
     if( prefix != "" &&  pos != 0 ) return; 
   OUT::nConv = IN::nConv;
 }; 
-
- void CopyconvP4_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "convP4_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convP4_x = std::vector<float>(*IN::convP4_x);
-}; 
-
- void CopyconvP4_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convP4_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convP4_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convP4_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convP4_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convP4_x->push_back( IN::convP4_x->at(index) ); 
- }; 
-
- void ClearOutputconvP4_x( std::string  prefix ) { 
-
-    std::string my_name = "convP4_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convP4_x, prefix = " << prefix << std::endl; 
-     OUT::convP4_x->clear(); 
- }; 
-
- void CopyconvP4_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "convP4_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convP4_y = std::vector<float>(*IN::convP4_y);
-}; 
-
- void CopyconvP4_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convP4_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convP4_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convP4_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convP4_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convP4_y->push_back( IN::convP4_y->at(index) ); 
- }; 
-
- void ClearOutputconvP4_y( std::string  prefix ) { 
-
-    std::string my_name = "convP4_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convP4_y, prefix = " << prefix << std::endl; 
-     OUT::convP4_y->clear(); 
- }; 
-
- void CopyconvP4_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "convP4_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convP4_z = std::vector<float>(*IN::convP4_z);
-}; 
-
- void CopyconvP4_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convP4_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convP4_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convP4_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convP4_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convP4_z->push_back( IN::convP4_z->at(index) ); 
- }; 
-
- void ClearOutputconvP4_z( std::string  prefix ) { 
-
-    std::string my_name = "convP4_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convP4_z, prefix = " << prefix << std::endl; 
-     OUT::convP4_z->clear(); 
- }; 
-
- void CopyconvP4_EInToOut( std::string prefix ) { 
-
-    std::string my_name = "convP4_E";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convP4_E = std::vector<float>(*IN::convP4_E);
-}; 
-
- void CopyconvP4_EInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convP4_E";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convP4_E->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convP4_E" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convP4_E" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convP4_E->push_back( IN::convP4_E->at(index) ); 
- }; 
-
- void ClearOutputconvP4_E( std::string  prefix ) { 
-
-    std::string my_name = "convP4_E";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convP4_E, prefix = " << prefix << std::endl; 
-     OUT::convP4_E->clear(); 
- }; 
-
- void CopyconvVtx_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "convVtx_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convVtx_x = std::vector<float>(*IN::convVtx_x);
-}; 
-
- void CopyconvVtx_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convVtx_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convVtx_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convVtx_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convVtx_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convVtx_x->push_back( IN::convVtx_x->at(index) ); 
- }; 
-
- void ClearOutputconvVtx_x( std::string  prefix ) { 
-
-    std::string my_name = "convVtx_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convVtx_x, prefix = " << prefix << std::endl; 
-     OUT::convVtx_x->clear(); 
- }; 
-
- void CopyconvVtx_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "convVtx_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convVtx_y = std::vector<float>(*IN::convVtx_y);
-}; 
-
- void CopyconvVtx_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convVtx_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convVtx_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convVtx_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convVtx_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convVtx_y->push_back( IN::convVtx_y->at(index) ); 
- }; 
-
- void ClearOutputconvVtx_y( std::string  prefix ) { 
-
-    std::string my_name = "convVtx_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convVtx_y, prefix = " << prefix << std::endl; 
-     OUT::convVtx_y->clear(); 
- }; 
-
- void CopyconvVtx_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "convVtx_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convVtx_z = std::vector<float>(*IN::convVtx_z);
-}; 
-
- void CopyconvVtx_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convVtx_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convVtx_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convVtx_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convVtx_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convVtx_z->push_back( IN::convVtx_z->at(index) ); 
- }; 
-
- void ClearOutputconvVtx_z( std::string  prefix ) { 
-
-    std::string my_name = "convVtx_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convVtx_z, prefix = " << prefix << std::endl; 
-     OUT::convVtx_z->clear(); 
- }; 
-
- void CopyconvVtxErr_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "convVtxErr_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convVtxErr_x = std::vector<float>(*IN::convVtxErr_x);
-}; 
-
- void CopyconvVtxErr_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convVtxErr_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convVtxErr_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convVtxErr_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convVtxErr_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convVtxErr_x->push_back( IN::convVtxErr_x->at(index) ); 
- }; 
-
- void ClearOutputconvVtxErr_x( std::string  prefix ) { 
-
-    std::string my_name = "convVtxErr_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convVtxErr_x, prefix = " << prefix << std::endl; 
-     OUT::convVtxErr_x->clear(); 
- }; 
-
- void CopyconvVtxErr_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "convVtxErr_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convVtxErr_y = std::vector<float>(*IN::convVtxErr_y);
-}; 
-
- void CopyconvVtxErr_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convVtxErr_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convVtxErr_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convVtxErr_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convVtxErr_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convVtxErr_y->push_back( IN::convVtxErr_y->at(index) ); 
- }; 
-
- void ClearOutputconvVtxErr_y( std::string  prefix ) { 
-
-    std::string my_name = "convVtxErr_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convVtxErr_y, prefix = " << prefix << std::endl; 
-     OUT::convVtxErr_y->clear(); 
- }; 
-
- void CopyconvVtxErr_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "convVtxErr_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convVtxErr_z = std::vector<float>(*IN::convVtxErr_z);
-}; 
-
- void CopyconvVtxErr_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convVtxErr_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convVtxErr_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convVtxErr_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convVtxErr_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convVtxErr_z->push_back( IN::convVtxErr_z->at(index) ); 
- }; 
-
- void ClearOutputconvVtxErr_z( std::string  prefix ) { 
-
-    std::string my_name = "convVtxErr_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convVtxErr_z, prefix = " << prefix << std::endl; 
-     OUT::convVtxErr_z->clear(); 
- }; 
-
- void CopyconvPairMomentum_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "convPairMomentum_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convPairMomentum_x = std::vector<float>(*IN::convPairMomentum_x);
-}; 
-
- void CopyconvPairMomentum_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convPairMomentum_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convPairMomentum_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convPairMomentum_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convPairMomentum_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convPairMomentum_x->push_back( IN::convPairMomentum_x->at(index) ); 
- }; 
-
- void ClearOutputconvPairMomentum_x( std::string  prefix ) { 
-
-    std::string my_name = "convPairMomentum_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convPairMomentum_x, prefix = " << prefix << std::endl; 
-     OUT::convPairMomentum_x->clear(); 
- }; 
-
- void CopyconvPairMomentum_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "convPairMomentum_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convPairMomentum_y = std::vector<float>(*IN::convPairMomentum_y);
-}; 
-
- void CopyconvPairMomentum_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convPairMomentum_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convPairMomentum_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convPairMomentum_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convPairMomentum_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convPairMomentum_y->push_back( IN::convPairMomentum_y->at(index) ); 
- }; 
-
- void ClearOutputconvPairMomentum_y( std::string  prefix ) { 
-
-    std::string my_name = "convPairMomentum_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convPairMomentum_y, prefix = " << prefix << std::endl; 
-     OUT::convPairMomentum_y->clear(); 
- }; 
-
- void CopyconvPairMomentum_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "convPairMomentum_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convPairMomentum_z = std::vector<float>(*IN::convPairMomentum_z);
-}; 
-
- void CopyconvPairMomentum_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convPairMomentum_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convPairMomentum_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convPairMomentum_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convPairMomentum_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convPairMomentum_z->push_back( IN::convPairMomentum_z->at(index) ); 
- }; 
-
- void ClearOutputconvPairMomentum_z( std::string  prefix ) { 
-
-    std::string my_name = "convPairMomentum_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convPairMomentum_z, prefix = " << prefix << std::endl; 
-     OUT::convPairMomentum_z->clear(); 
- }; 
-
- void CopyconvRefittedMomentum_xInToOut( std::string prefix ) { 
-
-    std::string my_name = "convRefittedMomentum_x";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convRefittedMomentum_x = std::vector<float>(*IN::convRefittedMomentum_x);
-}; 
-
- void CopyconvRefittedMomentum_xInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convRefittedMomentum_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convRefittedMomentum_x->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convRefittedMomentum_x" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convRefittedMomentum_x" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convRefittedMomentum_x->push_back( IN::convRefittedMomentum_x->at(index) ); 
- }; 
-
- void ClearOutputconvRefittedMomentum_x( std::string  prefix ) { 
-
-    std::string my_name = "convRefittedMomentum_x";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convRefittedMomentum_x, prefix = " << prefix << std::endl; 
-     OUT::convRefittedMomentum_x->clear(); 
- }; 
-
- void CopyconvRefittedMomentum_yInToOut( std::string prefix ) { 
-
-    std::string my_name = "convRefittedMomentum_y";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convRefittedMomentum_y = std::vector<float>(*IN::convRefittedMomentum_y);
-}; 
-
- void CopyconvRefittedMomentum_yInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convRefittedMomentum_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convRefittedMomentum_y->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convRefittedMomentum_y" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convRefittedMomentum_y" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convRefittedMomentum_y->push_back( IN::convRefittedMomentum_y->at(index) ); 
- }; 
-
- void ClearOutputconvRefittedMomentum_y( std::string  prefix ) { 
-
-    std::string my_name = "convRefittedMomentum_y";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convRefittedMomentum_y, prefix = " << prefix << std::endl; 
-     OUT::convRefittedMomentum_y->clear(); 
- }; 
-
- void CopyconvRefittedMomentum_zInToOut( std::string prefix ) { 
-
-    std::string my_name = "convRefittedMomentum_z";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convRefittedMomentum_z = std::vector<float>(*IN::convRefittedMomentum_z);
-}; 
-
- void CopyconvRefittedMomentum_zInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convRefittedMomentum_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convRefittedMomentum_z->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convRefittedMomentum_z" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convRefittedMomentum_z" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convRefittedMomentum_z->push_back( IN::convRefittedMomentum_z->at(index) ); 
- }; 
-
- void ClearOutputconvRefittedMomentum_z( std::string  prefix ) { 
-
-    std::string my_name = "convRefittedMomentum_z";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convRefittedMomentum_z, prefix = " << prefix << std::endl; 
-     OUT::convRefittedMomentum_z->clear(); 
- }; 
-
- void CopyconvNTracksInToOut( std::string prefix ) { 
-
-    std::string my_name = "convNTracks";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convNTracks = std::vector<int>(*IN::convNTracks);
-}; 
-
- void CopyconvNTracksInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convNTracks";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convNTracks->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convNTracks" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convNTracks" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convNTracks->push_back( IN::convNTracks->at(index) ); 
- }; 
-
- void ClearOutputconvNTracks( std::string  prefix ) { 
-
-    std::string my_name = "convNTracks";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convNTracks, prefix = " << prefix << std::endl; 
-     OUT::convNTracks->clear(); 
- }; 
-
- void CopyconvPairInvMassInToOut( std::string prefix ) { 
-
-    std::string my_name = "convPairInvMass";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convPairInvMass = std::vector<float>(*IN::convPairInvMass);
-}; 
-
- void CopyconvPairInvMassInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convPairInvMass";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convPairInvMass->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convPairInvMass" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convPairInvMass" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convPairInvMass->push_back( IN::convPairInvMass->at(index) ); 
- }; 
-
- void ClearOutputconvPairInvMass( std::string  prefix ) { 
-
-    std::string my_name = "convPairInvMass";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convPairInvMass, prefix = " << prefix << std::endl; 
-     OUT::convPairInvMass->clear(); 
- }; 
-
- void CopyconvPairCotThetaSepInToOut( std::string prefix ) { 
-
-    std::string my_name = "convPairCotThetaSep";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convPairCotThetaSep = std::vector<float>(*IN::convPairCotThetaSep);
-}; 
-
- void CopyconvPairCotThetaSepInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convPairCotThetaSep";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convPairCotThetaSep->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convPairCotThetaSep" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convPairCotThetaSep" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convPairCotThetaSep->push_back( IN::convPairCotThetaSep->at(index) ); 
- }; 
-
- void ClearOutputconvPairCotThetaSep( std::string  prefix ) { 
-
-    std::string my_name = "convPairCotThetaSep";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convPairCotThetaSep, prefix = " << prefix << std::endl; 
-     OUT::convPairCotThetaSep->clear(); 
- }; 
-
- void CopyconvEoverPInToOut( std::string prefix ) { 
-
-    std::string my_name = "convEoverP";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convEoverP = std::vector<float>(*IN::convEoverP);
-}; 
-
- void CopyconvEoverPInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convEoverP";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convEoverP->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convEoverP" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convEoverP" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convEoverP->push_back( IN::convEoverP->at(index) ); 
- }; 
-
- void ClearOutputconvEoverP( std::string  prefix ) { 
-
-    std::string my_name = "convEoverP";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convEoverP, prefix = " << prefix << std::endl; 
-     OUT::convEoverP->clear(); 
- }; 
-
- void CopyconvDistOfMinApproachInToOut( std::string prefix ) { 
-
-    std::string my_name = "convDistOfMinApproach";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convDistOfMinApproach = std::vector<float>(*IN::convDistOfMinApproach);
-}; 
-
- void CopyconvDistOfMinApproachInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convDistOfMinApproach";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convDistOfMinApproach->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convDistOfMinApproach" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convDistOfMinApproach" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convDistOfMinApproach->push_back( IN::convDistOfMinApproach->at(index) ); 
- }; 
-
- void ClearOutputconvDistOfMinApproach( std::string  prefix ) { 
-
-    std::string my_name = "convDistOfMinApproach";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convDistOfMinApproach, prefix = " << prefix << std::endl; 
-     OUT::convDistOfMinApproach->clear(); 
- }; 
-
- void CopyconvDPhiTrksAtVtxInToOut( std::string prefix ) { 
-
-    std::string my_name = "convDPhiTrksAtVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convDPhiTrksAtVtx = std::vector<float>(*IN::convDPhiTrksAtVtx);
-}; 
-
- void CopyconvDPhiTrksAtVtxInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convDPhiTrksAtVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convDPhiTrksAtVtx->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convDPhiTrksAtVtx" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convDPhiTrksAtVtx" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convDPhiTrksAtVtx->push_back( IN::convDPhiTrksAtVtx->at(index) ); 
- }; 
-
- void ClearOutputconvDPhiTrksAtVtx( std::string  prefix ) { 
-
-    std::string my_name = "convDPhiTrksAtVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convDPhiTrksAtVtx, prefix = " << prefix << std::endl; 
-     OUT::convDPhiTrksAtVtx->clear(); 
- }; 
-
- void CopyconvDPhiTrksAtEcalInToOut( std::string prefix ) { 
-
-    std::string my_name = "convDPhiTrksAtEcal";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convDPhiTrksAtEcal = std::vector<float>(*IN::convDPhiTrksAtEcal);
-}; 
-
- void CopyconvDPhiTrksAtEcalInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convDPhiTrksAtEcal";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convDPhiTrksAtEcal->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convDPhiTrksAtEcal" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convDPhiTrksAtEcal" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convDPhiTrksAtEcal->push_back( IN::convDPhiTrksAtEcal->at(index) ); 
- }; 
-
- void ClearOutputconvDPhiTrksAtEcal( std::string  prefix ) { 
-
-    std::string my_name = "convDPhiTrksAtEcal";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convDPhiTrksAtEcal, prefix = " << prefix << std::endl; 
-     OUT::convDPhiTrksAtEcal->clear(); 
- }; 
-
- void CopyconvDEtaTrksAtEcalInToOut( std::string prefix ) { 
-
-    std::string my_name = "convDEtaTrksAtEcal";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convDEtaTrksAtEcal = std::vector<float>(*IN::convDEtaTrksAtEcal);
-}; 
-
- void CopyconvDEtaTrksAtEcalInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convDEtaTrksAtEcal";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convDEtaTrksAtEcal->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convDEtaTrksAtEcal" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convDEtaTrksAtEcal" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convDEtaTrksAtEcal->push_back( IN::convDEtaTrksAtEcal->at(index) ); 
- }; 
-
- void ClearOutputconvDEtaTrksAtEcal( std::string  prefix ) { 
-
-    std::string my_name = "convDEtaTrksAtEcal";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convDEtaTrksAtEcal, prefix = " << prefix << std::endl; 
-     OUT::convDEtaTrksAtEcal->clear(); 
- }; 
-
- void CopyconvDxyInToOut( std::string prefix ) { 
-
-    std::string my_name = "convDxy";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convDxy = std::vector<float>(*IN::convDxy);
-}; 
-
- void CopyconvDxyInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convDxy";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convDxy->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convDxy" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convDxy" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convDxy->push_back( IN::convDxy->at(index) ); 
- }; 
-
- void ClearOutputconvDxy( std::string  prefix ) { 
-
-    std::string my_name = "convDxy";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convDxy, prefix = " << prefix << std::endl; 
-     OUT::convDxy->clear(); 
- }; 
-
- void CopyconvDzInToOut( std::string prefix ) { 
-
-    std::string my_name = "convDz";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convDz = std::vector<float>(*IN::convDz);
-}; 
-
- void CopyconvDzInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convDz";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convDz->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convDz" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convDz" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convDz->push_back( IN::convDz->at(index) ); 
- }; 
-
- void ClearOutputconvDz( std::string  prefix ) { 
-
-    std::string my_name = "convDz";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convDz, prefix = " << prefix << std::endl; 
-     OUT::convDz->clear(); 
- }; 
-
- void CopyconvLxyInToOut( std::string prefix ) { 
-
-    std::string my_name = "convLxy";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convLxy = std::vector<float>(*IN::convLxy);
-}; 
-
- void CopyconvLxyInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convLxy";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convLxy->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convLxy" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convLxy" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convLxy->push_back( IN::convLxy->at(index) ); 
- }; 
-
- void ClearOutputconvLxy( std::string  prefix ) { 
-
-    std::string my_name = "convLxy";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convLxy, prefix = " << prefix << std::endl; 
-     OUT::convLxy->clear(); 
- }; 
-
- void CopyconvLzInToOut( std::string prefix ) { 
-
-    std::string my_name = "convLz";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convLz = std::vector<float>(*IN::convLz);
-}; 
-
- void CopyconvLzInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convLz";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convLz->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convLz" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convLz" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convLz->push_back( IN::convLz->at(index) ); 
- }; 
-
- void ClearOutputconvLz( std::string  prefix ) { 
-
-    std::string my_name = "convLz";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convLz, prefix = " << prefix << std::endl; 
-     OUT::convLz->clear(); 
- }; 
-
- void CopyconvZofPrimVtxFromTrksInToOut( std::string prefix ) { 
-
-    std::string my_name = "convZofPrimVtxFromTrks";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convZofPrimVtxFromTrks = std::vector<float>(*IN::convZofPrimVtxFromTrks);
-}; 
-
- void CopyconvZofPrimVtxFromTrksInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convZofPrimVtxFromTrks";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convZofPrimVtxFromTrks->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convZofPrimVtxFromTrks" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convZofPrimVtxFromTrks" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convZofPrimVtxFromTrks->push_back( IN::convZofPrimVtxFromTrks->at(index) ); 
- }; 
-
- void ClearOutputconvZofPrimVtxFromTrks( std::string  prefix ) { 
-
-    std::string my_name = "convZofPrimVtxFromTrks";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convZofPrimVtxFromTrks, prefix = " << prefix << std::endl; 
-     OUT::convZofPrimVtxFromTrks->clear(); 
- }; 
-
- void CopyconvNHitsBeforeVtx_0InToOut( std::string prefix ) { 
-
-    std::string my_name = "convNHitsBeforeVtx_0";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convNHitsBeforeVtx_0 = std::vector<int>(*IN::convNHitsBeforeVtx_0);
-}; 
-
- void CopyconvNHitsBeforeVtx_0InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convNHitsBeforeVtx_0";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convNHitsBeforeVtx_0->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convNHitsBeforeVtx_0" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convNHitsBeforeVtx_0" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convNHitsBeforeVtx_0->push_back( IN::convNHitsBeforeVtx_0->at(index) ); 
- }; 
-
- void ClearOutputconvNHitsBeforeVtx_0( std::string  prefix ) { 
-
-    std::string my_name = "convNHitsBeforeVtx_0";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convNHitsBeforeVtx_0, prefix = " << prefix << std::endl; 
-     OUT::convNHitsBeforeVtx_0->clear(); 
- }; 
-
- void CopyconvNHitsBeforeVtx_1InToOut( std::string prefix ) { 
-
-    std::string my_name = "convNHitsBeforeVtx_1";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convNHitsBeforeVtx_1 = std::vector<int>(*IN::convNHitsBeforeVtx_1);
-}; 
-
- void CopyconvNHitsBeforeVtx_1InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convNHitsBeforeVtx_1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convNHitsBeforeVtx_1->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convNHitsBeforeVtx_1" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convNHitsBeforeVtx_1" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convNHitsBeforeVtx_1->push_back( IN::convNHitsBeforeVtx_1->at(index) ); 
- }; 
-
- void ClearOutputconvNHitsBeforeVtx_1( std::string  prefix ) { 
-
-    std::string my_name = "convNHitsBeforeVtx_1";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convNHitsBeforeVtx_1, prefix = " << prefix << std::endl; 
-     OUT::convNHitsBeforeVtx_1->clear(); 
- }; 
-
- void CopyconvNSharedHitsInToOut( std::string prefix ) { 
-
-    std::string my_name = "convNSharedHits";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convNSharedHits = std::vector<int>(*IN::convNSharedHits);
-}; 
-
- void CopyconvNSharedHitsInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convNSharedHits";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convNSharedHits->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convNSharedHits" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convNSharedHits" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convNSharedHits->push_back( IN::convNSharedHits->at(index) ); 
- }; 
-
- void ClearOutputconvNSharedHits( std::string  prefix ) { 
-
-    std::string my_name = "convNSharedHits";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convNSharedHits, prefix = " << prefix << std::endl; 
-     OUT::convNSharedHits->clear(); 
- }; 
-
- void CopyconvValidVtxInToOut( std::string prefix ) { 
-
-    std::string my_name = "convValidVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convValidVtx = std::vector<int>(*IN::convValidVtx);
-}; 
-
- void CopyconvValidVtxInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convValidVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convValidVtx->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convValidVtx" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convValidVtx" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convValidVtx->push_back( IN::convValidVtx->at(index) ); 
- }; 
-
- void ClearOutputconvValidVtx( std::string  prefix ) { 
-
-    std::string my_name = "convValidVtx";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convValidVtx, prefix = " << prefix << std::endl; 
-     OUT::convValidVtx->clear(); 
- }; 
-
- void CopyconvMVALikelihoodInToOut( std::string prefix ) { 
-
-    std::string my_name = "convMVALikelihood";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convMVALikelihood = std::vector<float>(*IN::convMVALikelihood);
-}; 
-
- void CopyconvMVALikelihoodInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convMVALikelihood";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convMVALikelihood->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convMVALikelihood" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convMVALikelihood" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convMVALikelihood->push_back( IN::convMVALikelihood->at(index) ); 
- }; 
-
- void ClearOutputconvMVALikelihood( std::string  prefix ) { 
-
-    std::string my_name = "convMVALikelihood";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convMVALikelihood, prefix = " << prefix << std::endl; 
-     OUT::convMVALikelihood->clear(); 
- }; 
-
- void CopyconvChi2InToOut( std::string prefix ) { 
-
-    std::string my_name = "convChi2";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convChi2 = std::vector<float>(*IN::convChi2);
-}; 
-
- void CopyconvChi2InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convChi2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convChi2->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convChi2" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convChi2" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convChi2->push_back( IN::convChi2->at(index) ); 
- }; 
-
- void ClearOutputconvChi2( std::string  prefix ) { 
-
-    std::string my_name = "convChi2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convChi2, prefix = " << prefix << std::endl; 
-     OUT::convChi2->clear(); 
- }; 
-
- void CopyconvChi2ProbabilityInToOut( std::string prefix ) { 
-
-    std::string my_name = "convChi2Probability";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convChi2Probability = std::vector<float>(*IN::convChi2Probability);
-}; 
-
- void CopyconvChi2ProbabilityInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convChi2Probability";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convChi2Probability->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convChi2Probability" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convChi2Probability" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convChi2Probability->push_back( IN::convChi2Probability->at(index) ); 
- }; 
-
- void ClearOutputconvChi2Probability( std::string  prefix ) { 
-
-    std::string my_name = "convChi2Probability";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convChi2Probability, prefix = " << prefix << std::endl; 
-     OUT::convChi2Probability->clear(); 
- }; 
-
- void CopyconvTk1DzInToOut( std::string prefix ) { 
-
-    std::string my_name = "convTk1Dz";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convTk1Dz = std::vector<float>(*IN::convTk1Dz);
-}; 
-
- void CopyconvTk1DzInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convTk1Dz";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convTk1Dz->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convTk1Dz" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convTk1Dz" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convTk1Dz->push_back( IN::convTk1Dz->at(index) ); 
- }; 
-
- void ClearOutputconvTk1Dz( std::string  prefix ) { 
-
-    std::string my_name = "convTk1Dz";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convTk1Dz, prefix = " << prefix << std::endl; 
-     OUT::convTk1Dz->clear(); 
- }; 
-
- void CopyconvTk2DzInToOut( std::string prefix ) { 
-
-    std::string my_name = "convTk2Dz";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convTk2Dz = std::vector<float>(*IN::convTk2Dz);
-}; 
-
- void CopyconvTk2DzInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convTk2Dz";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convTk2Dz->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convTk2Dz" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convTk2Dz" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convTk2Dz->push_back( IN::convTk2Dz->at(index) ); 
- }; 
-
- void ClearOutputconvTk2Dz( std::string  prefix ) { 
-
-    std::string my_name = "convTk2Dz";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convTk2Dz, prefix = " << prefix << std::endl; 
-     OUT::convTk2Dz->clear(); 
- }; 
-
- void CopyconvTk1DzErrInToOut( std::string prefix ) { 
-
-    std::string my_name = "convTk1DzErr";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convTk1DzErr = std::vector<float>(*IN::convTk1DzErr);
-}; 
-
- void CopyconvTk1DzErrInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convTk1DzErr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convTk1DzErr->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convTk1DzErr" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convTk1DzErr" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convTk1DzErr->push_back( IN::convTk1DzErr->at(index) ); 
- }; 
-
- void ClearOutputconvTk1DzErr( std::string  prefix ) { 
-
-    std::string my_name = "convTk1DzErr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convTk1DzErr, prefix = " << prefix << std::endl; 
-     OUT::convTk1DzErr->clear(); 
- }; 
-
- void CopyconvTk2DzErrInToOut( std::string prefix ) { 
-
-    std::string my_name = "convTk2DzErr";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convTk2DzErr = std::vector<float>(*IN::convTk2DzErr);
-}; 
-
- void CopyconvTk2DzErrInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convTk2DzErr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convTk2DzErr->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convTk2DzErr" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convTk2DzErr" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convTk2DzErr->push_back( IN::convTk2DzErr->at(index) ); 
- }; 
-
- void ClearOutputconvTk2DzErr( std::string  prefix ) { 
-
-    std::string my_name = "convTk2DzErr";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convTk2DzErr, prefix = " << prefix << std::endl; 
-     OUT::convTk2DzErr->clear(); 
- }; 
-
- void CopyconvCh1Ch2InToOut( std::string prefix ) { 
-
-    std::string my_name = "convCh1Ch2";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convCh1Ch2 = std::vector<int>(*IN::convCh1Ch2);
-}; 
-
- void CopyconvCh1Ch2InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convCh1Ch2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convCh1Ch2->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convCh1Ch2" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convCh1Ch2" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convCh1Ch2->push_back( IN::convCh1Ch2->at(index) ); 
- }; 
-
- void ClearOutputconvCh1Ch2( std::string  prefix ) { 
-
-    std::string my_name = "convCh1Ch2";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convCh1Ch2, prefix = " << prefix << std::endl; 
-     OUT::convCh1Ch2->clear(); 
- }; 
-
- void CopyconvTk1D0InToOut( std::string prefix ) { 
-
-    std::string my_name = "convTk1D0";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convTk1D0 = std::vector<float>(*IN::convTk1D0);
-}; 
-
- void CopyconvTk1D0InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convTk1D0";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convTk1D0->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convTk1D0" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convTk1D0" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convTk1D0->push_back( IN::convTk1D0->at(index) ); 
- }; 
-
- void ClearOutputconvTk1D0( std::string  prefix ) { 
-
-    std::string my_name = "convTk1D0";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convTk1D0, prefix = " << prefix << std::endl; 
-     OUT::convTk1D0->clear(); 
- }; 
-
- void CopyconvTk1PoutInToOut( std::string prefix ) { 
-
-    std::string my_name = "convTk1Pout";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convTk1Pout = std::vector<float>(*IN::convTk1Pout);
-}; 
-
- void CopyconvTk1PoutInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convTk1Pout";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convTk1Pout->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convTk1Pout" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convTk1Pout" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convTk1Pout->push_back( IN::convTk1Pout->at(index) ); 
- }; 
-
- void ClearOutputconvTk1Pout( std::string  prefix ) { 
-
-    std::string my_name = "convTk1Pout";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convTk1Pout, prefix = " << prefix << std::endl; 
-     OUT::convTk1Pout->clear(); 
- }; 
-
- void CopyconvTk1PinInToOut( std::string prefix ) { 
-
-    std::string my_name = "convTk1Pin";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convTk1Pin = std::vector<float>(*IN::convTk1Pin);
-}; 
-
- void CopyconvTk1PinInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convTk1Pin";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convTk1Pin->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convTk1Pin" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convTk1Pin" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convTk1Pin->push_back( IN::convTk1Pin->at(index) ); 
- }; 
-
- void ClearOutputconvTk1Pin( std::string  prefix ) { 
-
-    std::string my_name = "convTk1Pin";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convTk1Pin, prefix = " << prefix << std::endl; 
-     OUT::convTk1Pin->clear(); 
- }; 
-
- void CopyconvTk2D0InToOut( std::string prefix ) { 
-
-    std::string my_name = "convTk2D0";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convTk2D0 = std::vector<float>(*IN::convTk2D0);
-}; 
-
- void CopyconvTk2D0InToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convTk2D0";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convTk2D0->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convTk2D0" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convTk2D0" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convTk2D0->push_back( IN::convTk2D0->at(index) ); 
- }; 
-
- void ClearOutputconvTk2D0( std::string  prefix ) { 
-
-    std::string my_name = "convTk2D0";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convTk2D0, prefix = " << prefix << std::endl; 
-     OUT::convTk2D0->clear(); 
- }; 
-
- void CopyconvTk2PoutInToOut( std::string prefix ) { 
-
-    std::string my_name = "convTk2Pout";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convTk2Pout = std::vector<float>(*IN::convTk2Pout);
-}; 
-
- void CopyconvTk2PoutInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convTk2Pout";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convTk2Pout->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convTk2Pout" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convTk2Pout" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convTk2Pout->push_back( IN::convTk2Pout->at(index) ); 
- }; 
-
- void ClearOutputconvTk2Pout( std::string  prefix ) { 
-
-    std::string my_name = "convTk2Pout";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convTk2Pout, prefix = " << prefix << std::endl; 
-     OUT::convTk2Pout->clear(); 
- }; 
-
- void CopyconvTk2PinInToOut( std::string prefix ) { 
-
-    std::string my_name = "convTk2Pin";
-    std::size_t pos = my_name.find( prefix ); 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-  *OUT::convTk2Pin = std::vector<float>(*IN::convTk2Pin);
-}; 
-
- void CopyconvTk2PinInToOutIndex( unsigned index, std::string  prefix ) { 
-
-    std::string my_name = "convTk2Pin";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    if( index >= IN::convTk2Pin->size() ) {
-         std::cout << "Vector size exceeded for branch IN::convTk2Pin" << std::endl;
-         return; 
-     }; 
-
-     //std::cout << "Copy varaible convTk2Pin" << " at index " << index << ", prefix = " << prefix << std::endl; 
-     OUT::convTk2Pin->push_back( IN::convTk2Pin->at(index) ); 
- }; 
-
- void ClearOutputconvTk2Pin( std::string  prefix ) { 
-
-    std::string my_name = "convTk2Pin";
-    std::size_t pos = my_name.find( prefix ); 
-    std::size_t pos2 = my_name.find( "ph_sl" ); 
-    if( pos2 != std::string::npos ) return; 
-    // if the filter is given only continue if its matched at the beginning 
-    if( prefix != "" &&  pos != 0 ) return; 
-    //std::cout << "Clear varaible convTk2Pin, prefix = " << prefix << std::endl; 
-     OUT::convTk2Pin->clear(); 
- }; 
 
  

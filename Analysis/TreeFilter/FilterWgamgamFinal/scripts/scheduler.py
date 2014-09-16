@@ -1,15 +1,15 @@
 import os
-base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoEleVetoSCRVars_2014_04_30'
-#base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoTrig_2014_06_11'
+#base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoEleVetoSCRVars_2014_04_30'
+base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputDYNoTrig_2014_07_29'
 jobs_data = [
         #(base, 'job_electron_2012a_Jan22rereco'),
         #(base, 'job_electron_2012b_Jan22rereco'),
         #(base, 'job_electron_2012c_Jan2012rereco'),
         #(base, 'job_electron_2012d_Jan22rereco'),
-        (base, 'job_muon_2012a_Jan22rereco'),
-        (base, 'job_muon_2012b_Jan22rereco'),
-        (base, 'job_muon_2012c_Jan22rereco'),
-        (base, 'job_muon_2012d_Jan22rereco'),
+        #(base, 'job_muon_2012a_Jan22rereco'),
+        #(base, 'job_muon_2012b_Jan22rereco'),
+        #(base, 'job_muon_2012c_Jan22rereco'),
+        #(base, 'job_muon_2012d_Jan22rereco'),
 
         #(base, 'job_2photon_2012d_Jan22rereco_2of4'),
         #(base, 'job_2photon_2012d_Jan22rereco_3of4'),
@@ -38,7 +38,9 @@ jobs_data = [
         #(base, 'job_fall13_photonRunB2012_9'),
         #(base, 'job_photon_2012a_Jan22rereco'),
         #(base, 'job_MultiJet_2012a_Jan22rereco'),
+        #(base, 'job_jetmon_2012b_Jan22rereco'),
         #(base, 'job_jetmon_2012c_Jan22rereco'),
+        #(base, 'job_jetmon_2012d_Jan22rereco'),
 ]
 
 jobs_mc = [
@@ -47,7 +49,7 @@ jobs_mc = [
         #(base, 'job_summer12_WAA_ISR'),
         #(base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_Wg'),
-        #(base, 'job_summer12_Wjets'),
+        (base, 'job_summer12_Wjets'),
         #(base, 'job_summer12_ttjets_1l'),
         #(base, 'job_summer12_ttjets_2l'),
         #(base, 'job_summer12_ttg'),
@@ -85,10 +87,10 @@ jobs_mc = [
         #(base, 'job_summer12_tbar_t'),
         #(base, 'job_summer12_tbar_tW'),
         #(base, 'job_summer12_ttinclusive'),
-        ###(base, 'QCD_Pt-40_doubleEMEnriched')
-        ###(base_tmp, 'DYJetsToLLPhOlap' )
-        ###(base_tmp, 'WjetsPhOlap' )
-        ###(base_tmp, 'WgPhOlap' )
+        ##(base, 'QCD_Pt-40_doubleEMEnriched')
+        ##(base_tmp, 'DYJetsToLLPhOlap' )
+        ##(base_tmp, 'WjetsPhOlap' )
+        ##(base_tmp, 'WgPhOlap' )
 ]
 
 #module_mc   = 'ConfLepGammaFilter.py'
@@ -100,42 +102,49 @@ top_configs = [
                 #  'module'      : 'ConfObjFilter.py',
                 #  'args_mc'     : '{ \'cut_nLep\' : \' > 1 \', \'cut_nLepTrigMatch\' : \' > 0 \' }',
                 #  'args_data'   : '{ \'cut_nLep\' : \' > 1 \', \'cut_nLepTrigMatch\' : \' > 0 \' }',
-                #  'output_name' : 'DiLeptonNoPhId_2014_06_09',
+                #  'output_name' : 'DiLepton_2014_08_25',
                 #  'tag'         : 'llData',
-                #},
-                #{ 
-                #  'module'      : 'ConfObjFilter.py',
-                #  'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\' }',
-                #  'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\' }',
-                #  'output_name' : 'LepGammaNoTrigNoEleIDNoPhID_2014_06_09',
-                #  'tag'         : 'lgMC',
                 #},
                 { 
                   'module'      : 'ConfObjFilter.py',
-                  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPhPassMediumNoEleVeto\' : \'> 1\'}',
-                  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPhPassMediumNoEleVeto\' : \'> 1\', \'isData\' : \'True\'}',
-                  'output_name' : 'LepGammaGammaTESTLowMlgg_2014_06_16',
-                 'tag'         : 'lgMu',
+                  'args_mc'     : '{ \'cut_nLep\' : \' > 0 \' }',
+                  'args_data'   : '{ \'cut_nLep\' : \' > 0 \' }',
+                  'output_name' : 'SingleLepton_2014_09_03',
+                  'tag'         : 'llData',
                 },
                 #{ 
                 #  'module'      : 'ConfObjFilter.py',
-                #  'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \',  \'cut_nPh\' : \'> 2\'}',
-                #  'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \',  \'cut_nPh\' : \'< 2\' }',
-                #  'output_name' : 'LepGammaGammaSignal_2014_03_12',
-                # 'tag'         : 'lgg',
+                #  'args_mc'     : '{ \'cut_nPh\' : \'> 0\' }',
+                #  'args_data'   : '{ \'cut_nPh\' : \'> 0\' }',
+                #  'output_name' : 'GammaGammaMediumNoEleVetoOlapDYNoTrig_2014_08_13',
+                #  'tag'         : 'lgDY',
+                #},
+                #{ 
+                #  'module'      : 'ConfObjFilter.py',
+                #  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPhPassMediumNoEleVeto\' : \'> 1\'}',
+                #  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPhPassMediumNoEleVeto\' : \'> 1\', \'isData\' : \'True\'}',
+                #  'output_name' : 'LepGammaGammaTESTLowMlgg_2014_06_16',
+                # 'tag'         : 'lgMu',
+                #},
+                #{ 
+                #  'module'      : 'ConfObjFilter.py',
+                #  'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \',  \'cut_nPh\' : \'> 1\'}',
+                #  'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \',  \'cut_nPh\' : \'> 1\', \'cut_nPhPassMedium\' : \'<2\' }',
+                #  'output_name' : 'LepGammaGammaNoPixSeedNoEleOlap_2014_08_13',
+                # 'tag'         : 'lggEle',
                 #},
                 #{ 
                 #  'module'      : 'ConfObjFilter.py',
                 #  'args_mc'     : '{\'cut_nPh\' : \'>1\' }',
                 #  'args_data'   : '{\'cut_nPh\' : \'>1\' }',
-                #  'output_name' : 'QCD_2014_06_11',
+                #  'output_name' : 'QCDPFDiJet80_2014_07_11',
                 # 'tag'         : 'lg',
                 #},
                 #{ 
                 #  'module'      : 'ConfObjFilter.py',
-                #    'args_mc'   : '{ \'cut_nLep\' : \' > 0 \', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\', \'cut_nPhTruthMatchEl\' : \'==1\' }',
-                #  'args_data'   : '{ \'cut_nLep\' : \' > 0 \', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'== 1\', \'cut_nPhTruthMatchEl\' : \'==1\' }',
-                #  'output_name' : 'LepGammaLoosePhLowPtTrigMatchPhTMEl_2014_02_11',
+                #  'args_mc'   : '{ \'cut_nLep\' : \' > 0 \', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\' }',
+                #  'args_data'   : '{ \'cut_nLep\' : \' > 0 \', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'== 1\' }',
+                #  'output_name' : 'LepGammaNoEleVetoWithEleOlapNoTrig_2014_08_13',
                 #  'tag'         : 'lg',
                 #},
                 #{ 

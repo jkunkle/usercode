@@ -37,25 +37,21 @@ class RunModule : public virtual RunModuleBase {
 
     private :
         TFile * rfile;
-        TH1F * rhist_norm;
-        TH1F * rhist_pt;
-        TH1F * rhist_eta;
-        TH2F * rhist_pteta;
+        TH2F * rhist;
         TTree * outtree;
         std::string sample_key;
         std::string nconv;
         CmdOptions options;
 
-        TRandom3 *rand;
 };
 
 // Ouput namespace 
 // Declare any output variables that you'll fill here
 namespace OUT {
 
-#ifndef EXISTS_EventWeight
-    Float_t            EventWeight;
-#endif
+    Float_t            EventWeightElFF;
+    Float_t            EventErrElFF;
+
     Bool_t             HasElToPhFF;
 };
 

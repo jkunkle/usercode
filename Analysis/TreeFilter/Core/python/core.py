@@ -39,7 +39,7 @@ def ParseArgs() :
 
     parser.add_argument('--confFileName', dest='confFileName', default='analysis_config.txt', help='Name of the configuration file.  Default : analysis_config.txt')
 
-    parser.add_argument('--exeName', dest='exeName', default='RunAnalysis', help='Name of the executable file.  Use to avoid overwriting an executable that is in use')
+    parser.add_argument('--exeName', dest='exeName', default='RunAnalysis.exe', help='Name of the executable file.  Use to avoid overwriting an executable that is in use')
 
     #-----------------------------
     # Important additional input info
@@ -267,8 +267,12 @@ def config_and_run( options, package_name ) :
             logging.info('Not runnning.  Stop here')
             return
 
+        print 'GOTEHRE1'
+        print options.nproc
         pool = multiprocessing.Pool(options.nproc)
+        print 'GOTEHRE2'
         pool.map( os.system, commands)
+        print 'GOTEHRE3'
 
     else :
 
@@ -323,6 +327,27 @@ def collect_input_files_eos( filesDir, filekey='.root' ) :
 
 
 #-----------------------------------------------------------
+def get_branch_mapping_from_trees( trees ) :
+    """ get all branches with their types and size """
+
+    if not isinstance(trees, list) :
+        trees = [trees]
+
+    files_all_branches = []
+
+    if not trees :
+        return []
+
+    for tree in trees :
+
+        all_branches = get_branch_map_from_tree( tree )
+
+        files_all_branches.append(all_branches)
+
+    # now collect the maximum values from all files
+    return collect_files_branches( files_all_branches )
+
+#-----------------------------------------------------------
 def get_branch_mapping( files, treename ) :
     """ get all branches with their types and size """
 
@@ -338,92 +363,15 @@ def get_branch_mapping( files, treename ) :
         file = ROOT.TFile.Open( filename )
         tree = file.Get( treename )
 
-        all_branches = []
-        for br in tree.GetListOfBranches() :
-            
-            name  = br.GetName()
-            title = br.GetTitle()
-
-            #I don't know why this happens.  Just fix it
-            title = title.replace(']]', '][')
- 
-            lf = br.GetListOfLeaves()[0]
-            type  = lf.GetTypeName()
-            size  = lf.GetLen()
-            is_range = lf.IsRange()
-            # match any number of brackets and get them.  
-            # Also get the varId at the end.  
-            # If there are no brackets the first group is empty
-            check = re.match('\w+((?:\[\w+\])*)\s*/(\w)', title) 
-            size_leaf = None
-            bracketEntry = None
-            varId = None
-            leafEntry = None
-            arrayStr = ''
-            size_entries = []
-            totSize = lf.GetNdata()  # keep the total size for later
-            if check is None :
-                leafEntry = title
-            else :
-                bracketEntry = check.group(1)
-
-                if len(check.groups()) > 1 :
-                    varId = check.group(2)
-
-                # construct the leafEntry
-                leafEntry = name
-
-                # there could be any number of brackets in the variable
-                # If there are no brackets the leafEntry is simpy the name
-                # plus the varId.  Otherwise do some more work
-                if not bracketEntry == '' :
-                    # get each bracket entry
-                    each_bracket = bracketEntry.split('][')
-                    each_bracket = map( lambda x : x.rstrip(']').lstrip('['), each_bracket )
-
-                    # if one or more entries is a variable length array we need
-                    # to get its maximum size.  Otherwise we already have the size
-                    for  eb in each_bracket :
-
-                        # construct the leafEntry
-                        leafEntry += '[%s]' %eb.rstrip('_')
-
-                        is_int = True
-                        try :
-                            test = int(eb)
-                        except ValueError :
-                            is_int = False
-
-                        # If its not an int, its another branch.  Get it and find its max size
-                        if not is_int :
-
-                            size_leaf_name = eb.rstrip('_')
-
-                            size_br = tree.GetBranch(size_leaf_name)
-                            size = size_br.GetListOfLeaves()[0].GetMaximum()+1 #Add one for buffer
-                            size_entries.append(size)
-                        else :
-                            size_entries.append(int(eb))
-
-                    # This should be the format of the array in the declaration
-                    arrayStr = '[' + ']['.join([str(x) for x in size_entries]) + ']'
-
-            if varId is not None :
-                leafEntry += '/%s' %varId
-
-            prop_dic = {'name' : name, 'type' : type, 'totSize' : totSize, 'arrayStr' : arrayStr, 'leafEntry' : leafEntry, 'sizeEntries' : size_entries }
-            if name in [d['name'] for d in all_branches] :
-                continue
-
-            if is_range :
-                # any variable that is a range variable needs to come first
-                all_branches.insert(0, prop_dic) 
-            else :
-                all_branches.append(prop_dic)
+        all_branches = get_branch_map_from_tree( tree )
 
         files_all_branches.append(all_branches)
+        file.Close()
 
     # now collect the maximum values from all files
+    return collect_files_branches( files_all_branches )
+
+def collect_files_branches( files_all_branches ) :
 
     all_branches_max = []
     if len(files_all_branches) == 1 :
@@ -457,6 +405,94 @@ def get_branch_mapping( files, treename ) :
                     break
 
     return all_branches_max
+
+#-----------------------------------------------------------
+def get_branch_map_from_tree( tree ) :
+
+    all_branches = []
+    for br in tree.GetListOfBranches() :
+        
+        name  = br.GetName()
+        title = br.GetTitle()
+
+        #I don't know why this happens.  Just fix it
+        title = title.replace(']]', '][')
+ 
+        lf = br.GetListOfLeaves()[0]
+        type  = lf.GetTypeName()
+        size  = lf.GetLen()
+        is_range = lf.IsRange()
+        # match any number of brackets and get them.  
+        # Also get the varId at the end.  
+        # If there are no brackets the first group is empty
+        check = re.match('\w+((?:\[\w+\])*)\s*/(\w)', title) 
+        size_leaf = None
+        bracketEntry = None
+        varId = None
+        leafEntry = None
+        arrayStr = ''
+        size_entries = []
+        totSize = lf.GetNdata()  # keep the total size for later
+        if check is None :
+            leafEntry = title
+        else :
+            bracketEntry = check.group(1)
+
+            if len(check.groups()) > 1 :
+                varId = check.group(2)
+
+            # construct the leafEntry
+            leafEntry = name
+
+            # there could be any number of brackets in the variable
+            # If there are no brackets the leafEntry is simpy the name
+            # plus the varId.  Otherwise do some more work
+            if not bracketEntry == '' :
+                # get each bracket entry
+                each_bracket = bracketEntry.split('][')
+                each_bracket = map( lambda x : x.rstrip(']').lstrip('['), each_bracket )
+
+                # if one or more entries is a variable length array we need
+                # to get its maximum size.  Otherwise we already have the size
+                for  eb in each_bracket :
+
+                    # construct the leafEntry
+                    leafEntry += '[%s]' %eb.rstrip('_')
+
+                    is_int = True
+                    try :
+                        test = int(eb)
+                    except ValueError :
+                        is_int = False
+
+                    # If its not an int, its another branch.  Get it and find its max size
+                    if not is_int :
+
+                        size_leaf_name = eb.rstrip('_')
+
+                        size_br = tree.GetBranch(size_leaf_name)
+                        size = size_br.GetListOfLeaves()[0].GetMaximum()+1 #Add one for buffer
+                        size_entries.append(size)
+                    else :
+                        size_entries.append(int(eb))
+
+                # This should be the format of the array in the declaration
+                arrayStr = '[' + ']['.join([str(x) for x in size_entries]) + ']'
+
+        if varId is not None :
+            leafEntry += '/%s' %varId
+
+        prop_dic = {'name' : name, 'type' : type, 'totSize' : totSize, 'arrayStr' : arrayStr, 'leafEntry' : leafEntry, 'sizeEntries' : size_entries }
+        if name in [d['name'] for d in all_branches] :
+            continue
+
+        if is_range :
+            # any variable that is a range variable needs to come first
+            all_branches.insert(0, prop_dic) 
+        else :
+            all_branches.append(prop_dic)
+
+    return all_branches
 
 #-----------------------------------------------------------
 def check_and_filter_input_files( input_files, treename ) :
@@ -657,7 +693,7 @@ def get_file_evt_map( input_files, nsplit, nFilesPerJob, totalEvents, treeName )
 
     return split_files_evt_match
 
-def write_config( alg_list, filename, treeName, outputDir, outputFile, files_list, storage_path, sample, disableOutputTree, start_idx=0 ) :
+def write_config( alg_list, filename, treeName, outputDir, outputFile, files_list, storage_path='None', sample=None, disableOutputTree=False, start_idx=0 ) :
 
     cfile = open( filename, 'w')
 
@@ -803,9 +839,6 @@ def write_header_files( brdefname, linkdefname, branches, keep_branches=[] ) :
 
     link_header.close()
     
-
-
-
 
 def write_source_file(source_file_name, header_file_name, branches, keep_branches=[], debugCode=False, write_expert_code=False) :
 

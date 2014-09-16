@@ -1,6 +1,13 @@
-files : [/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGamma_2013_10_20/job_summer12_ZZ_2l2q/Job_0000/tree.root][0:(0-425074),];
+files : [/tmp/jkunkle/RecoOutputNoTrig_2014_06_11/job_summer12_DYJetsToLL/Job_0000/tree.root][0:(0-100000),];
 treeName : ggNtuplizer/EventTree
-outputDir : /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaWithBlind_2013_10_20/job_summer12_ZZ_2l2q
+outputDir : /tmp/jkunkle/RecoOutputNoTrigFilter_2014_06_11/job_summer12_DYJetsToLL
 outputFile : tree.root
 __Modules__
-FilterEvent : cut_nLep_muTight_elMed [ > 1 ] ; 
+FilterMuon : cut_mu_pt [ > 10 ] ; 
+FilterElectron : cut_el_mvaNonTrig [True] ; cut_el_pt [ > 10] ; cut_mu_el_dr [ > 0.2 ] ; 
+FilterPhoton : cut_el_ph_dr [ > 0.2 ] ; cut_ph_medium [True] ; cut_ph_pt [ > 15 ] ; 
+FilterJet : cut_jet_ele_dr [ > 0.4 ] ; cut_jet_mu_dr [ > 0.4 ] ; cut_jet_ph_dr [ > 0.4 ] ; 
+CalcEventVars : 
+BuildTruth : 
+FilterEvent : 
+FilterBlind : cut_m_lepphph [ < 100  ] ; init_isData [False] ; 

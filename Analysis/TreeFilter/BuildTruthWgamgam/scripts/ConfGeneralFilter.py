@@ -12,7 +12,7 @@ def config_analysis( alg_list ) :
 
     build_lep = Filter('BuildLepton')
     #build_lep.cut_incTau = 'False'
-    build_lep.cut_incTauMother = 'False'
+    build_lep.cut_incTauMother = 'True'
     build_lep.cut_incWMother = 'True'
     build_lep.cut_incZMother = 'True'
 

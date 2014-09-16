@@ -19,10 +19,10 @@ jobs = [
         #(base_data, 'job_electron_2012c_Jan2012rereco', 400),
         #(base_data, 'job_electron_2012d_Jan22rereco', 400),
         #(base_mc, 'job_summer12_DiPhotonBorn_Pt-10To25', 10),
-        #(base_mc2, 'job_summer12_DYJetsToLL', 50 ),
-        #(base_mc, 'job_summer12_Wjets', 100),
+        #(base_mc2, 'job_summer12_DYJetsToLL', 200 ),
+        (base_mc, 'job_summer12_Wjets', 100),
         #(base_mc, 'job_summer12_Wg', 50),
-        (base_mc, 'job_summer12_Zg', 50),
+        #(base_mc, 'job_summer12_Zg', 50),
         #(base_mc, 'job_summer12_Wgg_FSR', 20),
         #(base_mc, 'job_summer12_WAA_ISR', 20),
         #(base_mc, 'job_summer12_ttjets_1l', 50),
@@ -65,7 +65,9 @@ jobs = [
         #(base_me, 'job_summer12_WgPt130', 40),
         #(base_me, 'job_summer12_WgPt30-50', 40),
         #(base_me, 'job_summer12_WgPt20-30', 40),
+        #(base_me, 'job_jetmon_2012b_Jan22rereco', 100),
         #(base_me, 'job_jetmon_2012c_Jan22rereco', 100),
+        #(base_me, 'job_jetmon_2012d_Jan22rereco', 100),
 
 
 ]
@@ -79,10 +81,11 @@ command_base = 'python scripts/filter.py  --files root://eoscms/%(base)s/%(job)s
 #command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /tmp/jkunkle/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/ConfWgamgamReco.py --enableKeepFilter --nFilesPerJob 1 --nproc %(nproc)s --confFileName %(job)s.txt '
 
 #module = 'ConfWgamgamReco.py'
+#module = 'ConfWgamgamRecoJetTrig.py'
 module = 'ConfWgamgamRecoNoTrig.py'
-output = 'RecoOutputNoTrig_2014_06_11'
+output = 'RecoOutputDYNoTrig_2014_07_29'
 nFilesPerJob = 1
-nProc = 8
+nProc = 6
 exename='RunAnalysisMC'
 treename='ggNtuplizer/EventTree'
 #treename='tt'
@@ -90,4 +93,4 @@ treename='ggNtuplizer/EventTree'
 for base, job, nsplit in jobs :
     command = command_base %{ 'base' : base, 'job' : job, 'nfiles' : nFilesPerJob, 'output' : output, 'nsplit': nsplit, 'nproc' : nProc, 'exename' : exename, 'treename' : treename, 'module' : module }
     print command
-    #os.system(command)
+    os.system(command)

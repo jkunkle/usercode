@@ -4,6 +4,7 @@
 *.root
 *.o
 *.exe
+*.swp
 Dict.cxx
 Dict.h
 BranchInit.cxx

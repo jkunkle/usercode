@@ -81,6 +81,7 @@ class RunModule : public virtual RunModuleBase {
         void BuildPhoton         ( ModuleConfig & config ) const;
         void BuildJet            ( ModuleConfig & config ) const;
         void BuildEvent          ( ModuleConfig & config ) const;
+        void BuildTriggerBits    ( ModuleConfig & config ) const;
         void WeightEvent         ( ModuleConfig & config ) const;
         bool FilterElec          ( ModuleConfig & config ) const;
         bool FilterMuon          ( ModuleConfig & config ) const;
@@ -115,8 +116,14 @@ class RunModule : public virtual RunModuleBase {
         bool eval_ph_loose    ;
 
         bool apply_electron_corrections;
+        std::string ele_correction_path;
+        std::string ele_smearing_path;
+
+
+        // Old
         std::vector<correctionValues> electron_corr_vals;
         std::vector<linearityCorrectionValues> electron_lincorr_vals;
+
 
 
         bool apply_muon_corrections;
@@ -280,6 +287,11 @@ namespace OUT {
     std::vector<float>  *jet_eta;
     std::vector<float>  *jet_phi;
     std::vector<float>  *jet_e;
+
+    Bool_t              passTrig_ele27WP80;
+    Bool_t              passTrig_mu24eta2p1;
+    Bool_t              passTrig_mu24;
+
 
     Float_t             avgPU; 
     Float_t             PUWeight;

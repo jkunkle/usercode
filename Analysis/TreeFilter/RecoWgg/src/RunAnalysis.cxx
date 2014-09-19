@@ -344,13 +344,12 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
             }
             citr = mod_conf.GetInitData().find( "correctionFile" );
             if( citr != mod_conf.GetInitData().end() ) {
-                const std::string &filename = citr->second;
-                extractElectronCorrections( filename );
+                ele_correction_path = citr->second;
+
             }
-            citr = mod_conf.GetInitData().find( "linCorrectionFile" );
+            citr = mod_conf.GetInitData().find( "smearingFile" );
             if( citr != mod_conf.GetInitData().end() ) {
-                const std::string &filename = citr->second;
-                extractElectronLinCorrections( filename );
+                ele_smearing_path = citr->second;
             }
 
 
@@ -491,6 +490,13 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
         muCorr = 0;
     }
 
+    if( apply_electron_corrections ) {
+        eleCorr = new EnergyScaleCorrection_class( ele_correction_path, ele_smearing_path);
+    }
+    else {
+        eleCorr = 0;
+    }
+
 
 }
 
@@ -541,6 +547,10 @@ bool RunModule::ApplyModule( ModuleConfig & config ) {
     if( config.GetName() == "WeightEvent" ) {
         WeightEvent( config );
     }
+    if( config.GetName() == "BuildTriggerBits" ) {
+        BuildTriggerBits( config );
+    }
+
 
     // If the module applies a filter the filter decision
     // is passed back to here.  There is no requirement
@@ -749,7 +759,20 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         #ifdef EXISTS_isData
         #ifdef EXISTS_run
         if( apply_electron_corrections ) {
-            float scale = GetElectronMomentumCorrection(pt, sceta, eta, r9, IN::isData, IN::run);
+
+            bool iseb = false;
+            if( fabs(sceta) < 1.479 ) {
+                iseb = true;
+            }
+            float scale = 1.0;
+            if( IN::isData ) {
+                // last 2 args aren't used
+                scale = eleCorr->ScaleCorrection(IN::run, iseb, r9, sceta, pt, 0, 0 );
+            }
+            else {
+                scale = eleCorr->getSmearing(IN::run, en, iseb, r9, sceta );
+            }
+
             pt*=scale;
             en*=scale;
         }
@@ -2342,24 +2365,36 @@ void RunModule::extractElectronLinCorrections( const std::string & filename ) {
 
 }
 
+void RunModule::BuildTriggerBits( ModuleConfig & config ) const {
+
+    OUT::passTrig_ele27WP80  = ( IN::HLT[IN::HLTIndex[17]] > 0 );
+    OUT::passTrig_mu24eta2p1 = ( IN::HLT[IN::HLTIndex[18]] > 0 );
+    OUT::passTrig_mu24       = ( IN::HLT[IN::HLTIndex[19]] > 0 );
+    
+}
+
 bool RunModule::FilterTrigger( ModuleConfig & config ) const {
     
-#ifdef EXISTS_HLT
+//#ifdef EXISTS_HLT
     bool keep_evt = false;
     BOOST_FOREACH( const Cut & cut, config.GetCut("cut_trigger").GetCuts() ) {
        if( IN::HLT[IN::HLTIndex[cut.val_int] ] > 0 ) keep_evt = true;
     }
 
     return keep_evt;
-#else 
-    return true;
-#endif
+//#else 
+//    return true;
+//#endif
 }
 
 void RunModule::finalize() {
     if( muCorr ) {
         delete muCorr;
         muCorr = 0;
+   }
+    if( eleCorr ) {
+        delete eleCorr;
+        eleCorr = 0;
    }
 }
 

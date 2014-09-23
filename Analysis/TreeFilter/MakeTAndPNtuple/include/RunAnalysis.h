@@ -39,6 +39,7 @@ class RunModule : public virtual RunModuleBase {
         // return values, or inputs to these functions, but
         // you must of course handle them in the source file
         void MakeNtuple ( ModuleConfig & config ) const;
+        void MakeGGNtuple ( ModuleConfig & config ) const;
         bool FilterEvent( ModuleConfig & config ) const;
 
         TTree * outtree;
@@ -61,6 +62,7 @@ namespace OUT {
     int                probe_nConvTrk;
     Bool_t             probe_passtrig;
     float              m_tagprobe;
+    float              dr_tagprobe;
     float              m_tagprobe_sceta;
 
 };

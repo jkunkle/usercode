@@ -9,7 +9,6 @@
 # Tasks : CLEANUP
 ################################################################################
 
-
 EXE_DIR = ./
 OBJ_DIR = obj/
 SRC_DIR = src/
@@ -52,7 +51,18 @@ OBJECT_ANA = $(OBJ_DIR)/RunAnalysis.o
 BRANCH_INIT = $(OBJ_DIR)/BranchInit.o
 LINKDEF = $(OBJ_DIR)/cintLib.so
 
-EXE = $(EXE_DIR)/RunAnalysis
+NEWEXENAME=$(EXENAME)
+
+ifeq ($(strip ${EXENAME} ), )
+	NEWEXENAME=RunAnalysis.exe
+endif
+
+ifneq (, $(findstring x, $(EXENAME) ) )
+	NEWEXENAME=$(EXENAME).exe
+endif
+
+
+EXE = $(EXE_DIR)/$(NEWEXENAME)
 
 # Main targets
 

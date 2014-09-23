@@ -42,6 +42,8 @@ class RunModule : public virtual RunModuleBase {
         // Examples :
         void WeightEvent         ( ModuleConfig & config ) const;
         void CalcVars            ( ModuleConfig & config ) const;
+        void FilterPhoton        ( ModuleConfig & config ) const;
+        bool FilterEvent         ( ModuleConfig & config ) const;
 
         float event_weight;
 
@@ -56,6 +58,8 @@ namespace OUT {
     float m_lepph1Mod;
     float m_lepph2Mod;
     float mdiff_lepphph_lepph1;
+    float m_lepph1Div;
+    float m_lepph2Div;
 };
 
 #endif

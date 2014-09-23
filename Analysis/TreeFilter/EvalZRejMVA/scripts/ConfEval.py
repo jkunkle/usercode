@@ -30,8 +30,8 @@ def config_analysis( alg_list ) :
 
     eval = Filter('EvalMVA')
 
-    eval.add_var( 'TMVAWeightsFileEl', '/afs/cern.ch/user/j/jkunkle/usercode/Analysis/TreeFilter/TrainPhotonMVA/weights/ZRejElChMVA7VarsNom_BDT.weights.xml' )
-    eval.add_var( 'TMVAWeightsFileMu', '/afs/cern.ch/user/j/jkunkle/usercode/Analysis/TreeFilter/TrainPhotonMVA/weights/ZRejMuChMVA7VarsNom_BDT.weights.xml' )
+    eval.add_var( 'TMVAWeightsFileEl', '/afs/cern.ch/work/j/jkunkle/private/CMS/MVATrainingZRej2EleVeto_2014_06_19/weights/ZRejElChMVA7VarsVTUniform_BDT.weights.xml' )
+    #eval.add_var( 'TMVAWeightsFileMu', '/afs/cern.ch/user/j/jkunkle/usercode/Analysis/TreeFilter/TrainPhotonMVA/weights/ZRejMuChMVA7VarsNom_BDT.weights.xml' )
 
     alg_list.append( eval )
 

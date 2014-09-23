@@ -47,6 +47,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     std::string outputFileName;
     std::string JobName;
     std::string EtaCut;
+    std::string MvaOptions;
     std::vector<std::string> all_sig_files;
     std::vector<std::string> all_bkg_files;
     std::vector<std::string> variables;
@@ -95,6 +96,11 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
             weights = Tokenize(itr->second, ",");
         }
 
+        itr = mod_conf.GetInitData().find( "MvaOptions" );
+        if( itr != mod_conf.GetInitData().end() ) {
+            MvaOptions = itr->second;
+        }
+
         std::cout << "Running MVA for " << JobName << std::endl;
 
         TFile * outputFile = TFile::Open( outputFileName.c_str(), "RECREATE" );
@@ -135,8 +141,8 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
         TCut etacut(EtaCut.c_str());
         factory->PrepareTrainingAndTestTree(etacut, "");
 
-        factory->BookMethod( TMVA::Types::kBDT, "BDT", "nCuts=40:DoBoostMonitor:MaxDepth=4" );
-        factory->BookMethod( TMVA::Types::kKNN, "kNN", "" );
+        factory->BookMethod( TMVA::Types::kBDT, "BDT", MvaOptions);
+        //factory->BookMethod( TMVA::Types::kKNN, "kNN", "" );
         //factory->BookMethod( TMVA::Types::kMLP, "MLP", "HiddenLayers=1" );
 
         factory->TrainAllMethods();

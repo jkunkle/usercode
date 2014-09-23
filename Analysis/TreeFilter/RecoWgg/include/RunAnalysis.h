@@ -16,6 +16,7 @@
 #include "TMVA/Reader.h"
 
 class MuScleFitCorrector;
+class EnergyScaleCorrection_class;
 
 // The RunModule inherits from RunModuleBase (an Abstract Base Class )
 // defined in the Core package so that all
@@ -80,6 +81,7 @@ class RunModule : public virtual RunModuleBase {
         void BuildPhoton         ( ModuleConfig & config ) const;
         void BuildJet            ( ModuleConfig & config ) const;
         void BuildEvent          ( ModuleConfig & config ) const;
+        void BuildTriggerBits    ( ModuleConfig & config ) const;
         void WeightEvent         ( ModuleConfig & config ) const;
         bool FilterElec          ( ModuleConfig & config ) const;
         bool FilterMuon          ( ModuleConfig & config ) const;
@@ -114,8 +116,14 @@ class RunModule : public virtual RunModuleBase {
         bool eval_ph_loose    ;
 
         bool apply_electron_corrections;
+        std::string ele_correction_path;
+        std::string ele_smearing_path;
+
+
+        // Old
         std::vector<correctionValues> electron_corr_vals;
         std::vector<linearityCorrectionValues> electron_lincorr_vals;
+
 
 
         bool apply_muon_corrections;
@@ -131,6 +139,7 @@ class RunModule : public virtual RunModuleBase {
 
         TRandom3 _rand;
         MuScleFitCorrector * muCorr;
+        EnergyScaleCorrection_class * eleCorr;
 
         TFile *puweight_sample_file;
         TFile *puweight_data_file;
@@ -217,6 +226,19 @@ namespace OUT {
     std::vector<float>  *ph_chIsoCorr;
     std::vector<float>  *ph_neuIsoCorr;
     std::vector<float>  *ph_phoIsoCorr;
+    std::vector<float>  *ph_SCRChIso;
+    std::vector<float>  *ph_SCRPhoIso;
+    std::vector<float>  *ph_SCRNeuIso;
+    std::vector<float>  *ph_SCRChIso04;
+    std::vector<float>  *ph_SCRPhoIso04;
+    std::vector<float>  *ph_SCRNeuIso04;
+    std::vector<float>  *ph_RandConeChIso;
+    std::vector<float>  *ph_RandConePhoIso;
+    std::vector<float>  *ph_RandConeNeuIso;
+    std::vector<float>  *ph_RandConeChIso04;
+    std::vector<float>  *ph_RandConePhoIso04;
+    std::vector<float>  *ph_RandConeNeuIso04;
+
     std::vector<Bool_t> *ph_eleVeto;
     std::vector<Bool_t> *ph_hasPixSeed;
     std::vector<float>  *ph_drToTrk;
@@ -233,6 +255,9 @@ namespace OUT {
     std::vector<Bool_t> *ph_passMedium;
     std::vector<Bool_t> *ph_passLoose;
     std::vector<Bool_t> *ph_passLooseNoSIEIE;
+    std::vector<Bool_t> *ph_passHOverELoose;
+    std::vector<Bool_t> *ph_passHOverEMedium;
+    std::vector<Bool_t> *ph_passHOverETight;
     std::vector<Bool_t> *ph_passSIEIELoose;
     std::vector<Bool_t> *ph_passSIEIEMedium;
     std::vector<Bool_t> *ph_passSIEIETight;
@@ -262,6 +287,11 @@ namespace OUT {
     std::vector<float>  *jet_eta;
     std::vector<float>  *jet_phi;
     std::vector<float>  *jet_e;
+
+    Bool_t              passTrig_ele27WP80;
+    Bool_t              passTrig_mu24eta2p1;
+    Bool_t              passTrig_mu24;
+
 
     Float_t             avgPU; 
     Float_t             PUWeight;

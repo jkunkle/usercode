@@ -8,7 +8,8 @@
 //If this happens, the code will not compile because the
 //branch is not written in the header file.  To fix this problem
 //simply surround the offending code with #ifdef EXISTS_MYVAR ... #endif
-//and if the variable does not exist the preprocessor will ignore that code#define EXISTS_nHLT
+//and if the variable does not exist the preprocessor will ignore that code
+#define EXISTS_nHLT
 #define EXISTS_nVtx
 #define EXISTS_nVtxBS
 #define EXISTS_nMC
@@ -29,6 +30,7 @@
 #define EXISTS_bspotPos
 #define EXISTS_vtx
 #define EXISTS_IsVtxGood
+#define EXISTS_nGoodVtx
 #define EXISTS_vtxbs
 #define EXISTS_pdf
 #define EXISTS_pthat
@@ -46,14 +48,13 @@
 #define EXISTS_mcMomPhi
 #define EXISTS_mcIndex
 #define EXISTS_mcDecayType
+#define EXISTS_mcParentage
+#define EXISTS_mcStatus
 #define EXISTS_genMET
 #define EXISTS_genMETPhi
 #define EXISTS_nPU
 #define EXISTS_puBX
 #define EXISTS_puTrue
-#define EXISTS_MET
-#define EXISTS_METPhi
-#define EXISTS_METsumEt
 #define EXISTS_pfMET
 #define EXISTS_pfMETPhi
 #define EXISTS_pfMETsumEt
@@ -64,6 +65,14 @@
 #define EXISTS_recoPfMETsumEt
 #define EXISTS_recoPfMETmEtSig
 #define EXISTS_recoPfMETSig
+#define EXISTS_trkMETxPV
+#define EXISTS_trkMETyPV
+#define EXISTS_trkMETPhiPV
+#define EXISTS_trkMETPV
+#define EXISTS_trkMETx
+#define EXISTS_trkMETy
+#define EXISTS_trkMETPhi
+#define EXISTS_trkMET
 #define EXISTS_metFilters
 #define EXISTS_eleTrg
 #define EXISTS_eleClass
@@ -102,10 +111,7 @@
 #define EXISTS_eleE1x5
 #define EXISTS_eleE3x3
 #define EXISTS_eleE5x5
-#define EXISTS_eleE2x5Right
-#define EXISTS_eleE2x5Left
-#define EXISTS_eleE2x5Top
-#define EXISTS_eleE2x5Bottom
+#define EXISTS_eleE2x5Max
 #define EXISTS_eleRegrE
 #define EXISTS_eleRegrEerr
 #define EXISTS_elePhoRegrE
@@ -125,6 +131,9 @@
 #define EXISTS_eleIsoEcalDR04
 #define EXISTS_eleIsoHcalDR04
 #define EXISTS_eleIsoHcalDR0412
+#define EXISTS_eleModIsoTrk
+#define EXISTS_eleModIsoEcal
+#define EXISTS_eleModIsoHcal
 #define EXISTS_eleMissHits
 #define EXISTS_eleConvDist
 #define EXISTS_eleConvDcot
@@ -170,10 +179,6 @@
 #define EXISTS_phoCiCPF4phopfIso03
 #define EXISTS_phoCiCPF4phopfIso04
 #define EXISTS_phoEmax
-#define EXISTS_phoEtop
-#define EXISTS_phoEbottom
-#define EXISTS_phoEleft
-#define EXISTS_phoEright
 #define EXISTS_phoE3x3
 #define EXISTS_phoE3x1
 #define EXISTS_phoE1x3
@@ -181,10 +186,6 @@
 #define EXISTS_phoE1x5
 #define EXISTS_phoE2x2
 #define EXISTS_phoE2x5Max
-#define EXISTS_phoE2x5Right
-#define EXISTS_phoE2x5Left
-#define EXISTS_phoE2x5Top
-#define EXISTS_phoE2x5Bottom
 #define EXISTS_phoPFChIso
 #define EXISTS_phoPFPhoIso
 #define EXISTS_phoPFNeuIso
@@ -196,6 +197,7 @@
 #define EXISTS_phoSeedTime
 #define EXISTS_phoSeedDetId1
 #define EXISTS_phoSeedDetId2
+#define EXISTS_phoLICTD
 #define EXISTS_phoRecoFlag
 #define EXISTS_phoPos
 #define EXISTS_phoGenIndex
@@ -261,6 +263,8 @@
 #define EXISTS_muGenIndex
 #define EXISTS_mucktPt
 #define EXISTS_mucktPtErr
+#define EXISTS_mucktEta
+#define EXISTS_mucktPhi
 #define EXISTS_mucktdxy
 #define EXISTS_mucktdz
 #define EXISTS_muIsoTrk
@@ -284,7 +288,6 @@
 #define EXISTS_muPFIsoR03_NHHT
 #define EXISTS_muPFIsoR03_PhoHT
 #define EXISTS_muType
-#define EXISTS_muID
 #define EXISTS_muD0
 #define EXISTS_muDz
 #define EXISTS_muD0GV
@@ -293,6 +296,8 @@
 #define EXISTS_muInnerDz
 #define EXISTS_muInnerD0GV
 #define EXISTS_muInnerDzGV
+#define EXISTS_muInnerPt
+#define EXISTS_muInnerPtErr
 #define EXISTS_muNumberOfValidTrkLayers
 #define EXISTS_muNumberOfValidTrkHits
 #define EXISTS_muNumberOfValidPixelLayers
@@ -356,6 +361,22 @@
 #define EXISTS_jetNCharged
 #define EXISTS_jetMVAs
 #define EXISTS_jetWPLevels
+#define EXISTS_jetMt
+#define EXISTS_jetJECUnc
+#define EXISTS_jetLeadTrackPt
+#define EXISTS_jetVtxPt
+#define EXISTS_jetVtxMass
+#define EXISTS_jetVtx3dL
+#define EXISTS_jetVtx3deL
+#define EXISTS_jetSoftLeptPt
+#define EXISTS_jetSoftLeptPtRel
+#define EXISTS_jetSoftLeptdR
+#define EXISTS_jetSoftLeptIdlooseMu
+#define EXISTS_jetSoftLeptIdEle95
+#define EXISTS_jetDPhiMETJet
+#define EXISTS_jetPuJetIdL
+#define EXISTS_jetPuJetIdM
+#define EXISTS_jetPuJetIdT
 #define EXISTS_jetPartonID
 #define EXISTS_jetGenJetIndex
 #define EXISTS_jetGenJetEn
@@ -422,33 +443,33 @@ namespace IN {
  extern Int_t				HLT[444];
  extern Int_t				HLTIndex[70];
  extern Float_t				bspotPos[3];
- extern Float_t				vtx[61][3];
+ extern Float_t				vtx[63][3];
  extern Int_t				IsVtxGood;
- extern Float_t				vtxbs[61][3];
+ extern Int_t				nGoodVtx;
+ extern Float_t				vtxbs[63][3];
  extern Float_t				pdf[7];
  extern Float_t				pthat;
  extern Float_t				processID;
- extern Int_t				mcPID[11];
- extern Float_t				mcPt[11];
- extern Float_t				mcEta[11];
- extern Float_t				mcPhi[11];
- extern Float_t				mcE[11];
- extern Int_t				mcGMomPID[11];
- extern Int_t				mcMomPID[11];
- extern Float_t				mcMomPt[11];
- extern Float_t				mcMomMass[11];
- extern Float_t				mcMomEta[11];
- extern Float_t				mcMomPhi[11];
- extern Int_t				mcIndex[11];
- extern Int_t				mcDecayType[11];
+ extern Int_t				mcPID[97];
+ extern Float_t				mcPt[97];
+ extern Float_t				mcEta[97];
+ extern Float_t				mcPhi[97];
+ extern Float_t				mcE[97];
+ extern Int_t				mcGMomPID[97];
+ extern Int_t				mcMomPID[97];
+ extern Float_t				mcMomPt[97];
+ extern Float_t				mcMomMass[97];
+ extern Float_t				mcMomEta[97];
+ extern Float_t				mcMomPhi[97];
+ extern Int_t				mcIndex[97];
+ extern Int_t				mcDecayType[97];
+ extern Int_t				mcParentage[97];
+ extern Int_t				mcStatus[97];
  extern Float_t				genMET;
  extern Float_t				genMETPhi;
  extern Int_t				nPU[4];
  extern Int_t				puBX[4];
  extern Float_t				puTrue[4];
- extern Float_t				MET;
- extern Float_t				METPhi;
- extern Float_t				METsumEt;
  extern Float_t				pfMET;
  extern Float_t				pfMETPhi;
  extern Float_t				pfMETsumEt;
@@ -459,391 +480,366 @@ namespace IN {
  extern Float_t				recoPfMETsumEt;
  extern Float_t				recoPfMETmEtSig;
  extern Float_t				recoPfMETSig;
+ extern Float_t				trkMETxPV;
+ extern Float_t				trkMETyPV;
+ extern Float_t				trkMETPhiPV;
+ extern Float_t				trkMETPV;
+ extern Float_t				trkMETx[63];
+ extern Float_t				trkMETy[63];
+ extern Float_t				trkMETPhi[63];
+ extern Float_t				trkMET[63];
  extern Int_t				metFilters[10];
- extern Int_t				eleTrg[6][16];
- extern Int_t				eleClass[6];
- extern Int_t				eleIsEcalDriven[6];
- extern Int_t				eleCharge[6];
- extern Float_t				eleEn[6];
- extern Float_t				eleEcalEn[6];
- extern Float_t				eleSCRawEn[6];
- extern Float_t				eleSCEn[6];
- extern Float_t				eleESEn[6];
- extern Float_t				elePt[6];
- extern Float_t				eleEta[6];
- extern Float_t				elePhi[6];
- extern Float_t				eleSCEta[6];
- extern Float_t				eleSCPhi[6];
- extern Float_t				eleSCEtaWidth[6];
- extern Float_t				eleSCPhiWidth[6];
- extern Float_t				eleVtx[6][3];
- extern Float_t				eleD0[6];
- extern Float_t				eleDz[6];
- extern Float_t				eleD0GV[6];
- extern Float_t				eleDzGV[6];
- extern Float_t				eleHoverE[6];
- extern Float_t				eleHoverE12[6];
- extern Float_t				eleEoverP[6];
- extern Float_t				elePin[6];
- extern Float_t				elePout[6];
- extern Float_t				eleTrkMomErr[6];
- extern Float_t				eleBrem[6];
- extern Float_t				eledEtaAtVtx[6];
- extern Float_t				eledPhiAtVtx[6];
- extern Float_t				eleSigmaIEtaIEta[6];
- extern Float_t				eleSigmaIEtaIPhi[6];
- extern Float_t				eleSigmaIPhiIPhi[6];
- extern Float_t				eleEmax[6];
- extern Float_t				eleE1x5[6];
- extern Float_t				eleE3x3[6];
- extern Float_t				eleE5x5[6];
- extern Float_t				eleE2x5Right[6];
- extern Float_t				eleE2x5Left[6];
- extern Float_t				eleE2x5Top[6];
- extern Float_t				eleE2x5Bottom[6];
- extern Float_t				eleRegrE[6];
- extern Float_t				eleRegrEerr[6];
- extern Float_t				elePhoRegrE[6];
- extern Float_t				elePhoRegrEerr[6];
- extern Float_t				eleSeedTime[6];
- extern Int_t				eleRecoFlag[6];
- extern Int_t				elePos[6];
- extern Int_t				eleGenIndex[6];
- extern Int_t				eleGenGMomPID[6];
- extern Int_t				eleGenMomPID[6];
- extern Float_t				eleGenMomPt[6];
- extern Float_t				eleIsoTrkDR03[6];
- extern Float_t				eleIsoEcalDR03[6];
- extern Float_t				eleIsoHcalDR03[6];
- extern Float_t				eleIsoHcalDR0312[6];
- extern Float_t				eleIsoTrkDR04[6];
- extern Float_t				eleIsoEcalDR04[6];
- extern Float_t				eleIsoHcalDR04[6];
- extern Float_t				eleIsoHcalDR0412[6];
- extern Int_t				eleMissHits[6];
- extern Float_t				eleConvDist[6];
- extern Float_t				eleConvDcot[6];
- extern Int_t				eleConvVtxFit[6];
- extern Float_t				eleIP3D[6];
- extern Float_t				eleIP3DErr[6];
- extern Float_t				eleIDMVANonTrig[6];
- extern Float_t				eleIDMVATrig[6];
- extern Float_t				eleIDMVATrigIDIso[6];
- extern Float_t				elePFChIso03[6];
- extern Float_t				elePFPhoIso03[6];
- extern Float_t				elePFNeuIso03[6];
- extern Float_t				elePFChIso04[6];
- extern Float_t				elePFPhoIso04[6];
- extern Float_t				elePFNeuIso04[6];
- extern Float_t				eleESEffSigmaRR[6][3];
- extern Int_t				phoTrg[13][8];
- extern Int_t				phoTrgFilter[13][50];
- extern Bool_t				phoIsPhoton[13];
- extern Float_t				phoSCPos[13][3];
- extern Float_t				phoCaloPos[13][3];
- extern Float_t				phoE[13];
- extern Float_t				phoEt[13];
- extern Float_t				phoEta[13];
- extern Float_t				phoVtx[13][3];
- extern Float_t				phoPhi[13];
- extern Float_t				phoR9[13];
- extern Float_t				phoTrkIsoHollowDR03[13];
- extern Float_t				phoEcalIsoDR03[13];
- extern Float_t				phoHcalIsoDR03[13];
- extern Float_t				phoHcalIsoDR0312[13];
- extern Float_t				phoTrkIsoHollowDR04[13];
- extern Float_t				phoCiCdRtoTrk[13];
- extern Float_t				phoEcalIsoDR04[13];
- extern Float_t				phoHcalIsoDR04[13];
- extern Float_t				phoHcalIsoDR0412[13];
- extern Float_t				phoHoverE[13];
- extern Float_t				phoHoverE12[13];
- extern Int_t				phoEleVeto[13];
- extern Float_t				phoSigmaIEtaIEta[13];
- extern Float_t				phoSigmaIEtaIPhi[13];
- extern Float_t				phoSigmaIPhiIPhi[13];
- extern Float_t				phoCiCPF4phopfIso03[13];
- extern Float_t				phoCiCPF4phopfIso04[13];
- extern Float_t				phoEmax[13];
- extern Float_t				phoEtop[13];
- extern Float_t				phoEbottom[13];
- extern Float_t				phoEleft[13];
- extern Float_t				phoEright[13];
- extern Float_t				phoE3x3[13];
- extern Float_t				phoE3x1[13];
- extern Float_t				phoE1x3[13];
- extern Float_t				phoE5x5[13];
- extern Float_t				phoE1x5[13];
- extern Float_t				phoE2x2[13];
- extern Float_t				phoE2x5Max[13];
- extern Float_t				phoE2x5Right[13];
- extern Float_t				phoE2x5Left[13];
- extern Float_t				phoE2x5Top[13];
- extern Float_t				phoE2x5Bottom[13];
- extern Float_t				phoPFChIso[13];
- extern Float_t				phoPFPhoIso[13];
- extern Float_t				phoPFNeuIso[13];
- extern Float_t				phoSCRChIso[13];
- extern Float_t				phoSCRPhoIso[13];
- extern Float_t				phoSCRNeuIso[13];
- extern Float_t				phoRegrE[13];
- extern Float_t				phoRegrEerr[13];
- extern Float_t				phoSeedTime[13];
- extern Int_t				phoSeedDetId1[13];
- extern Int_t				phoSeedDetId2[13];
- extern Int_t				phoRecoFlag[13];
- extern Int_t				phoPos[13];
- extern Int_t				phoGenIndex[13];
- extern Int_t				phoGenGMomPID[13];
- extern Int_t				phoGenMomPID[13];
- extern Float_t				phoGenMomPt[13];
- extern Float_t				phoSCE[13];
- extern Float_t				phoSCRawE[13];
- extern Float_t				phoESEn[13];
- extern Float_t				phoSCEt[13];
- extern Float_t				phoSCEta[13];
- extern Float_t				phoSCPhi[13];
- extern Float_t				phoSCEtaWidth[13];
- extern Float_t				phoSCPhiWidth[13];
- extern Float_t				phoSCBrem[13];
- extern Int_t				phoOverlap[13];
- extern Int_t				phohasPixelSeed[13];
- extern Int_t				pho_hasConvPf[13];
- extern Int_t				pho_hasSLConvPf[13];
- extern Float_t				pho_pfconvVtxZ[13];
- extern Float_t				pho_pfconvVtxZErr[13];
- extern Int_t				pho_nSLConv[13];
- extern Float_t				pho_pfSLConvPos[13][20][3];
- extern Float_t				pho_pfSLConvVtxZ[13][20];
- extern Int_t				phoIsConv[13];
- extern Int_t				phoNConv[13];
- extern Float_t				phoConvInvMass[13];
- extern Float_t				phoConvCotTheta[13];
- extern Float_t				phoConvEoverP[13];
- extern Float_t				phoConvZofPVfromTrks[13];
- extern Float_t				phoConvMinDist[13];
- extern Float_t				phoConvdPhiAtVtx[13];
- extern Float_t				phoConvdPhiAtCalo[13];
- extern Float_t				phoConvdEtaAtCalo[13];
- extern Float_t				phoConvTrkd0[13][2];
- extern Float_t				phoConvTrkPin[13][2];
- extern Float_t				phoConvTrkPout[13][2];
- extern Float_t				phoConvTrkdz[13][2];
- extern Float_t				phoConvTrkdzErr[13][2];
- extern Float_t				phoConvChi2[13];
- extern Float_t				phoConvChi2Prob[13];
- extern Int_t				phoConvNTrks[13];
- extern Float_t				phoConvCharge[13][2];
- extern Float_t				phoConvValidVtx[13];
- extern Float_t				phoConvLikeLihood[13];
- extern Float_t				phoConvP4[13][4];
- extern Float_t				phoConvVtx[13][3];
- extern Float_t				phoConvVtxErr[13][3];
- extern Float_t				phoConvPairMomentum[13][3];
- extern Float_t				phoConvRefittedMomentum[13][3];
- extern Int_t				SingleLegConv[13];
- extern Float_t				phoPFConvVtx[13][3];
- extern Float_t				phoPFConvMom[13][3];
- extern Float_t				phoESEffSigmaRR[13][3];
- extern Int_t				muTrg[12][10];
- extern Float_t				muEta[12];
- extern Float_t				muPhi[12];
- extern Int_t				muCharge[12];
- extern Float_t				muPt[12];
- extern Float_t				muPz[12];
- extern Float_t				muVtx[12][3];
- extern Float_t				muVtxGlb[12][3];
- extern Int_t				muGenIndex[12];
- extern Float_t				mucktPt[12];
- extern Float_t				mucktPtErr[12];
- extern Float_t				mucktdxy[12];
- extern Float_t				mucktdz[12];
- extern Float_t				muIsoTrk[12];
- extern Float_t				muIsoCalo[12];
- extern Float_t				muIsoEcal[12];
- extern Float_t				muIsoHcal[12];
- extern Float_t				muChi2NDF[12];
- extern Float_t				muInnerChi2NDF[12];
- extern Float_t				muPFIsoR04_CH[12];
- extern Float_t				muPFIsoR04_NH[12];
- extern Float_t				muPFIsoR04_Pho[12];
- extern Float_t				muPFIsoR04_PU[12];
- extern Float_t				muPFIsoR04_CPart[12];
- extern Float_t				muPFIsoR04_NHHT[12];
- extern Float_t				muPFIsoR04_PhoHT[12];
- extern Float_t				muPFIsoR03_CH[12];
- extern Float_t				muPFIsoR03_NH[12];
- extern Float_t				muPFIsoR03_Pho[12];
- extern Float_t				muPFIsoR03_PU[12];
- extern Float_t				muPFIsoR03_CPart[12];
- extern Float_t				muPFIsoR03_NHHT[12];
- extern Float_t				muPFIsoR03_PhoHT[12];
- extern Int_t				muType[12];
- extern Bool_t				muID[12][6];
- extern Float_t				muD0[12];
- extern Float_t				muDz[12];
- extern Float_t				muD0GV[12];
- extern Float_t				muDzGV[12];
- extern Float_t				muInnerD0[12];
- extern Float_t				muInnerDz[12];
- extern Float_t				muInnerD0GV[12];
- extern Float_t				muInnerDzGV[12];
- extern Int_t				muNumberOfValidTrkLayers[12];
- extern Int_t				muNumberOfValidTrkHits[12];
- extern Int_t				muNumberOfValidPixelLayers[12];
- extern Int_t				muNumberOfValidPixelHits[12];
- extern Int_t				muNumberOfValidMuonHits[12];
- extern Int_t				muStations[12];
- extern Int_t				muChambers[12];
- extern Float_t				muIP3D[12];
- extern Float_t				muIP3DErr[12];
- extern Float_t				PFPhoEt[52];
- extern Float_t				PFPhoEta[52];
- extern Float_t				PFPhoPhi[52];
- extern Int_t				PFPhoType[52];
- extern Float_t				PFPhoIso[52];
+ extern Int_t				eleTrg[11][16];
+ extern Int_t				eleClass[11];
+ extern Int_t				eleIsEcalDriven[11];
+ extern Int_t				eleCharge[11];
+ extern Float_t				eleEn[11];
+ extern Float_t				eleEcalEn[11];
+ extern Float_t				eleSCRawEn[11];
+ extern Float_t				eleSCEn[11];
+ extern Float_t				eleESEn[11];
+ extern Float_t				elePt[11];
+ extern Float_t				eleEta[11];
+ extern Float_t				elePhi[11];
+ extern Float_t				eleSCEta[11];
+ extern Float_t				eleSCPhi[11];
+ extern Float_t				eleSCEtaWidth[11];
+ extern Float_t				eleSCPhiWidth[11];
+ extern Float_t				eleVtx[11][3];
+ extern Float_t				eleD0[11];
+ extern Float_t				eleDz[11];
+ extern Float_t				eleD0GV[11];
+ extern Float_t				eleDzGV[11];
+ extern Float_t				eleHoverE[11];
+ extern Float_t				eleHoverE12[11];
+ extern Float_t				eleEoverP[11];
+ extern Float_t				elePin[11];
+ extern Float_t				elePout[11];
+ extern Float_t				eleTrkMomErr[11];
+ extern Float_t				eleBrem[11];
+ extern Float_t				eledEtaAtVtx[11];
+ extern Float_t				eledPhiAtVtx[11];
+ extern Float_t				eleSigmaIEtaIEta[11];
+ extern Float_t				eleSigmaIEtaIPhi[11];
+ extern Float_t				eleSigmaIPhiIPhi[11];
+ extern Float_t				eleEmax[11];
+ extern Float_t				eleE1x5[11];
+ extern Float_t				eleE3x3[11];
+ extern Float_t				eleE5x5[11];
+ extern Float_t				eleE2x5Max[11];
+ extern Float_t				eleRegrE[11];
+ extern Float_t				eleRegrEerr[11];
+ extern Float_t				elePhoRegrE[11];
+ extern Float_t				elePhoRegrEerr[11];
+ extern Float_t				eleSeedTime[11];
+ extern Int_t				eleRecoFlag[11];
+ extern Int_t				elePos[11];
+ extern Int_t				eleGenIndex[11];
+ extern Int_t				eleGenGMomPID[11];
+ extern Int_t				eleGenMomPID[11];
+ extern Float_t				eleGenMomPt[11];
+ extern Float_t				eleIsoTrkDR03[11];
+ extern Float_t				eleIsoEcalDR03[11];
+ extern Float_t				eleIsoHcalDR03[11];
+ extern Float_t				eleIsoHcalDR0312[11];
+ extern Float_t				eleIsoTrkDR04[11];
+ extern Float_t				eleIsoEcalDR04[11];
+ extern Float_t				eleIsoHcalDR04[11];
+ extern Float_t				eleIsoHcalDR0412[11];
+ extern Float_t				eleModIsoTrk[11];
+ extern Float_t				eleModIsoEcal[11];
+ extern Float_t				eleModIsoHcal[11];
+ extern Int_t				eleMissHits[11];
+ extern Float_t				eleConvDist[11];
+ extern Float_t				eleConvDcot[11];
+ extern Int_t				eleConvVtxFit[11];
+ extern Float_t				eleIP3D[11];
+ extern Float_t				eleIP3DErr[11];
+ extern Float_t				eleIDMVANonTrig[11];
+ extern Float_t				eleIDMVATrig[11];
+ extern Float_t				eleIDMVATrigIDIso[11];
+ extern Float_t				elePFChIso03[11];
+ extern Float_t				elePFPhoIso03[11];
+ extern Float_t				elePFNeuIso03[11];
+ extern Float_t				elePFChIso04[11];
+ extern Float_t				elePFPhoIso04[11];
+ extern Float_t				elePFNeuIso04[11];
+ extern Float_t				eleESEffSigmaRR[11][3];
+ extern Int_t				phoTrg[12][8];
+ extern Int_t				phoTrgFilter[12][50];
+ extern Bool_t				phoIsPhoton[12];
+ extern Float_t				phoSCPos[12][3];
+ extern Float_t				phoCaloPos[12][3];
+ extern Float_t				phoE[12];
+ extern Float_t				phoEt[12];
+ extern Float_t				phoEta[12];
+ extern Float_t				phoVtx[12][3];
+ extern Float_t				phoPhi[12];
+ extern Float_t				phoR9[12];
+ extern Float_t				phoTrkIsoHollowDR03[12];
+ extern Float_t				phoEcalIsoDR03[12];
+ extern Float_t				phoHcalIsoDR03[12];
+ extern Float_t				phoHcalIsoDR0312[12];
+ extern Float_t				phoTrkIsoHollowDR04[12];
+ extern Float_t				phoCiCdRtoTrk[12];
+ extern Float_t				phoEcalIsoDR04[12];
+ extern Float_t				phoHcalIsoDR04[12];
+ extern Float_t				phoHcalIsoDR0412[12];
+ extern Float_t				phoHoverE[12];
+ extern Float_t				phoHoverE12[12];
+ extern Int_t				phoEleVeto[12];
+ extern Float_t				phoSigmaIEtaIEta[12];
+ extern Float_t				phoSigmaIEtaIPhi[12];
+ extern Float_t				phoSigmaIPhiIPhi[12];
+ extern Float_t				phoCiCPF4phopfIso03[12];
+ extern Float_t				phoCiCPF4phopfIso04[12];
+ extern Float_t				phoEmax[12];
+ extern Float_t				phoE3x3[12];
+ extern Float_t				phoE3x1[12];
+ extern Float_t				phoE1x3[12];
+ extern Float_t				phoE5x5[12];
+ extern Float_t				phoE1x5[12];
+ extern Float_t				phoE2x2[12];
+ extern Float_t				phoE2x5Max[12];
+ extern Float_t				phoPFChIso[12];
+ extern Float_t				phoPFPhoIso[12];
+ extern Float_t				phoPFNeuIso[12];
+ extern Float_t				phoSCRChIso[12];
+ extern Float_t				phoSCRPhoIso[12];
+ extern Float_t				phoSCRNeuIso[12];
+ extern Float_t				phoRegrE[12];
+ extern Float_t				phoRegrEerr[12];
+ extern Float_t				phoSeedTime[12];
+ extern Int_t				phoSeedDetId1[12];
+ extern Int_t				phoSeedDetId2[12];
+ extern Float_t				phoLICTD[12];
+ extern Int_t				phoRecoFlag[12];
+ extern Int_t				phoPos[12];
+ extern Int_t				phoGenIndex[12];
+ extern Int_t				phoGenGMomPID[12];
+ extern Int_t				phoGenMomPID[12];
+ extern Float_t				phoGenMomPt[12];
+ extern Float_t				phoSCE[12];
+ extern Float_t				phoSCRawE[12];
+ extern Float_t				phoESEn[12];
+ extern Float_t				phoSCEt[12];
+ extern Float_t				phoSCEta[12];
+ extern Float_t				phoSCPhi[12];
+ extern Float_t				phoSCEtaWidth[12];
+ extern Float_t				phoSCPhiWidth[12];
+ extern Float_t				phoSCBrem[12];
+ extern Int_t				phoOverlap[12];
+ extern Int_t				phohasPixelSeed[12];
+ extern Int_t				pho_hasConvPf[12];
+ extern Int_t				pho_hasSLConvPf[12];
+ extern Float_t				pho_pfconvVtxZ[12];
+ extern Float_t				pho_pfconvVtxZErr[12];
+ extern Int_t				pho_nSLConv[12];
+ extern Float_t				pho_pfSLConvPos[12][20][3];
+ extern Float_t				pho_pfSLConvVtxZ[12][20];
+ extern Int_t				phoIsConv[12];
+ extern Int_t				phoNConv[12];
+ extern Float_t				phoConvInvMass[12];
+ extern Float_t				phoConvCotTheta[12];
+ extern Float_t				phoConvEoverP[12];
+ extern Float_t				phoConvZofPVfromTrks[12];
+ extern Float_t				phoConvMinDist[12];
+ extern Float_t				phoConvdPhiAtVtx[12];
+ extern Float_t				phoConvdPhiAtCalo[12];
+ extern Float_t				phoConvdEtaAtCalo[12];
+ extern Float_t				phoConvTrkd0[12][2];
+ extern Float_t				phoConvTrkPin[12][2];
+ extern Float_t				phoConvTrkPout[12][2];
+ extern Float_t				phoConvTrkdz[12][2];
+ extern Float_t				phoConvTrkdzErr[12][2];
+ extern Float_t				phoConvChi2[12];
+ extern Float_t				phoConvChi2Prob[12];
+ extern Int_t				phoConvNTrks[12];
+ extern Float_t				phoConvCharge[12][2];
+ extern Float_t				phoConvValidVtx[12];
+ extern Float_t				phoConvLikeLihood[12];
+ extern Float_t				phoConvP4[12][4];
+ extern Float_t				phoConvVtx[12][3];
+ extern Float_t				phoConvVtxErr[12][3];
+ extern Float_t				phoConvPairMomentum[12][3];
+ extern Float_t				phoConvRefittedMomentum[12][3];
+ extern Int_t				SingleLegConv[12];
+ extern Float_t				phoPFConvVtx[12][3];
+ extern Float_t				phoPFConvMom[12][3];
+ extern Float_t				phoESEffSigmaRR[12][3];
+ extern Int_t				muTrg[16][10];
+ extern Float_t				muEta[16];
+ extern Float_t				muPhi[16];
+ extern Int_t				muCharge[16];
+ extern Float_t				muPt[16];
+ extern Float_t				muPz[16];
+ extern Float_t				muVtx[16][3];
+ extern Float_t				muVtxGlb[16][3];
+ extern Int_t				muGenIndex[16];
+ extern Float_t				mucktPt[16];
+ extern Float_t				mucktPtErr[16];
+ extern Float_t				mucktEta[16];
+ extern Float_t				mucktPhi[16];
+ extern Float_t				mucktdxy[16];
+ extern Float_t				mucktdz[16];
+ extern Float_t				muIsoTrk[16];
+ extern Float_t				muIsoCalo[16];
+ extern Float_t				muIsoEcal[16];
+ extern Float_t				muIsoHcal[16];
+ extern Float_t				muChi2NDF[16];
+ extern Float_t				muInnerChi2NDF[16];
+ extern Float_t				muPFIsoR04_CH[16];
+ extern Float_t				muPFIsoR04_NH[16];
+ extern Float_t				muPFIsoR04_Pho[16];
+ extern Float_t				muPFIsoR04_PU[16];
+ extern Float_t				muPFIsoR04_CPart[16];
+ extern Float_t				muPFIsoR04_NHHT[16];
+ extern Float_t				muPFIsoR04_PhoHT[16];
+ extern Float_t				muPFIsoR03_CH[16];
+ extern Float_t				muPFIsoR03_NH[16];
+ extern Float_t				muPFIsoR03_Pho[16];
+ extern Float_t				muPFIsoR03_PU[16];
+ extern Float_t				muPFIsoR03_CPart[16];
+ extern Float_t				muPFIsoR03_NHHT[16];
+ extern Float_t				muPFIsoR03_PhoHT[16];
+ extern Int_t				muType[16];
+ extern Float_t				muD0[16];
+ extern Float_t				muDz[16];
+ extern Float_t				muD0GV[16];
+ extern Float_t				muDzGV[16];
+ extern Float_t				muInnerD0[16];
+ extern Float_t				muInnerDz[16];
+ extern Float_t				muInnerD0GV[16];
+ extern Float_t				muInnerDzGV[16];
+ extern Float_t				muInnerPt[16];
+ extern Float_t				muInnerPtErr[16];
+ extern Int_t				muNumberOfValidTrkLayers[16];
+ extern Int_t				muNumberOfValidTrkHits[16];
+ extern Int_t				muNumberOfValidPixelLayers[16];
+ extern Int_t				muNumberOfValidPixelHits[16];
+ extern Int_t				muNumberOfValidMuonHits[16];
+ extern Int_t				muStations[16];
+ extern Int_t				muChambers[16];
+ extern Float_t				muIP3D[16];
+ extern Float_t				muIP3DErr[16];
+ extern Float_t				PFPhoEt[50];
+ extern Float_t				PFPhoEta[50];
+ extern Float_t				PFPhoPhi[50];
+ extern Int_t				PFPhoType[50];
+ extern Float_t				PFPhoIso[50];
  extern Float_t				rho25;
  extern Float_t				rho25_neu;
  extern Float_t				rho25_muPFiso;
  extern Float_t				rho25_elePFiso;
  extern Float_t				rho2011;
  extern Float_t				rho2012;
- extern Int_t				jetTrg[21][14];
- extern Float_t				jetEn[21];
- extern Float_t				jetPt[21];
- extern Float_t				jetEta[21];
- extern Float_t				jetPhi[21];
- extern Float_t				jetCharge[21];
- extern Float_t				jetEt[21];
- extern Float_t				jetRawPt[21];
- extern Float_t				jetRawEn[21];
- extern Float_t				jetArea[21];
- extern Float_t				jetCHF[21];
- extern Float_t				jetNHF[21];
- extern Float_t				jetCEF[21];
- extern Float_t				jetNEF[21];
- extern Int_t				jetNCH[21];
- extern Float_t				jetHFHAE[21];
- extern Float_t				jetHFEME[21];
- extern Int_t				jetNConstituents[21];
- extern Float_t				jetCombinedSecondaryVtxBJetTags[21];
- extern Float_t				jetCombinedSecondaryVtxMVABJetTags[21];
- extern Float_t				jetJetProbabilityBJetTags[21];
- extern Float_t				jetJetBProbabilityBJetTags[21];
- extern Float_t				jetTrackCountingHighPurBJetTags[21];
- extern Float_t				jetBetaStar[21][100];
- extern Bool_t				jetPFLooseId[21];
- extern Float_t				jetDRMean[21];
- extern Float_t				jetDR2Mean[21];
- extern Float_t				jetDZ[21];
- extern Float_t				jetFrac01[21];
- extern Float_t				jetFrac02[21];
- extern Float_t				jetFrac03[21];
- extern Float_t				jetFrac04[21];
- extern Float_t				jetFrac05[21];
- extern Float_t				jetFrac06[21];
- extern Float_t				jetFrac07[21];
- extern Float_t				jetBeta[21];
- extern Float_t				jetBetaStarCMG[21];
- extern Float_t				jetBetaStarClassic[21];
- extern Float_t				jetBetaExt[21][100];
- extern Float_t				jetNNeutrals[21];
- extern Float_t				jetNCharged[21];
- extern Float_t				jetMVAs[21][4];
- extern Int_t				jetWPLevels[21][4];
- extern Int_t				jetPartonID[21];
- extern Int_t				jetGenJetIndex[21];
- extern Float_t				jetGenJetEn[21];
- extern Float_t				jetGenJetPt[21];
- extern Float_t				jetGenJetEta[21];
- extern Float_t				jetGenJetPhi[21];
- extern Int_t				jetGenPartonID[21];
- extern Float_t				jetGenEn[21];
- extern Float_t				jetGenPt[21];
- extern Float_t				jetGenEta[21];
- extern Float_t				jetGenPhi[21];
- extern Float_t				convVtx[127][3];
- extern Float_t				convVtxErr[127][3];
- extern Float_t				convPairMomentum[127][3];
- extern Float_t				convRefittedMomentum[127][3];
- extern Int_t				convNTracks[127];
- extern Float_t				convPairInvMass[127];
- extern Float_t				convPairCotThetaSep[127];
- extern Float_t				convEoverP[127];
- extern Float_t				convDistOfMinApproach[127];
- extern Float_t				convDPhiTrksAtVtx[127];
- extern Float_t				convDPhiTrksAtEcal[127];
- extern Float_t				convDEtaTrksAtEcal[127];
- extern Float_t				convDxy[127];
- extern Float_t				convDz[127];
- extern Float_t				convLxy[127];
- extern Float_t				convLz[127];
- extern Float_t				convZofPrimVtxFromTrks[127];
- extern Int_t				convNHitsBeforeVtx[127][2];
- extern Int_t				convNSharedHits[127];
- extern Int_t				convValidVtx[127];
- extern Float_t				convMVALikelihood[127];
- extern Float_t				convChi2[127];
- extern Float_t				convChi2Probability[127];
- extern Float_t				convTk1Dz[127];
- extern Float_t				convTk2Dz[127];
- extern Float_t				convTk1DzErr[127];
- extern Float_t				convTk2DzErr[127];
- extern Int_t				convCh1Ch2[127];
- extern Float_t				convTk1D0[127];
- extern Float_t				convTk1Pout[127];
- extern Float_t				convTk1Pin[127];
- extern Float_t				convTk2D0[127];
- extern Float_t				convTk2Pout[127];
- extern Float_t				convTk2Pin[127];
+ extern Int_t				jetTrg[22][14];
+ extern Float_t				jetEn[22];
+ extern Float_t				jetPt[22];
+ extern Float_t				jetEta[22];
+ extern Float_t				jetPhi[22];
+ extern Float_t				jetCharge[22];
+ extern Float_t				jetEt[22];
+ extern Float_t				jetRawPt[22];
+ extern Float_t				jetRawEn[22];
+ extern Float_t				jetArea[22];
+ extern Float_t				jetCHF[22];
+ extern Float_t				jetNHF[22];
+ extern Float_t				jetCEF[22];
+ extern Float_t				jetNEF[22];
+ extern Int_t				jetNCH[22];
+ extern Float_t				jetHFHAE[22];
+ extern Float_t				jetHFEME[22];
+ extern Int_t				jetNConstituents[22];
+ extern Float_t				jetCombinedSecondaryVtxBJetTags[22];
+ extern Float_t				jetCombinedSecondaryVtxMVABJetTags[22];
+ extern Float_t				jetJetProbabilityBJetTags[22];
+ extern Float_t				jetJetBProbabilityBJetTags[22];
+ extern Float_t				jetTrackCountingHighPurBJetTags[22];
+ extern Float_t				jetBetaStar[22][100];
+ extern Bool_t				jetPFLooseId[22];
+ extern Float_t				jetDRMean[22];
+ extern Float_t				jetDR2Mean[22];
+ extern Float_t				jetDZ[22];
+ extern Float_t				jetFrac01[22];
+ extern Float_t				jetFrac02[22];
+ extern Float_t				jetFrac03[22];
+ extern Float_t				jetFrac04[22];
+ extern Float_t				jetFrac05[22];
+ extern Float_t				jetFrac06[22];
+ extern Float_t				jetFrac07[22];
+ extern Float_t				jetBeta[22];
+ extern Float_t				jetBetaStarCMG[22];
+ extern Float_t				jetBetaStarClassic[22];
+ extern Float_t				jetBetaExt[22][100];
+ extern Float_t				jetNNeutrals[22];
+ extern Float_t				jetNCharged[22];
+ extern Float_t				jetMVAs[22][4];
+ extern Int_t				jetWPLevels[22][4];
+ extern Float_t				jetMt[22];
+ extern Float_t				jetJECUnc[22];
+ extern Float_t				jetLeadTrackPt[22];
+ extern Float_t				jetVtxPt[22];
+ extern Float_t				jetVtxMass[22];
+ extern Float_t				jetVtx3dL[22];
+ extern Float_t				jetVtx3deL[22];
+ extern Float_t				jetSoftLeptPt[22];
+ extern Float_t				jetSoftLeptPtRel[22];
+ extern Float_t				jetSoftLeptdR[22];
+ extern Float_t				jetSoftLeptIdlooseMu[22];
+ extern Float_t				jetSoftLeptIdEle95[22];
+ extern Float_t				jetDPhiMETJet[22];
+ extern Float_t				jetPuJetIdL[22];
+ extern Float_t				jetPuJetIdM[22];
+ extern Float_t				jetPuJetIdT[22];
+ extern Int_t				jetPartonID[22];
+ extern Int_t				jetGenJetIndex[22];
+ extern Float_t				jetGenJetEn[22];
+ extern Float_t				jetGenJetPt[22];
+ extern Float_t				jetGenJetEta[22];
+ extern Float_t				jetGenJetPhi[22];
+ extern Int_t				jetGenPartonID[22];
+ extern Float_t				jetGenEn[22];
+ extern Float_t				jetGenPt[22];
+ extern Float_t				jetGenEta[22];
+ extern Float_t				jetGenPhi[22];
+ extern Float_t				convVtx[156][3];
+ extern Float_t				convVtxErr[156][3];
+ extern Float_t				convPairMomentum[156][3];
+ extern Float_t				convRefittedMomentum[156][3];
+ extern Int_t				convNTracks[156];
+ extern Float_t				convPairInvMass[156];
+ extern Float_t				convPairCotThetaSep[156];
+ extern Float_t				convEoverP[156];
+ extern Float_t				convDistOfMinApproach[156];
+ extern Float_t				convDPhiTrksAtVtx[156];
+ extern Float_t				convDPhiTrksAtEcal[156];
+ extern Float_t				convDEtaTrksAtEcal[156];
+ extern Float_t				convDxy[156];
+ extern Float_t				convDz[156];
+ extern Float_t				convLxy[156];
+ extern Float_t				convLz[156];
+ extern Float_t				convZofPrimVtxFromTrks[156];
+ extern Int_t				convNHitsBeforeVtx[156][2];
+ extern Int_t				convNSharedHits[156];
+ extern Int_t				convValidVtx[156];
+ extern Float_t				convMVALikelihood[156];
+ extern Float_t				convChi2[156];
+ extern Float_t				convChi2Probability[156];
+ extern Float_t				convTk1Dz[156];
+ extern Float_t				convTk2Dz[156];
+ extern Float_t				convTk1DzErr[156];
+ extern Float_t				convTk2DzErr[156];
+ extern Int_t				convCh1Ch2[156];
+ extern Float_t				convTk1D0[156];
+ extern Float_t				convTk1Pout[156];
+ extern Float_t				convTk1Pin[156];
+ extern Float_t				convTk2D0[156];
+ extern Float_t				convTk2Pout[156];
+ extern Float_t				convTk2Pin[156];
 };
 namespace OUT {
- extern Int_t				nHLT;
- extern Int_t				nVtx;
  extern Int_t				nVtxBS;
- extern Int_t				nMC;
- extern Int_t				nPUInfo;
- extern Int_t				nEle;
- extern Int_t				nPho;
- extern Int_t				nMu;
- extern Int_t				nPFPho;
- extern Int_t				nJet;
- extern Int_t				nConv;
- extern Int_t				nLowPtJet;
- extern Int_t				run;
- extern Long64_t				event;
- extern Int_t				lumis;
- extern Bool_t				isData;
- extern Int_t				HLT[444];
- extern Int_t				HLTIndex[70];
- extern Float_t				bspotPos[3];
- extern Float_t				vtx[61][3];
- extern Int_t				IsVtxGood;
- extern Float_t				vtxbs[61][3];
- extern Float_t				pdf[7];
- extern Float_t				pthat;
- extern Float_t				processID;
- extern Int_t				mcPID[11];
- extern Float_t				mcPt[11];
- extern Float_t				mcEta[11];
- extern Float_t				mcPhi[11];
- extern Float_t				mcE[11];
- extern Int_t				mcGMomPID[11];
- extern Int_t				mcMomPID[11];
- extern Float_t				mcMomPt[11];
- extern Float_t				mcMomMass[11];
- extern Float_t				mcMomEta[11];
- extern Float_t				mcMomPhi[11];
- extern Int_t				mcIndex[11];
- extern Int_t				mcDecayType[11];
- extern Float_t				genMET;
- extern Float_t				genMETPhi;
- extern Int_t				nPU[4];
- extern Int_t				puBX[4];
- extern Float_t				puTrue[4];
- extern Float_t				MET;
- extern Float_t				METPhi;
- extern Float_t				METsumEt;
  extern Float_t				pfMET;
  extern Float_t				pfMETPhi;
  extern Float_t				pfMETsumEt;
@@ -854,342 +850,5 @@ namespace OUT {
  extern Float_t				recoPfMETsumEt;
  extern Float_t				recoPfMETmEtSig;
  extern Float_t				recoPfMETSig;
- extern Int_t				metFilters[10];
- extern Int_t				eleTrg[6][16];
- extern Int_t				eleClass[6];
- extern Int_t				eleIsEcalDriven[6];
- extern Int_t				eleCharge[6];
- extern Float_t				eleEn[6];
- extern Float_t				eleEcalEn[6];
- extern Float_t				eleSCRawEn[6];
- extern Float_t				eleSCEn[6];
- extern Float_t				eleESEn[6];
- extern Float_t				elePt[6];
- extern Float_t				eleEta[6];
- extern Float_t				elePhi[6];
- extern Float_t				eleSCEta[6];
- extern Float_t				eleSCPhi[6];
- extern Float_t				eleSCEtaWidth[6];
- extern Float_t				eleSCPhiWidth[6];
- extern Float_t				eleVtx[6][3];
- extern Float_t				eleD0[6];
- extern Float_t				eleDz[6];
- extern Float_t				eleD0GV[6];
- extern Float_t				eleDzGV[6];
- extern Float_t				eleHoverE[6];
- extern Float_t				eleHoverE12[6];
- extern Float_t				eleEoverP[6];
- extern Float_t				elePin[6];
- extern Float_t				elePout[6];
- extern Float_t				eleTrkMomErr[6];
- extern Float_t				eleBrem[6];
- extern Float_t				eledEtaAtVtx[6];
- extern Float_t				eledPhiAtVtx[6];
- extern Float_t				eleSigmaIEtaIEta[6];
- extern Float_t				eleSigmaIEtaIPhi[6];
- extern Float_t				eleSigmaIPhiIPhi[6];
- extern Float_t				eleEmax[6];
- extern Float_t				eleE1x5[6];
- extern Float_t				eleE3x3[6];
- extern Float_t				eleE5x5[6];
- extern Float_t				eleE2x5Right[6];
- extern Float_t				eleE2x5Left[6];
- extern Float_t				eleE2x5Top[6];
- extern Float_t				eleE2x5Bottom[6];
- extern Float_t				eleRegrE[6];
- extern Float_t				eleRegrEerr[6];
- extern Float_t				elePhoRegrE[6];
- extern Float_t				elePhoRegrEerr[6];
- extern Float_t				eleSeedTime[6];
- extern Int_t				eleRecoFlag[6];
- extern Int_t				elePos[6];
- extern Int_t				eleGenIndex[6];
- extern Int_t				eleGenGMomPID[6];
- extern Int_t				eleGenMomPID[6];
- extern Float_t				eleGenMomPt[6];
- extern Float_t				eleIsoTrkDR03[6];
- extern Float_t				eleIsoEcalDR03[6];
- extern Float_t				eleIsoHcalDR03[6];
- extern Float_t				eleIsoHcalDR0312[6];
- extern Float_t				eleIsoTrkDR04[6];
- extern Float_t				eleIsoEcalDR04[6];
- extern Float_t				eleIsoHcalDR04[6];
- extern Float_t				eleIsoHcalDR0412[6];
- extern Int_t				eleMissHits[6];
- extern Float_t				eleConvDist[6];
- extern Float_t				eleConvDcot[6];
- extern Int_t				eleConvVtxFit[6];
- extern Float_t				eleIP3D[6];
- extern Float_t				eleIP3DErr[6];
- extern Float_t				eleIDMVANonTrig[6];
- extern Float_t				eleIDMVATrig[6];
- extern Float_t				eleIDMVATrigIDIso[6];
- extern Float_t				elePFChIso03[6];
- extern Float_t				elePFPhoIso03[6];
- extern Float_t				elePFNeuIso03[6];
- extern Float_t				elePFChIso04[6];
- extern Float_t				elePFPhoIso04[6];
- extern Float_t				elePFNeuIso04[6];
- extern Float_t				eleESEffSigmaRR[6][3];
- extern Int_t				phoTrg[13][8];
- extern Int_t				phoTrgFilter[13][50];
- extern Bool_t				phoIsPhoton[13];
- extern Float_t				phoSCPos[13][3];
- extern Float_t				phoCaloPos[13][3];
- extern Float_t				phoE[13];
- extern Float_t				phoEt[13];
- extern Float_t				phoEta[13];
- extern Float_t				phoVtx[13][3];
- extern Float_t				phoPhi[13];
- extern Float_t				phoR9[13];
- extern Float_t				phoTrkIsoHollowDR03[13];
- extern Float_t				phoEcalIsoDR03[13];
- extern Float_t				phoHcalIsoDR03[13];
- extern Float_t				phoHcalIsoDR0312[13];
- extern Float_t				phoTrkIsoHollowDR04[13];
- extern Float_t				phoCiCdRtoTrk[13];
- extern Float_t				phoEcalIsoDR04[13];
- extern Float_t				phoHcalIsoDR04[13];
- extern Float_t				phoHcalIsoDR0412[13];
- extern Float_t				phoHoverE[13];
- extern Float_t				phoHoverE12[13];
- extern Int_t				phoEleVeto[13];
- extern Float_t				phoSigmaIEtaIEta[13];
- extern Float_t				phoSigmaIEtaIPhi[13];
- extern Float_t				phoSigmaIPhiIPhi[13];
- extern Float_t				phoCiCPF4phopfIso03[13];
- extern Float_t				phoCiCPF4phopfIso04[13];
- extern Float_t				phoEmax[13];
- extern Float_t				phoEtop[13];
- extern Float_t				phoEbottom[13];
- extern Float_t				phoEleft[13];
- extern Float_t				phoEright[13];
- extern Float_t				phoE3x3[13];
- extern Float_t				phoE3x1[13];
- extern Float_t				phoE1x3[13];
- extern Float_t				phoE5x5[13];
- extern Float_t				phoE1x5[13];
- extern Float_t				phoE2x2[13];
- extern Float_t				phoE2x5Max[13];
- extern Float_t				phoE2x5Right[13];
- extern Float_t				phoE2x5Left[13];
- extern Float_t				phoE2x5Top[13];
- extern Float_t				phoE2x5Bottom[13];
- extern Float_t				phoPFChIso[13];
- extern Float_t				phoPFPhoIso[13];
- extern Float_t				phoPFNeuIso[13];
- extern Float_t				phoSCRChIso[13];
- extern Float_t				phoSCRPhoIso[13];
- extern Float_t				phoSCRNeuIso[13];
- extern Float_t				phoRegrE[13];
- extern Float_t				phoRegrEerr[13];
- extern Float_t				phoSeedTime[13];
- extern Int_t				phoSeedDetId1[13];
- extern Int_t				phoSeedDetId2[13];
- extern Int_t				phoRecoFlag[13];
- extern Int_t				phoPos[13];
- extern Int_t				phoGenIndex[13];
- extern Int_t				phoGenGMomPID[13];
- extern Int_t				phoGenMomPID[13];
- extern Float_t				phoGenMomPt[13];
- extern Float_t				phoSCE[13];
- extern Float_t				phoSCRawE[13];
- extern Float_t				phoESEn[13];
- extern Float_t				phoSCEt[13];
- extern Float_t				phoSCEta[13];
- extern Float_t				phoSCPhi[13];
- extern Float_t				phoSCEtaWidth[13];
- extern Float_t				phoSCPhiWidth[13];
- extern Float_t				phoSCBrem[13];
- extern Int_t				phoOverlap[13];
- extern Int_t				phohasPixelSeed[13];
- extern Int_t				pho_hasConvPf[13];
- extern Int_t				pho_hasSLConvPf[13];
- extern Float_t				pho_pfconvVtxZ[13];
- extern Float_t				pho_pfconvVtxZErr[13];
- extern Int_t				pho_nSLConv[13];
- extern Float_t				pho_pfSLConvPos[13][20][3];
- extern Float_t				pho_pfSLConvVtxZ[13][20];
- extern Int_t				phoIsConv[13];
- extern Int_t				phoNConv[13];
- extern Float_t				phoConvInvMass[13];
- extern Float_t				phoConvCotTheta[13];
- extern Float_t				phoConvEoverP[13];
- extern Float_t				phoConvZofPVfromTrks[13];
- extern Float_t				phoConvMinDist[13];
- extern Float_t				phoConvdPhiAtVtx[13];
- extern Float_t				phoConvdPhiAtCalo[13];
- extern Float_t				phoConvdEtaAtCalo[13];
- extern Float_t				phoConvTrkd0[13][2];
- extern Float_t				phoConvTrkPin[13][2];
- extern Float_t				phoConvTrkPout[13][2];
- extern Float_t				phoConvTrkdz[13][2];
- extern Float_t				phoConvTrkdzErr[13][2];
- extern Float_t				phoConvChi2[13];
- extern Float_t				phoConvChi2Prob[13];
- extern Int_t				phoConvNTrks[13];
- extern Float_t				phoConvCharge[13][2];
- extern Float_t				phoConvValidVtx[13];
- extern Float_t				phoConvLikeLihood[13];
- extern Float_t				phoConvP4[13][4];
- extern Float_t				phoConvVtx[13][3];
- extern Float_t				phoConvVtxErr[13][3];
- extern Float_t				phoConvPairMomentum[13][3];
- extern Float_t				phoConvRefittedMomentum[13][3];
- extern Int_t				SingleLegConv[13];
- extern Float_t				phoPFConvVtx[13][3];
- extern Float_t				phoPFConvMom[13][3];
- extern Float_t				phoESEffSigmaRR[13][3];
- extern Int_t				muTrg[12][10];
- extern Float_t				muEta[12];
- extern Float_t				muPhi[12];
- extern Int_t				muCharge[12];
- extern Float_t				muPt[12];
- extern Float_t				muPz[12];
- extern Float_t				muVtx[12][3];
- extern Float_t				muVtxGlb[12][3];
- extern Int_t				muGenIndex[12];
- extern Float_t				mucktPt[12];
- extern Float_t				mucktPtErr[12];
- extern Float_t				mucktdxy[12];
- extern Float_t				mucktdz[12];
- extern Float_t				muIsoTrk[12];
- extern Float_t				muIsoCalo[12];
- extern Float_t				muIsoEcal[12];
- extern Float_t				muIsoHcal[12];
- extern Float_t				muChi2NDF[12];
- extern Float_t				muInnerChi2NDF[12];
- extern Float_t				muPFIsoR04_CH[12];
- extern Float_t				muPFIsoR04_NH[12];
- extern Float_t				muPFIsoR04_Pho[12];
- extern Float_t				muPFIsoR04_PU[12];
- extern Float_t				muPFIsoR04_CPart[12];
- extern Float_t				muPFIsoR04_NHHT[12];
- extern Float_t				muPFIsoR04_PhoHT[12];
- extern Float_t				muPFIsoR03_CH[12];
- extern Float_t				muPFIsoR03_NH[12];
- extern Float_t				muPFIsoR03_Pho[12];
- extern Float_t				muPFIsoR03_PU[12];
- extern Float_t				muPFIsoR03_CPart[12];
- extern Float_t				muPFIsoR03_NHHT[12];
- extern Float_t				muPFIsoR03_PhoHT[12];
- extern Int_t				muType[12];
- extern Bool_t				muID[12][6];
- extern Float_t				muD0[12];
- extern Float_t				muDz[12];
- extern Float_t				muD0GV[12];
- extern Float_t				muDzGV[12];
- extern Float_t				muInnerD0[12];
- extern Float_t				muInnerDz[12];
- extern Float_t				muInnerD0GV[12];
- extern Float_t				muInnerDzGV[12];
- extern Int_t				muNumberOfValidTrkLayers[12];
- extern Int_t				muNumberOfValidTrkHits[12];
- extern Int_t				muNumberOfValidPixelLayers[12];
- extern Int_t				muNumberOfValidPixelHits[12];
- extern Int_t				muNumberOfValidMuonHits[12];
- extern Int_t				muStations[12];
- extern Int_t				muChambers[12];
- extern Float_t				muIP3D[12];
- extern Float_t				muIP3DErr[12];
- extern Float_t				PFPhoEt[52];
- extern Float_t				PFPhoEta[52];
- extern Float_t				PFPhoPhi[52];
- extern Int_t				PFPhoType[52];
- extern Float_t				PFPhoIso[52];
- extern Float_t				rho25;
- extern Float_t				rho25_neu;
- extern Float_t				rho25_muPFiso;
- extern Float_t				rho25_elePFiso;
- extern Float_t				rho2011;
- extern Float_t				rho2012;
- extern Int_t				jetTrg[21][14];
- extern Float_t				jetEn[21];
- extern Float_t				jetPt[21];
- extern Float_t				jetEta[21];
- extern Float_t				jetPhi[21];
- extern Float_t				jetCharge[21];
- extern Float_t				jetEt[21];
- extern Float_t				jetRawPt[21];
- extern Float_t				jetRawEn[21];
- extern Float_t				jetArea[21];
- extern Float_t				jetCHF[21];
- extern Float_t				jetNHF[21];
- extern Float_t				jetCEF[21];
- extern Float_t				jetNEF[21];
- extern Int_t				jetNCH[21];
- extern Float_t				jetHFHAE[21];
- extern Float_t				jetHFEME[21];
- extern Int_t				jetNConstituents[21];
- extern Float_t				jetCombinedSecondaryVtxBJetTags[21];
- extern Float_t				jetCombinedSecondaryVtxMVABJetTags[21];
- extern Float_t				jetJetProbabilityBJetTags[21];
- extern Float_t				jetJetBProbabilityBJetTags[21];
- extern Float_t				jetTrackCountingHighPurBJetTags[21];
- extern Float_t				jetBetaStar[21][100];
- extern Bool_t				jetPFLooseId[21];
- extern Float_t				jetDRMean[21];
- extern Float_t				jetDR2Mean[21];
- extern Float_t				jetDZ[21];
- extern Float_t				jetFrac01[21];
- extern Float_t				jetFrac02[21];
- extern Float_t				jetFrac03[21];
- extern Float_t				jetFrac04[21];
- extern Float_t				jetFrac05[21];
- extern Float_t				jetFrac06[21];
- extern Float_t				jetFrac07[21];
- extern Float_t				jetBeta[21];
- extern Float_t				jetBetaStarCMG[21];
- extern Float_t				jetBetaStarClassic[21];
- extern Float_t				jetBetaExt[21][100];
- extern Float_t				jetNNeutrals[21];
- extern Float_t				jetNCharged[21];
- extern Float_t				jetMVAs[21][4];
- extern Int_t				jetWPLevels[21][4];
- extern Int_t				jetPartonID[21];
- extern Int_t				jetGenJetIndex[21];
- extern Float_t				jetGenJetEn[21];
- extern Float_t				jetGenJetPt[21];
- extern Float_t				jetGenJetEta[21];
- extern Float_t				jetGenJetPhi[21];
- extern Int_t				jetGenPartonID[21];
- extern Float_t				jetGenEn[21];
- extern Float_t				jetGenPt[21];
- extern Float_t				jetGenEta[21];
- extern Float_t				jetGenPhi[21];
- extern Float_t				convVtx[127][3];
- extern Float_t				convVtxErr[127][3];
- extern Float_t				convPairMomentum[127][3];
- extern Float_t				convRefittedMomentum[127][3];
- extern Int_t				convNTracks[127];
- extern Float_t				convPairInvMass[127];
- extern Float_t				convPairCotThetaSep[127];
- extern Float_t				convEoverP[127];
- extern Float_t				convDistOfMinApproach[127];
- extern Float_t				convDPhiTrksAtVtx[127];
- extern Float_t				convDPhiTrksAtEcal[127];
- extern Float_t				convDEtaTrksAtEcal[127];
- extern Float_t				convDxy[127];
- extern Float_t				convDz[127];
- extern Float_t				convLxy[127];
- extern Float_t				convLz[127];
- extern Float_t				convZofPrimVtxFromTrks[127];
- extern Int_t				convNHitsBeforeVtx[127][2];
- extern Int_t				convNSharedHits[127];
- extern Int_t				convValidVtx[127];
- extern Float_t				convMVALikelihood[127];
- extern Float_t				convChi2[127];
- extern Float_t				convChi2Probability[127];
- extern Float_t				convTk1Dz[127];
- extern Float_t				convTk2Dz[127];
- extern Float_t				convTk1DzErr[127];
- extern Float_t				convTk2DzErr[127];
- extern Int_t				convCh1Ch2[127];
- extern Float_t				convTk1D0[127];
- extern Float_t				convTk1Pout[127];
- extern Float_t				convTk1Pin[127];
- extern Float_t				convTk2D0[127];
- extern Float_t				convTk2Pout[127];
- extern Float_t				convTk2Pin[127];
 };
 #endif

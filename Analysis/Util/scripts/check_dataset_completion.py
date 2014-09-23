@@ -33,7 +33,7 @@ def main() :
         filt_nevt = filt_nevt_hist
 
 
-    print '%s : Orignal = %d events, filtered = %d events.  Difference = %d' %( options.filteredDS, orig_nevt, filt_nevt, orig_nevt-filt_nevt)
+    print '%s : Orignal = %d events, filtered = %d events.  Difference = %d' %( options.filteredDS.split('/')[-1], orig_nevt, filt_nevt, orig_nevt-filt_nevt)
 
 def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNameFilt=None, histNameOrig=None, histNameFilt=None, fileKeyOrig=None, fileKeyFilt=None ) :
 
@@ -94,7 +94,7 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
 
     if not orig_nevt_tree and not orig_nevt_hist  :
         print 'Did not get any original events.  Check the path'
-        return
+        return orig_nevt_tree, orig_nevt_hist, filt_nevt_tree, filt_nevt_hist
         
 
     if filteredDS.count( '/eos/' ) :

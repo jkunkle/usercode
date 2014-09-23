@@ -31,18 +31,19 @@ def get_files( top_dir ) :
     return output
 
 
-def config_analysis( alg_list ) :
+def config_analysis( alg_list, args ) :
     """ Configure analysis modules. Order is preserved """
 
     #files_base = 'root://eoscms//eos/cms/store/user/jkunkle/Samples/MVATrainingSkims/'
     #sig_files = ['job_summer12_gjet_pt20to40_doubleEM.root', 'job_summer12_gjet_pt40_doubleEM.root']
     #bkg_files = ['job_summer12_qcd_pt30to40_doubleEM.root', 'job_summer12_qcd_pt40_doubleEM.root']
 
-    files_base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoEleVetoNewVarForMVA_2014_04_29/'
+    files_base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaForZMva1EleVeto_2014_06_19/'
     sig_dir = ['job_summer12_WAA_ISR', 'job_summer12_Wgg_FSR']
-    bkg_dir = ['job_summer12_Zg']
+    bkg_dir = ['job_summer12_Zg', 'job_summer12_DYJetsToLL']
+    #bkg_dir = ['job_electron_2012a_Jan22rereco', 'job_electron_2012b_Jan22rereco', 'job_electron_2012c_Jan2012rereco', 'job_electron_2012d_Jan22rereco']
 
-    OutputPath = '/afs/cern.ch/work/j/jkunkle/private/CMS/MVATrainingZRej_2014_04_29/'
+    OutputPath = args['outputDir']
     
     sig_files = []
     bkg_files = []
@@ -54,26 +55,19 @@ def config_analysis( alg_list ) :
     #variables = ['m_lepphph', 'm_lepph1', 'm_lepph2','m_phph', 'leadPhot_leadLepDR', 'sublPhot_leadLepDR', 'ph_phDR', 'dphi_met_lep1', 'dphi_met_ph1', 'dphi_met_ph2',]
     #variables = ['m_lepphph', 'm_lepph1', 'm_lepph2','m_phph', 'leadPhot_leadLepDR', 'sublPhot_leadLepDR', 'ph_phDR']
     #variables = ['mdiff_lepphph_lepph1', 'm_lepph2', 'm_phph', 'leadPhot_leadLepDR', 'sublPhot_leadLepDR', 'ph_phDR', 'm_minZdifflepph']
-    variables = ['m_lepphphMod', 'm_lepph1Mod', 'm_lepph2Mod', 'm_phph', 'leadPhot_leadLepDR', 'sublPhot_leadLepDR', 'ph_phDR']
+    vars = ['m_lepphph', 'm_lepph1', 'm_lepph2', 'm_phph', 'leadPhot_leadLepDR', 'sublPhot_leadLepDR', 'ph_phDR']
+    vars_dr = ['leadPhot_leadLepDR', 'sublPhot_leadLepDR', 'ph_phDR']
 
-    #alg_list.append(run_mva('ZRej7VarNom', sig_files, bkg_files, OutputPath+'trainZRejTEST.root', variables, weights='EventWeight', EtaCut='el_passtrig_n>0 && el_n==1 && ph_n==2 && leadPhot_pt>15 && sublPhot_pt>15 && ph_passMedium ') )
-    alg_list.append(run_mva('ZRejElChMVA7VarsMod40Cuts', sig_files, bkg_files, OutputPath+'trainZRejElCh7varsMod40Cuts.root', variables, weights='EventWeight', EtaCut='el_passtrig_n>0 && el_n==1 && ph_n==2 && leadPhot_pt>15 && sublPhot_pt>15 && ph_passMedium ') )
-    #alg_list.append(run_mva('ZRejMuChMVA7VarsNom', sig_files, bkg_files, OutputPath+'trainZRejMuCh7varsNom.root', variables, weights='EventWeight', EtaCut='mu_passtrig_n>0 && mu_n==1 && ph_n==2 && leadPhot_pt>15 && sublPhot_pt>15 && ph_passMedium ') )
+    #alg_list.append(run_mva('ZRejElChMVA3DRVars', sig_files, bkg_files, OutputPath+'trainZRejElCh3DRVars.root', vars_dr, weights='EventWeight', options='nCuts=40:MaxDepth=3' ) )
+    alg_list.append(run_mva('ZRejElChMVA7VarsNom', sig_files, bkg_files, OutputPath+'trainZRejElCh7VarsNom.root', vars, weights='EventWeight', options='nCuts=40:MaxDepth=3' ) )
 
-    #alg_list.append(run_mva('photonMVAIsoEE', sig_files, bkg_files, 'trainEE_Isovars.root', isovars, EtaCut='(phoEta > -2.5 && phoEta < -1.566) || (phoEta > 1.566 && phoEta < 2.5 )') )
-    #alg_list.append(run_mva('photonMVAIsoEB', sig_files, bkg_files, 'trainEB_Isovars.root', isovars, EtaCut='phoEta > -1.479 &&  phoEta < 1.479 ') )
+    alg_list.append(run_mva('ZRejElChMVA7VarsVTNorm', sig_files, bkg_files, OutputPath+'trainZRejElCh7VarsVTNorm.root', vars, weights='EventWeight', options='nCuts=40:MaxDepth=3:VarTransform=Norm' ) )
+    alg_list.append(run_mva('ZRejElChMVA7VarsVTDeco', sig_files, bkg_files, OutputPath+'trainZRejElCh7VarsVTDeco.root', vars, weights='EventWeight', options='nCuts=40:MaxDepth=3:VarTransform=Deco' ) )
+    alg_list.append(run_mva('ZRejElChMVA7VarsVTPCA', sig_files, bkg_files, OutputPath+'trainZRejElCh7VarsVTPCA.root', vars, weights='EventWeight', options='nCuts=40:MaxDepth=3:VarTransform=PCA' ) )
+    alg_list.append(run_mva('ZRejElChMVA7VarsVTUniform', sig_files, bkg_files, OutputPath+'trainZRejElCh7VarsVTUniform.root', vars, weights='EventWeight', options='nCuts=40:MaxDepth=3:VarTransform=Uniform' ) )
+    alg_list.append(run_mva('ZRejElChMVA7VarsVTGauss', sig_files, bkg_files, OutputPath+'trainZRejElCh7VarsVTGauss.root', vars, weights='EventWeight', options='nCuts=40:MaxDepth=3:VarTransform=Gauss' ) )
 
-    #alg_list.append(run_mva('photonMVAId2EE', sig_files, bkg_files, 'trainEE_Id2vars.root', idvars2, EtaCut='(phoEta > -2.5 && phoEta < -1.566) || (phoEta > 1.566 && phoEta < 2.5 )') )
-    #alg_list.append(run_mva('photonMVAId2EB', sig_files, bkg_files, 'trainEB_Id2vars.root', idvars2, EtaCut='phoEta > -1.479 &&  phoEta < 1.479 ') )
-
-    #alg_list.append(run_mva('photonMVAId8EE', sig_files, bkg_files, 'trainEE_Id8vars.root', idvars8, EtaCut='(phoEta > -2.5 && phoEta < -1.566) || (phoEta > 1.566 && phoEta < 2.5 )') )
-    #alg_list.append(run_mva('photonMVAId8EB', sig_files, bkg_files, 'trainEB_Id8vars.root', idvars8, EtaCut='phoEta > -1.479 &&  phoEta < 1.479 ') )
-
-    #alg_list.append(run_mva('photonMVAIsoIdEE', sig_files, bkg_files, 'trainEE_IdIsovars.root', isoidvars, EtaCut='(phoEta > -2.5 && phoEta < -1.566) || (phoEta > 1.566 && phoEta < 2.5 )') )
-    #alg_list.append(run_mva('photonMVAIsoIdEB', sig_files, bkg_files, 'trainEB_IdIsovars.root', isoidvars, EtaCut='phoEta > -1.479 &&  phoEta < 1.479 ') )
-
-
-def run_mva( job_name, sig_files, bkg_files, outputRootFile, variables, weights=None, **addtl_vars ) :
+def run_mva( job_name, sig_files, bkg_files, outputRootFile, variables, weights=None, options=None, **addtl_vars ) :
     
     module = Filter ( job_name )
 
@@ -85,6 +79,8 @@ def run_mva( job_name, sig_files, bkg_files, outputRootFile, variables, weights=
     module.add_var( 'Variables', ','.join(variables) )
     if weights is not None :
         module.add_var( 'Weights', weights)
+    if options is not None :
+        module.add_var( 'MvaOptions', options)
 
     for var, val in addtl_vars.iteritems() :
         module.add_var( var, val )

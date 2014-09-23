@@ -49,8 +49,12 @@ class RunModule : public virtual RunModuleBase {
         void BuildTruth        ( ModuleConfig & config ) const;
         void CalcEventVars     ( ModuleConfig & config ) const;
         bool FilterEvent       ( ModuleConfig & config ) const;
+        bool FilterBlind       ( ModuleConfig & config ) const;
         bool FilterTruth       ( ModuleConfig & config ) const;
 
+
+    private :
+        bool _isData;
 };
 
 // Ouput namespace 
@@ -59,6 +63,7 @@ namespace OUT {
 
     Int_t truelep_n        ;
     Int_t trueph_n         ;
+    Int_t trueW_n         ;
     Int_t trueph_wmother_n ;
     Int_t truegenph_n ;
     Int_t truegenphpt15_n;
@@ -75,6 +80,14 @@ namespace OUT {
     std::vector<float>  *trueph_eta      ;
     std::vector<float>  *trueph_phi      ;
     std::vector<int>    *trueph_motherPID  ;
+    std::vector<int>    *trueph_parentage;
+    std::vector<float>  *trueph_nearestLepDR ;
+    std::vector<float>  *trueph_nearestQrkDR ;
+
+    std::vector<float>  *trueW_pt       ;
+    std::vector<float>  *trueW_eta      ;
+    std::vector<float>  *trueW_phi      ;
+    std::vector<float>  *trueW_e        ;
 
     Float_t trueleadlep_pt;
     Float_t truesubllep_pt;
@@ -89,8 +102,23 @@ namespace OUT {
 
     Int_t   mu_pt25_n;
     Int_t   mu_passtrig_n;
+    Int_t   mu_passtrig25_n;
     Int_t   el_pt25_n;
     Int_t   el_passtrig_n;
+    Int_t   el_passtrig28_n;
+    Int_t   ph_mediumNoSIEIE_n;
+    Int_t   ph_medium_n;
+    Int_t   ph_mediumNoEleVeto_n;
+    Int_t   ph_mediumNoSIEIENoEleVeto_n;
+    Int_t   ph_mediumNoIso_n;
+    Int_t   ph_mediumNoChIso_n;
+    Int_t   ph_mediumNoNeuIso_n;
+    Int_t   ph_mediumNoPhoIso_n;
+    Int_t   ph_mediumNoChIsoNoNeuIso_n;
+    Int_t   ph_mediumNoChIsoNoPhoIso_n;
+    Int_t   ph_mediumNoNeuIsoNoPhoIso_n;
+    std::vector<Bool_t>  *ph_trigMatch_el;
+    std::vector<float>  *ph_elMinDR;
 
     Float_t leadPhot_pt;
     Float_t sublPhot_pt;

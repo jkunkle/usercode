@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 }
 
 void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
-                            const CmdOptions & _options, std::vector<ModuleConfig> & config ) {
+                            const CmdOptions & _options, std::vector<ModuleConfig> & configs ) {
     
     // *************************
     // initialize random numbers
@@ -70,12 +70,28 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     //outtree->Branch("m_2nearestToZ"   , &OUT::m_2nearestToZ   , "m_2nearestToZ/F"     );
     //outtree->Branch("m_3nearestToZ"   , &OUT::m_3nearestToZ   , "m_3nearestToZ/F"     );
     //outtree->Branch("m_4nearestToZ"   , &OUT::m_4nearestToZ   , "m_4nearestToZ/F"     );
-    outtree->Branch("leadPhot_leadLepDR", &OUT::leadPhot_leadLepDR, "leadPhot_leadLepDR/F"  );
-    outtree->Branch("leadPhot_sublLepDR", &OUT::leadPhot_sublLepDR, "leadPhot_sublLepDR/F"  );
-    outtree->Branch("sublPhot_leadLepDR", &OUT::sublPhot_leadLepDR, "sublPhot_leadLepDR/F"  );
-    outtree->Branch("sublPhot_sublLepDR", &OUT::sublPhot_sublLepDR, "sublPhot_sublLepDR/F"  );
+    //outtree->Branch("leadPhot_leadLepDR", &OUT::leadPhot_leadLepDR, "leadPhot_leadLepDR/F"  );
+    //outtree->Branch("leadPhot_sublLepDR", &OUT::leadPhot_sublLepDR, "leadPhot_sublLepDR/F"  );
+    //outtree->Branch("sublPhot_leadLepDR", &OUT::sublPhot_leadLepDR, "sublPhot_leadLepDR/F"  );
+    //outtree->Branch("sublPhot_sublLepDR", &OUT::sublPhot_sublLepDR, "sublPhot_sublLepDR/F"  );
+    //
 
+    outtree->Branch("PUBiasWeight_eb", &OUT::PUBiasWeight_eb, "PUBiasWeight_eb/F"  );
+    outtree->Branch("PUBiasWeight_ee", &OUT::PUBiasWeight_ee, "PUBiasWeight_ee/F"  );
     options = _options;
+
+    BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
+    
+        if( mod_conf.GetName() == "ApplyPUBiasWeight" ) { 
+            std::map<std::string, std::string>::const_iterator eitr = mod_conf.GetInitData().find( "root_file" );
+            if( eitr != mod_conf.GetInitData().end() ) {
+                rfile = TFile::Open( (eitr->second).c_str() );
+                whist_eb = dynamic_cast<TH1F*>(rfile->Get( "nvtxwt_eb" ));
+                whist_ee = dynamic_cast<TH1F*>(rfile->Get( "nvtxwt_ee" ));
+            }
+        }
+    }
+
 
 }
 
@@ -117,6 +133,9 @@ bool RunModule::ApplyModule( ModuleConfig & config, const CmdOptions & options) 
     // if you want the filter to work you need to do this
     //
     // Example :
+    if( config.GetName() == "ApplyPUBiasWeight" ) {
+        ApplyPUBiasWeight( config );
+    }
     if( config.GetName() == "CalcEventVars" ) {
         CalcEventVars( config );
     }
@@ -140,7 +159,7 @@ bool RunModule::ApplyModule( ModuleConfig & config, const CmdOptions & options) 
 bool RunModule::AddEventWeight( ModuleConfig & config, const CmdOptions & options ) {
 
     OUT::EventWeight = 1.0;
-    OUT::HasElToPhFF = false;
+    //OUT::HasElToPhFF = false;
 
     std::map<std::string, std::string> data = config.GetInitData();
 
@@ -248,7 +267,7 @@ bool RunModule::AddEventWeight( ModuleConfig & config, const CmdOptions & option
         float evt_sf = scale_factors[0] + scale_factors[1];
 
         OUT::EventWeight *= evt_sf;
-        OUT::HasElToPhFF = true;
+        //OUT::HasElToPhFF = true;
         // recalculate event kinematics counting a lepton as a photon
         
         TLorentzVector metlv;
@@ -299,9 +318,9 @@ bool RunModule::AddEventWeight( ModuleConfig & config, const CmdOptions & option
 
         if( leptons.size() == 2 ) {
            
-            OUT::mt_lep_met = calc_mt( leptons[0], metlv );
+            OUT::mt_lep_met = Utils::calc_mt( leptons[0], metlv );
 
-            OUT::mt_lepph1_met = calc_mt( leptons[0] + leptons[1], metlv );
+            OUT::mt_lepph1_met = Utils::calc_mt( leptons[0] + leptons[1], metlv );
 
             OUT::m_lepph1 = ( leptons[0] + leptons[1] ).M();
 
@@ -310,7 +329,7 @@ bool RunModule::AddEventWeight( ModuleConfig & config, const CmdOptions & option
             if( photons.size() > 0 ) {
 
                 OUT::m_lepphph = ( leptons[0]+leptons[1]+photons[0] ).M();
-                OUT::mt_lepphph_met = calc_mt( leptons[0] + leptons[1] + photons[0], metlv );
+                OUT::mt_lepphph_met = Utils::calc_mt( leptons[0] + leptons[1] + photons[0], metlv );
 
             }
         }
@@ -393,6 +412,15 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
 
 }
 
+bool RunModule::ApplyPUBiasWeight( ModuleConfig & config ) {
+
+    OUT::PUBiasWeight_ee= 1.0;
+    OUT::PUBiasWeight_eb= 1.0;
+
+    OUT::PUBiasWeight_ee = whist_ee->GetBinContent( whist_ee->FindBin( OUT::nVtx ) );
+    OUT::PUBiasWeight_eb = whist_eb->GetBinContent( whist_eb->FindBin( OUT::nVtx ) );
+
+}
 
 RunModule::RunModule() :
     rfile(0),

@@ -1,7 +1,6 @@
 import os
-#base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputPhMVA_2014_03_27'
-#base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputPhMVA_2014_04_02'
-base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoEleVeto_2014_04_25'
+#base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoEleVetoSCRVars_2014_04_30'
+base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputDYNoTrig_2014_07_29'
 jobs_data = [
         #(base, 'job_electron_2012a_Jan22rereco'),
         #(base, 'job_electron_2012b_Jan22rereco'),
@@ -38,16 +37,27 @@ jobs_data = [
         #(base, 'job_fall13_photonRunB2012_8'),
         #(base, 'job_fall13_photonRunB2012_9'),
         #(base, 'job_photon_2012a_Jan22rereco'),
+        #(base, 'job_MultiJet_2012a_Jan22rereco'),
+        #(base, 'job_jetmon_2012b_Jan22rereco'),
+        #(base, 'job_jetmon_2012c_Jan22rereco'),
+        #(base, 'job_jetmon_2012d_Jan22rereco'),
 ]
+
 jobs_mc = [
         #(base, 'job_summer12_DYJetsToLL'),
         #(base, 'job_summer12_Zg'),
         #(base, 'job_summer12_WAA_ISR'),
         #(base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_Wg'),
+<<<<<<< HEAD
         #(base, 'job_summer12_Wjets'),
         (base, 'job_summer12_ttjets_1l'),
         (base, 'job_summer12_ttjets_2l'),
+=======
+        (base, 'job_summer12_Wjets'),
+        #(base, 'job_summer12_ttjets_1l'),
+        #(base, 'job_summer12_ttjets_2l'),
+>>>>>>> 981dda67381d5b2da8342afee17fbf57d16b8ba5
         #(base, 'job_summer12_ttg'),
         #(base, 'job_summer12_WgPt130'),
         #(base, 'job_summer12_WgPt50-130'),
@@ -83,9 +93,10 @@ jobs_mc = [
         #(base, 'job_summer12_tbar_t'),
         #(base, 'job_summer12_tbar_tW'),
         #(base, 'job_summer12_ttinclusive'),
-        ####(base_tmp, 'DYJetsToLLPhOlap' )
-        ####(base_tmp, 'WjetsPhOlap' )
-        ####(base_tmp, 'WgPhOlap' )
+        ##(base, 'QCD_Pt-40_doubleEMEnriched')
+        ##(base_tmp, 'DYJetsToLLPhOlap' )
+        ##(base_tmp, 'WjetsPhOlap' )
+        ##(base_tmp, 'WgPhOlap' )
 ]
 
 #module_mc   = 'ConfLepGammaFilter.py'
@@ -97,42 +108,56 @@ top_configs = [
                 #  'module'      : 'ConfObjFilter.py',
                 #  'args_mc'     : '{ \'cut_nLep\' : \' > 1 \', \'cut_nLepTrigMatch\' : \' > 0 \' }',
                 #  'args_data'   : '{ \'cut_nLep\' : \' > 1 \', \'cut_nLepTrigMatch\' : \' > 0 \' }',
-                #  'output_name' : 'DiLeptonLoosePh_2014_03_12',
-                #  'tag'         : 'll',
+                #  'output_name' : 'DiLepton_2014_08_25',
+                #  'tag'         : 'llData',
                 #},
                 { 
                   'module'      : 'ConfObjFilter.py',
+<<<<<<< HEAD
                   'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\'}',
                   'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'== 1\' }',
                   'output_name' : 'LepGamma_2014_04_29',
                   'tag'         : 'lg',
+=======
+                  'args_mc'     : '{ \'cut_nLep\' : \' > 0 \' }',
+                  'args_data'   : '{ \'cut_nLep\' : \' > 0 \' }',
+                  'output_name' : 'SingleLepton_2014_09_03',
+                  'tag'         : 'llData',
+>>>>>>> 981dda67381d5b2da8342afee17fbf57d16b8ba5
                 },
                 #{ 
                 #  'module'      : 'ConfObjFilter.py',
-                #  'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nPh\' : \'> 1\'}',
-                #  'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nPh\' : \'== 1\' }',
-                #  'output_name' : 'LepGammaGammaPhMVAID2_2014_03_28',
+                #  'args_mc'     : '{ \'cut_nPh\' : \'> 0\' }',
+                #  'args_data'   : '{ \'cut_nPh\' : \'> 0\' }',
+                #  'output_name' : 'GammaGammaMediumNoEleVetoOlapDYNoTrig_2014_08_13',
+                #  'tag'         : 'lgDY',
+                #},
+                #{ 
+                #  'module'      : 'ConfObjFilter.py',
+                #  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPhPassMediumNoEleVeto\' : \'> 1\'}',
+                #  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPhPassMediumNoEleVeto\' : \'> 1\', \'isData\' : \'True\'}',
+                #  'output_name' : 'LepGammaGammaTESTLowMlgg_2014_06_16',
+                # 'tag'         : 'lgMu',
+                #},
+                #{ 
+                #  'module'      : 'ConfObjFilter.py',
+                #  'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \',  \'cut_nPh\' : \'> 1\'}',
+                #  'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \',  \'cut_nPh\' : \'> 1\', \'cut_nPhPassMedium\' : \'<2\' }',
+                #  'output_name' : 'LepGammaGammaNoPixSeedNoEleOlap_2014_08_13',
+                # 'tag'         : 'lggEle',
+                #},
+                #{ 
+                #  'module'      : 'ConfObjFilter.py',
+                #  'args_mc'     : '{\'cut_nPh\' : \'>1\' }',
+                #  'args_data'   : '{\'cut_nPh\' : \'>1\' }',
+                #  'output_name' : 'QCDPFDiJet80_2014_07_11',
                 # 'tag'         : 'lg',
                 #},
                 #{ 
                 #  'module'      : 'ConfObjFilter.py',
-                #  'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \',  \'cut_nPh\' : \'> 2\'}',
-                #  'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \',  \'cut_nPh\' : \'< 2\' }',
-                #  'output_name' : 'LepGammaGammaSignal_2014_03_12',
-                # 'tag'         : 'lgg',
-                #},
-                #{ 
-                #  'module'      : 'ConfObjFilter.py',
-                #  'args_mc'     : '{}',
-                #  'args_data'   : '{}',
-                #  'output_name' : 'ZgammaWithTruth_2014_02_26',
-                # 'tag'         : 'lg',
-                #},
-                #{ 
-                #  'module'      : 'ConfObjFilter.py',
-                #    'args_mc'   : '{ \'cut_nLep\' : \' > 0 \', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\', \'cut_nPhTruthMatchEl\' : \'==1\' }',
-                #  'args_data'   : '{ \'cut_nLep\' : \' > 0 \', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'== 1\', \'cut_nPhTruthMatchEl\' : \'==1\' }',
-                #  'output_name' : 'LepGammaLoosePhLowPtTrigMatchPhTMEl_2014_02_11',
+                #  'args_mc'   : '{ \'cut_nLep\' : \' > 0 \', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\' }',
+                #  'args_data'   : '{ \'cut_nLep\' : \' > 0 \', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'== 1\' }',
+                #  'output_name' : 'LepGammaNoEleVetoWithEleOlapNoTrig_2014_08_13',
                 #  'tag'         : 'lg',
                 #},
                 #{ 
@@ -165,11 +190,16 @@ top_configs = [
                 #},
 ]
 
+<<<<<<< HEAD
 command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /home/cranelli/JoshUserCode/usercode/Analysis/TreeFilter/FilterWgamgamFinal/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob %(nFilesPerJob)d --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s'
+=======
+command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob %(nFilesPerJob)d --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s '
+
+>>>>>>> 981dda67381d5b2da8342afee17fbf57d16b8ba5
 #command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob 5 --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s'
 
 nFilesPerJob = 1
-nproc=10
+nproc=8
 treename='ggNtuplizer/EventTree'
 
 for config in top_configs :

@@ -12,7 +12,7 @@ def config_analysis( alg_list ) :
 
     build_lep = Filter('BuildLepton')
     #build_lep.cut_incTau = 'False'
-    build_lep.cut_incTauMother = 'False'
+    build_lep.cut_incTauMother = 'True'
     build_lep.cut_incWMother = 'True'
     build_lep.cut_incZMother = 'True'
 
@@ -22,6 +22,7 @@ def config_analysis( alg_list ) :
     alg_list.append( build_lep )
 
     build_phot = Filter( 'BuildPhoton' )
+    build_phot.cut_motherPID = ' < 25 '
     #build_phot.cut_pt  = ' > 15'
     #build_phot.cut_abseta = ' < 2.5'
 

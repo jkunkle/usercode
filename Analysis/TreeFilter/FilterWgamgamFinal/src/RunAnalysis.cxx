@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 }
 
 void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
-                            const CmdOptions & options, std::vector<ModuleConfig> &/*configs*/ ) {
+                            const CmdOptions & options, std::vector<ModuleConfig> &configs ) {
     // *************************
     // initialize trees
     // *************************
@@ -57,10 +57,25 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("isBlinded", &OUT::isBlinded );
     outtree->Branch("EventWeight", &OUT::EventWeight, "EventWeight/F" );
 
-    outtree->Branch("mu_pt25_n"        , &OUT::mu_pt25_n        , "mu_pt25_n/I"        );
-    outtree->Branch("mu_passtrig_n"    , &OUT::mu_passtrig_n    , "mu_passtrig_n/I"        );
-    outtree->Branch("el_pt25_n"        , &OUT::el_pt25_n        , "el_pt25_n/I"        );
-    outtree->Branch("el_passtrig_n"    , &OUT::el_passtrig_n    , "el_passtrig_n/I"        );
+    outtree->Branch("mu_pt25_n"                   , &OUT::mu_pt25_n                   , "mu_pt25_n/I"        );
+    outtree->Branch("mu_passtrig_n"               , &OUT::mu_passtrig_n               , "mu_passtrig_n/I"        );
+    outtree->Branch("mu_passtrig25_n"             , &OUT::mu_passtrig25_n             , "mu_passtrig25_n/I"        );
+    outtree->Branch("el_pt25_n"                   , &OUT::el_pt25_n                   , "el_pt25_n/I"        );
+    outtree->Branch("el_passtrig_n"               , &OUT::el_passtrig_n               , "el_passtrig_n/I"        );
+    outtree->Branch("el_passtrig28_n"             , &OUT::el_passtrig28_n             , "el_passtrig28_n/I"        );
+    outtree->Branch("ph_mediumNoSIEIE_n"          , &OUT::ph_mediumNoSIEIE_n          , "ph_mediumNoSIEIE_n/I" );
+    outtree->Branch("ph_medium_n"                 , &OUT::ph_medium_n                 , "ph_medium_n/I" );
+    outtree->Branch("ph_mediumNoEleVeto_n"        , &OUT::ph_mediumNoEleVeto_n        , "ph_mediumNoEleVeto_n/I" );
+    outtree->Branch("ph_mediumNoSIEIENoEleVeto_n" , &OUT::ph_mediumNoSIEIENoEleVeto_n , "ph_mediumNoSIEIENoEleVeto_n/I" );
+    outtree->Branch("ph_mediumNoIso_n"            , &OUT::ph_mediumNoIso_n            , "ph_mediumNoIso_n/I" );
+    outtree->Branch("ph_mediumNoChIso_n"          , &OUT::ph_mediumNoChIso_n          , "ph_mediumNoChIso_n/I" );
+    outtree->Branch("ph_mediumNoNeuIso_n"         , &OUT::ph_mediumNoNeuIso_n         , "ph_mediumNoNeuIso_n/I" );
+    outtree->Branch("ph_mediumNoPhoIso_n"         , &OUT::ph_mediumNoPhoIso_n         , "ph_mediumNoPhoIso_n/I" );
+    outtree->Branch("ph_mediumNoChIsoNoNeuIso_n"  , &OUT::ph_mediumNoChIsoNoNeuIso_n  , "ph_mediumNoChIsoNoNeuIso_n/I" );
+    outtree->Branch("ph_mediumNoChIsoNoPhoIso_n"  , &OUT::ph_mediumNoChIsoNoPhoIso_n  , "ph_mediumNoChIsoNoPhoIso_n/I" );
+    outtree->Branch("ph_mediumNoNeuIsoNoPhoIso_n" , &OUT::ph_mediumNoNeuIsoNoPhoIso_n , "ph_mediumNoNeuIsoNoPhoIso_n/I" );
+    outtree->Branch("ph_trigMatch_el"             , &OUT::ph_trigMatch_el             );
+    outtree->Branch("ph_elMinDR"                  , &OUT::ph_elMinDR                  );
     
     outtree->Branch("leadPhot_pt"      , &OUT::leadPhot_pt      , "leadPhot_pt/F"        );
     outtree->Branch("sublPhot_pt"      , &OUT::sublPhot_pt      , "sublPhot_pt/F"        );
@@ -122,6 +137,14 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("trueph_eta", &OUT::trueph_eta );
     outtree->Branch("trueph_phi", &OUT::trueph_phi);
     outtree->Branch("trueph_motherPID", &OUT::trueph_motherPID );
+    outtree->Branch("trueph_parentage", &OUT::trueph_parentage);
+    outtree->Branch("trueph_nearestLepDR", &OUT::trueph_nearestLepDR);
+    outtree->Branch("trueph_nearestQrkDR", &OUT::trueph_nearestQrkDR);
+
+    outtree->Branch("trueW_pt"  , &OUT::trueW_pt  );
+    outtree->Branch("trueW_eta" , &OUT::trueW_eta );
+    outtree->Branch("trueW_phi" , &OUT::trueW_phi );
+    outtree->Branch("trueW_e"   , &OUT::trueW_e   );
 
     outtree->Branch("trueleadlep_pt"  , &OUT::trueleadlep_pt  , "trueleadlep_pt/F"    );
     outtree->Branch("truesubllep_pt"   , &OUT::truesubllep_pt   , "truesubllep_pt/F"     );
@@ -129,7 +152,22 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("trueleadlep_sublPhotDR"   , &OUT::trueleadlep_sublPhotDR, "trueleadlep_sublPhotDR/F"     );
     outtree->Branch("truesubllep_leadPhotDR"   , &OUT::truesubllep_leadPhotDR, "truesubllep_leadPhotDR/F"     );
     outtree->Branch("truesubllep_sublPhotDR"   , &OUT::truesubllep_sublPhotDR, "truesubllep_sublPhotDR/F"     );
+
+    BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
+    
+        if( mod_conf.GetName() == "FilterBlind" ) { 
+            std::map<std::string, std::string>::const_iterator eitr = mod_conf.GetInitData().find( "isData" );
+            if( eitr != mod_conf.GetInitData().end() ) {
+                std::string data = eitr->second;
+                std::transform(data.begin(), data.end(), data.begin(), ::tolower);
+                if( data=="true") _isData=true;
+                else              _isData=false;
+            }
+        }
+    }
+
 }
+   
 
 bool RunModule::execute( std::vector<ModuleConfig> & configs ) {
 
@@ -193,6 +231,9 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     if( config.GetName() == "FilterEvent" ) {
         keep_evt &= FilterEvent( config );
     }
+    if( config.GetName() == "FilterBlind" ) {
+        keep_evt &= FilterBlind( config );
+    }
     if( config.GetName() == "FilterTruth" ) {
         keep_evt &= FilterTruth( config );
     }
@@ -218,6 +259,7 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
 
 void RunModule::FilterElectron( ModuleConfig & config ) const {
 
+    #ifdef EXISTS_el_n
     OUT::el_n = 0;
     ClearOutputPrefix("el_");
 
@@ -232,14 +274,32 @@ void RunModule::FilterElectron( ModuleConfig & config ) const {
         if( !config.PassBool( "cut_el_mvaTrig", IN::el_passMvaTrig->at(idx)) ) continue;
         if( !config.PassBool( "cut_el_mvaNonTrig", IN::el_passMvaNonTrig->at(idx)) ) continue;
 
+        // Remove electrons that overlap with muons
+        float mindr = 100.;
+        TLorentzVector el;
+        el.SetPtEtaPhiE( IN::el_pt->at(idx), IN::el_eta->at(idx), IN::el_phi->at(idx), IN::el_e->at(idx ) );
+        for( int muidx = 0 ; muidx < OUT::mu_n; muidx++ ) {
+            TLorentzVector mu;
+            mu.SetPtEtaPhiE( OUT::mu_pt->at(muidx), OUT::mu_eta->at(muidx), OUT::mu_phi->at(muidx), OUT::mu_e->at(muidx ) );
+            float dr = el.DeltaR(mu);
+            if( dr < mindr ) {
+                mindr = dr;
+            }
+        }
+
+        if( !config.PassFloat( "cut_mu_el_dr", mindr ) ) continue;
+        
         CopyPrefixIndexBranchesInToOut( "el_", idx );
         OUT::el_n++;
 
     }
+    #endif
 
 }
 
 void RunModule::FilterPhoton( ModuleConfig & config ) const {
+
+    #ifdef EXISTS_ph_n
 
     OUT::ph_n = 0;
     ClearOutputPrefix("ph_");
@@ -247,7 +307,8 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
     for( int idx = 0; idx < IN::ph_n; idx++ ) {
 
         if( !config.PassFloat( "cut_ph_pt", IN::ph_pt->at(idx)) ) continue;
-        //if( !config.PassBool( "cut_ph_eleVeto", IN::ph_eleVeto->at(idx)) ) continue;
+        if( !config.PassBool( "cut_ph_eleVeto", IN::ph_eleVeto->at(idx)) ) continue;
+        if( !config.PassBool( "cut_ph_hasPixSeed", IN::ph_hasPixSeed->at(idx)) ) continue;
         if( !config.PassBool( "cut_ph_loose", IN::ph_passLoose->at(idx)) ) continue;
         if( !config.PassBool( "cut_ph_looseNoSIEIE", IN::ph_passLooseNoSIEIE->at(idx)) ) continue;
         if( !config.PassBool( "cut_ph_medium", IN::ph_passMedium->at(idx)) ) continue;
@@ -260,7 +321,6 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
         //    if( !config.PassBool( "cut_ph_eleVetoNotSLConv", IN::ph_eleVeto->at(idx) ) ) continue;
         //}
 
-        if( !config.PassBool( "cut_ph_tight", IN::ph_passTight->at(idx)) ) continue;
 
         // electron overlap removal
         TLorentzVector phlv;
@@ -289,17 +349,12 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
         OUT::ph_n++;
 
     }
-    //FIX
-    //OUT::ph_HoverE->clear();
-    //OUT::ph_HoverE12->clear();
-
-    //for( int idx = 0; idx < IN::ph_n; idx++ ) {
-    //    OUT::ph_HoverE->push_back( IN::ph_HoverE->at(idx*2) );
-    //    OUT::ph_HoverE12->push_back( IN::ph_HoverE->at(idx*2+1) );
-    //}
+    #endif
 }
 
 void RunModule::SortPhotonByMVAScore( ModuleConfig & config ) const {
+
+    #ifdef EXISTS_ph_n
 
     OUT::ph_n = 0;
     ClearOutputPrefix("ph_");
@@ -321,11 +376,13 @@ void RunModule::SortPhotonByMVAScore( ModuleConfig & config ) const {
         OUT::ph_n++;
 
     }
+    #endif
 
 }
 
 void RunModule::FilterMuon( ModuleConfig & config ) const {
 
+    #ifdef EXISTS_mu_n
     OUT::mu_n = 0;
     ClearOutputPrefix("mu_");
 
@@ -338,12 +395,14 @@ void RunModule::FilterMuon( ModuleConfig & config ) const {
 
     }
 
+    #endif
 }
 
 void RunModule::BuildTruth( ModuleConfig & config ) const {
 
     OUT::truelep_n        = 0;
     OUT::trueph_n         = 0;
+    OUT::trueW_n         = 0;
     OUT::trueph_wmother_n = 0;
     OUT::truegenph_n = 0;
     OUT::truegenphpt15_n = 0;
@@ -360,6 +419,14 @@ void RunModule::BuildTruth( ModuleConfig & config ) const {
     OUT::trueph_eta        -> clear();
     OUT::trueph_phi        -> clear();
     OUT::trueph_motherPID  -> clear();
+    OUT::trueph_parentage  -> clear();
+    OUT::trueph_nearestLepDR   -> clear();
+    OUT::trueph_nearestQrkDR   -> clear();
+
+    OUT::trueW_pt           -> clear();
+    OUT::trueW_eta          -> clear();
+    OUT::trueW_phi          -> clear();
+    OUT::trueW_e            -> clear();
     
     OUT::trueleadlep_pt    = 0;
     OUT::truesubllep_pt    = 0;
@@ -429,6 +496,8 @@ void RunModule::BuildTruth( ModuleConfig & config ) const {
 
             OUT::truelep_pt        -> push_back(IN::mcPt->at(idx)     );
             OUT::truelep_eta       -> push_back(IN::mcEta->at(idx)    );
+            OUT::truelep_phi       -> push_back( IN::mcPhi->at(idx)   );
+            OUT::truelep_e         -> push_back( IN::mcE->at(idx)   );
             OUT::truelep_motherPID -> push_back(IN::mcMomPID->at(idx) );
 
             OUT::truelep_isElec->push_back(false);
@@ -438,8 +507,12 @@ void RunModule::BuildTruth( ModuleConfig & config ) const {
 
         }
             
+    }
 
-        else if( IN::mcStatus->at(idx) == 1 &&  std::find(accept_pid_ph.begin(), accept_pid_ph.end(), abs(IN::mcPID->at(idx)) ) != accept_pid_ph.end() ) {
+    //now build photons
+    for( int idx = 0; idx < IN::nMC; ++idx ) {
+
+        if( IN::mcStatus->at(idx) == 1 &&  std::find(accept_pid_ph.begin(), accept_pid_ph.end(), abs(IN::mcPID->at(idx)) ) != accept_pid_ph.end() ) {
 
             float pt  = IN::mcPt->at(idx);
             float eta = IN::mcEta->at(idx);
@@ -459,7 +532,57 @@ void RunModule::BuildTruth( ModuleConfig & config ) const {
             OUT::trueph_eta       -> push_back(eta    );
             OUT::trueph_phi       -> push_back(phi    );
             OUT::trueph_motherPID -> push_back(IN::mcMomPID->at(idx) );
+            OUT::trueph_parentage -> push_back(IN::mcParentage->at(idx) );
+
+            float lepminDR = 100;
+            for( int lidx = 0; lidx < OUT::truelep_n; lidx++ ) {
+
+                TLorentzVector leplv;
+                leplv.SetPtEtaPhiE( OUT::truelep_pt->at(lidx), 
+                                    OUT::truelep_eta->at(lidx),
+                                    OUT::truelep_phi->at(lidx),
+                                    OUT::truelep_e->at(lidx) );
+
+                float dr = leplv.DeltaR( phlv );
+                if( dr < lepminDR ) {
+                    lepminDR = dr;
+                }
+            }
+
+            OUT::trueph_nearestLepDR-> push_back( lepminDR );
+
+            float qrkminDR = 100;
+
+            for( int mcidx = 0; mcidx < IN::nMC; mcidx++ ) {
+
+                if( fabs( IN::mcPID->at(mcidx) ) > 5 ) continue;
+
+                TLorentzVector qrklv;
+                qrklv.SetPtEtaPhiE( IN::mcPt->at(mcidx), 
+                                    IN::mcEta->at(mcidx),
+                                    IN::mcPhi->at(mcidx),
+                                    IN::mcE->at(mcidx) );
+
+                float dr = qrklv.DeltaR( phlv );
+                if( dr < qrkminDR ) {
+                    qrkminDR = dr;
+                }
+            }
+
+            OUT::trueph_nearestQrkDR-> push_back( qrkminDR );
+
+
+
+
             OUT::trueph_n++;
+        }
+        if( IN::mcStatus->at(idx) == 3 && abs(IN::mcPID->at(idx)) == 24 ) {
+            OUT::trueW_pt  ->push_back( IN::mcPt->at(idx) );
+            OUT::trueW_eta ->push_back( IN::mcEta->at(idx) );
+            OUT::trueW_phi ->push_back( IN::mcPhi->at(idx) );
+            OUT::trueW_e   ->push_back( IN::mcE->at(idx) );
+
+            OUT::trueW_n++;
         }
 
     } //end loop over all MC particles
@@ -519,47 +642,62 @@ bool RunModule::FilterTruth( ModuleConfig & config ) const {
 
 void RunModule::CalcEventVars( ModuleConfig & config ) const {
 
-    OUT::mu_pt25_n        = 0;
-    OUT::mu_passtrig_n    = 0;
-    OUT::el_pt25_n        = 0;
-    OUT::el_passtrig_n    = 0;
-    OUT::leadPhot_pt      = 0;
-    OUT::sublPhot_pt      = 0;
-    OUT::leadPhot_lepDR   = 0;
-    OUT::sublPhot_lepDR   = 0;
-    OUT::ph_phDR          = 0;
-    OUT::phPhot_lepDR     = 0;
-    OUT::leadPhot_lepDPhi = 0;
-    OUT::sublPhot_lepDPhi = 0;
-    OUT::ph_phDPhi        = 0;
-    OUT::phPhot_lepDPhi   = 0;
-    OUT::dphi_met_lep1    = 0;
-    OUT::dphi_met_lep2    = 0;
-    OUT::dphi_met_ph1     = 0;
-    OUT::dphi_met_ph2     = 0;
-    OUT::mt_lep_met       = 0;
-    OUT::mt_lepph1_met    = 0;
-    OUT::mt_lepph2_met    = 0;
-    OUT::mt_lepphph_met   = 0;
-    OUT::m_leplep         = 0;
-    OUT::m_lepph1         = 0;
-    OUT::m_lepph2         = 0;
-    OUT::m_lepphph        = 0;
-    OUT::m_leplepph       = 0;
-    OUT::m_phph           = 0;
-    OUT::m_leplepZ        = 0;
-    OUT::m_3lep           = 0;
-    OUT::m_4lep           = 0;
-    OUT::pt_phph          = 0;
-    OUT::pt_leplep        = 0;
-    OUT::pt_lepph1        = 0;
-    OUT::pt_lepph2        = 0;
-    OUT::pt_lepphph       = 0;
-    OUT::pt_leplepph      = 0;
-    OUT::pt_secondLepton  = 0;
-    OUT::pt_thirdLepton   = 0;
-    OUT::m_nearestToZ     = 0;
-    OUT::m_minZdifflepph  = 0;
+    OUT::mu_pt25_n                   = 0;
+    OUT::mu_passtrig_n               = 0;
+    OUT::mu_passtrig25_n             = 0;
+    OUT::el_pt25_n                   = 0;
+    OUT::el_passtrig_n               = 0;
+    OUT::el_passtrig28_n             = 0;
+    OUT::ph_mediumNoSIEIE_n          = 0;
+    OUT::ph_medium_n                 = 0;
+    OUT::ph_mediumNoEleVeto_n        = 0;
+    OUT::ph_mediumNoSIEIENoEleVeto_n = 0;
+    OUT::ph_mediumNoIso_n            = 0;
+    OUT::ph_mediumNoChIso_n          = 0;
+    OUT::ph_mediumNoNeuIso_n         = 0;
+    OUT::ph_mediumNoPhoIso_n         = 0;
+    OUT::ph_mediumNoChIsoNoNeuIso_n  = 0;
+    OUT::ph_mediumNoChIsoNoPhoIso_n  = 0;
+    OUT::ph_mediumNoNeuIsoNoPhoIso_n = 0;
+    OUT::ph_trigMatch_el->clear();
+    OUT::ph_elMinDR     ->clear();
+    OUT::leadPhot_pt                 = 0;
+    OUT::sublPhot_pt                 = 0;
+    OUT::leadPhot_lepDR              = 0;
+    OUT::sublPhot_lepDR              = 0;
+    OUT::ph_phDR                     = 0;
+    OUT::phPhot_lepDR                = 0;
+    OUT::leadPhot_lepDPhi            = 0;
+    OUT::sublPhot_lepDPhi            = 0;
+    OUT::ph_phDPhi                   = 0;
+    OUT::phPhot_lepDPhi              = 0;
+    OUT::dphi_met_lep1               = 0;
+    OUT::dphi_met_lep2               = 0;
+    OUT::dphi_met_ph1                = 0;
+    OUT::dphi_met_ph2                = 0;
+    OUT::mt_lep_met                  = 0;
+    OUT::mt_lepph1_met               = 0;
+    OUT::mt_lepph2_met               = 0;
+    OUT::mt_lepphph_met              = 0;
+    OUT::m_leplep                    = 0;
+    OUT::m_lepph1                    = 0;
+    OUT::m_lepph2                    = 0;
+    OUT::m_lepphph                   = 0;
+    OUT::m_leplepph                  = 0;
+    OUT::m_phph                      = 0;
+    OUT::m_leplepZ                   = 0;
+    OUT::m_3lep                      = 0;
+    OUT::m_4lep                      = 0;
+    OUT::pt_phph                     = 0;
+    OUT::pt_leplep                   = 0;
+    OUT::pt_lepph1                   = 0;
+    OUT::pt_lepph2                   = 0;
+    OUT::pt_lepphph                  = 0;
+    OUT::pt_leplepph                 = 0;
+    OUT::pt_secondLepton             = 0;
+    OUT::pt_thirdLepton              = 0;
+    OUT::m_nearestToZ                = 0;
+    OUT::m_minZdifflepph             = 0;
 
     OUT::EventWeight = 1.0;
 
@@ -568,6 +706,9 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     metlv.SetPtEtaPhiM( OUT::pfMET, 0.0, OUT::pfMETPhi, 0.0 );
 #endif
 
+    #ifdef EXISTS_el_n
+    #ifdef EXISTS_mu_n
+    #ifdef EXISTS_ph_n
     std::vector<TLorentzVector> leptons;
     // map pt to a bool, int pair.  The bool is 1 if electron, 0 if muon.  The int is the index
     std::vector<std::pair<float, std::pair<bool, int > > > sorted_leptons;
@@ -585,9 +726,14 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
         if( lv.Pt() > 25 ) {
             OUT::el_pt25_n++;
         }
+        if( lv.Pt() > 28 && OUT::el_triggerMatch->at(idx) && OUT::el_passMvaTrig->at(idx) ) {
+            OUT::el_passtrig28_n++;
+        }
+
         if( lv.Pt() > 30 && OUT::el_triggerMatch->at(idx) && OUT::el_passMvaTrig->at(idx) ) {
             OUT::el_passtrig_n++;
         }
+
     }
 
     for( int idx = 0; idx < OUT::mu_n; idx++ ) {
@@ -606,6 +752,9 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
         if( lv.Pt() > 30 && OUT::mu_triggerMatch->at(idx) ) {
             OUT::mu_passtrig_n++;
         }
+        if( lv.Pt() > 25 && OUT::mu_triggerMatch->at(idx) ) {
+            OUT::mu_passtrig25_n++;
+        }
     }
 
     std::vector<TLorentzVector> photons;
@@ -620,6 +769,75 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
         photons.push_back(phot);
         sorted_photons.push_back(std::make_pair( phot.Pt(), idx ));
         //sorted_photons.push_back(std::make_pair( OUT::ph_mvascore->at(idx), idx ));
+
+        if( OUT::ph_passSIEIEMedium->at(idx) && OUT::ph_hasPixSeed->at(idx) == 0 && OUT::ph_HoverE12->at(idx) < 0.05 ) { // replace with ph_passHOverEMedium 
+            if( OUT::ph_passChIsoCorrMedium->at(idx) ) {
+                  OUT::ph_mediumNoNeuIsoNoPhoIso_n++;
+            }
+            if( OUT::ph_passNeuIsoCorrMedium->at(idx) ) {
+                  OUT::ph_mediumNoChIsoNoPhoIso_n++;
+            }
+            if( OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
+                  OUT::ph_mediumNoChIsoNoNeuIso_n++;
+            }
+            if( OUT::ph_passChIsoCorrMedium->at(idx)  && OUT::ph_passNeuIsoCorrMedium->at(idx) ) {
+                OUT::ph_mediumNoPhoIso_n++;
+            }
+            if( OUT::ph_passPhoIsoCorrMedium->at(idx)  && OUT::ph_passNeuIsoCorrMedium->at(idx) ) {
+                OUT::ph_mediumNoChIso_n++;
+            }
+            if( OUT::ph_passChIsoCorrMedium->at(idx)  && OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
+                OUT::ph_mediumNoNeuIso_n++;
+            }
+        }
+        if( OUT::ph_HoverE12->at(idx) < 0.05 && OUT::ph_passChIsoCorrMedium->at(idx)  && OUT::ph_passNeuIsoCorrMedium->at(idx) && OUT::ph_passPhoIsoCorrMedium->at(idx) ) { // replace with ph_passHOverEMedium 
+            OUT::ph_mediumNoSIEIENoEleVeto_n++;
+
+            if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+                OUT::ph_mediumNoSIEIE_n++;
+            }
+            if( OUT::ph_passSIEIEMedium->at(idx) ) {
+                OUT::ph_mediumNoEleVeto_n++;
+            }
+            if( OUT::ph_passSIEIEMedium->at(idx) && OUT::ph_hasPixSeed->at(idx)==0 ) {
+                OUT::ph_medium_n++;
+            }
+
+        }
+           
+        bool match_eltrig = false;
+        for( int elidx = 0; elidx < IN::el_n; elidx++ ) {
+
+            // use IN electrons so that 
+            TLorentzVector ellv;
+            ellv.SetPtEtaPhiE(  IN::el_pt->at(elidx),
+                              IN::el_eta->at(elidx),
+                              IN::el_phi->at(elidx),
+                              IN::el_e->at(elidx)
+                            );
+            if( ellv.DeltaR( phot ) < 0.2 && IN::el_triggerMatch->at(elidx) ) {
+                match_eltrig=true;
+            }
+        }
+        OUT::ph_trigMatch_el->push_back(match_eltrig);
+
+        // electron overlap removal
+        // use OUT because we want to remove
+        // overlap with fully identified electrons
+        float min_dr = 100.0;
+        for( int eidx = 0; eidx < OUT::el_n; eidx++ ) {
+            TLorentzVector ellv;
+            ellv.SetPtEtaPhiE( OUT::el_pt->at(eidx), 
+                               OUT::el_eta->at(eidx), 
+                               OUT::el_phi->at(eidx), 
+                               OUT::el_e->at(eidx) );
+
+            float dr = phot.DeltaR( ellv );
+            if( dr < min_dr ) {
+                min_dr = dr;
+            }
+        }
+        OUT::ph_elMinDR->push_back( min_dr );
     }
 
 
@@ -635,6 +853,8 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
             }
         }
         if( sorted_photons.size() > 1 ) {
+            OUT::ph_phDR    = photons[sorted_photons[0].second].DeltaR(photons[sorted_photons[1].second]);
+            OUT::ph_phDPhi    = photons[sorted_photons[0].second].DeltaPhi(photons[sorted_photons[1].second]);
             if( sorted_leptons.size() > 0 ) {
                 OUT::sublPhot_leadLepDR = photons[sorted_photons[1].second].DeltaR(leptons[sorted_leptons[0].second.second]);
                 if( sorted_leptons.size() > 1 ) {
@@ -699,12 +919,10 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
 
             OUT::leadPhot_lepDR = photons[leadidx].DeltaR(leptons[0]);
             OUT::sublPhot_lepDR = photons[sublidx].DeltaR(leptons[0]);
-            OUT::ph_phDR    = photons[leadidx].DeltaR(photons[sublidx]);
             OUT::phPhot_lepDR = (photons[leadidx]+photons[sublidx]).DeltaR(photons[sublidx]);
             
             OUT::leadPhot_lepDPhi = photons[leadidx].DeltaPhi(leptons[0]);
             OUT::sublPhot_lepDPhi = photons[sublidx].DeltaPhi(leptons[0]);
-            OUT::ph_phDPhi    = photons[leadidx].DeltaPhi(photons[sublidx]);
             OUT::phPhot_lepDPhi = (photons[leadidx]+photons[sublidx]).DeltaPhi(photons[sublidx]);
             
             OUT::mt_lepph1_met = Utils::calc_mt( leptons[0] + photons[leadidx], metlv );
@@ -787,6 +1005,9 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
         OUT::m_nearestToZ = masses[nearestZidx];
 
     }
+    #endif //el_n
+    #endif //mu_n
+    #endif //ph_n
 
 }
 
@@ -794,12 +1015,11 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
 
     bool keep_event = true;
 
+    #ifdef EXISTS_el_n
+    #ifdef EXISTS_mu_n
+    #ifdef EXISTS_ph_n
     int nPh = OUT::ph_n;
     
-    // blind bit
-    if( nPh > 1 ) OUT::isBlinded = true;
-    else          OUT::isBlinded = false;
-
     int nLep = 0;
     int nLep25 = 0;
     int nLepTrigMatch = 0;
@@ -807,6 +1027,7 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     int nElPh = 0;
     int nEl = 0;
     int nPhTruthMatchEl = 0;
+    int nPhPassSIEIEAndEVeto =0;
 
     for( int i = 0; i < OUT::mu_n; ++i ) {
         nLep++;
@@ -837,6 +1058,9 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
         if( OUT::ph_truthMatch_el->at(i) ) {
             nPhTruthMatchEl++;
         }
+        if( OUT::ph_passSIEIEMedium->at(i) && OUT::ph_eleVeto->at(i)== 0 ) {
+            nPhPassSIEIEAndEVeto++;
+        }
     }
 
     if( !config.PassInt( "cut_nLep", nLep ) ) keep_event=false;
@@ -847,11 +1071,40 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     if( !config.PassInt( "cut_nElPh", nElPh ) )   keep_event = false;
     if( !config.PassInt( "cut_nEl", nEl ) )   keep_event = false;
     if( !config.PassInt( "cut_nPhTruthMatchEl", nPhTruthMatchEl ) )   keep_event = false;
+    if( !config.PassInt( "cut_nPhPassSIEIEAndEVeto", nPhPassSIEIEAndEVeto) )   keep_event = false;
+    if( !config.PassInt( "cut_nPhPassMedium", OUT::ph_medium_n) )   keep_event = false;
+    if( !config.PassInt( "cut_nPhPassMediumNoEleVeto", OUT::ph_mediumNoEleVeto_n) )   keep_event = false;
 
+    #endif //el_n
+    #endif //mu_n
+    #endif //ph_n
     return keep_event;
 }
 
+bool RunModule::FilterBlind( ModuleConfig & config ) const {
+
+    bool keep_event = true;
+
+    bool pass_blind = true;
+    if( !config.PassInt( "cut_nPhPassMedium", OUT::ph_medium_n ) ) pass_blind=false;
+    if( !config.PassInt( "cut_m_lepphph", OUT::m_lepphph) ) pass_blind=false;
+    
+    if( !pass_blind ) {
+        OUT::isBlinded=true;
+        std::cout << "IsBlinded!" << std::endl;
+        if( _isData ) keep_event=false;
+    }
+    else {
+        OUT::isBlinded=false;
+    }
+
+    return keep_event;
+
+}
+
 void RunModule::FilterJet( ModuleConfig & config ) const {
+
+    #ifdef EXISTS_jet_n
 
     OUT::jet_n = 0;
     ClearOutputPrefix( "jet_" );
@@ -919,5 +1172,6 @@ void RunModule::FilterJet( ModuleConfig & config ) const {
         CopyPrefixIndexBranchesInToOut( "jet_", idx );
 
     }
+    #endif
 }
 

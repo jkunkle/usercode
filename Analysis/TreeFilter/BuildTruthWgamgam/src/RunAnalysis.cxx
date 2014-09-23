@@ -364,6 +364,7 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
 
             if( !config.PassFloat( "cut_pt", IN::mcPt->at(idx) ) ) continue;
             if( !config.PassFloat( "cut_abseta", fabs(IN::mcEta->at(idx)) ) ) continue;
+            if( !config.PassFloat( "cut_motherPID", abs(IN::mcMomPID->at(idx)) ) ) continue;
 
             OUT::phot_pt        -> push_back(IN::mcPt->at(idx)     );
             OUT::phot_eta       -> push_back(IN::mcEta->at(idx)    );

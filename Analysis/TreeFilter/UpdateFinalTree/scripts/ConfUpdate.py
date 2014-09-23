@@ -21,21 +21,21 @@ def get_keep_filter() :
 def config_analysis( alg_list, args ) :
     """ Configure analysis modules. Order is preserved """
 
-    alg_list.append( Filter('CalcEventVars') )
+    #alg_list.append( Filter('CalcEventVars') )
 
     # run fake factor code after the event
     # level variables are calculated because some
     # variables are recalculated
-    #alg_list.append( add_Z_event_weight() )
+    alg_list.append( add_Z_event_weight() )
 
 
 def add_Z_event_weight() :
 
-    filt = Filter('AddEventWeight')
+    filt = Filter('ApplyPUBiasWeight')
 
     #filt.add_var( 'root_file', '/afs/cern.ch/user/j/jkunkle/usercode/Analysis/TreeFilter/UpdateFinalTree/data/EFakeGammaScaleFactorPt.root' )
-    filt.add_var( 'root_file', '/afs/cern.ch/user/j/jkunkle/usercode/Analysis/TreeFilter/UpdateFinalTree/data/ElToPhFF.root' )
-    filt.add_var( 'hist_name', 'pt')
-    filt.add_var( 'sample_key', 'DYJetsToLL' )
+    filt.add_var( 'root_file', '/afs/cern.ch/user/j/jkunkle/usercode/Analysis/TreeFilter/UpdateFinalTree/data/PUBiasVtxWt.root' )
+    #filt.add_var( 'hist_name', 'pt')
+    #filt.add_var( 'sample_key', 'DYJetsToLL' )
 
     return filt

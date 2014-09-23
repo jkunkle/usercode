@@ -8,28 +8,24 @@ def get_remove_filter() :
 
 def get_keep_filter() :
 
-    return ['pfMET.*', 'recoPfMET.*', 'nVtxBS', 'nMC', 'mcPID', 'mcParentage', 'mcStatus', 'mcMomPID', 'mcGMomPID', 'mcPt', 'mcEta', 'mcPhi', 'mcE', 'nPU', 'puTrue', 'nVtx', 'nVtxBS']
+    return ['pfMET.*', 'recoPfMET.*', 'nVtxBS', 'nMC', 'mcPID', 'mcParentage', 'mcStatus', 'mcMomPID', 'mcGMomPID', 'mcPt', 'mcEta', 'mcPhi', 'mcE', 'nPU', 'puTrue', 'nVtx', 'nVtxBS', 'rho2012', 'isData', 'run', 'event', 'lumis']
 
 def config_analysis( alg_list, args ) :
 
-    #alg_list.append( build_electron( do_cutflow=True, do_hists=True, evalPID='mvaNonTrig' ) )
     alg_list.append( build_electron( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=True ) )
     alg_list.append( build_muon( do_cutflow=False, do_hists=False, applyCorrections=True ) )
 
-    ## filter out a lepton 
-    #filter_evt = Filter( 'FilterEvent' )
-    #filter_evt.cut_mu_n = ' > 0 '
-    #alg_list.append(filter_evt)
-
-    alg_list.append( build_photon( do_cutflow=False, do_hists=False, evalPID=None, doEVeto=False) )
+    alg_list.append( build_photon( do_cutflow=False, do_hists=False, evalPID=None, doEVeto=False, applyCorrections=True) )
     alg_list.append( build_jet( do_cutflow=False, do_hists=False ) )
 
     # just for pileup reweighting
     alg_list.append( weight_event(args) )
 
+    alg_list.append( Filter( 'BuildTriggerBits' ) )
+
     trig_filt = Filter('FilterTrigger')
     ##trig_filt.cut_trigger = ' ==48 ' #HLT_Photon36_CaloId10_Iso50_Photon22_CaloId10_Iso50_v 
-    trig_filt.cut_trigger = '==17 | == 18 | == 19' # electron | muon
+    trig_filt.cut_trigger = '==17 | == 18 | == 19' # HLT_Ele27_WP80 || HLT_IsoMu24_eta2p1 || HLT_IsoMu24
     alg_list.append(trig_filt)
 
 def build_muon( do_cutflow=False, do_hists=False, applyCorrections=False ) :
@@ -221,8 +217,8 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     if applyCorrections :
         workarea = os.getenv('WorkArea')
         filt.add_var('applyCorrections', 'true' )
-        filt.add_var('correctionFile', '%s/TreeFilter/RecoWgg/data/scalesNewReg-May2013.csv' %workarea )
-        filt.add_var('linCorrectionFile', '%s/TreeFilter/RecoWgg/data/linearityNewReg-May2013.csv' %workarea )
+        filt.add_var('correctionFile', '%s/TreeFilter/RecoWgg/data/step2-invMass_SC-loose-Et_20-trigger-noPF-HggRunEtaR9.dat' %workarea )
+        filt.add_var('smearingFile', '%s/TreeFilter/RecoWgg/data/outFile-step4-invMass_SC-loose-Et_20-trigger-noPF-HggRunEtaR9-smearEle.dat' %workarea )
 
 
     if do_hists :

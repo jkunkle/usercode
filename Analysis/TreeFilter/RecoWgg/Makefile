@@ -9,7 +9,6 @@
 # Tasks : CLEANUP
 ################################################################################
 
-
 EXE_DIR = ./
 OBJ_DIR = obj/
 SRC_DIR = src/
@@ -20,7 +19,7 @@ WORK_AREA = ${WorkArea}
 ROOTCONFIG   = root-config
 
 ROOTCXXFLAGS = $(shell $(ROOTCONFIG) --cflags)
-ROOTLIBS     = $(shell $(ROOTCONFIG) --libs) -lTreePlayer -lTMVA
+ROOTLIBS     = $(shell $(ROOTCONFIG) --libs) -lTreePlayer -lTMVA -lRooFit
 
 BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50 -L/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/lib
 
@@ -48,15 +47,21 @@ else
 	LDFLAGS      = -O2 -I$(INC_DIR) $(INCLUDE) 
 endif
 
-OBJECT_ANA = $(OBJ_DIR)/RunAnalysis.o 
-BRANCH_INIT = $(OBJ_DIR)/BranchInit.o
+OBJECT_ANA = $(OBJ_DIR)/RunAnalysis.o $(OBJ_DIR)/EnergyScaleCorrection_class.o $(OBJ_DIR)/BranchInit.o 
 LINKDEF = $(OBJ_DIR)/cintLib.so
 
+NEWEXENAME=$(EXENAME)
+
 ifeq ($(strip ${EXENAME} ), )
-EXENAME=RunAnalysis
+	NEWEXENAME=RunAnalysis.exe
 endif
 
-EXE = $(EXE_DIR)/$(EXENAME)
+ifneq (, $(findstring x, $(EXENAME) ) )
+	NEWEXENAME=$(EXENAME).exe
+endif
+
+
+EXE = $(EXE_DIR)/$(NEWEXENAME)
 
 # Main targets
 
@@ -71,7 +76,7 @@ $(LINKDEF):  $(SRC_DIR)/Dict.cxx
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cxx
 	g++ $(CXXFLAGS) -c $^ -o $@ -I../$(INC_DIR)
 
-$(EXE): $(OBJECT_ANA) $(BRANCH_INIT) $(LINKDEF) 
+$(EXE): $(OBJECT_ANA) $(LINKDEF) 
 	g++ $(CXXFLAGS) -o $@ -g $^ $(COREOBJ) $(LIBS) -I../$(INC_DIR)
 clean:
 	@echo -e "\n\n===> cleaning directories"

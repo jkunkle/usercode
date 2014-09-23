@@ -4,113 +4,81 @@ from check_dataset_completion import check_dataset_completion
 #base_data     ='root://eoscms//eos/cms/store/group/phys_egamma/ymaravin/ggNtuples/V05-03-07-06'
 base_data     ='/eos/cms/store/group/phys_smp/ggNtuples/data'
 #base_data = '/eos/cms/store/user/jkunkle/Wgamgam/FilteredSamplesFeb14/'
-#base_alberto = '/eos/cms/store/user/abelloni/Wgamgam/FilteredSamplesFeb14/'
-base_mc     ='/eos/cms/store/group/phys_smp/ggNtuples/mc'
-#base_filtered ='/eos/cms/store/user/abelloni/Wgamgam/FilteredSamplesMar14'
-#base_filtered = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoEleVeto_2014_04_25'
-base_filtered = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoEleVeto_2014_04_27'
-#base_filtered = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2014_02_01/'
-#base_filtered = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoCorrJustDY_2014_02_26/'
-#base_all = '/eos/cms/store/user/jkunkle/Wgamgam/FilteredSamplesMar14/'
-base_all = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoEleVeto_2014_04_25'
-#base_all = '/eos/cms/store/group/phys_egamma/cmkuo/'
-base_phA = '/eos/cms/store/user/hebda/2012A'
-base_phB = '/eos/cms/store/user/hebda/2012B'
-base_phD = '/eos/cms/store/group/phys_higgs/cmshgg/rekovic/ggNtuples/RunD'
-base_phD2 = '/eos/cms/store/caf/user/cmkuo'
 
-#base_filtered = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/DiLeptonLoosePh_2014_03_12/'
-#base_all = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2014_03_05'
+from argparse import ArgumentParser
+import eos_utilities as eosutil
 
-base_data= base_all
-base_mc=base_all
+parser = ArgumentParser()
+
+parser.add_argument( '--filteredPath', dest='filteredPath', default=None, help='Path to the directory contating filtered samples', required=True )
+
+parser.add_argument( '--originalPath', dest='originalPath', default=None, help='Path to the directory contating orginal samples', required=True )
+
+parser.add_argument( '--singleFiles', dest='singleFiles', default=False, action='store_true', help='if true, each sample is an individual root file' )
+
+parser.add_argument( '--key', dest='key', default=None, help='Only check datasets matching key' )
 
 
-job_conf = [
-            #(base_mc, 'job_summer12_DYJetsToLL'),
-            #(base_all, 'job_summer12_WAA_ISR'),
-            #(base_all, 'job_summer12_WH_ZH_125'),
-            #(base_all, 'job_summer12_WWW'),
-            #(base_all, 'job_summer12_WWZ'),
-            #(base_all, 'job_summer12_WW_2l2nu'),
-            #(base_all, 'job_summer12_WWg'),
-            #(base_all, 'job_summer12_WZZ'),
-            #(base_all, 'job_summer12_WZ_2l2q'),
-            #(base_all, 'job_summer12_WZ_3lnu'),
-            #(base_all, 'job_summer12_Wg'),
-            #(base_all, 'job_summer12_Zg'),
-            #(base_all, 'job_summer12_Wgg_FSR'),
-            #(base_all, 'job_summer12_ZZZ'),
-            #(base_all, 'job_summer12_ZZ_2e2mu'),
-            #(base_all, 'job_summer12_ZZ_2e2tau'),
-            #(base_all, 'job_summer12_ZZ_2l2nu'),
-            #(base_all, 'job_summer12_ZZ_2l2q'),
-            #(base_all, 'job_summer12_ZZ_2mu2tau'),
-            #(base_all, 'job_summer12_ZZ_2q2nu'),
-            #(base_all, 'job_summer12_ZZ_4e'),
-            #(base_all, 'job_summer12_ZZ_4mu'),
-            #(base_all, 'job_summer12_ZZ_4tau'),
-            #(base_all, 'job_summer12_diphoton_box_10to25'),
-            #(base_all, 'job_summer12_diphoton_box_250toInf'),
-            #(base_all, 'job_summer12_diphoton_box_25to250'),
-            ##(base_all, 'job_summer12_ggH_125'),
-            #(base_all, 'job_summer12_ggZZ_2l2l'),
-            #(base_all, 'job_summer12_ggZZ_4l'),
-            #(base_all, 'job_summer12_t_s'),
-            #(base_all, 'job_summer12_t_t'),
-            #(base_all, 'job_summer12_t_tW'),
-            #(base_all, 'job_summer12_tbar_s'),
-            #(base_all, 'job_summer12_tbar_t'),
-            #(base_all, 'job_summer12_tbar_tW'),
-            #(base_all, 'job_summer12_ttW'),
-            #(base_all, 'job_summer12_ttZ'),
-            #(base_all, 'job_summer12_ttg'),
-            #(base_all, 'job_summer12_ttjets_1l'),
-            #(base_all, 'job_summer12_ttjets_2l'),
-            #(base_all, 'job_summer12_Wjets'),
+options = parser.parse_args()
+
+original_samples = []
+filtered_samples = []
+
+if options.originalPath.count('/eos/') :
+    if options.singleFiles :
+        for top, dirs, files, sizes in eosutil.walk_eos( options.originalPath ) :
+            for file in files :
+                original_samples.append( file.rstrip('.root') )
+            #only run once because the sample files should be in the given directory
+            break
+    else :
+        for top, dirs, files, sizes in eosutil.walk_eos( options.originalPath ) :
+            for dir in dirs :
+                original_samples.append( dir )
+            #only run once because the sample directories should be in the given directory
+            break
+else :
+    # use os.walk locally
+    for top, dirs, files in os.walk( options.originalPath ) :
+        for dir in dirs :
+            original_samples.append( dir )
+        break
+
+if options.filteredPath.count('/eos/') :
+    for top, dirs, files, sizes in eosutil.walk_eos( options.filteredPath ) :
+        for dir in dirs :
+            filtered_samples.append( dir )
+        #only run once because the sample files should be in the given directory
+        break
+else :
+    for top, dirs, files in os.walk( options.filteredPath ) :
+        for dir in dirs :
+            filtered_samples.append( dir )
+        break
+
+missing = set( original_samples ) - set( filtered_samples )
+if missing :
+    print 'Datasets not present in filtered samples : '
+    for miss in missing :
+        print miss
 
 
-            #(base_data, 'job_muon_2012a_Jan22rereco'),
-            #(base_data, 'job_muon_2012b_Jan22rereco'),
-            #(base_data, 'job_muon_2012c_Jan22rereco'),
-            #(base_data, 'job_muon_2012d_Jan22rereco'),
-            #(base_data, 'job_electron_2012a_Jan22rereco'),
-            #(base_data, 'job_electron_2012b_Jan22rereco'),
-            #(base_data, 'job_electron_2012c_Jan2012rereco'),
-            (base_data, 'job_electron_2012d_Jan22rereco'),
+for sample in filtered_samples :
 
-           #(base_phA, 'job_photon_2012a_Jan22rereco'),
-           #(base_phB, 'job_fall13_photonRunB2012_1'),
-           #(base_phB, 'job_fall13_photonRunB2012_10'),
-           #(base_phB, 'job_fall13_photonRunB2012_11'),
-           #(base_phB, 'job_fall13_photonRunB2012_12'),
-           #(base_phB, 'job_fall13_photonRunB2012_13'),
-           #(base_phB, 'job_fall13_photonRunB2012_14'),
-           #(base_phB, 'job_fall13_photonRunB2012_15'),
-           #(base_phB, 'job_fall13_photonRunB2012_16'),
-           #(base_phB, 'job_fall13_photonRunB2012_17'),
-           #(base_phB, 'job_fall13_photonRunB2012_2'),
-           #(base_phB, 'job_fall13_photonRunB2012_3'),
-           #(base_phB, 'job_fall13_photonRunB2012_4'),
-           #(base_phB, 'job_fall13_photonRunB2012_5'),
-           #(base_phB, 'job_fall13_photonRunB2012_6'),
-           #(base_phB, 'job_fall13_photonRunB2012_7'),
-           #(base_phB, 'job_fall13_photonRunB2012_8'),
-           #(base_phB, 'job_fall13_photonRunB2012_9'),
-           #(base_phD, 'job_2photon_2012d_Jan22rereco_1of4'),
-           #(base_phD, 'job_2photon_2012d_Jan22rereco_2of4'),
-           #(base_phD, 'job_2photon_2012d_Jan22rereco_3of4'),
-           #(base_phD2, 'job_2photon_2012d_Jan22rereco_4of4'),
-           #(base_phD2, 'job_2photon_2012d_Jan22rereco_5of5'),
+    if options.key is not None :
+        if sample.count(options.key) == 0 :
+            continue
 
+    filt_path = options.filteredPath + '/' + sample
+    if options.singleFiles :
+        orig_path = options.originalPath
+    else :
+        orig_path = options.originalPath + '/' + sample
+    
 
-]
+    if options.singleFiles :
+        os.system( 'python scripts/check_dataset_completion.py --originalDS %s --filteredDS %s --treeNameOrig ggNtuplizer/EventTree --treeNameFilt ggNtuplizer/EventTree --histNameFilt=ggNtuplizer/filter --fileKeyOrig %s --fileKeyFilt tree.root' %( orig_path, filt_path, sample+'.root') )
+    else :
+        #orig_nevt_tree, orig_nevt_hist, filt_nevt_tree, filt_nevt_hist = check_dataset_completion( originalDS=orig_path, filteredDS=filt_path, treeNameOrig='ggNtuplizer/EventTree', treeNameFilt='ggNtuplizer/EventTree',histNameFilt='ggNtuplizer/filter', fileKeyOrig='tree.root', fileKeyFilt='tree.root' )
+        os.system( 'python scripts/check_dataset_completion.py --originalDS %s --filteredDS %s --treeNameOrig ggNtuplizer/EventTree  --histNameFilt=ggNtuplizer/filter --fileKeyOrig tree.root --fileKeyFilt tree.root' %( orig_path, filt_path) )
 
-
-for base, ds in job_conf :
-
-    print "FIXME"
-    orig_nevt_tree, orig_nevt_hist, filt_nevt_tree, filt_nevt_hist = check_dataset_completion( originalDS=base+'/'+ds, filteredDS=base_filtered+'/'+ds, treeNameOrig='ggNtuplizer/EventTree', treeNameFilt='ggNtuplizer/EventTree',histNameFilt='ggNtuplizer/filter', fileKeyOrig='tree.root', fileKeyFilt='tree.root' )
-    #orig_nevt_tree, orig_nevt_hist, filt_nevt_tree, filt_nevt_hist = check_dataset_completion( originalDS=base, filteredDS=base_filtered+'/'+ds, treeNameOrig='ggNtuplizer/EventTree', treeNameFilt='ggNtuplizer/EventTree',histNameFilt='ggNtuplizer/filter', fileKeyOrig=ds+'.root', fileKeyFilt='tree.root' )
-
-    print '%s : Orignal = %d events, filtered = %d events.  Difference = %d' %( ds, orig_nevt_tree, filt_nevt_hist, orig_nevt_tree-filt_nevt_hist)

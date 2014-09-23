@@ -3,9 +3,12 @@
 *.pyc
 *.root
 *.o
+*.exe
+*.swp
 Dict.cxx
 Dict.h
 BranchInit.cxx
 BranchInit.h
+BranchDefs.h
 LinkDef.h
-
+analysis_config.txt

@@ -27,7 +27,7 @@ def config_analysis( alg_list, args ) :
     alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=10 ) )
     #alg_list.append( get_electron_filter( 'tightTrig' ) )
     #alg_list.append( get_photon_filter( 'looseNoSIEIE', ptcut=15 ) )
-    alg_list.append( get_photon_filter( None, ptcut=15 ) )
+    alg_list.append( get_photon_filter( medium, ptcut=15 ) )
     alg_list.append( get_jet_filter(do_hists=False) )
 
     # resort photons by the mva score
@@ -74,7 +74,7 @@ def get_photon_filter ( id=None, ptcut=10 ) :
     filt = Filter( 'FilterPhoton' )
     filt.cut_ph_pt = ' > %d ' %ptcut
     filt.cut_el_ph_dr = ' > 0.2 '
-    #filt.cut_ph_eleVeto = ' == False '
+    filt.cut_ph_eleVeto = ' == False '
     if id is not None :
         setattr( filt, 'cut_ph_%s' %id, 'True' )
 

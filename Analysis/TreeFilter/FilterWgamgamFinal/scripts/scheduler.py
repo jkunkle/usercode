@@ -41,13 +41,13 @@ jobs_data = [
 ]
 jobs_mc = [
         #(base, 'job_summer12_DYJetsToLL'),
-        (base, 'job_summer12_Zg'),
-        (base, 'job_summer12_WAA_ISR'),
-        (base, 'job_summer12_Wgg_FSR'),
+        #(base, 'job_summer12_Zg'),
+        #(base, 'job_summer12_WAA_ISR'),
+        #(base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_Wg'),
         #(base, 'job_summer12_Wjets'),
-        #(base, 'job_summer12_ttjets_1l'),
-        #(base, 'job_summer12_ttjets_2l'),
+        (base, 'job_summer12_ttjets_1l'),
+        (base, 'job_summer12_ttjets_2l'),
         #(base, 'job_summer12_ttg'),
         #(base, 'job_summer12_WgPt130'),
         #(base, 'job_summer12_WgPt50-130'),
@@ -104,7 +104,7 @@ top_configs = [
                   'module'      : 'ConfObjFilter.py',
                   'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\'}',
                   'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'== 1\' }',
-                  'output_name' : 'LepGammaNoEleVetoNewVar_2014_04_28',
+                  'output_name' : 'LepGamma_2014_04_29',
                   'tag'         : 'lg',
                 },
                 #{ 
@@ -165,7 +165,7 @@ top_configs = [
                 #},
 ]
 
-command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob %(nFilesPerJob)d --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s'
+command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /home/cranelli/JoshUserCode/usercode/Analysis/TreeFilter/FilterWgamgamFinal/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob %(nFilesPerJob)d --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s'
 #command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob 5 --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s'
 
 nFilesPerJob = 1

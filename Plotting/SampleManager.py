@@ -12,9 +12,9 @@ import eos_utilities
 import random
 from array import array
 import time
-from data_pair import data_pair
-from uncertainties import ufloat
-from uncertainties import umath
+#from data_pair import data_pair
+#from uncertainties import ufloat
+#from uncertainties import umath
 import pickle
 import core
 import subprocess

@@ -13,7 +13,7 @@ CERNLOC=CERN
 UMDLOC=UMD
 
 HOSTNAME := $(shell hostname)
-ifneq (,$(findstring 'cern.ch',$(HOSTNAME))) #find cern.ch in host, if found result is non-empty
+ifneq (,$(findstring cern.ch,$(HOSTNAME))) #find cern.ch in host, if found result is non-empty
 	LOCATION=$(CERNLOC)
 else 
 	LOCATION=$(UMDLOC)
@@ -68,7 +68,7 @@ endif
 OBJECT_ANA = $(OBJ_DIR)/RunAnalysis.o $(OBJ_DIR)/BranchInit.o
 LINKDEF = $(OBJ_DIR)/cintLib.so
 
-ifneq  ($(ATTL_OBJ),) 
+ifneq  ($(ADDTL_OBJ),) 
 	OBJECT_ADDTL = $(OBJ_DIR)/$(ADDTL_OBJ)
 endif
 
@@ -100,6 +100,7 @@ $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cxx
 	g++ $(CXXFLAGS) -c $^ -o $@ -I../$(INC_DIR)
 
 $(EXE): $(OBJECT_ANA) $(OBJECT_ADDTL) $(LINKDEF) 
+	@echo "LOCATION IS " $(LOCATION)
 	g++ $(CXXFLAGS) -o $@ -g $^ $(COREOBJ) $(LIBS) -I../$(INC_DIR)
 clean:
 	@echo -e "\n\n===> cleaning directories"

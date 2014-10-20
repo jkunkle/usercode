@@ -15,7 +15,7 @@ CERNLOC=CERN
 UMDLOC=UMD
 
 HOSTNAME := $(shell hostname)
-ifneq (,$(findstring 'cern.ch', $(HOSTNAME)) ) #find cern.ch in host, if found result is non-empty
+ifneq (,$(findstring 'cern.ch',$(HOSTNAME))) #find cern.ch in host, if found result is non-empty
 	LOCATION=$(CERNLOC)
 else 
 	LOCATION=$(UMDLOC)

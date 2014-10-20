@@ -12,14 +12,14 @@ p.add_argument('--lumi',     default=None,  type=float ,        dest='lumi',    
 p.add_argument('--outputDir',     default=None,  type=str ,        dest='outputDir',         help='output directory for histograms')
 p.add_argument('--quiet',     default=False,action='store_true',   dest='quiet',         help='disable information messages')
 
-p.add_argument('--save'        , default=False, action='store_true',   dest='save'        , help='save plots ( must provide outputDir )')
-p.add_argument('--detailLevel' , default=100, type=int, dest='detailLevel'      , help='make only plots at this detail level (make all plots by default)')
-p.add_argument('--makeAll'     , default=False, action='store_true',   dest='makeAll'     , help='make all plots')
-p.add_argument('--makeEvent'   , default=False, action='store_true',   dest='makeEvent'   , help='make Wgg event plots')
-p.add_argument('--makeMva'     , default=False, action='store_true',   dest='makeMva'     , help='make electron veto mva plots')
-p.add_argument('--makeEleVeto' , default=False, action='store_true',   dest='makeEleVeto' , help='make electron veto comparison plots')
-p.add_argument('--makeEleFake' , default=False, action='store_true',   dest='makeEleFake' , help='make electron fake factor plots')
-p.add_argument('--makePhComp'  , default=False, action='store_true',   dest='makePhComp'  , help='make photon ID vars comparison plots')
+p.add_argument('--save'          , default=False, action='store_true',   dest='save'        , help='save plots ( must provide outputDir )')
+p.add_argument('--detailLevel'   , default=100, type=int, dest='detailLevel'      , help='make only plots at this detail level (make all plots by default)')
+p.add_argument('--makeAll'       , default=False, action='store_true',   dest='makeAll'     , help='make all plots')
+p.add_argument('--makeEvent'     , default=False, action='store_true',   dest='makeEvent'   , help='make Wgg event plots')
+p.add_argument('--makeMva'       , default=False, action='store_true',   dest='makeMva'     , help='make electron veto mva plots')
+p.add_argument('--makeEleVeto'   , default=False, action='store_true',   dest='makeEleVeto' , help='make electron veto comparison plots')
+p.add_argument('--makeEleFake'   , default=False, action='store_true',   dest='makeEleFake' , help='make electron fake factor plots')
+p.add_argument('--makeSinglePhoton' , default=False, action='store_true',   dest='makeSinglePhoton'  , help='make single photon plots')
 p.add_argument('--makeJetFakeTemplate' , default=False, action='store_true',   dest='makeJetFakeTemplate' , help='make jet fake plots, template method')
 p.add_argument('--makeJetFakeFactor' , default=False, action='store_true',   dest='makeJetFakeFactor' , help='make jet fake plots, fake factor method')
 
@@ -45,17 +45,22 @@ samplesEF = None
 
 #analysis_bins_mgg = [0, 5, 10, 15, 20, 25, 30, 40, 50, 100, 200 ] 
 #analysis_bins_egg = [0, 5, 10, 15, 20, 25, 30, 40, 50, 100, 200 ] 
-analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 80, 200 ] 
-analysis_bins_egg = [0, 5, 10, 15, 25, 40, 80, 200 ] 
+#analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 80, 200 ] 
+#analysis_bins_egg = [0, 5, 10, 15, 25, 40, 80, 200 ] 
+analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 200 ] 
+analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 200 ] 
 
 ph_cuts = ''
 lead_dr_cut = 0.4
 subl_dr_cut = 0.4
 phot_dr_cut = 0.3
 
+blind_lead_max = 40
+
 baseline_cuts_mgg = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2  && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_phDR>0.3 && leadPhot_leadLepDR>%.1f && sublPhot_leadLepDR>%.1f && el_n==0 && m_phph>15  %s'%(lead_dr_cut, subl_dr_cut, ph_cuts)
 baseline_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_n==2  && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_phDR>0.3 && leadPhot_leadLepDR>%.1f && sublPhot_leadLepDR>%.1f && mu_n==0 && m_phph>15  %s'%(lead_dr_cut, subl_dr_cut, ph_cuts)
 zrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  && !(fabs(m_lepph2-91.2) < 5) && m_phph>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts)
+zcr_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && ( (fabs(m_lepphph-91.2) < 5) || (fabs(m_lepph1-91.2) < 5)  || (fabs(m_lepph2-91.2) < 5) ) && m_phph>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts)
 
 invPixLead_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_n==2  && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && ph_phDR>0.3 && leadPhot_leadLepDR>%.1f && sublPhot_leadLepDR>%.1f && mu_n==0 && m_phph>15  %s'%(lead_dr_cut, subl_dr_cut, ph_cuts)
 invPixSubl_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_n==2  && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && ph_phDR>0.3 && leadPhot_leadLepDR>%.1f && sublPhot_leadLepDR>%.1f && mu_n==0 && m_phph>15  %s'%(lead_dr_cut, subl_dr_cut, ph_cuts)
@@ -63,6 +68,15 @@ invPixLead_zrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.
 invPixSubl_zrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  && !(fabs(m_lepph2-91.2) < 5) && m_phph>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts)
 invPixLead_invzrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0  && ( (fabs(m_lepphph-91.2) < 5) || (fabs(m_lepph1-91.2) < 5) || (fabs(m_lepph2-91.2) < 5) ) && m_phph>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts)
 invPixSubl_invzrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1  && ( (fabs(m_lepphph-91.2) < 5) || (fabs(m_lepph1-91.2) < 5)  || (fabs(m_lepph2-91.2) < 5) ) && m_phph>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts)
+
+#------------------------------
+# single lepton cuts
+#------------------------------
+baseline_cuts_mg = ' mu_passtrig_n>0 && mu_n==1 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && el_n==0 '%(lead_dr_cut)
+baseline_cuts_eg = ' el_passtrig_n>0 && el_n==1 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && mu_n==0 '%(lead_dr_cut)
+zcr_cuts_eg      = ' el_passtrig_n>0 && el_n==1 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && mu_n==0 && m_lepph1 > 76 && m_lepph1 < 106 '%(lead_dr_cut)
+
+baseline_cuts_mmg = ' mu_passtrig_n>0 && mu_n==2 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f && el_n==0 '%(lead_dr_cut, lead_dr_cut)
 
 def main() :
 
@@ -106,8 +120,8 @@ def main() :
     if options.makeAll or options.makeEleFake:
         MakeWggEleFakePlots( save=options.save, detail=options.detailLevel )
 
-    if options.makeAll or options.makePhComp:
-        MakePhotonCompPlots( save=options.save, detail=options.detailLevel )
+    if options.makeAll or options.makeSinglePhoton:
+        MakeSinglePhotonPlots( save=options.save, detail=options.detailLevel )
 
     if options.makeAll or options.makeJetFakeTemplate:
         MakePhotonJetFakePlots( save=options.save, detail=options.detailLevel )
@@ -129,8 +143,6 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         print 'Must provide an outputDir to save plots'
         save=False
 
-
-    #ph_cuts = ' && ph_IsEB[0] && ph_IsEB[1]'
 
     samplesWgg.deactivate_sample( 'Data')
     print 'DISABLE DATA'
@@ -181,7 +193,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
     samplesWgg.deactivate_sample( 'FSR')
     samplesWgg.activate_sample( 'Wgg')
 
-    samplesWgg.Draw('m_lepphph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (60, 0, 300 ) , logy=0,  xlabel='M_{l,#gamma,#gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86), legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWgg.Draw('m_lepphph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (60, 0, 300 ) , hist_config={'logy':0,  'xlabel':'M_{l,#gamma,#gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
     if save :
         name = 'm_lepphph__egg__baselineCuts'
@@ -190,7 +202,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('m_lepphph', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut,ph_cuts), (60, 0, 300 ) , logy=0,  xlabel='M_{l,#gamma,#gamma} [GeV]', labelStyle='fancy', extra_label='Muon Channel',   extra_label_loc=(0.3, 0.86) , legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWgg.Draw('m_lepphph', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut,ph_cuts), (60, 0, 300 ) , hist_config={'logy':0,  'xlabel':'M_{l,#gamma,#gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',   'extra_label_loc':(0.3, 0.86)} , legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
 
     if save :
@@ -200,7 +212,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('m_lepph1', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , logy=0,  xlabel='M_{l, lead #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86), legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, legendTranslateX=0.05 , ) )
+    samplesWgg.Draw('m_lepph1', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{l, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, legendTranslateX=0.05 , ) )
 
     if save :
         name = 'm_lepph1__egg__baselineCuts'
@@ -209,7 +221,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('m_lepph1', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , logy=0,  xlabel='M_{l, lead #gamma} [GeV]', labelStyle='fancy', extra_label='Muon Channel',   extra_label_loc=(0.3, 0.86) , ymin=0, ymax=55, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWgg.Draw('m_lepph1', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , hist_config={'logy':0, 'ymin':0, 'ymax':55,  'xlabel':'M_{l, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
 
     if save :
@@ -219,7 +231,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %( lead_dr_cut, subl_dr_cut,ph_cuts), (40, 0, 200 ) , logy=0,  xlabel='M_{l, sublead #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86) , legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWgg.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %( lead_dr_cut, subl_dr_cut,ph_cuts), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{l, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
     if save :
         name = 'm_lepph2__egg__baselineCuts'
@@ -228,7 +240,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('m_lepph2', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %( lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , logy=0,  xlabel='M_{l, sublead #gamma} [GeV]', labelStyle='fancy', extra_label='Muon Channel',   extra_label_loc=(0.3, 0.86) , legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWgg.Draw('m_lepph2', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %( lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{l, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
 
     if save :
@@ -238,7 +250,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('m_phph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (50, 0, 200 ) , logy=1,  xlabel='M_{#gamma, #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',  extra_label_loc=(0.3, 0.86), ymin=0.1, ymax=1000 , legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
+    samplesWgg.Draw('m_phph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (50, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'M_{#gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
 
     if save :
         name = 'm_phph__egg__baselineCuts'
@@ -247,7 +259,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('m_phph', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %( lead_dr_cut, subl_dr_cut, ph_cuts), (50, 0, 200 ) , logy=1,  xlabel='M_{#gamma, #gamma} [GeV]', labelStyle='fancy', extra_label='Muon Channel',  extra_label_loc=(0.3, 0.86), ymin=0.1, ymax=1000 , legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
+    samplesWgg.Draw('m_phph', 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %( lead_dr_cut, subl_dr_cut, ph_cuts), (50, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'M_{#gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
 
     if save :
         name = 'm_phph__mgg__baselineCuts'
@@ -257,7 +269,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         raw_input('continue')
 
 
-    samplesWgg.Draw('m_lepph1', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5)  %s)' %( lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , logy=0,  xlabel='M_{l, lead #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86) , legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWgg.Draw('m_lepph1', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5)  %s)' %( lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{l, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
     if save :
         name = 'm_lepph1__egg__Cut_m_lepphph_10gevWindow'
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
@@ -267,7 +279,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         raw_input('continue')
 
 
-    samplesWgg.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5)  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , logy=0,  xlabel='M_{l, sublead #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86) , legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWgg.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5)  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{l, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
     if save :
         name = 'm_lepph2__egg__Cut_m_lepphph_10gevWindow'
@@ -277,7 +289,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , logy=0,  xlabel='M_{l, sublead #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86) , legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.4, ) )
+    samplesWgg.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{l, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.4, ) )
     if save :
         name = 'm_lepph2__egg__Cut_m_lepphph_10gevWindow__Cut_m_lepph1_10gevWindow'
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
@@ -287,7 +299,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         raw_input('continue')
 
 
-    samplesWgg.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  && !(fabs(m_lepph2-91.2) < 5)  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , logy=0,  xlabel='M_{#gamma, #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel',   extra_label_loc=(0.3, 0.86) , legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.4, ) )
+    samplesWgg.Draw('m_lepph2', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  && !(fabs(m_lepph2-91.2) < 5)  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{#gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.4, ) )
 
     if save :
         name = 'm_lepph2__egg__Cut_m_lepphph_10gevWindow__Cut_m_lepph1_10gevWindow__Cut_m_lepph2_10gevWindow'
@@ -297,7 +309,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('m_phph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  && !(fabs(m_lepph2-91.2) < 5)  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (50, 0, 200 ) , logy=1,  xlabel='M_{#gamma, #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel', extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWgg.Draw('m_phph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  && !(fabs(m_lepph2-91.2) < 5)  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (50, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'M_{#gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'm_phph__egg__Cut_m_lepphph_10gevWindow__Cut_m_lepph1_10gevWindow__Cut_m_lepph2_10gevWindow'
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
@@ -307,7 +319,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         raw_input('continue')
 
 
-    samplesWgg.Draw('m_phph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  && !(fabs(m_lepph2-91.2) < 5) && m_phph>15  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (50, 0, 200 ) , logy=1,  xlabel='M_{#gamma, #gamma} [GeV]', labelStyle='fancy', extra_label='Electron Channel', extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWgg.Draw('m_phph', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && !(fabs(m_lepphph-91.2) < 5) && !(fabs(m_lepph1-91.2) < 5)  && !(fabs(m_lepph2-91.2) < 5) && m_phph>15  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts), (50, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'M_{#gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'm_phph__egg__Cut_m_lepphph_10gevWindow__Cut_m_lepph1_10gevWindow__Cut_m_lepph2_10gevWindow__Cut_m_phph_15'
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
@@ -316,32 +328,34 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.MakeRocCurve( ['m_phph', 'm_phph'], ['PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && (fabs(m_lepphph-91.2) > 5) && (fabs(m_lepph1-91.2) > 5)  && (fabs(m_lepph2-91.2) > 5) %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts) ]*2, ['Wgg', 'Wgg'], ['AllBkg', 'Zgamma'], [(50, 0, 200 )]*2, doSoverB=1, less_than=[0,0], colors=[ROOT.kRed, ROOT.kBlue], legend_entries=['B = All MC backgrounds', 'B = Zjets + Z#gamma'], ymin=0.5, ymax=4.5, legend_config=samplesWgg.config_legend( legendWiden=1.3, legendCompress=1.4, legendTranslateX=-0.4 ) )
+    #samplesWgg.MakeRocCurve( ['m_phph', 'm_phph'], ['PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && (fabs(m_lepphph-91.2) > 5) && (fabs(m_lepph1-91.2) > 5)  && (fabs(m_lepph2-91.2) > 5) %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts) ]*2, ['Wgg', 'Wgg'], ['AllBkg', 'Zgamma'], [(50, 0, 200 )]*2, doSoverB=1, less_than=[0,0], colors=[ROOT.kRed, ROOT.kBlue], legend_entries=['B = All MC backgrounds', 'B = Zjets + Z#gamma'], ymin=0.5, ymax=4.5, legend_config=samplesWgg.config_legend( legendWiden=1.3, legendCompress=1.4, legendTranslateX=-0.4 ) )
 
-    if save :
-        name = 'm_phph__egg__Cut_m_lepphph_10gevWindow__Cut_m_lepph1_10gevWindow__Cut_m_lepph2_10gevWindow__RocCurve'
-        samplesWgg.DumpRoc(name, inDirs=subdir)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-    else :
-        samplesWgg.DumpRoc()
-        raw_input('continue')
+    #if save :
+    #    name = 'm_phph__egg__Cut_m_lepphph_10gevWindow__Cut_m_lepph1_10gevWindow__Cut_m_lepph2_10gevWindow__RocCurve'
+    #    samplesWgg.DumpRoc(name, inDirs=subdir)
+    #    samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+    #else :
+    #    samplesWgg.DumpRoc()
+    #    raw_input('continue')
 
-    samplesWgg.MakeRocCurve( ['m_phph', 'm_phph'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts)]*2, ['Wgg', 'Wgg'], ['AllBkg', 'ZjetsZgamma'], [(50, 0, 200 )]*2, doSoverB=1, debug=1, less_than=[0,0], colors=[ROOT.kRed, ROOT.kBlue], legend_entries=['B = All MC backgrounds', 'B = Zjets + Z#gamma'] )
+    #samplesWgg.MakeRocCurve( ['m_phph', 'm_phph'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR>0.3 && leadPhot_leadLepDR>%f && sublPhot_leadLepDR>%f && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  %s)' %(lead_dr_cut, subl_dr_cut, ph_cuts)]*2, ['Wgg', 'Wgg'], ['AllBkg', 'ZjetsZgamma'], [(50, 0, 200 )]*2, doSoverB=1, debug=1, less_than=[0,0], colors=[ROOT.kRed, ROOT.kBlue], legend_entries=['B = All MC backgrounds', 'B = Zjets + Z#gamma'] )
 
-    if save :
-        name = 'm_phph__mgg__baselineCuts__RocCurve'
-        samplesWgg.DumpRoc(name, inDirs=subdir)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-    else :
-        samplesWgg.DumpRoc()
-        raw_input('continue')
+    #if save :
+    #    name = 'm_phph__mgg__baselineCuts__RocCurve'
+    #    samplesWgg.DumpRoc(name, inDirs=subdir)
+    #    samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+    #else :
+    #    samplesWgg.DumpRoc()
+    #    raw_input('continue')
 
+
+    
 
 
     # --------------------------------------
     # muon channel , photon pT
     # --------------------------------------
-    samplesWgg.Draw('ph_pt[0]', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (40, 0, 200 ) , logy=1,  xlabel='lead photon p_{T} [GeV]', labelStyle='fancy', extra_label='Muon Channel',  extra_label_loc=(0.3, 0.86), ymin=0.1, ymax=1000 , legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
+    samplesWgg.Draw('ph_pt[0]', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
 
     if save :
         name = 'ph_pt_lead__mgg__baselineCuts'
@@ -351,7 +365,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('ph_pt[0]', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg ) , logy=1,  xlabel='lead photon p_{T} [GeV]', labelStyle='fancy', extra_label='Muon Channel',  extra_label_loc=(0.3, 0.86), ymin=0.1, ymax=1000 , legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
+    samplesWgg.Draw('ph_pt[0]', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
 
     if save :
         name = 'ph_pt_lead__mgg__baselineCuts__varBins'
@@ -362,7 +376,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         raw_input('continue')
 
 
-    samplesWgg.Draw('ph_pt[1]', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (40, 0, 200 ) , logy=1,  xlabel='sublead photon p_{T} [GeV]', labelStyle='fancy', extra_label='Muon Channel',  extra_label_loc=(0.3, 0.86), ymin=0.1, ymax=1000 , legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
+    samplesWgg.Draw('ph_pt[1]', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
 
     if save :
         name = 'ph_pt_subl__mgg__baselineCuts'
@@ -372,10 +386,24 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('ph_pt[1]', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg )   , logy=1,  xlabel='sublead photon p_{T} [GeV]', labelStyle='fancy', extra_label='Muon Channel',  extra_label_loc=(0.3, 0.86), ymin=0.1, ymax=1000 , legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
+    samplesWgg.Draw('ph_pt[1]', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
 
     if save :
         name = 'ph_pt_subl__mgg__baselineCuts__varBins'
+        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+    else :
+        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        raw_input('continue')
+
+    #----------------------
+    # Subleading pt for
+    # lead pt > 80 GeV
+    #----------------------
+    samplesWgg.Draw('ph_pt[1]', 'PUWeight * ( %s && ph_pt[0]>%d ) ' %(baseline_cuts_mgg, analysis_bins_mgg[-2] ), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
+
+    if save :
+        name = 'ph_pt_subl__mgg__baselineCuts__leadPt%d__varBins' %analysis_bins_mgg[-2]
         samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
     else :
@@ -392,6 +420,12 @@ def MakeWggEventPlots( save=False, detail=100 ) :
     analysis_bins_mgg_mod = list( analysis_bins_mgg )
     analysis_bins_mgg_mod[-1] = 1000000
 
+    subl_bins = [ ( analysis_bins_mgg[-2], 1000000, analysis_bins_mgg[3], analysis_bins_mgg[4] ), 
+                  ( analysis_bins_mgg[-2], 1000000, analysis_bins_mgg[4], 1000000 ), 
+                  ( analysis_bins_mgg[-2], 1000000, analysis_bins_mgg[3], analysis_bins_mgg[5] ), 
+                  ( analysis_bins_mgg[-2], 1000000, analysis_bins_mgg[5], 1000000 ), 
+                ]
+
     for ec, lab in zip(eta_cuts, eta_labels) :
 
         for idx, min in enumerate(analysis_bins_mgg_mod[:-1]) :
@@ -400,7 +434,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
             max = analysis_bins_mgg_mod[idx+1]
 
 
-            samplesWgg.Draw('ph_pt[0]', 'PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] && ph_pt[0] > %d && ph_pt[0] < %d )' %(baseline_cuts_mgg, ec[0], ec[1], min, max), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , logy=1,  xlabel='lead photon p_{T} [GeV]', labelStyle='fancy', extra_label='#splitline{Muon Channel}{%s}' %lab,  extra_label_loc=(0.3, 0.86), ymin=0.1, ymax=1000 , legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
+            samplesWgg.Draw('ph_pt[0]', 'PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] && ph_pt[0] > %d && ph_pt[0] < %d )' %(baseline_cuts_mgg, ec[0], ec[1], min, max), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
 
             if save :
                 if idx+2 == len(analysis_bins_mgg_mod) :
@@ -413,7 +447,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
                 samplesWgg.DumpStack( )
                 raw_input('continue')
 
-            samplesWgg.Draw('ph_pt[1]', 'PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] && ph_pt[0] > %d && ph_pt[0] < %d )' %(baseline_cuts_mgg, ec[0], ec[1], min, max), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , logy=1,  xlabel='sublead photon p_{T} [GeV]', labelStyle='fancy', extra_label='#splitline{Muon Channel}{%s}' %lab,  extra_label_loc=(0.3, 0.86), ymin=0.1, ymax=1000 , legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
+            samplesWgg.Draw('ph_pt[1]', 'PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] && ph_pt[0] > %d && ph_pt[0] < %d )' %(baseline_cuts_mgg, ec[0], ec[1], min, max), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
 
             if save :
                 if idx+2 == len(analysis_bins_mgg_mod) :
@@ -426,13 +460,30 @@ def MakeWggEventPlots( save=False, detail=100 ) :
                 samplesWgg.DumpStack( )
                 raw_input('continue')
 
+        for minl, maxl, mins, maxs in subl_bins :
+
+            samplesWgg.Draw('ph_pt[0]', 'PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] && ph_pt[0] > %d && ph_pt[0] < %d && ph_pt[1] > %d && ph_pt[1] < %d )' %(baseline_cuts_mgg, ec[0], ec[1], minl, maxl, mins, maxs), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
+
+            if save :
+                if maxs == analysis_bins_mgg_mod[-1] :
+                    name = 'ph_pt_lead__mgg__%s-%s__baselineCuts__ptbins_%d-max__subpt_%d-max' %(ec[0], ec[1], minl, mins)
+                else :
+                    name = 'ph_pt_lead__mgg__%s-%s__baselineCuts__ptbins_%d-max__subpt_%d-%d' %(ec[0], ec[1],minl, mins, maxs)
+                samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+            else :
+                samplesWgg.DumpStack( )
+                raw_input('continue')
+
+
+
     #----------------------------------------
     # Make eta dependent results also 
     #----------------------------------------
 
     for ec, lab in zip(eta_cuts, eta_labels) :
 
-        samplesWgg.Draw('ph_pt[0]', 'PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] )' %(baseline_cuts_mgg, ec[0], ec[1]), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , logy=1,  xlabel='lead photon p_{T} [GeV]', labelStyle='fancy', extra_label='#splitline{Muon Channel}{%s}' %lab,  extra_label_loc=(0.3, 0.86), ymin=0.1, ymax=1000 , legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) ) 
+        samplesWgg.Draw('ph_pt[0]', 'PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] )' %(baseline_cuts_mgg, ec[0], ec[1]), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) ) 
 
         if save :
             name = 'ph_pt_lead__mgg__%s-%s__baselineCuts'%(ec[0],ec[1])
@@ -442,7 +493,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
             samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
             raw_input('continue')
 
-        samplesWgg.Draw('ph_pt[0]', 'PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] ) ' %(baseline_cuts_mgg, ec[0], ec[1]), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg ) , logy=1,  xlabel='lead photon p_{T} [GeV]', labelStyle='fancy', extra_label='Muon Channel',  extra_label_loc=(0.3, 0.86), ymin=0.1, ymax=1000 , legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
+        samplesWgg.Draw('ph_pt[0]', 'PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] ) ' %(baseline_cuts_mgg, ec[0], ec[1]), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
 
         if save :
             name = 'ph_pt_lead__mgg__%s-%s__baselineCuts__varBins'%(ec[0],ec[1])
@@ -456,7 +507,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
     # electron channel , photon pT
     # --------------------------------------
 
-    samplesWgg.Draw('ph_pt[0]', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , logy=1,  xlabel='lead photon p_{T} [GeV]', labelStyle='fancy', extra_label='Electron Channel', extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWgg.Draw('ph_pt[0]', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'ph_pt_lead__egg__allZRejCuts'
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
@@ -465,7 +516,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('ph_pt[0]', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ), logy=1,  xlabel='lead photon p_{T} [GeV]', labelStyle='fancy', extra_label='Electron Channel', extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWgg.Draw('ph_pt[0]', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ), hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'ph_pt_lead__egg__allZRejCuts__varBins'
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
@@ -475,7 +526,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         raw_input('continue')
 
 
-    samplesWgg.Draw('ph_pt[1]', ' PUWeight * ( %s ) ' %zrej_cuts_egg ,(analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ),  logy=1,  xlabel='sublead photon p_{T} [GeV]', labelStyle='fancy', extra_label='Electron Channel', extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWgg.Draw('ph_pt[1]', ' PUWeight * ( %s ) ' %zrej_cuts_egg ,(analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ),  hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'ph_pt_subl__egg__allZRejCuts'
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
@@ -484,9 +535,22 @@ def MakeWggEventPlots( save=False, detail=100 ) :
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('ph_pt[1]', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , logy=1,  xlabel='sublead photon p_{T} [GeV]', labelStyle='fancy', extra_label='Electron Channel', extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWgg.Draw('ph_pt[1]', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'ph_pt_subl__egg__allZRejCuts__varBins'
+        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+    else :
+        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        raw_input('continue')
+
+    #----------------------
+    # Subleading pt for
+    # lead pt > 80 GeV
+    #----------------------
+    samplesWgg.Draw('ph_pt[1]', ' PUWeight * ( %s && ph_pt[0] > %d ) ' %(zrej_cuts_egg, analysis_bins_egg[-2]), (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    if save :
+        name = 'ph_pt_subl__egg__allZRejCuts__leadPt%d__varBins'%analysis_bins_egg[-2]
         samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
         samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
@@ -497,28 +561,28 @@ def MakeWggEventPlots( save=False, detail=100 ) :
     # make eta-pt dependent cuts
     #-------------------------------------
 
-    cuts = [baseline_cuts_egg, zrej_cuts_egg ]
-    labels = ['baselineCuts', 'allZrejCuts']
+    cuts = [baseline_cuts_egg, zrej_cuts_egg, zcr_cuts_egg ]
+    labels = ['baselineCuts', 'allZrejCuts', 'ZCR']
 
     for cut, label in zip( cuts, labels ) :
 
         eta_cuts = [['EB', 'EB'],['EB', 'EE'],['EE', 'EB'],['EE', 'EE']]
         eta_labels = ['Barrel photons', 'Lead photon in Barrel, sublead in Endcap','Lead photon in Endcap, sublead in Barrel', 'Endcap photons']
 
-        analysis_bins_egg_mod = list( analysis_bins_egg )
-        analysis_bins_egg_mod[-1] = 1000000
+        binning_mod = list( analysis_bins_egg )
+        binning_mod[-1] = 1000000
 
         for ec, lab in zip(eta_cuts, eta_labels) :
 
-            for idx, min in enumerate(analysis_bins_egg_mod[:-1]) :
+            for idx, min in enumerate(binning_mod[:-1]) :
                 if min < 15 : 
                     continue
-                max = analysis_bins_egg_mod[idx+1]
+                max = binning_mod[idx+1]
 
-                samplesWgg.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] && ph_pt[0]>%d && ph_pt[0]<%d )' %(cut, ec[0], ec[1], min, max), (40, 0, 200 ) , logy=1,  xlabel='lead photon p_{T} [GeV]', labelStyle='fancy', extra_label='#splitline{Electron Channel}{%s}'%lab, extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+                samplesWgg.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] && ph_pt[0]>%d && ph_pt[0]<%d )' %(cut, ec[0], ec[1], min, max), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
                 if save :
-                    if idx+2 == len(analysis_bins_egg_mod) :
+                    if idx+2 == len(binning_mod) :
                         name = 'ph_pt_lead__egg__%s-%s__%s__ptbins_%d-max' %(ec[0], ec[1], label, min)
                     else :
                         name = 'ph_pt_lead__egg__%s-%s__%s__ptbins_%d-%d' %(ec[0], ec[1], label, min, max)
@@ -528,10 +592,10 @@ def MakeWggEventPlots( save=False, detail=100 ) :
                     samplesWgg.DumpStack( )
                     raw_input('continue')
 
-                samplesWgg.Draw('ph_pt[1]', ' PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] && ph_pt[0]>%d && ph_pt[0]<%d )' %(cut, ec[0], ec[1], min, max), (40, 0, 200 ) , logy=1,  xlabel='sublead photon p_{T} [GeV]', labelStyle='fancy', extra_label='#splitline{Electron Channel}{%s}'%lab, extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+                samplesWgg.Draw('ph_pt[1]', ' PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] && ph_pt[0]>%d && ph_pt[0]<%d )' %(cut, ec[0], ec[1], min, max), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
                 if save :
-                    if idx+2 == len(analysis_bins_egg_mod) :
+                    if idx+2 == len(binning_mod) :
                         name = 'ph_pt_subl__egg__%s-%s__%s__ptbins_%d-max' %(ec[0], ec[1], label,min)
                     else :
                         name = 'ph_pt_subl__egg__%s-%s__%s__ptbins_%d-%d' %(ec[0], ec[1],label, min, max)
@@ -541,11 +605,27 @@ def MakeWggEventPlots( save=False, detail=100 ) :
                     samplesWgg.DumpStack( )
                     raw_input('continue')
 
+            for minl, maxl, mins, maxs in subl_bins :
+
+                samplesWgg.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] && ph_pt[0]>%d && ph_pt[0]<%d && ph_pt[1] > %d && ph_pt[1] < %d)' %(cut, ec[0], ec[1], minl, maxl, mins, maxs), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+
+                if save :
+                    if maxs == analysis_bins_mgg_mod[-1] :
+                        name = 'ph_pt_lead__egg__%s-%s__baselineCuts__ptbins_%d-max__subpt_%d-max' %(ec[0], ec[1], minl, mins)
+                    else :
+                        name = 'ph_pt_lead__egg__%s-%s__baselineCuts__ptbins_%d-max__subpt_%d-%d' %(ec[0], ec[1],minl, mins, max)
+                    samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                    samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+                else :
+                    samplesWgg.DumpStack( )
+                    raw_input('continue')
+
         #-------------------------------------
         # make eta dependent cuts also
         #-------------------------------------
         for ec, lab in zip(eta_cuts, eta_labels) :
-            samplesWgg.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] )' %(cut, ec[0], ec[1]), (40, 0, 200 ) , logy=1,  xlabel='lead photon p_{T} [GeV]', labelStyle='fancy', extra_label='#splitline{Electron Channel}{%s}'%lab, extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+            samplesWgg.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] )' %(cut, ec[0], ec[1]), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+
 
             if save :
                 name = 'ph_pt_lead__egg__%s-%s__%s'%(ec[0], ec[1], label)
@@ -555,7 +635,7 @@ def MakeWggEventPlots( save=False, detail=100 ) :
                 samplesWgg.DumpStack()
                 raw_input('continue')
 
-            samplesWgg.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] ) ' %(cut, ec[0], ec[1]), (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , logy=1,  xlabel='lead photon p_{T} [GeV]', labelStyle='fancy', extra_label='Electron Channel', extra_label_loc=(0.3, 0.86), ymin=0.5, ymax=100,   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+            samplesWgg.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[0] && ph_Is%s[1] ) ' %(cut, ec[0], ec[1]), (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
             if save :
                 name = 'ph_pt_lead__egg__%s-%s__%s__varBins'%(ec[0], ec[1], label)
                 samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
@@ -581,28 +661,34 @@ def MakeWggEleFakePlots( save=False, detail=100 ) :
     draw_base_inv = 'el_passtrig_n>0 && el_n==1 && ph_n==1 && ph_passMedium[0] && ph_hasPixSeed[0]==1 '
 
     pt_bins = analysis_bins_egg[3:-1]
-    eta_bins = [0.0, 0.1, 0.5, 1.0, 1.48, 1.57, 2.1, 2.2, 2.3, 2.4, 2.5]
+    eta_bins = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.48), (1.48, 1.57), (1.57, 2.1), (2.1, 2.2), (2.2, 2.3), (2.3, 2.4), (2.4, 2.5), (0.0, 1.48), (1.48, 1.57), (1.57,2.50) ]
+    eta_bins = [(0.0, 1.48), (1.48, 1.57), (1.57,2.50) ]
     pt_bins_last = [analysis_bins_egg[-2], 1000000]
-    eta_bins_last = [0.0, 0.1, 0.5, 1.0, 1.48, 1.57, 2.1, 2.4, 2.5]
+    eta_bins_last = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.48), (1.48, 1.57), (1.57, 2.1), (2.1, 2.4), (2.4, 2.5), (0.0, 1.48), (1.48, 1.57), (1.57,2.50)]
+    eta_bins_last = [(0.0, 1.48), (1.48, 1.57), (1.57,2.50)]
 
     pt_eta_bins = {}
     for ptidx, ptmin in enumerate(pt_bins[:-1] ) :
         ptmax = pt_bins[ptidx+1]
         pt_eta_bins[(ptmin,ptmax)] = eta_bins
-    #for ptidx, ptmin in enumerate(pt_bins_last[:-1] ) :
-    #    ptmax = pt_bins_last[ptidx+1]
-    #    pt_eta_bins[(ptmin,ptmax)] = eta_bins_last
+    for ptidx, ptmin in enumerate(pt_bins_last[:-1] ) :
+        ptmax = pt_bins_last[ptidx+1]
+        pt_eta_bins[(ptmin,ptmax)] = eta_bins_last
     
-    print pt_eta_bins
     last_pt_bin = max ([x[1] for x in pt_eta_bins.keys() ] )
     for (ptmin, ptmax), etabins in pt_eta_bins.iteritems() :
-        for etaidx, etamin in enumerate(etabins[:-1] ) :
-            etamax = eta_bins[etaidx+1]
+        for etamin, etamax in etabins :
+
+            # binning should match that used when fitting
+            mass_binning = ( 80, 40, 200)
+            if ptmax == last_pt_bin :
+                mass_binning = ( 40, 40, 200 )
+
 
             if ptmin < 15 :
                 continue
 
-            samplesWg.Draw( 'm_lepph1', 'PUWeight * ( %s && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d )' %( draw_base_nom, etamin, etamax, ptmin, ptmax ), ( 100, 0, 200), hist_config={'logy':1, 'xlabel':'M_{e, #gamma} [GeV]'}, legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ), )
+            samplesWg.Draw( 'm_lepph1', 'PUWeight * ( %s && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d && m_lepph1 > 40 )' %( draw_base_nom, etamin, etamax, ptmin, ptmax ), mass_binning , hist_config={'logy':1, 'xlabel':'M_{e, #gamma} [GeV]'}, legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ), )
 
             if save :
                 if ptmax == last_pt_bin :
@@ -615,7 +701,7 @@ def MakeWggEleFakePlots( save=False, detail=100 ) :
                 samplesWg.DumpStack()
                 raw_input('continue')
 
-            samplesWg.Draw( 'm_lepph1', 'PUWeight * ( %s && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d )' %( draw_base_inv, etamin, etamax, ptmin, ptmax ), ( 100, 0, 200), hist_config={'logy':1, 'xlabel':'M_{e, #gamma} [GeV]'}, legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ), )
+            samplesWg.Draw( 'm_lepph1', 'PUWeight * ( %s && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d && m_lepph1 > 40)' %( draw_base_inv, etamin, etamax, ptmin, ptmax ), mass_binning, hist_config={'logy':1, 'xlabel':'M_{e, #gamma} [GeV]'}, legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ), )
 
             if save :
                 if ptmax == last_pt_bin :
@@ -983,51 +1069,69 @@ def MakeWggEleVetoCompPlots( save=False, detail=100 ) :
 
 
 #---------------------------------------
-def MakePhotonCompPlots( save=False, detail=100) :
+def MakeSinglePhotonPlots( save=False, detail=100) :
 
-    samplesWg.CompareSelections('ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2 , ['Wgamma','Inclusive W'], (100, 0, 0.1), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.00001, ymax = 0.5, logy=1, xlabel='#sigma i#eta i#eta', extra_label='Endcap photons', ylabel='Normalized Events / 0.001'  )
-    SaveStack('ph_sigmaIEIE_EE_comp_wg_wjets', 'base')
+    subdir = 'SinglePhotonPlots'
 
-    samplesWg.CompareSelections('ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2 , ['Wgamma','Inclusive W'], (100, 0, 0.03), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.00001, ymax = 0.8, logy=1, xlabel='#sigma i#eta i#eta', extra_label='Barrel photons', ylabel='Normalized Events / 0.0003'  ) 
-    SaveStack('ph_sigmaIEIE_EB_comp_wg_wjets', 'base')
+    #-------------------------------------
+    # make eta-pt dependent cuts
+    #-------------------------------------
 
-    samplesWg.CompareSelections('ph_chIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2 , ['Wgamma','Inclusive W'], (100, 0, 100), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected charged hadron isolation [GeV]', extra_label='Barrel photons', ylabel='Normalized Events / GeV'  )
-    SaveStack('ph_chIsoCorr_EB_comp_wg_wjets', 'base')
+    binnings = [analysis_bins_mgg, analysis_bins_egg, analysis_bins_egg]
+    cuts = [baseline_cuts_mg, baseline_cuts_eg, zcr_cuts_eg ]
+    channels  =['Muon', 'Electron', 'Electron']
+    tags = ['mg', 'eg', 'eg']
+    labels = ['baselineCuts','baselineCuts',  'ZCR']
+    eta_cuts = ['EB', 'EE']
+    eta_labels = ['Barrel photon', 'Endcap photon']
 
-    samplesWg.CompareSelections('ph_chIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2 , ['Wgamma','Inclusive W'], (100, 0, 100), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected charged hadron isolation [GeV]', extra_label='Endcap photons', ylabel='Normalized Events / GeV'  )
-    SaveStack('ph_chIsoCorr_EE_comp_wg_wjets', 'base')
+    for cut, binning, tag, label, channel in zip( cuts, binnings, tags, labels, channels ) :
 
-    samplesWg.CompareSelections('ph_neuIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2 , ['Wgamma', 'Inclusive W'], (80, -20, 20), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected neutral hadron isolation [GeV]', extra_label='Endcap photons', ylabel='Normalized Events / 0.5 GeV'  )
-    SaveStack('ph_neuIsoCorr_EE_comp_wg_wjets', 'base')
+        binning_mod = list( binning )
+        binning_mod[-1] = 1000000
 
-    samplesWg.CompareSelections('ph_neuIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2 , ['Wgamma', 'Inclusive W'], (80, -20, 20), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected neutral hadron isolation [GeV]', extra_label='Barrel photons', ylabel='Normalized Events / 0.5 GeV'  )
-    SaveStack('ph_neuIsoCorr_EB_comp_wg_wjets', 'base')
+        for ec, lab in zip(eta_cuts, eta_labels) :
 
-    samplesWg.CompareSelections('ph_phoIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2 , ['Wgamma', 'Inclusive W'], (100, -5, 45), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected photon isolation [GeV]', extra_label='Endcap photons', ylabel='Normalized Events / 0.5 GeV'  )
-    SaveStack('ph_phoIsoCorr_EE_comp_wg_wjets', 'base')
+            for idx, min in enumerate(binning_mod[:-1]) :
+                if min < 15 : 
+                    continue
+                max = binning_mod[idx+1]
 
-    samplesWg.CompareSelections('ph_phoIsoCorr[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2 , ['Wgamma', 'Inclusive W'], (100, -5, 45), colors=[ROOT.kRed, ROOT.kBlack],normalize=1, ymin=0.0001, ymax = 0.8, logy=1, xlabel='p_{T}, #rho corrected photon isolation [GeV]', extra_label='Barrel photons', ylabel='Normalized Events / 0.5 GeV'  )
-    SaveStack('ph_phoIsoCorr_EB_comp_wg_wjets', 'base')
+                samplesWg.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[0] && ph_pt[0]>%d && ph_pt[0]<%d )' %(cut, ec, min, max), (40, 0, 200 ) , hist_config={'logy':1,  'xlabel':'photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{%s Channel}{%s}'%(channel, lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
-    samplesWg.MakeRocCurve(['ph_sigmaIEIE[0]', 'ph_passSIEIEMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, 0, 0.1), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['#sigma i#eta i#eta ROC curve', 'Medium working point'], extra_label='Endcap Photons', extra_label_loc="BottomLeft" )
-    SaveStack('ph_sigmaIEIE_EE_roc_comp_medium', 'base')
-    samplesWg.MakeRocCurve(['ph_sigmaIEIE[0]', 'ph_passSIEIEMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, 0, 0.03), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['#sigma i#eta i#eta ROC curve', 'Medium working point'], extra_label='Barrel Photons', extra_label_loc="BottomLeft" )
-    SaveStack('ph_sigmaIEIE_EB_roc_comp_medium', 'base')
+                if save :
+                    if idx+2 == len(binning_mod) :
+                        name = 'ph_pt__%s__%s__%s__ptbins_%d-max' %(tag, ec, label, min)
+                    else :
+                        name = 'ph_pt__%s__%s__%s__ptbins_%d-%d' %(tag, ec, label, min, max)
+                    samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
+                    samplesWg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                else :
+                    samplesWg.DumpStack( )
+                    raw_input('continue')
 
-    samplesWg.MakeRocCurve(['ph_chIsoCorr[0]', 'ph_passChIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, 0, 100), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr ch iso ROC curve', 'Medium working point'], extra_label='Endcap Photons', extra_label_loc="BottomLeft" )
-    SaveStack('ph_chIsoCorr_EE_roc_comp_medium', 'base')
-    samplesWg.MakeRocCurve(['ph_chIsoCorr[0]', 'ph_passChIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, 0, 100), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr ch iso ROC curve', 'Medium working point'], extra_label='Barrel Photons', extra_label_loc="BottomLeft" )
-    SaveStack('ph_chIsoCorr_EB_roc_comp_medium', 'base')
+    binning_mod = list( analysis_bins_mgg)
+    binning_mod[-1] = 1000000
 
-    samplesWg.MakeRocCurve(['ph_neuIsoCorr[0]', 'ph_passNeuIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, -20, 20), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr neu iso ROC curve', 'Medium working point'], extra_label='Endcap Photons', extra_label_loc="BottomLeft" )
-    SaveStack('ph_neuIsoCorr_EE_roc_comp_medium', 'base')
-    samplesWg.MakeRocCurve(['ph_neuIsoCorr[0]', 'ph_passNeuIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, -20, 20), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr neu iso ROC curve', 'Medium working point'], extra_label='Barrel Photons', extra_label_loc="BottomLeft" )
-    SaveStack('ph_neuIsoCorr_EB_roc_comp_medium', 'base')
+    for ec, lab in zip(eta_cuts, eta_labels) :
 
-    samplesWg.MakeRocCurve(['ph_phoIsoCorr[0]', 'ph_passPhoIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEE[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, -5, 45), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr pho iso ROC curve', 'Medium working point'], extra_label='Endcap Photons', extra_label_loc="BottomLeft" )
-    SaveStack('ph_phoIsoCorr_EE_roc_comp_medium', 'base')
-    samplesWg.MakeRocCurve(['ph_phoIsoCorr[0]', 'ph_passPhoIsoCorrMedium[0]'], ['PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_pt[0]>15 && ph_IsEB[0] )']*2, ['Wgamma']*2, ['Inclusive W']*2, [(100, -5, 45), (2, 0, 2)], less_than=[1,0], markers=[3, 21], colors=[ROOT.kRed, ROOT.kBlack], debug=1, legend_entries=['p_{T}, #rho corr pho iso ROC curve', 'Medium working point'], extra_label='Barrel Photons', extra_label_loc="BottomLeft" )
-    SaveStack('ph_phoIsoCorr_EB_roc_comp_medium', 'base')
+        for idx, min in enumerate(binning_mod[:-1]) :
+            if min < 15 : 
+                continue
+            max = binning_mod[idx+1]
+
+            samplesWg.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[0] && ph_pt[0]>%d && ph_pt[0]<%d )' %(baseline_cuts_mmg, ec, min, max), (40, 0, 200 ) , hist_config={'logy':1,  'xlabel':'photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+
+            if save :
+                if idx+2 == len(binning_mod) :
+                    name = 'ph_pt__mmg__baselineCuts__%s__ptbins_%d-max' %(ec, min)
+                else :
+                    name = 'ph_pt__mmg__baselineCuts__%s__ptbins_%d-%d' %(ec, min, max)
+                samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
+                samplesWg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+            else :
+                samplesWg.DumpStack( )
+                raw_input('continue')
 
 def MakePhotonJetFakePlots(save=False, detail=100 ) :
 
@@ -1193,7 +1297,7 @@ def MakePhotonJetFakePlots(save=False, detail=100 ) :
             name_str = '__pt_%d-%d' %(ptmin, ptmax)
 
 
-        samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5 && %s && ph_IsEE[0] %s)'%(photon_cuts, fsr_cut, cut_str)]*2 + ['PUWeight * (mu_passtrig_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_IsEE[0] && leadPhot_leadLepDR>0.4 %s )' %(photon_cuts, cut_str)], ['Data', 'Zgamma', 'Wgamma'], (50, 0, 0.1 ), hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] } )
+        samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5 && leadPhot_leadLepDR>0.3 && leadPhot_sublLepDR > 0.3 && (leadPhot_leadLepDR < 1.0 || leadPhot_sublLepDR < 1.0 ) && %s && ph_IsEE[0] %s)'%(photon_cuts, fsr_cut, cut_str)]*2 + ['PUWeight * (mu_passtrig_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_IsEE[0] && leadPhot_leadLepDR>0.4 %s )' %(photon_cuts, cut_str)], ['Data', 'Zgamma', 'Wgamma'], (50, 0, 0.1 ), hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] } )
 
         if save :
             name = 'ph_sigmaIEIE__EE%s__CompDataRealPhotonMCTruthMatchPhoton'%name_str
@@ -1202,7 +1306,7 @@ def MakePhotonJetFakePlots(save=False, detail=100 ) :
             raw_input('continue')
 
 
-        samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5 && %s && ph_IsEB[0] %s)' %(photon_cuts, fsr_cut, cut_str)]*2 + ['PUWeight * (mu_passtrig_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_IsEB[0] && leadPhot_leadLepDR>0.4 %s )' %(photon_cuts, cut_str)], ['Data', 'Zgamma', 'Wgamma'], (60, 0, 0.03 ), hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.0005', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons']})
+        samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5 && leadPhot_leadLepDR>0.3 && leadPhot_sublLepDR > 0.3 && (leadPhot_leadLepDR < 1.0 || leadPhot_sublLepDR < 1.0 ) && %s && ph_IsEB[0] %s)' %(photon_cuts, fsr_cut, cut_str)]*2 + ['PUWeight * (mu_passtrig_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_IsEB[0] && leadPhot_leadLepDR>0.4 %s )' %(photon_cuts, cut_str)], ['Data', 'Zgamma', 'Wgamma'], (60, 0, 0.03 ), hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.0005', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons']})
 
         if save :
             name = 'ph_sigmaIEIE__EB%s__CompDataRealPhotonMCTruthMatchPhoton'%name_str
@@ -1210,7 +1314,7 @@ def MakePhotonJetFakePlots(save=False, detail=100 ) :
         else :
             raw_input('continue')
 
-        samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5 && %s && ph_IsEE[0] %s)'%(photon_cuts, fsr_cut, cut_str)]*2 + ['PUWeight * (mu_passtrig_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_IsEE[0] && leadPhot_leadLepDR>0.4 %s )' %(photon_cuts, cut_str)], ['Data', 'Zgamma', 'Wgamma'], [0, 0.033, 0.1], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] } )
+        samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5 && leadPhot_leadLepDR>0.3 && leadPhot_sublLepDR > 0.3 && (leadPhot_leadLepDR < 1.0 || leadPhot_sublLepDR < 1.0 ) && %s && ph_IsEE[0] %s)'%(photon_cuts, fsr_cut, cut_str)]*2 + ['PUWeight * (mu_passtrig_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_IsEE[0] && leadPhot_leadLepDR>0.4 %s )' %(photon_cuts, cut_str)], ['Data', 'Zgamma', 'Wgamma'], [0, 0.033, 0.1], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] } )
 
         if save :
             name = 'ph_sigmaIEIE__EE%s__CompDataRealPhotonMCTruthMatchPhoton_twoBin'%name_str
@@ -1220,7 +1324,7 @@ def MakePhotonJetFakePlots(save=False, detail=100 ) :
             raw_input('continue')
 
 
-        samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5 && %s && ph_IsEB[0] %s)' %(photon_cuts, fsr_cut, cut_str)]*2 + ['PUWeight * (mu_passtrig_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_IsEB[0] && leadPhot_leadLepDR>0.4 %s)' %(photon_cuts, cut_str)], ['Data', 'Zgamma', 'Wgamma'], [0, 0.011, 0.03], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.0005', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8} , legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons']})
+        samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5 && leadPhot_leadLepDR>0.3 && leadPhot_sublLepDR > 0.3 && (leadPhot_leadLepDR < 1.0 || leadPhot_sublLepDR < 1.0 ) && %s && ph_IsEB[0] %s)' %(photon_cuts, fsr_cut, cut_str)]*2 + ['PUWeight * (mu_passtrig_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_IsEB[0] && leadPhot_leadLepDR>0.4 %s)' %(photon_cuts, cut_str)], ['Data', 'Zgamma', 'Wgamma'], [0, 0.011, 0.03], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.0005', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8} , legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons']})
 
         if save :
             name = 'ph_sigmaIEIE__EB%s__CompDataRealPhotonMCTruthMatchPhoton_twoBin'%name_str
@@ -1229,7 +1333,7 @@ def MakePhotonJetFakePlots(save=False, detail=100 ) :
         else :
             raw_input('continue')
 
-    samplesWg.CompareSelections( 'ph_pt[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4 )'%photon_cuts]*2 + ['PUWeight * (ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 )' %photon_cuts], ['Data', 'Zgamma', 'Wgamma'], (50, 0, 200 ), hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'photon p_{T} [GeV]', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config=samplesWg.config_legend(legendWiden=1.5, legend_entries=['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] ) )
+    samplesWg.CompareSelections( 'ph_pt[0]', ['PUWeight * ( mu_passtrig_n>0 && mu_n==2 && ph_n==1 && fabs( m_leplepph-91.2 ) < 5 && leadPhot_leadLepDR>0.3 && leadPhot_sublLepDR > 0.3 && (leadPhot_leadLepDR < 1.0 || leadPhot_sublLepDR < 1.0 ) &&  %s  )'%photon_cuts]*2 + ['PUWeight * (ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 )' %photon_cuts], ['Data', 'Zgamma', 'Wgamma'], (50, 0, 200 ), hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'photon p_{T} [GeV]', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config=samplesWg.config_legend(legendWiden=1.5, legend_entries=['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] ) )
 
     if save :
         name = 'ph_pt__CompDataRealPhotonMCTruthMatchPhoton'
@@ -1654,7 +1758,15 @@ def MakePhotonJetFakePlots(save=False, detail=100 ) :
     var_bins_ee = [0, 0.033, 0.1] 
     var_bins_eb = [0, 0.011, 0.03] 
     binning = {'EB': (30, 0, 0.03), 'EE':  (20, 0, 0.1), 'EB__varBins' : [0, 0.011, 0.03], 'EE__varBins' : [0, 0.033, 0.1] }
-    pt_cuts = [(None, None), (15, 25), (25, 40), (40, 80), (80, None)]
+
+    pt_cuts = [(None, None)]
+    for idx, ptmin in enumerate(analysis_bins_mgg[:-1]) :
+        ptmax = analysis_bins_mgg[idx+1]
+        if ptmax == analysis_bins_mgg[-1] :
+            pt_cuts.append( (ptmin, None ) )
+        else :
+            pt_cuts.append( (ptmin, ptmax ) )
+
     draw_samples = ['Zgammastar', 'MuonRealPhotonSub']
     for samp in draw_samples :
         for reg in ['EB', 'EE'] :

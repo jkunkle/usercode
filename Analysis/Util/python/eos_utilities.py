@@ -11,6 +11,12 @@ def copy_eos_to_local(eos_path, local_path) :
     result = subprocess.Popen(cmd, stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
 
 #---------------------------------------------------------
+def copy_local_to_eos(local_path, eos_path) :
+
+    cmd = [__EOS__, 'cp', local_path, eos_path]
+    result = subprocess.Popen(cmd, stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+
+#---------------------------------------------------------
 def rm_eos(path) :
 
     cmd = [__EOS__, 'rm', path]
@@ -67,12 +73,13 @@ def parse_eos_dir(path, DEBUG=False) :
         splitline = line.split()
 
         if len(splitline) != 9 :
-            print 'Cannot parse line :'
-            print line
-            print 'Here is the path'
-            print path 
-            print 'Here is the full entry'
-            print result
+            if line :
+                print 'Cannot parse line :'
+                print line
+                print 'Here is the path'
+                print path 
+                print 'Here is the full entry'
+                print result
             continue
 
         obj = splitline[8]

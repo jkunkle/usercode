@@ -52,9 +52,11 @@ class RunModule : public virtual RunModuleBase {
         bool FilterBlind       ( ModuleConfig & config ) const;
         bool FilterTruth       ( ModuleConfig & config ) const;
 
+        std::vector<int> get_ph_sorted_by_id() const;
 
     private :
         bool _isData;
+        bool sort_photons_by_id;
 };
 
 // Ouput namespace 
@@ -117,6 +119,12 @@ namespace OUT {
     Int_t   ph_mediumNoChIsoNoNeuIso_n;
     Int_t   ph_mediumNoChIsoNoPhoIso_n;
     Int_t   ph_mediumNoNeuIsoNoPhoIso_n;
+    Int_t   ph_iso533_n;
+    Int_t   ph_iso855_n;
+    Int_t   ph_iso1077_n;
+    Int_t   ph_iso1299_n;
+    Int_t   ph_iso151111_n;
+    Int_t   ph_iso201616_n;
     std::vector<Bool_t>  *ph_trigMatch_el;
     std::vector<float>  *ph_elMinDR;
 
@@ -139,6 +147,7 @@ namespace OUT {
     Float_t mt_lepph2_met;
     Float_t mt_lepphph_met;
     Float_t m_leplep;
+    Float_t m_leplep_uncorr;
     Float_t m_lepph1;
     Float_t m_lepph2;
     Float_t m_leplepph;
@@ -160,6 +169,35 @@ namespace OUT {
     Float_t            leadPhot_sublLepDR;
     Float_t            sublPhot_leadLepDR;
     Float_t            sublPhot_sublLepDR;
+    // variables that explicity use
+    // the default photon order 
+    Float_t            dr_ph1_leadLep;
+    Float_t            dr_ph1_sublLep;
+    Float_t            dr_ph2_leadLep;
+    Float_t            dr_ph2_sublLep;
+    Float_t            m_ph1_ph2;
+    Float_t            dr_ph1_ph2;
+    Float_t            dphi_ph1_ph2; 
+    Float_t            pt_ph1_ph2; 
+    Float_t            m_leadLep_ph1_ph2; 
+    Float_t            m_leadLep_ph1; 
+    Float_t            m_leadLep_ph2; 
+    Float_t            pt_leadph12;
+    Float_t            pt_sublph12;
+    Float_t            sieie_leadph12;
+    Float_t            sieie_sublph12;
+    Float_t            chIsoCorr_leadph12;
+    Float_t            chIsoCorr_sublph12;
+    Float_t            neuIsoCorr_leadph12;
+    Float_t            neuIsoCorr_sublph12;
+    Float_t            phoIsoCorr_leadph12;
+    Float_t            phoIsoCorr_sublph12;
+
+    Bool_t             isEB_leadph12;
+    Bool_t             isEE_leadph12;
+    Bool_t             isEB_sublph12;
+    Bool_t             isEE_sublph12;
+
 
     Float_t m_nearestToZ;
     Float_t m_minZdifflepph;

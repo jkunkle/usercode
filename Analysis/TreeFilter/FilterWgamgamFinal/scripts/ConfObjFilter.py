@@ -28,14 +28,13 @@ def config_analysis( alg_list, args ) :
     #alg_list.append( get_electron_filter( 'tightTrig' ) )
     #alg_list.append( get_electron_filter( None ) )
     #alg_list.append( get_photon_filter( 'looseNoSIEIE', ptcut=15 ) )
-    alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15 ) )
-    #alg_list.append( get_photon_filter( id=None, eVeto='hasPixSeed', ptcut=15 ) )
+    #alg_list.append( get_photon_filter( id='medium', eVeto='hasPixSeed', ptcut=15, sort_by_id='true') )
+    alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True ) )
     alg_list.append( get_jet_filter(do_hists=False) )
-    print 'SAVING MEDIUM ELE VETO PHOTONS, NO ELE OLAP'
-    print 'SAVING NOID ELECTRONS'
+    #print 'SAVING Medium PHOTONS, WITH ELE OLAP'
+    print 'SAVING NOID PHOTONS, WITH ELE OLAP'
+    print 'SAVING MVA ELECTRONS'
 
-    # resort photons by the mva score
-    #alg_list.append( Filter( 'SortPhotonByMVAScore' ) )
     
     alg_list.append( Filter( 'CalcEventVars' ) )
     alg_list.append( Filter( 'BuildTruth' ) )
@@ -49,11 +48,13 @@ def config_analysis( alg_list, args ) :
     alg_list.append( filter_event )
 
     filter_blind = Filter( 'FilterBlind' )
+    filter_blind.cut_ph_pt_lead = ' < 40 '
     #filter_blind.cut_nPhPassMedium = ' < 2 '
-    #filter_blind.cut_m_lepphph= ' < 100  '
+    #filter_blind.cut_m_lepphph= ' > 86.2 & < 96.2  '
+    #filter_blind.cut_m_lepph1= ' > 86.2 & < 96.2  '
+    #filter_blind.cut_m_lepph2= ' > 86.2 & < 96.2  '
     filter_blind.add_var( 'isData', isData )
-    alg_list.append(filter_blind)
-
+    #alg_list.append(filter_blind)
 
 
 def get_jet_filter( do_hists = False ) :
@@ -90,16 +91,24 @@ def get_electron_filter ( id, ptcut=10 ) :
 
     return filt
 
-def get_photon_filter ( id=None, eVeto=None, ptcut=10 ) :
+def get_photon_filter ( id=None, eVeto=None, ptcut=10, sort_by_id='false' ) :
+
+    if sort_by_id == True :
+        sort_by_id = 'true'
+    if sort_by_id == False :
+        sort_by_id = 'false'
+
 
     filt = Filter( 'FilterPhoton' )
     filt.cut_ph_pt = ' > %d ' %ptcut
     filt.cut_el_ph_dr = ' > 0.2 '
-    #filt.cut_ph_eleVeto = ' == False '
+    filt.cut_ph_eleVeto = ' == False '
     if id is not None :
         setattr( filt, 'cut_ph_%s' %id, 'True' )
     if eVeto is not None :
         setattr( filt, 'cut_ph_%s' %eVeto, ' False ' )
+
+    filt.sort_by_id = sort_by_id
 
     return filt
 

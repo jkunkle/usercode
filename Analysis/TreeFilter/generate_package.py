@@ -18,7 +18,8 @@ else :
     sys.exit()
 
 print 'Enter new package and run a small analysis to create first generated c++ code '
-os.system('cd %s ; python scripts/filter.py  --files test/tree.root --fileKey tree.root --outputDir /tmp --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/ConfTemplate.py ; rm scripts/ConfTemplate.pyc ; cd .. ' %( options.packageName ) )
+print ('cd %s ; echo "PACKAGE=%s">&Makefile ; echo "include ../Makefile.global">>Makefile ; python scripts/filter.py  --files test/tree.root --fileKey tree.root --outputDir /tmp --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/ConfTemplate.py ; rm scripts/ConfTemplate.pyc ; cd .. ' %( options.packageName, options.packageName ) )
+os.system('cd %s ; echo "PACKAGE=%s">&Makefile ; echo "include ../Makefile.global">>Makefile ; python scripts/filter.py  --files test/tree.root --fileKey tree.root --outputDir /tmp --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/ConfTemplate.py ; rm scripts/ConfTemplate.pyc ; cd .. ' %( options.packageName, options.packageName ) )
 
 
 

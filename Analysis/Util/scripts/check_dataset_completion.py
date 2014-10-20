@@ -6,7 +6,6 @@ import eos_utilities as eosutil
 import ROOT
 
 
-
 def main() :
 
     parser = ArgumentParser()
@@ -58,17 +57,28 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
                 if treeNameOrig is not None :
                     try :
                         otree = ofile.Get(treeNameOrig)
-                        orig_nevt_tree += otree.GetEntries()
                     except ReferenceError :
                         print 'Could not access file'
+                        continue
+
+                    try :
+                        orig_nevt_tree += otree.GetEntries()
+                    except AttributeError :
+                        print 'Could not access hist'
+                        continue
 
                 if histNameOrig is not None :
                     try :
                         ohist = ofile.Get(histNameOrig)
-                        orig_nevt_hist += ohist.GetBinContent(1)
                     except ReferenceError :
                         print 'Could not access file'
+                        continue
 
+                    try  :
+                        orig_nevt_hist += ohist.GetBinContent(1)
+                    except AttributeError :
+                        print 'Could not access hist'
+                        continue
     else :
         for top, dirs, files in os.walk( originalDS ) :
             for file in files :
@@ -104,6 +114,13 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
                 if fileKeyFilt is not None and not file.count(fileKeyFilt) : continue
 
                 ofile = ROOT.TFile.Open( 'root://eoscms/' + top+'/'+file )
+                if ofile == None :
+                    continue
+                if  ofile.IsZombie() :
+                    continue
+                if ofile.TestBit(ROOT.TFile.kRecovered) :
+                    print 'File was recovered, and data is probably not available'
+                    continue
                 if treeNameFilt is not None :
                     try :
                         otree = ofile.Get(treeNameFilt)
@@ -114,9 +131,15 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
                 if histNameFilt is not None :
                     try :
                         ohist = ofile.Get(histNameFilt)
-                        filt_nevt_hist += ohist.GetBinContent(1)
                     except ReferenceError :
                         print 'Could not access file'
+                        continue
+
+                    try  :
+                        filt_nevt_hist += ohist.GetBinContent(1)
+                    except AttributeError :
+                        print 'Could not access hist'
+                        continue
 
 
     else :
@@ -126,6 +149,11 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
                 if fileKeyFilt is not None and not file.count(fileKeyFilt) : continue
 
                 ofile = ROOT.TFile.Open( top+'/'+file )
+                if ofile.IsZombie() :
+                    continue
+                if ofile.TestBit(ROOT.TFile.kRecovered) :
+                    print 'File was recovered, and data is probably not available'
+                    continue
                 if treeNameFilt is not None :
                     try :
                         otree = ofile.Get(treeNameFilt)
@@ -136,9 +164,13 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
                 if histNameFilt is not None :
                     try :
                         ohist = ofile.Get(histNameFilt)
-                        filt_nevt_hist += ohist.GetBinContent(1)
                     except ReferenceError :
                         print 'Could not access file'
+                    try :
+                        filt_nevt_hist += ohist.GetBinContent(1)
+                    except AttributeError :
+                        print 'Could not get hist from file %s' %(top+'/'+file)
+
 
 
 

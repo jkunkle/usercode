@@ -1,3 +1,13 @@
+#-----------------------------------------------------
+#
+# Generate systematic inputs to RunMatrixFit.py
+# Real and fake template systematics are 
+# taken from variations in 
+# sigmaIEIE shape
+#
+#-----------------------------------------------------
+
+
 import re
 import os
 import math

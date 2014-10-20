@@ -1,4 +1,16 @@
 import os
+from argparse import ArgumentParser
+
+p = ArgumentParser()
+p.add_argument( '--run', dest='run', default=False, action='store_true', help='Run filtering' )
+p.add_argument( '--check', dest='check', default=False, action='store_true', help='Run check of completion' )
+p.add_argument( '--clean', dest='clean', default=False, action='store_true', help='Run cleanup of extra files' )
+p.add_argument( '--resubmit', dest='resubmit', default=False, action='store_true', help='Only submit missing output' )
+p.add_argument( '--local', dest='local', default=False, action='store_true', help='Run locally' )
+options = p.parse_args()
+
+if not options.run and not options.check and not options.clean :
+    options.run = True
 
 base_muon = '/eos/cms/store/user/abelloni/Wgamgam/FilteredSamplesDec13'
 base_elec = '/eos/cms/store/user/jkunkle/Wgamgam/FilteredSamplesDec13'
@@ -19,10 +31,11 @@ jobs = [
         #(base_data, 'job_electron_2012c_Jan2012rereco', 400),
         #(base_data, 'job_electron_2012d_Jan22rereco', 400),
         #(base_mc, 'job_summer12_DiPhotonBorn_Pt-10To25', 10),
-        #(base_mc2, 'job_summer12_DYJetsToLL', 200 ),
-        (base_mc, 'job_summer12_Wjets', 100),
-        #(base_mc, 'job_summer12_Wg', 50),
-        #(base_mc, 'job_summer12_Zg', 50),
+        #(base_mc2, 'job_summer12_DYJetsToLL', 300 ),
+        #(base_mc, 'job_summer12_Wjets', 100),
+        (base_mc, 'job_summer12_Wg', 50),
+        #(base_mc, 'job_summer12_Zg', 200),
+        #(base_me, 'job_summer12_Zgg', 5 ),
         #(base_mc, 'job_summer12_Wgg_FSR', 20),
         #(base_mc, 'job_summer12_WAA_ISR', 20),
         #(base_mc, 'job_summer12_ttjets_1l', 50),
@@ -65,32 +78,55 @@ jobs = [
         #(base_me, 'job_summer12_WgPt130', 40),
         #(base_me, 'job_summer12_WgPt30-50', 40),
         #(base_me, 'job_summer12_WgPt20-30', 40),
-        #(base_me, 'job_jetmon_2012b_Jan22rereco', 100),
-        #(base_me, 'job_jetmon_2012c_Jan22rereco', 100),
-        #(base_me, 'job_jetmon_2012d_Jan22rereco', 100),
+        ##(base_me, 'job_jetmon_2012b_Jan22rereco', 100),
+        ##(base_me, 'job_jetmon_2012c_Jan22rereco', 100),
+        ##(base_me, 'job_jetmon_2012d_Jan22rereco', 100),
 
 
 ]
 
-#command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s/ --fileKey tree.root --outputDir /tmp/jkunkle/%(base)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/ConfWgamgamReco.py --enableKeepFilter --nFilesPerJob %(nfiles)d --storagePath /eos/cms/store/user/jkunkle/Wgamgam/%(output)s/%(job)s --nproc %(nsplit)d --confFileName %(job)s '
+if options.local :
+    #--------------------
+    # not batch
+    #--------------------
+    command_base = 'python scripts/filter.py  --files root://eoscms/%(base)s/%(job)s.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Temp_outputs/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --enableKeepFilter --confFileName %(job)s.txt --nsplit %(nsplit)d --nproc %(nproc)d --storagePath /eos/cms/store/user/jkunkle/Wgamgam/%(output)s/%(job)s --exeName %(exename)s_%(job)s --moduleArgs "{ \'sampleFile\' : \'root://eoscms/%(base)s/%(job)s.root\'}"'
+    
+else :
+    #--------------------
+    # for batch submission
+    #--------------------
+    command_base = 'python scripts/filter.py  --files root://eoscms/%(base)s/%(job)s.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Temp_outputs/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --enableKeepFilter --batch --confFileName %(job)s.txt --nsplit %(nsplit)d --storagePath /eos/cms/store/user/jkunkle/Wgamgam/%(output)s/%(job)s --exeName %(exename)s_%(job)s --moduleArgs "{ \'sampleFile\' : \'root://eoscms/%(base)s/%(job)s.root\'}"'
 
-#command_base = 'python scripts/filter.py  --files root://eoscms/%(base)s/%(job)s.root --fileKey tree.root --outputDir /tmp/jkunkle/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/ConfWgamgamReco.py --enableKeepFilter --nFilesPerJob %(nfiles)d --storagePath /eos/cms/store/user/jkunkle/Wgamgam/%(output)s/%(job)s --nproc %(nproc)d --confFileName %(job)s.txt '
+if options.resubmit :
+    command_base += ' --resubmit '
 
-command_base = 'python scripts/filter.py  --files root://eoscms/%(base)s/%(job)s.root --outputDir /tmp/jkunkle/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --enableKeepFilter --nproc %(nproc)s --confFileName %(job)s.txt --nsplit %(nsplit)d --storagePath /eos/cms/store/user/jkunkle/Wgamgam/%(output)s/%(job)s --exeName %(exename)s --moduleArgs "{ \'sampleFile\' : \'root://eoscms/%(base)s/%(job)s.root\'}"; python ../../Util/scripts/clean_conf_files.py --path /eos/cms/store/user/jkunkle/Wgamgam/%(output)s/%(job)s '
+clean_command_base = ' python ../../Util/scripts/clean_conf_files.py --path /eos/cms/store/user/jkunkle/Wgamgam/%(output)s/%(job)s '
 
-#command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /tmp/jkunkle/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/ConfWgamgamReco.py --enableKeepFilter --nFilesPerJob 1 --nproc %(nproc)s --confFileName %(job)s.txt '
+check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s --filteredDS /eos/cms/store/user/jkunkle/Wgamgam/%(output)s/%(job)s --treeNameOrig %(treename)s --histNameFilt ggNtuplizer/filter --fileKeyOrig %(job)s.root --fileKeyFilt tree.root'
 
 #module = 'ConfWgamgamReco.py'
 #module = 'ConfWgamgamRecoJetTrig.py'
-module = 'ConfWgamgamRecoNoTrig.py'
-output = 'RecoOutputDYNoTrig_2014_07_29'
+module = 'ConfWgamgamReco.py'
+output = 'RecoOutputNoLepIso_2014_10_15'
 nFilesPerJob = 1
-nProc = 6
+nProc = 5
 exename='RunAnalysisMC'
 treename='ggNtuplizer/EventTree'
-#treename='tt'
 
-for base, job, nsplit in jobs :
-    command = command_base %{ 'base' : base, 'job' : job, 'nfiles' : nFilesPerJob, 'output' : output, 'nsplit': nsplit, 'nproc' : nProc, 'exename' : exename, 'treename' : treename, 'module' : module }
-    print command
-    os.system(command)
+if options.run :
+    for base, job, nsplit in jobs :
+        command = command_base %{ 'base' : base, 'job' : job, 'nfiles' : nFilesPerJob, 'output' : output, 'nsplit': nsplit/2, 'nproc' : nProc, 'exename' : exename, 'treename' : treename, 'module' : module }
+        print command
+        os.system(command)
+
+if options.check :
+    for base, job, nsplit in jobs :
+        command = check_commands_base%{ 'base' : base, 'job' : job, 'output' : output,  'treename' : treename}
+        print command
+        os.system(command)
+
+if options.clean :
+    for base, job, nsplit in jobs :
+        command = clean_command_base %{'job' : job, 'output' : output}
+        print command
+        os.system(command)

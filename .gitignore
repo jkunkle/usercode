@@ -3,6 +3,7 @@
 *.pyc
 *.root
 *.o
+*.so
 *.exe
 *.swp
 Dict.cxx

@@ -1,0 +1,7 @@
+<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>
+<Combination OutputFilePrefix="onebin_fit/config/config"  >
+<Input>onebin_fit/config/channel_OneBin.xml</Input>
+<Measurement LumiRelErr="0.05"  Name="onebin_fit"  Lumi="1."  >
+<POI>SigXsecOverSM</POI>
+</Measurement> 
+</Combination> 

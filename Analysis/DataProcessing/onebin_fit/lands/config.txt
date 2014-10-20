@@ -1,0 +1,11 @@
+Wgg Fit onebin_fit 2014-8-4
+imax 1 number of channels
+jmax 1 number of backgrounds
+kmax 2 number of systematics
+Observation 429.968483
+bin 1  1
+process signal  background
+process 0  1
+rate 69.286054  360.682429
+0  lnN  1.000000  29.550280  Stat_background 
+1  lnN  1.100000  1.000000  Lumi 

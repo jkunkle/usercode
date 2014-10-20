@@ -1,0 +1,17 @@
+<!DOCTYPE Channel  SYSTEM 'HistFactorySchema.dtd'>
+<Channel Name="bin_EE-EE_40_80"  InputFile="allbin_fit/data/bin_EE-EE_40_80.root"  >
+<Data HistoPath=""  HistoName="data" ></Data>
+<StatErrorConfig ConstraintType="Poisson"  RelErrorThreshold="0.001" ></StatErrorConfig>
+<Sample HistoName="jetfake_fake_real"  Name="jetfake_fake_real"  HistoPath=""  >
+<StatError Activate="True" ></StatError>
+</Sample> 
+<Sample HistoName="signal"  Name="signal"  HistoPath=""  >
+<NormFactor High="10."  Name="SigXsecOverSM"  Val="1"  Low="0." ></NormFactor>
+</Sample> 
+<Sample HistoName="jetfake_fake_fake"  Name="jetfake_fake_fake"  HistoPath=""  >
+<StatError Activate="True" ></StatError>
+</Sample> 
+<Sample HistoName="jetfake_real_fake"  Name="jetfake_real_fake"  HistoPath=""  >
+<StatError Activate="True" ></StatError>
+</Sample> 
+</Channel> 

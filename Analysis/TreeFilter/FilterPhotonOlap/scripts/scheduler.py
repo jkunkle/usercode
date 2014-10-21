@@ -7,16 +7,16 @@ import os
 base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 
 jobs = [
-        #(base, 'job_summer12_Wg'),
+        (base, 'job_summer12_Wg'),
         #(base, 'job_summer12_WgPt20-30'),
         #(base, 'job_summer12_WgPt30-50'),
         #(base, 'job_summer12_WgPt50-130'),
         #(base, 'job_summer12_WgPt130'),
-        (base, 'job_summer12_DYJetsToLL'),
-        (base, 'job_summer12_Wjets'),
-        (base, 'job_summer12_ttjets_1l'),
-        (base, 'job_summer12_ttjets_2l'),
-        #(base, 'job_summer12_WAA_ISR'),
+        #(base, 'job_summer12_DYJetsToLL'),
+        #(base, 'job_summer12_Wjets'),
+        #(base, 'job_summer12_ttjets_1l'),
+        #(base, 'job_summer12_ttjets_2l'),
+        #(base, 'job_summer12_Zg'),
         #(base, 'job_summer12_DiPhotonBorn_Pt-10To25'),
         #(base, 'job_summer12_WH_ZH_125'),
         #(base, 'job_summer12_WWW'),
@@ -25,7 +25,6 @@ jobs = [
         #(base, 'job_summer12_WWg'),
         #(base, 'job_summer12_WZZ'),
         #(base, 'job_summer12_WZ_3lnu'),
-        #(base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_ZZZ'),
         #(base, 'job_summer12_ZZ_2e2mu'),
         #(base, 'job_summer12_ZZ_2e2tau'),
@@ -36,20 +35,21 @@ jobs = [
         #(base, 'job_summer12_ZZ_4e'),
         #(base, 'job_summer12_ZZ_4mu'),
         #(base, 'job_summer12_ZZ_4tau'),
-        #(base, 'job_summer12_Zg'),
-        #(base, 'job_summer12_diphoton_box_10to25'),
-        #(base, 'job_summer12_diphoton_box_250toInf'),
-        #(base, 'job_summer12_diphoton_box_25to250'),
         #(base, 'job_summer12_ggZZ_2l2l'),
         #(base, 'job_summer12_ggZZ_4l'),
+        #(base, 'job_summer12_ttg'),
         #(base, 'job_summer12_t_s'),
         #(base, 'job_summer12_t_t'),
         #(base, 'job_summer12_t_tW'),
         #(base, 'job_summer12_tbar_s'),
         #(base, 'job_summer12_tbar_t'),
         #(base, 'job_summer12_tbar_tW'),
-        #(base, 'job_summer12_ttg'),
+        #(base, 'job_summer12_Wgg_FSR'),
+        #(base, 'job_summer12_WAA_ISR'),
         #(base, 'job_summer12_ttinclusive'),
+        #(base, 'job_summer12_diphoton_box_10to25'),
+        #(base, 'job_summer12_diphoton_box_250toInf'),
+        #(base, 'job_summer12_diphoton_box_25to250'),
         ##(base_tmp, 'DYJetsToLLPhOlap' )
         ##(base_tmp, 'WjetsPhOlap' )
         ##(base_tmp, 'WgPhOlap' )
@@ -61,11 +61,11 @@ jobs = [
 #sub_base = ['LepGammaLoosePh_2014_03_06', 'DiLeptonLoosePh_2014_03_06']
 #sub_base = ['LepGammaPhMVAID_2014_03_28']
 #sub_base = ['LepGammaGamma_2014_07_14']
-sub_base = ['DiLepton_2014_08_25']
+sub_base = ['LepGammaGammaNoPhIDVetoPixSeedBoth_2014_10_15']
 
 command_base = 'python scripts/filter.py  --filesDir %(base)s/%(sub_base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(sub_base)s/%(job)s%(suffix)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc %(nproc)d '
 
-nproc=12
+nproc=4
 module = 'ConfFilter.py'
 suffix='PhOlap'
 

@@ -1,0 +1,11 @@
+<!DOCTYPE Channel  SYSTEM 'HistFactorySchema.dtd'>
+<Channel Name="bin_15_25"  InputFile="multptbin_fit/data/bin_15_25.root"  >
+<Data HistoPath=""  HistoName="data" ></Data>
+<StatErrorConfig ConstraintType="Poisson"  RelErrorThreshold="0.001" ></StatErrorConfig>
+<Sample HistoName="signal"  Name="signal"  HistoPath=""  >
+<NormFactor High="10."  Name="SigXsecOverSM"  Val="1"  Low="0." ></NormFactor>
+</Sample> 
+<Sample HistoName="background"  Name="background"  HistoPath=""  >
+<StatError Activate="True" ></StatError>
+</Sample> 
+</Channel> 

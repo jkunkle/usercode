@@ -74,48 +74,78 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("ph_mediumNoChIsoNoNeuIso_n"  , &OUT::ph_mediumNoChIsoNoNeuIso_n  , "ph_mediumNoChIsoNoNeuIso_n/I" );
     outtree->Branch("ph_mediumNoChIsoNoPhoIso_n"  , &OUT::ph_mediumNoChIsoNoPhoIso_n  , "ph_mediumNoChIsoNoPhoIso_n/I" );
     outtree->Branch("ph_mediumNoNeuIsoNoPhoIso_n" , &OUT::ph_mediumNoNeuIsoNoPhoIso_n , "ph_mediumNoNeuIsoNoPhoIso_n/I" );
+    outtree->Branch("ph_iso533_n"                 , &OUT::ph_iso533_n                 , "ph_iso533_n/I" );
+    outtree->Branch("ph_iso855_n"                 , &OUT::ph_iso855_n                 , "ph_iso855_n/I" );
+    outtree->Branch("ph_iso1077_n"                , &OUT::ph_iso1077_n                , "ph_iso1077_n/I" );
+    outtree->Branch("ph_iso1299_n"                , &OUT::ph_iso1299_n                , "ph_iso1299_n/I" );
+    outtree->Branch("ph_iso151111_n"              , &OUT::ph_iso151111_n              , "ph_iso151111_n/I" );
+    outtree->Branch("ph_iso201616_n"              , &OUT::ph_iso201616_n              , "ph_iso201616_n/I" );
     outtree->Branch("ph_trigMatch_el"             , &OUT::ph_trigMatch_el             );
     outtree->Branch("ph_elMinDR"                  , &OUT::ph_elMinDR                  );
     
-    outtree->Branch("leadPhot_pt"      , &OUT::leadPhot_pt      , "leadPhot_pt/F"        );
-    outtree->Branch("sublPhot_pt"      , &OUT::sublPhot_pt      , "sublPhot_pt/F"        );
-    outtree->Branch("leadPhot_lepDR"   , &OUT::leadPhot_lepDR   , "leadPhot_lepDR/F"     );
-    outtree->Branch("sublPhot_lepDR"   , &OUT::sublPhot_lepDR   , "sublPhot_lepDR/F"     );
-    outtree->Branch("ph_phDR"          , &OUT::ph_phDR          , "ph_phDR/F"            );
-    outtree->Branch("phPhot_lepDR"     , &OUT::phPhot_lepDR     , "phPhot_lepDR/F"       );
-    outtree->Branch("leadPhot_lepDPhi" , &OUT::leadPhot_lepDPhi , "leadPhot_lepDPhi/F"   );
-    outtree->Branch("sublPhot_lepDPhi" , &OUT::sublPhot_lepDPhi , "sublPhot_lepDPhi/F"   );
-    outtree->Branch("ph_phDPhi"        , &OUT::ph_phDPhi        , "ph_phDPhi/F"          );
-    outtree->Branch("phPhot_lepDPhi"   , &OUT::phPhot_lepDPhi   , "phPhot_lepDPhi/F"     );
-    outtree->Branch("dphi_met_lep1"    , &OUT::dphi_met_lep1    , "dphi_met_lep1/F"      );
-    outtree->Branch("dphi_met_lep2"    , &OUT::dphi_met_lep2    , "dphi_met_lep2/F"      );
-    outtree->Branch("dphi_met_ph1"     , &OUT::dphi_met_ph1     , "dphi_met_ph1/F"      );
-    outtree->Branch("dphi_met_ph2"     , &OUT::dphi_met_ph2     , "dphi_met_ph2/F"      );
-    outtree->Branch("mt_lep_met"       , &OUT::mt_lep_met       , "mt_lep_met/F"         );
-    outtree->Branch("mt_lepph1_met"    , &OUT::mt_lepph1_met    , "mt_lepph1_met/F"      );
-    outtree->Branch("mt_lepph2_met"    , &OUT::mt_lepph2_met    , "mt_lepph2_met/F"      );
-    outtree->Branch("mt_lepphph_met"   , &OUT::mt_lepphph_met   , "mt_lepphph_met/F"     );
-    outtree->Branch("m_leplep"         , &OUT::m_leplep         , "m_leplep/F"           );
-    outtree->Branch("m_lepph1"         , &OUT::m_lepph1         , "m_lepph1/F"           );
-    outtree->Branch("m_lepph2"         , &OUT::m_lepph2         , "m_lepph2/F"           );
-    outtree->Branch("m_leplepph"       , &OUT::m_leplepph       , "m_leplepph/F"         );
-    outtree->Branch("m_lepphph"        , &OUT::m_lepphph        , "m_lepphph/F"          );
-    outtree->Branch("m_phph"           , &OUT::m_phph           , "m_phph/F"             );
-    outtree->Branch("m_leplepZ"        , &OUT::m_leplepZ        , "m_leplepZ/F"          );
-    outtree->Branch("m_3lep"           , &OUT::m_3lep           , "m_3lep/F"             );
-    outtree->Branch("m_4lep"           , &OUT::m_4lep           , "m_4lep/F"             );
-    outtree->Branch("pt_phph"          , &OUT::pt_phph          , "pt_phph/F"             );
-    outtree->Branch("pt_leplep"        , &OUT::pt_leplep        , "pt_leplep/F"          );
-    outtree->Branch("pt_lepph1"        , &OUT::pt_lepph1        , "pt_lepph1/F"          );
-    outtree->Branch("pt_lepph2"        , &OUT::pt_lepph2        , "pt_lepph2/F"          );
-    outtree->Branch("pt_lepphph"       , &OUT::pt_lepphph       , "pt_lepphph/F"         );
-    outtree->Branch("pt_leplepph"      , &OUT::pt_leplepph      , "pt_leplepph/F"        );
-    outtree->Branch("pt_secondLepton"  , &OUT::pt_secondLepton  , "pt_secondLepton/F"    );
-    outtree->Branch("pt_thirdLepton"   , &OUT::pt_thirdLepton   , "pt_thirdLepton/F"     );
-    outtree->Branch("leadPhot_leadLepDR", &OUT::leadPhot_leadLepDR, "leadPhot_leadLepDR/F"  );
-    outtree->Branch("leadPhot_sublLepDR", &OUT::leadPhot_sublLepDR, "leadPhot_sublLepDR/F"  );
-    outtree->Branch("sublPhot_leadLepDR", &OUT::sublPhot_leadLepDR, "sublPhot_leadLepDR/F"  );
-    outtree->Branch("sublPhot_sublLepDR", &OUT::sublPhot_sublLepDR, "sublPhot_sublLepDR/F"  );
+    outtree->Branch("leadPhot_pt"         , &OUT::leadPhot_pt         , "leadPhot_pt/F"       );
+    outtree->Branch("sublPhot_pt"         , &OUT::sublPhot_pt        , "sublPhot_pt/F"        );
+    outtree->Branch("leadPhot_lepDR"      , &OUT::leadPhot_lepDR     , "leadPhot_lepDR/F"     );
+    outtree->Branch("sublPhot_lepDR"      , &OUT::sublPhot_lepDR     , "sublPhot_lepDR/F"     );
+    outtree->Branch("ph_phDR"             , &OUT::ph_phDR            , "ph_phDR/F"            );
+    outtree->Branch("phPhot_lepDR"        , &OUT::phPhot_lepDR       , "phPhot_lepDR/F"       );
+    outtree->Branch("leadPhot_lepDPhi"    , &OUT::leadPhot_lepDPhi   , "leadPhot_lepDPhi/F"   );
+    outtree->Branch("sublPhot_lepDPhi"    , &OUT::sublPhot_lepDPhi   , "sublPhot_lepDPhi/F"   );
+    outtree->Branch("ph_phDPhi"           , &OUT::ph_phDPhi          , "ph_phDPhi/F"          );
+    outtree->Branch("phPhot_lepDPhi"      , &OUT::phPhot_lepDPhi     , "phPhot_lepDPhi/F"     );
+    outtree->Branch("dphi_met_lep1"       , &OUT::dphi_met_lep1      , "dphi_met_lep1/F"      );
+    outtree->Branch("dphi_met_lep2"       , &OUT::dphi_met_lep2      , "dphi_met_lep2/F"      );
+    outtree->Branch("dphi_met_ph1"        , &OUT::dphi_met_ph1       , "dphi_met_ph1/F"       );
+    outtree->Branch("dphi_met_ph2"        , &OUT::dphi_met_ph2       , "dphi_met_ph2/F"       );
+    outtree->Branch("mt_lep_met"          , &OUT::mt_lep_met         , "mt_lep_met/F"         );
+    outtree->Branch("mt_lepph1_met"       , &OUT::mt_lepph1_met      , "mt_lepph1_met/F"      );
+    outtree->Branch("mt_lepph2_met"       , &OUT::mt_lepph2_met      , "mt_lepph2_met/F"      );
+    outtree->Branch("mt_lepphph_met"      , &OUT::mt_lepphph_met     , "mt_lepphph_met/F"     );
+    outtree->Branch("m_leplep"            , &OUT::m_leplep           , "m_leplep/F"           );
+    outtree->Branch("m_leplep_uncorr"     , &OUT::m_leplep_uncorr    , "m_leplep_uncorr/F"    );
+    outtree->Branch("m_lepph1"            , &OUT::m_lepph1           , "m_lepph1/F"           );
+    outtree->Branch("m_lepph2"            , &OUT::m_lepph2           , "m_lepph2/F"           );
+    outtree->Branch("m_leplepph"          , &OUT::m_leplepph         , "m_leplepph/F"         );
+    outtree->Branch("m_lepphph"           , &OUT::m_lepphph          , "m_lepphph/F"          );
+    outtree->Branch("m_leplepZ"           , &OUT::m_leplepZ          , "m_leplepZ/F"          );
+    outtree->Branch("m_3lep"              , &OUT::m_3lep             , "m_3lep/F"             );
+    outtree->Branch("m_4lep"              , &OUT::m_4lep             , "m_4lep/F"             );
+    outtree->Branch("pt_leplep"           , &OUT::pt_leplep          , "pt_leplep/F"          );
+    outtree->Branch("pt_lepph1"           , &OUT::pt_lepph1          , "pt_lepph1/F"          );
+    outtree->Branch("pt_lepph2"           , &OUT::pt_lepph2          , "pt_lepph2/F"          );
+    outtree->Branch("pt_lepphph"          , &OUT::pt_lepphph         , "pt_lepphph/F"         );
+    outtree->Branch("pt_leplepph"         , &OUT::pt_leplepph        , "pt_leplepph/F"        );
+    outtree->Branch("pt_secondLepton"     , &OUT::pt_secondLepton    , "pt_secondLepton/F"    );
+    outtree->Branch("pt_thirdLepton"      , &OUT::pt_thirdLepton     , "pt_thirdLepton/F"     );
+    outtree->Branch("leadPhot_leadLepDR"  , &OUT::leadPhot_leadLepDR , "leadPhot_leadLepDR/F" );
+    outtree->Branch("leadPhot_sublLepDR"  , &OUT::leadPhot_sublLepDR , "leadPhot_sublLepDR/F" );
+    outtree->Branch("sublPhot_leadLepDR"  , &OUT::sublPhot_leadLepDR , "sublPhot_leadLepDR/F" );
+    outtree->Branch("sublPhot_sublLepDR"  , &OUT::sublPhot_sublLepDR , "sublPhot_sublLepDR/F" );
+    outtree->Branch("dr_ph1_leadLep"      , &OUT::dr_ph1_leadLep     , "dr_ph1_leadLep/F"     );
+    outtree->Branch("dr_ph1_sublLep"      , &OUT::dr_ph1_sublLep     , "dr_ph1_sublLep/F"     );
+    outtree->Branch("dr_ph2_leadLep"      , &OUT::dr_ph2_leadLep     , "dr_ph2_leadLep/F"     );
+    outtree->Branch("dr_ph2_sublLep"      , &OUT::dr_ph2_sublLep     , "dr_ph2_sublLep/F"     );
+    outtree->Branch("m_ph1_ph2"           , &OUT::m_ph1_ph2          , "m_ph1_ph2/F"          );
+    outtree->Branch("dr_ph1_ph2"          , &OUT::dr_ph1_ph2         , "dr_ph1_ph2/F"         );
+    outtree->Branch("dphi_ph1_ph2"        , &OUT::dphi_ph1_ph2       , "dphi_ph1_ph2/F"       );
+    outtree->Branch("pt_ph1_ph2"          , &OUT::pt_ph1_ph2         , "pt_ph1_ph2/F"         );
+    outtree->Branch("m_leadLep_ph1_ph2"   , &OUT::m_leadLep_ph1_ph2  , "m_leadLep_ph1_ph2/F"  );
+    outtree->Branch("m_leadLep_ph1"       , &OUT::m_leadLep_ph1      , "m_leadLep_ph1/F"      );
+    outtree->Branch("m_leadLep_ph2"       , &OUT::m_leadLep_ph2      , "m_leadLep_ph2/F"      );
+    outtree->Branch("pt_leadph12"         , &OUT::pt_leadph12        , "pt_leadph12/F"        );
+    outtree->Branch("pt_sublph12"         , &OUT::pt_sublph12        , "pt_sublph12/F"        );
+    outtree->Branch("sieie_leadph12"      , &OUT::sieie_leadph12     , "sieie_leadph12/F"     );
+    outtree->Branch("sieie_sublph12"      , &OUT::sieie_sublph12     , "sieie_sublph12/F"     );
+    outtree->Branch("chIsoCorr_leadph12"  , &OUT::chIsoCorr_leadph12 , "chIsoCorr_leadph12/F" );
+    outtree->Branch("chIsoCorr_sublph12"  , &OUT::chIsoCorr_sublph12 , "chIsoCorr_sublph12/F" );
+    outtree->Branch("neuIsoCorr_leadph12" , &OUT::neuIsoCorr_leadph12, "neuIsoCorr_leadph12/F");
+    outtree->Branch("neuIsoCorr_sublph12" , &OUT::neuIsoCorr_sublph12, "neuIsoCorr_sublph12/F");
+    outtree->Branch("phoIsoCorr_leadph12" , &OUT::phoIsoCorr_leadph12, "phoIsoCorr_leadph12/F");
+    outtree->Branch("phoIsoCorr_sublph12" , &OUT::phoIsoCorr_sublph12, "phoIsoCorr_sublph12/F");
+    outtree->Branch("isEB_leadph12", &OUT::isEB_leadph12, "isEB_leadph12/O" );
+    outtree->Branch("isEB_sublph12", &OUT::isEB_sublph12, "isEB_sublph12/O" );
+    outtree->Branch("isEE_leadph12", &OUT::isEE_leadph12, "isEE_leadph12/O" );
+    outtree->Branch("isEE_sublph12", &OUT::isEE_sublph12, "isEE_sublph12/O" );
 
     outtree->Branch("m_nearestToZ"   , &OUT::m_nearestToZ   , "m_nearestToZ/F"     );
     outtree->Branch("m_minZdifflepph", &OUT::m_minZdifflepph, "m_minZdifflepph/F"     );
@@ -164,6 +194,16 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 else              _isData=false;
             }
         }
+
+        if( mod_conf.GetName() == "FilterPhoton" ) { 
+            std::map<std::string, std::string>::const_iterator eitr = mod_conf.GetInitData().find( "sort_by_id" );
+            if( eitr != mod_conf.GetInitData().end() ) {
+                std::string data = eitr->second;
+                std::transform(data.begin(), data.end(), data.begin(), ::tolower);
+                if( data=="true") sort_photons_by_id=true;
+                else              sort_photons_by_id=false;
+            }
+        }
     }
 
 }
@@ -206,14 +246,24 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     if( config.GetName() == "FilterMuon" ) {
         FilterMuon( config );
     }
+
+    //----------------------------------
+    // Reorder the photons 
+    // if requested.  Only one
+    // module should be used otherwise
+    // one will override the other
+    if( config.GetName() == "SortPhotonByMVAScore" ) {
+        SortPhotonByMVAScore( config );
+    }
+    //----------------------------------
+    // Now select photons
     if( config.GetName() == "FilterPhoton" ) {
         FilterPhoton( config );
     }
+    //----------------------------------
+
     if( config.GetName() == "FilterJet" ) {
         FilterJet( config );
-    }
-    if( config.GetName() == "SortPhotonByMVAScore" ) {
-        SortPhotonByMVAScore( config );
     }
     if( config.GetName() == "BuildTruth" ) {
         BuildTruth( config );
@@ -304,7 +354,17 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
     OUT::ph_n = 0;
     ClearOutputPrefix("ph_");
 
-    for( int idx = 0; idx < IN::ph_n; idx++ ) {
+    std::vector<int> ph_order;
+    if( sort_photons_by_id ) {
+        ph_order = get_ph_sorted_by_id( );
+    }
+    else {
+        for( int idx = 0; idx < IN::ph_n; idx++ ) {
+            ph_order.push_back(idx);
+        }
+    }
+
+    BOOST_FOREACH( int idx, ph_order )  {
 
         if( !config.PassFloat( "cut_ph_pt", IN::ph_pt->at(idx)) ) continue;
         if( !config.PassBool( "cut_ph_eleVeto", IN::ph_eleVeto->at(idx)) ) continue;
@@ -352,10 +412,13 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
     #endif
 }
 
+//------------------------------------------
+// DEPRICATED, sort iside of Filter Photon
 void RunModule::SortPhotonByMVAScore( ModuleConfig & config ) const {
 
     #ifdef EXISTS_ph_n
 
+    // clear all
     OUT::ph_n = 0;
     ClearOutputPrefix("ph_");
 
@@ -379,6 +442,50 @@ void RunModule::SortPhotonByMVAScore( ModuleConfig & config ) const {
     #endif
 
 }
+
+std::vector<int> RunModule::get_ph_sorted_by_id( ) const {
+
+    std::vector<std::pair<int, int> > sorted_photons;
+    for( int idx = 0; idx < IN::ph_n; idx++ ) {
+
+        int sort_val = 0;
+        if( IN::ph_passMedium->at(idx) ) {
+            sort_val = 7;
+        }
+        else if( IN::ph_chIsoCorr->at(idx) < 5  && IN::ph_neuIsoCorr->at(idx) < 3  && IN::ph_phoIsoCorr->at(idx) < 3 ) {
+            sort_val = 6;
+        }
+        else if( IN::ph_chIsoCorr->at(idx) < 8  && IN::ph_neuIsoCorr->at(idx) < 5  && IN::ph_phoIsoCorr->at(idx) < 5 ) {
+            sort_val = 5;
+        }
+        else if( IN::ph_chIsoCorr->at(idx) < 10 && IN::ph_neuIsoCorr->at(idx) < 7  && IN::ph_phoIsoCorr->at(idx) < 7 ) {
+            sort_val = 4;
+        }
+        else if( IN::ph_chIsoCorr->at(idx) < 12 && IN::ph_neuIsoCorr->at(idx) < 9  && IN::ph_phoIsoCorr->at(idx) < 9 ) {
+            sort_val = 3;
+        }
+        else if( IN::ph_chIsoCorr->at(idx) < 15 && IN::ph_neuIsoCorr->at(idx) < 11 && IN::ph_phoIsoCorr->at(idx) < 11 ) {
+            sort_val = 2;
+        }
+        else if( IN::ph_chIsoCorr->at(idx) < 20 && IN::ph_neuIsoCorr->at(idx) < 16 && IN::ph_phoIsoCorr->at(idx) < 16 ) {
+            sort_val = 1;
+        }
+
+        sorted_photons.push_back( std::make_pair( sort_val, idx ) );
+    }
+
+    std::sort(sorted_photons.rbegin(), sorted_photons.rend());
+
+    std::vector<int> sorted_idx;
+    for( std::vector<std::pair<int,int> >::const_iterator itr = sorted_photons.begin() ; itr != sorted_photons.end(); ++itr) {
+        sorted_idx.push_back( itr->second );
+    }
+    
+    return sorted_idx;
+
+
+}
+
 
 void RunModule::FilterMuon( ModuleConfig & config ) const {
 
@@ -659,6 +766,12 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     OUT::ph_mediumNoChIsoNoNeuIso_n  = 0;
     OUT::ph_mediumNoChIsoNoPhoIso_n  = 0;
     OUT::ph_mediumNoNeuIsoNoPhoIso_n = 0;
+    OUT::ph_iso533_n                 = 0;
+    OUT::ph_iso855_n                 = 0;
+    OUT::ph_iso1077_n                = 0;
+    OUT::ph_iso1299_n                = 0;
+    OUT::ph_iso151111_n              = 0;
+    OUT::ph_iso201616_n              = 0;
     OUT::ph_trigMatch_el->clear();
     OUT::ph_elMinDR     ->clear();
     OUT::leadPhot_pt                 = 0;
@@ -680,15 +793,14 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     OUT::mt_lepph2_met               = 0;
     OUT::mt_lepphph_met              = 0;
     OUT::m_leplep                    = 0;
+    OUT::m_leplep_uncorr             = 0;
     OUT::m_lepph1                    = 0;
     OUT::m_lepph2                    = 0;
     OUT::m_lepphph                   = 0;
     OUT::m_leplepph                  = 0;
-    OUT::m_phph                      = 0;
     OUT::m_leplepZ                   = 0;
     OUT::m_3lep                      = 0;
     OUT::m_4lep                      = 0;
-    OUT::pt_phph                     = 0;
     OUT::pt_leplep                   = 0;
     OUT::pt_lepph1                   = 0;
     OUT::pt_lepph2                   = 0;
@@ -710,6 +822,7 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     #ifdef EXISTS_mu_n
     #ifdef EXISTS_ph_n
     std::vector<TLorentzVector> leptons;
+    std::vector<TLorentzVector> leptons_uncorr;
     // map pt to a bool, int pair.  The bool is 1 if electron, 0 if muon.  The int is the index
     std::vector<std::pair<float, std::pair<bool, int > > > sorted_leptons;
     for( int idx = 0; idx < OUT::el_n; idx++ ) {
@@ -722,6 +835,18 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
                         );
         leptons.push_back(lv);
         sorted_leptons.push_back( std::make_pair( lv.Pt(), std::make_pair( 1, idx ) ) );
+
+#ifdef EXISTS_el_pt_uncorr
+#ifdef EXISTS_el_e_uncorr
+        TLorentzVector lv_uncorr;
+        lv_uncorr.SetPtEtaPhiE(  OUT::el_pt_uncorr->at(idx),
+                                 OUT::el_eta->at(idx),
+                                 OUT::el_phi->at(idx),
+                                 OUT::el_e_uncorr->at(idx)
+                        );
+        leptons_uncorr.push_back(lv_uncorr);
+#endif 
+#endif 
 
         if( lv.Pt() > 25 ) {
             OUT::el_pt25_n++;
@@ -746,6 +871,23 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
                         );
         leptons.push_back(lv);
         sorted_leptons.push_back( std::make_pair( lv.Pt(), std::make_pair( 0, idx ) ) );
+
+        #ifdef EXISTS_mu_pt_uncorr
+        #ifdef EXISTS_mu_eta_uncorr
+        #ifdef EXISTS_mu_phi_uncorr
+        #ifdef EXISTS_mu_e_uncorr
+        TLorentzVector lv_uncorr;
+        lv_uncorr.SetPtEtaPhiE(  OUT::mu_pt_uncorr->at(idx),
+                                 OUT::mu_eta_uncorr->at(idx),
+                                 OUT::mu_phi_uncorr->at(idx),
+                                 OUT::mu_e_uncorr->at(idx)
+                        );
+        leptons_uncorr.push_back(lv_uncorr);
+        #endif
+        #endif
+        #endif
+        #endif
+
         if( lv.Pt() > 25 ) {
             OUT::mu_pt25_n++;
         }
@@ -768,8 +910,45 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
                         );
         photons.push_back(phot);
         sorted_photons.push_back(std::make_pair( phot.Pt(), idx ));
-        //sorted_photons.push_back(std::make_pair( OUT::ph_mvascore->at(idx), idx ));
 
+        if( OUT::ph_HoverE12->at(idx) < 0.05 ) {
+
+            if( OUT::ph_chIsoCorr->at(idx) < 5   && 
+                OUT::ph_neuIsoCorr->at(idx) < 3  && 
+                OUT::ph_phoIsoCorr->at(idx) < 3 ) {
+                OUT::ph_iso533_n++;
+            }
+            
+            if( OUT::ph_chIsoCorr->at(idx) < 8  && 
+                OUT::ph_neuIsoCorr->at(idx) < 5 && 
+                OUT::ph_phoIsoCorr->at(idx) < 5 ) {
+                OUT::ph_iso855_n++;
+            }
+            
+            if( OUT::ph_chIsoCorr->at(idx) < 10 && 
+                OUT::ph_neuIsoCorr->at(idx) < 7  && 
+                OUT::ph_phoIsoCorr->at(idx) < 7 ) {
+                OUT::ph_iso1077_n++;
+            }
+            
+            if( OUT::ph_chIsoCorr->at(idx) < 12 && 
+                OUT::ph_neuIsoCorr->at(idx) < 9  && 
+                OUT::ph_phoIsoCorr->at(idx) < 9 ) {
+                OUT::ph_iso1299_n++;
+            }
+            
+            if( OUT::ph_chIsoCorr->at(idx) < 15 && 
+                OUT::ph_neuIsoCorr->at(idx) < 11 && 
+                OUT::ph_phoIsoCorr->at(idx) < 11 ) {
+                OUT::ph_iso151111_n++;
+            }
+            
+            if( OUT::ph_chIsoCorr->at(idx) < 20 && 
+                OUT::ph_neuIsoCorr->at(idx) < 16 && 
+                OUT::ph_phoIsoCorr->at(idx) < 16 ) {
+                OUT::ph_iso201616_n++;
+            }
+        }
         if( OUT::ph_passSIEIEMedium->at(idx) && OUT::ph_hasPixSeed->at(idx) == 0 && OUT::ph_HoverE12->at(idx) < 0.05 ) { // replace with ph_passHOverEMedium 
             if( OUT::ph_passChIsoCorrMedium->at(idx) ) {
                   OUT::ph_mediumNoNeuIsoNoPhoIso_n++;
@@ -845,6 +1024,7 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     std::sort(sorted_photons.rbegin(), sorted_photons.rend());
     std::sort(sorted_leptons.rbegin(), sorted_leptons.rend());
 
+    // fill variables for pT sorted photons
     if( sorted_photons.size() > 0 ) { 
         if( sorted_leptons.size() > 0 ) {
             OUT::leadPhot_leadLepDR = photons[sorted_photons[0].second].DeltaR(leptons[sorted_leptons[0].second.second]);
@@ -864,6 +1044,65 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
             }
         }
     }
+    // fill variables for default sorted photons
+    if( photons.size() > 0 ) { 
+        if( sorted_leptons.size() > 0 ) {
+            OUT::dr_ph1_leadLep = photons[0].DeltaR(leptons[sorted_leptons[0].second.second]);
+            OUT::m_leadLep_ph1 = ( photons[0] + leptons[sorted_leptons[0].second.second] ).M();
+            if( sorted_leptons.size() > 1 ) {
+                OUT::dr_ph1_sublLep = photons[0].DeltaR(leptons[sorted_leptons[1].second.second]);
+            }
+        }
+        if( photons.size() > 1 ) {
+
+            OUT::dr_ph1_ph2 = photons[0].DeltaR(photons[1]);
+            OUT::dphi_ph1_ph2 = photons[0].DeltaPhi(photons[1]);
+            OUT::m_ph1_ph2 = (photons[0] + photons[1]).M();
+            OUT::pt_ph1_ph2 = (photons[0] + photons[1]).Pt();
+            if( photons[0].Pt() > photons[1].Pt() ) {
+                OUT::pt_leadph12 = photons[0].Pt();
+                OUT::pt_sublph12 = photons[1].Pt();
+                OUT::sieie_leadph12 = OUT::ph_sigmaIEIE->at(0);
+                OUT::sieie_sublph12 = OUT::ph_sigmaIEIE->at(1);
+                OUT::chIsoCorr_leadph12 = OUT::ph_chIsoCorr->at(0);
+                OUT::chIsoCorr_sublph12 = OUT::ph_chIsoCorr->at(1);
+                OUT::neuIsoCorr_leadph12 = OUT::ph_neuIsoCorr->at(0);
+                OUT::neuIsoCorr_sublph12 = OUT::ph_neuIsoCorr->at(1);
+                OUT::phoIsoCorr_leadph12 = OUT::ph_phoIsoCorr->at(0);
+                OUT::phoIsoCorr_sublph12 = OUT::ph_phoIsoCorr->at(1);
+                OUT::isEB_leadph12 = OUT::ph_IsEB->at(0);
+                OUT::isEB_sublph12 = OUT::ph_IsEB->at(1);
+                OUT::isEE_leadph12 = OUT::ph_IsEE->at(0);
+                OUT::isEE_sublph12 = OUT::ph_IsEE->at(1);
+            }
+            else {
+                OUT::pt_leadph12 = photons[1].Pt();
+                OUT::pt_sublph12 = photons[0].Pt();
+                OUT::sieie_leadph12 = OUT::ph_sigmaIEIE->at(1);
+                OUT::sieie_sublph12 = OUT::ph_sigmaIEIE->at(0);
+                OUT::chIsoCorr_leadph12 = OUT::ph_chIsoCorr->at(1);
+                OUT::chIsoCorr_sublph12 = OUT::ph_chIsoCorr->at(0);
+                OUT::neuIsoCorr_leadph12 = OUT::ph_neuIsoCorr->at(1);
+                OUT::neuIsoCorr_sublph12 = OUT::ph_neuIsoCorr->at(0);
+                OUT::phoIsoCorr_leadph12 = OUT::ph_phoIsoCorr->at(1);
+                OUT::phoIsoCorr_sublph12 = OUT::ph_phoIsoCorr->at(0);
+                OUT::isEB_leadph12 = OUT::ph_IsEB->at(1);
+                OUT::isEB_sublph12 = OUT::ph_IsEB->at(0);
+                OUT::isEE_leadph12 = OUT::ph_IsEE->at(1);
+                OUT::isEE_sublph12 = OUT::ph_IsEE->at(0);
+            }
+
+            if( sorted_leptons.size() > 0 ) {
+                OUT::dr_ph1_leadLep = photons[0].DeltaR( leptons[sorted_leptons[0].second.second]);
+                OUT::m_leadLep_ph1_ph2 = ( photons[0] + photons[1] + leptons[sorted_leptons[0].second.second] ).M();
+                OUT::m_leadLep_ph2 = ( photons[1] + leptons[sorted_leptons[0].second.second] ).M();
+
+                if( sorted_leptons.size() > 1 ) {
+                    OUT::dr_ph2_sublLep = photons[1].DeltaR(leptons[sorted_leptons[1].second.second]);
+                }
+            }
+        }
+    }
     if( photons.size() > 1 ) { 
         OUT::leadPhot_pt = sorted_photons[0].first;
         OUT::sublPhot_pt = sorted_photons[1].first;
@@ -874,8 +1113,6 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
         OUT::dphi_met_ph1 = photons[leadidx].DeltaPhi( metlv );
         OUT::dphi_met_ph2 = photons[sublidx].DeltaPhi( metlv );
 
-        OUT::m_phph = ( photons[leadidx] + photons[sublidx] ).M();
-        OUT::pt_phph = ( photons[leadidx] + photons[sublidx] ).Pt();
     }
     else if ( photons.size() == 1 ) {
         OUT::leadPhot_pt = sorted_photons[0].first;
@@ -894,6 +1131,9 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     if( leptons.size() > 1 ) {
         OUT::m_leplep = ( leptons[0] + leptons[1] ).M();
         OUT::pt_leplep = ( leptons[0] + leptons[1] ).Pt();
+        if (leptons_uncorr.size() > 1) {
+            OUT::m_leplep_uncorr = ( leptons_uncorr[0] + leptons_uncorr[1] ).M();
+        }
 
         int leadidx = sorted_leptons[0].second.second;
         int sublidx = sorted_leptons[1].second.second;
@@ -1074,6 +1314,16 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     if( !config.PassInt( "cut_nPhPassSIEIEAndEVeto", nPhPassSIEIEAndEVeto) )   keep_event = false;
     if( !config.PassInt( "cut_nPhPassMedium", OUT::ph_medium_n) )   keep_event = false;
     if( !config.PassInt( "cut_nPhPassMediumNoEleVeto", OUT::ph_mediumNoEleVeto_n) )   keep_event = false;
+    if( OUT::ph_n > 1 ) {
+        if( OUT::ph_pt->at(0) > OUT::ph_pt->at(1) ) {
+            if( !config.PassBool( "cut_hasPixSeed_leadph12", OUT::ph_hasPixSeed->at(0) ) ) keep_event = false;
+            if( !config.PassBool( "cut_hasPixSeed_sublph12", OUT::ph_hasPixSeed->at(1) ) ) keep_event = false;
+        }
+        else {
+            if( !config.PassBool( "cut_hasPixSeed_leadph12", OUT::ph_hasPixSeed->at(1) ) ) keep_event = false;
+            if( !config.PassBool( "cut_hasPixSeed_sublph12", OUT::ph_hasPixSeed->at(0) ) ) keep_event = false;
+        }
+    }
 
     #endif //el_n
     #endif //mu_n
@@ -1087,11 +1337,20 @@ bool RunModule::FilterBlind( ModuleConfig & config ) const {
 
     bool pass_blind = true;
     if( !config.PassInt( "cut_nPhPassMedium", OUT::ph_medium_n ) ) pass_blind=false;
-    if( !config.PassInt( "cut_m_lepphph", OUT::m_lepphph) ) pass_blind=false;
+    if( !config.PassInt( "cut_ph_pt_lead", OUT::leadPhot_pt) ) pass_blind=false;
+
+    // electron channel mass
+    if( OUT::el_passtrig_n > 0 ) {
+
+        //if( !config.PassFloat( "cut_m_lepphph", OUT::m_lepphph) ) pass_blind=false;
+        //if( !config.PassFloat( "cut_m_lepph1", OUT::m_lepph1  ) ) pass_blind=false;
+        //if( !config.PassFloat( "cut_m_lepph2", OUT::m_lepph2  ) ) pass_blind=false;
+        if( !config.PassFloat( "cut_m_lepphph", OUT::m_lepphph) && !config.PassFloat( "cut_m_lepph1", OUT::m_lepph1 ) && !config.PassFloat( "cut_m_lepph2", OUT::m_lepph2  ) )  pass_blind = false;
+
+    }
     
     if( !pass_blind ) {
         OUT::isBlinded=true;
-        std::cout << "IsBlinded!" << std::endl;
         if( _isData ) keep_event=false;
     }
     else {

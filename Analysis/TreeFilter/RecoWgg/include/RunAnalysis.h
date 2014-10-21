@@ -130,6 +130,9 @@ class RunModule : public virtual RunModuleBase {
         std::string muon_correction_path;
 
         bool apply_photon_corrections;
+        std::string pho_correction_path;
+        std::string pho_smearing_path;
+
         bool apply_jet_corrections;
 
         // tmva files for photon mva
@@ -165,6 +168,7 @@ namespace OUT {
     std::vector<float>  *el_phi;
     std::vector<float>  *el_e;
     std::vector<float>  *el_pt_uncorr;
+    std::vector<float>  *el_e_uncorr;
     std::vector<float>  *el_mva_trig;
     std::vector<float>  *el_mva_nontrig;
     std::vector<float>  *el_d0pv;
@@ -190,6 +194,9 @@ namespace OUT {
     std::vector<float>  *mu_phi;
     std::vector<float>  *mu_e;
     std::vector<float>  *mu_pt_uncorr;
+    std::vector<float>  *mu_eta_uncorr;
+    std::vector<float>  *mu_phi_uncorr;
+    std::vector<float>  *mu_e_uncorr;
     std::vector<float>  *mu_pfIso_ch;
     std::vector<float>  *mu_pfIso_nh;
     std::vector<float>  *mu_pfIso_pho;
@@ -204,6 +211,7 @@ namespace OUT {
     std::vector<float>  *ph_sceta;
     std::vector<float>  *ph_phi;
     std::vector<float>  *ph_e;
+    std::vector<float>  *ph_pt_uncorr;
     std::vector<float>  *ph_HoverE;
     std::vector<float>  *ph_HoverE12;
     std::vector<float>  *ph_sigmaIEIE;

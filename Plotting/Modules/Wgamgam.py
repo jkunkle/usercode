@@ -58,6 +58,7 @@ def config_samples(samples) :
     #samples.AddSample('Zgg'                          , path='job_summer12_ZgTwoPhot'                  ,  isActive=False, useXSFile=True, XSName='Zg' )
     #samples.AddSample('Zg'                           , path='job_summer12_ZgOnePhot'                   ,  isActive=False, useXSFile=True )
     samples.AddSample('Zg'                           , path='job_summer12_Zg'                   ,  isActive=False, useXSFile=True )
+    samples.AddSample('Zgg'                          , path='job_summer12_Zgg'                   ,  isActive=False, useXSFile=True, XSName='Zg' )
     samples.AddSample('ZZ_2e2mu'                     , path='job_summer12_ZZ_2e2mu'             ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2e2tau'                    , path='job_summer12_ZZ_2e2tau'            ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2l2nu'                     , path='job_summer12_ZZ_2l2nu'             ,  isActive=False, useXSFile=True )
@@ -69,6 +70,27 @@ def config_samples(samples) :
     samples.AddSample('ZZ_4tau'                      , path='job_summer12_ZZ_4tau'              ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZZ'                          , path='job_summer12_ZZZ'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('ZgElToPh'                     , path='job_summer12_ZgElToPh'             ,  isActive=False, useXSFile=True, XSName='Zg' )
+    samples.AddSample('ggZZ_2l2lg'                   , path='job_summer12_ggZZ_2l2lg'           , isActive=False, useXSFile=True, XSName='ggZZ_2l2l' )
+    samples.AddSample('ggZZ_4lg'                     , path='job_summer12_ggZZ_4lg'             , isActive=False, useXSFile=True, XSName='ggZZ_4l' )
+    samples.AddSample('ttgg'                         , path='job_summer12_ttgg'                 , isActive=False, useXSFile=True, XSName='ttg' )
+    samples.AddSample('WW_2l2nug'                    , path='job_summer12_WW_2l2nug'            , isActive=False, useXSFile=True, XSName='WW_2l2nu' )
+    samples.AddSample('WWgg'                         , path='job_summer12_WWgg'                 , isActive=False, useXSFile=True, XSName='WWg' )
+    samples.AddSample('WWWg'                         , path='job_summer12_WWWg'                 , isActive=False, useXSFile=True, XSName='WWW' )
+    samples.AddSample('WWZg'                         , path='job_summer12_WWZg'                 , isActive=False, useXSFile=True, XSName='WWZ' )
+    samples.AddSample('WZ_3lnug'                     , path='job_summer12_WZ_3lnug'             , isActive=False, useXSFile=True, XSName='WZ_3lnu' )
+    samples.AddSample('WZZg'                         , path='job_summer12_WZZg'                 , isActive=False, useXSFile=True, XSName='WZZ' )
+    samples.AddSample('Zgg'                          , path='job_summer12_Zgg'                  , isActive=False, useXSFile=True, XSName='Zg' )
+    samples.AddSample('ZZ_2e2mug'                    , path='job_summer12_ZZ_2e2mug'            , isActive=False, useXSFile=True, XSName='ZZ_2e2mu' )
+    samples.AddSample('ZZ_2e2taug'                   , path='job_summer12_ZZ_2e2taug'           , isActive=False, useXSFile=True, XSName='ZZ_2e2tau' )
+    samples.AddSample('ZZ_2l2nug'                    , path='job_summer12_ZZ_2l2nug'            , isActive=False, useXSFile=True, XSName='ZZ_2l2nu' )
+    samples.AddSample('ZZ_2l2qg'                     , path='job_summer12_ZZ_2l2qg'             , isActive=False, useXSFile=True, XSName='ZZ_2l2q' )
+    samples.AddSample('ZZ_2mu2taug'                  , path='job_summer12_ZZ_2mu2taug'          , isActive=False, useXSFile=True, XSName='ZZ_2mu2tau' )
+    samples.AddSample('ZZ_2q2nug'                    , path='job_summer12_ZZ_2q2nug'            , isActive=False, useXSFile=True, XSName='ZZ_2q2nu' )
+    samples.AddSample('ZZ_4eg'                       , path='job_summer12_ZZ_4eg'               , isActive=False, useXSFile=True, XSName='ZZ_4e' )
+    samples.AddSample('ZZ_4mug'                      , path='job_summer12_ZZ_4mug'              , isActive=False, useXSFile=True, XSName='ZZ_4mu' )
+    samples.AddSample('ZZ_4taug'                     , path='job_summer12_ZZ_4taug'             , isActive=False, useXSFile=True, XSName='ZZ_4tau' )
+    samples.AddSample('ZZZg'                         , path='job_summer12_ZZZg'                 , isActive=False, useXSFile=True, XSName='ZZZ' )
+
 
     #samples.AddSample('MultiJet', path='job_MultiJet_2012a_Jan22rereco', isActive=True )
 
@@ -118,6 +140,16 @@ def config_samples(samples) :
                            isActive=False,
                           )
 
+    samples.AddSampleGroup( 'Wgg', legend_name='W#gamma#gamma', 
+                            input_samples = [
+                                             'WAA_ISR',
+                                             'Wgg_FSR',
+                                            ],
+                           plotColor=ROOT.kRed,
+                           isSignal=False,
+                          )
+
+
     #samples.AddSampleGroup( 'Single Photon', legend_name='Single photon', 
     #                    input_samples = [
     #                                       'gjet_pt20to40_doubleEM'  ,
@@ -129,9 +161,8 @@ def config_samples(samples) :
 
     samples.AddSampleGroup( 'Zgammastar', legend_name='Z/#gamma * ', 
                             input_samples = [
-                                             #'DYJetsToLLPhOlapWithBits'
-                                            #'DYJetsToLLPhOlapMotherCheck'
                                              'DYJetsToLLPhOlap'
+                                             #'DYJetsToLL'
     #                                        'Zg',
                                             ],
                            plotColor=ROOT.kCyan,
@@ -146,12 +177,12 @@ def config_samples(samples) :
                            plotColor=ROOT.kOrange-4,
                            isSignal=False,
                           )
-    #samples.AddSampleGroup( 'Zgammagamma', legend_name='Z#gamma#gamma', 
-    #                       input_samples = [
-    #                                        'Zgg',
-    #                       ],
-    #                       plotColor=ROOT.kOrange+2,
-    #                      )
+    samples.AddSampleGroup( 'Zgammagamma', legend_name='Z#gamma#gamma', 
+                           input_samples = [
+                                            'Zgg',
+                           ],
+                           plotColor=ROOT.kOrange+2,
+                          )
 
     samples.AddSampleGroup( 'Wjets', legend_name='W+jets', 
                             input_samples = [
@@ -185,14 +216,14 @@ def config_samples(samples) :
     #                      )
 
 
-    samples.AddSampleGroup( 'Wgg', legend_name='W#gamma#gamma', 
-                            input_samples = [
-                                             'WAA_ISR',
-                                             'Wgg_FSR',
-                                            ],
-                           plotColor=ROOT.kRed,
-                           isSignal=True,
-                          )
+    #samples.AddSampleGroup( 'Wgg', legend_name='W#gamma#gamma', 
+    #                        input_samples = [
+    #                                         'WAA_ISR',
+    #                                         'Wgg_FSR',
+    #                                        ],
+    #                       plotColor=ROOT.kRed,
+    #                       isSignal=True,
+    #                      )
 
     samples.AddSampleGroup( 'ISR', legend_name='W#gamma#gamma -- ISR', 
                             input_samples = [
@@ -212,6 +243,32 @@ def config_samples(samples) :
                            isActive=False
                           )
 
+    samples.AddSampleGroup( 'RealDiPhoton', legend_name='real diphoton', 
+                           input_samples = [
+                                            'ggZZ_2l2lg',
+                                            'ggZZ_4lg',
+                                            'ttgg',
+                                            'WW_2l2nug',
+                                            'WWgg',
+                                            'WWWg',
+                                            'WWZg',
+                                            'WZ_3lnug',
+                                            'WZZg',
+                                            'Zgg',
+                                            'ZZ_2e2mug',
+                                            'ZZ_2e2taug',
+                                            'ZZ_2l2nug',
+                                            'ZZ_2l2qg',
+                                            'ZZ_2mu2taug',
+                                            'ZZ_2q2nug',
+                                            'ZZ_4eg',
+                                            'ZZ_4mug',
+                                            'ZZ_4taug',
+                                            'ZZZg',
+                           ],
+                               plotColor=ROOT.kBlue,
+                               isActive=True,
+                           )
     #samples.AddSampleGroup( 'DiBoson', legend_name='WW/WZ/ZZ', 
     #                       input_samples = [
     #                                       'WW_2l2nu'                ,
@@ -321,19 +378,19 @@ def config_samples(samples) :
                                            #'tbar_tW'                 ,
                                            #'ttW'                     ,
                                            #'ttZ'                     ,
-                                           'ttg'                     ,
+                                           #'ttg'                     ,
                                            'ttjets_1l'               ,
                                            'ttjets_2l'               ,
                            ],
                            plotColor=ROOT.kGreen-3,
                           )
 
-    #samples.AddSampleGroup( 'Topgamma', legend_name='Top + #gamma', 
-    #                       input_samples = [
-    #                                       'ttg',
-    #                       ],
-    #                       plotColor=ROOT.kGreen+4,
-    #                      )
+    samples.AddSampleGroup( 'Topgamma', legend_name='Top + #gamma', 
+                           input_samples = [
+                                           'ttg',
+                           ],
+                           plotColor=ROOT.kGreen+4,
+                          )
 
     samples.AddSampleGroup( 'DiPhoton', legend_name='DiPhoton', 
                            input_samples = [

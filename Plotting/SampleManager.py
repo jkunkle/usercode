@@ -12,7 +12,6 @@ import eos_utilities
 import random
 from array import array
 import time
-from data_pair import data_pair
 from uncertainties import ufloat
 from uncertainties import umath
 import pickle
@@ -133,6 +132,7 @@ class Sample :
         if readHists :
             for file in files :
                 self.ofiles.append( ROOT.TFile.Open( file ) )
+                print self.ofiles[-1]
 
     def AddGroupSamples( self, samples ) :
         """ Add subsamples to this sample """
@@ -1063,43 +1063,47 @@ class SampleManager :
 
         print 'Will create %d histograms!' %n_tot
 
+        if n_tot == 0 :
+            print 'No histograms were scheduled.  Aborting!'
+            return
+
 
         output_loc = '/tmp/jkunkle/drawn_histograms'
 
-        ## create the source code file
-        #self.write_source_code( self.draw_commands, runsrc_file_name, draw_branches )
+        # create the source code file
+        self.write_source_code( self.draw_commands, runsrc_file_name, draw_branches )
 
-        ## create the header code file
-        #self.write_header_code( self.draw_commands, runinc_file_name )
+        # create the header code file
+        self.write_header_code( self.draw_commands, runinc_file_name )
 
-        ## Write the c++ files having the branch definitions and 
-        ## SetBranchAddress calls
-        #core.write_header_files(brdef_file_name, linkdef_file_name, draw_branches )
+        # Write the c++ files having the branch definitions and 
+        # SetBranchAddress calls
+        core.write_header_files(brdef_file_name, linkdef_file_name, draw_branches )
 
-        #core.write_source_file(source_file_name, header_file_name, draw_branches )
+        core.write_source_file(source_file_name, header_file_name, draw_branches )
 
-        ## compile
-        #os.system( 'cd %s ; make clean ; make ; cd - '%compile_base )
+        # compile
+        os.system( 'cd %s ; rm RunAnalysis ; make clean ; make ; cd - '%compile_base )
 
-        #all_samples = []
-        #for sample in self.samples :
-        #    if sample.isActive :
-        #        if sample.IsGroupedSample() :
-        #            for subsamp in self.GetLowestGroupedSamples(sample) :
-        #                all_samples.append(subsamp)
-        #        else :
-        #            all_samples.append(sample)
+        all_samples = []
+        for sample in self.samples :
+            if sample.isActive :
+                if sample.IsGroupedSample() :
+                    for subsamp in self.GetLowestGroupedSamples(sample) :
+                        all_samples.append(subsamp)
+                else :
+                    all_samples.append(sample)
 
-        #configs = []
-        #for sample in all_samples :
-        #    config_name = '%s/configs/config_%s.txt' %(compile_base, sample.name)
-        #    file_evt_map = [ ([f.GetTitle() for f in sample.chain.GetListOfFiles()], [(0, sample.chain.GetEntries())] ) ]
-        #    core.write_config([], config_name, sample.chain.GetName(), output_loc, '%s.root'%sample.name, file_evt_map, sample=sample.name, disableOutputTree=True )
-        #    configs.append(config_name)
+        configs = []
+        for sample in all_samples :
+            config_name = '%s/configs/config_%s.txt' %(compile_base, sample.name)
+            file_evt_map = [ ([f.GetTitle() for f in sample.chain.GetListOfFiles()], [(0, sample.chain.GetEntries())] ) ]
+            core.write_config([], config_name, sample.chain.GetName(), output_loc, '%s.root'%sample.name, file_evt_map, sample=sample.name, disableOutputTree=True )
+            configs.append(config_name)
 
-        #run_cmds = ['%s/RunAnalysis --conf_file %s' %( compile_base, c ) for c in configs ]
-        #p=multiprocessing.Pool(4)
-        #p.map(os.system, run_cmds)
+        run_cmds = ['%s/RunAnalysis --conf_file %s' %( compile_base, c ) for c in configs ]
+        p=multiprocessing.Pool(4)
+        p.map(os.system, run_cmds)
 
         # Now get the histograms and draw
         for draw_config in self.draw_commands:
@@ -1242,6 +1246,8 @@ class SampleManager :
         sample.hist = None
         if not hasattr(sample, 'file' ) :
             sample.file = ROOT.TFile.Open( filename, 'READ')
+        print filename
+        print name
         sample.hist = sample.file.Get(name).Clone()
         sample.hist.SetDirectory(0)
         sample.hist.Sumw2()
@@ -1934,7 +1940,9 @@ class SampleManager :
                 if samp.hist is not None :
                     samp.hist.Rebin(rebin)
 
-        self.MakeStack(histpath, doratio=doratio )
+        
+        draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel} )
+        self.MakeStack(draw_config )
 
         if ylabel is None :
             binwidth = self.get_samples(isActive=True)[0].hist.GetBinWidth(1)
@@ -1942,7 +1950,7 @@ class SampleManager :
         if rlabel is None :
             rlabel = 'Data / MC'
             
-        self.DrawCanvas(self.curr_stack, ylabel=ylabel, xlabel=xlabel, rlabel=rlabel, logy=logy, ymin=ymin, ymax=ymax, rmin=rmin, rmax=rmax, datahists=['Data'], sighists=self.get_signal_samples(), doratio=doratio, labelStyle=labelStyle)
+        self.DrawCanvas(self.curr_stack, draw_config, datahists=['Data'],sighists=self.get_signal_samples()  )
 
 
     #def Draw(self, varexp, selection, histpars, doratio=False, ylabel=None, xlabel=None, rlabel=None, logy=False, ymin=None, ymax=None, ymax_scale=None, rmin=None, rmax=None, useModel=False, treeHist=None, treeSelection=None, labelStyle=None, extra_label=None, extra_label_loc=None, generate_data_from_sample=None, replace_selection_for_sample={}, legendConfig=None  ) :
@@ -2168,6 +2176,8 @@ class SampleManager :
         for samp in reversed(orderd_samples) :              
             samp.hist.SetFillColor( samp.color )
             samp.hist.SetLineColor( ROOT.kBlack )
+            samp.hist.SetLineWidth( 1 )
+
             self.curr_stack.Add(samp.hist, 'HIST')
 
         # additional formatting
@@ -2295,6 +2305,14 @@ class SampleManager :
 
         return created_samples
 
+    def list_hists( self ) :
+        for samp in self.get_samples() :
+            for ofile in samp.ofiles :
+                if ofile is not None :
+                    ofile.ls()
+                    break
+
+
     def get_hist( self, sample, histpath ) :
         sampname = sample.name
         print 'Getting hist for %s' %sampname
@@ -2319,15 +2337,18 @@ class SampleManager :
 
         else :
 
-            thishist = sample.ofiles[0].Get(histpath).Clone()
-            for ofile in sample.ofiles[1:] :
-                thishist.Add( ofile.Get(histpath) )
+            thishist = sample.ofiles[0].Get(histpath)
+            if thishist == None :
+                sample.isActive = False
+            else :
+                for ofile in sample.ofiles[1:] :
+                    thishist.Add( ofile.Get(histpath) )
 
-            if sample.hist is not None :
-                sample.hist.Delete()
-            sample.hist = thishist
-            if sample.hist is not None :
-                self.format_hist( sample )
+                if sample.hist is not None :
+                    sample.hist.Delete()
+                sample.hist = thishist
+                if sample.hist is not None :
+                    self.format_hist( sample )
     
 
     def create_hist( self, sample, varexp, selection, histpars, isModel=False ) :
@@ -2344,6 +2365,7 @@ class SampleManager :
     
         if not self.quiet : print 'Creating hist for %s' %sampname
         if not self.quiet : print selection
+        if not self.quiet : print histpars
 
         ## check that this histogram hasn't been drawn
         #if sample.hist is not None :

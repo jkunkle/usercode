@@ -75,13 +75,13 @@ endif
 
 NEWEXENAME=$(EXENAME)
 
-ifeq ($(strip ${EXENAME} ), )
+ifeq ($(strip $(EXENAME) ), )
 	NEWEXENAME=RunAnalysis.exe
 endif
 
-ifneq (, $(findstring x, $(EXENAME) ) )
-	NEWEXENAME=$(EXENAME).exe
-endif
+#ifneq (, $(findstring x, $(EXENAME) ) )
+#	NEWEXENAME=$(EXENAME).exe
+#endif
 
 
 EXE = $(EXE_DIR)/$(NEWEXENAME)

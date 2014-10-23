@@ -127,10 +127,30 @@ top_configs = [
                 #},
                 { 
                   'module'      : 'ConfObjFilter.py',
+<<<<<<< HEAD
                     'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPh\' : \'> 1\' }',
                   'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPh\' : \'> 1\', \'isData\' : \'True\' }',
                   'output_name' : 'LepGammaGammaNoPhID_2014_10_23',
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+                  'args_mc'     : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\'}',
+                  'args_data'   : '{ \'cut_nLep\' : \'> 0\', \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'== 1\' }',
+                  'output_name' : 'LepGamma_2014_04_29',
+                  'tag'         : 'lg',
+=======
+                  'args_mc'     : '{ \'cut_nLep\' : \' > 0 \' }',
+                  'args_data'   : '{ \'cut_nLep\' : \' > 0 \' }',
+                  'output_name' : 'SingleLepton_2014_09_03',
+                  'tag'         : 'llData',
+>>>>>>> 981dda67381d5b2da8342afee17fbf57d16b8ba5
+=======
+                    'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPh\' : \'> 1\', \'cut_hasPixSeed_leadph12\' : \'False\', \'cut_hasPixSeed_sublph12\' : \'False\'  }',
+                  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 0\', \'cut_nPh\' : \'> 1\', \'isData\' : \'True\', \'cut_hasPixSeed_leadph12\' : \'False\', \'cut_hasPixSeed_sublph12\' : \'False\' }',
+                  'output_name' : 'LepGammaGammaNoPhIDVetoPixSeedBothNoLepIso_2014_10_16',
+>>>>>>> d5856ba77220b16b62cbece455f874906d352e8e
                  'tag'         : 'lgg',
+>>>>>>> 39b94b2423cd7ed2b1f777bf1d1216de9fbc50ad
                 },
                 #{ 
                 #  'module'      : 'ConfObjFilter.py',
@@ -218,6 +238,12 @@ top_configs = [
                 #},
 ]
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /home/cranelli/JoshUserCode/usercode/Analysis/TreeFilter/FilterWgamgamFinal/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob %(nFilesPerJob)d --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s'
+=======
+command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob %(nFilesPerJob)d --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s '
+=======
 
 if options.local :
     #--------------
@@ -235,7 +261,9 @@ if options.resubmit :
     command_base += ' --resubmit'
 
 check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s/%(job)s --filteredDS /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --treeNameOrig %(treename)s --histNameFilt ggNtuplizer/filter --fileKeyOrig tree.root --fileKeyFilt tree.root'
+>>>>>>> 39b94b2423cd7ed2b1f777bf1d1216de9fbc50ad
 
+>>>>>>> 981dda67381d5b2da8342afee17fbf57d16b8ba5
 #command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --nFilesPerJob 5 --nproc %(nproc)d --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s'
 
 nFilesPerJob = 2

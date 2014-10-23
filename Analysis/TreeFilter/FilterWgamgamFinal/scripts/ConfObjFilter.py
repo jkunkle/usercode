@@ -28,8 +28,17 @@ def config_analysis( alg_list, args ) :
     #alg_list.append( get_electron_filter( 'tightTrig' ) )
     #alg_list.append( get_electron_filter( None ) )
     #alg_list.append( get_photon_filter( 'looseNoSIEIE', ptcut=15 ) )
+<<<<<<< HEAD
+<<<<<<< HEAD
+    alg_list.append( get_photon_filter( medium, ptcut=15 ) )
+=======
+    alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15 ) )
+    #alg_list.append( get_photon_filter( id=None, eVeto='hasPixSeed', ptcut=15 ) )
+>>>>>>> 981dda67381d5b2da8342afee17fbf57d16b8ba5
+=======
     #alg_list.append( get_photon_filter( id='medium', eVeto='hasPixSeed', ptcut=15, sort_by_id='true') )
     alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True ) )
+>>>>>>> 39b94b2423cd7ed2b1f777bf1d1216de9fbc50ad
     alg_list.append( get_jet_filter(do_hists=False) )
     #print 'SAVING Medium PHOTONS, WITH ELE OLAP'
     print 'SAVING NOID PHOTONS, WITH ELE OLAP'

@@ -1,0 +1,10 @@
+<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>
+<Combination OutputFilePrefix="multptbin_fit/config/config"  >
+<Input>multptbin_fit/config/channel_bin_25_40.xml</Input>
+<Input>multptbin_fit/config/channel_bin_40_80.xml</Input>
+<Input>multptbin_fit/config/channel_bin_15_25.xml</Input>
+<Input>multptbin_fit/config/channel_bin_80_max.xml</Input>
+<Measurement LumiRelErr="0.05"  Name="multptbin_fit"  Lumi="1."  >
+<POI>SigXsecOverSM</POI>
+</Measurement> 
+</Combination> 

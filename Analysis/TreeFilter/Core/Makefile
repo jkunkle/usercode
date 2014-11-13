@@ -11,6 +11,17 @@
 ################################################################################
 
 
+CERNLOC=CERN
+UMDLOC=UMD
+
+HOSTNAME := $(shell hostname)
+ifneq (,$(findstring 'cern.ch',$(HOSTNAME))) #find cern.ch in host, if found result is non-empty
+	LOCATION=$(CERNLOC)
+else 
+	LOCATION=$(UMDLOC)
+endif 
+
+
 CXX     = g++
 LD      = g++
 
@@ -25,7 +36,14 @@ ROOTCINT     = rootcint
 ROOTCONFIG   = root-config
 ROOTCXXFLAGS = $(shell $(ROOTCONFIG) --cflags)
 ROOTLIBS     = $(shell $(ROOTCONFIG) --libs) -lTreePlayer -lTMVA #-lBoost
-BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50
+
+ifeq ($(LOCATION), $(CERNLOC))
+	BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50
+endif
+
+ifeq ($(LOCATION), $(UMDLOC))
+	BOOSTFLAGS   = -I/cvmfs/cms.cern.ch/slc5_amd64_gcc481/external/boost/1.51.0-cms/include
+endif
 
 # we need to link against an additional library if using root>5.24
 NEWROOTVERSION  = $(shell $(ROOTCONFIG) --version | grep -c "5.24" )

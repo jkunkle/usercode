@@ -35,7 +35,7 @@ def ParseArgs() :
     
     parser.add_argument('--outputFile', dest='outputFile', default=None, help='Name of output file.  If none given it will assume the name of one if the input files')
     
-    parser.add_argument('--storagePath', dest='storagePath', default='None', help='After the output file is written, transfer it to storage.  Use --outputDir to give the local output from where the file is transferred.  Local files are removed after the copy')
+    parser.add_argument('--storagePath', dest='storagePath', default=None, help='After the output file is written, transfer it to storage.  Use --outputDir to give the local output from where the file is transferred.  Local files are removed after the copy')
 
     parser.add_argument('--confFileName', dest='confFileName', default='analysis_config.txt', help='Name of the configuration file.  Default : analysis_config.txt')
 
@@ -70,6 +70,10 @@ def ParseArgs() :
     parser.add_argument('--totalEvents', dest='totalEvents', type=int, default=0, help='Total number of events to run over.  Only use to run over fewer than all events')
 
     parser.add_argument('--nproc', dest='nproc', type=int, default=1, help='Number of processors to use.  If set to > 1, use multiprocessing')
+
+    parser.add_argument('--batch', dest='batch', action='store_true', default=False, help='Submit jobs to the batch')
+
+    parser.add_argument('--resubmit', dest='resubmit', action='store_true', default=False, help='Only submit jobs whose output does not exist')
     
     #-----------------------------
     # Filter flags
@@ -100,6 +104,10 @@ def ParseArgs() :
     parser.add_argument('--sample', dest='sample', default=None, help='Name of sample.  May be used in cases where the sample name must be known to the c++ code')
     
     parser.add_argument('--moduleArgs', dest='moduleArgs', default=None, help='Arguments to pass to module.  Should be in the form of a dictionary')
+
+    parser.add_argument('--write_file_list', dest='write_file_list', default=False, action='store_true', help='Write a text file containing files found on eos.  use --read_file_list to use this file in the future')
+
+    parser.add_argument('--read_file_list', dest='read_file_list', default=False, action='store_true', help='Read the file list instaed of looking on eos.  Must have used --write_file_list to create the file' )
     
     return parser.parse_args()
 
@@ -108,6 +116,7 @@ def config_and_run( options, package_name ) :
     assert options.noInputFiles or options.files is not None or options.filesDir is not None , 'Must provide a file list via --files or a search directory via --filesDir'
     assert options.outputDir is not None, 'Must provide an output directory via --outputDir'
     assert options.noInputFiles or options.treeName is not None, 'Must provide a tree name via --treeName'
+    assert options.module is not None, 'Must provide a module via --module'
 
     if options.loglevel.upper() not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] :
         print 'Loglevel must be one of DEBUG, INFO, WARNING, ERROR, CRITICAL.  Default to INFO'
@@ -132,13 +141,14 @@ def config_and_run( options, package_name ) :
             input_files = filter( lambda s: os.path.isfile( s ), input_files )
     elif options.filesDir is not None :
         for eachdir in options.filesDir.split(',') :
-            input_files += collect_input_files( eachdir, options.fileKey )
+            input_files += collect_input_files( eachdir, options.fileKey, write_file_list=options.write_file_list, read_file_list=options.read_file_list )
 
     # remove any blank entries
     while '' in input_files :
         input_files.remove('')
 
-    input_files = check_and_filter_input_files( input_files, options.treeName )
+    if not options.read_file_list :
+        input_files = check_and_filter_input_files( input_files, options.treeName )
 
     if not options.noInputFiles and not input_files :
         print 'Did not locate any input files with the path and file name given!  Check the inputs.'
@@ -197,7 +207,13 @@ def config_and_run( options, package_name ) :
         logging.info('********************************')
         proc = subprocess.Popen(['make', 'clean'])
         proc.wait()
-        proc = subprocess.Popen(['make', 'EXENAME="%s"' %options.exeName])
+
+        # get the executable name.  If .exe does not
+        # appear as the extension, add it
+        if re.match( '.*?\.exe', options.exeName ) is None :
+            options.exeName = options.exeName + '.exe'
+
+        proc = subprocess.Popen(['make', 'EXENAME=%s' %options.exeName])
         retcode = proc.wait()
         
         # abort if non-zero return code
@@ -249,6 +265,7 @@ def config_and_run( options, package_name ) :
     #if options.nproc > 1 and options.nproc > len(file_evt_list) :
     #    options.nproc = len(file_evt_list)
 
+
     logging.info('********************************')
     logging.info('Will run a total of %d processes, %d at a time' %(len(file_evt_list), options.nproc) )
     logging.info('********************************')
@@ -260,25 +277,72 @@ def config_and_run( options, package_name ) :
         # Stop here if not running
         logging.info('********************************')
         for cmd in commands :
-            logging.info( 'Executing ' + cmd )
+            logging.info( 'Executing ' + cmd[1] )
         logging.info('********************************')
 
         if options.noRun :
             logging.info('Not runnning.  Stop here')
             return
 
-        print 'GOTEHRE1'
-        print options.nproc
         pool = multiprocessing.Pool(options.nproc)
-        print 'GOTEHRE2'
-        pool.map( os.system, commands)
-        print 'GOTEHRE3'
+        pool.map( os.system, [c[1] for c in commands])
+
+    elif options.batch :
+
+        commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
+        commands = []
+
+        # storagePath could have been passed as 'None'
+        # make 'None' None
+        if options.storagePath == 'None' :
+            options.storagePath = None
+
+        if options.resubmit :
+            if options.storagePath is not None :
+                for jobid, cmd in commands_orig :
+                    file_path = '%s/%s/' %(options.storagePath, jobid )
+                    exists = False
+                    for top, dirs, files, sizes in eosutil.walk_eos(file_path) :
+                        if options.outputFile in files :
+                            exists = True
+
+                    if not exists :
+                        commands.append( ( jobid, cmd ) )
+            else :
+                for jobid, cmd in commands_orig :
+                    file_path = '%s/%s/' %(options.outputDir, jobid )
+                    exists = False
+                    for top, dirs, files in os.walk(file_path) :
+                        if options.outputFile in files :
+                            exists = True
+
+                    if not exists :
+                        commands.append( ( jobid, cmd ) )
+
+        else :
+            commands = commands_orig
+
+        wrappers = []
+        for jobid, cmd in commands :
+            # write a wrapper script 
+            wrapper = '%s/wrapper_%s.sh' %( options.outputDir, jobid) 
+            file = open( wrapper, 'w' )
+            file.write( 'export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/contrib/gcc/4.6/x86_64-slc6-gcc46-opt/lib64:$LD_LIBRARY_PATH\n' )
+            file.write( cmd + '\n' )
+            file.close()
+            os.system('chmod 777 %s' %wrapper )
+            wrappers.append((jobid,wrapper))
+
+        print 'Will submit %d jobs' %len(wrappers)
+        for jobid, wrap in wrappers :
+            os.system( 'bsub -q 1nh -o %s/out_%s.txt -e %s/err_%s.txt %s ' %(options.outputDir, jobid, options.outputDir, jobid, wrap) )
 
     else :
 
         output_file = '%s/%s' %(options.outputDir, options.outputFile )
-        write_config( alg_list, options.confFileName, options.treeName, options.outputDir, options.outputFile, file_evt_list, options.storagePath, options.sample, options.disableOutputTree ) 
-        command = make_exe_command( exe_path, options.confFileName, options.outputDir  )
+        conf_file  = '%s/%s' %(options.outputDir, options.confFileName )
+        write_config( alg_list, conf_file, options.treeName, options.outputDir, options.outputFile, file_evt_list, options.storagePath, options.sample, options.disableOutputTree ) 
+        command = make_exe_command( exe_path, conf_file, options.outputDir  )
 
         # Stop here if not running
         if options.noRun :
@@ -296,10 +360,10 @@ def config_and_run( options, package_name ) :
     print 'Output written to %s' %(options.outputDir)
 
 
-def collect_input_files( filesDir, filekey='.root' ) :
+def collect_input_files( filesDir, filekey='.root', write_file_list=False, read_file_list=False ) :
     input_files = []
     if filesDir.count('root://') > 0 :
-        input_files = collect_input_files_eos( filesDir, filekey )
+        input_files = collect_input_files_eos( filesDir, filekey, write_file_list=write_file_list, read_file_list=read_file_list )
     else :
         input_files = collect_input_files_local( filesDir, filekey )
 
@@ -314,16 +378,41 @@ def collect_input_files_local( filesDir, filekey='.root' ) :
 
     return input_files
 
-def collect_input_files_eos( filesDir, filekey='.root' ) :
+def collect_input_files_eos( filesDir, filekey='.root', write_file_list=False, read_file_list=False ) :
     
     logging.info('Getting list of input files from eos in %s' %filesDir)
-    input_files = []
-    for top, dirs, files, sizes in eosutil.walk_eos(filesDir) :
-        for f in files :
-            if f.count(filekey) > 0 :
-                input_files.append(top+'/'+f)
+    if read_file_list :
+        logging.info('Will read file list ' )
+        tmpfile = '/tmp/filelist.txt'
+        eosutil.copy_eos_to_local( '%s/filelist.txt' %filesDir, tmpfile )
 
-    return input_files
+        input_files = []
+        file = open( tmpfile, 'r' )
+        for line in file :
+            input_files.append( line.rstrip('\n') )
+
+        file.close()
+
+        return input_files 
+
+    else :
+
+        input_files = []
+        for top, dirs, files, sizes in eosutil.walk_eos(filesDir) :
+            for f in files :
+                if f.count(filekey) > 0 :
+                    input_files.append(top+'/'+f)
+
+        if write_file_list :
+            logging.info('Write files to file list' )
+            ofile = open( '/tmp/filelist.txt', 'w' )
+            for line in input_files :
+                ofile.write(line+'\n')
+            ofile.close()
+            eosutil.copy_local_to_eos( '/tmp/filelist.txt', '%s/filelist.txt' %( filesDir ) )
+
+
+        return input_files
 
 
 #-----------------------------------------------------------
@@ -588,7 +677,13 @@ def generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, option
     # nproc, split the list so that it can be
     # used for multiprocessing
     file_evt_list_mod = []
-    if len(file_evt_list) < options.nproc : 
+    if options.nproc > 1 :
+        if len(file_evt_list) < options.nproc : 
+            for entry in file_evt_list :
+                file = entry[0]
+                for evtrange in entry[1] :
+                    file_evt_list_mod.append( (file, [evtrange]) )
+    else :
         for entry in file_evt_list :
             file = entry[0]
             for evtrange in entry[1] :
@@ -605,7 +700,7 @@ def generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, option
             os.makedirs( outputDir )
         
         write_config(alg_list, conf_file, options.treeName, outputDir, options.outputFile, [file_split], options.storagePath, options.sample, options.disableOutputTree, idx )
-        commands.append( make_exe_command( exe_path, conf_file, outputDir+'/'+jobid ) )
+        commands.append( ( jobid, make_exe_command( exe_path, conf_file, outputDir+'/'+jobid ) ) )
 
     return commands
 
@@ -689,11 +784,13 @@ def get_file_evt_map( input_files, nsplit, nFilesPerJob, totalEvents, treeName )
     for flist, evtsplit in zip(split_files, files_evtsplit) :
         split_files_evt_match.append( (flist, evtsplit ))
 
-
-
     return split_files_evt_match
 
-def write_config( alg_list, filename, treeName, outputDir, outputFile, files_list, storage_path='None', sample=None, disableOutputTree=False, start_idx=0 ) :
+def write_config( alg_list, filename, treeName, outputDir, outputFile, files_list, storage_path=None, sample=None, disableOutputTree=False, start_idx=0 ) :
+
+    base_dir = os.path.split( filename )[0]
+    if not os.path.isdir(base_dir ) :
+        os.makedirs( base_dir)
 
     cfile = open( filename, 'w')
 
@@ -713,7 +810,7 @@ def write_config( alg_list, filename, treeName, outputDir, outputFile, files_lis
     cfile.write( 'treeName : %s\n' %( treeName ) )
     cfile.write( 'outputDir : %s\n' %( outputDir ) )
     cfile.write( 'outputFile : %s\n' %( outputFile ) )
-    if storage_path != 'None' :
+    if storage_path is not None :
         cfile.write( 'storagePath : %s\n' %storage_path )
     if sample is not None :
         cfile.write( 'sample : %s\n' %sample )

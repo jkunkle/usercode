@@ -629,6 +629,8 @@ const CutConfig & ModuleConfig::GetCut( const std::string & name ) const {
     }
 
     // This will throw an exception.  Its a bit hacked, but its the desired functionality
+    std::cout << "Requested cut does not exist!  To avoid this error, use HasCut to check for its existance before calling GetCut" << std::endl;
+    assert (false);
     return configs[configs.size()];
 
 }
@@ -861,6 +863,9 @@ AnaConfig ParseConfig( const std::string & fname, CmdOptions & options ) {
             }
 
         }
+    }
+    else {
+        std::cout << "ERROR - Failed to open config file " << fname << std::endl;
     }
     return ana_config;
 }

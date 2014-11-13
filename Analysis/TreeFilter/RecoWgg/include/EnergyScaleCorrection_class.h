@@ -171,5 +171,4 @@ class EnergyScaleCorrection_class{
 
 };
 
-
 #endif

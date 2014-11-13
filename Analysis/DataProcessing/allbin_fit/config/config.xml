@@ -1,0 +1,22 @@
+<!DOCTYPE Combination  SYSTEM 'HistFactorySchema.dtd'>
+<Combination OutputFilePrefix="allbin_fit/config/config"  >
+<Input>allbin_fit/config/channel_bin_EB-EB_25_40.xml</Input>
+<Input>allbin_fit/config/channel_bin_EE-EB_80_max.xml</Input>
+<Input>allbin_fit/config/channel_bin_EE-EE_15_25.xml</Input>
+<Input>allbin_fit/config/channel_bin_EB-EE_40_80.xml</Input>
+<Input>allbin_fit/config/channel_bin_EE-EE_25_40.xml</Input>
+<Input>allbin_fit/config/channel_bin_EE-EB_40_80.xml</Input>
+<Input>allbin_fit/config/channel_bin_EE-EE_40_80.xml</Input>
+<Input>allbin_fit/config/channel_bin_EB-EB_15_25.xml</Input>
+<Input>allbin_fit/config/channel_bin_EE-EB_15_25.xml</Input>
+<Input>allbin_fit/config/channel_bin_EE-EE_80_max.xml</Input>
+<Input>allbin_fit/config/channel_bin_EE-EB_25_40.xml</Input>
+<Input>allbin_fit/config/channel_bin_EB-EE_15_25.xml</Input>
+<Input>allbin_fit/config/channel_bin_EB-EE_25_40.xml</Input>
+<Input>allbin_fit/config/channel_bin_EB-EB_80_max.xml</Input>
+<Input>allbin_fit/config/channel_bin_EB-EB_40_80.xml</Input>
+<Input>allbin_fit/config/channel_bin_EB-EE_80_max.xml</Input>
+<Measurement LumiRelErr="0.05"  Name="allbin_fit"  Lumi="1."  >
+<POI>SigXsecOverSM</POI>
+</Measurement> 
+</Combination> 

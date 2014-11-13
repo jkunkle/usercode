@@ -110,6 +110,18 @@ def WriteCurrentHists( filename='hist.root') :
     file.Close()
         
 #---------------------------------------
+def SaveStack( name, can=None ) :
+    if options.outputDir is None :
+        print 'No outputDir given!'
+        return
+
+    samples.SaveStack( name, outputDir=options.outputDir, canname=can )
+
+
+
+#---------------------------------------
+
+
 #graveyard.py
 #def MakeTAndPHists( outputfile, tagprobe_min=0, tagprobe_max=1e9, normalize=1 ) :
 #def MakeTAndPPlots( ) :

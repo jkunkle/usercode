@@ -56,6 +56,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::el_phi                    = 0;
     OUT::el_e                      = 0;
     OUT::el_pt_uncorr              = 0;
+    OUT::el_e_uncorr               = 0;
     OUT::el_mva_trig               = 0;
     OUT::el_mva_nontrig            = 0;
     OUT::el_d0pv                   = 0;
@@ -80,6 +81,9 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::mu_phi                    = 0;
     OUT::mu_e                      = 0;
     OUT::mu_pt_uncorr              = 0;
+    OUT::mu_eta_uncorr             = 0;
+    OUT::mu_phi_uncorr             = 0;
+    OUT::mu_e_uncorr               = 0;
     OUT::mu_pfIso_ch               = 0;
     OUT::mu_pfIso_nh               = 0;
     OUT::mu_pfIso_pho              = 0;
@@ -93,6 +97,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::ph_sceta                  = 0;
     OUT::ph_phi                    = 0;
     OUT::ph_e                      = 0;
+    OUT::ph_pt_uncorr              = 0;
     OUT::ph_HoverE                 = 0;
     OUT::ph_HoverE12               = 0;
     OUT::ph_sigmaIEIE              = 0;
@@ -179,6 +184,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("el_phi"                    , &OUT::el_phi                    );
     outtree->Branch("el_e"                      , &OUT::el_e                      );
     outtree->Branch("el_pt_uncorr"              , &OUT::el_pt_uncorr              );
+    outtree->Branch("el_e_uncorr"               , &OUT::el_e_uncorr               );
     outtree->Branch("el_mva_trig"               , &OUT::el_mva_trig               );
     outtree->Branch("el_mva_nontrig"            , &OUT::el_mva_nontrig            );
     outtree->Branch("el_d0pv"                   , &OUT::el_d0pv                   );
@@ -204,6 +210,9 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("mu_phi"                    , &OUT::mu_phi                    );
     outtree->Branch("mu_e"                      , &OUT::mu_e                      );
     outtree->Branch("mu_pt_uncorr"              , &OUT::mu_pt_uncorr              );
+    outtree->Branch("mu_eta_uncorr"             , &OUT::mu_eta_uncorr             );
+    outtree->Branch("mu_phi_uncorr"             , &OUT::mu_phi_uncorr             );
+    outtree->Branch("mu_e_uncorr"               , &OUT::mu_e_uncorr               );
     outtree->Branch("mu_pfIso_ch"               , &OUT::mu_pfIso_ch               );
     outtree->Branch("mu_pfIso_nh"               , &OUT::mu_pfIso_nh               );
     outtree->Branch("mu_pfIso_pho"              , &OUT::mu_pfIso_pho              );
@@ -218,6 +227,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("ph_sceta"                  , &OUT::ph_sceta                  );
     outtree->Branch("ph_phi"                    , &OUT::ph_phi                    );
     outtree->Branch("ph_e"                      , &OUT::ph_e                      );
+    outtree->Branch("ph_pt_uncorr"              , &OUT::ph_pt_uncorr              );
     outtree->Branch("ph_HoverE"                 , &OUT::ph_HoverE                 );
     outtree->Branch("ph_HoverE12"               , &OUT::ph_HoverE12               );
     outtree->Branch("ph_sigmaIEIE"              , &OUT::ph_sigmaIEIE              );
@@ -582,6 +592,9 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
     OUT::mu_phi          -> clear();
     OUT::mu_e            -> clear();
     OUT::mu_pt_uncorr    -> clear();
+    OUT::mu_eta_uncorr   -> clear();
+    OUT::mu_phi_uncorr   -> clear();
+    OUT::mu_e_uncorr     -> clear();
     OUT::mu_pfIso_ch     -> clear();
     OUT::mu_pfIso_nh     -> clear();
     OUT::mu_pfIso_pho    -> clear();
@@ -661,11 +674,17 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         TLorentzVector muon;
         muon.SetPtEtaPhiM( pt, eta, phi, 0.106 );
 
-        OUT::mu_pt           -> push_back(pt);
-        OUT::mu_eta          -> push_back(eta);
-        OUT::mu_phi          -> push_back(phi);
-        OUT::mu_e            -> push_back(muon.E());
-        OUT::mu_pt_uncorr    -> push_back(IN::muPt->at(idx));
+        TLorentzVector muon_uncorr;
+        muon_uncorr.SetPtEtaPhiM( IN::muPt->at(idx), IN::muEta->at(idx), IN::muPhi->at(idx), 0.106 );
+
+        OUT::mu_pt           -> push_back(muon.Pt() );
+        OUT::mu_eta          -> push_back(muon.Eta());
+        OUT::mu_phi          -> push_back(muon.Phi());
+        OUT::mu_e            -> push_back(muon.E()  );
+        OUT::mu_pt_uncorr    -> push_back(muon_uncorr.Pt() );
+        OUT::mu_eta_uncorr   -> push_back(muon_uncorr.Eta());
+        OUT::mu_phi_uncorr   -> push_back(muon_uncorr.Phi());
+        OUT::mu_e_uncorr     -> push_back(muon_uncorr.E()  );
         OUT::mu_pfIso_ch     -> push_back(muPFIsoCH);
         OUT::mu_pfIso_nh     -> push_back(muPFIsoNH);
         OUT::mu_pfIso_pho    -> push_back(muPFIsoPho);
@@ -695,6 +714,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
     OUT::el_phi            -> clear();
     OUT::el_e              -> clear();
     OUT::el_pt_uncorr      -> clear();
+    OUT::el_e_uncorr       -> clear();
     OUT::el_mva_nontrig    -> clear();
     OUT::el_mva_trig       -> clear();
     OUT::el_d0pv           -> clear();
@@ -1377,11 +1397,14 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         OUT::el_phi            -> push_back(phi);
         OUT::el_e              -> push_back(pt*cosh(eta));
         OUT::el_pt_uncorr      -> push_back(IN::elePt->at(idx));
+        OUT::el_e_uncorr       -> push_back(IN::eleEn->at(idx));
         OUT::el_mva_trig       -> push_back(mva_trig);
         OUT::el_mva_nontrig    -> push_back(mva_nontrig);
         OUT::el_d0pv           -> push_back( d0 );
         OUT::el_z0pv           -> push_back( z0 );
         OUT::el_sigmaIEIE      -> push_back( sigmaIEIE );
+        // sigmaIEIE cori
+        //
         OUT::el_pfiso30        -> push_back( pfiso30 );
         OUT::el_pfiso40        -> push_back( pfiso40 );
         OUT::el_hasMatchedConv -> push_back( convfit );
@@ -1458,6 +1481,7 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
     OUT::ph_sceta                  -> clear();
     OUT::ph_phi                    -> clear();
     OUT::ph_e                      -> clear();
+    OUT::ph_pt_uncorr              -> clear();
     OUT::ph_HoverE                 -> clear();
     OUT::ph_HoverE12               -> clear();
     OUT::ph_sigmaIEIE              -> clear();
@@ -1569,6 +1593,41 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
         float SCphiWidth   = IN::phoSCPhiWidth->at(idx);
         float ESEffSigmaRR = IN::phoESEffSigmaRR_x->at(idx);
 
+        // sigmaIEIE corr
+        float r9Corr = r9;
+        if( !IN::isData ) {
+            if( fabs(sceta) < 1.479 ) {
+                r9Corr = 0.000740 + 1.00139*r9;
+                // correct sieie in MC
+                sigmaIEIE =  0.0009133 + 0.891832*sigmaIEIE;
+            }
+            else {
+                r9Corr = -0.000399 + 1.00016*r9;
+            }
+        }
+        // photon mometum correction
+        #ifdef EXISTS_isData
+        #ifdef EXISTS_run
+        if( apply_photon_corrections ) {
+
+            bool iseb = false;
+            if( fabs(sceta) < 1.479 ) {
+                iseb = true;
+            }
+            float scale = 1.0;
+            if( IN::isData ) {
+                // last 2 args aren't used
+                scale = eleCorr->ScaleCorrection(IN::run, iseb, r9, sceta, pt, 0, 0 );
+            }
+            else {
+                scale = eleCorr->getSmearing(IN::run, en, iseb, r9, sceta );
+            }
+
+            pt*=scale;
+            en*=scale;
+        }
+        #endif
+        #endif
 
         // evaluate largest isolation value
         float phoPFChIsoWorst = 0;
@@ -1584,15 +1643,6 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
 
         float hcalIsoDR03PtCorr      = hcalIsoDR03 - 0.005 * pt;
         float trkIsoHollowDR03PtCorr = trkIsoHollowDR03  - 0.002 * pt;
-        float r9Corr = r9;
-        if( !IN::isData ) {
-            if( fabs(sceta) < 1.479 ) {
-                r9Corr = 0.000740 + 1.00139*r9;
-            }
-            else {
-                r9Corr = -0.000399 + 1.00016*r9;
-            }
-        }
 
         float pfChIso     = IN::phoPFChIso->at(idx);
         float pfNeuIso    = IN::phoPFNeuIso->at(idx);
@@ -1873,6 +1923,7 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
         OUT::ph_sceta                -> push_back(sceta);
         OUT::ph_phi                  -> push_back(phi);
         OUT::ph_e                    -> push_back(pt*cosh(eta));
+        OUT::ph_pt_uncorr            -> push_back(IN::phoEt->at(idx));
         OUT::ph_HoverE               -> push_back(hovere);
         OUT::ph_HoverE12             -> push_back(hovere12);
         OUT::ph_sigmaIEIE            -> push_back(sigmaIEIE);
@@ -2091,7 +2142,7 @@ void RunModule::WeightEvent( ModuleConfig & config ) const {
     OUT::PUWeight = num/den;
 
     if( OUT::PUWeight < 0.05 ) {
-        std::cout << "PUweight is zero" << std::endl;
+        std::cout << "PUweight is zero for PUVal " << puval << std::endl;
     }
 }
 

@@ -13,9 +13,11 @@ def get_keep_filter() :
 def config_analysis( alg_list, args ) :
 
     alg_list.append( build_electron( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=True ) )
+
     alg_list.append( build_muon( do_cutflow=False, do_hists=False, applyCorrections=True ) )
 
     alg_list.append( build_photon( do_cutflow=False, do_hists=False, evalPID=None, doEVeto=False, applyCorrections=True) )
+
     alg_list.append( build_jet( do_cutflow=False, do_hists=False ) )
 
     # just for pileup reweighting
@@ -36,7 +38,7 @@ def build_muon( do_cutflow=False, do_hists=False, applyCorrections=False ) :
 
     filt.cut_isGlobal   = ' == True '
     filt.cut_isPF       = ' == True '
-    filt.cut_pt         = ' > 10 '
+    filt.cut_pt         = ' > 5 '
     filt.cut_abseta     = ' < 2.5'
     filt.cut_chi2       = ' < 10'
     filt.cut_nTrkLayers = ' > 8 ' 
@@ -73,7 +75,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
 
     filt.do_cutflow = do_cutflow
 
-    filt.cut_pt = ' > 10'
+    filt.cut_pt = ' > 5'
     filt.cut_abssceta       = ' <2.5 '
     # no crack for now
     #filt.cut_abssceta_crack = ' > 1.44 & < 1.57 '
@@ -260,7 +262,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
 
     return filt
 
-def build_photon( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None, doEVeto=True ) :
+def build_photon( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None, doEVeto=True, applyCorrections=False ) :
 
     filt = Filter('BuildPhoton')
 
@@ -335,6 +337,12 @@ def build_photon( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None, 
 
     if evalPID is not None :
         filt.add_var( 'evalPID', evalPID )
+
+    if applyCorrections :
+        workarea = os.getenv('WorkArea')
+        filt.add_var('applyCorrections', 'true' )
+        filt.add_var('correctionFile', '%s/TreeFilter/RecoWgg/data/step2-invMass_SC-loose-Et_20-trigger-noPF-HggRunEtaR9.dat' %workarea )
+        filt.add_var('smearingFile', '%s/TreeFilter/RecoWgg/data/outFile-step4-invMass_SC-loose-Et_20-trigger-noPF-HggRunEtaR9-smearEle.dat' %workarea )
 
     filt.add_var( 'TMVAWeightsFileEB', '/afs/cern.ch/user/r/rslu/public/photonIDMVA_2014/EB_BDT.weights.xml' )
     filt.add_var( 'TMVAWeightsFileEE', '/afs/cern.ch/user/r/rslu/public/photonIDMVA_2014/EE_BDT.weights.xml' )

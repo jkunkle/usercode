@@ -93,11 +93,12 @@ void EnergyScaleCorrection_class::Add(TString category_, int runMin_, int runMax
   cat.runmin=runMin_;
   cat.runmax=runMax_;
 
+  std::cout << scales[cat] << std::endl;
   if(scales.count(cat)!=0){
     std::cerr << "[ERROR] Category already defined!" << std::endl;
     std::cerr << "        Adding category:  " << cat << std::endl;
     std::cerr << "        Defined category: " << scales[cat] << std::endl;
-    exit(1);
+    //exit(1);
   }
 
   correctionValue_class corr;
@@ -105,7 +106,7 @@ void EnergyScaleCorrection_class::Add(TString category_, int runMin_, int runMax
   corr.scale_err=err_deltaP_;
   scales[cat]=corr;
 
-  std::cout << "[INFO:scale correction] " << cat << corr << std::endl;
+  //std::cout << "[INFO:scale correction] " << cat << corr << std::endl;
   return;
 }
 
@@ -229,7 +230,7 @@ void EnergyScaleCorrection_class::AddSmearing(TString category_, int runMin_, in
     std::cerr << "[ERROR] Category already defined!" << std::endl;
     std::cerr << "        Adding category:  " << cat << std::endl;
     std::cerr << "        Defined category: " << scales[cat] << std::endl;
-    exit(1);
+    //exit(1);
   }
 
   correctionValue_class corr;

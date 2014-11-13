@@ -1,0 +1,11 @@
+Wgg Fit multptbin_fit 2014-8-4
+imax 4 number of channels
+jmax 1 number of backgrounds
+kmax 2 number of systematics
+Observation 89.474407  46.674988  57.268486  17.286562
+bin 1  1  2  2  3  3  4  4
+process signal  background  signal  background  signal  background  signal  background
+process 0  1  0  1  0  1  0  1
+rate 11.698854  77.775553  13.930266  32.744722  6.621562  50.646924  8.496548  8.790013
+0  lnN  1.000000  9.470346  1.000000  5.815807  1.000000  6.506871  1.000000  2.879120  Stat_background 
+1  lnN  1.100000  1.000000  1.100000  1.000000  1.100000  1.000000  1.100000  1.000000  Lumi 

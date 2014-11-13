@@ -3,8 +3,10 @@
 *.pyc
 *.root
 *.o
+*.so
 *.exe
 *.swp
+core.*
 Dict.cxx
 Dict.h
 BranchInit.cxx

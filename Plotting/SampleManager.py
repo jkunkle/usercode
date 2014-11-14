@@ -12,6 +12,7 @@ import eos_utilities
 import random
 from array import array
 import time
+
 from uncertainties import ufloat
 from uncertainties import umath
 import pickle

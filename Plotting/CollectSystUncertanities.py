@@ -44,7 +44,6 @@ def main() :
     files_jet_temp_real_inc      = find_files_in_dir( sub_dir_jet, file_key_jet_temp_real_inc      )
     files_jet_temp_fake_asym_inc = find_files_in_dir( sub_dir_jet, file_key_jet_temp_fake_asym_inc )
 
-
     ratio_key_temp_fake_nom = '5 < Iso < 10'
     ratio_key_temp_fake_asym = '(\d+),(\d+),(\d+)\s*\(ch,neu,pho\)'
     ratio_key_temp_real = 'W#gamma, truth matched photons'

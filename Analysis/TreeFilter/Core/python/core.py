@@ -111,6 +111,16 @@ def ParseArgs() :
     
     return parser.parse_args()
 
+class JobConfig :
+
+    def __init__(self) :
+
+        self.jobid        = None
+        self.storage_path = None
+        self.output_dir   = None
+        self.run_command  = None
+
+
 def config_and_run( options, package_name ) :
 
     assert options.noInputFiles or options.files is not None or options.filesDir is not None , 'Must provide a file list via --files or a search directory via --filesDir'
@@ -178,6 +188,12 @@ def config_and_run( options, package_name ) :
         print 'Will remove %d branches from output file : ' %( len(branches) - len(branches_to_keep))
         print '\n'.join( list( set( [ br['name'] for br in branches ] ) - set( branches_to_keep ) ) )
 
+
+    # get the executable name.  If .exe does not
+    # appear as the extension, add it
+    if re.match( '.*?\.exe', options.exeName ) is None :
+        options.exeName = options.exeName + '.exe'
+
     if not options.noCompile :
 
         lockfile = '.compile.lock'
@@ -208,10 +224,6 @@ def config_and_run( options, package_name ) :
         proc = subprocess.Popen(['make', 'clean'])
         proc.wait()
 
-        # get the executable name.  If .exe does not
-        # appear as the extension, add it
-        if re.match( '.*?\.exe', options.exeName ) is None :
-            options.exeName = options.exeName + '.exe'
 
         proc = subprocess.Popen(['make', 'EXENAME=%s' %options.exeName])
         retcode = proc.wait()
@@ -272,7 +284,12 @@ def config_and_run( options, package_name ) :
 
     if options.nproc > 1 and file_evt_list > 1: #multiprocessing!
 
-        commands = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
+        commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
+
+        if options.resubmit :
+            commands = filter_jobs_for_resubmit( commands_orig, options.storagePath, options.outputDir, options.outputFile )
+        else :
+            commands = commands_orig
 
         # Stop here if not running
         logging.info('********************************')
@@ -290,7 +307,6 @@ def config_and_run( options, package_name ) :
     elif options.batch :
 
         commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
-        commands = []
 
         # storagePath could have been passed as 'None'
         # make 'None' None
@@ -298,33 +314,15 @@ def config_and_run( options, package_name ) :
             options.storagePath = None
 
         if options.resubmit :
-            if options.storagePath is not None :
-                for jobid, cmd in commands_orig :
-                    file_path = '%s/%s/' %(options.storagePath, jobid )
-                    exists = False
-                    for top, dirs, files, sizes in eosutil.walk_eos(file_path) :
-                        if options.outputFile in files :
-                            exists = True
-
-                    if not exists :
-                        commands.append( ( jobid, cmd ) )
-            else :
-                for jobid, cmd in commands_orig :
-                    file_path = '%s/%s/' %(options.outputDir, jobid )
-                    exists = False
-                    for top, dirs, files in os.walk(file_path) :
-                        if options.outputFile in files :
-                            exists = True
-
-                    if not exists :
-                        commands.append( ( jobid, cmd ) )
-
+            commands = filter_jobs_for_resubmit( commands_orig, options.storagePath, options.outputDir, options.outputFile )
         else :
             commands = commands_orig
 
         wrappers = []
         for jobid, cmd in commands :
             # write a wrapper script 
+            #if options.copyLocal :
+            ##    get the event range
             wrapper = '%s/wrapper_%s.sh' %( options.outputDir, jobid) 
             file = open( wrapper, 'w' )
             file.write( 'export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/contrib/gcc/4.6/x86_64-slc6-gcc46-opt/lib64:$LD_LIBRARY_PATH\n' )
@@ -704,6 +702,34 @@ def generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, option
 
     return commands
 
+def filter_jobs_for_resubmit( orig_commands, storagePath, outputDir, outputFile ) :
+
+    commands = []
+        
+    if storagePath is not None :
+        for jobid, cmd in orig_commands:
+            file_path = '%s/%s/' %(storagePath, jobid )
+            exists = False
+            for top, dirs, files, sizes in eosutil.walk_eos(file_path) :
+                print files
+                if outputFile in files :
+                    exists = True
+
+            if not exists :
+                commands.append( ( jobid, cmd ) )
+    else :
+        for jobid, cmd in orig_commands :
+            file_path = '%s/%s/' %(outputDir, jobid )
+            exists = False
+            for top, dirs, files in os.walk(file_path) :
+                if outputFile in files :
+                    exists = True
+
+            if not exists :
+                commands.append( ( jobid, cmd ) )
+
+
+    return commands
 
 def get_file_evt_map( input_files, nsplit, nFilesPerJob, totalEvents, treeName ) :
 
@@ -877,6 +903,7 @@ def write_header_files( brdefname, linkdefname, branches, keep_branches=[] ) :
         # declare the variable differently for a vector
         if conf['type'].count('vector') :
             modtype = conf['type'].replace('vector', 'std::vector')
+            modtype = modtype.replace('string', 'std::string')
             file_entry = ' extern %s\t\t\t\t*%s;\n' %(modtype, name)
         else :
             file_entry = ' extern %s\t\t\t\t%s%s;\n' %(conf['type'], name, conf['arrayStr'])
@@ -896,6 +923,7 @@ def write_header_files( brdefname, linkdefname, branches, keep_branches=[] ) :
 
         if conf['type'].count('vector') :
             modtype = conf['type'].replace('vector', 'std::vector')
+            modtype = modtype.replace('string', 'std::string')
             file_entry = ' extern %s\t\t\t\t*%s;\n' %(modtype, name)
         else :
             file_entry = ' extern %s\t\t\t\t%s%s;\n' %(conf['type'], name, conf['arrayStr'])
@@ -969,6 +997,8 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
     branch_header.write('#endif\n')
     branch_header.close()
 
+    print 'WRITE ', source_file_name
+
     branch_setting = open(source_file_name, 'w')
     branch_setting.write('#include <algorithm>\n')
     branch_setting.write('#include <iostream>\n')
@@ -985,6 +1015,7 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
         # declare the variable differently for a vector
         if conf['type'].count('vector') :
             modtype = conf['type'].replace('vector', 'std::vector')
+            modtype = modtype.replace('string', 'std::string')
             file_entry = ' %s\t\t\t\t*%s;\n' %(modtype, name)
         else :
             file_entry = ' %s\t\t\t\t%s%s;\n' %(conf['type'], name, conf['arrayStr'])
@@ -1004,6 +1035,7 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
 
         if conf['type'].count('vector') :
             modtype = conf['type'].replace('vector', 'std::vector')
+            modtype = modtype.replace('string', 'std::string')
             file_entry = ' %s\t\t\t\t*%s;\n' %(modtype, name)
         else :
             file_entry = ' %s\t\t\t\t%s%s;\n' %(conf['type'], name, conf['arrayStr'])
@@ -1130,6 +1162,7 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
         set_line = ''
         if conf['type'].count('vector') :
             modtype = conf['type'].replace('vector', 'std::vector')
+            modtype = modtype.replace('string', 'std::string')
             set_line = '  *OUT::%s = %s(*IN::%s);\n' %(name, modtype, name)
         else :
             if conf['totSize'] > 1 :
@@ -1245,205 +1278,205 @@ class Filter :
         self.hists.append( {'name':name, 'nbin':nbin, 'xmin':xmin, 'xmax':xmax } )
 
 
-# for python only code
-
-class AnalysisConfig :
-
-    def __init__(self) :
-        self.modules = []
-        self.files = []
-        self.keep_branches = []
-
-    def add_module(self, module) :
-        self.modules.append(module)
-
-    def get_modules(self) :
-        return self.modules
-
-    def Run( self, runmod, options ) :
-
-        if not hasattr(runmod, 'Run') :
-            print 'AnalysisConfig.Run - ERROR : Run module does not implement a function called Run'
-
-        runmod.in_tree = ROOT.TChain( options.treeName, options.treeName )
-        for file in self.files :
-            runmod.in_tree.Add( file )
-
-        runmod.outfile = ROOT.TFile.Open( '%s/%s' %(options.outputDir, options.outputFile ), 'RECREATE' )
-        runmod.outfile.cd()
-
-        # make the output tree
-        # if the input tree is within a directory, put the output tree
-        # in a directory of the same name
-        name_split = runmod.in_tree.GetName().split('/')
-        dir_path = ''
-        if len(name_split) > 1 :
-            for dir in name_split[:-1] :
-                dir_path = dir_path + dir + '/'
-                print 'TFile.mkdir %s' %dir_path
-                runmod.outfile.mkdir( dir_path )
-
-            runmod.outfile.cd( dir_path )
-
-            tree_name = name_split[-1]
-
-            runmod.out_tree = ROOT.TTree( tree_name, tree_name )
-        else :
-            runmod.out_tree = ROOT.TTRee( runmod.in_tree.GetName(), runmod.in_tree.GetName() )
-            runmod.out_tree.SetDirectory( runmod.outfile )
-
-        self.init_out_tree( runmod )
-
-        print 'OUT branches'
-        for br in runmod.out_tree.GetListOfBranches() :
-            print br.GetName()
-
-        runmod.Run( self.get_modules(), options, 0, 0 )
-
-        runmod.outfile.Write()
-        runmod.outfile.Close()
-
-    def init_out_tree( self, module ) :
-
-        all_branches = get_branch_mapping( module.in_tree )
-
-        for br in all_branches :
-            brname = br['name']
-
-            if brname not in self.keep_branches :
-                continue
-
-            if br['type'].count('vector') :
-                print 'FIX ME'
-                setattr(module.out_tree, brname, std.vector(int)())
-                out_tree.Branch(brname, getattr(module.out_tree, brname))
-            else :
-                array_type = ''
-                br_type = br['type']
-                if br_type == 'int' or br_type == 'Int_t' :
-                    array_type = 'i'
-                elif br_type == 'float' or br_type == 'Float_t' :
-                    array_type = 'f'
-                elif br_type == 'double' or br_type == 'Double_t' :
-                    array_type = 'd'
-                elif br_type == 'Long64_t' :
-                    array_type = 'L'
-                elif br_type == 'Bool_t' :
-                    array_type = 'B'
-                else :
-                    print 'No conversion for type %s' %br_type
-                    continue
-               
-                    #    root2PythonDictionary = { 
-                    #            #root:python 
-                    #            'C':'c',#char 
-                    #            'B':'b',#signed char 
-                    #            'b':'B',#unsigned char 
-                    #            'S':'h',#signed short 
-                    #            's':'H',#unsigned short 
-                    #            'I':'i',#signed int 
-                    #            'i':'I',#unsigned int 
-                    #            'L':'l',#signed long 
-                    #            'l':'L',#unsigned long 
-                    #            'F':'f',#float 
-                    #            'D':'d'#double 
-                    #    } 
-                setattr(module, brname, array.array(array_type, br['totSize']*[0]) )
-                print brname
-                print getattr(module, brname)
-                print br['leafEntry']
-                module.out_tree.Branch(brname, getattr(module, brname), br['leafEntry'])
-
-class ModuleConfig : 
-    
-    def __init__( self, alg ) :
-
-        self.name = alg.name
-
-        self.cuts = {}
-
-        for member in alg.__dict__ : 
-            if not member.count('cut_') :
-                continue
-
-            self.cuts[member] = getattr(alg, member)
-
-            
-    def pass_cut( self, cut, val ) :
-
-        # if cut hasn't been configured, then pass it
-        if cut not in self.cuts :
-            return True
-
-        return eval( 'val' + self.cuts[cut] )
-
-    def Print( self ) :
-        print 'Module name is %s' %self.name
-        print 'Cuts are : '
-        for name, val in self.cuts.iteritems() :
-            print '%s %s' %(name, val)
-
-def ConfigureAnalysis( runmod, options ) :
-
-    # read input files
-    assert options.files is not None or options.filesDir is not None, 'Must provide a list of files via --files or a directory containing files via --filesDir'
-
-    ana_config = AnalysisConfig()
-    if options.files is not None :
-        ana_config.files = options.files.split(',')
-    elif options.filesDir is not None :
-        ana_config.files = collect_input_files( options.filesDir )
-        
-    if not ana_config.files :
-        print 'No files were found'
-        return 
-
-    # get the configuration
-    ImportedModule = import_module( options.module )
-
-    alg_list = []
-    ImportedModule.config_analysis( alg_list )
-
-    for alg in alg_list :
-        ana_config.add_module(ModuleConfig(alg))
-
-    keep_filter   = []
-    remove_filter = []
-
-    branches = get_branch_mapping( ana_config.files, options.treeName )
-
-    ana_config.keep_branches = get_keep_branches( ImportedModule, branches, options.enableKeepFilter, options.enableRemoveFilter )
-
-    return ana_config
-    
-def copy_event( module ) :
-
-    for br in module.out_tree.GetListOfBranches() :
-        brname = br.GetName()
-
-        #module.nEle[0] = module.in_tree.nEle
-        print brname
-        print module.out_tree.GetBranch(brname).GetTitle()
-        brtitle = module.out_tree.GetBranch(brname).GetTitle()
-        is_array = brtitle.count('[') and brtitle.count(']')
-        #print getattr(module, brname)
-        #varlen = len(getattr(module, brname))
-        varlen = module.in_tree.GetBranch(brname).GetLeaf(brname).GetNdata()
-        print varlen
-        #print 'leaf type', module.in_tree.GetBranch(brname).GetLeaf(brname).GetTypeName()
-        #print getattr(module, brname)
-        
-        if is_array :
-            #setattr(module, brname, getattr(module.in_tree, brname) )
-            for idx in xrange(0, len(getattr(module.in_tree, brname ))) :
-                exec('module.%s[%d] = module.in_tree.%s[%d]' %(brname, idx, brname, idx) )
-        else :
-            exec('module.%s[0] = module.in_tree.%s' %(brname, brname ) )
-
-        #if varlen == 1 :
-        #    exec('module.%s[0] = module.in_tree.%s' %(brname, brname ) )
-        #else :
-        #    setattr(module, brname, getattr(module.in_tree, brname) )
-        #    #for idx in xrange(0, len(getattr(module.in_tree, brname ))) :
-        #    #    exec('module.%s[%d] = copy.copymodule.in_tree.%s[%d]' %(brname, idx, brname, idx) )
-        ##setattr(module, brname+'[0]', getattr(module.in_tree, brname) )
+## for python only code
+#
+#class AnalysisConfig :
+#
+#    def __init__(self) :
+#        self.modules = []
+#        self.files = []
+#        self.keep_branches = []
+#
+#    def add_module(self, module) :
+#        self.modules.append(module)
+#
+#    def get_modules(self) :
+#        return self.modules
+#
+#    def Run( self, runmod, options ) :
+#
+#        if not hasattr(runmod, 'Run') :
+#            print 'AnalysisConfig.Run - ERROR : Run module does not implement a function called Run'
+#
+#        runmod.in_tree = ROOT.TChain( options.treeName, options.treeName )
+#        for file in self.files :
+#            runmod.in_tree.Add( file )
+#
+#        runmod.outfile = ROOT.TFile.Open( '%s/%s' %(options.outputDir, options.outputFile ), 'RECREATE' )
+#        runmod.outfile.cd()
+#
+#        # make the output tree
+#        # if the input tree is within a directory, put the output tree
+#        # in a directory of the same name
+#        name_split = runmod.in_tree.GetName().split('/')
+#        dir_path = ''
+#        if len(name_split) > 1 :
+#            for dir in name_split[:-1] :
+#                dir_path = dir_path + dir + '/'
+#                print 'TFile.mkdir %s' %dir_path
+#                runmod.outfile.mkdir( dir_path )
+#
+#            runmod.outfile.cd( dir_path )
+#
+#            tree_name = name_split[-1]
+#
+#            runmod.out_tree = ROOT.TTree( tree_name, tree_name )
+#        else :
+#            runmod.out_tree = ROOT.TTRee( runmod.in_tree.GetName(), runmod.in_tree.GetName() )
+#            runmod.out_tree.SetDirectory( runmod.outfile )
+#
+#        self.init_out_tree( runmod )
+#
+#        print 'OUT branches'
+#        for br in runmod.out_tree.GetListOfBranches() :
+#            print br.GetName()
+#
+#        runmod.Run( self.get_modules(), options, 0, 0 )
+#
+#        runmod.outfile.Write()
+#        runmod.outfile.Close()
+#
+#    def init_out_tree( self, module ) :
+#
+#        all_branches = get_branch_mapping( module.in_tree )
+#
+#        for br in all_branches :
+#            brname = br['name']
+#
+#            if brname not in self.keep_branches :
+#                continue
+#
+#            if br['type'].count('vector') :
+#                print 'FIX ME'
+#                setattr(module.out_tree, brname, std.vector(int)())
+#                out_tree.Branch(brname, getattr(module.out_tree, brname))
+#            else :
+#                array_type = ''
+#                br_type = br['type']
+#                if br_type == 'int' or br_type == 'Int_t' :
+#                    array_type = 'i'
+#                elif br_type == 'float' or br_type == 'Float_t' :
+#                    array_type = 'f'
+#                elif br_type == 'double' or br_type == 'Double_t' :
+#                    array_type = 'd'
+#                elif br_type == 'Long64_t' :
+#                    array_type = 'L'
+#                elif br_type == 'Bool_t' :
+#                    array_type = 'B'
+#                else :
+#                    print 'No conversion for type %s' %br_type
+#                    continue
+#               
+#                    #    root2PythonDictionary = { 
+#                    #            #root:python 
+#                    #            'C':'c',#char 
+#                    #            'B':'b',#signed char 
+#                    #            'b':'B',#unsigned char 
+#                    #            'S':'h',#signed short 
+#                    #            's':'H',#unsigned short 
+#                    #            'I':'i',#signed int 
+#                    #            'i':'I',#unsigned int 
+#                    #            'L':'l',#signed long 
+#                    #            'l':'L',#unsigned long 
+#                    #            'F':'f',#float 
+#                    #            'D':'d'#double 
+#                    #    } 
+#                setattr(module, brname, array.array(array_type, br['totSize']*[0]) )
+#                print brname
+#                print getattr(module, brname)
+#                print br['leafEntry']
+#                module.out_tree.Branch(brname, getattr(module, brname), br['leafEntry'])
+#
+#class ModuleConfig : 
+#    
+#    def __init__( self, alg ) :
+#
+#        self.name = alg.name
+#
+#        self.cuts = {}
+#
+#        for member in alg.__dict__ : 
+#            if not member.count('cut_') :
+#                continue
+#
+#            self.cuts[member] = getattr(alg, member)
+#
+#            
+#    def pass_cut( self, cut, val ) :
+#
+#        # if cut hasn't been configured, then pass it
+#        if cut not in self.cuts :
+#            return True
+#
+#        return eval( 'val' + self.cuts[cut] )
+#
+#    def Print( self ) :
+#        print 'Module name is %s' %self.name
+#        print 'Cuts are : '
+#        for name, val in self.cuts.iteritems() :
+#            print '%s %s' %(name, val)
+#
+#def ConfigureAnalysis( runmod, options ) :
+#
+#    # read input files
+#    assert options.files is not None or options.filesDir is not None, 'Must provide a list of files via --files or a directory containing files via --filesDir'
+#
+#    ana_config = AnalysisConfig()
+#    if options.files is not None :
+#        ana_config.files = options.files.split(',')
+#    elif options.filesDir is not None :
+#        ana_config.files = collect_input_files( options.filesDir )
+#        
+#    if not ana_config.files :
+#        print 'No files were found'
+#        return 
+#
+#    # get the configuration
+#    ImportedModule = import_module( options.module )
+#
+#    alg_list = []
+#    ImportedModule.config_analysis( alg_list )
+#
+#    for alg in alg_list :
+#        ana_config.add_module(ModuleConfig(alg))
+#
+#    keep_filter   = []
+#    remove_filter = []
+#
+#    branches = get_branch_mapping( ana_config.files, options.treeName )
+#
+#    ana_config.keep_branches = get_keep_branches( ImportedModule, branches, options.enableKeepFilter, options.enableRemoveFilter )
+#
+#    return ana_config
+#    
+#def copy_event( module ) :
+#
+#    for br in module.out_tree.GetListOfBranches() :
+#        brname = br.GetName()
+#
+#        #module.nEle[0] = module.in_tree.nEle
+#        print brname
+#        print module.out_tree.GetBranch(brname).GetTitle()
+#        brtitle = module.out_tree.GetBranch(brname).GetTitle()
+#        is_array = brtitle.count('[') and brtitle.count(']')
+#        #print getattr(module, brname)
+#        #varlen = len(getattr(module, brname))
+#        varlen = module.in_tree.GetBranch(brname).GetLeaf(brname).GetNdata()
+#        print varlen
+#        #print 'leaf type', module.in_tree.GetBranch(brname).GetLeaf(brname).GetTypeName()
+#        #print getattr(module, brname)
+#        
+#        if is_array :
+#            #setattr(module, brname, getattr(module.in_tree, brname) )
+#            for idx in xrange(0, len(getattr(module.in_tree, brname ))) :
+#                exec('module.%s[%d] = module.in_tree.%s[%d]' %(brname, idx, brname, idx) )
+#        else :
+#            exec('module.%s[0] = module.in_tree.%s' %(brname, brname ) )
+#
+#        #if varlen == 1 :
+#        #    exec('module.%s[0] = module.in_tree.%s' %(brname, brname ) )
+#        #else :
+#        #    setattr(module, brname, getattr(module.in_tree, brname) )
+#        #    #for idx in xrange(0, len(getattr(module.in_tree, brname ))) :
+#        #    #    exec('module.%s[%d] = copy.copymodule.in_tree.%s[%d]' %(brname, idx, brname, idx) )
+#        ##setattr(module, brname+'[0]', getattr(module.in_tree, brname) )

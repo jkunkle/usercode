@@ -1,6 +1,7 @@
 import subprocess 
 import os
 import sys
+import time
 
 __EOS__ = '/afs/cern.ch/project/eos/installation/0.3.4/bin/eos.select'
 
@@ -41,10 +42,11 @@ def parse_eos_dir(path, DEBUG=False) :
     #res = re.match('/xrootd/(.*)', path)
     #if res is not None :
     #    path = res.group(1)
-
     directories = []
     files = [] 
     sizes = []
+
+    #print 'PATH = ', path
 
     #print "xrd hn.at3f dirlist "+path
     #lines = os.popen("xrd hn.at3f dirlist "+path).readlines()
@@ -54,9 +56,13 @@ def parse_eos_dir(path, DEBUG=False) :
 
     # get directory contents
     cmd = [eos, 'ls -l', path+'/']
-    #cmd = '%s ls -l %s' %(eos, path)
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, bufsize=-1)
-    p.wait()
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=None,bufsize=-1)
+    # p.wait() hangs indefinately on large directories
+    # (this is a known issue https://docs.python.org/2/library/subprocess.html#subprocess.Popen.wait)
+    # so instead, just use a short sleep to 
+    # ensure the command has completed
+    #time.sleep(2)
+    #p.wait()
     result = p.communicate()[0]
     p.stdout.close()
 

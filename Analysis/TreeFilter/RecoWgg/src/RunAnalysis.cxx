@@ -73,6 +73,10 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::el_passTightTrig          = 0;
     OUT::el_passMvaNonTrig         = 0;
     OUT::el_passMvaTrig            = 0;
+    OUT::el_passMvaNonTrigNoIso    = 0;
+    OUT::el_passMvaTrigNoIso       = 0;
+    OUT::el_passMvaNonTrigOnlyIso  = 0;
+    OUT::el_passMvaTrigOnlyIso     = 0;
     OUT::el_truthMatch_el          = 0;
     OUT::el_truthMinDR_el          = 0;
     OUT::el_truthMatchPt_el        = 0;
@@ -90,6 +94,8 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::mu_pfIso_pu               = 0;
     OUT::mu_corrIso                = 0;
     OUT::mu_triggerMatch           = 0;
+    OUT::mu_triggerMatchDiMu       = 0;
+    OUT::mu_passTight              = 0;
     OUT::mu_truthMatch             = 0;
     OUT::mu_truthMinDR             = 0;
     OUT::ph_pt                     = 0;
@@ -97,6 +103,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::ph_sceta                  = 0;
     OUT::ph_phi                    = 0;
     OUT::ph_e                      = 0;
+    OUT::ph_scE                    = 0;
     OUT::ph_pt_uncorr              = 0;
     OUT::ph_HoverE                 = 0;
     OUT::ph_HoverE12               = 0;
@@ -201,6 +208,10 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("el_passTightTrig"          , &OUT::el_passTightTrig          );
     outtree->Branch("el_passMvaTrig"            , &OUT::el_passMvaTrig            );
     outtree->Branch("el_passMvaNonTrig"         , &OUT::el_passMvaNonTrig         );
+    outtree->Branch("el_passMvaTrigNoIso"       , &OUT::el_passMvaTrigNoIso       );
+    outtree->Branch("el_passMvaNonTrigNoIso"    , &OUT::el_passMvaNonTrigNoIso    );
+    outtree->Branch("el_passMvaTrigOnlyIso"     , &OUT::el_passMvaTrigOnlyIso     );
+    outtree->Branch("el_passMvaNonTrigOnlyIso"  , &OUT::el_passMvaNonTrigOnlyIso  );
     outtree->Branch("el_truthMatch_el"          , &OUT::el_truthMatch_el          );
     outtree->Branch("el_truthMinDR_el"          , &OUT::el_truthMinDR_el          );
     outtree->Branch("el_truthMatchPt_el"        , &OUT::el_truthMatchPt_el        );
@@ -219,6 +230,8 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("mu_pfIso_pu"               , &OUT::mu_pfIso_pu               );
     outtree->Branch("mu_corrIso"                , &OUT::mu_corrIso                );
     outtree->Branch("mu_triggerMatch"           , &OUT::mu_triggerMatch           );
+    outtree->Branch("mu_triggerMatchDiMu"       , &OUT::mu_triggerMatchDiMu       );
+    outtree->Branch("mu_passTight"              , &OUT::mu_passTight              );
     outtree->Branch("mu_truthMatch"             , &OUT::mu_truthMatch             );
     outtree->Branch("mu_truthMinDR"             , &OUT::mu_truthMinDR             );
     
@@ -227,6 +240,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("ph_sceta"                  , &OUT::ph_sceta                  );
     outtree->Branch("ph_phi"                    , &OUT::ph_phi                    );
     outtree->Branch("ph_e"                      , &OUT::ph_e                      );
+    outtree->Branch("ph_scE"                    , &OUT::ph_scE                    );
     outtree->Branch("ph_pt_uncorr"              , &OUT::ph_pt_uncorr              );
     outtree->Branch("ph_HoverE"                 , &OUT::ph_HoverE                 );
     outtree->Branch("ph_HoverE12"               , &OUT::ph_HoverE12               );
@@ -322,6 +336,8 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     eval_el_tightTrig   = false;
     eval_el_mva_trig    = false;
     eval_el_mva_nontrig = false;
+
+    eval_mu_tight       = false;
 
     eval_ph_tight     = false;
     eval_ph_medium    = false;
@@ -435,6 +451,12 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
             }
         }
         if( mod_conf.GetName() == "BuildMuon" ) { 
+            std::map<std::string, std::string>::const_iterator eitr = mod_conf.GetInitData().find( "evalPID" );
+            if( eitr != mod_conf.GetInitData().end() ) {
+                std::string pid = eitr->second;
+                if( pid == "tight"     ) eval_mu_tight       = true;
+            }
+
             std::map<std::string, std::string>::const_iterator citr = mod_conf.GetInitData().find( "applyCorrections" );
             if( citr != mod_conf.GetInitData().end() && citr->second == "true" ) {
                 apply_muon_corrections=true;
@@ -601,6 +623,8 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
     OUT::mu_pfIso_pu     -> clear();
     OUT::mu_corrIso      -> clear();
     OUT::mu_triggerMatch -> clear();
+    OUT::mu_triggerMatchDiMu -> clear();
+    OUT::mu_passTight-> clear();
     OUT::mu_truthMatch   -> clear();
     OUT::mu_truthMinDR   -> clear();
     OUT::mu_n          = 0;
@@ -633,7 +657,9 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
 
         // trigger matching
         bool trigMatch = false;
+        bool trigMatchDiMu = false;
         if( ( (IN::muTrg->at(idx) & 0x1) == 0x1 ) || ( (IN::muTrg->at(idx) & 0x2) == 0x2 ) ) trigMatch = true;
+        if( ( (IN::muTrg->at(idx) & 0x4) == 0x4 ) || ( (IN::muTrg->at(idx) & 0x8) == 0x8 ) ) trigMatchDiMu = true;
 
         // muon momentum corrections
         #ifdef EXISTS_isData
@@ -655,19 +681,25 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         }
         float corriso = muPFIsoCH+sum_neu;
 
-        if( !config.PassBool ( "cut_isGlobal"   , is_global_muon ) ) continue;
-        if( !config.PassBool ( "cut_isPF"       , is_pf_muon     ) ) continue;
         if( !config.PassFloat( "cut_pt"         , pt             ) ) continue;
         if( !config.PassFloat( "cut_abseta"     , fabs(eta)      ) ) continue;
-        if( !config.PassFloat( "cut_chi2"       , chi2           ) ) continue;
-        if( !config.PassFloat( "cut_nMuonHits"  , nHits          ) ) continue;
-        if( !config.PassFloat( "cut_nStations"  , muStations     ) ) continue;
-        if( !config.PassFloat( "cut_nPixelHits" , nPixHit        ) ) continue;
-        if( !config.PassFloat( "cut_nTrkLayers" , nTrkLayers     ) ) continue;
-        if( !config.PassFloat( "cut_d0"         , fabs(d0)       ) ) continue;
-        if( !config.PassFloat( "cut_z0"         , fabs(z0)       ) ) continue;
-        if( !config.PassFloat( "cut_trkiso"     , tkIso/pt       ) ) continue;
-        if( !config.PassFloat( "cut_corriso"    , corriso/pt     ) ) continue;
+
+        bool pass_tight = true;
+
+        if( !config.PassBool ( "cut_isGlobal"   , is_global_muon ) ) pass_tight = false;
+        if( !config.PassBool ( "cut_isPF"       , is_pf_muon     ) ) pass_tight = false;
+        if( !config.PassFloat( "cut_chi2"       , chi2           ) ) pass_tight = false;
+        if( !config.PassFloat( "cut_nMuonHits"  , nHits          ) ) pass_tight = false;
+        if( !config.PassFloat( "cut_nStations"  , muStations     ) ) pass_tight = false;
+        if( !config.PassFloat( "cut_nPixelHits" , nPixHit        ) ) pass_tight = false;
+        if( !config.PassFloat( "cut_nTrkLayers" , nTrkLayers     ) ) pass_tight = false;
+        if( !config.PassFloat( "cut_d0"         , fabs(d0)       ) ) pass_tight = false;
+        if( !config.PassFloat( "cut_z0"         , fabs(z0)       ) ) pass_tight = false;
+        if( !config.PassFloat( "cut_trkiso"     , tkIso/pt       ) ) pass_tight = false;
+        if( !config.PassFloat( "cut_corriso"    , corriso/pt     ) ) pass_tight = false;
+
+        // evaluate tight cuts if requested
+        if( eval_mu_tight && !pass_tight ) continue;
 
         OUT::mu_n++;
 
@@ -691,6 +723,8 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         OUT::mu_pfIso_pu     -> push_back(muPFIsoPU);
         OUT::mu_corrIso      -> push_back(corriso);
         OUT::mu_triggerMatch -> push_back( trigMatch );
+        OUT::mu_triggerMatchDiMu -> push_back( trigMatchDiMu );
+        OUT::mu_passTight     -> push_back( pass_tight );
 
 
         std::vector<int> matchPID;
@@ -708,32 +742,36 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
 
 void RunModule::BuildElectron( ModuleConfig & config ) {
 
-    OUT::el_pt             -> clear();
-    OUT::el_eta            -> clear();
-    OUT::el_sceta          -> clear();
-    OUT::el_phi            -> clear();
-    OUT::el_e              -> clear();
-    OUT::el_pt_uncorr      -> clear();
-    OUT::el_e_uncorr       -> clear();
-    OUT::el_mva_nontrig    -> clear();
-    OUT::el_mva_trig       -> clear();
-    OUT::el_d0pv           -> clear();
-    OUT::el_z0pv           -> clear();
-    OUT::el_sigmaIEIE      -> clear();
-    OUT::el_pfiso30        -> clear();
-    OUT::el_pfiso40        -> clear();
-    OUT::el_triggerMatch   -> clear();
-    OUT::el_hasMatchedConv -> clear();
-    OUT::el_passTight      -> clear();
-    OUT::el_passMedium     -> clear();
-    OUT::el_passLoose      -> clear();
-    OUT::el_passVeryLoose  -> clear();
-    OUT::el_passTightTrig  -> clear();
-    OUT::el_passMvaNonTrig -> clear();
-    OUT::el_passMvaTrig    -> clear();
-    OUT::el_truthMatch_el  -> clear();
-    OUT::el_truthMinDR_el  -> clear();
-    OUT::el_truthMatchPt_el-> clear();
+    OUT::el_pt                    -> clear();
+    OUT::el_eta                   -> clear();
+    OUT::el_sceta                 -> clear();
+    OUT::el_phi                   -> clear();
+    OUT::el_e                     -> clear();
+    OUT::el_pt_uncorr             -> clear();
+    OUT::el_e_uncorr              -> clear();
+    OUT::el_mva_nontrig           -> clear();
+    OUT::el_mva_trig              -> clear();
+    OUT::el_d0pv                  -> clear();
+    OUT::el_z0pv                  -> clear();
+    OUT::el_sigmaIEIE             -> clear();
+    OUT::el_pfiso30               -> clear();
+    OUT::el_pfiso40               -> clear();
+    OUT::el_triggerMatch          -> clear();
+    OUT::el_hasMatchedConv        -> clear();
+    OUT::el_passTight             -> clear();
+    OUT::el_passMedium            -> clear();
+    OUT::el_passLoose             -> clear();
+    OUT::el_passVeryLoose         -> clear();
+    OUT::el_passTightTrig         -> clear();
+    OUT::el_passMvaNonTrig        -> clear();
+    OUT::el_passMvaTrig           -> clear();
+    OUT::el_passMvaNonTrigNoIso   -> clear();
+    OUT::el_passMvaTrigNoIso      -> clear();
+    OUT::el_passMvaNonTrigOnlyIso -> clear();
+    OUT::el_passMvaTrigOnlyIso    -> clear();
+    OUT::el_truthMatch_el         -> clear();
+    OUT::el_truthMinDR_el         -> clear();
+    OUT::el_truthMatchPt_el       -> clear();
     OUT::el_n              = 0;
 
 #ifdef EXISTS_nEle
@@ -806,13 +844,17 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         if( !config.PassFloat( "cut_abssceta"       , fabs(eta) ) ) continue;
         if( !config.PassFloat( "cut_abssceta_crack" , fabs(eta) ) ) continue;
 
-        bool pass_tight       = true;
-        bool pass_medium      = true;
-        bool pass_loose       = true;
-        bool pass_veryloose   = true;
-        bool pass_tightTrig   = true;
-        bool pass_mva_trig    = true;
-        bool pass_mva_nontrig = true;
+        bool pass_tight             = true;
+        bool pass_medium            = true;
+        bool pass_loose             = true;
+        bool pass_veryloose         = true;
+        bool pass_tightTrig         = true;
+        bool pass_mva_trig          = true;
+        bool pass_mva_nontrig       = true;
+        bool pass_mva_trig_noiso    = true;
+        bool pass_mva_nontrig_noiso = true;
+        bool pass_mva_trig_onlyiso    = true;
+        bool pass_mva_nontrig_onlyiso = true;
 
         bool use_eval = eval_el_tight || eval_el_medium || eval_el_loose || eval_el_veryloose || eval_el_tightTrig || eval_el_mva_nontrig || eval_el_mva_trig;
 
@@ -1273,18 +1315,21 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                 if( fabs(sceta) < 0.8 ) {
                     if( !config.PassFloat( "cut_mva_central_lowpt_mvanontrig"   , mva_nontrig  ) ) {
                         pass_mva_nontrig =false;
+                        pass_mva_nontrig_noiso =false;
                         if( eval_el_mva_nontrig ) continue;
                     }
                 }
                 else if( fabs(sceta) < 1.479 ) {
                     if( !config.PassFloat( "cut_mva_crack_lowpt_mvanontrig"   , mva_nontrig  ) ) {
                         pass_mva_nontrig =false;
+                        pass_mva_nontrig_noiso =false;
                         if( eval_el_mva_nontrig ) continue;
                     }
                 }
                 else if( fabs(sceta) < 2.5 ) {
                     if( !config.PassFloat( "cut_mva_endcap_lowpt_mvanontrig"   , mva_nontrig  ) ) {
                         pass_mva_nontrig =false;
+                        pass_mva_nontrig_noiso =false;
                         if( eval_el_mva_nontrig ) continue;
                     }
                 }
@@ -1292,18 +1337,21 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                 if( fabs(sceta) < 0.8 ) {
                     if( !config.PassFloat( "cut_mva_central_highpt_mvanontrig"   , mva_nontrig  ) ) {
                         pass_mva_nontrig =false;
+                        pass_mva_nontrig_noiso =false;
                         if( eval_el_mva_nontrig ) continue;
                     }
                 }
                 else if( fabs(sceta) < 1.479 ) {
                     if( !config.PassFloat( "cut_mva_crack_highpt_mvanontrig"   , mva_nontrig  ) ) {
                         pass_mva_nontrig =false;
+                        pass_mva_nontrig_noiso =false;
                         if( eval_el_mva_nontrig ) continue;
                     }
                 }
                 else if( fabs(sceta) < 2.5 ) {
                     if( !config.PassFloat( "cut_mva_endcap_highpt_mvanontrig"   , mva_nontrig  ) ) {
                         pass_mva_nontrig =false;
+                        pass_mva_nontrig_noiso =false;
                         if( eval_el_mva_nontrig ) continue;
                     }
                 }
@@ -1312,14 +1360,17 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
 
             if( !config.PassFloat( "cut_relpfiso_mvanontrig"   , pfiso40/pt      ) ) {
                 pass_mva_nontrig=false;
+                pass_mva_nontrig_onlyiso=false;
                 if( eval_el_mva_nontrig ) continue;
             }
             if( !config.PassInt( "cut_misshits_mvanontrig"   , misshits      ) ) {
                 pass_mva_nontrig=false;
+                pass_mva_nontrig_noiso =false;
                 if( eval_el_mva_nontrig ) continue;
             }
             if( !config.PassFloat( "cut_sip_mvanontrig"   , sip     ) ) {
                 pass_mva_nontrig=false;
+                pass_mva_nontrig_noiso =false;
                 if( eval_el_mva_nontrig ) continue;
             }
         }
@@ -1331,18 +1382,21 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                 if( fabs(sceta) < 0.8 ) {
                     if( !config.PassFloat( "cut_mva_central_lowpt_mvatrig"   , mva_trig  ) ) {
                         pass_mva_trig =false;
+                        pass_mva_trig_noiso = false;
                         if( eval_el_mva_trig ) continue;
                     }
                 }
                 else if( fabs(sceta) < 1.479 ) {
                     if( !config.PassFloat( "cut_mva_crack_lowpt_mvatrig"   , mva_trig  ) ) {
                         pass_mva_trig =false;
+                        pass_mva_trig_noiso = false;
                         if( eval_el_mva_trig ) continue;
                     }
                 }
                 else if( fabs(sceta) < 2.5 ) {
                     if( !config.PassFloat( "cut_mva_endcap_lowpt_mvatrig"   , mva_trig  ) ) {
                         pass_mva_trig =false;
+                        pass_mva_trig_noiso = false;
                         if( eval_el_mva_trig ) continue;
                     }
                 }
@@ -1350,18 +1404,21 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                 if( fabs(sceta) < 0.8 ) {
                     if( !config.PassFloat( "cut_mva_central_highpt_mvatrig"   , mva_trig  ) ) {
                         pass_mva_trig =false;
+                        pass_mva_trig_noiso = false;
                         if( eval_el_mva_trig ) continue;
                     }
                 }
                 else if( fabs(sceta) < 1.479 ) {
                     if( !config.PassFloat( "cut_mva_crack_highpt_mvatrig"   , mva_trig  ) ) {
                         pass_mva_trig =false;
+                        pass_mva_trig_noiso = false;
                         if( eval_el_mva_trig ) continue;
                     }
                 }
                 else if( fabs(sceta) < 2.5 ) {
                     if( !config.PassFloat( "cut_mva_endcap_highpt_mvatrig"   , mva_trig  ) ) {
                         pass_mva_trig =false;
+                        pass_mva_trig_noiso = false;
                         if( eval_el_mva_trig ) continue;
                     }
                 }
@@ -1369,14 +1426,17 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
 
             if( !config.PassFloat( "cut_relpfiso_mvatrig"   , pfiso40/pt      ) ) {
                 pass_mva_trig=false;
+                pass_mva_trig_onlyiso=false;
                 if( eval_el_mva_trig ) continue;
             }
             if( !config.PassInt( "cut_misshits_mvatrig"   , misshits      ) ) {
                 pass_mva_trig=false;
+                pass_mva_trig_noiso = false;
                 if( eval_el_mva_trig ) continue;
             }
             if( !config.PassInt( "cut_convfit_mvatrig"   , convfit     ) ) {
                 pass_mva_trig=false;
+                pass_mva_trig_noiso = false;
                 if( eval_el_mva_trig ) continue;
             }
         }
@@ -1405,16 +1465,20 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         OUT::el_sigmaIEIE      -> push_back( sigmaIEIE );
         // sigmaIEIE cori
         //
-        OUT::el_pfiso30        -> push_back( pfiso30 );
-        OUT::el_pfiso40        -> push_back( pfiso40 );
-        OUT::el_hasMatchedConv -> push_back( convfit );
-        OUT::el_passTight      -> push_back(pass_tight);
-        OUT::el_passMedium     -> push_back(pass_medium);
-        OUT::el_passLoose      -> push_back(pass_loose);
-        OUT::el_passVeryLoose  -> push_back(pass_veryloose);
-        OUT::el_passTightTrig  -> push_back(pass_tightTrig);
-        OUT::el_passMvaTrig    -> push_back(pass_mva_trig);
-        OUT::el_passMvaNonTrig -> push_back(pass_mva_nontrig);
+        OUT::el_pfiso30               -> push_back( pfiso30 );
+        OUT::el_pfiso40               -> push_back( pfiso40 );
+        OUT::el_hasMatchedConv        -> push_back( convfit );
+        OUT::el_passTight             -> push_back(pass_tight);
+        OUT::el_passMedium            -> push_back(pass_medium);
+        OUT::el_passLoose             -> push_back(pass_loose);
+        OUT::el_passVeryLoose         -> push_back(pass_veryloose);
+        OUT::el_passTightTrig         -> push_back(pass_tightTrig);
+        OUT::el_passMvaTrig           -> push_back(pass_mva_trig);
+        OUT::el_passMvaNonTrig        -> push_back(pass_mva_nontrig);
+        OUT::el_passMvaTrigNoIso      -> push_back(pass_mva_trig_noiso);
+        OUT::el_passMvaNonTrigNoIso   -> push_back(pass_mva_nontrig_noiso);
+        OUT::el_passMvaTrigOnlyIso    -> push_back(pass_mva_trig_onlyiso);
+        OUT::el_passMvaNonTrigOnlyIso -> push_back(pass_mva_nontrig_onlyiso);
         OUT::el_triggerMatch   -> push_back( trigMatch );
 
         // check truth matching
@@ -1481,6 +1545,7 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
     OUT::ph_sceta                  -> clear();
     OUT::ph_phi                    -> clear();
     OUT::ph_e                      -> clear();
+    OUT::ph_scE                    -> clear();
     OUT::ph_pt_uncorr              -> clear();
     OUT::ph_HoverE                 -> clear();
     OUT::ph_HoverE12               -> clear();
@@ -1923,6 +1988,7 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
         OUT::ph_sceta                -> push_back(sceta);
         OUT::ph_phi                  -> push_back(phi);
         OUT::ph_e                    -> push_back(pt*cosh(eta));
+        OUT::ph_scE                  -> push_back(SCRawE);
         OUT::ph_pt_uncorr            -> push_back(IN::phoEt->at(idx));
         OUT::ph_HoverE               -> push_back(hovere);
         OUT::ph_HoverE12             -> push_back(hovere12);
@@ -1984,10 +2050,10 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
 
         bool iseb = false;
         bool isee = false;
-        if( fabs(sceta) < 1.479 ) {
+        if( fabs(sceta) < 1.44 ) {
             iseb = true;
         }
-        if( fabs(sceta) > 1.566 ) {
+        if( fabs(sceta) > 1.57 ) {
             isee = true;
         }
         OUT::ph_IsEB -> push_back( iseb );
@@ -2142,7 +2208,25 @@ void RunModule::WeightEvent( ModuleConfig & config ) const {
     OUT::PUWeight = num/den;
 
     if( OUT::PUWeight < 0.05 ) {
-        std::cout << "PUweight is zero for PUVal " << puval << std::endl;
+        std::cout << "PUweight is zero for PUVal " << puval << " will average over +- 2.5 to get non-zer value " << std::endl;
+
+        int bin_min_sample = puweight_sample_hist->FindBin(puval-2.5);
+        int bin_max_sample = puweight_sample_hist->FindBin(puval+2.5);
+        int bin_min_data = puweight_data_hist->FindBin(puval-2.5);
+        int bin_max_data = puweight_data_hist->FindBin(puval+2.5);
+
+        val_data = puweight_data_hist->Integral(bin_min_data, bin_max_data);
+        val_sample = puweight_sample_hist->Integral(bin_min_sample, bin_max_sample);
+
+        num = val_data/tot_data;
+        den = val_sample/tot_sample;
+
+        OUT::PUWeight = num/den;
+
+        if( OUT::PUWeight < 0.05 ) {
+            std::cout << "PUweight is still zero!" << std::endl;
+        }
+
     }
 }
 

@@ -45,10 +45,12 @@ class RunModule : public virtual RunModuleBase {
 namespace OUT {
 
     Int_t n_gen_photon;
+    Int_t n_gen_photon_pt10;
     Int_t n_non_prompt_photon;
     Int_t n_ewk_photon;
     Int_t n_lep_photon;
     Int_t n_qcd_photon;
+    Int_t n_lep_photon_raw;
 
 
 };

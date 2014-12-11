@@ -65,7 +65,13 @@ else
 	LDFLAGS      = -O2 -I$(INC_DIR) $(INCLUDE) 
 endif
 
-OBJECT_ANA = $(OBJ_DIR)/RunAnalysis.o $(OBJ_DIR)/BranchInit.o
+OBJECT_INIT = $(OBJ_DIR)/BranchInit.o
+OBJECT_RUN = $(OBJ_DIR)/RunAnalysis.o
+
+SRC_INIT = $(SRC_DIR)/BranchInit.cxx
+SRC_RUN = $(SRC_DIR)/RunAnalysis.cxx
+
+OBJECT_ANA = $(OBJECT_INIT) $(OBJECT_RUN)
 LINKDEF = $(OBJ_DIR)/cintLib.so
 
 ifneq  ($(ADDTL_OBJ),) 
@@ -96,6 +102,12 @@ $(SRC_DIR)/Dict.cxx: $(INC_DIR)/include/LinkDef.h
 $(LINKDEF):  $(SRC_DIR)/Dict.cxx
 	g++ -shared -o$@ `root-config --ldflags` $(CXXFLAGS) -I$(ROOTSYS)/include $^
 
+#$(OBJECT_INIT) :
+#	g++ $(CXXFLAGS) -c  $(SRC_INIT) -o $@ -I../$(INC_DIR)
+#
+#$(OBJECT_RUN) : 
+#	g++ $(CXXFLAGS) -c $(SRC_RUN) -o $@ -I../$(INC_DIR)
+
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cxx
 	g++ $(CXXFLAGS) -c $^ -o $@ -I../$(INC_DIR)
 
@@ -108,5 +120,8 @@ clean:
 
 veryclean : 
 	rm -f $(OBJ_DIR)/*.o 
-	rm $(SRC_DIR)/Dict.cxx
-	rm $(INC_DIR)/LinkDef.h
+	rm -f $(SRC_DIR)/Dict.cxx
+	rm -f $(SRC_DIR)/BranchInit.cxx
+	rm -f $(INC_DIR)/LinkDef.h
+	rm -f $(INC_DIR)/BranchDefs.h
+	rm -f $(INC_DIR)/BranchInit.h

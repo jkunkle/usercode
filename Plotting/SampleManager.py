@@ -34,6 +34,29 @@ for p in atlasstylesearch:
 #ROOT.SetAtlasStyle()
 ROOT.gStyle.SetPalette(1)
 
+class Printer() :
+
+    def __init__ (self) :
+        self.entries = []
+
+    def AddLine( self, line ) :
+        self.entries.append( line )
+
+    def Print(self) :
+
+        # get number of columns
+        max_cols = max( [len(line) for line in self.entries ] )
+        colwidths = [0]*max_cols
+
+        # collect max length of each column
+        for line in self.entries :
+            for idx, col in enumerate(line) :
+                if len(col) > colwidths[idx] :
+                    colwidths[idx] = len(col)
+
+        for line in self.entries :
+            print ' '.join( [col.ljust(colwidths[idx]) for idx, col in enumerate(line) ] )
+
 class Sample :
     """ Store information about one sample """
 
@@ -62,6 +85,11 @@ class Sample :
 
         # if the sample is to be used as a ratio
         self.isRatio = kwargs.get('isRatio', False)
+
+        # if true for any of the samples that are drawn
+        # a shaded error band is drawn on the top of the stack
+        # using errors from all samples
+        self.displayErrBand = kwargs.get('displayErrBand', False)
 
         # color determines the histogram or line color, default=black
         self.color = kwargs.get('color', ROOT.kBlack)
@@ -341,6 +369,10 @@ class DrawConfig :
             basename = basename.split('[')[0]
         if basename.count('+') :
             basename = basename.replace('+', '_')
+        if basename.count('(') :
+            basename = basename.replace('(', '_')
+        if basename.count(')') :
+            basename = basename.replace(')', '_')
 
         if basename in self.used_names :
             for i in range( 0, 1000000  ) :
@@ -464,11 +496,70 @@ class DrawConfig :
         return [v['cppselection'] for v in self.hist_configs.values()]
 
     def get_cpp_selection_str( self, selection, branches ) :
+        """ Create selection string in c++ 
 
-        modified_selection = selection
+            branches is a list of branches in the tree
+            such that we can search the selection string
+            for occurences of these branches
+        """
+
+        # for each branch, find all occurances of that branch
+        # and store the branch name and end of the name
+        # indexed by the start index
+        # Then make the replacement for the largest
+        # string.  This avoids problems when one branch
+        # is a substring of another and the incorrect
+        # replacement is made
+        matched_locations = {}
         for br in branches :
-            if modified_selection.count(br['name']) and not modified_selection.count( 'IN::'+br['name']):
-                modified_selection = modified_selection.replace( br['name'], 'IN::'+br['name'])
+            for selitr in re.finditer( br['name'], selection ) :
+                start = selitr.start()
+                end   = selitr.end()
+                br_range = (start, end)
+                matched_locations.setdefault( br_range , [] ).append( br['name'] )
+
+        max_ranges = {}
+        ranges = list( matched_locations.keys() )
+        for idx1, range1 in enumerate(ranges) :
+            has_sub_range = False
+            for idx2, range2 in enumerate(ranges) :
+                if idx1 == idx2 : 
+                    continue
+                if range1[0] == range2[0] : #they start at the same place
+                    if range1[1] <= range2[1] :
+                        has_sub_range = True
+                if range1[1] == range2[1] : # they end at the same place 
+                    if range1[0] >= range2[0] :
+                        has_sub_range = True
+                if range1[0] > range2[0] and range1[1] < range2[1] :
+                    has_sub_range = True
+
+            if not has_sub_range :
+                max_ranges[range1] = matched_locations[range1]
+
+        print max_ranges
+        modified_selection = str(selection)
+        # start from the end of the string (max start)
+        # so that the found indices don't change
+        # when the string is modified
+        all_start = max_ranges.keys()
+        all_start.sort()
+        for max_range in reversed( all_start ) :
+            max_br = max_ranges[max_range]
+            if len( max_br ) != 1 :
+                print 'Matched multiple branches with the max range!  This must be fixed!'
+                sys.exit(1)
+
+            print 'Modified sel before'
+            print 'start = %d, end= %d, br = %s' %( max_range[0], max_range[1], max_br[0] )
+            print modified_selection
+            modified_selection = modified_selection[:max_range[0]] + 'IN::' + max_br[0] + modified_selection[max_range[1]:]
+            print 'Modified sel after'
+            print modified_selection
+
+        #for br in branches :
+        #    if modified_selection.count(br['name']) and not modified_selection.count( 'IN::'+br['name']):
+        #        modified_selection = modified_selection.replace( br['name'], 'IN::'+br['name'])
         # a bit hacked
         for i in range(0, 10) :
             modified_selection = modified_selection.replace('[%s]'%i, '->at(%s)'%i )
@@ -480,16 +571,44 @@ class DrawConfig :
 
     def get_cpp_var_str(self, var, branches) :
 
-        modified_var = var
-        for br in branches :
-            if modified_var.count(br['name']) and not modified_var.count( 'IN::'+br['name']):
-                modified_var= modified_var.replace( br['name'], 'IN::'+br['name'])
+        return self.get_cpp_selection_str( var, branches )
+        ## for each branch, find all occurances of that branch
+        ## and store the branch name and end of the name
+        ## indexed by the start index
+        ## Then make the replacement for the largest
+        ## string.  This avoids problems when one branch
+        ## is a substring of another and the incorrect
+        ## replacement is made
+        #matched_locations = {}
+        #for br in branches :
+        #    for selitr in re.finditer( br['name'], var ) :
+        #        start = selitr.start()
+        #        matched_locations.setdefault( start , {} )
+        #        matched_locations[start][selitr.end()-start] = br['name']
 
-        # a bit hacked
-        for i in range(0, 10) :
-            modified_var= modified_var.replace('[%s]'%i, '->at(%s)'%i )
+        #modified_var = str(var)
+        ## start from the end of the string (max start)
+        ## so that the found indices don't change
+        ## when the string is modified
+        #all_start = matched_locations.keys()
+        #all_start.sort()
+        #for start in reversed( all_start ) :
+        #    matches = matched_locations[start]
+        #    max_match  = max( matches.keys() )
+        #    max_br = matches[max_match]
 
-        return modified_var
+        #    modified_var = modified_var[:start] + 'IN::' + max_br + modified_var[start+max_match:]
+
+        ##modified_var = var
+        ##for br in branches :
+        ##    if modified_var.count(br['name']) and not modified_var.count( 'IN::'+br['name']):
+        ##        modified_var= modified_var.replace( br['name'], 'IN::'+br['name'])
+
+        ## a bit hacked
+        #for i in range(0, 10) :
+        #    modified_var= modified_var.replace('[%s]'%i, '->at(%s)'%i )
+
+        #return modified_var
 
     
     def get_eval_selection_string(self, sample, treename) :
@@ -704,6 +823,7 @@ class SampleManager :
             print 'Could not locate old sample'
             return None
 
+        print 'Create new sample with name ', newname
         newsample = copy.copy( oldsample )
         newsample.name = newname
         
@@ -845,6 +965,8 @@ class SampleManager :
     #--------------------------------
     def activate_sample(self, samp_name) :
         sel_samps = self.get_samples(name=samp_name)
+        for s in self.get_samples() :
+            print s.name
         if not sel_samps :
             print 'No sample with name %s' %samp_name
         elif len(sel_samps) > 1 :
@@ -942,6 +1064,9 @@ class SampleManager :
 
     #--------------------------------
     def read_xsfile( self, file, lumi ) :
+        print '-------------------------------------'
+        print ' LOAD CROSS SECTION INFO'
+        print '-------------------------------------'
         weightMap = {}
         if file is None :
             return weightMap
@@ -954,19 +1079,23 @@ class SampleManager :
 
         ofile = open( file )
         xsdict = eval( ofile.read() )
+        xs_printer = Printer()
         for name, values in xsdict.iteritems() :
 
             lumi_sample_den = values['cross_section']*values['gen_eff']*values['k_factor']
             if lumi_sample_den == 0 :
                 print 'Cannot calculate cross section for %s.  It will receive a weight of 1.' %name
                 lumi_sample = lumi
+                xs_printer.AddLine( ['Sample %s ' %name, 'cross section : %f pb' %values['cross_section'], 'N Events : %d' %(values['n_evt']), 'sample lumi : %f' %(lumi_sample), 'Scale : ERROR' ] )
             else :
                 lumi_sample = values['n_evt']/float(lumi_sample_den)
 
             lumi_scale = float(lumi)/lumi_sample;
-            print 'Sample %s : lumi_sample = %f, scale = %f' %( name, lumi_sample, lumi_scale)
+            xs_printer.AddLine( ['Sample %s ' %name, 'cross section : %f pb' %values['cross_section'], 'N Events : %d' %(values['n_evt']), 'sample lumi : %f' %(lumi_sample), 'Scale : %f' %lumi_scale ] )
 
             weightMap[name] = lumi_scale
+
+        xs_printer.Print()
 
         return weightMap
 
@@ -1094,23 +1223,50 @@ class SampleManager :
                 else :
                     all_samples.append(sample)
 
+        # remove output directory
+        if os.path.isdir( output_loc ) :
+            os.system( 'rm -rf %s' %output_loc )
+
         configs = []
         for sample in all_samples :
             config_name = '%s/configs/config_%s.txt' %(compile_base, sample.name)
-            file_evt_map = [ ([f.GetTitle() for f in sample.chain.GetListOfFiles()], [(0, sample.chain.GetEntries())] ) ]
+            entries = sample.chain.GetEntries()
+            file_evt_map = core.get_file_evt_map( [f.GetTitle() for f in sample.chain.GetListOfFiles()], nsplit=5, nFilesPerJob=0, totalEvents=None, treeName='ggNtuplizer/EventTree')
+            #file_evt_map = [ ([f.GetTitle() for f in sample.chain.GetListOfFiles()], [(0, entries)] ) ]
             core.write_config([], config_name, sample.chain.GetName(), output_loc, '%s.root'%sample.name, file_evt_map, sample=sample.name, disableOutputTree=True )
-            configs.append(config_name)
+            configs.append((entries, config_name))
 
-        run_cmds = ['%s/RunAnalysis --conf_file %s' %( compile_base, c ) for c in configs ]
-        p=multiprocessing.Pool(4)
+        
+        #configs.sort(reverse=True)
+
+        run_cmds = ['%s/RunAnalysis --conf_file %s' %( compile_base, c[1] ) for c in configs ]
+        p=multiprocessing.Pool(6)
         p.map(os.system, run_cmds)
+
+        file_map = {}
+        for file in os.listdir( '%s/Job_0000' %output_loc ) :
+            file_map[file] = []
+
+        for top, dirs, files in os.walk( output_loc ) :
+            for file in files :
+                if file in file_map.keys() :
+                    file_map[file].append( top+'/'+file ) 
+
+        comb_dir = output_loc+'/COMB'
+        os.makedirs( comb_dir )
+        for base, files in file_map.iteritems() :
+            if len(files) == 1 :
+                os.system( 'cp %s %s/' %(files[0], comb_dir ) )
+            else :
+                os.system( 'hadd %s/%s %s' %( comb_dir, base, ' '.join( files ) ) )
+
 
         # Now get the histograms and draw
         for draw_config in self.draw_commands:
             if draw_config.compare_hists :
-                self.CompareFromHistFiles( draw_config, output_loc )
+                self.CompareFromHistFiles( draw_config, comb_dir )
             else :
-                self.DrawFromHistFiles( draw_config, output_loc )
+                self.DrawFromHistFiles( draw_config, comb_dir )
 
     def DrawFromHistFiles(self,  draw_config, output_loc ) :
 
@@ -1125,7 +1281,7 @@ class SampleManager :
                 all_samples.append( sample )
 
         for sample in all_samples :
-            filename = '%s/Job_0000/%s.root' %( output_loc, sample.name )
+            filename = '%s/%s.root' %( output_loc, sample.name )
             for name  in draw_config.hist_configs.keys() :
                 self.load_hist_from_file_cache( sample, name, filename )
 
@@ -1177,7 +1333,7 @@ class SampleManager :
 
             if newsamp.IsGroupedSample() :
                 for subsamp in self.GetLowestGroupedSamples(newsamp) :
-                    filename = '%s/Job_0000/%s.root' %( output_loc, subsamp.name )
+                    filename = '%s/%s.root' %( output_loc, subsamp.name )
                     self.load_hist_from_file_cache( subsamp, name, filename, debug=True )
                     subsamp.hist.Draw()
 
@@ -1185,7 +1341,7 @@ class SampleManager :
                 newsamp.hist.Draw()
                     
             else :
-                filename = '%s/Job_0000/%s.root' %( output_loc, newsamp.name )
+                filename = '%s/%s.root' %( output_loc, newsamp.name )
                 self.load_hist_from_file_cache( newsamp , name, filename )
 
             created_samples.append(newsamp)
@@ -1227,14 +1383,14 @@ class SampleManager :
 
         # make the legend
         step = len(created_samples)
-        self.curr_legend = self.create_standard_legend(step, draw_config.doRatio() )
+        self.curr_legend = self.create_standard_legend(step, draw_config=draw_config )
 
         self.create_same_legend( draw_config.get_legend_entries() , created_samples )
 
         self.DrawCanvas(self.curr_canvases['same'], draw_config)
 
         if draw_config.stack_dump_params :
-            self.DumpStack( draw_config.stack_dump_params['dirname'], draw_config.stack_dump_params['filename'] )
+            self.DumpStack( draw_config.stack_dump_params['dirname'], draw_config.stack_dump_params['filename'], doRatio=draw_config.doRatio() )
         if draw_config.stack_save_params :
             self.SaveStack( draw_config.stack_save_params['filename'], draw_config.stack_save_params['dirname'], draw_config.stack_save_params['canname'] )
             
@@ -1441,6 +1597,14 @@ class SampleManager :
             else :
                 if br.GetName().count(key) :
                     print br.GetName()
+
+    #---------------------------------------
+    def list_hists( self ) :
+        for samp in self.get_samples() :
+            for ofile in samp.ofiles :
+                if ofile is not None :
+                    ofile.ls()
+                    break
 
     #---------------------------------------
     def SaveStack( self, filename, outputDir=None, canname=None, write_command=False, command_file='commands.txt'  ) :
@@ -1670,7 +1834,7 @@ class SampleManager :
         self.ReadSamples(self.samples_conf )
 
     #--------------------------------
-    def AddSample(self, name, path=None, filekey=None, isData=False, scale=None, isSignal=False, drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, isActive=True, useXSFile=False, XSName=None, legend_name=None) :
+    def AddSample(self, name, path=None, filekey=None, isData=False, scale=None, isSignal=False, drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, isActive=True, displayErrBand=False, useXSFile=False, XSName=None, legend_name=None) :
         """ Create an entry for this sample """
 
         # get all root files under this sample
@@ -1716,7 +1880,7 @@ class SampleManager :
                     thisscale *= self.weightMap[xsname]
                     print 'Update scale for %s' %name
 
-            thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, color=plotColor, drawRatio=drawRatio, scale=thisscale, legendName=legend_name)
+            thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, displayErrBand=displayErrBand, color=plotColor, drawRatio=drawRatio, scale=thisscale, legendName=legend_name)
             thisSample.AddFiles( input_files, self.treeName, self.readHists )
 
             self.samples.append(thisSample)
@@ -1779,7 +1943,7 @@ class SampleManager :
         return input_files
 
     #--------------------------------
-    def AddSampleGroup(self, name, input_samples=[], isData=False, scale=None, isSignal=False, drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, legend_name=None, isActive=True) :
+    def AddSampleGroup(self, name, input_samples=[], isData=False, scale=None, isSignal=False, drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, legend_name=None, isActive=True, displayErrBand=False ) :
         """Make a new sample from any number of samples that have already been added via AddSample
 
            For example if a process is made of a number of individual samples that each have their
@@ -1810,7 +1974,7 @@ class SampleManager :
             thisscale *= scale
         
         print 'Grouping %s' %name
-        thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, color=plotColor, drawRatio=drawRatio, scale=thisscale, legendName=legend_name)
+        thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, displayErrBand=displayErrBand, color=plotColor, drawRatio=drawRatio, scale=thisscale, legendName=legend_name)
 
         for samp in available_samples :
 
@@ -1915,11 +2079,13 @@ class SampleManager :
             print 'Could not import module %s' %module_path
         
         if hasattr(ImportedModule, 'config_samples') :
+            print '-------------------------------------'
+            print 'BEGIN READING SAMPLES'
+            print '-------------------------------------'
             ImportedModule.config_samples(self)
         else :
             print 'ERROR - samplesConf does not implement a function called config_samples '
             sys.exit(-1)
-
         
         if hasattr(ImportedModule, 'print_examples') :
             ImportedModule.print_examples()
@@ -1927,7 +2093,7 @@ class SampleManager :
             print 'WARNING - samplesConf does not implement a function called print_examples '
 
 
-    def DrawHist(self, histpath, rebin=None, varRebinThresh=None, doratio=False, ylabel=None, xlabel=None, rlabel=None, logy=False, ymin=None, ymax=None, rmin=None, rmax=None, labelStyle=None ) :
+    def DrawHist(self, histpath, rebin=None, varRebinThresh=None, doratio=False, ylabel=None, xlabel=None, rlabel=None, logy=False, ymin=None, ymax=None, rmin=None, rmax=None, label_config={}, legend_config={} ) :
 
         self.clear_all()
         self.extract_active_samples( histpath )
@@ -1940,8 +2106,7 @@ class SampleManager :
                 if samp.hist is not None :
                     samp.hist.Rebin(rebin)
 
-        
-        draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel} )
+        draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel} , label_config=label_config, legend_config=legend_config)
         self.MakeStack(draw_config )
 
         if ylabel is None :
@@ -1949,12 +2114,33 @@ class SampleManager :
             ylabel = 'Events / %.1f GeV' %binwidth
         if rlabel is None :
             rlabel = 'Data / MC'
-            
-        self.DrawCanvas(self.curr_stack, draw_config, datahists=['Data'],sighists=self.get_signal_samples()  )
+
+        errSamp = None
+        for samp in self.get_samples( isActive=True ) :
+            if samp.displayErrBand :
+                print samp.name
+                all_stack_hist = self.get_samples( name='__AllStack__' )[0].hist
+                if errSamp is None :
+                    errSamp = self.clone_sample( samp.name, 'err_band', temporary=True )
+                    errSamp.hist = all_stack_hist.Clone('err_band')
+                    for bin in range(1, errSamp.hist.GetNbinsX() + 1 ) :
+                        errSamp.hist.SetBinContent(bin, 0)
+                        errSamp.hist.SetBinError(bin, 0)
+                for bin in range(1, all_stack_hist.GetNbinsX()+1 ) :
+                    errSamp.hist.SetBinContent( bin, all_stack_hist.GetBinContent( bin ) )
+                    curr_err = errSamp.hist.GetBinError( bin )
+                    this_err = samp.hist.GetBinError(bin)
+                    print 'bin = %d, curr_err = %f, new err = %f' %( bin, curr_err, this_err )
+                    errSamp.hist.SetBinError( bin, math.sqrt( curr_err*curr_err + this_err*this_err )  )
+
+        if errSamp is not None :
+            errSamp.graph = ROOT.TGraphErrors( errSamp.hist )
+
+        self.DrawCanvas(self.curr_stack, draw_config, datahists=['Data'],sighists=self.get_signal_samples(), errhists=['err_band']  )
 
 
     #def Draw(self, varexp, selection, histpars, doratio=False, ylabel=None, xlabel=None, rlabel=None, logy=False, ymin=None, ymax=None, ymax_scale=None, rmin=None, rmax=None, useModel=False, treeHist=None, treeSelection=None, labelStyle=None, extra_label=None, extra_label_loc=None, generate_data_from_sample=None, replace_selection_for_sample={}, legendConfig=None  ) :
-    def Draw(self, varexp, selection, histpars, hist_config={}, label_config={}, legend_config=None, treeHist=None, treeSelection=None, labelStyle=None, extra_label=None, extra_label_loc=None, generate_data_from_sample=None, replace_selection_for_sample={} , useModel=False ) :
+    def Draw(self, varexp, selection, histpars, hist_config={}, label_config={}, legend_config={}, treeHist=None, treeSelection=None, labelStyle=None, extra_label=None, extra_label_loc=None, generate_data_from_sample=None, replace_selection_for_sample={} , useModel=False ) :
 
         
         if self.collect_commands :
@@ -2117,10 +2303,8 @@ class SampleManager :
                 if rlabel is None :
                     rlabel = 'Data / MC'
                     
-                print 'GOTHERE4'
                 self.DrawCanvas(self.curr_stack, ylabel=ylabel, xlabel=xlabel, rlabel=rlabel, logy=logy, ymin=ymin, ymax=ymax, ymax_scale=ymax_scale, rmin=rmin, rmax=rmax, datahists=['Data'], sighists=self.get_signal_samples(), doratio=doratio, labelStyle=labelStyle, extra_label=extra_label, extra_label_loc=extra_label_loc )
 
-                print 'GOTHERE5'
                 yield (xmin, xmax, ymin, ymax)
 
 
@@ -2190,7 +2374,8 @@ class SampleManager :
         for sname in self.stack_order :
             drawn_samples+=self.get_samples( name=sname, failed_draw=False, isActive=True )
         step = len(drawn_samples)
-        self.curr_legend = self.create_standard_legend(step, doratio)
+
+        self.curr_legend = self.create_standard_legend( step, draw_config=draw_config)
 
         # format the entries
         tmp_legend_entries = []
@@ -2207,6 +2392,7 @@ class SampleManager :
                 tmp_legend_entries.append( ( samp.hist, samp.legendName, 'L') )
 
         if self.legendLoc=='Double' :
+            # 
             legend_entries = [None]*len(tmp_legend_entries)
             if len(legend_entries)%2 == 0 :
                 n_first_col = len(legend_entries)/2 
@@ -2305,13 +2491,6 @@ class SampleManager :
 
         return created_samples
 
-    def list_hists( self ) :
-        for samp in self.get_samples() :
-            for ofile in samp.ofiles :
-                if ofile is not None :
-                    ofile.ls()
-                    break
-
 
     def get_hist( self, sample, histpath ) :
         sampname = sample.name
@@ -2339,6 +2518,7 @@ class SampleManager :
 
             thishist = sample.ofiles[0].Get(histpath)
             if thishist == None :
+                print 'Could not get hist!'
                 sample.isActive = False
             else :
                 for ofile in sample.ofiles[1:] :
@@ -2519,42 +2699,189 @@ class SampleManager :
 
 
     def format_hist( self, sample ) :
+        self.AddOverflow( sample.hist )
+        sample.SetHist()
+
+    def AddOverflow(self,  hist ) :
+
         # account for overflow and underflow
-        nbins        = sample.hist.GetNbinsX()
-        overflow     = sample.hist.GetBinContent(nbins+1)
-        overflowerr  = sample.hist.GetBinError  (nbins+1)
-        underflow    = sample.hist.GetBinContent(0)
-        underflowerr = sample.hist.GetBinError  (0)
+        # go 3-2-1 because TH3 inherits from TH2 etc..
+        if isinstance( hist, ROOT.TH3 ) :
+            nbinsx = hist.GetNbinsX()
+            nbinsy = hist.GetNbinsY()
+            nbinsz = hist.GetNbinsZ()
 
-        lastbincont  = sample.hist.GetBinContent(nbins)
-        lastbinerr   = sample.hist.GetBinError  (nbins)
-        firstbincont = sample.hist.GetBinContent(1)
-        firstbinerr  = sample.hist.GetBinError  (1)
+            #print 'Content before'
+            #sum = 0
+            #for xbin in range( 0, nbinsx+2 ) :
+            #    for ybin in range( 0, nbinsy+2 ) :
+            #        for zbin in range( 0, nbinsz+2 ) :
+            #            sum += hist.GetBinContent( xbin, ybin, zbin ) 
+            #            print 'Content (%d, %d, %d) = %d' %( xbin, ybin, zbin, hist.GetBinContent( xbin, ybin, zbin ) )
+            #print 'SUM = ', sum
+            for xbin in range( 1, nbinsx+1 ) :
+                for ybin in range( 1, nbinsy+1 ) :
+                    for zbin in range( 1, nbinsz+1 ) :
+                        if xbin == 1 or xbin == nbinsx or ybin == 1 or ybin == nbinsy or zbin == 1 or zbin == nbinsz  :
+                            # only combine on edge bins
 
-        if overflow != 0 :
-            newcont = overflow + lastbincont
-            if lastbincont == 0 :
-                newconterr = overflowerr
+                            bin = [ xbin, ybin, zbin ]
+
+                            all_mod_bins = {}
+                            # get singly modified bins (TH1, TH2, TH3)
+                            self.get_single_mod_bins( bin, all_mod_bins )
+                            # get doubly modified bins (TH2, TH3)
+                            self.get_multi_mod_bins( bin, all_mod_bins )
+                            # get triply modified bins (TH3)
+                            self.get_multi_mod_bins( bin, all_mod_bins )
+
+                            #get the full list of bins that are overflow
+                            all_bins = []
+                            #print all_mod_bins
+                            for vals in all_mod_bins.values() :
+                                for val in vals :
+                                    if ( (val[0]==nbinsx+1 or val[0]==0 or val[0]==xbin) and 
+                                         (val[1]==nbinsy+1 or val[1]==0 or val[1]==ybin) and 
+                                         (val[2]==nbinsz+1 or val[2]==0 or val[2]==zbin) ) :
+                                        all_bins.append(val)
+
+                            # unique the list
+                            unique_bins = [list(x) for x in set( tuple(x)  for x in all_bins) ]
+
+                            for ovbin in unique_bins :
+                                #print 'Combine bin %s with bin %s' %( str(bin), str(ovbin) ) 
+                                self.combine_overflow_bin( hist, bin, ovbin )
+            #print 'Content after'
+            #sum = 0
+            #for xbin in range( 0, nbinsx+2 ) :
+            #    for ybin in range( 0, nbinsy+2 ) :
+            #        for zbin in range( 0, nbinsz+2 ) :
+            #            sum += hist.GetBinContent( xbin, ybin, zbin )
+            #            print 'Content (%d, %d, %d) = %d' %( xbin, ybin, zbin, hist.GetBinContent( xbin, ybin, zbin ) )
+            #print 'SUM = ', sum
+
+        elif isinstance( hist, ROOT.TH2 ) :
+
+            nbinsx = hist.GetNbinsX()
+            nbinsy = hist.GetNbinsY()
+            #print 'Content before'
+            #sum = 0
+            #for xbin in range( 0, nbinsx+2 ) :
+            #    for ybin in range( 0, nbinsy+2 ) :
+            #        sum += hist.GetBinContent( xbin, ybin )
+            #        print 'Content (%d, %d ) = %d' %( xbin, ybin,  hist.GetBinContent( xbin, ybin ) )
+            #print 'SUM = ', sum
+
+            for xbin in range( 1, nbinsx+1 ) :
+                for ybin in range( 1, nbinsy+1 ) :
+                    if xbin == 1 or xbin == nbinsx  or ybin == 1 or ybin == nbinsy :
+                        bin = [ xbin, ybin ]
+
+                        all_mod_bins = {}
+                        # get singly modified bins (TH1, TH2, TH3)
+                        self.get_single_mod_bins( bin, all_mod_bins )
+                        # get doubly modified bins (TH2, TH3)
+                        self.get_multi_mod_bins( bin, all_mod_bins )
+
+                        #print all_mod_bins
+
+                        #get the full list of bins that are overflow
+                        all_bins = []
+                        for vals in all_mod_bins.values() :
+                            for val in vals :
+                                if ( (val[0]==nbinsx+1 or val[0]==0 or val[0]==xbin) and 
+                                    (val[1]==nbinsy+1 or val[1]==0 or val[1]==ybin) ) :
+                                    all_bins.append(val)
+
+                        # unique the list
+                        unique_bins = [list(x) for x in set( tuple(x)  for x in all_bins) ]
+
+                        for ovbin in unique_bins :
+                            self.combine_overflow_bin( hist, bin, ovbin )
+
+            #print 'Content after'
+            #sum = 0
+            #for xbin in range( 0, nbinsx+2 ) :
+            #    for ybin in range( 0, nbinsy+2 ) :
+            #        sum += hist.GetBinContent( xbin, ybin )
+            #        print 'Content (%d, %d) = %d' %( xbin, ybin,  hist.GetBinContent( xbin, ybin ) )
+            #print 'SUM = ', sum
+        elif isinstance( hist, ROOT.TH1 ) :
+
+            nbinsx = hist.GetNbinsX()
+
+            self.combine_overflow_bin( hist, nbinsx, nbinsx+1 )
+
+
+    def get_single_mod_bins( self, bin, bin_collection ) :
+        # for each entry in the bin, 
+        # make a modified bin
+        # for that value up and that value down
+        for binentry in range(0, len( bin ) ):
+            binup = list(bin)
+            binup [binentry]+=1
+            bindn = list(bin)
+            bindn [binentry]-=1
+            bin_collection.setdefault( (binentry,), []).append(binup)
+            bin_collection.setdefault( (binentry,), []).append(bindn)
+
+    def get_multi_mod_bins( self, bin, bin_collection ) :
+        if not bin_collection :
+            print 'Must have already defined bins to run multi'
+            return
+
+        # loop over the already defined bins
+        for modbinval in bin_collection.keys() :
+            modbins = bin_collection[modbinval]
+            # grab entries that have fewer than the number of axes modified
+            if len(modbinval) < len(bin) :
+                for modbin in modbins :
+                    # get an entry that was not modified before
+                    # and modify it
+                    for binentry in range(0, len( bin ) ) :
+                        if binentry in modbinval :
+                            continue
+                        binup = list( modbin )
+                        binup[binentry]+=1
+                        bindn = list( modbin )
+                        bindn[binentry]-=1
+                        bin_collection.setdefault( modbinval+(binentry,), []).append(binup)
+                        bin_collection.setdefault( modbinval+(binentry,), []).append(bindn)
+
+
+    def combine_overflow_bin( self, hist, bin, overbin ) :
+
+        if not isinstance( overbin, tuple ) :
+            if isinstance( overbin, list ) :
+                overbin = tuple( overbin )
             else :
-                newconterr = math.sqrt( overflowerr * overflowerr + lastbinerr * lastbinerr )
-            sample.hist.SetBinContent(nbins, newcont)
-            sample.hist.SetBinError  (nbins, newconterr)
-            sample.hist.SetBinContent(nbins+1, 0)
-            sample.hist.SetBinError  (nbins+1, 0)
-
-        if underflow != 0 :
-            newcont = underflow + firstbincont
-            if firstbincont == 0 :
-                newconterr = firstbinerr
+                overbin = (overbin,)
+        if not isinstance( bin, tuple ) :
+            if isinstance( bin, list) :
+                bin = tuple( bin )
             else :
-                newconterr = math.sqrt( underflowerr * underflowerr + firstbinerr * firstbinerr )
-            sample.hist.SetBinContent(1, newcont)
-            sample.hist.SetBinError  (1, newconterr)
-            sample.hist.SetBinContent(0, 0)
-            sample.hist.SetBinError  (0, 0)
+                bin = (bin,)
 
-        # get the histogram
-        sample.SetHist( )
+        over_val = hist.GetBinContent( *overbin )
+
+        if over_val != 0 :
+
+            orig_val = hist.GetBinContent( *bin )
+            orig_err = hist.GetBinError( *bin )
+            over_err = hist.GetBinError( *overbin )
+
+            new_val = orig_val + over_val
+
+            if orig_val == 0 :
+                new_err = over_err
+            else :
+                new_err = math.sqrt( orig_err*orig_err + over_err*over_err )
+
+            hist.SetBinContent( *( bin + (new_val,) ) )
+            hist.SetBinError( *( bin + (new_err,) ) )
+            hist.SetBinContent( *( overbin + (0,) ) )
+            hist.SetBinError( *( overbin + (0,) ) )
+
 
     def extract_active_samples( self, histpath ) :
 
@@ -2907,7 +3234,7 @@ class SampleManager :
         self.curr_canvases[name].SetTitle('')
 
 
-    def DrawCanvas(self, topcan, draw_config, datahists=[], sighists=[] ) :
+    def DrawCanvas(self, topcan, draw_config, datahists=[], sighists=[], errhists=[] ) :
 
         doratio=draw_config.doRatio()
         if doratio == True or doratio == 1 :
@@ -2951,6 +3278,15 @@ class SampleManager :
             if samp.isActive :
                 samp.hist.SetLineWidth(3)
                 samp.hist.Draw('HIST same')
+
+        if errhists :
+            errsamps = self.get_samples(name=errhists )
+            for samp in errsamps :
+                samp.graph.SetFillStyle(3004)
+                samp.graph.SetFillColor(ROOT.kBlack)
+                samp.graph.Draw('2same')
+
+                self.curr_legend.AddEntry( samp.graph, 'Total uncertainty' )
 
         if doratio :
             self.curr_canvases['bottom'].cd()
@@ -3114,7 +3450,7 @@ class SampleManager :
 
         # make the legend
         step = len(created_samples)
-        self.curr_legend = self.create_standard_legend(step, config.doRatio() )
+        self.curr_legend = self.create_standard_legend(step, draw_config=config )
 
         legend_entries = config.get_legend_entries()
         self.create_same_legend( legend_entries , created_samples )
@@ -3431,6 +3767,8 @@ class SampleManager :
         created_samples=[]
         for idx, (samp_name, selection) in enumerate(zip(sample_names, selections)) :
 
+            if not self.get_samples(name=samp_name) :
+                print 'No sample with name ', samp_name
             samp = self.get_samples(name=samp_name)[0]
             newname = '%s_%d' %(samp.name, idx)
             newsamp = self.clone_sample( oldname=samp.name, newname=newname, temporary=True )
@@ -4247,17 +4585,30 @@ class SampleManager :
         return newhist
 
     # ----------------------------------------------------------------------------
-    def create_standard_legend(self, nentries, doratio=False) :
+    def create_standard_legend(self, nentries,draw_config=None ) :
 
-        if self.legendLoc == 'TopLeft' :
-            legend_limits = { 'x1' : 0.2+self.legendTranslateX, 'y1' : 0.88-self.legendCompress*0.052*nentries+self.legendTranslateY, 'x2' : 0.5*self.legendWiden+self.legendTranslateX, 'y2' : 0.88+self.legendTranslateY }
-        elif self.legendLoc == 'Double' :
-            legend_limits = { 'x1' : 0.15+self.legendTranslateX, 'y1' : 0.90-self.legendCompress*0.052*nentries+self.legendTranslateY, 'x2' : 0.65*self.legendWiden+self.legendTranslateX, 'y2' : 0.85+self.legendTranslateY }
+        legend_config = {}
+        if draw_config is not None :
+            legend_config = draw_config.legend_config
+
+        legendTranslateX = legend_config.get('legendTranslateX', self.legendTranslateX )
+        legendTranslateY = legend_config.get('legendTranslateY', self.legendTranslateY )
+        
+        legendWiden      = legend_config.get('legendWiden'   , self.legendWiden    )
+        legendCompress   = legend_config.get('legendCompress', self.legendCompress )
+
+        legendLoc        = legend_config.get('legendLoc', self.legendLoc )
+        
+
+        if legendLoc == 'TopLeft' :
+            legend_limits = { 'x1' : 0.2+legendTranslateX, 'y1' : 0.88-legendCompress*0.052*nentries+legendTranslateY, 'x2' : 0.5*legendWiden+legendTranslateX, 'y2' : 0.88+legendTranslateY }
+        elif legendLoc == 'Double' :
+            legend_limits = { 'x1' : 0.15+legendTranslateX, 'y1' : 0.90-legendCompress*0.052*nentries+legendTranslateY, 'x2' : 0.65*legendWiden+legendTranslateX, 'y2' : 0.85+legendTranslateY }
         else :
-            legend_limits = { 'x1' : 0.9-0.25*self.legendWiden+self.legendTranslateX, 'y1' : 0.90-self.legendCompress*0.052*nentries+self.legendTranslateY, 'x2' : 0.90+self.legendTranslateX, 'y2' : 0.90+self.legendTranslateY }
+            legend_limits = { 'x1' : 0.9-0.25*legendWiden+legendTranslateX, 'y1' : 0.90-legendCompress*0.052*nentries+legendTranslateY, 'x2' : 0.90+legendTranslateX, 'y2' : 0.90+legendTranslateY }
 
         # modify for different canvas size
-        if doratio :
+        if draw_config.doRatio():
             legend_limits['y1'] = legend_limits['y1']*0.90
             #legend_limits['y2'] = legend_limits['y2']*1.05
 
@@ -4270,7 +4621,7 @@ class SampleManager :
         leg.SetFillColor(ROOT.kWhite)
         leg.SetBorderSize(0)
 
-        if self.legendLoc == 'Double' :
+        if legendLoc == 'Double' :
             leg.SetNColumns(2)
         
 

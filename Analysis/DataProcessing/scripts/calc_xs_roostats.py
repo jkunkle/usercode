@@ -5,7 +5,6 @@ import math
 import ROOT
 import collections
 import datetime
-import data_pair
 from uncertainties import ufloat
 
 rand = ROOT.TRandom3()
@@ -30,14 +29,14 @@ def main() :
     #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_09_24'
     #signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
     #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
-    signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_02_last70'
-    bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_02_last70'
-    run_full_fit( signal_base, bkg_base, lands=True )
+    signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_12_08'
+    bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_12_08'
+    run_full_fit( signal_base, bkg_base, lands=False, combine=True)
 
 def run_onebin_fit(lands=False) :
 
     onebin_name = 'onebin_fit'
-    file_mgg = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_08_01/WggEventPlots/ph_pt_lead__mgg__baselineCuts.pickle'
+    file_mgg = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_11_20/WggEventPlots/ph_pt_lead__mgg__baselineCuts.pickle'
 
     fit_onebin = FitConfig( name=onebin_name )
 
@@ -57,7 +56,7 @@ def run_multptbin_fit(lands=False) :
     fit_name = 'multptbin_fit'
     in_files = {}
     filekey = 'ph_pt_lead__mgg__EB-EB__baselineCuts__ptbins_(\d+)-(\d+|\w+)\.pickle'
-    file_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_08_01/WggEventPlots/'
+    file_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_11_20/WggEventPlots/'
     for file in os.listdir (file_base) :
         res = re.match( filekey, file )
         if res is not None :
@@ -82,7 +81,7 @@ def run_allbin_fit_mcbkg() :
     in_files = {}
     filekey = 'ph_pt_lead__mgg__(\w+)-(\w+)__baselineCuts__ptbins_(\d+)-(\d+|\w+)\.pickle'
 
-    file_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_08_01/WggEventPlots/'
+    file_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_11_20/WggEventPlots/'
     for file in os.listdir (file_base) :
         res = re.match( filekey, file )
         if res is not None :
@@ -99,17 +98,13 @@ def run_allbin_fit_mcbkg() :
     fit_allbin.create_config()
     ##fit_onebin.run_fit()
 
-def run_full_fit(event_base, bkg_base, lands=False) :
+def run_full_fit(event_base, bkg_base, lands=False, combine=False) :
 
     fit_name = 'full_fit'
-    filekey_signal_mgg = 'ph_pt_lead__mgg__(\w+)-(\w+)__baselineCuts__ptbins_(\d+)-(\d+|\w+)(__subpt_(\d+)-(\d+|max)){0,1}\.pickle'
-    filekey_signal_egg = 'ph_pt_lead__egg__(\w+)-(\w+)__allZrejCuts__ptbins_(\d+)-(\d+|\w+)(__subpt_(\d+)-(\d+|max)){0,1}\.pickle'
-    #filekey_signal_mgg = 'ph_pt_lead__mgg__(\w+)-(\w+)__baselineCuts__ptbins_(40|80)-(80|max)\.pickle'
-    #filekey_signal_egg = 'ph_pt_lead__egg__(\w+)-(\w+)__allZrejCuts__ptbins_(40|80)-(80|max)\.pickle'
-    #filekey_signal_mgg = 'ph_pt_lead__mgg__(\w+)-(\w+)__baselineCuts__ptbins_(40)-(80)\.pickle'
-    #filekey_signal_egg = 'ph_pt_lead__egg__(\w+)-(\w+)__allZrejCuts__ptbins_(40)-(80)\.pickle'
-    #filekey_signal_mgg = 'ph_pt_lead__mgg__(\w+)-(\w+)__baselineCuts__ptbins_(80)-(max)\.pickle'
-    #filekey_signal_egg = 'ph_pt_lead__egg__(\w+)-(\w+)__allZrejCuts__ptbins_(80)-(max)\.pickle'
+    #filekey_signal_mgg = 'ph_pt_lead__mgg__(\w+)-(\w+)__baselineCuts__ptbins_(\d+)-(\d+|\w+)(__subpt_(\d+)-(\d+|max)){0,1}\.pickle'
+    #filekey_signal_egg = 'ph_pt_lead__egg__(\w+)-(\w+)__allZrejCuts__ptbins_(\d+)-(\d+|\w+)(__subpt_(\d+)-(\d+|max)){0,1}\.pickle'
+    filekey_signal_mgg = 'ph_pt_lead__mgg__(\w+)-(\w+)__baselineCuts__ptbins_(\d+)-(\d+|\w+)\.pickle'
+    filekey_signal_egg = 'ph_pt_lead__egg__(\w+)-(\w+)__allZrejCuts__ptbins_(\d+)-(\d+|\w+)\.pickle'
     filekey_bkg    = 'results_(\w+)-(\w+)_pt_(\d+)_(\d+|\w+)\.pickle'
 
     in_files_signal = {}
@@ -121,7 +116,7 @@ def run_full_fit(event_base, bkg_base, lands=False) :
         if res_mgg is not None :
             if res_mgg.group(1) == 'EE' and res_mgg.group(2) == 'EE' :
                 continue
-            if res_mgg.group(6) is None and res_mgg.group(7) is None :
+            if len( res_mgg.groups() ) <= 4 :
                 in_files_signal['mgg'][(res_mgg.group(1),res_mgg.group(2),res_mgg.group(3), res_mgg.group(4))]=file_base_signal +'/'+file
             else :
                 in_files_signal['mgg'][(res_mgg.group(1),res_mgg.group(2),res_mgg.group(3), res_mgg.group(4),res_mgg.group(6), res_mgg.group(7))]=file_base_signal +'/'+file
@@ -130,28 +125,37 @@ def run_full_fit(event_base, bkg_base, lands=False) :
         if res_egg is not None :
             if res_egg.group(1) == 'EE' and res_egg.group(2) == 'EE' :
                 continue
-            if res_egg.group(6) is None and res_egg.group(7) is None :
+            if len( res_egg.groups() ) <= 4 :
                 in_files_signal['egg'][(res_egg.group(1),res_egg.group(2),res_egg.group(3), res_egg.group(4))]=file_base_signal +'/'+file
             else :
                 in_files_signal['egg'][(res_egg.group(1),res_egg.group(2),res_egg.group(3), res_egg.group(4),res_egg.group(6), res_egg.group(7))]=file_base_signal +'/'+file
+
+    if len( in_files_signal['mgg'].keys() ) != 12 :
+        print 'Did not get 12 muon bins'
+        print in_files_signal
+        return
+    if len( in_files_signal['egg'].keys() ) != 12 :
+        print 'Did not get 12 electron bins'
+        print in_files_signal
+        return
 
     in_files_bkg = {}
     file_base_bkg = '%s/BackgroundEstimates/' %bkg_base
     file_jet = {}
     file_jet['egg'] = '%s/jet_fake_results__egg_allZRejCuts.pickle' %file_base_bkg
     file_jet['mgg'] = '%s/jet_fake_results__mgg.pickle' %file_base_bkg
-    file_ele     = '%s/electron_fake_results.pickle' %file_base_bkg
+    file_ele        = '%s/electron_fake_results.pickle' %file_base_bkg
+    file_ele_syst   = '%s/electron_fake_results.pickle' %file_base_bkg
         
     fit_allbin = FitConfig( name=fit_name )
 
     regions = [('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB')]
-    #ptbins = ['15', '25', '40', '80', 'max']
-    #ptbins = ['15', '25', '40', '70', 'max']
     ptbins = ['15', '25', '40', '70', 'max']
+    regions = [('EB', 'EB')]
     #sublbins = [ ('70', 'max', '15', '40'), ('70', 'max', '40', 'max') ]
     sublbins=[]
     for ch, ch_entries in in_files_signal.iteritems() :
-        if ch=='ggg' :
+        if ch=='egg' :
             continue
         for r1, r2 in regions :
             for bidx, min in enumerate( ptbins[:-1] ) :
@@ -161,76 +165,75 @@ def run_full_fit(event_base, bkg_base, lands=False) :
                 
                 ch_bin = fit_allbin.create_channel(chName='bin__%s__%s-%s_%s_%s' %(ch, r1, r2, min, max))
 
+                # --------------------
+                # not working
+                # --------------------
+                #ch_bin.AddSample( 'signal_%s' %ch, f, 'Wgg', isSig=True, err={'Lumi' : 1.1 }  )
+                #ch_bin.AddSample( 'jetfake__%s__sum'%ch, file_jet[ch], ['stat+syst', 'sum', (r1, r2, min,max), 'result'], 
+                #                 err={'Stat_jetfake__%s__sum_%s-%s_%s-%s'%(ch, r1, r2, min, max) : ( file_jet[ch], ['stat', 'sum', (r1, r2, min,max), 'result'] ) ,
+                #                      'Syst_jetfake__%s__sum_%s-%s_%s-%s'%(ch, r1, r2, min, max) : ( file_jet[ch], ['syst', 'sum', (r1, r2, min,max), 'result'] ) , 
+                #                      'Syst_jetfake_closure' : 1.10, 
+                #                      } 
+                #                )
+                #if ch=='egg' :
+                #    ch_bin.AddSample( 'elefake__egg', file_ele, ['stat+syst', 'sum', (r1, r2, min,max), 'result'], 
+                #                     err={'Stat_elefake__egg__%s-%s_%s-%s'%(r1, r2, min, max)    : (file_ele, ['stat', 'sum', (r1,r2,min,max), 'result']),
+                #                          'EleSyst_elefake__egg__%s-%s_%s-%s'%(r1, r2, min, max) : (file_ele, ['elesyst', 'sum', (r1,r2,min,max), 'result']),
+                #                          'Syst_jetfake__egg__sum_%s-%s_%s-%s'%(r1, r2, min, max) : (file_ele, ['jetsyst', 'sum', (r1,r2,min,max), 'result']),
+                #                          'Syst_elefake_closure' : 1.15,
+                #                         } 
+                #                    )
+
+                # ---------------------------------
+                # don't separate systematics by channel
+                # ---------------------------------
                 ch_bin.AddSample( 'signal_%s' %ch, f, 'Wgg', isSig=True, err={'Lumi' : 1.1 }  )
-                ch_bin.AddSample( 'jetfake__%s__real_fake'%ch, file_jet[ch], ['stat+syst', 'sum', (r1, r2, min,max)], 
-                                 err={'Stat_jetfake__%s__real_fake_%s-%s_%s-%s'%(ch, r1, r2, min, max) : ( file_jet[ch], ['stat', 'sum', (r1, r2, min,max)] ) ,
-                                      'Syst_jetfake__%s__real_fake_%s-%s_%s-%s'%(ch, r1, r2, min, max) : ( file_jet[ch], ['syst', 'sum', (r1, r2, min,max)] ) , 
-                                      'Syst_jetfake_real_temp' : 1.10, 
-                                      'Syst_jetfake_fake_temp': 1.20, 
-                                      'Syst_jetfake_closure' : 1.05, 
-                                      'Syst_jetfake_asym' : 1.15} 
+                ch_bin.AddSample( 'jetfake__%s__sum'%ch, file_jet[ch], ['stat+syst', 'sum', (r1, r2, min,max), 'result'], 
+                                 err={'Stat_jetfake__%s__sum'%(ch) : ( file_jet[ch], ['stat', 'sum', (r1, r2, min,max), 'result'] ) ,
+                                      'Syst_jetfake__%s__sum'%(ch) : ( file_jet[ch], ['syst', 'sum', (r1, r2, min,max), 'result'] ) , 
+                                      'Syst_jetfake_closure' : 1.10, 
+                                      } 
                                 )
-                #ch_bin.AddSample( 'jetfake__%s__fake_real'%ch, file_jet[ch], ['stat+syst', 'fr', (r1, r2, min,max)], 
-                #                 err={'Stat_jetfake__%s__fake_real_%s-%s_%s-%s'%(ch, r1, r2, min, max) : ( file_jet[ch], ['stat', 'fr', (r1, r2, min,max)] ), 
-                #                      'Syst_jetfake__%s__fake_real_%s-%s_%s-%s'%(ch, r1, r2, min, max) : ( file_jet[ch], ['syst', 'fr', (r1, r2, min,max)] ), 
-                #                      'Syst_jetfake_real_temp' : 1.10, 
-                #                      'Syst_jetfake_fake_temp': 1.20, 
-                #                      'Syst_jetfake_closure' : 1.05, 
-                #                      'Syst_jetfake_asym' : 1.15} 
-                #                )
-                #ch_bin.AddSample( 'jetfake__%s__fake_fake'%ch, file_jet[ch], ['stat+syst', 'ff', (r1, r2, min,max)], 
-                #                 err={'Stat_jetfake__%s__fake_fake_%s-%s_%s-%s'%(ch, r1, r2, min, max) : ( file_jet[ch], ['stat', 'ff', (r1, r2, min,max)] ), 
-                #                      'Syst_jetfake__%s__fake_fake_%s-%s_%s-%s'%(ch, r1, r2, min, max) : ( file_jet[ch], ['syst', 'ff', (r1, r2, min,max)] ), 
-                #                      'Syst_jetfake_real_temp' : 1.10, 
-                #                      'Syst_jetfake_fake_temp': 1.20, 
-                #                      'Syst_jetfake_closure' : 1.05, 
-                #                      'Syst_jetfake_asym' : 1.15} 
-                #                )
                 if ch=='egg' :
-                    ch_bin.AddSample( 'elefake__egg', file_ele, [(r1, r2, min,max)], err={'Stat_elefake__egg__%s-%s_%s-%s'%(r1, r2, min, max) : 'Stat', 'Syst_elefake_closure' : 1.15, 'Syst_elefake_fit' : 1.2} )
-                if ch=='mgg' :
-                    ch_bin.AddSample( 'elefake__mgg', )
+                    ch_bin.AddSample( 'elefake__egg', file_ele, ['stat+syst', 'sum', (r1, r2, min,max), 'result'], 
+                                     err={'Stat_elefake__egg__%s-%s_%s-%s'%(r1, r2, min, max)    : (file_ele, ['stat', 'sum', (r1,r2,min,max), 'result']),
+                                          'EleSyst_elefake__egg__%s-%s_%s-%s'%(r1, r2, min, max) : (file_ele, ['elesyst', 'sum', (r1,r2,min,max), 'result']),
+                                          'Syst_jetfake__egg__sum_%s-%s_%s-%s'%(r1, r2, min, max) : (file_ele, ['jetsyst', 'sum', (r1,r2,min,max), 'result']),
+                                          'Syst_elefake_closure' : 1.15,
+                                         } 
+                                    )
+                #if ch=='mgg' :
+                #    ch_bin.AddSample( 'elefake__mgg', )
 
-                ch_bin.AddData( use_sample_sum=True, generate=False )
+                ch_bin.AddData( use_sample_sum=True, generate=True)
 
-            for minl, maxl, mins, maxs in  sublbins :
+            #for minl, maxl, mins, maxs in  sublbins :
 
-                f = ch_entries[(r1,r2,minl,maxl,mins,maxs)]
-                ch_bin = fit_allbin.create_channel(chName='bin__%s__%s-%s_%s_%s_sub_%s_%s' %(ch, r1, r2, minl, maxl, mins, maxs))
+            #    f = ch_entries[(r1,r2,minl,maxl,mins,maxs)]
+            #    ch_bin = fit_allbin.create_channel(chName='bin__%s__%s-%s_%s_%s_sub_%s_%s' %(ch, r1, r2, minl, maxl, mins, maxs))
 
-                ch_bin.AddSample( 'signal_%s' %ch, f, 'Wgg', isSig=True, err={'Lumi' : 1.1 }  )
-                ch_bin.AddSample( 'jetfake__%s__real_fake'%ch, file_jet[ch], ['stat+syst', 'sum', (r1, r2, minl,maxl,mins,maxs)], 
-                err={'Stat_jetfake__%s__real_fake_%s-%s_%s-%s_sub_%s-%s'%(ch, r1, r2, minl, maxl, mins, maxs) : (file_jet[ch], ['stat', 'sum', (r1,r2,minl,maxl,mins,maxs)] ), 
-                     'Syst_jetfake__%s__real_fake_%s-%s_%s-%s_sub_%s-%s'%(ch, r1, r2, minl, maxl, mins, maxs) : (file_jet[ch], ['syst', 'sum', (r1,r2,minl,maxl,mins,maxs)] ), 
-                     'Syst_jetfake_real_temp' : 1.10, 
-                     'Syst_jetfake_fake_temp': 1.20, 
-                     'Syst_jetfake_closure' : 1.05, 
-                     'Syst_jetfake_asym' : 1.15} 
-                                )
-                #ch_bin.AddSample( 'jetfake__%s__fake_real'%ch, file_jet[ch], ['stat+syst', 'fr', (r1, r2, minl,maxl,mins,maxs)], 
-                #err={'Stat_jetfake__%s__fake_real_%s-%s_%s-%s_sub_%s-%s'%(ch, r1, r2, minl, maxl, mins, maxs) : (file_jet[ch], ['stat', 'fr', (r1,r2,minl,maxl,mins,maxs)] ), 
-                #     'Syst_jetfake__%s__fake_real_%s-%s_%s-%s_sub_%s-%s'%(ch, r1, r2, minl, maxl, mins, maxs) : (file_jet[ch], ['syst', 'fr', (r1,r2,minl,maxl,mins,maxs)] ), 
-                #     'Syst_jetfake_real_temp' : 1.10, 
-                #     'Syst_jetfake_fake_temp': 1.20, 
-                #     'Syst_jetfake_closure' : 1.05, 
-                #     'Syst_jetfake_asym' : 1.15} 
-                #                )
-                #ch_bin.AddSample( 'jetfake__%s__fake_fake'%ch, file_jet[ch], ['stat+syst', 'ff', (r1, r2, minl,maxl,mins,maxs)], 
-                #err={'Stat_jetfake__%s__fake_fake_%s-%s_%s-%s_sub_%s-%s'%(ch, r1, r2, minl, maxl, mins, maxs) : (file_jet[ch], ['stat', 'ff', (r1,r2,minl,maxl,mins,maxs)] ) , 
-                #     'Syst_jetfake__%s__fake_fake_%s-%s_%s-%s_sub_%s-%s'%(ch, r1, r2, minl, maxl, mins, maxs) : (file_jet[ch], ['syst', 'ff', (r1,r2,minl,maxl,mins,maxs)] ) , 
-                #     'Syst_jetfake_real_temp' : 1.10, 
-                #     'Syst_jetfake_fake_temp': 1.20, 
-                #     'Syst_jetfake_closure' : 1.05, 
-                #     'Syst_jetfake_asym' : 1.15} 
-                #               )
-                if ch=='egg' :
-                    ch_bin.AddSample( 'elefake__egg', file_ele, [(r1, r2, minl,maxl, mins,maxs)], err={'Stat_elefake__egg__%s-%s_%s-%s_sub_%s-%s'%(r1, r2, minl, maxl, mins, maxs) : 'Stat', 'Syst_elefake_closure' : 1.15, 'Syst_elefake_fit' : 1.2} )
-                if ch=='mgg' :
-                    ch_bin.AddSample( 'elefake__mgg', )
+            #    ch_bin.AddSample( 'signal_%s' %ch, f, 'Wgg', isSig=True, err={'Lumi' : 1.1 }  )
+            #    ch_bin.AddSample( 'jetfake__%s__real_fake'%ch, file_jet[ch], ['stat+syst', 'sum', (r1, r2, minl,maxl,mins,maxs)], 
+            #    err={'Stat_jetfake__%s__real_fake_%s-%s_%s-%s_sub_%s-%s'%(ch, r1, r2, minl, maxl, mins, maxs) : (file_jet[ch], ['stat', 'sum', (r1,r2,minl,maxl,mins,maxs)] ), 
+            #         'Syst_jetfake__%s__real_fake_%s-%s_%s-%s_sub_%s-%s'%(ch, r1, r2, minl, maxl, mins, maxs) : (file_jet[ch], ['syst', 'sum', (r1,r2,minl,maxl,mins,maxs)] ), 
+            #         'Syst_jetfake_real_temp' : 1.10, 
+            #         'Syst_jetfake_fake_temp': 1.20, 
+            #         'Syst_jetfake_closure' : 1.05, 
+            #         'Syst_jetfake_asym' : 1.15} 
+            #                    )
+            #    if ch=='egg' :
+            #        ch_bin.AddSample( 'elefake__egg', file_ele, [(r1, r2, minl,maxl, mins,maxs)], err={'Stat_elefake__egg__%s-%s_%s-%s_sub_%s-%s'%(r1, r2, minl, maxl, mins, maxs) : 'Stat', 'Syst_elefake_closure' : 1.15, 'Syst_elefake_fit' : 1.2} )
+            #    if ch=='mgg' :
+            #        ch_bin.AddSample( 'elefake__mgg', )
 
-                ch_bin.AddData( use_sample_sum=True, generate=False )
+            #    ch_bin.AddData( use_sample_sum=True, generate=True)
     if lands :
         fit_allbin.create_lands_config()
+        fit_allbin.run_lands()
+    elif combine :
+        # lands config is the same as for combine
+        fit_allbin.create_lands_config()
+        fit_allbin.run_combine()
     else :
         fit_allbin.create_config()
 
@@ -241,7 +244,7 @@ def run_allbin_fit(lands=False) :
     filekey_bkg    = 'results_(\w+)-(\w+)_pt_(\d+)_(\d+|\w+)\.pickle'
 
     in_files_signal = {}
-    file_base_signal = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_08_01/WggEventPlots/'
+    file_base_signal = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_11_20/WggEventPlots/'
     for file in os.listdir (file_base_signal) :
         res = re.match( filekey_signal, file )
         if res is not None :
@@ -250,7 +253,7 @@ def run_allbin_fit(lands=False) :
             in_files_signal[(res.group(1),res.group(2),res.group(3), res.group(4))]=file_base_signal +'/'+file
 
     in_files_bkg = {}
-    file_base_bkg = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_07_29/JetFakeTemplateFitPlotsNomIso/CoarseBins/'
+    file_base_bkg = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_11_20/JetFakeTemplateFitPlotsNomIso/CoarseBins/'
     for file in os.listdir (file_base_bkg) :
         res = re.match( filekey_bkg, file )
         if res is not None :
@@ -276,6 +279,8 @@ def run_allbin_fit(lands=False) :
         ch_bin.AddSample( 'jetfake_fake_fake', file_bkg, 'N_FF_TT', err={'Stat_jetfake_fake_fake' : None} )
 
     if lands :
+        fit_allbin.create_lands_config()
+    elif combine :
         fit_allbin.create_lands_config()
     else :
         fit_allbin.create_config()
@@ -340,6 +345,10 @@ class ChannelConfig :
         binlen = list(set( binlen ))
         if len( binlen ) > 1 :
             print 'All samples should have the same number of input files'
+            for sname ,samp in self.samples.iteritems() : 
+                print sname
+                print samp
+            
 
         nBins = binlen[0]
 
@@ -365,10 +374,14 @@ class ChannelConfig :
 
     def fill_hist_from_pickle(self, hist, files, fields) :
 
-        data = get_data_from_pickle( files, fields)
+        data = self.get_data_from_pickle( files, fields)
         for idx, val in enumerate(data) :
-            hist.SetBinContent(idx+1, val.n )
-            hist.SetBinError(idx+1, val.s )
+            try :
+                hist.SetBinContent(idx+1, val.n )
+                hist.SetBinError(idx+1, val.s )
+            except :
+                print 'Did not get a ufloat from provided dict path!  Got, '
+                print val
 
     def get_data_from_pickle(self, files, fields) :
 
@@ -612,9 +625,16 @@ class FitConfig :
             text_file.write( lin + '\n' )
         text_file.close()
 
+
+    def run_lands(self)  :
         #os.system( 'Lands/test/lands.exe -d %s -M Asymptotic  -rMin 1 -rMax 10' %self.filename_lands )
         os.system( 'echo Lands/test/lands.exe -d %s -M ProfileLikelihood --significance 1 -rMin 1 -rMax 10' %self.filename_lands )
         os.system( 'Lands/test/lands.exe -d %s -M ProfileLikelihood --significance 1 -rMin 1 -rMax 10' %self.filename_lands )
+
+    def run_combine(self)  :
+        #os.system( 'Lands/test/lands.exe -d %s -M Asymptotic  -rMin 1 -rMax 10' %self.filename_lands )
+        os.system( 'echo combine -M ProfileLikelihood --signif --rMin 1 --rMax 10 %s ' %self.filename_lands )
+        os.system( 'combine -M ProfileLikelihood --signif --rMin 1 --rMax 10 %s ' %self.filename_lands )
 
     def generate_xml( self ) :
 

@@ -40,6 +40,8 @@ class RunModule : public virtual RunModuleBase {
         // you must of course handle them in the source file
         void MakeNtuple ( ModuleConfig & config ) const;
         void MakeGGNtuple ( ModuleConfig & config ) const;
+        void MakeMuMuNtuple ( ModuleConfig & config ) const;
+        void MakeEENtuple ( ModuleConfig & config ) const;
         bool FilterEvent( ModuleConfig & config ) const;
 
         TTree * outtree;
@@ -65,6 +67,36 @@ namespace OUT {
     float              dr_tagprobe;
     float              m_tagprobe_sceta;
 
+    float              mutag_pt;
+    float              mutag_eta;
+    float              mutag_phi;
+    float              muprobe_pt;
+    float              muprobe_eta;
+    float              muprobe_phi;
+    Bool_t             muprobe_passTight;
+    Bool_t             muprobe_triggerMatch;
+    float              m_mutagprobe;
+    float              dr_mutagprobe;
+
+    float              eltag_pt;
+    float              eltag_eta;
+    float              eltag_phi;
+    float              elprobe_pt;
+    float              elprobe_eta;
+    float              elprobe_phi;
+    float              elprobe_matchElDR;
+    float              elprobe_mindr;
+    Bool_t             elprobe_isPh;
+    Bool_t             elprobe_isEl;
+    Bool_t             elprobe_passMVATrig;
+    Bool_t             elprobe_passMVANonTrig;
+    Bool_t             elprobe_triggerMatch;
+    float              m_eltagprobe;
+    float              dr_eltagprobe;
+
+    float              PUWeight;
+    int                run;
+    int                event;
 };
 
 #endif

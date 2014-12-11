@@ -149,6 +149,8 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
                 if fileKeyFilt is not None and not file.count(fileKeyFilt) : continue
 
                 ofile = ROOT.TFile.Open( top+'/'+file )
+                if ofile == None :
+                    continue
                 if ofile.IsZombie() :
                     continue
                 if ofile.TestBit(ROOT.TFile.kRecovered) :

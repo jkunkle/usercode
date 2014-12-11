@@ -1,6 +1,7 @@
 import os
 #base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2014_01_16'
-base = '/eos/cms/store/group/phys_egamma/cmkuo/'
+#base = '/eos/cms/store/group/phys_egamma/cmkuo/'
+base = '/eos/cms/store/user/jkunkle/Samples/ggNtuples'
 
 jobs = [
        #(base, 'job_electron_2012a_Jan22rereco'),
@@ -34,7 +35,8 @@ jobs = [
        #(base, 'job_summer12_ZZ_4e'),
        #(base, 'job_summer12_ZZ_4mu'),
        #(base, 'job_summer12_ZZ_4tau'),
-       (base, 'job_summer12_Zg'),
+       #(base, 'job_summer12_Zg'),
+       (base, 'job_summer12_Zgg'),
        #(base, 'job_summer12_diphoton_box_10to25'),
        #(base, 'job_summer12_diphoton_box_250toInf'),
        #(base, 'job_summer12_diphoton_box_25to250'),
@@ -55,8 +57,8 @@ command_base = 'python scripts/filter.py  --files root://eoscms/%(base)s/%(job)s
 
 output = 'SignalTruth_2014_03_08'
 nFilesPerJob = 0
-nProc = 12
-nSplit=12
+nProc = 6
+nSplit=6
 
 first = True
 for base, job in jobs :

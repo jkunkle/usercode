@@ -43,60 +43,136 @@ from SampleManager import Sample
 
 ROOT.gROOT.SetBatch(False)
 
-samples = None
+samplesFF = None
+samplesData = None
 
 def main() :
 
-    global samples
+    global samplesFF
+    global samplesData
 
     if not options.baseDir.count('/eos/') and not os.path.isdir( options.baseDir ) :
         print 'baseDir not found!'
         return
 
-    samples = SampleManager(options.baseDir, options.treeName, mcweight=options.mcweight, treeNameModel=options.treeNameModel, filename=options.fileName, base_path_model=options.baseDirModel, xsFile=options.xsFile, lumi=options.lumi, readHists=options.readHists, quiet=options.quiet)
+    samplesFF = SampleManager(options.baseDir, options.treeName, mcweight=options.mcweight, treeNameModel=options.treeNameModel, filename=options.fileName, base_path_model=options.baseDirModel, xsFile=options.xsFile, lumi=options.lumi, readHists=options.readHists, quiet=options.quiet)
+
+    base_dir_data      = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2014_10_29'
+
+    samplesData = SampleManager(base_dir_data, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
 
 
     if options.samplesConf is not None :
 
-        samples.ReadSamples( options.samplesConf )
-
-        print 'Samples ready.\n'  
-
-        print 'The draw syntax follows that of TTree.Draw.  Examples : '
-        
-        print 'samples.Draw(\'met_et\', \'EventWeight && passcut_ee==1\', \'(300, 0, 300)\'\n'
-
-        print 'The first argument is a branch in the tree to draw'
-        print 'The second argument is a set of cuts and/or weights to apply'
-        print 'The third argument are the bin limits to use \n'
-
-        print 'To see all available branches do ListBranches()'
+        samplesFF.ReadSamples( options.samplesConf )
+        samplesData.ReadSamples( options.samplesConf )
 
     #cuts_den = '!ph_passChIsoCorrMedium[0] && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0]  && ph_sigmaIEIE[0]>%f && ph_sigmaIEIE[0] < %f '
     #cuts_num = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && %s && ph_passSIEIEMedium[0] ' %(ec)
 
-    cuts_den = 'ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0]  && ph_sigmaIEIE[0]>%f && ph_sigmaIEIE[0] < %f '
-    cuts_num = 'ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0] '
+    loose_cuts = (12, 9, 9)
+    #loose_cuts = (20, 15, 15)
+    #loose_cuts = (1000000,1000000,1000000)
 
-    sieie_cuts = { 'EB' : ( 0.013, 0.03 ), 'EE' : ( 0.035, 0.1 ) }
-    eta_cuts = { 'EB' : 'ph_IsEB[0]', 'EE' : 'ph_IsEE[0]' }
-    ptbins = [ 15, 20, 25, 30, 50, 80, 500 ]
+    cuts_den = 'ph_hasPixSeed[0]==0 && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && !ph_passSIEIEMedium[0] && !ph_passChIsoCorrMedium[0] && ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d ' %(loose_cuts[0], loose_cuts[1], loose_cuts[2] )
+    cuts_num = 'ph_hasPixSeed[0]==0 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_HoverE12[0] < 0.05'
 
-    fake_factors = GetFakeFactors(cuts_den, cuts_num, sieie_cuts, eta_cuts, ptbins)
+    regions = ['EB', 'EE']
+    ptbins = [ 15, 25, 40, 70, 1000000 ]
 
-    for key, val in fake_factors.iteritems() :
-        print 'Fake factors for %s' %key
-        val.Draw()
-        raw_input('continue')
+    fake_factors = GetFakeFactors(cuts_den, cuts_num, regions, ptbins)
 
-    ApplySinglePhotonFF( cuts_den, sieie_cuts, eta_cuts, ptbins, fake_factors )
+    #for key, val in fake_factors.iteritems() :
+    #    print 'Fake factors for %s' %key
+    #    val.Draw()
+    #    raw_input('continue')
+
+    #ApplySinglePhotonFF( cuts_den, sieie_cuts, eta_cuts, ptbins, fake_factors )
+
+    gg_regions = [ ('EB', 'EB') ]
+
+    ApplyDiPhotonFF( loose_cuts, gg_regions, ptbins, fake_factors ) 
+
+def ApplyDiPhotonFF( loose_cuts, regions,  ptbins, fake_factors) :
+
+    draw_cmd_base = 'mu_passtrig25_n>0 && mu_n==1 && ph_n > 1 && dr_ph1_ph2 > 0.3 && m_ph1_ph2>15 && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  '
+
+    samp = samplesData.get_samples(name='Muon')
+
+
+    for r1,r2 in regions  :
+
+        draw_cmd = draw_cmd_base + ' && is%s_leadph12 && is%s_sublph12' %( r1,r2)
+
+        draw_cmd_LL = '%s && chIsoCorr_leadph12 > 1.5 && neuIsoCorr_leadph12 > 1.0 && phoIsoCorr_leadph12 > 0.7 && chIsoCorr_sublph12 > 1.5 && neuIsoCorr_sublph12 > 1.0 && phoIsoCorr_sublph12 > 0.7 && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %d && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %d && sieie_leadph12 > 0.011 && sieie_sublph12 > 0.011' %(draw_cmd, loose_cuts[0], loose_cuts[1], loose_cuts[2], loose_cuts[0], loose_cuts[1], loose_cuts[2]) 
+        draw_cmd_TL = '%s && chIsoCorr_leadph12 < 1.5 && neuIsoCorr_leadph12 < 1.0 && phoIsoCorr_leadph12 < 0.7 && chIsoCorr_sublph12 > 1.5 && neuIsoCorr_sublph12 > 1.0 && phoIsoCorr_sublph12 > 0.7 && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %d && sieie_leadph12 < 0.011 && sieie_sublph12 > 0.011' %(draw_cmd, loose_cuts[0], loose_cuts[1], loose_cuts[2]) 
+        draw_cmd_LT = '%s && chIsoCorr_leadph12 > 1.5 && neuIsoCorr_leadph12 > 1.0 && phoIsoCorr_leadph12 > 0.7 && chIsoCorr_sublph12 < 1.5 && neuIsoCorr_sublph12 < 1.0 && phoIsoCorr_sublph12 < 0.7 && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %d && sieie_leadph12 > 0.011 && sieie_sublph12 < 0.011' %(draw_cmd, loose_cuts[0], loose_cuts[1], loose_cuts[2]) 
+
+        var = 'pt_leadph12'
+
+        samplesData.create_hist( samp[0], var, draw_cmd_LL, (100, 0, 500 ) )
+        LL_hist = samp[0].hist.Clone( 'll_hist' )
+
+        samplesData.create_hist( samp[0], var, draw_cmd_TL, (100, 0, 500 ) )
+        TL_hist = samp[0].hist.Clone( 'tl_hist' )
+
+        samplesData.create_hist( samp[0], var, draw_cmd_LT, (100, 0, 500 ) )
+        LT_hist = samp[0].hist.Clone( 'lt_hist' )
+
+        for idx, min in enumerate( ptbins[0:-1] ) :
+
+            max = ptbins[idx+1]
+
+            bin_lead = ( r1, min, max )
+            bin_subl = ( r2, 15, max )
+
+            LL_count = LL_hist.Integral( LL_hist.FindBin( min ), LL_hist.FindBin( max ) - 1 )
+            LT_count = LT_hist.Integral( LT_hist.FindBin( min ), LT_hist.FindBin( max ) - 1 )
+            TL_count = TL_hist.Integral( TL_hist.FindBin( min ), TL_hist.FindBin( max ) - 1 )
+
+            ff_lead = fake_factors[bin_lead]
+            ff_subl = fake_factors[bin_subl]
+
+            N_FF_TL = LL_count*ff_lead
+            N_FF_LT = LL_count*ff_subl
+
+            N_RF_TL = TL_count - N_FF_TL
+            N_FR_LT = LT_count - N_FF_LT
+
+            N_RF_TT = N_RF_TL*ff_subl
+            N_FR_TT = N_FR_LT*ff_lead
+            N_FF_TT = LL_count*ff_lead*ff_subl
+
+            print 'Lead pt = %d - %d, subl pt = %d - %d' %( min, max, 15, max )
+
+            print 'N_LL = ', LL_count
+            print 'N_LT = ', LT_count
+            print 'N_TL = ', TL_count
+
+            print 'N_FF_TL = ', N_FF_TL
+            print 'N_FF_LT = ', N_FF_LT
+
+            print 'N_RF_TL = ', N_RF_TL
+            print 'N_FR_LT = ', N_FR_LT
+
+            print 'N_RF_TT = ', N_RF_TT
+            print 'N_FR_TT = ', N_FR_TT
+            print 'N_FF_TT = ', N_FF_TT
+
+            print 'Sum = ', (N_RF_TT+N_FR_TT+N_FF_TT)
+
+
+
+
+
+        
 
 def ApplySinglePhotonFF( cut_str, cut_vals, eta_cuts, ptbins, fake_factors) :
 
     labels = cut_vals.keys()
 
-    samp = samples.get_samples(name='Data')
-    sampEval = samples.get_samples(name='WjetsZjets')
+    samp = samplesData.get_samples(name='Data')
+    sampEval = samplesData.get_samples(name='WjetsZjets')
 
     for lab in labels :
 
@@ -106,7 +182,7 @@ def ApplySinglePhotonFF( cut_str, cut_vals, eta_cuts, ptbins, fake_factors) :
         cuts_den = cut_str%vals
         cuts_den += ' && ' + ec
                 
-        den_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s ' %cuts_den
+        den_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s ' %cuts_den
 
         #generate weighting string
 
@@ -135,7 +211,7 @@ def ApplySinglePhotonFF( cut_str, cut_vals, eta_cuts, ptbins, fake_factors) :
 
         if sampEval :
 
-            samples.create_hist( sampEval[0], var, 'PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_passMedium[0] && %s)'%ec , binning )
+            samples.create_hist( sampEval[0], var, 'PUWeight * ( mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_passMedium[0] && %s)'%ec , binning )
             evalhist = sampEval[0].hist.Clone( 'evalHist' )
 
         evalhist.SetMarkerColor( ROOT.kRed )
@@ -147,60 +223,70 @@ def ApplySinglePhotonFF( cut_str, cut_vals, eta_cuts, ptbins, fake_factors) :
         raw_input('contin')
 
 
-def GetFakeFactors(cut_den_base, cut_num_base, cut_vals, eta_cuts, ptbins) :
+def GetFakeFactors(cut_den_base, cut_num_base, regions, ptbins) :
 
-    labels = cut_vals.keys()
     binning = ( 500, 0, 500 )
 
-    den_sample = 'DataRealPhotonZgSub'
-    samp = samples.get_samples(name=den_sample)
+    den_sample = 'MuonRealPhotonZgSub'
+    samp = samplesFF.get_samples(name=den_sample)
+
+    fake_factors = {}
 
     output = {}
 
-    for lab in labels :
-        output[lab] = ROOT.TH1F( 'ff_%s'%lab, 'ff_%s'%lab, binning[0], binning[1], binning[2] )
 
-    for lab in labels :
+    for reg in regions :
 
-        ec = eta_cuts[lab]
-        vals = cut_vals[lab]
-
-        cuts_den = cut_den_base%vals
-        cuts_den += ' && ' + ec
+        cuts_den = cut_den_base
+        cuts_den += ' && ph_Is%s[0]' %reg
                 
         cuts_num = cut_num_base
-        cuts_num += ' && ' + ec
+        cuts_num += ' && ph_Is%s[0]' %reg
 
-        full_den_cuts = ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ' %cuts_den
-        full_num_cuts = ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ' %cuts_num
-
-
+        full_den_cuts = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ' %cuts_den
+        full_num_cuts = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ' %cuts_num
+        
         #generate histograms
         den_hist = None
         num_hist = None
 
         var = 'ph_pt[0]'
         if samp:
-            samples.create_hist( samp[0], var, full_den_cuts, binning )
+            samplesFF.create_hist( samp[0], var, full_den_cuts, binning )
             den_hist = samp[0].hist.Clone( 'den_hist' )
-            samples.create_hist( samp[0], var, full_num_cuts, binning )
+            samplesFF.create_hist( samp[0], var, full_num_cuts, binning )
             num_hist = samp[0].hist.Clone( 'num_hist' )
 
 
         for idx, min in enumerate( ptbins[0:-1] ) :
 
             max = ptbins[idx+1]
-            num_count = num_hist.Integral( num_hist.FindBin( min), num_hist.FindBin(max ) )
-            den_count = den_hist.Integral( den_hist.FindBin( min), den_hist.FindBin(max ) )
+
+            bin = ( reg, min, max )
+
+            num_count = num_hist.Integral( num_hist.FindBin( min), num_hist.FindBin(max ) - 1 )
+            den_count = den_hist.Integral( den_hist.FindBin( min), den_hist.FindBin(max ) - 1 )
 
             factor = num_count/den_count
 
-            for bin in range( 1, output[lab].GetNbinsX()+1 ) :
-                if output[lab].GetBinCenter( bin ) > min and output[lab].GetBinCenter( bin) < max :
-                    output[lab].SetBinContent(bin, factor )
-
-
             print 'Pt bins %f - %f, N num = %f, N den = %f, fake factor = %f ' %( min, max, num_count, den_count, factor )
+
+            output[bin] = factor
+
+        for idx, max in enumerate( ptbins[1:] ) :
+
+            bin = (reg, 15, max )
+
+            if bin in output :
+                continue
+
+            num_count = num_hist.Integral( num_hist.FindBin( 15), num_hist.FindBin(max ) - 1 )
+            den_count = den_hist.Integral( den_hist.FindBin( 15), den_hist.FindBin(max ) - 1 )
+
+            factor = num_count/den_count
+
+            output[bin] = factor
+
 
     return output
 

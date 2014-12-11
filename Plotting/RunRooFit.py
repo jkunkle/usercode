@@ -50,16 +50,16 @@ sampMan = None
 
 def get_default_draw_commands( ) :
 
-    return { 'real' :'mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 ' , 
-             'fake' :'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ',
+    return { 'real' :'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 ' , 
+             'fake' :'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ',
              #'fake' :'ph_n==2 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && ph_phDR>0.3  ',
-             'xf_cr' : ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && m_phph>15 && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 ',
-             'fx_cr' : ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && m_phph>15 && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 ',
-             'ff_cr' : ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && m_phph>15 && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 ',
+             'xf_cr' : ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && m_phph>15 && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 ',
+             'fx_cr' : ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && m_phph>15 && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 ',
+             'ff_cr' : ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && m_phph>15 && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 ',
            }
 
-    #real_base = ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 %s && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4' %iso_cuts_single
-    #fake_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 %s && leadPhot_leadLepDR>1 ' %iso_cuts_single
+    #real_base = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 %s && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4' %iso_cuts_single
+    #fake_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 %s && leadPhot_leadLepDR>1 ' %iso_cuts_single
 def get_default_samples( ) :
 
     return { 'real' : 'Wgamma', 'fake' : 'DataRealPhotonZgSub', 'target' : 'Data' }
@@ -129,44 +129,44 @@ def DoPhJetFakeSIEIETemplateFit() :
     #iso_cuts = 'ph_chIsoCorr[0]< 5 && ph_neuIsoCorr[0] < 3 && ph_phoIsoCorr[0] < 3 '
     #iso_cuts = 'ph_chIsoCorr[0] > -99999'
 
-    #real_base = ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4'
+    #real_base = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4'
     #signal_sample = 'Data'
-    real_base = 'mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 ' %iso_cuts
+    real_base = 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 ' %iso_cuts
     signal_sample = 'Wgamma'
 
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 '
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < m 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_phoIsoCorr[0] > 2 && ph_phoIsoCorr[0] < 4   '
-    fake_base = ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ' %iso_cuts
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_passChIsoCorrMedium[0] '
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]  && ph_passChIsoCorrMedium[0] '
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && !( ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25) '
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 '
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < m 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_phoIsoCorr[0] > 2 && ph_phoIsoCorr[0] < 4   '
+    fake_base = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ' %iso_cuts
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_passChIsoCorrMedium[0] '
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]  && ph_passChIsoCorrMedium[0] '
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && !( ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25) '
 
     bkg_sample = 'DataRealPhotonZgSub'
     #bkg_sample = 'Zgammastar'
 
-    #target_base = ' PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && mt_lep_met > 60 )'
+    #target_base = ' PUWeight * ( mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && mt_lep_met > 60 )'
     iso_cuts_subl = iso_cuts.replace('[0]', '[1]')
     iso_cuts_tot = iso_cuts + ' && ' + iso_cuts_subl
     target_bases = [
-                    'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && ph_phDR>0.3 && !ph_passSIEIEMedium[1] ' %iso_cuts_tot,
+                    'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && ph_phDR>0.3 && !ph_passSIEIEMedium[1] ' %iso_cuts_tot,
                     #'el_passtrig_n>0 && el_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && ph_phDR>1.0 && !ph_passSIEIEMedium[1] ' %iso_cuts_tot,
-                    #'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_chIsoCorr[1]< 5 && ph_neuIsoCorr[1] < 3 && ph_phoIsoCorr[1] < 3  ' %iso_cuts,
-                    #'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_neuIsoCorr[1] < 3 && ph_phoIsoCorr[1] < 3  ' %iso_cuts,
-                    #'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_chIsoCorr[1]< 5 && ph_phoIsoCorr[1] < 3  ' %iso_cuts,
-                    #'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_chIsoCorr[1]< 5 && ph_neuIsoCorr[1] < 3  ' %iso_cuts,
-                    #'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 ' %iso_cuts,
-                    #'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 ' %iso_cuts,
-                    #'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && %s && ph_phDR>0.3 ' %iso_cuts,
-                    #'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] ' %iso_cuts,
-                    #'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_passPhoIsoCorrMedium[1] ' %iso_cuts,
-                    #'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_passNeuIsoCorrMedium[1] ' %iso_cuts,
-                    #'mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_passChIsoCorrMedium[1]  ' %iso_cuts,
-                    #' mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && %s ' %iso_cuts
+                    #'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_chIsoCorr[1]< 5 && ph_neuIsoCorr[1] < 3 && ph_phoIsoCorr[1] < 3  ' %iso_cuts,
+                    #'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_neuIsoCorr[1] < 3 && ph_phoIsoCorr[1] < 3  ' %iso_cuts,
+                    #'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_chIsoCorr[1]< 5 && ph_phoIsoCorr[1] < 3  ' %iso_cuts,
+                    #'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_chIsoCorr[1]< 5 && ph_neuIsoCorr[1] < 3  ' %iso_cuts,
+                    #'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 ' %iso_cuts,
+                    #'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 ' %iso_cuts,
+                    #'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && %s && ph_phDR>0.3 ' %iso_cuts,
+                    #'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] ' %iso_cuts,
+                    #'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_passPhoIsoCorrMedium[1] ' %iso_cuts,
+                    #'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_passNeuIsoCorrMedium[1] ' %iso_cuts,
+                    #'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_passChIsoCorrMedium[1]  ' %iso_cuts,
+                    #' mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && %s ' %iso_cuts
                    ]
-    #target_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s ' %iso_cuts
-    #target_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_chIsoCorr[1]< 5 && ph_neuIsoCorr[1] < 3 && ph_phoIsoCorr[1] < 3  ' %iso_cuts
-    #target_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_neuIsoCorr[1] < 3 && ph_phoIsoCorr[1] < 3  ' %iso_cuts
+    #target_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && %s ' %iso_cuts
+    #target_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_chIsoCorr[1]< 5 && ph_neuIsoCorr[1] < 3 && ph_phoIsoCorr[1] < 3  ' %iso_cuts
+    #target_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_phDR>0.3 && ph_neuIsoCorr[1] < 3 && ph_phoIsoCorr[1] < 3  ' %iso_cuts
     target_sample = 'Data'
     #target_sample = 'WjetsWgamma'
 
@@ -731,29 +731,29 @@ def DoDiPhotonSIEIETemplateFit( outputDir=None) :
     iso_cuts_subl = iso_cuts_lead.replace('[0]', '[1]' ) 
     #iso_cuts_lead += ' && ph_pt[0]>40 '
 
-    #real_base = ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && %s && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4' %iso_cuts_lead
+    #real_base = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && %s && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4' %iso_cuts_lead
     #signal_sample = 'Data'
-    real_base = 'mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && %s && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 ' % iso_cuts_lead
+    real_base = 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && %s && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 ' % iso_cuts_lead
     signal_sample = 'Wgamma'
 
-    fake_base = ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && %s && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ' %iso_cuts_lead
-    #fake_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && %s && leadPhot_leadLepDR>1 ' %iso_cuts_lead
+    fake_base = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && %s && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ' %iso_cuts_lead
+    #fake_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_eleVeto[0]==0 && ph_HoverE12[0] < 0.05 && %s && leadPhot_leadLepDR>1 ' %iso_cuts_lead
 
     bkg_sample = 'DataRealPhotonZgSub'
     #bkg_sample = 'DataRealPhotonWgSub'
     #bkg_sample = 'Zgammastar'
 
-    target_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && ph_HoverE12[1] < 0.05 && %s' %(iso_cuts_lead, iso_cuts_subl )
+    target_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && ph_HoverE12[1] < 0.05 && %s' %(iso_cuts_lead, iso_cuts_subl )
 
-    xf_cr_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_HoverE12[1] < 0.05 && %s ' %(iso_cuts_lead, iso_cuts_subl)
+    xf_cr_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[1] && ph_HoverE12[1] < 0.05 && %s ' %(iso_cuts_lead, iso_cuts_subl)
 
-    fx_cr_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[0] && ph_HoverE12[1] < 0.05 && %s ' %(iso_cuts_lead, iso_cuts_subl)
+    fx_cr_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[0] && ph_HoverE12[1] < 0.05 && %s ' %(iso_cuts_lead, iso_cuts_subl)
 
-    fr_cr_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[0] && ph_passSIEIEMedium[1] && ph_HoverE12[1] < 0.05 && %s ' %(iso_cuts_lead, iso_cuts_subl )
+    fr_cr_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[0] && ph_passSIEIEMedium[1] && ph_HoverE12[1] < 0.05 && %s ' %(iso_cuts_lead, iso_cuts_subl )
 
-    rf_cr_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && ph_passSIEIEMedium[0] && !ph_passSIEIEMedium[1] && ph_HoverE12[1] < 0.05 && %s ' %(iso_cuts_lead, iso_cuts_subl)
+    rf_cr_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && ph_passSIEIEMedium[0] && !ph_passSIEIEMedium[1] && ph_HoverE12[1] < 0.05 && %s ' %(iso_cuts_lead, iso_cuts_subl)
 
-    ff_cr_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[1] && !ph_passSIEIEMedium[0] && ph_HoverE12[1] < 0.05 && %s ' %(iso_cuts_lead, iso_cuts_subl )
+    ff_cr_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && %s && !ph_passSIEIEMedium[1] && !ph_passSIEIEMedium[0] && ph_HoverE12[1] < 0.05 && %s ' %(iso_cuts_lead, iso_cuts_subl )
     target_sample = 'Data'
     #target_sample = 'WjetsWgamma'
 
@@ -825,18 +825,18 @@ def DoDiPhotonSIEIETemplateFit( outputDir=None) :
 
 def DoDiPhoton2DSIEIETemplateFit() :
 
-    #real_base = ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4'
+    #real_base = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplepph-91.2 ) < 5 && leadPhot_sublLepDR > 0.4 && leadPhot_sublLepDR<1 && leadPhot_leadLepDR>0.4'
     #signal_sample = 'Data'
-    real_base = 'mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25'
+    real_base = 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25'
     signal_sample = 'Wgamma'
 
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 '
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < m 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_phoIsoCorr[0] > 2 && ph_phoIsoCorr[0] < 4   '
-    fake_base = ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 '
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_passChIsoCorrMedium[0] '
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]  && ph_passChIsoCorrMedium[0] '
-    #fake_base =  ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && !( ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25) '
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 '
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < m 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_phoIsoCorr[0] > 2 && ph_phoIsoCorr[0] < 4   '
+    fake_base = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 '
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_passChIsoCorrMedium[0] '
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]  && ph_passChIsoCorrMedium[0] '
+    #fake_base =  ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && !( ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25) '
 
     bkg_sample = 'DataRealPhotonSub'
     #bkg_sample = 'Zgammastar'
@@ -925,13 +925,13 @@ def DoDiPhoton2DSIEIETemplateFit() :
     raw_input('continue')
 
     
-    #target_base = ' PUWeight * ( mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && mt_lep_met > 60 )'
-    target_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
-    #rf_cr_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
-    #fr_cr_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[1] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
-    rf_cr_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && !ph_passSIEIEMedium[1] && ph_passSIEIEMedium[0] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
-    fr_cr_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && !ph_passSIEIEMedium[0] && ph_passSIEIEMedium[1] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
-    ff_cr_base = ' mu_passtrig_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && !ph_passSIEIEMedium[1] && !ph_passSIEIEMedium[0] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
+    #target_base = ' PUWeight * ( mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && mt_lep_met > 60 )'
+    target_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
+    #rf_cr_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
+    #fr_cr_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[1] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
+    rf_cr_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && !ph_passSIEIEMedium[1] && ph_passSIEIEMedium[0] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
+    fr_cr_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && !ph_passSIEIEMedium[0] && ph_passSIEIEMedium[1] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
+    ff_cr_base = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && ph_phDR > 0.3 && ph_eleVeto[0]==0 && ph_eleVeto[1]==0 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && !ph_passSIEIEMedium[1] && !ph_passSIEIEMedium[0] && ph_HoverE12[1] < 0.05 && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
     target_sample = 'Data'
     #target_sample = 'WjetsWgamma'
 

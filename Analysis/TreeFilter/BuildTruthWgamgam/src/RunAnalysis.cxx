@@ -608,13 +608,43 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
 
     //count number of photons that originate from a W
     int nwphot=0;
+    int nphot15 = 0;
     for( int idx = 0 ; idx < OUT::phot_n; ++idx ) {
         if( abs(OUT::phot_motherPID->at(idx)) == 24 ) {
             nwphot++;
         }
+        if( OUT::phot_pt->at(idx)  > 15 ) {
+
+            TLorentzVector phlv;
+            phlv.SetPtEtaPhiM( OUT::phot_pt->at(idx),
+                               OUT::phot_eta->at(idx),
+                               OUT::phot_phi->at(idx),
+                               0.0 );
+
+            float mindr = 100.;
+            for( int lidx = 0 ; lidx < OUT::lep_n ; lidx ++ ) {
+                TLorentzVector leplv;
+                leplv.SetPtEtaPhiM( OUT::lep_pt->at(lidx),
+                                    OUT::lep_eta->at(lidx),
+                                    OUT::lep_phi->at(lidx),
+                                    0.0 );
+
+                float dr = phlv.DeltaR( leplv );
+
+                if( dr < mindr ) {
+                    mindr = dr;
+                }
+
+            }
+            if( mindr > 0.4 ) {
+                nphot15++;
+            }
+        }
     }
 
     if( !config.PassInt("cut_nWPhot", nwphot ) ) keep_event = false;
+
+    if( !config.PassInt("cut_nPhotPt15", nphot15 ) ) keep_event = false;
 
     return keep_event;
 

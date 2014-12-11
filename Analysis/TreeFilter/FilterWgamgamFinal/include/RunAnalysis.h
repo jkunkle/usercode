@@ -21,7 +21,7 @@ class RunModule : public virtual RunModuleBase {
 
     public :
 
-        RunModule() {}
+        RunModule();
 
         // The run function must exist and be defined exactly as this
         // because it is defined in RunModuleBase 
@@ -57,6 +57,29 @@ class RunModule : public virtual RunModuleBase {
     private :
         bool _isData;
         bool sort_photons_by_id;
+
+        bool _doMuPtScaleDown;
+        bool _doMuPtScaleUp;
+        bool _doElPtScaleDown;
+        bool _doElPtScaleUp;
+        bool _doPhPtScaleDown;
+        bool _doPhPtScaleUp;
+
+        float _muPtScaleDownBarrel;
+        float _muPtScaleDownEndcap;
+        float _muPtScaleUpBarrel;
+        float _muPtScaleUpEndcap;
+
+        float _elPtScaleDownBarrel;
+        float _elPtScaleDownEndcap;
+        float _elPtScaleUpBarrel;
+        float _elPtScaleUpEndcap;
+
+        float _phPtScaleDownBarrel;
+        float _phPtScaleDownEndcap;
+        float _phPtScaleUpBarrel;
+        float _phPtScaleUpEndcap;
+
 };
 
 // Ouput namespace 
@@ -69,6 +92,10 @@ namespace OUT {
     Int_t trueph_wmother_n ;
     Int_t truegenph_n ;
     Int_t truegenphpt15_n;
+
+    Int_t truegenphpt15WZMom_n;
+    Int_t truegenphpt15LepMom_n;
+    Int_t truegenphpt15QMom_n;
 
     std::vector<float>  *truelep_pt        ;
     std::vector<float>  *truelep_eta       ;
@@ -93,11 +120,17 @@ namespace OUT {
 
     Float_t trueleadlep_pt;
     Float_t truesubllep_pt;
+    Float_t true_m_leplep;
 
     Float_t trueleadlep_leadPhotDR;
     Float_t trueleadlep_sublPhotDR;
     Float_t truesubllep_leadPhotDR;
     Float_t truesubllep_sublPhotDR;
+
+    Float_t truephph_dr;
+    Float_t truephph_dphi;
+    Float_t truephph_m;
+    Float_t truelepphph_m;
 
     Bool_t isBlinded;
     Float_t EventWeight;
@@ -151,6 +184,9 @@ namespace OUT {
     Float_t m_lepph1;
     Float_t m_lepph2;
     Float_t m_leplepph;
+    Float_t m_leplepphph;
+    Float_t m_leplepph1;
+    Float_t m_leplepph2;
     Float_t m_lepphph;
     Float_t m_phph;
     Float_t m_leplepZ;
@@ -175,6 +211,10 @@ namespace OUT {
     Float_t            dr_ph1_sublLep;
     Float_t            dr_ph2_leadLep;
     Float_t            dr_ph2_sublLep;
+    Float_t            dphi_ph1_leadLep;
+    Float_t            dphi_ph1_sublLep;
+    Float_t            dphi_ph2_leadLep;
+    Float_t            dphi_ph2_sublLep;
     Float_t            m_ph1_ph2;
     Float_t            dr_ph1_ph2;
     Float_t            dphi_ph1_ph2; 
@@ -184,6 +224,10 @@ namespace OUT {
     Float_t            m_leadLep_ph2; 
     Float_t            pt_leadph12;
     Float_t            pt_sublph12;
+    Float_t            eta_leadph12;
+    Float_t            eta_sublph12;
+    Float_t            hasPixSeed_leadph12;
+    Float_t            hasPixSeed_sublph12;
     Float_t            sieie_leadph12;
     Float_t            sieie_sublph12;
     Float_t            chIsoCorr_leadph12;

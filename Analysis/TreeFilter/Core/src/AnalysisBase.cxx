@@ -9,6 +9,8 @@
 #include <boost/tokenizer.hpp>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <ctime>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "TFile.h"
 
@@ -124,12 +126,20 @@ void AnaConfig::Run( RunModuleBase & runmod, const CmdOptions & options ) {
             }
 
             int n_saved = 0;
+            int n_evt = 0;
             std::cout << "Will analyze " << maxevt-minevt << " events between " << minevt << " and " << maxevt << std::endl;
+            boost::posix_time::ptime time_start = boost::posix_time::microsec_clock::local_time();
             for( int cidx = minevt; cidx < maxevt; cidx++ ) {
 
-                if( cidx % 10000 == 0 ) {
-                  std::cout << "Processed " << cidx << " entries " << std::endl;
+                //if( n_evt == 0 ) time_start = boost::posix_time::microsec_clock::local_time();
+                if( n_evt % 10000 == 0 && n_evt > 0 ) {
+                    boost::posix_time::ptime time_now = boost::posix_time::microsec_clock::local_time();
+                    boost::posix_time::time_duration deltat = time_now - time_start;
+                    std::cout << "Processed " << n_evt << " entries in " << std::fixed << std::setprecision(2) << deltat.total_milliseconds()/1000. << " seconds" << std::endl;
+                    //time_start = boost::posix_time::microsec_clock::local_time();
                 }
+
+                n_evt++;
 
                 chain->GetEntry(cidx);
 

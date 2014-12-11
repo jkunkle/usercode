@@ -28,5 +28,7 @@ def config_analysis( alg_list ) :
     alg_list.append( Filter('BuildNeutrino') )
     alg_list.append( Filter('BuildWboson') )
 
+    filter_event = Filter( 'FilterEvent' )
+    filter_event.cut_nPhotPt15 = ' > 0 ' 
     alg_list.append( Filter('BuildEvent'   ) )
 

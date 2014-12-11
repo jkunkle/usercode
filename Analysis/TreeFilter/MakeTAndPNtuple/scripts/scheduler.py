@@ -1,12 +1,23 @@
 import os
-base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 
+from argparse import ArgumentParser
+p = ArgumentParser()
+p.add_argument( '--run', dest='run', default=False, action='store_true', help='Run filtering' )
+p.add_argument( '--check', dest='check', default=False, action='store_true', help='Run check of completion' )
+p.add_argument( '--resubmit', dest='resubmit', default=False, action='store_true', help='Only submit missing output' )
+p.add_argument( '--local', dest='local', default=False, action='store_true', help='Run locally, not on batch' )
+options = p.parse_args()
+
+if not options.run and not options.check :
+    options.run = True
+
+base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2014_11_13'
 
 jobs_data = [
     #(base, 'job_electron_2012a_Jan22rereco'),
     #(base, 'job_electron_2012b_Jan22rereco'),
     #(base, 'job_electron_2012c_Jan2012rereco'),
-    #(base, 'job_electron_2012d_Jan22rereco'),
+    (base, 'job_electron_2012d_Jan22rereco'),
     #(base, 'job_muon_2012a_Jan22rereco'),
     #(base, 'job_muon_2012b_Jan22rereco'),
     #(base, 'job_muon_2012c_Jan22rereco'),
@@ -14,7 +25,9 @@ jobs_data = [
 ]
 jobs_mc = [
     #(base, 'job_summer12_DYJetsToLL'),
-    (base, 'job_summer12_DYJetsToLLPhOlap'),
+    #(base, 'job_summer12_Zg'),
+    #(base, 'job_summer12_Wg'),
+    (base, 'job_summer12_Wjets'),
     #(base, 'job_summer12_WAA_ISR'),
     #(base, 'job_summer12_WH_ZH_125'),
     #(base, 'job_summer12_WWW'),
@@ -24,11 +37,8 @@ jobs_mc = [
     #(base, 'job_summer12_WZZ'),
     #(base, 'job_summer12_WZ_2l2q'),
     #(base, 'job_summer12_WZ_3lnu'),
-    #(base, 'job_summer12_Wg'),
     #(base, 'job_summer12_WgPhOlap'),
     #(base, 'job_summer12_Wgg_FSR'),
-    #(base, 'job_summer12_Wjets'),
-    (base, 'job_summer12_WjetsPhOlap'),
     #(base, 'job_summer12_ZZZ'),
     #(base, 'job_summer12_ZZ_2e2mu'),
     #(base, 'job_summer12_ZZ_2e2tau'),
@@ -39,7 +49,6 @@ jobs_mc = [
     #(base, 'job_summer12_ZZ_4e'),
     #(base, 'job_summer12_ZZ_4mu'),
     #(base, 'job_summer12_ZZ_4tau'),
-    #(base, 'job_summer12_Zg'),
     #(base, 'job_summer12_diphoton_box_10to25'),
     #(base, 'job_summer12_diphoton_box_250toInf'),
     #(base, 'job_summer12_diphoton_box_25to250'),
@@ -60,24 +69,34 @@ jobs_mc = [
 
 ]
 
-second_base = ['DiLeptonTightPh_2014_02_12', 'LepGammaTightPh_2014_02_12']
+output_name = 'TAndPElEl_2014_11_27'
+#output_name = 'TAndPMuMu_2014_11_27'
+module = 'ConfElectronTAndP.py'
+#module = 'ConfMuonTAndP.py'
+treename='ggNtuplizer/EventTree'
 
-#module_mc   = 'ConfLepGammaFilter.py'
-#module_data = 'ConfLepGammaFilter_Data.py'
-output_name = 'TAndPTightPh_2014_02_12'
+if options.local :
+    command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(input)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc 6 --enableRemoveFilter  --disableOutputTree'
 
-command_base = 'python scripts/filter.py  --filesDir %(input)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/ConfTAndP.py --nFilesPerJob 1 --nproc 8 --enableRemoveFilter %(addtl)s'
+else :
 
-addtl = ''
-for base, job in jobs_data+jobs_mc :
+    command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(input)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --batch --enableRemoveFilter --disableOutputTree'
 
-    input_dirs = []
-    for sb in second_base :
-        input_dirs.append( '%s/%s/%s' %( base, sb, job ) )
+if options.resubmit :
+    command_base += ' --resubmit'
+
+check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s/%(job)s --filteredDS /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --treeNameOrig %(treename)s --histNameFilt ggNtuplizer/filter --fileKeyOrig tree.root --fileKeyFilt tree.root'
+
+if options.run :
+    for base, job in jobs_data+jobs_mc :
     
-    command = command_base %{ 'input' : ','.join(input_dirs), 'output' : output_name, 'job' : job, 'addtl' : addtl }
-    print command
-    os.system(command)
+        command = command_base %{ 'input' : base+'/'+job, 'output' : output_name, 'job' : job, 'module' : module }
+        print command
+        os.system(command)
     
-    if not addtl :
-        addtl = ' --noCompile'
+if options.check :
+    for base, job in jobs_data+jobs_mc :
+        command = check_commands_base%{ 'base': base , 'job' : job, 'output' : output_name, 'treename' : treename}
+        print command
+        os.system(command)
+        

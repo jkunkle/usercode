@@ -37,6 +37,9 @@ def main() :
         print 'Output file already in list of input files.  Has the script already been run on this directory?'
         ana_files.remove( output_file )
 
+    if len(ana_files) < 2 :
+        print 'It looks like files have already been combined.  Will abort.'
+        return
 
     # sort the files so they have some reasonable ordering
     ana_files.sort()

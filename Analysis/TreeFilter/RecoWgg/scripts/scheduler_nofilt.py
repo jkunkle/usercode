@@ -29,17 +29,23 @@ jobs = [
         #(base_data, 'job_electron_2012a_Jan22rereco', 100),
         #(base_data, 'job_electron_2012b_Jan22rereco', 200),
         #(base_data, 'job_electron_2012c_Jan2012rereco', 400),
-        #(base_data, 'job_electron_2012d_Jan22rereco', 400),
-        #(base_mc, 'job_summer12_DiPhotonBorn_Pt-10To25', 10),
+        (base_data, 'job_electron_2012d_Jan22rereco', 500),
+
+        ##(base_data, 'job_2muon_2012a_Jan22rereco', 50),
+        ##(base_data, 'job_2muon_2012b_Jan22rereco', 100),
+        ##(base_data, 'job_2muon_2012c_Jan22rereco', 100),
+        ##(base_data, 'job_2muon_2012d_Jan22rereco', 100),
+
         #(base_mc2, 'job_summer12_DYJetsToLL', 300 ),
-        #(base_mc, 'job_summer12_Wjets', 100),
-        (base_mc, 'job_summer12_Wg', 50),
+        #(base_mc, 'job_summer12_Wjets', 400),
+        #(base_mc, 'job_summer12_Wg', 50),
         #(base_mc, 'job_summer12_Zg', 200),
         #(base_me, 'job_summer12_Zgg', 5 ),
         #(base_mc, 'job_summer12_Wgg_FSR', 20),
         #(base_mc, 'job_summer12_WAA_ISR', 20),
-        #(base_mc, 'job_summer12_ttjets_1l', 50),
-        #(base_mc, 'job_summer12_ttjets_2l', 50),
+        (base_mc, 'job_summer12_ttjets_1l', 200),
+        #(base_mc, 'job_summer12_ttjets_2l', 100),
+
         #(base_mc, 'job_summer12_ttg', 20),
         #(base_mc, 'job_summer12_WH_ZH_125', 10),
         #(base_mc, 'job_summer12_WWW', 10),
@@ -47,7 +53,7 @@ jobs = [
         #(base_mc, 'job_summer12_WW_2l2nu', 10),
         #(base_mc, 'job_summer12_WWg', 10),
         #(base_mc, 'job_summer12_WZZ', 10),
-        #(base_mc, 'job_summer12_WZ_2l2q', 10),
+        #(base_mc, 'job_summer12_WZ_2l2q', 50),
         #(base_mc, 'job_summer12_WZ_3lnu', 10),
         #(base_mc, 'job_summer12_ZZZ', 10),
         #(base_mc, 'job_summer12_ZZ_2e2mu', 10),
@@ -72,15 +78,20 @@ jobs = [
         #(base_mc, 'job_summer12_tbar_tW', 20),
         #(base_mc, 'job_summer12_ttW', 20),
         #(base_mc, 'job_summer12_ttZ', 20),
-        #(base_mc, 'job_summer12_ttinclusive', 100),
-        #(base_me, 'QCD_Pt-40_doubleEMEnriched', 20),
+
+        #(base_mc, 'job_summer12_DiPhotonBorn_Pt-10To25', 10),
         #(base_me, 'job_summer12_WgPt50-130', 40),
         #(base_me, 'job_summer12_WgPt130', 40),
         #(base_me, 'job_summer12_WgPt30-50', 40),
         #(base_me, 'job_summer12_WgPt20-30', 40),
-        ##(base_me, 'job_jetmon_2012b_Jan22rereco', 100),
-        ##(base_me, 'job_jetmon_2012c_Jan22rereco', 100),
-        ##(base_me, 'job_jetmon_2012d_Jan22rereco', 100),
+        #(base_me, 'job_jetmon_2012b_Jan22rereco', 100),
+        #(base_me, 'job_jetmon_2012c_Jan22rereco', 100),
+        #(base_me, 'job_jetmon_2012d_Jan22rereco', 100),
+
+        #(base_mc, 'job_summer12_ttinclusive', 100),
+        #(base_me, 'QCD_Pt-40_doubleEMEnriched', 20),
+
+        #(base_me, 'job_mg2pythia8_Wgg_small', 1),
 
 
 ]
@@ -107,7 +118,8 @@ check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --o
 #module = 'ConfWgamgamReco.py'
 #module = 'ConfWgamgamRecoJetTrig.py'
 module = 'ConfWgamgamReco.py'
-output = 'RecoOutputNoLepIso_2014_10_15'
+output = 'RecoOutput_2014_12_05'
+#output = 'LepGammaNoEleVetoNewVar_2014_05_02'
 nFilesPerJob = 1
 nProc = 5
 exename='RunAnalysisMC'
@@ -115,7 +127,7 @@ treename='ggNtuplizer/EventTree'
 
 if options.run :
     for base, job, nsplit in jobs :
-        command = command_base %{ 'base' : base, 'job' : job, 'nfiles' : nFilesPerJob, 'output' : output, 'nsplit': nsplit/2, 'nproc' : nProc, 'exename' : exename, 'treename' : treename, 'module' : module }
+        command = command_base %{ 'base' : base, 'job' : job, 'nfiles' : nFilesPerJob, 'output' : output, 'nsplit': nsplit, 'nproc' : nProc, 'exename' : exename, 'treename' : treename, 'module' : module }
         print command
         os.system(command)
 

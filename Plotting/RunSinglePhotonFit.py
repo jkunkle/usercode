@@ -19,6 +19,7 @@ from uncertainties import unumpy
 
 from SampleManager import SampleManager
 from SampleManager import Sample
+from RunMatrixFit import draw_template
 
 # Parse command-line options
 from argparse import ArgumentParser
@@ -70,27 +71,30 @@ sampManFit = None
 def get_default_draw_commands(ch='mu' ) :
 
     real_fake_cmds = {
-                      'real' :'mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 ' , 
-                      'fake' :'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ',
-                      'fakewin' :'mu_passtrig_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
-                      'realwin' :'mu_passtrig_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
+                      'real' :'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 ' , 
+                      'fake' :'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ',
+                      'fakewin' :'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
+                      'realwin' :'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
 
     }
     if ch=='mu' :
-        gg_cmds = {'gg' : ' mu_passtrig_n>0 && mu_n==2 && ph_n==1 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && el_n==0 && m_leplep>60 && m_leplepph > 105' }
-               
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIE_n==1 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && el_n==0 && m_leplep>60 && m_leplepph > 105' }
+    if ch=='murealcr' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIE_n==1 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && el_n==0 && m_leplep>60 && m_leplepph > 81 && m_leplepph < 101' }
     elif ch == 'el' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==2 && ph_n==1 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && mu_n==0 && m_leplep>60 && m_leplepph > 105',}
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==2 && ph_mediumNoSIEIE_n==1 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && mu_n==0 && m_leplep>60 && m_leplepph > 105',}
+    elif ch == 'elrealcr' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==2 && ph_mediumNoSIEIE_n==1 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && mu_n==0 && m_leplep>60 && m_leplepph > 81 && m_leplepph < 101',}
     elif ch=='muw' :
-        gg_cmds = {'gg' : ' mu_passtrig_n>0 && mu_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 80',}
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 80',}
     elif ch=='elw' :
         gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && mu_n==0 && mt_lep_met > 80',}
-    elif ch == 'elzcr' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && mu_n==0 && m_lepph1 > 76 && m_lepph1 < 106 && mt_lep_met > 80',}
-    elif ch == 'elinvpixlead' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==1 && ph_HoverE12[0] < 0.05 && mu_n==0 && mt_lep_met > 80',}
-    elif ch == 'elzcrinvpixlead' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==1 && ph_HoverE12[0] < 0.05 && mu_n==0 && m_lepph1 > 76 && m_lepph1 < 106 && mt_lep_met > 80',}
+    elif ch == 'elwzcr' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && mu_n==0 && m_lepph1 > 76 && m_lepph1 < 106 ',}
+    elif ch == 'elwinvpixlead' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==1 && ph_HoverE12[0] < 0.05 && mu_n==0 ',}
+    elif ch == 'elwzcrinvpixlead' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==1 && ph_HoverE12[0] < 0.05 && mu_n==0 && m_lepph1 > 76 && m_lepph1 < 106 ',}
 
     real_fake_cmds.update(gg_cmds)
 
@@ -159,13 +163,10 @@ def main() :
     global sampMan
     global sampManFit
 
-    if not options.baseDir.count('/eos/') and not os.path.isdir( options.baseDir ) :
-        print 'baseDir not found!'
-        return
+    base_dir = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2014_12_08/'
+    fit_dir  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_12_08/'
 
-    fit_dir = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_10_07/'
-
-    sampMan = SampleManager(options.baseDir, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
+    sampMan    = SampleManager(base_dir, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManFit = SampleManager(fit_dir, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
 
 
@@ -185,69 +186,6 @@ def main() :
 
     if options.nom :
         RunNomFitting( outputDir = options.outputDir, ch=options.channel)
-        #RunNomFitting( outputDir = options.outputDir, ch='el' )
-        #RunNomFitting( outputDir = options.outputDir, ch='elfull' )
-        #RunNomFitting( outputDir = options.outputDir, ch='elinvpixsubl' )
-        #RunNomFitting( outputDir = options.outputDir, ch='elinvpixlead' )
-        #RunNomFitting( outputDir = options.outputDir, ch='elfullinvpixlead' )
-        #RunNomFitting( outputDir = options.outputDir, ch='elfullinvpixsubl' )
-    if options.loose :
-        #RunLooseFitting( outputDir = options.outputDir, ch='mu' )
-        #RunLooseFitting( outputDir = options.outputDir, ch='el' )
-        RunLooseFitting( outputDir = options.outputDir, ch=options.channel )
-    if options.asym533 :
-        #RunAsymFittingLoose(vals=( 5,3,3  ), outputDir = options.outputDir , ch='mu' )
-        #RunAsymFittingLoose(vals=( 5,3,3  ), outputDir = options.outputDir , ch='el' )
-        RunAsymFittingLoose(vals=( 5,3,3  ), outputDir = options.outputDir , ch=options.channel )
-    if options.asym855 :
-        #RunAsymFittingLoose(vals=( 8,5,5  ), outputDir = options.outputDir , ch='mu' )
-        #RunAsymFittingLoose(vals=( 8,5,5  ), outputDir = options.outputDir , ch='el' )
-        RunAsymFittingLoose(vals=( 8,5,5  ), outputDir = options.outputDir , ch=options.channel )
-    if options.asym1077 :
-        #RunAsymFittingLoose( vals=( 10,7,7 ), outputDir = options.outputDir, ch='mu' )
-        #RunAsymFittingLoose( vals=( 10,7,7 ), outputDir = options.outputDir, ch='el' )
-        RunAsymFittingLoose( vals=( 10,7,7 ), outputDir = options.outputDir, ch=options.channel )
-    if options.asym1299 :
-        #RunAsymFittingLoose( vals=( 12,9,9 ), outputDir = options.outputDir, ch='mu' )
-        #RunAsymFittingLoose( vals=( 12,9,9 ), outputDir = options.outputDir, ch='el' )
-        RunAsymFittingLoose( vals=( 12,9,9 ), outputDir = options.outputDir, ch=options.channel )
-    if options.asym151111 :
-        #RunAsymFittingLoose( vals=( 15,11,11 ), outputDir = options.outputDir, ch='mu' )
-        #RunAsymFittingLoose( vals=( 15,11,11 ), outputDir = options.outputDir, ch='el' )
-        RunAsymFittingLoose( vals=( 15,11,11 ), outputDir = options.outputDir, ch=options.channel )
-    if options.asym201616 :
-        #RunAsymFittingLoose( vals=( 20,16,16 ), outputDir = options.outputDir, ch='mu' )
-        #RunAsymFittingLoose( vals=( 20,16,16 ), outputDir = options.outputDir, ch='el' )
-        RunAsymFittingLoose( vals=( 20,16,16 ), outputDir = options.outputDir, ch=options.channel )
-
-    if options.asymcorr533 :
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='mu' )
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='el' )
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='elfull' )
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='elinvpixsubl' )
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='elinvpixlead' )
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='elfullinvpixsubl' )
-        RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch=options.channel )
-    if options.asymcorr855 :
-        #RunCorrectedAsymFitting(vals=( 8,5,5  ), outputDir = options.outputDir , ch='mu' )
-        #RunCorrectedAsymFitting(vals=( 8,5,5  ), outputDir = options.outputDir , ch='el' )
-        RunCorrectedAsymFitting(vals=( 8,5,5  ), outputDir = options.outputDir , ch=options.channel )
-    if options.asymcorr1077 :
-        #RunCorrectedAsymFitting( vals=( 10,7,7 ), outputDir = options.outputDir, ch='mu' )
-        #RunCorrectedAsymFitting( vals=( 10,7,7 ), outputDir = options.outputDir, ch='el' )
-        RunCorrectedAsymFitting( vals=( 10,7,7 ), outputDir = options.outputDir, ch=options.channel )
-    if options.asymcorr1299 :
-        #RunCorrectedAsymFitting( vals=( 12,9,9 ), outputDir = options.outputDir, ch='mu' )
-        #RunCorrectedAsymFitting( vals=( 12,9,9 ), outputDir = options.outputDir, ch='el' )
-        RunCorrectedAsymFitting( vals=( 12,9,9 ), outputDir = options.outputDir, ch=options.channel)
-    if options.asymcorr151111 :
-        #RunCorrectedAsymFitting( vals=( 15,11,11 ), outputDir = options.outputDir, ch='mu' )
-        #RunCorrectedAsymFitting( vals=( 15,11,11 ), outputDir = options.outputDir, ch='el' )
-        RunCorrectedAsymFitting( vals=( 15,11,11 ), outputDir = options.outputDir, ch=options.channel )
-    if options.asymcorr201616 :
-        #RunCorrectedAsymFitting( vals=( 20,16,16 ), outputDir = options.outputDir, ch='mu' )
-        #RunCorrectedAsymFitting( vals=( 20,16,16 ), outputDir = options.outputDir, ch='el' )
-        RunCorrectedAsymFitting( vals=( 20,16,16 ), outputDir = options.outputDir, ch=options.channel )
 
 def load_syst_file( file ) :
 
@@ -265,48 +203,48 @@ def RunNomFitting( outputDir = None, ch='mu') :
         outputDirNom = outputDir + '/SinglePhotonResults/JetSinglePhotonFakeNomIso'
 
     ptbins = [15, 25, 40, 70, 1000000 ]
+    #ptbins = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 100, 1000000 ]
 
     iso_cuts_full = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
     iso_cuts = 'ph_chIsoCorr[0] < 8 && ph_neuIsoCorr[0] < 5 && ph_phoIsoCorr[0] < 5'
 
     do_nominal_fit( iso_cuts_full, ptbins=ptbins, ch=ch, outputDir = outputDirNom, systematics='Nom')
 
-    asym_cuts = [(5,3,3), (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20, 16, 16) ]
-    #asym_cuts = [ (15,11,11), (20, 16, 16) ]
-    for cuts in asym_cuts :
-        iso_cuts = 'ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %cuts
-        outputDirAsym=None
-        if outputDir is not None :
-            outputDirAsym = outputDir + '/SinglePhotonResults/JetSinglePhotonFakeAsymIso%d-%d-%d' %cuts
+    #asym_cuts = [(5,3,3), (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20, 16, 16) ]
+    #for cuts in asym_cuts :
+    #    iso_cuts = 'ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %cuts
+    #    outputDirAsym=None
+    #    if outputDir is not None :
+    #        outputDirAsym = outputDir + '/SinglePhotonResults/JetSinglePhotonFakeAsymIso%d-%d-%d' %cuts
 
-        do_nominal_fit( iso_cuts, ptbins=ptbins, ch=ch, outputDir = outputDirAsym, systematics='Nom', iso_cuts_data=iso_cuts)
+    #    do_nominal_fit( iso_cuts, ptbins=ptbins, ch=ch, outputDir = outputDirAsym, systematics='Nom', iso_cuts_data=iso_cuts)
 
 
-def RunAsymFittingLoose(vals, outputDir = None, ch='mu') :
-
-    outputDirNom = None
-    if outputDir is not None :
-        outputDirNom = outputDir + '/JetFakeTemplateFitPlotsLoose%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
-
-    iso_cuts_iso = ' ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-    iso_cuts_noiso = ' ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(vals[0], vals[1], vals[2] )
-
-    ptbins = [15, 25, 40, 80, 1000000 ]
-
-    do_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=ptbins, ch=ch, outputDir=outputDirNom )
-
-def RunCorrectedAsymFitting(vals, outputDir = None, ch='mu') :
-
-    outputDirNom = None
-    if outputDir is not None :
-        outputDirNom = outputDir + '/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
-
-    iso_cuts_iso = ' ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-    iso_cuts_noiso = ' ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(vals[0], vals[1], vals[2] )
-
-    ptbins = [15, 25, 40, 80, 1000000 ]
-
-    do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=ptbins, ch=ch, outputDir=outputDirNom, systematics=('-'.join([str(v) for v in vals])) )
+#def RunAsymFittingLoose(vals, outputDir = None, ch='mu') :
+#
+#    outputDirNom = None
+#    if outputDir is not None :
+#        outputDirNom = outputDir + '/JetFakeTemplateFitPlotsLoose%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
+#
+#    iso_cuts_iso = ' ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+#    iso_cuts_noiso = ' ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(vals[0], vals[1], vals[2] )
+#
+#    ptbins = [15, 25, 40, 80, 1000000 ]
+#
+#    do_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=ptbins, ch=ch, outputDir=outputDirNom )
+#
+#def RunCorrectedAsymFitting(vals, outputDir = None, ch='mu') :
+#
+#    outputDirNom = None
+#    if outputDir is not None :
+#        outputDirNom = outputDir + '/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
+#
+#    iso_cuts_iso = ' ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+#    iso_cuts_noiso = ' ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(vals[0], vals[1], vals[2] )
+#
+#    ptbins = [15, 20, 25, 30, 40, 50, 70, 1000000 ]
+#
+#    do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=ptbins, ch=ch, outputDir=outputDirNom, systematics=('-'.join([str(v) for v in vals])) )
 
 def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), ch='mu', outputDir=None, systematics=None, iso_cuts_data=None ) :
 
@@ -417,271 +355,271 @@ def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), ch='mu', outp
 
             save_results( results_pt_syst, outputDir, namePostfix_syst )
 
-def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_noiso=None, ptbins=[], subl_ptrange=(None,None), ch='mu', outputDir=None, systematics=None ) :
-
-    binning = get_default_binning()
-    samples = get_default_samples(ch)
-
-    real_template_str_iso = get_default_draw_commands(ch )['real']
-    fake_template_str_iso = get_default_draw_commands(ch )['fake']
-    if iso_cuts_iso is not None :
-        real_template_str_iso = real_template_str_iso + ' && ' + iso_cuts_iso
-        fake_template_str_iso = fake_template_str_iso + ' && ' + iso_cuts_iso
-
-    real_template_str_noiso = get_default_draw_commands(ch )['real']
-    fake_template_str_noiso = get_default_draw_commands(ch )['fake']
-    if iso_cuts_noiso is not None :
-        real_template_str_noiso = real_template_str_noiso + ' && ' + iso_cuts_noiso
-        fake_template_str_noiso = fake_template_str_noiso + ' && ' + iso_cuts_noiso
-
-    templates_iso_reg = {}
-    templates_iso_reg['EB'] = {}
-    templates_iso_reg['EE'] = {}
-    templates_iso_reg['EB']['real'] = get_single_photon_template(real_template_str_iso, binning['EB'], samples['real'], 'EB' )
-    templates_iso_reg['EE']['real'] = get_single_photon_template(real_template_str_iso, binning['EE'], samples['real'], 'EE' )
-    templates_iso_reg['EB']['fake'] = get_single_photon_template(fake_template_str_iso, binning['EB'], samples['fake'], 'EB' )
-    templates_iso_reg['EE']['fake'] = get_single_photon_template(fake_template_str_iso, binning['EE'], samples['fake'], 'EE' )
-
-    templates_noiso_reg = {}
-    templates_noiso_reg['EB'] = {}
-    templates_noiso_reg['EE'] = {}
-    templates_noiso_reg['EB']['real'] = get_single_photon_template(real_template_str_noiso, binning['EB'], samples['real'], 'EB' )
-    templates_noiso_reg['EE']['real'] = get_single_photon_template(real_template_str_noiso, binning['EE'], samples['real'], 'EE' )
-    templates_noiso_reg['EB']['fake'] = get_single_photon_template(fake_template_str_noiso, binning['EB'], samples['fake'], 'EB' )
-    templates_noiso_reg['EE']['fake'] = get_single_photon_template(fake_template_str_noiso, binning['EE'], samples['fake'], 'EE' )
-
-    lead_iso_cuts   = None
-    lead_noiso_cuts = None
-
-    if iso_cuts_iso is not None :
-        lead_iso_cuts = iso_cuts_iso.replace('[1]', '[0]')
-    if iso_cuts_noiso is not None :
-        lead_noiso_cuts = iso_cuts_noiso.replace('[1]', '[0]')
-
-    regions = [ 'EB', 'EE' ]
-
-    for reg in regions :
-
-        templates_leadiso = {}
-        templates_leadiso['lead'] = {}
-        templates_leadiso['lead']['real'] = templates_iso_reg[reg]['real']
-        templates_leadiso['lead']['fake'] = templates_iso_reg[reg]['fake']
-
-        templates_subliso = {}
-        templates_subliso['lead'] = {}
-        templates_subliso['lead']['real'] = templates_noiso_reg[reg]['real']
-        templates_subliso['lead']['fake'] = templates_noiso_reg[reg]['fake']
-
-        templates_nom = {}
-        templates_nom['lead'] = {}
-        templates_nom['lead']['real'] = templates_leadiso['lead']['real']
-        templates_nom['lead']['fake'] = templates_leadiso['lead']['fake']
-
-        # add regions onto the selection
-        gg_selection_leadiso = get_default_draw_commands(ch)['gg'] + ' && ph_Is%s[0] ' %( reg )
-
-        # add object cuts to the selection
-        if lead_iso_cuts is not None :
-            gg_selection_leadiso = gg_selection_leadiso + ' && %s ' %(lead_iso_cuts)
-
-        # parse out the x and y binning
-        xbinn = binning[reg[0]]
-
-        # variable given to TTree.Draw
-        var = 'ph_pt[0]::ph_sigmaIEIE[0]' #z:y:x
-
-        # get sample
-        target_samp = sampManFit.get_samples(name=samples['target'])
-
-        # draw and get back the hist
-        gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], 100, 0, 500 ) )
-
-        # -----------------------
-        # inclusive result
-        # -----------------------
-        # project data hist
-        gg_hist_leadiso_inclusive = gg_hist_leadiso.Project3D( 'yx' )
-
-        templates_leadiso_inclusive = get_projected_templates( templates_leadiso, lead_ptrange = (None,None) )
-        templates_nom_inclusive = get_projected_templates( templates_nom, lead_ptrange = (None,None) )
-
-        (results_corr_stat, results_corr_syst)  = run_corrected_diphoton_fit(templates_leadiso_inclusive, gg_hist_leadiso_inclusive, reg, lead_ptrange=(None,None), outputDir=outputDir, outputPrefix='__%s' %ch, systematics=systematics)
-
-        namePostfix = '__%s__%s-%s' %( ch,reg[0], reg[1] )
-
-        save_templates( templates_nom_inclusive, outputDir, lead_ptrange=(None,None),namePostfix=namePostfix )
-        save_results( results_corr_stat, outputDir, namePostfix)
-
-        namePostfix_syst = '__syst%s' %namePostfix
-        save_results( results_corr_syst, outputDir, namePostfix_syst)
-
-        # -----------------------
-        # pt binned results
-        # -----------------------
-        for idx, ptmin in enumerate(ptbins[:-1] ) :
-
-            ptmax = ptbins[idx+1]
-
-            # put lead range together (expected by following code)
-            if ptmax == ptbins[-1] : 
-                lead_ptrange = ( ptmin, None )
-            else :
-                lead_ptrange = ( ptmin, ptmax )
-
-            print 'ptmin = %d, ptmax = %d, Min Z bin = %d, max Z bin = %d' %( ptmin, ptmax, gg_hist_leadiso.GetZaxis().FindBin( ptmin), gg_hist_leadiso.GetZaxis().FindBin( ptmax )-1 )
-            # project data hist
-            gg_hist_leadiso.GetZaxis().SetRange( gg_hist_leadiso.GetZaxis().FindBin( ptmin), gg_hist_leadiso.GetZaxis().FindBin( ptmax )-1 )
-            gg_hist_leadiso_pt = gg_hist_leadiso.Project3D( 'yx' )
-
-            gg_hist_subliso.GetZaxis().SetRange( gg_hist_subliso.GetZaxis().FindBin( ptmin), gg_hist_subliso.GetZaxis().FindBin( ptmax )-1 )
-            gg_hist_subliso_pt = gg_hist_subliso.Project3D( 'yx' )
-                
-            # get templates
-            templates_leadiso_pt = get_projected_templates( templates_leadiso, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1]) )
-            templates_subliso_pt = get_projected_templates( templates_subliso, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1]) )
-            templates_nom_pt = get_projected_templates( templates_nom, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1]) )
-
-            # get results
-            (results_corr_pt_stat, results_corr_pt_syst) = run_corrected_diphoton_fit(templates_leadiso_pt, templates_subliso_pt, gg_hist_leadiso_pt, gg_hist_subliso_pt, reg[0], reg[1], lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1]), outputDir=outputDir, outputPrefix='__%s'%ch, systematics=systematics)
-
-            namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
-
-            if lead_ptrange[0] is not None :
-                if lead_ptrange[1] is None :
-                    namePostfix += '__pt_%d-max' %lead_ptrange[0]
-                else :
-                    namePostfix += '__pt_%d-%d' %(lead_ptrange[0], lead_ptrange[1] )
-
-            if subl_ptrange[0] is not None :
-                if subl_ptrange[1] is None :
-                    namePostfix += '__subpt_%d-max' %subl_ptrange[0]
-                else :
-                    namePostfix += '__subpt_%d-%d' %(subl_ptrange[0], subl_ptrange[1] )
-
-            save_templates( templates_nom_pt, outputDir, lead_ptrange=lead_ptrange, namePostfix=namePostfix)
-            save_results( results_corr_pt_stat, outputDir, namePostfix)
-
-            namePostfix_syst = '__syst%s' %namePostfix
-            save_results( results_corr_pt_syst, outputDir, namePostfix_syst)
-
-def do_closure_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptrange=None, ch='mu', ngen=None, corr_factor=0.0, outputDir=None ) :
-
-    if ngen is None :
-        ngen = { 'RF' : 10000, 'FR' : 10000, 'FF' : 10000 }
-
-    binning = get_default_binning()
-    samples = get_default_samples(ch)
-
-    # generate templates for both EB and EE
-    real_template_str = get_default_draw_commands(ch )['real'] + ' && %s' %iso_cuts_lead
-    fake_template_str = get_default_draw_commands(ch )['fake'] + ' && %s' %iso_cuts_lead
-
-    templates_reg = {}
-    templates_reg['EB'] = {}
-    templates_reg['EE'] = {}
-    templates_reg['EB']['real'] = get_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB')
-    templates_reg['EE']['real'] = get_single_photon_template(real_template_str, binning['EE'], samples['real'], 'EE')
-    templates_reg['EB']['fake'] = get_single_photon_template(fake_template_str, binning['EB'], samples['fake'], 'EB')
-    templates_reg['EE']['fake'] = get_single_photon_template(fake_template_str, binning['EE'], samples['fake'], 'EE')
-
-    regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB'), ('EE', 'EE') ]
-    for reg in regions :
-
-        # convert from regions to lead/subl
-        templates = {}
-        templates['lead'] = {}
-        templates['subl'] = {}
-        templates['lead']['real'] = templates_reg[reg[0]]['real']
-        templates['subl']['real'] = templates_reg[reg[1]]['real']
-        templates['lead']['fake'] = templates_reg[reg[0]]['fake']
-        templates['subl']['fake'] = templates_reg[reg[1]]['fake']
-
-        templates_inclusive = get_projected_templates( templates, lead_ptrange = (None,None), subl_ptrange=subl_ptrange )
-
-        results_inclusive = run_generated_diphoton_fit(templates_inclusive, reg[0], reg[1], ngen, corr_factor=corr_factor, outputDir=outputDir, outputPrefix='__%s'%ch )
-
-        print results_inclusive
-
-        #namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
-        #save_templates( templates_inclusive, outputDir, lead_ptrange=(None,None), namePostfix=namePostfix )
-        #save_results( results_inclusive, outputDir, namePostfix )
-
-        # -----------------------
-        # pt binned results
-        # -----------------------
-        for idx, ptmin in enumerate(ptbins[:-1] ) :
-            ptmax = ptbins[idx+1]
-
-            # put lead range together (expected by following code)
-            if ptmax == ptbins[-1] : 
-                lead_ptrange = ( ptmin, None )
-            else :
-                lead_ptrange = ( ptmin, ptmax )
-
-            # get templates
-            templates_pt = get_projected_templates( templates, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1] ) )
-
-            # get results
-            results_pt = run_generated_diphoton_fit(templates_pt, reg[0], reg[1],ngen, corr_factor=corr_factor, outputDir=outputDir, outputPrefix='__%s' %ch )
-
-            print results_pt
-
-            #namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
-            #if lead_ptrange[0] is not None :
-            #    if lead_ptrange[1] is None :
-            #        namePostfix += '__pt_%d-max' %lead_ptrange[0]
-            #    else :
-            #        namePostfix += '__pt_%d-%d' %(lead_ptrange[0], lead_ptrange[1] )
-
-            #if subl_ptrange[0] is not None :
-            #    if subl_ptrange[1] is None :
-            #        namePostfix += '__subpt_%d-max' %subl_ptrange[0]
-            #    else :
-            #        namePostfix += '__subpt_%d-%d' %(subl_ptrange[0], subl_ptrange[1] )
-
-            #save_templates( templates_pt, outputDir, lead_ptrange=lead_ptrange, namePostfix=namePostfix )
-            #save_results( results_pt, outputDir, namePostfix )
-
-
-def update_asym_results( results_leadiso, results_subliso ) :
-        
-    iso_eff_subl = (results_subliso['template_int_subl_fake_tight']+results_subliso['template_int_subl_fake_loose'])/(results_leadiso['template_int_subl_fake_tight']+results_leadiso['template_int_subl_fake_loose'])
-    iso_eff_lead = (results_leadiso['template_int_lead_fake_tight']+results_leadiso['template_int_lead_fake_loose'])/(results_subliso['template_int_lead_fake_tight']+results_subliso['template_int_lead_fake_loose'])
-
-    results_leadiso['iso_eff_subl'] = iso_eff_subl
-    results_subliso['iso_eff_lead'] = iso_eff_lead
-
-    results_leadiso['Npred_RF_TT_scaled'] = results_leadiso['Npred_RF_TT']*iso_eff_subl
-    results_leadiso['Npred_FR_TT_scaled'] = results_leadiso['Npred_FR_TT']*iso_eff_subl
-    results_leadiso['Npred_FF_TT_scaled'] = results_leadiso['Npred_FF_TT']*iso_eff_subl
-
-    results_leadiso['Npred_RF_TL_scaled'] = results_leadiso['Npred_RF_TL']*iso_eff_subl
-    results_leadiso['Npred_FR_TL_scaled'] = results_leadiso['Npred_FR_TL']*iso_eff_subl
-    results_leadiso['Npred_FF_TL_scaled'] = results_leadiso['Npred_FF_TL']*iso_eff_subl
-
-    results_leadiso['Npred_RF_LT_scaled'] = results_leadiso['Npred_RF_LT']*iso_eff_subl
-    results_leadiso['Npred_FR_LT_scaled'] = results_leadiso['Npred_FR_LT']*iso_eff_subl
-    results_leadiso['Npred_FF_LT_scaled'] = results_leadiso['Npred_FF_LT']*iso_eff_subl
-
-    results_leadiso['Npred_RF_LL_scaled'] = results_leadiso['Npred_RF_LL']*iso_eff_subl
-    results_leadiso['Npred_FR_LL_scaled'] = results_leadiso['Npred_FR_LL']*iso_eff_subl
-    results_leadiso['Npred_FF_LL_scaled'] = results_leadiso['Npred_FF_LL']*iso_eff_subl
-
-    results_subliso['Npred_RF_TT_scaled'] = results_subliso['Npred_RF_TT']*iso_eff_lead
-    results_subliso['Npred_FR_TT_scaled'] = results_subliso['Npred_FR_TT']*iso_eff_lead
-    results_subliso['Npred_FF_TT_scaled'] = results_subliso['Npred_FF_TT']*iso_eff_lead
-
-    results_subliso['Npred_RF_TL_scaled'] = results_subliso['Npred_RF_TL']*iso_eff_lead
-    results_subliso['Npred_FR_TL_scaled'] = results_subliso['Npred_FR_TL']*iso_eff_lead
-    results_subliso['Npred_FF_TL_scaled'] = results_subliso['Npred_FF_TL']*iso_eff_lead
-
-    results_subliso['Npred_RF_LT_scaled'] = results_subliso['Npred_RF_LT']*iso_eff_lead
-    results_subliso['Npred_FR_LT_scaled'] = results_subliso['Npred_FR_LT']*iso_eff_lead
-    results_subliso['Npred_FF_LT_scaled'] = results_subliso['Npred_FF_LT']*iso_eff_lead
-
-    results_subliso['Npred_RF_LL_scaled'] = results_subliso['Npred_RF_LL']*iso_eff_lead
-    results_subliso['Npred_FR_LL_scaled'] = results_subliso['Npred_FR_LL']*iso_eff_lead
-    results_subliso['Npred_FF_LL_scaled'] = results_subliso['Npred_FF_LL']*iso_eff_lead
+#def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_noiso=None, ptbins=[], subl_ptrange=(None,None), ch='mu', outputDir=None, systematics=None ) :
+#
+#    binning = get_default_binning()
+#    samples = get_default_samples(ch)
+#
+#    real_template_str_iso = get_default_draw_commands(ch )['real']
+#    fake_template_str_iso = get_default_draw_commands(ch )['fake']
+#    if iso_cuts_iso is not None :
+#        real_template_str_iso = real_template_str_iso + ' && ' + iso_cuts_iso
+#        fake_template_str_iso = fake_template_str_iso + ' && ' + iso_cuts_iso
+#
+#    real_template_str_noiso = get_default_draw_commands(ch )['real']
+#    fake_template_str_noiso = get_default_draw_commands(ch )['fake']
+#    if iso_cuts_noiso is not None :
+#        real_template_str_noiso = real_template_str_noiso + ' && ' + iso_cuts_noiso
+#        fake_template_str_noiso = fake_template_str_noiso + ' && ' + iso_cuts_noiso
+#
+#    templates_iso_reg = {}
+#    templates_iso_reg['EB'] = {}
+#    templates_iso_reg['EE'] = {}
+#    templates_iso_reg['EB']['real'] = get_single_photon_template(real_template_str_iso, binning['EB'], samples['real'], 'EB' )
+#    templates_iso_reg['EE']['real'] = get_single_photon_template(real_template_str_iso, binning['EE'], samples['real'], 'EE' )
+#    templates_iso_reg['EB']['fake'] = get_single_photon_template(fake_template_str_iso, binning['EB'], samples['fake'], 'EB' )
+#    templates_iso_reg['EE']['fake'] = get_single_photon_template(fake_template_str_iso, binning['EE'], samples['fake'], 'EE' )
+#
+#    templates_noiso_reg = {}
+#    templates_noiso_reg['EB'] = {}
+#    templates_noiso_reg['EE'] = {}
+#    templates_noiso_reg['EB']['real'] = get_single_photon_template(real_template_str_noiso, binning['EB'], samples['real'], 'EB' )
+#    templates_noiso_reg['EE']['real'] = get_single_photon_template(real_template_str_noiso, binning['EE'], samples['real'], 'EE' )
+#    templates_noiso_reg['EB']['fake'] = get_single_photon_template(fake_template_str_noiso, binning['EB'], samples['fake'], 'EB' )
+#    templates_noiso_reg['EE']['fake'] = get_single_photon_template(fake_template_str_noiso, binning['EE'], samples['fake'], 'EE' )
+#
+#    lead_iso_cuts   = None
+#    lead_noiso_cuts = None
+#
+#    if iso_cuts_iso is not None :
+#        lead_iso_cuts = iso_cuts_iso.replace('[1]', '[0]')
+#    if iso_cuts_noiso is not None :
+#        lead_noiso_cuts = iso_cuts_noiso.replace('[1]', '[0]')
+#
+#    regions = [ 'EB', 'EE' ]
+#
+#    for reg in regions :
+#
+#        templates_leadiso = {}
+#        templates_leadiso['lead'] = {}
+#        templates_leadiso['lead']['real'] = templates_iso_reg[reg]['real']
+#        templates_leadiso['lead']['fake'] = templates_iso_reg[reg]['fake']
+#
+#        templates_subliso = {}
+#        templates_subliso['lead'] = {}
+#        templates_subliso['lead']['real'] = templates_noiso_reg[reg]['real']
+#        templates_subliso['lead']['fake'] = templates_noiso_reg[reg]['fake']
+#
+#        templates_nom = {}
+#        templates_nom['lead'] = {}
+#        templates_nom['lead']['real'] = templates_leadiso['lead']['real']
+#        templates_nom['lead']['fake'] = templates_leadiso['lead']['fake']
+#
+#        # add regions onto the selection
+#        gg_selection_leadiso = get_default_draw_commands(ch)['gg'] + ' && ph_Is%s[0] ' %( reg )
+#
+#        # add object cuts to the selection
+#        if lead_iso_cuts is not None :
+#            gg_selection_leadiso = gg_selection_leadiso + ' && %s ' %(lead_iso_cuts)
+#
+#        # parse out the x and y binning
+#        xbinn = binning[reg[0]]
+#
+#        # variable given to TTree.Draw
+#        var = 'ph_pt[0]::ph_sigmaIEIE[0]' #z:y:x
+#
+#        # get sample
+#        target_samp = sampManFit.get_samples(name=samples['target'])
+#
+#        # draw and get back the hist
+#        gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], 100, 0, 500 ) )
+#
+#        # -----------------------
+#        # inclusive result
+#        # -----------------------
+#        # project data hist
+#        gg_hist_leadiso_inclusive = gg_hist_leadiso.Project3D( 'yx' )
+#
+#        templates_leadiso_inclusive = get_projected_templates( templates_leadiso, lead_ptrange = (None,None) )
+#        templates_nom_inclusive = get_projected_templates( templates_nom, lead_ptrange = (None,None) )
+#
+#        (results_corr_stat, results_corr_syst)  = run_corrected_diphoton_fit(templates_leadiso_inclusive, gg_hist_leadiso_inclusive, reg, lead_ptrange=(None,None), outputDir=outputDir, outputPrefix='__%s' %ch, systematics=systematics)
+#
+#        namePostfix = '__%s__%s-%s' %( ch,reg[0], reg[1] )
+#
+#        save_templates( templates_nom_inclusive, outputDir, lead_ptrange=(None,None),namePostfix=namePostfix )
+#        save_results( results_corr_stat, outputDir, namePostfix)
+#
+#        namePostfix_syst = '__syst%s' %namePostfix
+#        save_results( results_corr_syst, outputDir, namePostfix_syst)
+#
+#        # -----------------------
+#        # pt binned results
+#        # -----------------------
+#        for idx, ptmin in enumerate(ptbins[:-1] ) :
+#
+#            ptmax = ptbins[idx+1]
+#
+#            # put lead range together (expected by following code)
+#            if ptmax == ptbins[-1] : 
+#                lead_ptrange = ( ptmin, None )
+#            else :
+#                lead_ptrange = ( ptmin, ptmax )
+#
+#            print 'ptmin = %d, ptmax = %d, Min Z bin = %d, max Z bin = %d' %( ptmin, ptmax, gg_hist_leadiso.GetZaxis().FindBin( ptmin), gg_hist_leadiso.GetZaxis().FindBin( ptmax )-1 )
+#            # project data hist
+#            gg_hist_leadiso.GetZaxis().SetRange( gg_hist_leadiso.GetZaxis().FindBin( ptmin), gg_hist_leadiso.GetZaxis().FindBin( ptmax )-1 )
+#            gg_hist_leadiso_pt = gg_hist_leadiso.Project3D( 'yx' )
+#
+#            gg_hist_subliso.GetZaxis().SetRange( gg_hist_subliso.GetZaxis().FindBin( ptmin), gg_hist_subliso.GetZaxis().FindBin( ptmax )-1 )
+#            gg_hist_subliso_pt = gg_hist_subliso.Project3D( 'yx' )
+#                
+#            # get templates
+#            templates_leadiso_pt = get_projected_templates( templates_leadiso, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1]) )
+#            templates_subliso_pt = get_projected_templates( templates_subliso, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1]) )
+#            templates_nom_pt = get_projected_templates( templates_nom, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1]) )
+#
+#            # get results
+#            (results_corr_pt_stat, results_corr_pt_syst) = run_corrected_diphoton_fit(templates_leadiso_pt, templates_subliso_pt, gg_hist_leadiso_pt, gg_hist_subliso_pt, reg[0], reg[1], lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1]), outputDir=outputDir, outputPrefix='__%s'%ch, systematics=systematics)
+#
+#            namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
+#
+#            if lead_ptrange[0] is not None :
+#                if lead_ptrange[1] is None :
+#                    namePostfix += '__pt_%d-max' %lead_ptrange[0]
+#                else :
+#                    namePostfix += '__pt_%d-%d' %(lead_ptrange[0], lead_ptrange[1] )
+#
+#            if subl_ptrange[0] is not None :
+#                if subl_ptrange[1] is None :
+#                    namePostfix += '__subpt_%d-max' %subl_ptrange[0]
+#                else :
+#                    namePostfix += '__subpt_%d-%d' %(subl_ptrange[0], subl_ptrange[1] )
+#
+#            save_templates( templates_nom_pt, outputDir, lead_ptrange=lead_ptrange, namePostfix=namePostfix)
+#            save_results( results_corr_pt_stat, outputDir, namePostfix)
+#
+#            namePostfix_syst = '__syst%s' %namePostfix
+#            save_results( results_corr_pt_syst, outputDir, namePostfix_syst)
+#
+#def do_closure_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptrange=None, ch='mu', ngen=None, corr_factor=0.0, outputDir=None ) :
+#
+#    if ngen is None :
+#        ngen = { 'RF' : 10000, 'FR' : 10000, 'FF' : 10000 }
+#
+#    binning = get_default_binning()
+#    samples = get_default_samples(ch)
+#
+#    # generate templates for both EB and EE
+#    real_template_str = get_default_draw_commands(ch )['real'] + ' && %s' %iso_cuts_lead
+#    fake_template_str = get_default_draw_commands(ch )['fake'] + ' && %s' %iso_cuts_lead
+#
+#    templates_reg = {}
+#    templates_reg['EB'] = {}
+#    templates_reg['EE'] = {}
+#    templates_reg['EB']['real'] = get_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB')
+#    templates_reg['EE']['real'] = get_single_photon_template(real_template_str, binning['EE'], samples['real'], 'EE')
+#    templates_reg['EB']['fake'] = get_single_photon_template(fake_template_str, binning['EB'], samples['fake'], 'EB')
+#    templates_reg['EE']['fake'] = get_single_photon_template(fake_template_str, binning['EE'], samples['fake'], 'EE')
+#
+#    regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB'), ('EE', 'EE') ]
+#    for reg in regions :
+#
+#        # convert from regions to lead/subl
+#        templates = {}
+#        templates['lead'] = {}
+#        templates['subl'] = {}
+#        templates['lead']['real'] = templates_reg[reg[0]]['real']
+#        templates['subl']['real'] = templates_reg[reg[1]]['real']
+#        templates['lead']['fake'] = templates_reg[reg[0]]['fake']
+#        templates['subl']['fake'] = templates_reg[reg[1]]['fake']
+#
+#        templates_inclusive = get_projected_templates( templates, lead_ptrange = (None,None), subl_ptrange=subl_ptrange )
+#
+#        results_inclusive = run_generated_diphoton_fit(templates_inclusive, reg[0], reg[1], ngen, corr_factor=corr_factor, outputDir=outputDir, outputPrefix='__%s'%ch )
+#
+#        print results_inclusive
+#
+#        #namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
+#        #save_templates( templates_inclusive, outputDir, lead_ptrange=(None,None), namePostfix=namePostfix )
+#        #save_results( results_inclusive, outputDir, namePostfix )
+#
+#        # -----------------------
+#        # pt binned results
+#        # -----------------------
+#        for idx, ptmin in enumerate(ptbins[:-1] ) :
+#            ptmax = ptbins[idx+1]
+#
+#            # put lead range together (expected by following code)
+#            if ptmax == ptbins[-1] : 
+#                lead_ptrange = ( ptmin, None )
+#            else :
+#                lead_ptrange = ( ptmin, ptmax )
+#
+#            # get templates
+#            templates_pt = get_projected_templates( templates, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1] ) )
+#
+#            # get results
+#            results_pt = run_generated_diphoton_fit(templates_pt, reg[0], reg[1],ngen, corr_factor=corr_factor, outputDir=outputDir, outputPrefix='__%s' %ch )
+#
+#            print results_pt
+#
+#            #namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
+#            #if lead_ptrange[0] is not None :
+#            #    if lead_ptrange[1] is None :
+#            #        namePostfix += '__pt_%d-max' %lead_ptrange[0]
+#            #    else :
+#            #        namePostfix += '__pt_%d-%d' %(lead_ptrange[0], lead_ptrange[1] )
+#
+#            #if subl_ptrange[0] is not None :
+#            #    if subl_ptrange[1] is None :
+#            #        namePostfix += '__subpt_%d-max' %subl_ptrange[0]
+#            #    else :
+#            #        namePostfix += '__subpt_%d-%d' %(subl_ptrange[0], subl_ptrange[1] )
+#
+#            #save_templates( templates_pt, outputDir, lead_ptrange=lead_ptrange, namePostfix=namePostfix )
+#            #save_results( results_pt, outputDir, namePostfix )
+#
+#
+#def update_asym_results( results_leadiso, results_subliso ) :
+#        
+#    iso_eff_subl = (results_subliso['template_int_subl_fake_tight']+results_subliso['template_int_subl_fake_loose'])/(results_leadiso['template_int_subl_fake_tight']+results_leadiso['template_int_subl_fake_loose'])
+#    iso_eff_lead = (results_leadiso['template_int_lead_fake_tight']+results_leadiso['template_int_lead_fake_loose'])/(results_subliso['template_int_lead_fake_tight']+results_subliso['template_int_lead_fake_loose'])
+#
+#    results_leadiso['iso_eff_subl'] = iso_eff_subl
+#    results_subliso['iso_eff_lead'] = iso_eff_lead
+#
+#    results_leadiso['Npred_RF_TT_scaled'] = results_leadiso['Npred_RF_TT']*iso_eff_subl
+#    results_leadiso['Npred_FR_TT_scaled'] = results_leadiso['Npred_FR_TT']*iso_eff_subl
+#    results_leadiso['Npred_FF_TT_scaled'] = results_leadiso['Npred_FF_TT']*iso_eff_subl
+#
+#    results_leadiso['Npred_RF_TL_scaled'] = results_leadiso['Npred_RF_TL']*iso_eff_subl
+#    results_leadiso['Npred_FR_TL_scaled'] = results_leadiso['Npred_FR_TL']*iso_eff_subl
+#    results_leadiso['Npred_FF_TL_scaled'] = results_leadiso['Npred_FF_TL']*iso_eff_subl
+#
+#    results_leadiso['Npred_RF_LT_scaled'] = results_leadiso['Npred_RF_LT']*iso_eff_subl
+#    results_leadiso['Npred_FR_LT_scaled'] = results_leadiso['Npred_FR_LT']*iso_eff_subl
+#    results_leadiso['Npred_FF_LT_scaled'] = results_leadiso['Npred_FF_LT']*iso_eff_subl
+#
+#    results_leadiso['Npred_RF_LL_scaled'] = results_leadiso['Npred_RF_LL']*iso_eff_subl
+#    results_leadiso['Npred_FR_LL_scaled'] = results_leadiso['Npred_FR_LL']*iso_eff_subl
+#    results_leadiso['Npred_FF_LL_scaled'] = results_leadiso['Npred_FF_LL']*iso_eff_subl
+#
+#    results_subliso['Npred_RF_TT_scaled'] = results_subliso['Npred_RF_TT']*iso_eff_lead
+#    results_subliso['Npred_FR_TT_scaled'] = results_subliso['Npred_FR_TT']*iso_eff_lead
+#    results_subliso['Npred_FF_TT_scaled'] = results_subliso['Npred_FF_TT']*iso_eff_lead
+#
+#    results_subliso['Npred_RF_TL_scaled'] = results_subliso['Npred_RF_TL']*iso_eff_lead
+#    results_subliso['Npred_FR_TL_scaled'] = results_subliso['Npred_FR_TL']*iso_eff_lead
+#    results_subliso['Npred_FF_TL_scaled'] = results_subliso['Npred_FF_TL']*iso_eff_lead
+#
+#    results_subliso['Npred_RF_LT_scaled'] = results_subliso['Npred_RF_LT']*iso_eff_lead
+#    results_subliso['Npred_FR_LT_scaled'] = results_subliso['Npred_FR_LT']*iso_eff_lead
+#    results_subliso['Npred_FF_LT_scaled'] = results_subliso['Npred_FF_LT']*iso_eff_lead
+#
+#    results_subliso['Npred_RF_LL_scaled'] = results_subliso['Npred_RF_LL']*iso_eff_lead
+#    results_subliso['Npred_FR_LL_scaled'] = results_subliso['Npred_FR_LL']*iso_eff_lead
+#    results_subliso['Npred_FF_LL_scaled'] = results_subliso['Npred_FF_LL']*iso_eff_lead
 
 def get_projected_templates( templates, lead_ptrange=(None,None) ) :
 
@@ -1163,10 +1101,11 @@ def run_photon_fit( templates, gg_hist, lead_reg, lead_ptrange=(None,None), outp
         gg_hist.Rebin(10)
         hist_temp_lead_real.Rebin(10)
         hist_temp_lead_fake.Rebin(10)
-    draw_template(can_proj_lead, [gg_hist, hist_temp_lead_real, hist_temp_lead_fake], normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+fake prediction', 'fake+fake prediction' ], outputName=outputNamePL )
 
-    text_results_stat = collect_results( results_stat,Ndata, eff_1d_stat, templates, bins_lead_loose, bins_lead_tight )
-    text_results_syst = collect_results( results_syst,Ndata, eff_1d_stat, templates, bins_lead_loose, bins_lead_tight )
+    draw_template(can_proj_lead, [gg_hist, hist_temp_lead_real, hist_temp_lead_fake], sampManFit, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+fake prediction', 'fake+fake prediction' ], outputName=outputNamePL )
+
+    text_results_stat = collect_results( results_stat, Ndata, eff_1d_stat, templates, bins_lead_loose, bins_lead_tight )
+    text_results_syst = collect_results( results_syst, Ndata, eff_1d_stat, templates, bins_lead_loose, bins_lead_tight )
 
     return text_results_stat, text_results_syst
     
@@ -1505,8 +1444,7 @@ def get_single_photon_template( selection, binning, sample, reg, real=False) :
         return None
 
     if real :
-        print 'WATCH FOR DOUBLE CORRECT'
-        var = 'ph_pt[0]:0.0009133 + 0.891832*ph_sigmaIEIE[0]' #y:x
+        var = 'ph_pt[0]:ph_sigmaIEIE[0]' #y:x
     else :
         var = 'ph_pt[0]:ph_sigmaIEIE[0]' #y:x
 
@@ -1526,7 +1464,7 @@ def get_single_photon_template( selection, binning, sample, reg, real=False) :
         
     if bkg_samp_name is not None :
         bkg_samp = sampMan.get_samples(name=bkg_samp_name )
-        var_bkg = 'ph_pt[0]:0.0009133 + 0.891832*ph_sigmaIEIE[0]' #y:x
+        var_bkg = 'ph_pt[0]:ph_sigmaIEIE[0]' #y:x
 
         if bkg_samp :
             template_hists['Background'] = clone_sample_and_draw( bkg_samp[0], var_bkg, selection, ( binning[0], binning[1], binning[2],100, 0, 500  ) ) 
@@ -1614,8 +1552,8 @@ def save_templates( templates, outputDir, lead_ptrange=(None,None), namePostfix=
         else :
             pt_label_lead = ' %d < p_{T} < %d ' %( lead_ptrange[0], lead_ptrange[1] )
 
-    draw_template( can_lead_real, draw_templates['lead']['real'], normalize=1, label=pt_label_lead, outputName = outputDir+'/template_lead_real%s.pdf' %namePostfix )
-    draw_template( can_lead_fake, draw_templates['lead']['fake'], normalize=1, label=pt_label_lead, outputName = outputDir+'/template_lead_fake%s.pdf' %namePostfix )
+    draw_template( can_lead_real, draw_templates['lead']['real'], sampManFit, normalize=1, label=pt_label_lead, outputName = outputDir+'/template_lead_real%s.pdf' %namePostfix )
+    draw_template( can_lead_fake, draw_templates['lead']['fake'], sampManFit, normalize=1, label=pt_label_lead, outputName = outputDir+'/template_lead_fake%s.pdf' %namePostfix )
 
 
 def save_results( results, outputDir, namePostfix='' ) :
@@ -1632,103 +1570,103 @@ def save_results( results, outputDir, namePostfix='' ) :
     file.close()
 
 
-def draw_template(can, hists, normalize=False, first_hist_is_data=False, label=None, legend_entries=[], outputName=None ) :
-
-    if not isinstance(hists, list) :
-        hists = [hists]
-
-    can.cd()
-    can.SetBottomMargin( 0.12 )
-    can.SetLeftMargin( 0.12 )
-
-    added_sum_hist=False
-    if len(hists) > 1 and not first_hist_is_data or len(hists)>2 and first_hist_is_data :
-        if first_hist_is_data :
-            hists_to_sum = hists[1:]
-        else :
-            hists_to_sum = hists
-
-        sumhist = hists_to_sum[0].Clone( 'sumhist%s' %hists_to_sum[0].GetName())
-        for h in hists_to_sum[1:] :
-            sumhist.Add(h)
-
-        sumhist.SetLineColor(ROOT.kBlue+1)
-        sumhist.SetLineWidth(3)
-        hists.append(sumhist)
-        added_sum_hist=True
-
-    #get y size
-    maxbin = hists[0].GetBinContent(hists[0].GetMaximumBin())
-    for h in hists[1: ] :
-        if h.GetBinContent(h.GetMaximumBin() ) > maxbin :
-            maxbin = h.GetBinContent(h.GetMaximumBin() )
-
-    maxval_hist = maxbin * 1.25
-    if normalize :
-        maxval_axis = maxval_hist/hists[0].Integral()
-    else :
-        maxval_axis = maxval_hist
-        
-    for h in hists :        
-        h.GetYaxis().SetRangeUser( 0, maxval_hist )
-        h.GetXaxis().SetTitleSize( 0.05 )
-        h.GetXaxis().SetLabelSize( 0.05 )
-        h.GetYaxis().SetTitleSize( 0.05 )
-        h.GetYaxis().SetLabelSize( 0.05 )
-        h.GetYaxis().SetTitleOffset( 1.15 )
-        h.GetXaxis().SetTitle( '#sigma i#etai#eta' )
-        h.SetStats(0)
-        h.SetLineWidth( 2 )
-        bin_width = h.GetXaxis().GetBinWidth(1)
-
-        if first_hist_is_data :
-            h.GetYaxis().SetTitle( 'Events / %.3f ' %bin_width )
-        else :
-            h.GetYaxis().SetTitle( 'A.U. / %.3f ' %bin_width )
-
-    drawcmd=''
-    if not first_hist_is_data :
-        drawcmd += 'hist'
-
-    if normalize :
-        hists[0].DrawNormalized(drawcmd)
-        drawcmd+='hist'
-        for h in hists[1:] :
-            h.DrawNormalized(drawcmd + 'same')
-    else :
-        hists[0].Draw(drawcmd)
-        drawcmd+='hist'
-        for h in hists[1:] :
-            h.Draw(drawcmd + 'same')
-
-    leg=None
-    if legend_entries :
-        global sampMan
-        sampMan.legendTranslateX = -0.1
-        leg = sampMan.create_standard_legend( len(hists) )
-        if added_sum_hist :
-            legend_entries.append( 'Template sum' )
-
-        for ent, hist in zip( legend_entries, hists ) :
-            leg.AddEntry( hist, ent )
-
-        leg.Draw()
-
-    if label is not None :
-        lab = ROOT.TLatex(0.3, 0.8, label )
-        lab.SetNDC()
-        lab.SetX(0.3)
-        lab.SetY(0.8)
-        lab.Draw()
-        
-    if outputName is None :
-        raw_input('continue')
-
-    if outputName is not None :
-        if not os.path.isdir( os.path.dirname(outputName) ) :
-            os.makedirs( os.path.dirname(outputName) )
-
-        can.SaveAs( outputName )
+#def draw_template(can, hists, normalize=False, first_hist_is_data=False, label=None, legend_entries=[], outputName=None ) :
+#
+#    if not isinstance(hists, list) :
+#        hists = [hists]
+#
+#    can.cd()
+#    can.SetBottomMargin( 0.12 )
+#    can.SetLeftMargin( 0.12 )
+#
+#    added_sum_hist=False
+#    if len(hists) > 1 and not first_hist_is_data or len(hists)>2 and first_hist_is_data :
+#        if first_hist_is_data :
+#            hists_to_sum = hists[1:]
+#        else :
+#            hists_to_sum = hists
+#
+#        sumhist = hists_to_sum[0].Clone( 'sumhist%s' %hists_to_sum[0].GetName())
+#        for h in hists_to_sum[1:] :
+#            sumhist.Add(h)
+#
+#        sumhist.SetLineColor(ROOT.kBlue+1)
+#        sumhist.SetLineWidth(3)
+#        hists.append(sumhist)
+#        added_sum_hist=True
+#
+#    #get y size
+#    maxbin = hists[0].GetBinContent(hists[0].GetMaximumBin())
+#    for h in hists[1: ] :
+#        if h.GetBinContent(h.GetMaximumBin() ) > maxbin :
+#            maxbin = h.GetBinContent(h.GetMaximumBin() )
+#
+#    maxval_hist = maxbin * 1.25
+#    if normalize :
+#        maxval_axis = maxval_hist/hists[0].Integral()
+#    else :
+#        maxval_axis = maxval_hist
+#        
+#    for h in hists :        
+#        h.GetYaxis().SetRangeUser( 0, maxval_hist )
+#        h.GetXaxis().SetTitleSize( 0.05 )
+#        h.GetXaxis().SetLabelSize( 0.05 )
+#        h.GetYaxis().SetTitleSize( 0.05 )
+#        h.GetYaxis().SetLabelSize( 0.05 )
+#        h.GetYaxis().SetTitleOffset( 1.15 )
+#        h.GetXaxis().SetTitle( '#sigma i#etai#eta' )
+#        h.SetStats(0)
+#        h.SetLineWidth( 2 )
+#        bin_width = h.GetXaxis().GetBinWidth(1)
+#
+#        if first_hist_is_data :
+#            h.GetYaxis().SetTitle( 'Events / %.3f ' %bin_width )
+#        else :
+#            h.GetYaxis().SetTitle( 'A.U. / %.3f ' %bin_width )
+#
+#    drawcmd=''
+#    if not first_hist_is_data :
+#        drawcmd += 'hist'
+#
+#    if normalize :
+#        hists[0].DrawNormalized(drawcmd)
+#        drawcmd+='hist'
+#        for h in hists[1:] :
+#            h.DrawNormalized(drawcmd + 'same')
+#    else :
+#        hists[0].Draw(drawcmd)
+#        drawcmd+='hist'
+#        for h in hists[1:] :
+#            h.Draw(drawcmd + 'same')
+#
+#    leg=None
+#    if legend_entries :
+#        global sampMan
+#        drawconf = DrawConfig( None, None, None, legend_config={'legendTranslateX' : -0.1 } )
+#        leg = sampMan.create_standard_legend( len(hists) )
+#        if added_sum_hist :
+#            legend_entries.append( 'Template sum' )
+#
+#        for ent, hist in zip( legend_entries, hists ) :
+#            leg.AddEntry( hist, ent )
+#
+#        leg.Draw()
+#
+#    if label is not None :
+#        lab = ROOT.TLatex(0.3, 0.8, label )
+#        lab.SetNDC()
+#        lab.SetX(0.3)
+#        lab.SetY(0.8)
+#        lab.Draw()
+#        
+#    if outputName is None :
+#        raw_input('continue')
+#
+#    if outputName is not None :
+#        if not os.path.isdir( os.path.dirname(outputName) ) :
+#            os.makedirs( os.path.dirname(outputName) )
+#
+#        can.SaveAs( outputName )
 
                                    
 

@@ -8,15 +8,15 @@ def get_remove_filter() :
 
 def get_keep_filter() :
 
-    return ['pfMET.*', 'recoPfMET.*', 'nVtxBS', 'nMC', 'mcPID', 'mcParentage', 'mcStatus', 'mcMomPID', 'mcGMomPID', 'mcPt', 'mcEta', 'mcPhi', 'mcE', 'nPU', 'puTrue', 'nVtx', 'nVtxBS', 'rho2012', 'isData', 'run', 'event', 'lumis']
+    return ['pfMET.*', 'recoPfMET.*', 'pfType01MET.*', 'nVtxBS', 'nMC', 'mcPID', 'mcParentage', 'mcStatus', 'mcMomPID', 'mcGMomPID', 'mcPt', 'mcEta', 'mcPhi', 'mcE', 'nPU', 'puTrue', 'nVtx', 'nVtxBS', 'rho2012', 'isData', 'run', 'event', 'lumis', 'LHE*']
 
 def config_analysis( alg_list, args ) :
 
-    alg_list.append( build_electron( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=True ) )
+    alg_list.append( build_electron( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=False ) )
 
-    alg_list.append( build_muon( do_cutflow=False, do_hists=False, applyCorrections=True ) )
+    alg_list.append( build_muon( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=False ) )
 
-    alg_list.append( build_photon( do_cutflow=False, do_hists=False, evalPID=None, doEVeto=False, applyCorrections=True) )
+    alg_list.append( build_photon( do_cutflow=False, do_hists=False, evalPID=None, doEVeto=False, applyCorrections=False ) )
 
     alg_list.append( build_jet( do_cutflow=False, do_hists=False ) )
 
@@ -28,9 +28,10 @@ def config_analysis( alg_list, args ) :
     trig_filt = Filter('FilterTrigger')
     ##trig_filt.cut_trigger = ' ==48 ' #HLT_Photon36_CaloId10_Iso50_Photon22_CaloId10_Iso50_v 
     trig_filt.cut_trigger = '==17 | == 18 | == 19' # HLT_Ele27_WP80 || HLT_IsoMu24_eta2p1 || HLT_IsoMu24
+    #trig_filt.cut_trigger = '==13 | == 14 ' # HLT_mu17_mu8 || HLT_mu17_TkMu8
     alg_list.append(trig_filt)
 
-def build_muon( do_cutflow=False, do_hists=False, applyCorrections=False ) :
+def build_muon( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=False ) :
 
     filt = Filter('BuildMuon')
 
@@ -39,15 +40,19 @@ def build_muon( do_cutflow=False, do_hists=False, applyCorrections=False ) :
     filt.cut_isGlobal   = ' == True '
     filt.cut_isPF       = ' == True '
     filt.cut_pt         = ' > 5 '
-    filt.cut_abseta     = ' < 2.5'
+    filt.cut_abseta     = ' < 2.4'
     filt.cut_chi2       = ' < 10'
     filt.cut_nTrkLayers = ' > 8 ' 
     filt.cut_nStations  = ' > 1'
     filt.cut_nPixelHits = ' > 0'
     filt.cut_d0         = ' < 0.2'
     filt.cut_z0         = ' < 0.5'
-    #filt.cut_trkiso     = ' < 0.1 '
     filt.cut_corriso    = ' < 0.2'
+
+    ##filt.cut_trkiso     = ' < 0.1 '
+
+    if evalPID is not None :
+        filt.add_var( 'evalPID', evalPID )
 
     if applyCorrections :
         filt.add_var( 'applyCorrections', 'true' )
@@ -268,9 +273,9 @@ def build_photon( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None, 
 
     filt.do_cutflow = do_cutflow
 
-    filt.cut_pt           = ' > 15 '
+    filt.cut_pt           = ' > 10 '
     filt.cut_abseta       = ' < 2.5'
-    filt.cut_abseta_crack = ' > 1.479 & < 1.566 '
+    filt.cut_abseta_crack = ' > 1.44 & < 1.57 '
     filt.invert('cut_abseta_crack')
 
     #filt.cut_hovere       = ' < 0.05'

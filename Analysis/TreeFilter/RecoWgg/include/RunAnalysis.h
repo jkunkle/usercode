@@ -111,6 +111,8 @@ class RunModule : public virtual RunModuleBase {
         bool eval_el_mva_trig   ;
         bool eval_el_mva_nontrig;
 
+        bool eval_mu_tight      ;
+
         bool eval_ph_tight    ;
         bool eval_ph_medium   ;
         bool eval_ph_loose    ;
@@ -185,6 +187,10 @@ namespace OUT {
     std::vector<Bool_t> *el_passTightTrig;
     std::vector<Bool_t> *el_passMvaNonTrig;
     std::vector<Bool_t> *el_passMvaTrig;
+    std::vector<Bool_t> *el_passMvaNonTrigNoIso;
+    std::vector<Bool_t> *el_passMvaTrigNoIso;
+    std::vector<Bool_t> *el_passMvaNonTrigOnlyIso;
+    std::vector<Bool_t> *el_passMvaTrigOnlyIso;
     std::vector<Bool_t> *el_truthMatch_el;
     std::vector<float>  *el_truthMatchPt_el;
     std::vector<float>  *el_truthMinDR_el;
@@ -203,6 +209,8 @@ namespace OUT {
     std::vector<float>  *mu_pfIso_pu;
     std::vector<float>  *mu_corrIso;
     std::vector<Bool_t> *mu_triggerMatch;
+    std::vector<Bool_t> *mu_triggerMatchDiMu;
+    std::vector<Bool_t> *mu_passTight;
     std::vector<Bool_t> *mu_truthMatch;
     std::vector<float>  *mu_truthMinDR;
 
@@ -211,6 +219,7 @@ namespace OUT {
     std::vector<float>  *ph_sceta;
     std::vector<float>  *ph_phi;
     std::vector<float>  *ph_e;
+    std::vector<float>  *ph_scE;
     std::vector<float>  *ph_pt_uncorr;
     std::vector<float>  *ph_HoverE;
     std::vector<float>  *ph_HoverE12;

@@ -37,3 +37,11 @@ def config_samples(samples) :
                            )
 
 
+    samples.AddSampleGroup( 'Zgamma', legend_name='Zgamma', 
+                            input_samples = [
+                                             'Zg',
+                            ],
+                           plotColor=ROOT.kBlue,
+                           )
+
+

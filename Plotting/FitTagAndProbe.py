@@ -12,6 +12,18 @@ import collections
 _lepton_hist_eta_pt_bins = ( 25, 0.0, 2.5, 401, 0, 401 )
 _photon_hist_eta_pt_bins = ( 250, 0.0, 2.5, 401, 0, 401 )
 
+uncert_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_12_08/SinglePhotonResults/JetSinglePhotonFakeNomIso'
+_photon_jet_fake_uncert_files = { 'mmg_eveto_llcut' : { 
+                                   ('EB', '70', 'max') : uncert_base+'/results__mu_tp_eveto__EB__pt_70-max.pickle',
+                                   ('EE', '70', 'max') : uncert_base+'/results__mu_tp_eveto__EE__pt_70-max.pickle',
+                                 },
+                                  'mmg_medium_llcut' : {
+                                   ('EB', '70', 'max') : uncert_base+'/results__mu_tp_medium__EB__pt_70-max.pickle',
+                                   ('EE', '70', 'max') : uncert_base+'/results__mu_tp_medium__EE__pt_70-max.pickle',
+                                  },
+}
+
+
 def get_default_draw_commands( ch ) :
 
     if ch=='mmg_loose' :
@@ -191,7 +203,7 @@ def main() :
     global sampManMM
     global sampManEE
 
-    base_dir_mmg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_12_08'
+    base_dir_mmg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_12_23'
     base_dir_mm  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/TAndPMuMu_2014_11_27'
     base_dir_ee  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/TAndPElEl_2014_11_27'
 
@@ -220,15 +232,79 @@ def main() :
         subdir = 'PhotonEfficiencies'
         outputDir = options.outputDir + '/' + subdir
 
-        eff_medium_data = GetPhotonEfficiencies( data_sample='Muon'       , numerator='mmg_medium', denominator='mmg_loose', doNDKeys=True, outputDir=outputDir+'/Data' )
-        eff_eveto_data  = GetPhotonEfficiencies( data_sample='Muon'       , numerator='mmg_eveto', denominator='mmg_medium', doNDKeys=True, outputDir=outputDir+'/Data' )
-        eff_medium_mc   = GetPhotonEfficiencies( data_sample='ZjetsZgamma', numerator='mmg_medium', denominator='mmg_loose', doNDKeys=True, outputDir=outputDir+'/MC' )
-        eff_eveto_mc    = GetPhotonEfficiencies( data_sample='ZjetsZgamma', numerator='mmg_eveto', denominator='mmg_medium', doNDKeys=True, outputDir=outputDir+'/MC' )
+        eff_medium_data, eff_medium_data_count = GetPhotonEfficiencies( data_sample='Muon'       , numerator='mmg_medium', denominator='mmg_loose', doNDKeys=True, outputDir=outputDir+'/Data' )
+        eff_eveto_data , eff_eveto_data_count  = GetPhotonEfficiencies( data_sample='Muon'       , numerator='mmg_eveto', denominator='mmg_medium', doNDKeys=True, outputDir=outputDir+'/Data' )
+        eff_medium_mc  , eff_medium_mc_count   = GetPhotonEfficiencies( data_sample='ZjetsZgamma', numerator='mmg_medium', denominator='mmg_loose', doNDKeys=True, outputDir=outputDir+'/MC' )
+        eff_eveto_mc   , eff_eveto_mc_count    = GetPhotonEfficiencies( data_sample='ZjetsZgamma', numerator='mmg_eveto', denominator='mmg_medium', doNDKeys=True, outputDir=outputDir+'/MC' )
 
-        eff_medium_data_llcut = GetPhotonEfficiencies( data_sample='Muon'       , numerator='mmg_medium_llcut', denominator='mmg_loose_llcut', doNDKeys=True, outputDir=outputDir+'/DataLLCut' )
-        eff_eveto_data_llcut  = GetPhotonEfficiencies( data_sample='Muon'       , numerator='mmg_eveto_llcut', denominator='mmg_medium_llcut', doNDKeys=True, outputDir=outputDir+'/DataLLCut' )
-        eff_medium_mc_llcut   = GetPhotonEfficiencies( data_sample='ZjetsZgamma', numerator='mmg_medium_llcut', denominator='mmg_loose_llcut', doNDKeys=True, outputDir=outputDir+'/MCLLCut' )
-        eff_eveto_mc_llcut    = GetPhotonEfficiencies( data_sample='ZjetsZgamma', numerator='mmg_eveto_llcut', denominator='mmg_medium_llcut', doNDKeys=True, outputDir=outputDir+'/MCLLCut' )
+        eff_medium_data_llcut, eff_medium_data_llcut_count = GetPhotonEfficiencies( data_sample='Muon'       , numerator='mmg_medium_llcut', denominator='mmg_loose_llcut', doNDKeys=True, outputDir=outputDir+'/DataLLCut' )
+        eff_eveto_data_llcut , eff_eveto_data_llcut_count  = GetPhotonEfficiencies( data_sample='Muon'       , numerator='mmg_eveto_llcut', denominator='mmg_medium_llcut', doNDKeys=True, outputDir=outputDir+'/DataLLCut' )
+        eff_medium_mc_llcut  , eff_medium_mc_llcut_count   = GetPhotonEfficiencies( data_sample='ZjetsZgamma', numerator='mmg_medium_llcut', denominator='mmg_loose_llcut', doNDKeys=True, outputDir=outputDir+'/MCLLCut' )
+        eff_eveto_mc_llcut   , eff_eveto_mc_llcut_count    = GetPhotonEfficiencies( data_sample='ZjetsZgamma', numerator='mmg_eveto_llcut', denominator='mmg_medium_llcut', doNDKeys=True, outputDir=outputDir+'/MCLLCut' )
+
+        print 'Eveto data '
+        for bin, eff in eff_eveto_data.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'Eveto data  count'
+        for bin, eff in eff_eveto_data_count.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'medium data '
+        for bin, eff in eff_medium_data.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'medium data  count'
+        for bin, eff in eff_medium_data_count.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'Eveto MC '
+        for bin, eff in eff_eveto_mc.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'Eveto MC  count'
+        for bin, eff in eff_eveto_mc_count.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'medium MC '
+        for bin, eff in eff_medium_mc.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'medium MC  count'
+        for bin, eff in eff_medium_mc_count.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'Eveto data llcut'
+        for bin, eff in eff_eveto_data_llcut.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'Eveto data llcut count'
+        for bin, eff in eff_eveto_data_llcut_count.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'medium data llcut'
+        for bin, eff in eff_medium_data_llcut.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'medium data llcut count'
+        for bin, eff in eff_medium_data_llcut_count.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'Eveto MC llcut'
+        for bin, eff in eff_eveto_mc_llcut.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'Eveto MC llcut count'
+        for bin, eff in eff_eveto_mc_llcut_count.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'medium MC llcut'
+        for bin, eff in eff_medium_mc_llcut.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
+
+        print 'medium MC llcut count'
+        for bin, eff in eff_medium_mc_llcut_count.iteritems() :
+            print 'Bin = %s, eff = %s' %(bin, eff)
 
         MakeScaleFactor( eff_medium_data, eff_medium_mc, tag='sf_medium_nom' , binning=_photon_hist_eta_pt_bins, outputDir=outputDir )
         MakeScaleFactor( eff_eveto_data , eff_eveto_mc , tag='sf_eveto_nom'  , binning=_photon_hist_eta_pt_bins, outputDir=outputDir )
@@ -514,6 +590,7 @@ def GetPhotonEfficiencies( data_sample, numerator, denominator, doNDKeys=False, 
     fits_num = {}
     fits_den = {}
     eff    = {}
+    eff_count    = {}
 
     data_samp = sampManMMG.get_samples(name=data_sample )
 
@@ -553,31 +630,34 @@ def GetPhotonEfficiencies( data_sample, numerator, denominator, doNDKeys=False, 
 
             bkg_sample = 'DYJetsToLLPhOlap'
 
-            label_num = 'hist_num_mmg_%s_%d-%d' %( reg, minpt, maxpt )
-            label_den = 'hist_den_mmg_%s_%d-%d' %( reg, minpt, maxpt )
+            label_num = 'hist_num_%s_%s_%d-%d' %( numerator, reg, minpt, maxpt )
+            label_den = 'hist_den_%s_%s_%d-%d' %( denominator, reg, minpt, maxpt )
 
             # ----------------------------
             # Numerator
             # ----------------------------
-            hist_data_num = clone_sample_and_draw( sampManMMG, data_samp[0], var, 'PUWeight * ( %s )' %draw_base_num, mass_binning )
+            hist_data_num = clone_sample_and_draw( sampManMMG, data_samp[0], var, 'PUWeight * ( %s )' %draw_full_num, mass_binning )
             hist_data_num.SetName( label_num )
 
-            chi2_loose = run_fit( sampManMMG, hist_data_num, m_leplepph,  mass_binning, name=label_num, doNDKeys=doNDKeys, bkg_sample=bkg_sample, draw_base_bkg=draw_full_num_bkg )
+            integerr_num = ROOT.Double()
+            integral_num = hist_data_num.IntegralAndError( hist_data_num.FindBin( 76 ), hist_data_num.FindBin( 106 ), integerr_num )
+
+            chi2_num = run_fit( sampManMMG, hist_data_num, m_leplepph,  mass_binning, name=label_num, doNDKeys=doNDKeys, bkg_sample=bkg_sample, draw_base_bkg=draw_full_num_bkg )
 
             outputNameNum=None
             if outputDir is not None :
                 outputNameNum = outputDir +'/' + label_num
-            draw_fitted_results( sampManMMG.fit_objs['model'], sampManMMG.fit_objs['target_data'], sampManMMG.fit_objs['sig_model'], 'Bkg', m_leplepph, chi2_loose, label_num, outputName=outputNameNum )
+                draw_fitted_results( sampManMMG.fit_objs['model'], sampManMMG.fit_objs['target_data'], sampManMMG.fit_objs['sig_model'], 'Bkg', m_leplepph, chi2_num, label_num, outputName=outputNameNum )
 
             for name, obj in sampManMMG.fit_objs.iteritems() :
                 if isinstance( obj, ROOT.RooRealVar ) :
                     fits_num[bin][name] = ufloat( obj.getVal(), obj.getError() )
 
-            # ----------------------------
-            # Denominator
-            # ----------------------------
-            hist_data_den = clone_sample_and_draw( sampManMMG, data_samp[0], var, 'PUWeight * ( %s )' %draw_base_den, mass_binning )
+            hist_data_den = clone_sample_and_draw( sampManMMG, data_samp[0], var, 'PUWeight * ( %s )' %draw_full_den, mass_binning )
             hist_data_den.SetName( label_den )
+
+            integerr_den = ROOT.Double()
+            integral_den = hist_data_den.IntegralAndError( hist_data_den.FindBin( 76 ), hist_data_den.FindBin( 106 ), integerr_den )
 
             chi2_den = run_fit( sampManMMG, hist_data_den , m_leplepph, mass_binning, name=label_den, doNDKeys=doNDKeys, bkg_sample=bkg_sample, draw_base_bkg=draw_full_den_bkg )
 
@@ -590,10 +670,13 @@ def GetPhotonEfficiencies( data_sample, numerator, denominator, doNDKeys=False, 
                 if isinstance( obj, ROOT.RooRealVar ) :
                     fits_den[bin][name] = ufloat( obj.getVal(), obj.getError() )
 
+            print fits_den[bin]
             if fits_den[bin]['nsig'] == 0 :
                 eff[bin] = 0
             else :
                 eff[bin] = fits_num[bin]['nsig']/fits_den[bin]['nsig']
+
+            eff_count[bin] = ufloat(integral_num, integerr_num)/ufloat(integral_den, integerr_den )
 
     if outputDir is not None :
         if not os.path.isdir( outputDir ) :
@@ -633,7 +716,7 @@ def GetPhotonEfficiencies( data_sample, numerator, denominator, doNDKeys=False, 
             hist_eff.Write()
             ofile.Close()
 
-    return eff
+    return eff,eff_count
 
 
 def run_fit( sampMan, hist_data, fit_var, mass_binning, name, doNDKeys=False, sig_hist =None, bkg_sample=None, draw_base_bkg=None ) :

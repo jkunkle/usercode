@@ -53,8 +53,8 @@ def main() :
     global samplesLLG
     global samplesLG
 
-    baseDirLLG  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_12_08'
-    baseDirLG   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2014_12_08'
+    baseDirLLG  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_12_23'
+    baseDirLG   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2014_12_23'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
@@ -540,6 +540,7 @@ def MakeSingleBkgEstimatePlots( baseDir, plotDir, channels=[], makeEleFake=True 
             samplesLG.deactivate_all_samples()
             samplesLG.activate_sample( 'Wgamma' )
             samplesLG.activate_sample( 'Zgamma' )
+            samplesLG.activate_sample( 'DYJetsToLLPhOlap' )
 
             data_sample = None
             if ch.count('mu') :
@@ -558,6 +559,9 @@ def MakeSingleBkgEstimatePlots( baseDir, plotDir, channels=[], makeEleFake=True 
 
             hist_zg_mg  = samplesLG.get_samples(name='Zgamma')[0].hist.Clone('pt_leadph12_%s_%s'%(ch,reg))
             save_hist( '%s/%s/Zg/hist.root' %(baseDir, plotDir), hist_zg_mg )
+
+            hist_zjets_mg  = samplesLG.get_samples(name='DYJetsToLLPhOlap')[0].hist.Clone('pt_leadph12_%s_%s'%(ch,reg))
+            save_hist( '%s/%s/ZJets/hist.root' %(baseDir, plotDir), hist_zjets_mg )
 
         make_hist_from_pickle( samplesLG, baseDir + '/jet_fake_results__%s.pickle'%ch            , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag=ch, regions=regions )
 

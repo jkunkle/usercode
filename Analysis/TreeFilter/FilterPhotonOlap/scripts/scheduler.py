@@ -71,7 +71,7 @@ jobs = [
 #module_mc   = 'ConfLepGammaFilter.py'
 #module_data = 'ConfLepGammaFilter_Data.py'
 #output_name = 'LepGamma_2013_11_04'
-sub_base = ['LepGammaGammaNomUnblindEle_2014_12_08']
+sub_base = ['LepGammaGammaTrigEleOlapUnblindLowPt_2015_01_02']
 #sub_base = ['LepLepGammaGammaNoPhIDDiMuonTrig_2014_11_28']
 
 #sub_base = ['LepGammaGammaNoPhID_2014_11_20',]

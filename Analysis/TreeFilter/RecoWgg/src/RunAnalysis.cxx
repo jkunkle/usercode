@@ -2207,8 +2207,8 @@ void RunModule::WeightEvent( ModuleConfig & config ) const {
 
     OUT::PUWeight = num/den;
 
-    if( OUT::PUWeight < 0.05 ) {
-        std::cout << "PUweight is zero for PUVal " << puval << " will average over +- 2.5 to get non-zer value " << std::endl;
+    if( OUT::PUWeight < 0.005 ) {
+        std::cout << "PUweight, " << OUT::PUWeight << " is zero for PUVal " << puval << " will average over +- 2.5 to get non-zero value " << std::endl;
 
         int bin_min_sample = puweight_sample_hist->FindBin(puval-2.5);
         int bin_max_sample = puweight_sample_hist->FindBin(puval+2.5);
@@ -2223,7 +2223,7 @@ void RunModule::WeightEvent( ModuleConfig & config ) const {
 
         OUT::PUWeight = num/den;
 
-        if( OUT::PUWeight < 0.05 ) {
+        if( OUT::PUWeight < 0.005 ) {
             std::cout << "PUweight is still zero!" << std::endl;
         }
 

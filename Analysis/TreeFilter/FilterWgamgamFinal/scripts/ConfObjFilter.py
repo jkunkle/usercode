@@ -31,7 +31,8 @@ def config_analysis( alg_list, args ) :
     #alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15, sort_by_id=True ) )
     #alg_list.append( get_photon_filter( id=None, eVeto='hasPixSeed', ptcut=15 ) )
     #alg_list.append( get_photon_filter( id='medium', eVeto='hasPixSeed', ptcut=15, sort_by_id=True) )
-    alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True ) )
+    #alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True ) )
+    alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=True ) )
     alg_list.append( get_jet_filter(do_hists=False) )
     #print 'SAVING Medium PHOTONS, WITH ELE OLAP'
     print 'SAVING NOID PHOTONS, WITH ELE OLAP'
@@ -102,7 +103,7 @@ def get_electron_filter ( id, ptcut=10 ) :
 
     return filt
 
-def get_photon_filter ( id=None, eVeto=None, ptcut=10, sort_by_id='false' ) :
+def get_photon_filter ( id=None, eVeto=None, ptcut=10, sort_by_id='false', doElOlapRm=True, doTrigElOlapRm=True ) :
 
     if sort_by_id == True :
         sort_by_id = 'true'
@@ -118,9 +119,12 @@ def get_photon_filter ( id=None, eVeto=None, ptcut=10, sort_by_id='false' ) :
     #filt.cut_ph_abseta_crack = ' > 1.44 & < 1.57 '
     #filt.invert('cut_ph_abseta_crack')
 
-    filt.cut_el_ph_dr = ' > 0.4 '
     filt.cut_mu_ph_dr = ' > 0.4 '
     filt.cut_ph_ph_dr = ' > 0.4 '
+    if doElOlapRm :
+        filt.cut_el_ph_dr = ' > 0.4 '
+    if doTrigElOlapRm :
+        filt.cut_trigel_ph_dr = ' > 0.4 '
 
     #filt.add_var( 'PtScaleDownBarrel', '0.994' )
     #filt.add_var( 'PtScaleDownEndcap', '0.986' )
@@ -148,6 +152,7 @@ def get_muon_filter( ptcut=10 ) :
 
     filt.cut_mu_passTight = ' == True '
     filt.cut_mu_pt = ' > %d' %ptcut
+    filt.cut_mu_eta = ' < 2.1 '
     #filt.cut_mu_corriso = ' < 0.2  '
 
     

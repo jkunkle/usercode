@@ -72,6 +72,8 @@ void RunModule::initialize( TChain * chain, TTree * _outtree, TFile *outfile,
     outtree->Branch("probe_isPhoton"   , &OUT::probe_isPhoton   , "probe_isPhoton/O");
     outtree->Branch("probe_nConvTrk"   , &OUT::probe_nConvTrk   , "probe_nConvTrk/O");
     outtree->Branch("probe_passtrig"   , &OUT::probe_passtrig   , "probe_passtrig/O");
+    outtree->Branch("probe_hasPixSeed" , &OUT::probe_hasPixSeed , "probe_hasPixSeed/O");
+    outtree->Branch("probe_eleVeto"    , &OUT::probe_eleVeto    , "probe_eleVeto/O");
     outtree->Branch("m_tagprobe"       , &OUT::m_tagprobe       , "m_tagprobe/F");
     outtree->Branch("dr_tagprobe"      , &OUT::dr_tagprobe      , "dr_tagprobe/F");
     outtree->Branch("m_tagprobe_sceta" , &OUT::m_tagprobe_sceta , "m_tagprobe_sceta/F");
@@ -155,6 +157,8 @@ void RunModule::MakeNtuple( ModuleConfig & config ) const {
     std::vector< TLorentzVector> objects_sceta;
     std::vector<bool> obj_isElec;
     std::vector<int> obj_index;
+    std::vector<bool> obj_hasPixSeed;
+    std::vector<bool> obj_eleVeto;
     for( int eidx = 0; eidx < IN::el_n; ++eidx ) {
         TLorentzVector ellv;
         ellv.SetPtEtaPhiE( IN::el_pt->at(eidx),
@@ -165,6 +169,8 @@ void RunModule::MakeNtuple( ModuleConfig & config ) const {
         //ellv.SetPtEtaPhiE( ellv.Pt(), IN::el_sceta->at(eidx), ellv.Phi(), ellv.E() );
         //objects_sceta.push_back( ellv );
         obj_isElec.push_back(true);
+        obj_hasPixSeed.push_back(false);
+        obj_eleVeto.push_back(false);
         obj_index.push_back( eidx );
     }
 
@@ -177,58 +183,62 @@ void RunModule::MakeNtuple( ModuleConfig & config ) const {
         objects.push_back( phlv );
         obj_isElec.push_back(false);
         obj_index.push_back( pidx );
+        obj_hasPixSeed.push_back( IN::ph_hasPixSeed->at(pidx) );
+        obj_eleVeto.push_back( IN::ph_eleVeto->at(pidx) );
         //phlv.SetPtEtaPhiE( phlv.Pt(), IN::ph_sceta->at(pidx), phlv.Phi(), phlv.E() );
         //objects_sceta.push_back( phlv );
     }
 
-    if( objects.size() == 2 ) {
-        for( unsigned i = 0; i < objects.size(); ++i) {
-            OUT::probe_nConvTrk = -1;
-            if( obj_isElec[i] ) { // if its an electron
-                bool pass_tag_cuts = true;
-                if( !config.PassFloat( "cut_tag_pt", objects[i].Pt() ) ) pass_tag_cuts = false;
-                if( !config.PassBool( "cut_tag_triggerMatch", IN::el_triggerMatch->at(obj_index[i]) ) ) pass_tag_cuts = false;
-                if( !config.PassBool( "cut_tag_passMvaTrig", IN::el_passMvaTrig->at(obj_index[i]) ) ) pass_tag_cuts = false;
+    for( unsigned i = 0; i < objects.size(); ++i) {
+        OUT::probe_nConvTrk = -1;
+        if( obj_isElec[i] ) { // if its an electron
+            bool pass_tag_cuts = true;
+            if( !config.PassFloat( "cut_tag_pt"          , objects[i].Pt()                       ) ) pass_tag_cuts = false;
+            if( !config.PassBool ( "cut_tag_triggerMatch", IN::el_triggerMatch->at(obj_index[i]) ) ) pass_tag_cuts = false;
+            if( !config.PassBool ( "cut_tag_passMvaTrig" , IN::el_passMvaTrig ->at(obj_index[i]) ) ) pass_tag_cuts = false;
 
-                if( !pass_tag_cuts ) {
-                    continue;
-                }
+            if( !pass_tag_cuts ) {
+                continue;
+            }
 
-                // fill tag info
-                OUT::tag_pt = objects[i].Pt();
-                OUT::tag_eta = objects[i].Eta();
-                OUT::tag_phi = objects[i].Phi();
-                //OUT::tag_eta_sc = objects_sceta[i].Eta();
+            // fill tag info
+            OUT::tag_pt  = objects[i].Pt();
+            OUT::tag_eta = objects[i].Eta();
+            OUT::tag_phi = objects[i].Phi();
+            //OUT::tag_eta_sc = objects_sceta[i].Eta();
 
-                // now loop over the objects again
-                for( unsigned j = 0; j < objects.size(); ++j) {
-                    if( j == i ) continue; // but don't  use the same object
-                    //this is a probe
-                    OUT::probe_pt  = objects[j].Pt();
-                    OUT::probe_eta = objects[j].Eta();
-                    OUT::probe_phi = objects[j].Phi();
-                    //OUT::probe_eta_sc = objects_sceta[j].Eta();
-                    OUT::probe_isPhoton = !obj_isElec[j];
-                    //if( OUT::probe_isPhoton ) {
-                    //    OUT::probe_nConvTrk = IN::ph_conv_nTrk->at(obj_index[j]);
-                    //}
-                    OUT::probe_passtrig=false;
-                    if( !OUT::probe_isPhoton   && 
-                        objects[j].Pt() > 27   && 
-                        IN::el_triggerMatch->at(obj_index[j])    && 
-                        IN::el_passMvaTrig->at(obj_index[j])      ) {
-                            OUT::probe_passtrig = true;
-                    }
+            // now loop over the objects again
+            for( unsigned j = 0; j < objects.size(); ++j) {
+                if( j == i ) continue; // but don't use the same object
 
-                    OUT::m_tagprobe = (objects[i] + objects[j]).M();
-                    //OUT::m_tagprobe_sceta = ( objects_sceta[i] + objects_sceta[j] ).M();
-                }
+                // the probe should be a photon
+                if( obj_isElec[j] ) continue;
 
+                // require that the objects are separated
+                if( objects[j].DeltaR( objects[i] ) < 0.4 ) continue;
+
+                if( !config.PassBool( "cut_probe_passMedium", IN::ph_passMedium->at( obj_index[j] ) ) ) continue;
+
+                //this is a probe
+                OUT::probe_pt  = objects[j].Pt();
+                OUT::probe_eta = objects[j].Eta();
+                OUT::probe_phi = objects[j].Phi();
+                //OUT::probe_eta_sc = objects_sceta[j].Eta();
+                OUT::probe_isPhoton = !obj_isElec[j];
+                //if( OUT::probe_isPhoton ) {
+                //    OUT::probe_nConvTrk = IN::ph_conv_nTrk->at(obj_index[j]);
+                //}
+                OUT::probe_passtrig   = false;
+                OUT::probe_hasPixSeed = obj_hasPixSeed[j];
+                OUT::probe_eleVeto    = obj_eleVeto[j];
+
+                OUT::m_tagprobe = (objects[i] + objects[j]).M();
+                //OUT::m_tagprobe_sceta = ( objects_sceta[i] + objects_sceta[j] ).M();
+                
                 outtree->Fill();
             }
         }
     }
-
 }
 
 void RunModule::MakeGGNtuple( ModuleConfig & config ) const {

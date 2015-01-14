@@ -90,14 +90,6 @@ def config_samples(samples) :
 
     samples.AddSampleGroup( 'Data', legend_name='Data', 
                             input_samples = [
-                                             #'electron_2012a_Jan22rerecoTightBlind',
-                                             #'electron_2012b_Jan22rerecoTightBlind',
-                                             #'electron_2012c_Jan2012rerecoTightBlind',
-                                             #'electron_2012d_Jan22rerecoTightBlind',
-                                             #'muon_2012a_Jan22rerecoTightBlind',
-                                             #'muon_2012b_Jan22rerecoTightBlind',
-                                             #'muon_2012c_Jan22rerecoTightBlind',
-                                             #'muon_2012d_Jan22rerecoTightBlind',
                                              'electron_2012a_Jan22rereco',
                                              'electron_2012b_Jan22rereco',
                                              'electron_2012c_Jan2012rereco',
@@ -153,6 +145,13 @@ def config_samples(samples) :
     #                      )
 
 
+    samples.AddSampleGroup( 'Zgamma', legend_name='Z#gamma', 
+                           input_samples = [
+                                            'Zg',
+                           ],
+                           plotColor=ROOT.kOrange-4,
+                           isSignal=False,
+                          )
     samples.AddSampleGroup( 'Zgammastar', legend_name='Z/#gamma * ', 
                             input_samples = [
                                              'DYJetsToLLPhOlap'
@@ -164,13 +163,6 @@ def config_samples(samples) :
                            #scale=1.4,
                           )
 
-    samples.AddSampleGroup( 'Zgamma', legend_name='Z#gamma', 
-                           input_samples = [
-                                            'Zg',
-                           ],
-                           plotColor=ROOT.kOrange-4,
-                           isSignal=False,
-                          )
     samples.AddSampleGroup( 'Zgammagamma', legend_name='Z#gamma#gamma', 
                            input_samples = [
                                             'Zgg',

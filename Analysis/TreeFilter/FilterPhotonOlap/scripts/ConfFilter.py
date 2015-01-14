@@ -31,7 +31,7 @@ def config_analysis( alg_list ) :
     # for Zg FSR
     filter_event.cut_n_gen_photons_pt10 = ' > 1 '
 
-    filter_event.add_hist( 'cut_n_gen_photons', 10, 0, 10 )
+    #filter_event.add_hist( 'cut_n_gen_photons', 10, 0, 10 )
 
     filter_event.do_cutflow=True
     alg_list.append( filter_event )

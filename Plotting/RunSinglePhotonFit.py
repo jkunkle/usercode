@@ -79,7 +79,19 @@ def get_default_draw_commands(ch='mu' ) :
     }
     if ch=='mu' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIE_n==1 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && el_n==0 && m_leplep>60 && m_leplepph > 105' }
-    if ch=='murealcr' :
+    elif ch=='mu_tp_eveto' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIE_n==1 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && el_n==0 && m_leplep>76 && m_leplep < 106' }
+    elif ch=='mu_tp_eveto_loose' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIE_n==1 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && el_n==0 && m_leplep>71 && m_leplep < 111' }
+    elif ch=='mu_tp_eveto_tight' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIE_n==1 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && el_n==0 && m_leplep>81 && m_leplep < 101' }
+    elif ch=='mu_tp_medium' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIENoEleVeto_n==1 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && el_n==0 && m_leplep>76 && m_leplep < 106' }
+    elif ch=='mu_tp_medium_loose' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIENoEleVeto_n==1 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && el_n==0 && m_leplep>71 && m_leplep < 111' }
+    elif ch=='mu_tp_medium_tight' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIENoEleVeto_n==1 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && el_n==0 && m_leplep>81 && m_leplep < 101' }
+    elif ch=='murealcr' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIE_n==1 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && el_n==0 && m_leplep>60 && m_leplepph > 81 && m_leplepph < 101' }
     elif ch == 'el' :
         gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==2 && ph_mediumNoSIEIE_n==1 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && mu_n==0 && m_leplep>60 && m_leplepph > 105',}
@@ -87,6 +99,10 @@ def get_default_draw_commands(ch='mu' ) :
         gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==2 && ph_mediumNoSIEIE_n==1 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && mu_n==0 && m_leplep>60 && m_leplepph > 81 && m_leplepph < 101',}
     elif ch=='muw' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 80',}
+    elif ch=='muw_tp_medium' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoSIEIENoEleVeto_n==1 && leadPhot_leadLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 60',}
+    elif ch=='muw_tp_eveto' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoSIEIE_n == 1 && ph_hasPixSeed[0] == 0 && leadPhot_leadLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 60',}
     elif ch=='elw' :
         gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && mu_n==0 && mt_lep_met > 80',}
     elif ch == 'elwzcr' :
@@ -163,8 +179,8 @@ def main() :
     global sampMan
     global sampManFit
 
-    base_dir = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2014_12_08/'
-    fit_dir  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_12_08/'
+    base_dir = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2014_12_23/'
+    fit_dir  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_12_23/'
 
     sampMan    = SampleManager(base_dir, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManFit = SampleManager(fit_dir, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
@@ -319,9 +335,12 @@ def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), ch='mu', outp
 
             # put lead range together (expected by following code)
             if ptmax == ptbins[-1] : 
+                # if we're in the last bin, move the min pt down one
+                lead_ptrange_templates = ( ptbins[idx-1], None )
                 lead_ptrange = ( ptmin, None )
             else :
                 lead_ptrange = ( ptmin, ptmax )
+                lead_ptrange_templates = ( ptmin, ptmax )
 
             print 'ptmin = %d, ptmax = %d, Min Z bin = %d, max Z bin = %d' %( ptmin, ptmax, gg_hist.GetZaxis().FindBin( ptmin), gg_hist.GetZaxis().FindBin( ptmax )-1 )
 
@@ -331,7 +350,7 @@ def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), ch='mu', outp
             # get templates
             # if in the last pt bin, use the 
             # second to last template
-            templates_pt = get_projected_templates( templates, lead_ptrange=lead_ptrange ) 
+            templates_pt = get_projected_templates( templates, lead_ptrange=lead_ptrange_templates ) 
 
             #if ptmax == ptbins[-1] :
             #    templates_pt_prev = get_projected_templates( templates, lead_ptrange=(ptbins[idx-1], ptbins[idx] ) )
@@ -1337,7 +1356,10 @@ def get_1d_loose_efficiencies( int_stat, int_syst, lead_reg, lead_ptrange, syste
     eff_stat = {}
     eff_syst = {}
 
-    eff_stat['eff_R_T_lead'] = int_stat['lead']['real']['tight'] / (int_stat['lead']['real']['tight']+int_stat['lead']['real']['loose'])
+    if int_stat['lead']['real']['loose'].n == 0 :
+        eff_stat['eff_R_T_lead'] = ufloat( 1.0, int_stat['lead']['real']['tight'].s/int_stat['lead']['real']['tight'].n )
+    else :
+        eff_stat['eff_R_T_lead'] = int_stat['lead']['real']['tight'] / (int_stat['lead']['real']['tight']+int_stat['lead']['real']['loose'])
     eff_stat['eff_F_T_lead'] = int_stat['lead']['fake']['tight'] / (int_stat['lead']['fake']['tight']+int_stat['lead']['fake']['loose'])
     eff_stat['eff_R_L_lead'] = int_stat['lead']['real']['loose'] / (int_stat['lead']['real']['tight']+int_stat['lead']['real']['loose'])
     eff_stat['eff_F_L_lead'] = int_stat['lead']['fake']['loose'] / (int_stat['lead']['fake']['tight']+int_stat['lead']['fake']['loose'])

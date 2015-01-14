@@ -564,6 +564,7 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
                            IN::ph_e->at(idx) );
 
         float min_el_dr = 100.0;
+        float min_trigel_dr = 100.0;
 
         for( int eidx = 0; eidx < OUT::el_n; eidx++ ) {
             TLorentzVector ellv;
@@ -575,6 +576,10 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
             float dr = phlv.DeltaR( ellv );
             if( dr < min_el_dr ) {
                 min_el_dr = dr;
+            }
+
+            if( OUT::el_triggerMatch->at(eidx) && OUT::el_passMvaTrig->at(eidx) && ellv.Pt() > 30 && dr < min_trigel_dr ) {
+                min_trigel_dr = dr;
             }
         }
 
@@ -609,6 +614,7 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
         }
 
         if( !config.PassFloat( "cut_el_ph_dr", min_el_dr ) ) continue;
+        if( !config.PassFloat( "cut_trigel_ph_dr", min_trigel_dr) ) continue;
         if( !config.PassFloat( "cut_mu_ph_dr", min_mu_dr ) ) continue;
         if( !config.PassFloat( "cut_ph_ph_dr", min_ph_dr ) ) continue;
 
@@ -725,6 +731,7 @@ void RunModule::FilterMuon( ModuleConfig & config ) const {
         }
 
         if( !config.PassFloat( "cut_mu_pt", muPt) ) continue;
+        if( !config.PassFloat( "cut_mu_eta", fabs(IN::mu_eta->at(idx) ) ) ) continue;
         if( !config.PassFloat( "cut_mu_corriso", IN::mu_corrIso->at(idx)/IN::mu_pt->at(idx)) ) continue;
         if( !config.PassBool( "cut_mu_passTight", IN::mu_passTight->at(idx)) ) continue;
 
@@ -1167,10 +1174,10 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
         if( lv.Pt() > 25 ) {
             OUT::mu_pt25_n++;
         }
-        if( lv.Pt() > 30 && OUT::mu_triggerMatch->at(idx) ) {
+        if( lv.Pt() > 30 && fabs(lv.Eta()) < 2.1 && OUT::mu_triggerMatch->at(idx) ) {
             OUT::mu_passtrig_n++;
         }
-        if( lv.Pt() > 25 && OUT::mu_triggerMatch->at(idx) ) {
+        if( lv.Pt() > 25 && fabs(lv.Eta()) < 2.1 && OUT::mu_triggerMatch->at(idx) ) {
             OUT::mu_passtrig25_n++;
         }
     }

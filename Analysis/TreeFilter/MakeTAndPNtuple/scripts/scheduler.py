@@ -11,12 +11,13 @@ options = p.parse_args()
 if not options.run and not options.check :
     options.run = True
 
-base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2014_11_13'
+base = r'/eos/cms/store/user/jkunkle/Wgamgam/LepGammaNoPhIDNoEleOlap_2014_12_29'
+#base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2014_12_05'
 
 jobs_data = [
-    #(base, 'job_electron_2012a_Jan22rereco'),
-    #(base, 'job_electron_2012b_Jan22rereco'),
-    #(base, 'job_electron_2012c_Jan2012rereco'),
+    (base, 'job_electron_2012a_Jan22rereco'),
+    (base, 'job_electron_2012b_Jan22rereco'),
+    (base, 'job_electron_2012c_Jan2012rereco'),
     (base, 'job_electron_2012d_Jan22rereco'),
     #(base, 'job_muon_2012a_Jan22rereco'),
     #(base, 'job_muon_2012b_Jan22rereco'),
@@ -24,10 +25,11 @@ jobs_data = [
     #(base, 'job_muon_2012d_Jan22rereco'),
 ]
 jobs_mc = [
+    (base, 'job_summer12_DYJetsToLLPhOlap'),
     #(base, 'job_summer12_DYJetsToLL'),
     #(base, 'job_summer12_Zg'),
     #(base, 'job_summer12_Wg'),
-    (base, 'job_summer12_Wjets'),
+    #(base, 'job_summer12_Wjets'),
     #(base, 'job_summer12_WAA_ISR'),
     #(base, 'job_summer12_WH_ZH_125'),
     #(base, 'job_summer12_WWW'),
@@ -69,9 +71,9 @@ jobs_mc = [
 
 ]
 
-output_name = 'TAndPElEl_2014_11_27'
+output_name = 'TAndPElFF_2015_01_01'
 #output_name = 'TAndPMuMu_2014_11_27'
-module = 'ConfElectronTAndP.py'
+module = 'ConfTAndP.py'
 #module = 'ConfMuonTAndP.py'
 treename='ggNtuplizer/EventTree'
 

@@ -551,12 +551,7 @@ class DrawConfig :
                 print 'Matched multiple branches with the max range!  This must be fixed!'
                 sys.exit(1)
 
-            print 'Modified sel before'
-            print 'start = %d, end= %d, br = %s' %( max_range[0], max_range[1], max_br[0] )
-            print modified_selection
             modified_selection = modified_selection[:max_range[0]] + 'IN::' + max_br[0] + modified_selection[max_range[1]:]
-            print 'Modified sel after'
-            print modified_selection
 
         #for br in branches :
         #    if modified_selection.count(br['name']) and not modified_selection.count( 'IN::'+br['name']):
@@ -634,29 +629,6 @@ class DrawConfig :
 
             if self.modified_selection.count('fabs') :
                 self.modified_selection = self.modified_selection.replace( 'fabs', 'math.fabs')
-
-            #selection_entries = self.selection.split(' ')
-            #mod_entries = []
-            #for se in selection_entries :
-            #    # match to a variable name, for example m_phph, or ph_pt[0]
-            #    # if a regex match is found, check if the string is in the
-            #    # branch list.  If in the branch list, append the name
-            #    res = re.match( '(\w+)(\[\d\])*', se ) 
-            #    found_match = ( len([ br for br in all_branches if se.count(br)  ]) > 0 )
-            #    if found_match :
-            #        mod_entries.append( '%s.%s' %(treename, se ) )
-            #    else :
-            #        # special cases
-            #        if se.count('&&') :
-            #            mod_entries.append('and')
-            #        elif se.count('||') :
-            #            mod_entries.append('or')
-            #        elif se.count('fabs') :
-            #            mod_entries.append( se.replace('fabs', 'math.fabs') )
-            #        else :
-            #            mod_entries.append(se)
-                    
-            #self.modified_selection = ' '.join(mod_entries)
 
             return self.modified_selection
 
@@ -918,11 +890,14 @@ class SampleManager :
             if hasattr( Sample(''), arg ) :
                 each_results.append([ samp  for samp in self.samples if getattr( samp, arg ) in val_list])
 
-        if not each_results :
+        common_results = list( reduce( lambda x,y : set(x) & set(y), each_results ) ) 
+        if not common_results :
+            print 'WARNING : Found zero samples matching criteria!  Available samples are : '
+            for s in self.get_samples() :
+                print s.name
             return []
 
-        common_results = reduce( lambda x,y : set(x) & set(y), each_results )
-        return list(common_results)
+        return common_results
         ## default, return all samples
         #if names is None :
         #    return self.samples
@@ -1660,7 +1635,7 @@ class SampleManager :
 
     
     #---------------------------------------
-    def DumpStack( self, outputDir=None, txtname=None, doRatio=None ) :
+    def DumpStack( self, outputDir=None, txtname=None, doRatio=None, details=False ) :
     
         if self.collect_commands :
             self.add_dump_stack( txtname, outputDir )
@@ -1671,9 +1646,10 @@ class SampleManager :
                 doRatio = self.draw_commands[-1].doRatio()
 
         # store the signal and stack entries
-        stack_entries = {}
+        stack_entries  = {}
         signal_entries = {}
-        ratio_entries = {}
+        ratio_entries  = {}
+        detail_entries = {}
     
         # get samples with the MC stack, data, and signal samples
         samp_list = self.get_samples(name=self.stack_order) + self.get_samples(isData=True) + self.get_samples(isSignal=True)
@@ -1755,6 +1731,27 @@ class SampleManager :
                                                            {'bin' : bin, 'val' : rsamp.hist.GetBinContent(bin), 'err' : rsamp.hist.GetBinError(bin), 
                                                            'min' : rsamp.hist.GetXaxis().GetBinLowEdge(bin), 
                                                            'max' : rsamp.hist.GetXaxis().GetBinUpEdge(bin) }  )
+        
+        if details :
+            detail_entries['detail'] = {}
+
+            active_samps = self.get_samples(isActive=True)
+
+            for samp in active_samps :
+                detail_entries['detail'][samp.name] = {'bins' : {} }
+                for bin in range(1, samp.hist.GetNbinsX()+1) :
+                    val = samp.hist.GetBinContent(bin)
+                    err = samp.hist.GetBinError(bin)
+
+                    min = samp.hist.GetXaxis().GetBinLowEdge(bin)
+                    max = samp.hist.GetXaxis().GetBinUpEdge(bin)
+
+                    detail_entries['detail'][samp.name]['bins'][str(bin)] = {}
+                    detail_entries['detail'][samp.name]['bins'][str(bin)]['val'] = ufloat( val, err )
+                    detail_entries['detail'][samp.name]['bins'][str(bin)]['min'] = min
+                    detail_entries['detail'][samp.name]['bins'][str(bin)]['max'] = max
+
+                    lines.append('%s, bin %d : %.3f += %.4f ' %( samp.name, bin, val, err ) )
 
         for line in lines :
             print line
@@ -1787,6 +1784,7 @@ class SampleManager :
             # write a pickle file
             stack_entries.update(signal_entries)
             stack_entries.update(ratio_entries)
+            stack_entries.update(detail_entries)
             stack_entries['All Bkg'] = bkg_sum
             stack_entries['Total Expected'] = bkg_sum+sig_sum
 
@@ -2131,7 +2129,6 @@ class SampleManager :
                     errSamp.hist.SetBinContent( bin, all_stack_hist.GetBinContent( bin ) )
                     curr_err = errSamp.hist.GetBinError( bin )
                     this_err = samp.hist.GetBinError(bin)
-                    print 'bin = %d, curr_err = %f, new err = %f' %( bin, curr_err, this_err )
                     errSamp.hist.SetBinError( bin, math.sqrt( curr_err*curr_err + this_err*this_err )  )
 
         if errSamp is not None :
@@ -2322,9 +2319,8 @@ class SampleManager :
         bkg_name = '__AllStack__'
         # get all stacked histograms and add them
         stack_samples = self.get_samples(name=self.stack_order, isActive=True)
-    
+
         if stack_samples :
-            print stack_samples[0].name
             sum_hist = stack_samples[0].hist.Clone(bkg_name)
             for samp in stack_samples[1:] :
                 sum_hist.Add(samp.hist)

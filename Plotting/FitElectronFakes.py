@@ -33,6 +33,8 @@ p.add_argument('--ndkeys_cms_fine',     default=False, action='store_true',  des
 p.add_argument('--ndkeys_cms_coarse',     default=False, action='store_true',  dest='ndkeys_cms_coarse', help='Fit Signal MC Gaussian smeared and background CMS shape, coarse eta bins')
 p.add_argument('--ndkeys_exp_fine',     default=False, action='store_true',  dest='ndkeys_exp_fine', help='Fit Signal MC Gaussian smeared and background Exponential shape, fine eta bins')
 p.add_argument('--ndkeys_exp_coarse',     default=False, action='store_true',  dest='ndkeys_exp_coarse', help='Fit Signal MC Gaussian smeared and background Exponential shape, coarse eta bins')
+p.add_argument('--useCsev',     default=False, action='store_true',  dest='useCsev', help='Use conversion save electron veto instead of pixel seed veto')
+p.add_argument('--useTAndP',     default=False, action='store_true',  dest='useTAndP', help='Use tag and probe ntuples')
 
 
 
@@ -82,7 +84,7 @@ def get_default_draw_commands( ) :
              'RR' :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_eta[0])<2.5 && fabs(ph_eta[1]) < 2.5',
            }
 
-def get_ratio_draw_commands( isConv=None ) :
+def get_ratio_draw_commands( isConv=None, useCsev=False, useTAndP=False ) :
 
     if isConv==False :
 
@@ -96,12 +98,31 @@ def get_ratio_draw_commands( isConv=None ) :
                  'nom'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==0 && ph_isConv[0]',
                  'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==1 && ph_isConv[0]',
                }
-    else :
+    elif useCsev :
 
-        return { 
-                 'nom'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==0 ',
-                 'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==1 ',
-               }
+        if useTAndP :
+            return { 
+                     'nom'  :'probe_isPhoton && probe_eleVeto == 0 ',
+                     'inv'  :'probe_isPhoton && probe_eleVeto == 1 ',
+                   }
+        else :
+            return { 
+                     'nom'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_eleVeto[0]==0 ',
+                     'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_eleVeto[0]==1 ',
+                   }
+    else :
+        if useTAndP:
+            return { 
+                     'nom'  :'probe_isPhoton && probe_hasPixSeed == 0 ',
+                     'inv'  :'probe_isPhoton && probe_hasPixSeed == 1 ',
+                   }
+        else :
+
+            return { 
+                     'nom'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==0 ',
+                     'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==1 ',
+                     #'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] ',
+                   }
 
 
 def get_fit_defaults( histname, useGaussSig=False, useLandauSig=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False ) :
@@ -459,24 +480,24 @@ def main() :
 
     #DoElectronFakeRatioClosure(  outputDir=options.outputDir )
 
-    #DoElectronFakeFitRatio( outputDir=options.outputDir,useHist='.EleFitData', useCoarseEta=False, useMCTemplate=False, doNDKeys=False, usePolyBkg=True, useExpBkg=False)
-    #DoElectronFakeFitRatio( outputDir=options.outputDir,useHist='.EleFitData', useCoarseEta=False, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False)
-    #DoElectronFakeFitRatio( outputDir=options.outputDir,useHist='.EleFitData', useCoarseEta=False, useMCTemplate=True, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False)
+    #DoElectronFakeFitRatio( outputDir=options.outputDir,useHist='.EleFitData', useCoarseEta=False, useMCTemplate=False, doNDKeys=False, usePolyBkg=True, useExpBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
+    #DoElectronFakeFitRatio( outputDir=options.outputDir,useHist='.EleFitData', useCoarseEta=False, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
+    #DoElectronFakeFitRatio( outputDir=options.outputDir,useHist='.EleFitData', useCoarseEta=False, useMCTemplate=True, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
     #--------------------------
     # Use MC template for syst. studies
     #--------------------------
-    #DoElectronFakeFitRatio( outputDir=options.outputDir, sample='Data', useHist='.EleFit3dRatioAbsEtaWithEleVetoConv', useMCTemplate=False, useCoarseEta=True )
+    #DoElectronFakeFitRatio( outputDir=options.outputDir, sample='Data', useHist='.EleFit3dRatioAbsEtaWithEleVetoConv', useMCTemplate=False, useCoarseEta=True, useCsev=options.useCsev, useTAndP=options.useTAndP )
 
-    #DoElectronFakeFitRatio( outputDir=options.outputDir, sample='Data', isConv=True, useHist='.EleFit3dRatioAbsEtaWithEleVetoMCConv', useMCTemplate=True )
+    #DoElectronFakeFitRatio( outputDir=options.outputDir, sample='Data', isConv=True, useHist='.EleFit3dRatioAbsEtaWithEleVetoMCConv', useMCTemplate=True, useCsev=options.useCsev, useTAndP=options.useTAndP )
 
     #--------------------------
     # Use bw x cb with cms shape bkg
     # For nominal fits at high pt
     #--------------------------
     if options.bw_cms_fine :
-        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False)
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
     if options.bw_cms_coarse :
-        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False)
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
 
 
     #--------------------------
@@ -486,37 +507,37 @@ def main() :
     #extra_bkg_sample = 'Zgamma'
     extra_bkg_sample = None
     if options.ndkeys_cms_fine :
-        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=True, doNDKeys=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, extra_bkg_sample=extra_bkg_sample)
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=True, doNDKeys=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, extra_bkg_sample=extra_bkg_sample, useCsev=options.useCsev, useTAndP=options.useTAndP)
     if options.ndkeys_cms_coarse :
-        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=True, doNDKeys=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False)
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=True, doNDKeys=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
 
     #--------------------------
     # Use MC template with exponential bkg
     # For syst variations
     #--------------------------
     if options.ndkeys_exp_fine :
-        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=True, doNDKeys=True, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False)
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=True, doNDKeys=True, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
     if options.ndkeys_exp_coarse :
-        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=True, doNDKeys=True, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False)
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=True, doNDKeys=True, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
 
     #--------------------------
     # Use bw x cb with exponential bkg
     # For syst variations
     #--------------------------
     if options.bw_exp_fine :
-        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False)
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
     if options.bw_exp_coarse :
-        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False)
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
 
     ##--------------------------
     ## Use Landau Sig with cmsshap bkg
     ##--------------------------
-    #DoElectronFakeFitRatio( outputDir=options.outputDir,useHist='.EleFitData', useCoarseEta=False, useMCTemplate=False, doNDKeys=False, useLandauSig=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False)
+    #DoElectronFakeFitRatio( outputDir=options.outputDir,useHist='.EleFitData', useCoarseEta=False, useMCTemplate=False, doNDKeys=False, useLandauSig=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
 
     ##--------------------------
     ## Use MC template with cms shape bkg
     ##--------------------------
-    #DoElectronFakeFitRatio( outputDir=options.outputDir,useHist='.EleFitData', useCoarseEta=False, useMCTemplate=True, doNDKeys=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False)
+    #DoElectronFakeFitRatio( outputDir=options.outputDir,useHist='.EleFitData', useCoarseEta=False, useMCTemplate=True, doNDKeys=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
 
 def CompTrigNoTrig( outputDir=None ) :
 
@@ -582,9 +603,13 @@ def DoElectronFakeFit( outputDir=None, useHist=None) :
 
     print ffresults
 
-def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useHist=None, useCoarseEta=False, useMCTemplate=False, useLandauSig=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, doNDKeys=False, extra_bkg_sample=None) :
+def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=False, useTAndP=False, useHist=None, useCoarseEta=False, useMCTemplate=False, useLandauSig=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, doNDKeys=False, extra_bkg_sample=None) :
 
     subdir = 'ElectronFakeFitsRatio'
+    if useCsev :
+        subdir += 'CSEV'
+    if useTAndP :
+        subdir += 'TAndP'
     if sample != 'Data' :
         subdir += sample
     if useMCTemplate :
@@ -614,7 +639,6 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useHist=
     if usePolyBkg or useExpBkg or useChebyBkg or useBernsteinBkg :
         useCmsShapeBkg = False
 
-
     if outputDir is not None :
         outputDir = outputDir + '/' + subdir
 
@@ -642,22 +666,22 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useHist=
         pt_eta_bins[pts] = eta_bins_80
         
 
-    draw_cmds = get_ratio_draw_commands(isConv=isConv )
+    draw_cmds = get_ratio_draw_commands(isConv=isConv, useCsev=useCsev, useTAndP=useTAndP )
     selection_nom = draw_cmds['nom'] 
     selection_inv = draw_cmds['inv'] 
 
-    hists = get_3d_mass_ratio_histograms( selection_nom, selection_inv, sample, mass_binning, useHist=useHist, useAbsEta=True )
+    hists = get_3d_mass_ratio_histograms( selection_nom, selection_inv, sample, mass_binning, useHist=useHist, useAbsEta=True, useTAndP=useTAndP )
 
     if useMCTemplate :
         hists_extra={'nom' : None, 'inv' : None }
         if extra_bkg_sample is not None :
-            hists_extra = get_3d_mass_ratio_histograms( selection_nom, selection_inv, extra_bkg_sample, mass_binning, useHist=useHist, useAbsEta=True )
+            hists_extra = get_3d_mass_ratio_histograms( selection_nom, selection_inv, extra_bkg_sample, mass_binning, useHist=useHist, useAbsEta=True, useTAndP=useTAndP )
         
         if doNDKeys :
-            results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSelection=selection_nom, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], outputDir =outputDir, namePrefix='_nom' )
-            results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSelection=selection_inv, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], outputDir =outputDir, namePrefix='_inv' )
+            results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSelection=selection_nom, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, namePrefix='_nom' )
+            results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSelection=selection_inv, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, namePrefix='_inv' )
         else :
-            template_hist = get_3d_mass_ratio_histograms( selection_nom, selection_inv, 'DYJetsToLLPhOlap', mass_binning, useHist=None, useAbsEta=True )
+            template_hist = get_3d_mass_ratio_histograms( selection_nom, selection_inv, 'DYJetsToLLPhOlap', mass_binning, useHist=None, useAbsEta=True, useTAndP=useTAndP )
 
             results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, mcTemplate=template_hist['nom'], usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, outputDir =outputDir, namePrefix='_nom' )
             results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, mcTemplate=template_hist['inv'], usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, outputDir =outputDir, namePrefix='_inv' )
@@ -938,7 +962,7 @@ def get_mass_histograms( selection_2fake_taglead, selection_2fake_tagsubl, selec
 
     return results
     
-def get_3d_mass_ratio_histograms( selection_nom, selection_inv, sample,  mass_binning, useHist=None ,useAbsEta=False ) :
+def get_3d_mass_ratio_histograms( selection_nom, selection_inv, sample,  mass_binning, useHist=None ,useAbsEta=False, useTAndP=False ) :
 
     results = {}
 
@@ -958,12 +982,18 @@ def get_3d_mass_ratio_histograms( selection_nom, selection_inv, sample,  mass_bi
     target_samp = sampMan.get_samples(name=sample)
 
     if useAbsEta :
-        var_lead = 'm_lepph1:ph_pt[0]:fabs(ph_eta[0])' #z:y:x
+        if useTAndP :
+            var_lead = 'm_tagprobe:probe_pt:fabs(probe_eta)'
+        else :
+            var_lead = 'm_lepph1:ph_pt[0]:fabs(ph_eta[0])' #z:y:x
         eta_nbin = 250
         eta_min = 0
         eta_max = 2.5
     else :
-        var_lead = 'm_lepph1:ph_pt[0]:ph_eta[0]' #z:y:x
+        if useTAndP :
+            var_lead = 'm_tagprobe:probe_pt:probe_eta'
+        else :
+            var_lead = 'm_lepph1:ph_pt[0]:ph_eta[0]' #z:y:x
         eta_nbin = 500
         eta_min = -2.5
         eta_max = 2.5
@@ -1185,7 +1215,7 @@ def get_fake_factors_fit( hists, pt_bins, eta_bins) :
         fit_hist_nominal( hist_ee_pt )
 
 
-def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, useLandauSig=False, ndKeysSample=None, ndKeysSelection=None, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCmsShapeBkg=False, extraBkgHist=None, outputDir=None, namePrefix='' ) :
+def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, useLandauSig=False, ndKeysSample=None, ndKeysSelection=None, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCmsShapeBkg=False, extraBkgHist=None, useTAndP=False, outputDir=None, namePrefix='' ) :
 
     results_pt_eta = {}
     last_pt = max( [x[1] for x in pt_eta_bins.keys() ] )
@@ -1217,7 +1247,6 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, useLandauSig=False, ndK
                 fitname = 'fit%s_eta_%.2f-%.2f_pt_%d-%d' %(namePrefix, etamin, etamax, ptmin, ptmax)
 
             hist_proj = hist.ProjectionZ(fitname, eta_bin_min, eta_bin_max, pt_bin_min, pt_bin_max )
-            
 
             if ptmax == last_pt:
                 hist_proj.Rebin(2)
@@ -1232,34 +1261,44 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, useLandauSig=False, ndK
 
             elif ndKeysSample is not None :
 
-                pt_eta_selection_nomatch = ndKeysSelection + ' && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d ' %( etamin, etamax, ptmin, ptmax )
-                #pt_eta_selection_match = ndKeysSelection + ' && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d && ph_truthMatch_ph[0]' %( etamin, etamax, ptmin, ptmax )
+                if useTAndP :
+                    pt_eta_selection = ndKeysSelection + ' && fabs(probe_eta) > %f && fabs(probe_eta) < %f && probe_pt > %d && probe_pt < %d ' %( etamin, etamax, ptmin, ptmax )
+                else :
+                    pt_eta_selection = ndKeysSelection + ' && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d ' %( etamin, etamax, ptmin, ptmax )
 
                 orig_tree = sampMan.get_samples( name=ndKeysSample )[0].chain
                 orig_tree.SetBranchStatus('*', 1)
                 tmpfile = ROOT.TFile.Open( '/tmp/jkunkle/tmp.root', 'RECREATE' )
-                new_tree_nomatch = orig_tree.CopyTree( pt_eta_selection_nomatch )
+                new_tree = orig_tree.CopyTree( pt_eta_selection )
 
-                #tmpfile2 = ROOT.TFile.Open( '/tmp/jkunkle/tmp2.root', 'RECREATE' )
-                #new_tree_match = orig_tree.CopyTree( pt_eta_selection_match )
 
-                m_lepph1         = ROOT.RooRealVar( 'm_lepph1', 'm_lepph1', 40, 200 )
-                ph_passMedium    = ROOT.RooRealVar( 'ph_passMedium[0]', 'ph_passMedium[0]', 0, 1 )
-                el_passtrig_n    = ROOT.RooRealVar( 'el_passtrig_n', 'el_passtrig_n', 0, 10 )
-                el_n             = ROOT.RooRealVar( 'el_n', 'el_n', 0, 10 )
-                ph_n             = ROOT.RooRealVar( 'ph_n', 'ph_n', 0, 10 )
-                ph_hasPixSeed    = ROOT.RooRealVar( 'ph_hasPixSeed[0]', 'ph_hasPixSeed[0]', 0, 10 )
-                ph_eta           = ROOT.RooRealVar( 'ph_eta[0]', 'ph_eta[0]', -5., 5. )
-                ph_pt            = ROOT.RooRealVar( 'ph_pt[0]', 'ph_pt[0]', 0, 1000. )
-                ph_truthMatch_ph = ROOT.RooRealVar( 'ph_truthMatch_ph[0]', 'ph_truthMatch_ph[0]', 0, 1. )
+                if useTAndP :
+                    m_tagprobe       = ROOT.RooRealVar( 'm_tagprobe', 'm_tagprobe', 40, 200 )
+                    probe_pt         = ROOT.RooRealVar( 'probe_pt', 'probe_pt', 0, 1000 )
+                    probe_eta        = ROOT.RooRealVar( 'probe_eta', 'probe_eta', -5, 5)
+                    probe_hasPixSeed = ROOT.RooRealVar( 'probe_hasPixSeed', 'probe_hasPixSeed', 0, 1)
+                    probe_eleVeto    = ROOT.RooRealVar( 'probe_eleVeto', 'probe_eleVeto', 0, 1)
+                    probe_isPhoton   = ROOT.RooRealVar( 'probe_isPhoton', 'probe_isPhoton', 0, 1)
 
-                data_set_nomatch = ROOT.RooDataSet( 'dataset_nomatch_%.2f_%.2f_%d_%d' %(etamin, etamax, ptmin, ptmax ), '', new_tree_nomatch,ROOT.RooArgSet( m_lepph1))
-                #data_set_match = ROOT.RooDataSet( 'dataset_match_%.2f_%.2f_%d_%d' %(etamin, etamax, ptmin, ptmax ), '', new_tree_match,ROOT.RooArgSet( m_lepph1))
+                    data_set = ROOT.RooDataSet( 'dataset_%.2f_%.2f_%d_%d' %(etamin, etamax, ptmin, ptmax ), '', new_tree,ROOT.RooArgSet( m_tagprobe ))
 
-                results = fit_hist_ndkeys( hist_proj, signal_dataset=data_set_nomatch, bkg_dataset=None, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, label=hist_proj.GetName(), outputName=output_name )
-                #results = fit_hist_ndkeys( hist_proj, signal_dataset=data_set_nomatch, bkg_dataset=data_set_match, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=True, label=hist_proj.GetName(), outputName=output_name )
+                    results = fit_hist_ndkeys( hist_proj, signal_dataset=data_set, varname='m_tagprobe', bkg_dataset=None, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, label=hist_proj.GetName(), outputName=output_name )
+                else :
+
+                    m_lepph1         = ROOT.RooRealVar( 'm_lepph1', 'm_lepph1', 40, 200 )
+                    ph_passMedium    = ROOT.RooRealVar( 'ph_passMedium[0]', 'ph_passMedium[0]', 0, 1 )
+                    el_passtrig_n    = ROOT.RooRealVar( 'el_passtrig_n', 'el_passtrig_n', 0, 10 )
+                    el_n             = ROOT.RooRealVar( 'el_n', 'el_n', 0, 10 )
+                    ph_n             = ROOT.RooRealVar( 'ph_n', 'ph_n', 0, 10 )
+                    ph_hasPixSeed    = ROOT.RooRealVar( 'ph_hasPixSeed[0]', 'ph_hasPixSeed[0]', 0, 10 )
+                    ph_eta           = ROOT.RooRealVar( 'ph_eta[0]', 'ph_eta[0]', -5., 5. )
+                    ph_pt            = ROOT.RooRealVar( 'ph_pt[0]', 'ph_pt[0]', 0, 1000. )
+                    ph_truthMatch_ph = ROOT.RooRealVar( 'ph_truthMatch_ph[0]', 'ph_truthMatch_ph[0]', 0, 1. )
+
+                    data_set = ROOT.RooDataSet( 'dataset_%.2f_%.2f_%d_%d' %(etamin, etamax, ptmin, ptmax ), '', new_tree,ROOT.RooArgSet( m_lepph1))
+
+                    results = fit_hist_ndkeys( hist_proj, signal_dataset=data_set, varname='m_lepph1', bkg_dataset=None, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, label=hist_proj.GetName(), outputName=output_name )
                 tmpfile.Close()
-                #tmpfile2.Close()
             else :
                 results = fit_hist_nominal( hist_proj, useLandauSig=useLandauSig, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, label=hist_proj.GetName(), outputName=output_name )
 
@@ -1369,7 +1408,7 @@ def fit_hist_mc_template( data_hist, template_hist, usePolyBkg=False, useExpBkg=
 
     return store_results( m_lepph1 )
 
-def fit_hist_ndkeys( data_hist, signal_dataset=None, bkg_dataset=None, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCmsShapeBkg=False, label=None, outputName=None ) :
+def fit_hist_ndkeys( data_hist, signal_dataset=None, bkg_dataset=None, varname='m_lepph1', usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCmsShapeBkg=False, label=None, outputName=None ) :
 
     sampMan.fit_objs = {}
 
@@ -1380,7 +1419,7 @@ def fit_hist_ndkeys( data_hist, signal_dataset=None, bkg_dataset=None, usePolyBk
     xmax = 200
 
     # independent var
-    m_lepph1 = ROOT.RooRealVar( 'm_lepph1', 'm_lepph1', xmin,xmax)
+    m_lepph1 = ROOT.RooRealVar( varname, varname, xmin,xmax)
 
     signals = [signal_dataset]
     if bkg_dataset is not None :

@@ -65,21 +65,32 @@ if options.outputDir is not None :
 else :
     ROOT.gROOT.SetBatch(False)
 
-sampMan = None
-sampManData = None
 
 common_ptbins = [15, 25, 40, 70, 1000000 ]
 if options.ptbins is not None :
     common_ptbins = [int(x) for x in options.ptbins.split(',')]
 
-def get_default_draw_commands(ch='mu' ) :
+def get_real_template_draw_commands( ch='mu' ) :
 
-    real_fake_cmds = {
-                      'real' :'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.3 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 ' , 
-                      'fake' :'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ',
-                      'fakewin' :'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
+    # in the muon channel remove the pixel seed veto
+    if ch == 'mu' :
+        return 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.3 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 '
+    else :
+        return 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.3 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && ph_hasPixSeed[0]==0 '
 
-    }
+def get_fake_template_draw_commands( ch='mu' ) :
+
+    # in the muon channel remove the pixel seed veto
+    if ch == 'mu' :
+        return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 '
+    else :
+        return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_hasPixSeed[0]==0 '
+
+#'fakewin' :'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
+#'fakewin' :'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
+
+def get_default_draw_commands( ch='mu' ) :
+
     if ch=='mu' :
         #gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>15 && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 ' }
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>15 && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 ' }
@@ -104,9 +115,7 @@ def get_default_draw_commands(ch='mu' ) :
     elif ch == 'elzcrinvpixsubl' :
         gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>15 && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && (fabs(m_leadLep_ph1_ph2-91.2) < 5) ',}
 
-    real_fake_cmds.update(gg_cmds)
-
-    return real_fake_cmds
+    return gg_cmds
 
 def get_default_samples(ch='mu' ) :
 
@@ -185,19 +194,25 @@ def main() :
     global sampManLLG
     global sampManLG
     global sampManData
+    global sampManDataNOEV
     global sampManDataInvL
     global sampManDataInvS
 
-    #base_dir_data      = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoPixSeedBoth_2014_12_08'
-    base_dir_data      = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDDiMuonTrig_2014_11_28'
-    base_dir_data_invl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2014_12_08'
-    base_dir_data_invs = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2014_12_08'
-    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_12_08'
-    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2014_12_08'
+    base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoPixSeedBoth_2014_12_23'
+    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2014_12_23'
+    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDDiMuonTrig_2014_11_28'
+    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2014_12_23'
+    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2014_12_23'
+    #base_dir_data      = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDTrigEleOlapVetoPixSeedBoth_2015_01_02'
+    #base_dir_data_invl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDTrigEleOlapInvPixSeedLead_2015_01_02'
+    #base_dir_data_invs = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDTrigEleOlapInvPixSeedSubl_2015_01_02'
+    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_12_23'
+    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2014_12_23'
 
     sampManLLG      = SampleManager(base_dir_llg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManLG       = SampleManager(base_dir_lg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManData     = SampleManager(base_dir_data, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
+    sampManDataNOEV = SampleManager(base_dir_data_noeveto, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManDataInvL = SampleManager(base_dir_data_invl, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManDataInvS = SampleManager(base_dir_data_invs, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
 
@@ -205,10 +220,12 @@ def main() :
 
         sampManLLG.ReadSamples( options.samplesConf )
         sampManLG.ReadSamples( options.samplesConf )
-        #sampManData.ReadSamples( options.samplesConf )
-        sampManData.ReadSamples( 'Modules/JetFakeFitZgg.py' )
+        sampManData.ReadSamples( options.samplesConf )
+        sampManDataNOEV.ReadSamples( options.samplesConf )
         sampManDataInvL.ReadSamples( options.samplesConf )
         sampManDataInvS.ReadSamples( options.samplesConf )
+
+        #sampManData.ReadSamples( 'Modules/JetFakeFitZgg.py' )
 
     if options.outputDir is not None :
         if not os.path.isdir( options.outputDir ) :
@@ -221,68 +238,20 @@ def main() :
 
     if options.nom :
         RunNomFitting( outputDir = options.outputDir, ch=options.channel)
-        #RunNomFitting( outputDir = options.outputDir, ch='el' )
-        #RunNomFitting( outputDir = options.outputDir, ch='elfull' )
-        #RunNomFitting( outputDir = options.outputDir, ch='elinvpixsubl' )
-        #RunNomFitting( outputDir = options.outputDir, ch='elinvpixlead' )
-        #RunNomFitting( outputDir = options.outputDir, ch='elfullinvpixlead' )
-        #RunNomFitting( outputDir = options.outputDir, ch='elfullinvpixsubl' )
     if options.loose :
-        #RunLooseFitting( outputDir = options.outputDir, ch='mu' )
-        #RunLooseFitting( outputDir = options.outputDir, ch='el' )
         RunLooseFitting( outputDir = options.outputDir, ch=options.channel )
-    #if options.asym533 :
-    #    #RunAsymFittingLoose(vals=( 5,3,3  ), outputDir = options.outputDir , ch='mu' )
-    #    #RunAsymFittingLoose(vals=( 5,3,3  ), outputDir = options.outputDir , ch='el' )
-    #    RunAsymFittingLoose(vals=( 5,3,3  ), outputDir = options.outputDir , ch=options.channel )
-    #if options.asym855 :
-    #    #RunAsymFittingLoose(vals=( 8,5,5  ), outputDir = options.outputDir , ch='mu' )
-    #    #RunAsymFittingLoose(vals=( 8,5,5  ), outputDir = options.outputDir , ch='el' )
-    #    RunAsymFittingLoose(vals=( 8,5,5  ), outputDir = options.outputDir , ch=options.channel )
-    #if options.asym1077 :
-    #    #RunAsymFittingLoose( vals=( 10,7,7 ), outputDir = options.outputDir, ch='mu' )
-    #    #RunAsymFittingLoose( vals=( 10,7,7 ), outputDir = options.outputDir, ch='el' )
-    #    RunAsymFittingLoose( vals=( 10,7,7 ), outputDir = options.outputDir, ch=options.channel )
-    #if options.asym1299 :
-    #    #RunAsymFittingLoose( vals=( 12,9,9 ), outputDir = options.outputDir, ch='mu' )
-    #    #RunAsymFittingLoose( vals=( 12,9,9 ), outputDir = options.outputDir, ch='el' )
-    #    RunAsymFittingLoose( vals=( 12,9,9 ), outputDir = options.outputDir, ch=options.channel )
-    #if options.asym151111 :
-    #    #RunAsymFittingLoose( vals=( 15,11,11 ), outputDir = options.outputDir, ch='mu' )
-    #    #RunAsymFittingLoose( vals=( 15,11,11 ), outputDir = options.outputDir, ch='el' )
-    #    RunAsymFittingLoose( vals=( 15,11,11 ), outputDir = options.outputDir, ch=options.channel )
-    #if options.asym201616 :
-    #    #RunAsymFittingLoose( vals=( 20,16,16 ), outputDir = options.outputDir, ch='mu' )
-    #    #RunAsymFittingLoose( vals=( 20,16,16 ), outputDir = options.outputDir, ch='el' )
-    #    RunAsymFittingLoose( vals=( 20,16,16 ), outputDir = options.outputDir, ch=options.channel )
 
     if options.asymcorr533 :
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='mu' )
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='el' )
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='elfull' )
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='elinvpixsubl' )
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='elinvpixlead' )
-        #RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch='elfullinvpixsubl' )
         RunCorrectedAsymFitting(vals=( 5,3,3  ), outputDir = options.outputDir , ch=options.channel )
     if options.asymcorr855 :
-        #RunCorrectedAsymFitting(vals=( 8,5,5  ), outputDir = options.outputDir , ch='mu' )
-        #RunCorrectedAsymFitting(vals=( 8,5,5  ), outputDir = options.outputDir , ch='el' )
         RunCorrectedAsymFitting(vals=( 8,5,5  ), outputDir = options.outputDir , ch=options.channel )
     if options.asymcorr1077 :
-        #RunCorrectedAsymFitting( vals=( 10,7,7 ), outputDir = options.outputDir, ch='mu' )
-        #RunCorrectedAsymFitting( vals=( 10,7,7 ), outputDir = options.outputDir, ch='el' )
         RunCorrectedAsymFitting( vals=( 10,7,7 ), outputDir = options.outputDir, ch=options.channel )
     if options.asymcorr1299 :
-        #RunCorrectedAsymFitting( vals=( 12,9,9 ), outputDir = options.outputDir, ch='mu' )
-        #RunCorrectedAsymFitting( vals=( 12,9,9 ), outputDir = options.outputDir, ch='el' )
         RunCorrectedAsymFitting( vals=( 12,9,9 ), outputDir = options.outputDir, ch=options.channel)
     if options.asymcorr151111 :
-        #RunCorrectedAsymFitting( vals=( 15,11,11 ), outputDir = options.outputDir, ch='mu' )
-        #RunCorrectedAsymFitting( vals=( 15,11,11 ), outputDir = options.outputDir, ch='el' )
         RunCorrectedAsymFitting( vals=( 15,11,11 ), outputDir = options.outputDir, ch=options.channel )
     if options.asymcorr201616 :
-        #RunCorrectedAsymFitting( vals=( 20,16,16 ), outputDir = options.outputDir, ch='mu' )
-        #RunCorrectedAsymFitting( vals=( 20,16,16 ), outputDir = options.outputDir, ch='el' )
         RunCorrectedAsymFitting( vals=( 20,16,16 ), outputDir = options.outputDir, ch=options.channel )
 
 def load_syst_file( file ) :
@@ -367,22 +336,31 @@ def RunCorrectedAsymFitting(vals, outputDir = None, ch='mu') :
 
     fitvar = 'sigmaIEIE'
 
+    # make the output dir based on the iso vals
     outputDirNom = None
     if outputDir is not None :
         outputDirNom = outputDir + '/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
 
+    # iso cuts for isolated photons
     iso_cuts_iso = ' ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+    # loosened iso cuts
     iso_cuts_noiso = ' ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(vals[0], vals[1], vals[2] )
     loose_iso_cuts = vals
 
     do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, loose_iso_cuts, ptbins=common_ptbins, fitvar=fitvar, ch=ch, outputDir=outputDirNom, systematics=('-'.join([str(v) for v in vals])) )
+
+    # ----------------------------
     # subleading binning
+    # Uncomment to use sublead binning
+    # in specific lead pt bins
+    # ----------------------------
     #subl_pt_lead_bins = [ common_ptbins[-2],  common_ptbins[-1] ]
     #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[0], common_ptbins[1]), ch=ch, outputDir = outputDirNom, systematics='Nom')
     #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[1], None), ch=ch, outputDir = outputDirNom, systematics='Nom')
 
     #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[0], common_ptbins[2]), ch=ch, outputDir = outputDirNom, systematics='Nom')
     #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[2], None), ch=ch, outputDir = outputDirNom, systematics='Nom')
+    # ----------------------------
 
 def do_nominal_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptrange=(None,None), fitvar='sigmaIEIE', ch='mu', outputDir=None, systematics=None ) :
 
@@ -390,9 +368,9 @@ def do_nominal_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptra
     samples = get_default_samples(ch)
 
     # generate templates for both EB and EE
-    real_template_str = get_default_draw_commands(ch )['real'] + ' && %s' %iso_cuts_lead
+    real_template_str = get_real_template_draw_commands(ch ) + ' && %s' %iso_cuts_lead
     #fake_template_str = get_default_draw_commands(ch )['fakewin']
-    fake_template_str = get_default_draw_commands(ch )['fake'] + ' && %s' %iso_cuts_lead
+    fake_template_str = get_fake_template_draw_commands(ch ) + ' && %s' %iso_cuts_lead
 
     templates_reg = {}
     templates_reg['EB'] = {}
@@ -416,7 +394,9 @@ def do_nominal_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptra
 
         count_var = None
         if fitvar == 'sigmaIEIE' :
-            if ch.count('invpix') :
+            # if the channel inverts one of the pixel seeds then don't require the veto
+            # if its the muon channel don't require the veto
+            if ch.count('invpix') or ch == 'mu' :
                 count_var = 'ph_mediumNoSIEIENoEleVeto_n'
             else :
                 count_var = 'ph_mediumNoSIEIE_n'
@@ -470,6 +450,13 @@ def do_nominal_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptra
             # draw and get back the hist
             gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=sampManDataInvS )
 
+        # in the muon channel don't make the electron veto cut
+        elif ch.count( 'mu' ) :
+            print 'USE sampManDataNOEV'
+            target_samp = sampManDataNOEV.get_samples(name=samples['target'])
+
+            # draw and get back the hist
+            gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=sampManDataNOEV )
         else :
             print 'USE sampManData'
             target_samp = sampManData.get_samples(name=samples['target'])
@@ -776,14 +763,14 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_noiso=None, loose_iso_
     binning = get_default_binning(fitvar)
     samples = get_default_samples(ch)
 
-    real_template_str_iso = get_default_draw_commands(ch )['real']
-    fake_template_str_iso = get_default_draw_commands(ch )['fake']
+    real_template_str_iso = get_real_template_draw_commands(ch)
+    fake_template_str_iso = get_fake_template_draw_commands(ch)
     if iso_cuts_iso is not None :
         real_template_str_iso = real_template_str_iso + ' && ' + iso_cuts_iso
         fake_template_str_iso = fake_template_str_iso + ' && ' + iso_cuts_iso
 
-    real_template_str_noiso = get_default_draw_commands(ch )['real']
-    fake_template_str_noiso = get_default_draw_commands(ch )['fake']
+    real_template_str_noiso = get_real_template_draw_commands(ch )
+    fake_template_str_noiso = get_fake_template_draw_commands(ch )
     if iso_cuts_noiso is not None :
         real_template_str_noiso = real_template_str_noiso + ' && ' + iso_cuts_noiso
         fake_template_str_noiso = fake_template_str_noiso + ' && ' + iso_cuts_noiso
@@ -907,6 +894,14 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_noiso=None, loose_iso_
             gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvS )
             gg_hist_subliso = clone_sample_and_draw( target_samp[0], var, gg_selection_subliso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvS )
 
+        elif ch.count('mu' ) :
+            print 'USE sampManDataNOEV'
+
+            target_samp = sampManDataNOEV.get_samples(name=samples['target'])
+
+            # draw and get back the hist
+            gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataNOEV )
+            gg_hist_subliso = clone_sample_and_draw( target_samp[0], var, gg_selection_subliso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataNOEV )
         else :
             print 'USE sampManData'
 

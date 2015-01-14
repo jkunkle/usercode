@@ -11,14 +11,6 @@ def config_samples(samples) :
     samples.AddSample('muon_2012b_Jan22rereco'       , path='job_muon_2012b_Jan22rereco'        ,  isActive=False, scale=1.0 )
     samples.AddSample('muon_2012c_Jan22rereco'       , path='job_muon_2012c_Jan22rereco'        ,  isActive=False, scale=1.0 )
     samples.AddSample('muon_2012d_Jan22rereco'       , path='job_muon_2012d_Jan22rereco'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012a_Jan22rerecoTightBlind'       , path='job_muon_2012a_Jan22rerecoTightBlind'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012b_Jan22rerecoTightBlind'       , path='job_muon_2012b_Jan22rerecoTightBlind'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012c_Jan22rerecoTightBlind'       , path='job_muon_2012c_Jan22rerecoTightBlind'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012d_Jan22rerecoTightBlind'       , path='job_muon_2012d_Jan22rerecoTightBlind'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('electron_2012a_Jan22rerecoTightBlind'   , path='job_electron_2012a_Jan22rerecoTightBlind'    ,  isActive=False, scale=1.0 )
-    samples.AddSample('electron_2012b_Jan22rerecoTightBlind'   , path='job_electron_2012b_Jan22rerecoTightBlind'    ,  isActive=False, scale=1.0 )
-    samples.AddSample('electron_2012c_Jan2012rerecoTightBlind' , path='job_electron_2012c_Jan2012rerecoTightBlind'  ,  isActive=False, scale=1.0 )
-    samples.AddSample('electron_2012d_Jan22rerecoTightBlind'   , path='job_electron_2012d_Jan22rerecoTightBlind'    ,  isActive=False, scale=1.0 )
     samples.AddSample('DYJetsToLL'                   , path='job_summer12_DYJetsToLL'         ,  isActive=False, useXSFile=True )
 
     samples.AddSample('DYJetsToLLPhOlap'             , path='job_summer12_DYJetsToLLPhOlap'     ,  isActive=False, useXSFile=True, XSName='DYJetsToLL')
@@ -74,14 +66,6 @@ def config_samples(samples) :
 
     samples.AddSampleGroup( 'Data', legend_name='Data', 
                             input_samples = [
-                                             #'electron_2012a_Jan22rerecoTightBlind',
-                                             #'electron_2012b_Jan22rerecoTightBlind',
-                                             #'electron_2012c_Jan2012rerecoTightBlind',
-                                             #'electron_2012d_Jan22rerecoTightBlind',
-                                             #'muon_2012a_Jan22rerecoTightBlind',
-                                             #'muon_2012b_Jan22rerecoTightBlind',
-                                             #'muon_2012c_Jan22rerecoTightBlind',
-                                             #'muon_2012d_Jan22rerecoTightBlind',
                                              'electron_2012a_Jan22rereco',
                                              'electron_2012b_Jan22rereco',
                                              'electron_2012c_Jan2012rereco',

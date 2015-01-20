@@ -109,6 +109,7 @@ $(LINKDEF):  $(SRC_DIR)/Dict.cxx
 #	g++ $(CXXFLAGS) -c $(SRC_RUN) -o $@ -I../$(INC_DIR)
 
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cxx
+	mkdir -p $(OBJ_DIR)
 	g++ $(CXXFLAGS) -c $^ -o $@ -I../$(INC_DIR)
 
 $(EXE): $(OBJECT_ANA) $(OBJECT_ADDTL) $(LINKDEF) 

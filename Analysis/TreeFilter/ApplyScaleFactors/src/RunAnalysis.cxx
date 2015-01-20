@@ -234,6 +234,8 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
     OUT::ph_evetoSFUP = 0;
     OUT::ph_evetoSFDN = 0;
 
+    // to check if photon pt is above histogram
+    float max_pt_highpt = _sfhist_ph_eveto_highpt->GetYaxis()->GetBinUpEdge( _sfhist_ph_eveto_highpt->GetNbinsY() );
     
     std::vector<float> sfs_id;
     std::vector<float> errs_id;
@@ -256,14 +258,31 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
             errs_id.push_back(_sfhist_ph_id->GetBinError( _sfhist_ph_id->FindBin( 999., feta ) ) );
         }
 
-        // switch between 
+
+        // switch between highpt and lowpt
         if( pt < 70 ) {
+            if( _sfhist_ph_eveto->GetBinContent( _sfhist_ph_eveto->FindBin(feta, pt) ) == 0 ) {
+                std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
+            }
             sfs_eveto.push_back( _sfhist_ph_eveto->GetBinContent( _sfhist_ph_eveto->FindBin(feta, pt) ) );
             errs_eveto.push_back( _sfhist_ph_eveto->GetBinError( _sfhist_ph_eveto->FindBin(feta, pt) ) );
         }
         else {
-            sfs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto->FindBin(feta, pt )) );
-            errs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinError( _sfhist_ph_eveto->FindBin(feta, pt ) ));
+            
+            if( pt >= max_pt_highpt ) {
+                if( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, max_pt_highpt-1) ) == 0 ) {
+                    std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
+                }
+                sfs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, max_pt_highpt-1 )) );
+                errs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinError( _sfhist_ph_eveto_highpt->FindBin(feta, max_pt_highpt-1 ) ));
+            }
+            else {
+                if( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, pt) ) == 0 ) {
+                    std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
+                }
+                sfs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, pt )) );
+                errs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinError( _sfhist_ph_eveto_highpt->FindBin(feta, pt ) ));
+            }
         }
     }
 
@@ -276,7 +295,7 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
         OUT::ph_evetoSFUP = sfs_eveto[0]+errs_eveto[0];
         OUT::ph_evetoSFDN = sfs_eveto[0]-errs_eveto[0];
     }
-    else if( sfs_id.size() == 2) {
+    else if( sfs_id.size() > 1 ) {
         OUT::ph_idSF = sfs_id[0]*sfs_id[1];
         OUT::ph_idSFUP = ( sfs_id[0] + errs_id[0] )*( sfs_id[1] + errs_id[1] );
         OUT::ph_idSFDN = ( sfs_id[0] - errs_id[0] )*( sfs_id[1] - errs_id[1] );

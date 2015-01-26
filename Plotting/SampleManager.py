@@ -132,7 +132,6 @@ class Sample :
         self.hist.SetMarkerColor( self.color )
         self.hist.SetTitle('')
         self.hist.Scale( self.scale )
-        print 'scale ', self.scale
         if self.isData :
             self.hist.SetMarkerStyle( 20 )
             self.hist.SetMarkerSize( 1.15 )
@@ -538,7 +537,6 @@ class DrawConfig :
             if not has_sub_range :
                 max_ranges[range1] = matched_locations[range1]
 
-        print max_ranges
         modified_selection = str(selection)
         # start from the end of the string (max start)
         # so that the found indices don't change
@@ -1576,11 +1574,21 @@ class SampleManager :
 
     #---------------------------------------
     def list_hists( self ) :
+        all_hists = []
         for samp in self.get_samples() :
             for ofile in samp.ofiles :
                 if ofile is not None :
-                    ofile.ls()
-                    break
+                    for objkey in ofile.GetListOfKeys() :
+                        obj = ofile.Get( objkey.GetName() )
+                        class_name = obj.ClassName()
+                        if class_name.count( 'TH1' ) :
+                            all_hists.append(obj.GetName() )
+
+        uniq_hists = list( set( all_hists ) )
+        uniq_hists.sort()
+
+        for h in uniq_hists :
+            print h
 
     #---------------------------------------
     def SaveStack( self, filename, outputDir=None, canname=None, write_command=False, command_file='commands.txt'  ) :
@@ -1694,8 +1702,8 @@ class SampleManager :
             lines.append('%s : \t %s' %( sig, signal_entries[sig] ))
             latex_lines.append( '%s & %s ' %( sig, signal_entries[sig] )  + r'\\')
     
-        lines.append('MC Sum : \t %s' %(bkg_sum))
-        latex_lines.append('MC Sum & %s ' %(bkg_sum) + r'\\')
+        lines.append('Stack Sum : \t %s' %(bkg_sum))
+        latex_lines.append('Stack Sum & %s ' %(bkg_sum) + r'\\')
     
         for sig in signal_entries :
             den = umath.sqrt(signal_entries[sig] + bkg_sum )
@@ -1751,7 +1759,7 @@ class SampleManager :
                     detail_entries['detail'][samp.name]['bins'][str(bin)]['min'] = min
                     detail_entries['detail'][samp.name]['bins'][str(bin)]['max'] = max
 
-                    lines.append('%s, bin %d : %.3f += %.4f ' %( samp.name, bin, val, err ) )
+                    lines.append('%s, bin %d (%s-%s) : %.3f += %.4f ' %( samp.name, bin, str(min), str(max), val, err ) )
 
         for line in lines :
             print line

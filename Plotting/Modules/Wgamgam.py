@@ -156,7 +156,7 @@ def config_samples(samples) :
                             input_samples = [
                                              'DYJetsToLLPhOlap'
                                              #'DYJetsToLL'
-    #                                        #'Zg',
+                                             #'Zg',
                                             ],
                            plotColor=ROOT.kCyan,
                            scale=1.0,

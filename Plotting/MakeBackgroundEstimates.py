@@ -21,7 +21,8 @@ from SampleManager import SampleManager
 
 ROOT.gROOT.SetBatch(True)
 
-samplesWgg = None
+samplesWelgg = None
+samplesWmugg = None
 samplesWggInvSubl = None
 samplesWggInvLead = None
 
@@ -31,16 +32,13 @@ subl_dr_cut = 0.4
 phot_dr_cut = 0.4
 
 el_cuts = {'elfull' : 
-           {'invlead' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep >%f && dr_ph2_leadLep>%f && mu_n==0 && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) && m_ph1_ph2>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts),
-            'invsubl' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) && m_ph1_ph2>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts),
-           },
+            'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) && m_ph1_ph2>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts),
            'elzcr' :
-           {
-            #'invlead' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && ( (fabs(m_leadLep_ph1_ph2-91.2) < 5) || (fabs(m_leadLep_ph1-91.2) < 5) || (fabs(m_leadLep_ph2-91.2) < 5) ) && m_ph1_ph2>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts),
-           # 'invsubl' : ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && ( (fabs(m_leadLep_ph1_ph2-91.2) < 5) || (fabs(m_leadLep_ph1-91.2) < 5)  || (fabs(m_leadLep_ph2-91.2) < 5) ) && m_ph1_ph2>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts),
-           'invlead' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1_ph2-91.2) < 5) && m_ph1_ph2>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts),
-            'invsubl' : ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1_ph2-91.2) < 5) && m_ph1_ph2>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts),
-           },
+           'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1_ph2-91.2) < 10) && m_ph1_ph2>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts),
+           'elph1zcr' :
+           'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1-91.2) < 10) && m_ph1_ph2>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts),
+           'elph2zcr' :
+           'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph2-91.2) < 10) && m_ph1_ph2>15  %s ' %(lead_dr_cut, subl_dr_cut, ph_cuts),
            'elbase' : 
            {'invlead' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && mu_n==0 && m_ph1_ph2>15  %s'%(lead_dr_cut, subl_dr_cut, ph_cuts),
             'invsubl' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && mu_n==0 && m_ph1_ph2>15  %s'%(lead_dr_cut, subl_dr_cut, ph_cuts) 
@@ -51,7 +49,11 @@ _asym_iso_syst = { (0, 0, 0) : 0.05, (5,3,3) : 0.05, (8,5,5) : 0.10, (10, 7, 7) 
 
 _ele_eta_bins        = {'EB': [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44) ], 'EE' : [(1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5)] }
 _ele_eta_bins_highpt = {'EB': [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44) ], 'EE' : [(1.57, 2.1), (2.1, 2.4), (2.4, 2.5)] }
+
+_ele_eta_bins_coarse = {'EB': [(0.0, 1.44) ], 'EE' : [(1.57, 2.5)] }
+
 _eta_pt_bin_map = { ('15', '25') : _ele_eta_bins, ('25', '40') : _ele_eta_bins, ('40', '70') : _ele_eta_bins, ('70', 'max') : _ele_eta_bins_highpt }
+_eta_pt_bin_map_coarse = { ('15', '25') : _ele_eta_bins_coarse, ('25', '40') : _ele_eta_bins_coarse, ('40', '70') : _ele_eta_bins_coarse, ('70', 'max') : _ele_eta_bins_coarse}
 
 class FakeFactorManager :
 
@@ -162,11 +164,13 @@ def main() :
     
     options = p.parse_args()
 
-    global samplesWgg
+    global samplesWelgg
+    global samplesWmugg
     global samplesWggInvLead
     global samplesWggInvSubl
 
-    baseDirWgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindLowPt_2014_12_23'
+    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindLowPt_2014_12_23'
+    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoEleVetoUnblindLowPt_2015_01_14'
     #baseDirWgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindEleZCR_2014_12_23'
     baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2014_12_23'
     baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2014_12_23'
@@ -184,11 +188,13 @@ def main() :
 
     sampleConfWgg = 'Modules/Wgamgam.py'
 
-    samplesWgg = SampleManager(baseDirWgg, treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
+    samplesWelgg = SampleManager(baseDirWelgg, treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
+    samplesWmugg = SampleManager(baseDirWmugg, treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
     samplesWggInvLead = SampleManager(baseDirWggInvLead, treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
     samplesWggInvSubl = SampleManager(baseDirWggInvSubl, treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
 
-    samplesWgg.ReadSamples( sampleConfWgg )
+    samplesWelgg.ReadSamples( sampleConfWgg )
+    samplesWmugg.ReadSamples( sampleConfWgg )
     samplesWggInvLead.ReadSamples( sampleConfWgg )
     samplesWggInvSubl.ReadSamples( sampleConfWgg )
 
@@ -241,17 +247,75 @@ def main() :
         base_dir_ele = options.baseDir
         base_dir_jet = '%s/JetFakeResultsSyst'%options.baseDir
         outputDir='%s/BackgroundEstimates'%options.baseDir
-        #MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDir )
+        MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDir )
         MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDir, namePostfix='__zcr' )
-        #MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map_coarse, file_bin_map_coarse_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDir, namePostfix='__coarse' )
-        #MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map_coarse, file_bin_map_coarse_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDir, namePostfix='__coarse__zcr' )
+        #MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map_coarse, file_bin_map_coarse_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDir, namePostfix='__coarse', coarse=True )
+        #MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map_coarse, file_bin_map_coarse_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDir, namePostfix='__coarse__zcr', coarse=True )
 
-        #MakeJetBkgEstimate( base_dir_jet, pt_bins, outputDir )
+        MakeJetBkgEstimate( base_dir_jet, pt_bins, outputDir )
 
-        #MakeBkgEstimatePlots( outputDir, options.plotDir )
+        MakeBkgEstimatePlots( outputDir, options.plotDir )
+
+        MakeDiPhotonCREleFakeFactors( )
 
     print '^_^ FINSISHED ^_^'
     print 'It is safe to kill the program if it is hanging'
+
+def MakeDiPhotonCREleFakeFactors( ) :
+
+    regions = [('EB', 'EB'), ('EB' , 'EE'), ('EE', 'EB')]
+
+    data_samp_invlead = samplesWggInvLead.get_samples( name='Data' )[0]
+    data_samp_invsubl = samplesWggInvSubl.get_samples( name='Data' )[0]
+    data_samp_nom     = samplesWelgg     .get_samples( name='Data' )[0]
+    for r1, r2 in regions :
+        # --------------------------------------
+        # Mlgg control region
+        # --------------------------------------
+        draw_str_mlgg = ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 )' %(el_cuts['elzcr'], r1, r2)
+
+        samplesWggInvLead.create_hist(data_samp_invlead, 'pt_leadph12', draw_str_mlgg, ( 20, 0, 100) )
+
+        hist_mlgg_lead = data_samp_invlead.hist.Clone('hist_lead_mlgg__%s-%s' %(r1,r2))
+
+        samplesWggInvSubl.create_hist(data_samp_invsubl, 'pt_leadph12', draw_str_mlgg, ( 20, 0, 100) )
+
+        hist_mlgg_subl = data_samp_invsubl.hist.Clone('hist_subl_mlgg__%s-%s' %(r1,r2))
+
+        samplesWelgg.create_hist(data_samp_nom, 'pt_leadph12', draw_str_mlgg, ( 20, 0, 100) )
+
+        hist_mlgg_nom  = data_samp_nom.hist.Clone('hist_nom_mlgg__%s-%s' %(r1, r2) )
+
+        # --------------------------------------
+        # Mlg1 control region
+        # --------------------------------------
+        draw_str_mlg1 = ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 )' %(el_cuts['elph1zcr'], r1, r2)
+
+        samplesWggInvLead.create_hist(data_samp_invlead, 'pt_leadph12', draw_str_mlg1, ( 20, 0, 100) )
+
+        hist_mlg1_lead = data_samp_invlead.hist.Clone('hist_lead_mlg1__%s-%s' %(r1,r2))
+
+        samplesWelgg.create_hist(data_samp_nom, 'pt_leadph12', draw_str_mlg1, ( 20, 0, 100) )
+
+        hist_mlg1_nom  = data_samp_nom.hist.Clone('hist_nom_mlg1__%s-%s' %(r1, r2) )
+
+        # --------------------------------------
+        # Mlg2 control region
+        # --------------------------------------
+        draw_str_mlg2 = ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 )' %(el_cuts['elph2zcr'], r1, r2)
+
+        samplesWggInvLead.create_hist(data_samp_invlead, 'pt_sublph12', draw_str_mlg2, ( 20, 0, 100) )
+
+        hist_mlg2_lead = data_samp_invlead.hist.Clone('hist_lead_mlg2__%s-%s' %(r1,r2))
+
+        samplesWelgg.create_hist(data_samp_nom, 'pt_sublph12', draw_str_mlg2, ( 20, 0, 100) )
+
+        hist_mlg2_nom  = data_samp_nom.hist.Clone('hist_nom_mlg2__%s-%s' %(r1, r2) )
+
+
+
+
+
 
 def MakeJetBkgEstimate( base_dir_jet, pt_bins, outputDir=None ) :
 
@@ -375,16 +439,16 @@ def MakeBkgEstimatePlots( baseDir, plotDir ) :
             reg_str = ' && !(isEE_leadph12 && isEE_sublph12 )'
             reg_tag = ''
     
-        samplesWgg.Draw( 'pt_leadph12', 'PUWeight * (mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 %s  ) ' %(reg_str), [0,5,10,15,25,40,70,200] )
+        samplesWmugg.Draw( 'pt_leadph12', 'PUWeight * (mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 %s  ) ' %(reg_str), [0,5,10,15,25,40,70,200] )
 
-        hist_data_mgg = samplesWgg.get_samples(name='Data')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
+        hist_data_mgg = samplesWmugg.get_samples(name='Data')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
         save_hist( '%s/%s/Data/hist.root' %(baseDir, plotDir), hist_data_mgg )
 
-        hist_sig_mgg  = samplesWgg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
+        hist_sig_mgg  = samplesWmugg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
         save_hist( '%s/%s/Wgg/hist.root' %(baseDir, plotDir), hist_sig_mgg )
 
-        hist_Zgg_mgg     = samplesWgg.get_samples(name='Zgg')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
-        hist_ZggFSR_mgg  = samplesWgg.get_samples(name='ZgammagammaFSR')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
+        hist_Zgg_mgg     = samplesWmugg.get_samples(name='Zgg')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
+        hist_ZggFSR_mgg  = samplesWmugg.get_samples(name='ZgammagammaFSR')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
         #hist_Zgg_mgg.Add(hist_ZggFSR_mgg)
         add_syst_to_hist( hist_Zgg_mgg, 0.15 )
         add_syst_to_hist( hist_ZggFSR_mgg, 0.15 )
@@ -392,19 +456,19 @@ def MakeBkgEstimatePlots( baseDir, plotDir ) :
         save_hist( '%s/%s/ZggFSR/hist.root' %(baseDir, plotDir), hist_ZggFSR_mgg )
         save_hist( '%s/%s/Zgg/hist.root' %(baseDir, plotDir), hist_Zgg_mgg )
 
-        samplesWgg.Draw( 'pt_leadph12', 'PUWeight * (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && !(fabs(m_leadLep_ph1_ph2-91.2)<5) && !(fabs(m_leadLep_ph1-91.2)<5) && !(fabs(m_leadLep_ph2-91.2)<5) %s ) ' %(reg_str), [0,5,10,15,25,40,70,200] )
+        samplesWelgg.Draw( 'pt_leadph12', 'PUWeight * (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && !(fabs(m_leadLep_ph1_ph2-91.2)<5) && !(fabs(m_leadLep_ph1-91.2)<5) && !(fabs(m_leadLep_ph2-91.2)<5) %s ) ' %(reg_str), [0,5,10,15,25,40,70,200] )
 
-        hist_data_egg = samplesWgg.get_samples(name='Data')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
+        hist_data_egg = samplesWelgg.get_samples(name='Data')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
         save_hist( '%s/%s/Data/hist.root' %(baseDir, plotDir), hist_data_egg )
 
-        hist_sig_egg  = samplesWgg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
+        hist_sig_egg  = samplesWelgg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
         save_hist( '%s/%s/Wgg/hist.root' %(baseDir, plotDir), hist_sig_egg )
 
-        hist_Zgg_egg     = samplesWgg.get_samples(name='Zgg')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
-        hist_ZggFSR_egg  = samplesWgg.get_samples(name='ZgammagammaFSR')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
-        hist_Zg_egg  = samplesWgg.get_samples(name='Zgamma')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
-        #hist_Top_egg  = samplesWgg.get_samples(name='Top')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
-        #hist_MB_egg  = samplesWgg.get_samples(name='MultiBoson')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
+        hist_Zgg_egg     = samplesWelgg.get_samples(name='Zgg')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
+        hist_ZggFSR_egg  = samplesWelgg.get_samples(name='ZgammagammaFSR')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
+        hist_Zg_egg  = samplesWelgg.get_samples(name='Zgamma')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
+        #hist_Top_egg  = samplesWelgg.get_samples(name='Top')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
+        #hist_MB_egg  = samplesWelgg.get_samples(name='MultiBoson')[0].hist.Clone('pt_leadph12_egg%s'%(reg_tag))
 
         add_syst_to_hist( hist_Zgg_egg, 0.15 )
         add_syst_to_hist( hist_ZggFSR_egg, 0.15 )
@@ -418,20 +482,20 @@ def MakeBkgEstimatePlots( baseDir, plotDir ) :
         #save_hist( '%s/%s/MultiBoson/hist.root' %(baseDir, plotDir), hist_MB_egg )
 
 
-        #samplesWgg.Draw( 'pt_leadph12', 'PUWeight * (el_passtrig_n>0 && el_n==1 && ph_medium_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && ( (fabs(m_leadLep_ph1_ph2-91.2)<5) || (fabs(m_leadLep_ph1-91.2)<5) || (fabs(m_leadLep_ph2-91.2)<5) )  %s ) ' %(reg_str), [0,5,10,15,25,40,70,200] )
-        samplesWgg.Draw( 'pt_leadph12', 'PUWeight * (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph1_ph2-91.2)<5) %s ) ' %(reg_str), [0,5,10,15,25,40,70,200] )
+        #samplesWelgg.Draw( 'pt_leadph12', 'PUWeight * (el_passtrig_n>0 && el_n==1 && ph_medium_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && ( (fabs(m_leadLep_ph1_ph2-91.2)<5) || (fabs(m_leadLep_ph1-91.2)<5) || (fabs(m_leadLep_ph2-91.2)<5) )  %s ) ' %(reg_str), [0,5,10,15,25,40,70,200] )
+        samplesWelgg.Draw( 'pt_leadph12', 'PUWeight * (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph1_ph2-91.2)<5) %s ) ' %(reg_str), [0,5,10,15,25,40,70,200] )
    
-        hist_data_egg_zcr = samplesWgg.get_samples(name='Data')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
+        hist_data_egg_zcr = samplesWelgg.get_samples(name='Data')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
         save_hist( '%s/%s/Data/hist.root' %(baseDir, plotDir), hist_data_egg_zcr )
 
-        hist_sig_egg_zcr  = samplesWgg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
+        hist_sig_egg_zcr  = samplesWelgg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
         save_hist( '%s/%s/Wgg/hist.root' %(baseDir, plotDir), hist_sig_egg_zcr )
 
-        hist_Zgg_egg_zcr     = samplesWgg.get_samples(name='Zgg')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
-        hist_ZggFSR_egg_zcr  = samplesWgg.get_samples(name='ZgammagammaFSR')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
-        hist_Zg_egg_zcr      = samplesWgg.get_samples(name='Zgamma')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
-        #hist_Top_egg_zcr      = samplesWgg.get_samples(name='Top')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
-        #hist_MB_egg_zcr      = samplesWgg.get_samples(name='MultiBoson')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
+        hist_Zgg_egg_zcr     = samplesWelgg.get_samples(name='Zgg')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
+        hist_ZggFSR_egg_zcr  = samplesWelgg.get_samples(name='ZgammagammaFSR')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
+        hist_Zg_egg_zcr      = samplesWelgg.get_samples(name='Zgamma')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
+        #hist_Top_egg_zcr      = samplesWelgg.get_samples(name='Top')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
+        #hist_MB_egg_zcr      = samplesWelgg.get_samples(name='MultiBoson')[0].hist.Clone('pt_leadph12_egg_zcr%s'%(reg_tag))
 
         add_syst_to_hist( hist_Zgg_egg_zcr, 0.15 )
         add_syst_to_hist( hist_ZggFSR_egg_zcr, 0.15 )
@@ -444,12 +508,12 @@ def MakeBkgEstimatePlots( baseDir, plotDir ) :
         #save_hist( '%s/%s/Top/hist.root' %(baseDir, plotDir), hist_Top_egg_zcr )
         #save_hist( '%s/%s/MultiBoson/hist.root' %(baseDir, plotDir), hist_MB_egg_zcr )
 
-    make_hist_from_pickle( samplesWgg, baseDir + '/jet_fake_results__mgg.pickle'            , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='mgg', regions=regions )
-    make_hist_from_pickle( samplesWgg, baseDir + '/jet_fake_results__egg_allZRejCuts.pickle', '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg', regions=regions )
-    make_hist_from_pickle( samplesWgg, baseDir + '/electron_fake_results.pickle'            , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg', regions=regions, syst=baseDir + '/electron_fake_results_syst.pickle')
+    make_hist_from_pickle( samplesWmugg, baseDir + '/jet_fake_results__mgg.pickle'            , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='mgg', regions=regions )
+    make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__egg_allZRejCuts.pickle', '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg', regions=regions )
+    make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results.pickle'            , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg', regions=regions, syst=baseDir + '/electron_fake_results_syst.pickle')
 
-    make_hist_from_pickle( samplesWgg, baseDir + '/electron_fake_results__zcr.pickle'       , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg_zcr', regions=regions, syst=baseDir + '/electron_fake_results_syst.pickle')
-    make_hist_from_pickle( samplesWgg, baseDir + '/jet_fake_results__egg_ZCR.pickle'        , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg_zcr', regions=regions )
+    make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__zcr.pickle'       , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg_zcr', regions=regions, syst=baseDir + '/electron_fake_results_syst.pickle')
+    make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__egg_ZCR.pickle'        , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg_zcr', regions=regions )
 
 def add_syst_to_hist( hist, syst ) :
 
@@ -576,7 +640,7 @@ def get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key ) :
 
 
 
-def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins, outputDir=None, el_selection='elfull', namePostfix='') :
+def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins, outputDir=None, el_selection='elfull', namePostfix='', coarse=False) :
 
     print '-----------------------------------'
     print 'START ELECTRON FAKE ESTMATE FOR %s' %el_selection
@@ -596,16 +660,14 @@ def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_sy
     regions = [('EB', 'EB'), ('EB' , 'EE'), ('EE', 'EB')]
 
     # get fake factors from nominal fits
-    results_nom = get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection )
+    results_nom = get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, coarse=coarse )
     # get fake factors from systematic fits
-    results_syst = get_ele_fakefactors( base_dir_ele, file_bin_map_syst, regions, el_selection )
+    results_syst = get_ele_fakefactors( base_dir_ele, file_bin_map_syst, regions, el_selection, coarse=coarse )
 
-    print 'results_nom'
-    print results_nom
-
-    results_comb = {'stat' : { 'lead' : {}, 'subl' : {}}, 'syst' : { 'lead' : {}, 'subl' : {}} }
+    results_comb = {'stat' : { 'lead' : {}, 'subl' : {}}, 'syst' : { 'lead' : {}, 'subl' : {}} , 'details' : { 'lead' : {}, 'subl' : {}} }
     for bin, res in results_nom['lead'].iteritems() :
         results_comb['stat']['lead'][bin] = res['pred']
+        results_comb['details']['lead'][bin] = res
         if res['pred'] == 0 :
             results_comb['syst']['lead'][bin] = ufloat( res['pred'].n, res['pred'].n)
         else :
@@ -613,13 +675,11 @@ def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_sy
 
     for bin, res in results_nom['subl'].iteritems() :
         results_comb['stat']['subl'][bin] = res['pred']
+        results_comb['details']['subl'][bin] = res
         if res['pred'] == 0 :
             results_comb['syst']['subl'][bin] = ufloat( res['pred'].n, res['pred'].n)
         else :
             results_comb['syst']['subl'][bin] = ufloat( res['pred'].n, math.fabs( (res['pred'].n - results_syst['subl'][bin]['pred'].n))/res['pred'].n)
-
-    print 'results_comb'
-    print results_comb
 
     file_key_lead = 'results__%sinvpixlead__(EB|EE)-(EB|EE)__pt_(\d+)-(\d+|max).pickle' %el_selection
     file_key_subl = 'results__%sinvpixsubl__(EB|EE)-(EB|EE)__pt_(\d+)-(\d+|max).pickle' %el_selection
@@ -723,13 +783,17 @@ def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_sy
             print '%s-%s, pt %s-%s' %( r1, r2, ptmin, ptmax)
 
             bin = (r1,r2,ptmin,ptmax)
+
+            print 'Jet fake, lead CR : rf = %s, fr = %s, ff = %s, sum = %s ' %( jet_scaled['stat'][bin]['rf']['pred_lead'], jet_scaled['stat'][bin]['fr']['pred_lead'], jet_scaled['stat'][bin]['ff']['pred_lead'], jet_scaled['stat'][bin]['rf']['pred_lead']+jet_scaled['stat'][bin]['fr']['pred_lead']+jet_scaled['stat'][bin]['ff']['pred_lead'])
+            print 'Jet fake, subl CR : rf = %s, fr = %s, ff = %s, sum = %s ' %( jet_scaled['stat'][bin]['rf']['pred_subl'], jet_scaled['stat'][bin]['fr']['pred_subl'], jet_scaled['stat'][bin]['ff']['pred_subl'], jet_scaled['stat'][bin]['rf']['pred_subl']+jet_scaled['stat'][bin]['fr']['pred_subl']+jet_scaled['stat'][bin]['ff']['pred_subl'])
+
+            print 'N jet fake lead*ff = %s' %((jet_scaled['stat'][bin]['rf']['pred_lead']+jet_scaled['stat'][bin]['fr']['pred_lead']+jet_scaled['stat'][bin]['ff']['pred_lead']) * ff_lead )
+            print 'N jet fake subl*ff = %s' %((jet_scaled['stat'][bin]['rf']['pred_subl']+jet_scaled['stat'][bin]['fr']['pred_subl']+jet_scaled['stat'][bin]['ff']['pred_subl']) * ff_subl )
+            print 'N data lead*ff = %s' %results_comb['stat']['lead'][bin]
+            print 'N data subl*ff = %s' %results_comb['stat']['subl'][bin]
     
-            print 'Pred rf = %s' %( jet_scaled['stat'][ bin ]['rf']['total'] )
-            print 'Pred fr = %s' %( jet_scaled['stat'][ bin ]['fr']['total'] )
-            print 'Pred ff = %s' %( jet_scaled['stat'][ bin ]['ff']['total'] )
-
-
-    results_subtracted = {'stat' : {'sum' : {}}, 'elesyst' : {'sum' : {}}, 'jetsyst' : {'sum' : {}}, 'stat+syst' : {'sum' : {}}}
+    results_subtracted = {'stat' : {'sum' : {}}, 'elesyst' : {'sum' : {}}, 'jetsyst' : {'sum' : {}}, 'stat+syst' : {'sum' : {}}, 'details' : {}}
+    results_subtracted['details'] = results_comb['details']
     for bin, info_stat_lead in results_comb['stat']['lead'].iteritems() :
         info_stat_subl = results_comb['stat']['subl'][bin]
         info_syst_lead = results_comb['syst']['lead'][bin]
@@ -794,7 +858,7 @@ def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_sy
         #file_sub_syst.close()
 
 
-def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection ) :
+def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, coarse=False ) :
 
     results = {}
     results['lead'] = {}
@@ -810,7 +874,7 @@ def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection ) :
         # draw once and make cuts
         # for all lead pt and eta
         # -----------------------------------
-        draw_str = ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 )' %(el_cuts[el_selection]['invlead'], r1, r2)
+        draw_str = ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 )' %(el_cuts[el_selection], r1, r2)
 
         samplesWggInvLead.create_hist(data_samp_invlead, 'pt_leadph12:fabs(eta_leadph12)', draw_str, ( 250, 0, 2.5, 20, 0, 100) )
 
@@ -824,12 +888,18 @@ def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection ) :
 
             ff_man = FakeFactorManager( '%s/%s/results.pickle' %(base_dir_ele, file), ['fake_ratio'] )
 
-            for etamin, etamax in _eta_pt_bin_map[(leadptmin,leadptmax)][r1]  :
+            bin = (r1, r2, leadptmin, leadptmax)
 
-                bin = (r1, r2, leadptmin, leadptmax)
+            results['lead'][bin] = {}
+            results['lead'][bin]['pred'] = ufloat(0, 0)
 
-                results['lead'][bin] = {}
-                results['lead'][bin]['pred'] = ufloat(0, 0)
+            eta_map = _eta_pt_bin_map
+            if coarse :
+                eta_map = _eta_pt_bin_map_coarse
+            
+
+            for etamin, etamax in eta_map[(leadptmin,leadptmax)][r1]  :
+
 
                 # get the bins.  For the max bin subtract 1 because
                 # you get the bin above the value
@@ -861,7 +931,7 @@ def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection ) :
 
                 # sum the results
                 results['lead'][bin]['pred'] = results['lead'][bin]['pred'] + results['lead'][bin][ff_bin]['pred']
-
+                print 'Update results ', results['lead'][bin]['pred']
             # -----------------------------------------
             # Subl control region
             # Get data counts in each pt and eta region
@@ -881,9 +951,9 @@ def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection ) :
             # -----------------------------------
 
             if leadptmax == 'max' :
-                draw_str = ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %s )' %(el_cuts[el_selection]['invsubl'], r1, r2, leadptmin)
+                draw_str = ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %s )' %(el_cuts[el_selection], r1, r2, leadptmin)
             else :
-                draw_str = ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %s && pt_leadph12 < %s )' %(el_cuts[el_selection]['invsubl'], r1, r2, leadptmin, leadptmax)
+                draw_str = ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %s && pt_leadph12 < %s )' %(el_cuts[el_selection], r1, r2, leadptmin, leadptmax)
             samplesWggInvSubl.create_hist(data_samp_invsubl, 'pt_sublph12:fabs(eta_sublph12)', draw_str,  (250, 0, 2.5, 20, 0, 100) )
 
             hist_subl = data_samp_invsubl.hist.Clone('hist_subl__%s-%s_leadpt%s-%s' %(r1,r2, leadptmin, leadptmax))
@@ -902,7 +972,7 @@ def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection ) :
 
                 # the sublead photon should run from 15 to the max lead pt bin
                 # use the global binning for this
-                for subletamin, subletamax in _eta_pt_bin_map[(sublptmin,sublptmax)][r2] :
+                for subletamin, subletamax in eta_map[(sublptmin,sublptmax)][r2] :
 
 
                     sublptbinmin = hist_subl.GetYaxis().FindBin( float(sublptmin) )

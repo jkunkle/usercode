@@ -259,7 +259,15 @@ def config_and_run( options, package_name ) :
     alg_list = []
     try :
         ImportedModule.config_analysis(alg_list, modargs)
-    except TypeError : 
+    except TypeError, e : 
+        logging.warning('********************************')
+        logging.warning('Could not call config_analysis with two arguments')
+        logging.warning('To maintain compatibility with the old method of using a single argument')
+        logging.warning('The function will be called in this way.')
+        logging.warning('Just in case the exception is,')
+        logging.warning(e)
+        logging.warning('********************************')
+
         ImportedModule.config_analysis(alg_list)
 
 

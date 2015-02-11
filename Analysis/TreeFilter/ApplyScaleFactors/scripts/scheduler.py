@@ -13,61 +13,63 @@ if not options.run and not options.check :
     options.run = True
 
 base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output'
+base_orig_dy = 'root://eoscms//eos/cms/store/group/phys_smp/ggNtuples/mc'
+base_orig = 'root://eoscms//eos/cms/store/group/phys_egamma/cmkuo/'
 
 
 jobs_data = [
-        (base, 'job_muon_2012a_Jan22rereco'),
-        (base, 'job_muon_2012b_Jan22rereco'),
-        (base, 'job_muon_2012c_Jan22rereco'),
-        (base, 'job_muon_2012d_Jan22rereco'),
-        #(base, 'job_electron_2012a_Jan22rereco'),
-        #(base, 'job_electron_2012b_Jan22rereco'),
-        #(base, 'job_electron_2012c_Jan2012rereco'),
-        #(base, 'job_electron_2012d_Jan22rereco'),
+        #(base, base_orig, 'job_muon_2012a_Jan22rereco'),
+        #(base, base_orig, 'job_muon_2012b_Jan22rereco'),
+        #(base, base_orig, 'job_muon_2012c_Jan22rereco'),
+        #(base, base_orig, 'job_muon_2012d_Jan22rereco'),
+        #(base, base_orig, 'job_electron_2012a_Jan22rereco'),
+        #(base, base_orig, 'job_electron_2012b_Jan22rereco'),
+        #(base, base_orig, 'job_electron_2012c_Jan2012rereco'),
+        #(base, base_orig, 'job_electron_2012d_Jan22rereco'),
 ]
 jobs_mc = [
-        (base, 'job_summer12_Wgg_FSR'),
-        (base, 'job_summer12_WAA_ISR'),
-        (base, 'job_summer12_DYJetsToLL'),
-        (base, 'job_summer12_Wg'),
-        (base, 'job_summer12_Zg'),
-        (base, 'job_summer12_Zgg'),
-        #(base, 'job_summer12_Wjets'),
-        #(base, 'job_summer12_ttjets_1l'),
-        #(base, 'job_summer12_ttjets_2l'),
-        #(base, 'job_summer12_ttg'),
-        #(base, 'job_summer12_WH_ZH_125'),
-        #(base, 'job_summer12_WWW'),
-        #(base, 'job_summer12_WWZ'),
-        #(base, 'job_summer12_WW_2l2nu'),
-        #(base, 'job_summer12_WWg'),
-        #(base, 'job_summer12_WZZ'),
-        #(base, 'job_summer12_WZ_2l2q'),
-        #(base, 'job_summer12_WZ_3lnu'),
-        #(base, 'job_summer12_ZZZ'),
-        #(base, 'job_summer12_ZZ_2e2mu'),
-        #(base, 'job_summer12_ZZ_2e2tau'),
-        #(base, 'job_summer12_ZZ_2l2nu'),
-        #(base, 'job_summer12_ZZ_2l2q'),
-        #(base, 'job_summer12_ZZ_2mu2tau'),
-        #(base, 'job_summer12_ZZ_2q2nu'),
-        #(base, 'job_summer12_ZZ_4e'),
-        #(base, 'job_summer12_ZZ_4mu'),
-        #(base, 'job_summer12_ZZ_4tau'),
-        #(base, 'job_summer12_diphoton_box_10to25'),
-        #(base, 'job_summer12_diphoton_box_250toInf'),
-        #(base, 'job_summer12_diphoton_box_25to250'),
-        #(base, 'job_summer12_ggZZ_2l2l'),
-        #(base, 'job_summer12_ggZZ_4l'),
-        #(base, 'job_summer12_t_s'),
-        #(base, 'job_summer12_t_t'),
-        #(base, 'job_summer12_t_tW'),
-        #(base, 'job_summer12_tbar_s'),
-        #(base, 'job_summer12_tbar_t'),
-        #(base, 'job_summer12_tbar_tW'),
-        #(base, 'job_summer12_ttW'),
-        #(base, 'job_summer12_ttZ'),
-        #(base, 'job_jfaulkne_WZA'),
+        #(base, base_orig, 'job_summer12_Wgg_FSR'),
+        #(base, base_orig, 'job_summer12_WAA_ISR'),
+        (base,  base_orig_dy, 'job_summer12_DYJetsToLL'),
+        #(base, base_orig, 'job_summer12_Wg'),
+        #(base, base_orig, 'job_summer12_Zg'),
+        #(base, base_orig, 'job_summer12_Zgg'),
+        #(base, base_orig, 'job_summer12_Wjets'),
+        #(base, base_orig, 'job_summer12_ttjets_1l'),
+        #(base, base_orig, 'job_summer12_ttjets_2l'),
+        #(base, base_orig, 'job_summer12_ttg'),
+        #(base, base_orig, 'job_summer12_WH_ZH_125'),
+        #(base, base_orig, 'job_summer12_WWW'),
+        #(base, base_orig, 'job_summer12_WWZ'),
+        #(base, base_orig, 'job_summer12_WW_2l2nu'),
+        #(base, base_orig, 'job_summer12_WWg'),
+        #(base, base_orig, 'job_summer12_WZZ'),
+        #(base, base_orig, 'job_summer12_WZ_2l2q'),
+        #(base, base_orig, 'job_summer12_WZ_3lnu'),
+        #(base, base_orig, 'job_summer12_ZZZ'),
+        #(base, base_orig, 'job_summer12_ZZ_2e2mu'),
+        #(base, base_orig, 'job_summer12_ZZ_2e2tau'),
+        #(base, base_orig, 'job_summer12_ZZ_2l2nu'),
+        #(base, base_orig, 'job_summer12_ZZ_2l2q'),
+        #(base, base_orig, 'job_summer12_ZZ_2mu2tau'),
+        #(base, base_orig, 'job_summer12_ZZ_2q2nu'),
+        #(base, base_orig, 'job_summer12_ZZ_4e'),
+        #(base, base_orig, 'job_summer12_ZZ_4mu'),
+        #(base, base_orig, 'job_summer12_ZZ_4tau'),
+        #(base, base_orig, 'job_summer12_diphoton_box_10to25'),
+        #(base, base_orig, 'job_summer12_diphoton_box_250toInf'),
+        #(base, base_orig, 'job_summer12_diphoton_box_25to250'),
+        #(base, base_orig, 'job_summer12_ggZZ_2l2l'),
+        #(base, base_orig, 'job_summer12_ggZZ_4l'),
+        #(base, base_orig, 'job_summer12_t_s'),
+        #(base, base_orig, 'job_summer12_t_t'),
+        #(base, base_orig, 'job_summer12_t_tW'),
+        #(base, base_orig, 'job_summer12_tbar_s'),
+        #(base, base_orig, 'job_summer12_tbar_t'),
+        #(base, base_orig, 'job_summer12_tbar_tW'),
+        #(base, base_orig, 'job_summer12_ttW'),
+        #(base, base_orig, 'job_summer12_ttZ'),
+        #(base, base_orig, 'job_jfaulkne_WZA'),
 
         ##(base, 'job_summer12_ttinclusive'),
         ##(base, 'QCD_Pt-40_doubleEMEnriched'),
@@ -93,22 +95,18 @@ else :
 if options.resubmit :
     command_base += ' --resubmit '
 
-input = 'LepGammaGammaNoPhID_2014_12_23'
-#input = 'LepGammaGammaFullPhIDElPhScaleUp_2014_11_20'
-#output = 'LepGammaGammaTrigEleOlapUnblindLowPt_2015_01_02'
-#output = 'LepGammaGammaNomUnblindAll_2015_01_26'
-output = 'LepGammaGammaFinalMuUnblindLowPt_2015_01_28'
-#output = 'LepGammaGammaFullPhIDElPhScaleUpFinal_2014_11_20'
+input = 'LepLep_2014_12_23'
+output = 'LepLepNew_2015_02_02'
 
-module = 'ConfFilter.py'
-nFilesPerJob = 5
+module = 'Conf.py'
+nFilesPerJob = 1
 nProc = 6
 exename='RunAnalysis'
 treename='ggNtuplizer/EventTree'
 
 if options.run :
     first = True
-    for base, job in jobs_data :
+    for base, base_orig, job in jobs_data :
         if options.local :
             job_exename = exename+'Data'
         else :
@@ -123,7 +121,7 @@ if options.run :
             first = False
 
     first = True
-    for base, job in jobs_mc :
+    for base, base_orig, job in jobs_mc :
         if options.local :
             job_exename = exename+'MC'
         else :
@@ -131,6 +129,7 @@ if options.run :
         command = command_base %{ 'base' : base, 'job' : job, 'nFilesPerJob' : nFilesPerJob, 'input' : input, 'output' : output, 'nproc' : nProc, 'exename' : job_exename, 'treename' : treename, 'module' : module }
         if not first :
             command += ' --noCompile '
+        command += ' --moduleArgs "{ \'PUDistMCFile\' : \'%s/%s.root\' }"  ' %( base_orig, job )
         print command
         os.system(command)
         if first :

@@ -871,7 +871,7 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_noiso=None, loose_iso_
         if lead_noiso_cuts is not None :
             gg_selection_subliso = gg_selection_subliso + ' && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %d ' %( loose_iso_cuts )
 
-        gg_selection_bothiso = gg_selection_bothiso + ' && ph_mediumNoSIEIE_n > 1 '
+        gg_selection_bothiso = gg_selection_bothiso + ' && ph_mediumNoSIEIENoEleVeto_n > 1 '
 
         # add subl pt cuts onto the selection
         if subl_ptrange[0] is not None :
@@ -931,7 +931,7 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_noiso=None, loose_iso_
             gg_hist_bothiso = clone_sample_and_draw( target_samp[0], var, gg_selection_bothiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManData )
 
         ndim = 3
-        if ch == 'muZgg' or ch=='elzcr' or ch.count('elinv') :
+        if ch == 'muZgg' or ch=='zcr' or ch.count('inv') :
             ndim = 4
 
         # -----------------------
@@ -1000,7 +1000,7 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_noiso=None, loose_iso_
 
                 
             ndim = 3
-            if ch == 'muZgg' or ch=='elzcr' or ch.count('elinv') or ptmax <= 40:
+            if ch == 'muZgg' or ch=='zcr' or ch.count('inv') or ptmax <= 40:
                 ndim = 4
 
             # get templates
@@ -1010,6 +1010,7 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_noiso=None, loose_iso_
 
             # get results
             (results_corr_pt_stat, results_corr_pt_syst) = run_corrected_diphoton_fit(templates_leadiso_pt, templates_subliso_pt, gg_hist_leadiso_pt, gg_hist_subliso_pt, gg_hist_bothiso_pt, reg[0], reg[1], lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max), outputDir=outputDir, outputPrefix='__%s'%ch, ndim=ndim, systematics=systematics)
+
 
             namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
 
@@ -1339,8 +1340,6 @@ def run_corrected_diphoton_fit( templates_leadiso, templates_subliso, gg_hist_le
         datacorr['LL'] = Ncorr_LL
         results_stat = run_fit( datacorr, eff_2d_stat )
         results_syst= run_fit( datacorr, eff_2d_syst )
-
-        datacorr['TT'] = ufloat(0, 0)
 
         text_results_stat = collect_results( results_stat, datacorr, eff_2d_stat, templates_corr, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
         text_results_syst = collect_results( results_syst, datacorr, eff_2d_syst, templates_corr, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)

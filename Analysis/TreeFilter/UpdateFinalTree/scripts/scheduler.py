@@ -14,10 +14,10 @@ jobs_data = [
         #(base, 'job_electron_2012b_Jan22rereco'),
         #(base, 'job_electron_2012c_Jan2012rereco'),
         #(base, 'job_electron_2012d_Jan22rereco'),
-        (base, 'job_muon_2012a_Jan22rerecoTightBlind'),
-        (base, 'job_muon_2012b_Jan22rerecoTightBlind'),
-        (base, 'job_muon_2012c_Jan22rerecoTightBlind'),
-        (base, 'job_muon_2012d_Jan22rerecoTightBlind'),
+        (base, 'job_muon_2012a_Jan22rereco'),
+        (base, 'job_muon_2012b_Jan22rereco'),
+        (base, 'job_muon_2012c_Jan22rereco'),
+        (base, 'job_muon_2012d_Jan22rereco'),
 ]
 jobs_mc = [
         #(base, 'job_summer12_DYJetsToLL'),
@@ -73,8 +73,8 @@ top_configs = [
                 { 
                   'module_mc'   : 'ConfUpdate.py',
                   'module_data' : 'ConfUpdate.py',
-                  'output_name' : 'LepGammaNoEleVetoNewVarPUBiasWt_2014_05_02',
-                  'input_name'  : 'LepGammaNoEleVetoNewVar_2014_05_02',
+                  'output_name' : 'LepLep_2015_02_02',
+                  'input_name'  : 'LepLep_2014_12_23',
                   'tag'         : 'll',
                 },
                 #{ 

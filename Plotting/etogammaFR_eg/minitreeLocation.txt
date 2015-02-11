@@ -1,0 +1,7 @@
+/data2/volpe/hgg/GG/CMSSW_5_3_10_patch1/src/Waa/newNtuple/minitrees/Wgg_data_ele_1M_egamma/dataEle_egamma.root
+
+/data2/volpe/hgg/GG/CMSSW_5_3_10_patch1/src/Waa/newNtuple/minitrees/Wgg_data_ele_1M_ele_egamma/dataEle_ele_egamma_test.root
+
+/data2/volpe/hgg/GG/CMSSW_5_3_10_patch1/src/Waa/newNtuple_feb21/minitrees/Wgg_data_ele_1M_ee/dataEle_ee.root
+
+

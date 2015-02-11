@@ -16,7 +16,7 @@ def get_keep_filter() :
         If both filters are used, all branches in keep_filter are used
         except for those in remove_filter """
 
-    return ['el_n', 'mu_n', 'ph_n', 'jet_n', 'el_pt', 'el_eta', 'el_phi', 'el_e', 'mu_pt', 'mu_eta', 'mu_phi', 'mu_e', 'ph_pt', 'ph_eta', 'ph_phi', 'ph_e','pfMET.*', 'recoPfMET.*', 'pfType01MET.*','nPU', 'puTrue', 'nVtx', 'nVtxBS']
+    return ['el_n', 'mu_n', 'ph_n', 'jet_n', 'el_pt', 'el_eta', 'el_phi', 'el_e', 'mu_pt', 'mu_eta', 'mu_phi', 'mu_e', 'ph_pt', 'ph_eta', 'ph_phi', 'ph_e','pfMET.*', 'recoPfMET.*', 'pfType01MET.*','nPU', 'puTrue', 'nVtx', 'nVtxBS', 'PUWeight.*']
 
 def config_analysis( alg_list, args ) :
     """ Configure analysis modules. Order is preserved """

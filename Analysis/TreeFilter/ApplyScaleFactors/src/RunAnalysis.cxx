@@ -96,6 +96,11 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch( "mu_idSFUP"    ,  &OUT::mu_idSFUP    , "mu_idSFUP/F"    );
     outtree->Branch( "mu_idSFDN"    ,  &OUT::mu_idSFDN    , "mu_idSFDN/F"    );
 
+    outtree->Branch( "PUWeightUP5"  ,  &OUT::PUWeightUP5  , "PUWeightUP5/F"  );
+    outtree->Branch( "PUWeightUP10" ,  &OUT::PUWeightUP10 , "PUWeightUP10/F"  );
+    outtree->Branch( "PUWeightDN5"  ,  &OUT::PUWeightDN5  , "PUWeightDN5/F"  );
+    outtree->Branch( "PUWeightDN10" ,  &OUT::PUWeightDN10 , "PUWeightDN10/F"  );
+
     BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
 
         if( mod_conf.GetName() == "AddMuonSF" ) { 
@@ -155,6 +160,21 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 _sfhist_ph_eveto_highpt = dynamic_cast<TH2F*>(_sffile_ph_eveto_highpt->Get( "hist_sf_eveto_highpt" ) );
             }
         }
+        if( mod_conf.GetName() == "AddPileupSF" ) {
+            std::map<std::string, std::string>::const_iterator itr;
+            itr = mod_conf.GetInitData().find( "DataFilePath" );
+            if( itr != mod_conf.GetInitData().end() ) {
+                _sffile_pileup_data = TFile::Open( (itr->second).c_str(), "READ" );
+                _sfhist_pileup_data = dynamic_cast<TH1D*>(_sffile_pileup_data->Get("pileup") );
+
+            }
+            itr = mod_conf.GetInitData().find( "MCFilePath" );
+            if( itr != mod_conf.GetInitData().end() ) {
+                std::cout << "Load MC file " << itr->second << std::endl;
+                _sffile_pileup_mc = TFile::Open( (itr->second).c_str(), "READ" );
+                _sfhist_pileup_mc = dynamic_cast<TH1F*>(_sffile_pileup_mc->Get("ggNtuplizer/hPUTrue") );
+            }
+        }
     }
 }
 
@@ -186,6 +206,9 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     if( config.GetName() == "AddPhotonSF" ) {
         AddPhotonSF( config );
     }
+    if( config.GetName() == "AddPileupSF" ) {
+        AddPileupSF( config );
+    }
 
     return keep_evt;
 
@@ -193,9 +216,13 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
 
 void RunModule::AddElectronSF( ModuleConfig & /*config*/ ) const {
 
-    OUT::el_trigSF  = 0;
-    OUT::el_trigSFUP  = 0;
-    OUT::el_trigSFDN  = 0;
+    OUT::el_trigSF   = 1.0;
+    OUT::el_trigSFUP = 1.0;
+    OUT::el_trigSFDN = 1.0;
+
+    if( OUT::isData ) {
+        return;
+    }
 
     for( int idx = 0; idx < OUT::el_n; ++idx ) {
 
@@ -226,14 +253,17 @@ void RunModule::AddElectronSF( ModuleConfig & /*config*/ ) const {
 
 void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
 
-    OUT::ph_idSF = 0;
-    OUT::ph_idSFUP = 0;
-    OUT::ph_idSFDN = 0;
+    OUT::ph_idSF = 1.0;
+    OUT::ph_idSFUP = 1.0;
+    OUT::ph_idSFDN = 1.0;
     
-    OUT::ph_evetoSF = 0;
-    OUT::ph_evetoSFUP = 0;
-    OUT::ph_evetoSFDN = 0;
+    OUT::ph_evetoSF = 1.0;
+    OUT::ph_evetoSFUP = 1.0;
+    OUT::ph_evetoSFDN = 1.0;
 
+    if( OUT::isData ) {
+        return;
+    }
     // to check if photon pt is above histogram
     float max_pt_highpt = _sfhist_ph_eveto_highpt->GetYaxis()->GetBinUpEdge( _sfhist_ph_eveto_highpt->GetNbinsY() );
     
@@ -307,20 +337,99 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
 
 }
 
+void RunModule::AddPileupSF( ModuleConfig & /*config*/ ) const { 
+
+    OUT::PUWeight     = 1.0;
+    OUT::PUWeightUP5  = 1.0;
+    OUT::PUWeightUP10 = 1.0;
+    OUT::PUWeightDN5  = 1.0;
+    OUT::PUWeightDN10 = 1.0;
+
+    if( OUT::isData ) {
+        return;
+    }
+
+    float puval = OUT::puTrue->at(0);
+    OUT::PUWeight     = calc_pu_weight( puval );
+    OUT::PUWeightUP5  = calc_pu_weight( puval, 1.05 );
+    OUT::PUWeightUP10 = calc_pu_weight( puval, 1.10 );
+    OUT::PUWeightDN5  = calc_pu_weight( puval, 0.95 );
+    OUT::PUWeightDN10 = calc_pu_weight( puval, 0.90 );
+
+}
+
+float RunModule::calc_pu_weight( float puval, float mod ) const {
+
+
+    float tot_data   = _sfhist_pileup_data->Integral();
+    float tot_sample = _sfhist_pileup_mc->Integral();
+
+    int bin_sample = 0;
+    int bin_data   = 0;
+
+    if( mod*puval > 60 ) {
+        bin_data = 300;
+    }
+    else {
+        bin_data = _sfhist_pileup_data->FindBin(mod*puval);
+    }
+
+    bin_sample = _sfhist_pileup_mc->FindBin(puval);
+
+    float val_data = _sfhist_pileup_data->GetBinContent( bin_data );
+    float val_sample = _sfhist_pileup_mc->GetBinContent( bin_sample );
+
+
+    float num = val_data/tot_data;
+    float den = val_sample/tot_sample;
+
+    float weight = num/den;
+
+    if( weight < 0.005 ) {
+        std::cout << "PUweight, " << weight << " is zero for PUVal " << puval << " will average over +- 2.5 to get non-zero value " << std::endl;
+
+        int bin_min_sample = _sfhist_pileup_mc->FindBin(puval-2.5);
+        int bin_max_sample = _sfhist_pileup_mc->FindBin(puval+2.5);
+        int bin_min_data = _sfhist_pileup_data->FindBin(puval*mod-2.5);
+        int bin_max_data = _sfhist_pileup_data->FindBin(puval*mod+2.5);
+
+        if( puval*mod+2.5  > 60 ) {
+            bin_max_data = 300;
+        }
+
+        val_data = _sfhist_pileup_data->Integral(bin_min_data, bin_max_data);
+        val_sample = _sfhist_pileup_mc->Integral(bin_min_sample, bin_max_sample);
+
+        num = val_data/tot_data;
+        den = val_sample/tot_sample;
+
+        weight = num/den;
+
+        if( weight < 0.005 ) {
+            std::cout << "PUweight is still zero!" << std::endl;
+        }
+
+    }
+    return weight;
+}
 
 void RunModule::AddMuonSF( ModuleConfig & /*config*/ ) const { 
 
-    OUT::mu_trigSF = 0;
-    OUT::mu_idSF   = 0;
-    OUT::mu_isoSF  = 0;
+    OUT::mu_trigSF = 1.0;
+    OUT::mu_idSF   = 1.0;
+    OUT::mu_isoSF  = 1.0;
 
-    OUT::mu_trigSFUP = 0;
-    OUT::mu_idSFUP   = 0;
-    OUT::mu_isoSFUP  = 0;
+    OUT::mu_trigSFUP = 1.0;
+    OUT::mu_idSFUP   = 1.0;
+    OUT::mu_isoSFUP  = 1.0;
 
-    OUT::mu_trigSFDN = 0;
-    OUT::mu_idSFDN   = 0;
-    OUT::mu_isoSFDN  = 0;
+    OUT::mu_trigSFDN = 1.0;
+    OUT::mu_idSFDN   = 1.0;
+    OUT::mu_isoSFDN  = 1.0;
+
+    if( OUT::isData ) {
+        return;
+    }
 
     for( int idx = 0; idx < OUT::mu_n; ++idx ) {
         float feta = fabs(OUT::mu_eta->at(idx));

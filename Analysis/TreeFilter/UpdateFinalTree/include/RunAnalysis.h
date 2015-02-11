@@ -43,8 +43,9 @@ class RunModule : public virtual RunModuleBase {
         // you must of course handle them in the source file
         // Examples :
         void CalcEventVars ( ModuleConfig & config ) const;
+        void AddPUVars( ModuleConfig & config ) const;
         bool AddEventWeight( ModuleConfig & config, const CmdOptions & options );
-        bool ApplyPUBiasWeight( ModuleConfig & config );
+        void ApplyPUBiasWeight( ModuleConfig & config );
 
     private :
 
@@ -71,8 +72,25 @@ namespace OUT {
     //Float_t            sublPhot_leadLepDR;
     //Float_t            sublPhot_sublLepDR;
 
-    Float_t              PUBiasWeight_ee;
-    Float_t              PUBiasWeight_eb;
+    //Float_t              PUBiasWeight_ee;
+    //Float_t              PUBiasWeight_eb;
+    Float_t             PUWeightDN5;
+    Float_t             PUWeightDN10;
+
+    Float_t             PUWeightUP5;
+    Float_t             PUWeightUP6;
+    Float_t             PUWeightUP7;
+    Float_t             PUWeightUP8;
+    Float_t             PUWeightUP9;
+    Float_t             PUWeightUP10;
+    Float_t             PUWeightUP11;
+    Float_t             PUWeightUP12;
+    Float_t             PUWeightUP13;
+    Float_t             PUWeightUP14;
+    Float_t             PUWeightUP15;
+    Float_t             PUWeightUP16;
+    Float_t             PUWeightUP17;
+
 };
 
 #endif

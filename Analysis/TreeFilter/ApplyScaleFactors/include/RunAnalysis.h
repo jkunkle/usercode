@@ -56,8 +56,10 @@ class RunModule : public virtual RunModuleBase {
         void AddElectronSF ( ModuleConfig & config ) const;
         void AddMuonSF     ( ModuleConfig & config ) const;
         void AddPhotonSF   ( ModuleConfig & config ) const;
+        void AddPileupSF   ( ModuleConfig & config ) const;
 
         ValWithErr GetValsFromGraph( const TGraphAsymmErrors *, float pt, bool debug=true ) const;
+        float calc_pu_weight( float puval, float mod=1.0 ) const;
 
 
     private :
@@ -65,6 +67,8 @@ class RunModule : public virtual RunModuleBase {
         TFile *_sffile_mu_iso;
         TFile *_sffile_mu_id;
         TFile *_sffile_mu_trig;
+        TFile *_sffile_pileup_data;
+        TFile *_sffile_pileup_mc;
 
         TGraphAsymmErrors *_sfgraph_mu_iso_barrel;
         TGraphAsymmErrors *_sfgraph_mu_iso_trans;
@@ -94,6 +98,9 @@ class RunModule : public virtual RunModuleBase {
         TH2F *_sfhist_ph_id;
         TH2F *_sfhist_ph_eveto;
         TH2F *_sfhist_ph_eveto_highpt;
+
+        TH1D *_sfhist_pileup_data;
+        TH1F *_sfhist_pileup_mc;
 
 
 
@@ -126,6 +133,13 @@ namespace OUT {
     float mu_idSF;
     float mu_idSFUP;
     float mu_idSFDN;
+
+    // Nominal PUWeight already exists
+    //float PUWeight;
+    float PUWeightUP5;
+    float PUWeightUP10;
+    float PUWeightDN5;
+    float PUWeightDN10;
 
 
     //Examples

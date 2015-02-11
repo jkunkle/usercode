@@ -326,7 +326,23 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("jet_e"                     , &OUT::jet_e                     );
 
     //outtree->Branch("avgPU"              , &OUT::avgPU, "avgPU/F"                        );
-    outtree->Branch("PUWeight"       , &OUT::PUWeight, "PUWeight/F"                        );
+    outtree->Branch("PUWeight"       , &OUT::PUWeight    , "PUWeight/F"       );
+    outtree->Branch("PUWeightDN5"    , &OUT::PUWeightDN5 , "PUWeightDN5/F"    );
+    outtree->Branch("PUWeightDN10"   , &OUT::PUWeightDN10, "PUWeightDN10/F"   );
+
+    outtree->Branch("PUWeightUP5"    , &OUT::PUWeightUP5 , "PUWeightUP5/F"    );
+    outtree->Branch("PUWeightUP6"    , &OUT::PUWeightUP6 , "PUWeightUP6/F"    );
+    outtree->Branch("PUWeightUP7"    , &OUT::PUWeightUP7 , "PUWeightUP7/F"    );
+    outtree->Branch("PUWeightUP8"    , &OUT::PUWeightUP8 , "PUWeightUP8/F"    );
+    outtree->Branch("PUWeightUP9"    , &OUT::PUWeightUP9 , "PUWeightUP9/F"    );
+    outtree->Branch("PUWeightUP10"    , &OUT::PUWeightUP10 , "PUWeightUP10/F"    );
+    outtree->Branch("PUWeightUP11"    , &OUT::PUWeightUP11 , "PUWeightUP11/F"    );
+    outtree->Branch("PUWeightUP12"    , &OUT::PUWeightUP12 , "PUWeightUP12/F"    );
+    outtree->Branch("PUWeightUP13"    , &OUT::PUWeightUP13 , "PUWeightUP13/F"    );
+    outtree->Branch("PUWeightUP14"    , &OUT::PUWeightUP14 , "PUWeightUP14/F"    );
+    outtree->Branch("PUWeightUP15"    , &OUT::PUWeightUP15 , "PUWeightUP15/F"    );
+    outtree->Branch("PUWeightUP16"    , &OUT::PUWeightUP16 , "PUWeightUP16/F"    );
+    outtree->Branch("PUWeightUP17"    , &OUT::PUWeightUP17 , "PUWeightUP17/F"    );
 
     eval_el_tight       = false;
     eval_el_medium      = false;
@@ -2177,6 +2193,22 @@ void RunModule::WeightEvent( ModuleConfig & config ) const {
     #ifdef EXISTS_isData
     if( IN::isData ) {
         OUT::PUWeight = 1.0;
+        OUT::PUWeightDN5 = 1.0;
+        OUT::PUWeightDN10 = 1.0;
+
+        OUT::PUWeightUP5 = 1.0;
+        OUT::PUWeightUP6 = 1.0;
+        OUT::PUWeightUP7 = 1.0;
+        OUT::PUWeightUP8 = 1.0;
+        OUT::PUWeightUP9 = 1.0;
+        OUT::PUWeightUP10 = 1.0;
+        OUT::PUWeightUP11 = 1.0;
+        OUT::PUWeightUP12 = 1.0;
+        OUT::PUWeightUP13 = 1.0;
+        OUT::PUWeightUP14 = 1.0;
+        OUT::PUWeightUP15 = 1.0;
+        OUT::PUWeightUP16 = 1.0;
+        OUT::PUWeightUP17 = 1.0;
         return;
     }
     #endif
@@ -2189,31 +2221,56 @@ void RunModule::WeightEvent( ModuleConfig & config ) const {
     #ifdef EXISTS_puTrue
     puval = IN::puTrue->at(0);
     #endif
+    //#ifdef EXISTS_nVtx
+    //puval = IN::nVtx;
+    //#endif
 
-    float num = 0;
-    float den = 0;
+    
+    OUT::PUWeight = calc_pu_weight( puval );
+
+    OUT::PUWeightUP5 = calc_pu_weight( puval, 1.05 );
+    OUT::PUWeightUP6 = calc_pu_weight( puval, 1.06 );
+    OUT::PUWeightUP7 = calc_pu_weight( puval, 1.07 );
+    OUT::PUWeightUP8 = calc_pu_weight( puval, 1.08 );
+    OUT::PUWeightUP9 = calc_pu_weight( puval, 1.09 );
+    OUT::PUWeightUP10 = calc_pu_weight( puval, 1.10 );
+    OUT::PUWeightUP11 = calc_pu_weight( puval, 1.11 );
+    OUT::PUWeightUP12 = calc_pu_weight( puval, 1.12 );
+    OUT::PUWeightUP13 = calc_pu_weight( puval, 1.13 );
+    OUT::PUWeightUP14 = calc_pu_weight( puval, 1.14 );
+    OUT::PUWeightUP15 = calc_pu_weight( puval, 1.15 );
+    OUT::PUWeightUP16 = calc_pu_weight( puval, 1.16 );
+    OUT::PUWeightUP17 = calc_pu_weight( puval, 1.17 );
+
+    OUT::PUWeightDN5 = calc_pu_weight( puval, 0.95 );
+    OUT::PUWeightDN10 = calc_pu_weight( puval, 0.9 );
+    
+}
+
+float RunModule::calc_pu_weight( float puval, float mod ) const {
 
     float tot_data   = puweight_data_hist->Integral();
     float tot_sample = puweight_sample_hist->Integral();
 
-    int bin_data = puweight_data_hist->FindBin(puval);
     int bin_sample = puweight_sample_hist->FindBin(puval);
+    int bin_data = puweight_data_hist->FindBin(mod*puval);
 
     float val_data = puweight_data_hist->GetBinContent( bin_data );
     float val_sample = puweight_sample_hist->GetBinContent( bin_sample );
 
-    num = val_data/tot_data;
-    den = val_sample/tot_sample;
 
-    OUT::PUWeight = num/den;
+    float num = val_data/tot_data;
+    float den = val_sample/tot_sample;
 
-    if( OUT::PUWeight < 0.005 ) {
-        std::cout << "PUweight, " << OUT::PUWeight << " is zero for PUVal " << puval << " will average over +- 2.5 to get non-zero value " << std::endl;
+    float weight = num/den;
+
+    if( weight < 0.005 ) {
+        std::cout << "PUweight, " << weight << " is zero for PUVal " << puval << " will average over +- 2.5 to get non-zero value " << std::endl;
 
         int bin_min_sample = puweight_sample_hist->FindBin(puval-2.5);
         int bin_max_sample = puweight_sample_hist->FindBin(puval+2.5);
-        int bin_min_data = puweight_data_hist->FindBin(puval-2.5);
-        int bin_max_data = puweight_data_hist->FindBin(puval+2.5);
+        int bin_min_data = puweight_data_hist->FindBin(puval*mod-2.5);
+        int bin_max_data = puweight_data_hist->FindBin(puval*mod+2.5);
 
         val_data = puweight_data_hist->Integral(bin_min_data, bin_max_data);
         val_sample = puweight_sample_hist->Integral(bin_min_sample, bin_max_sample);
@@ -2221,13 +2278,14 @@ void RunModule::WeightEvent( ModuleConfig & config ) const {
         num = val_data/tot_data;
         den = val_sample/tot_sample;
 
-        OUT::PUWeight = num/den;
+        weight = num/den;
 
-        if( OUT::PUWeight < 0.005 ) {
+        if( weight < 0.005 ) {
             std::cout << "PUweight is still zero!" << std::endl;
         }
 
     }
+    return weight;
 }
 
 bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR ) const {

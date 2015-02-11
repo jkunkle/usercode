@@ -76,8 +76,26 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     //outtree->Branch("sublPhot_sublLepDR", &OUT::sublPhot_sublLepDR, "sublPhot_sublLepDR/F"  );
     //
 
-    outtree->Branch("PUBiasWeight_eb", &OUT::PUBiasWeight_eb, "PUBiasWeight_eb/F"  );
-    outtree->Branch("PUBiasWeight_ee", &OUT::PUBiasWeight_ee, "PUBiasWeight_ee/F"  );
+    //outtree->Branch("PUBiasWeight_eb", &OUT::PUBiasWeight_eb, "PUBiasWeight_eb/F"  );
+    //outtree->Branch("PUBiasWeight_ee", &OUT::PUBiasWeight_ee, "PUBiasWeight_ee/F"  );
+    
+    outtree->Branch("PUWeightDN5"    , &OUT::PUWeightDN5 , "PUWeightDN5/F"    );
+    outtree->Branch("PUWeightDN10"   , &OUT::PUWeightDN10, "PUWeightDN10/F"   );
+    
+    outtree->Branch("PUWeightUP5"    , &OUT::PUWeightUP5 , "PUWeightUP5/F"    );
+    outtree->Branch("PUWeightUP6"    , &OUT::PUWeightUP6 , "PUWeightUP6/F"    );
+    outtree->Branch("PUWeightUP7"    , &OUT::PUWeightUP7 , "PUWeightUP7/F"    );
+    outtree->Branch("PUWeightUP8"    , &OUT::PUWeightUP8 , "PUWeightUP8/F"    );
+    outtree->Branch("PUWeightUP9"    , &OUT::PUWeightUP9 , "PUWeightUP9/F"    );
+    outtree->Branch("PUWeightUP10"    , &OUT::PUWeightUP10 , "PUWeightUP10/F"    );
+    outtree->Branch("PUWeightUP11"    , &OUT::PUWeightUP11 , "PUWeightUP11/F"    );
+    outtree->Branch("PUWeightUP12"    , &OUT::PUWeightUP12 , "PUWeightUP12/F"    );
+    outtree->Branch("PUWeightUP13"    , &OUT::PUWeightUP13 , "PUWeightUP13/F"    );
+    outtree->Branch("PUWeightUP14"    , &OUT::PUWeightUP14 , "PUWeightUP14/F"    );
+    outtree->Branch("PUWeightUP15"    , &OUT::PUWeightUP15 , "PUWeightUP15/F"    );
+    outtree->Branch("PUWeightUP16"    , &OUT::PUWeightUP16 , "PUWeightUP16/F"    );
+    outtree->Branch("PUWeightUP17"    , &OUT::PUWeightUP17 , "PUWeightUP17/F"    );
+    
     options = _options;
 
     BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
@@ -141,6 +159,9 @@ bool RunModule::ApplyModule( ModuleConfig & config, const CmdOptions & options) 
     }
     if( config.GetName() == "AddEventWeight" ) {
         keep_evt &= AddEventWeight( config, options );
+    }
+    if( config.GetName() == "AddPUVars" ) {
+        AddPUVars( config);
     }
 
     return keep_evt;
@@ -338,6 +359,25 @@ bool RunModule::AddEventWeight( ModuleConfig & config, const CmdOptions & option
     return true;
 }
 
+void RunModule::AddPUVars( ModuleConfig & config ) const {
+
+    OUT::PUWeightDN5 = 1.0;
+    OUT::PUWeightDN10 = 1.0;
+
+    OUT::PUWeightUP5 = 1.0;
+    OUT::PUWeightUP6 = 1.0;
+    OUT::PUWeightUP7 = 1.0;
+    OUT::PUWeightUP8 = 1.0;
+    OUT::PUWeightUP9 = 1.0;
+    OUT::PUWeightUP10 = 1.0;
+    OUT::PUWeightUP11 = 1.0;
+    OUT::PUWeightUP12 = 1.0;
+    OUT::PUWeightUP13 = 1.0;
+    OUT::PUWeightUP14 = 1.0;
+    OUT::PUWeightUP15 = 1.0;
+    OUT::PUWeightUP16 = 1.0;
+    OUT::PUWeightUP17 = 1.0;
+}
 void RunModule::CalcEventVars( ModuleConfig & config ) const {
 
     OUT::leadPhot_leadLepDR     = 0;
@@ -412,13 +452,13 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
 
 }
 
-bool RunModule::ApplyPUBiasWeight( ModuleConfig & config ) {
+void RunModule::ApplyPUBiasWeight( ModuleConfig & config ) {
 
-    OUT::PUBiasWeight_ee= 1.0;
-    OUT::PUBiasWeight_eb= 1.0;
+    //OUT::PUBiasWeight_ee= 1.0;
+    //OUT::PUBiasWeight_eb= 1.0;
 
-    OUT::PUBiasWeight_ee = whist_ee->GetBinContent( whist_ee->FindBin( OUT::nVtx ) );
-    OUT::PUBiasWeight_eb = whist_eb->GetBinContent( whist_eb->FindBin( OUT::nVtx ) );
+    //OUT::PUBiasWeight_ee = whist_ee->GetBinContent( whist_ee->FindBin( OUT::nVtx ) );
+    //OUT::PUBiasWeight_eb = whist_eb->GetBinContent( whist_eb->FindBin( OUT::nVtx ) );
 
 }
 

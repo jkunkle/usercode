@@ -34,10 +34,6 @@ def config_samples(samples) :
     #samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  isActive=False, useXSFile=False, scale=1.0 )
     samples.AddSample('Wg'                           , path='job_summer12_Wg'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('WgPhOlap'                           , path='job_summer12_WgPhOlap'          ,  isActive=False, useXSFile=True, XSName='Wg' )
-    samples.AddSample('WgPt20-30'                   , path='job_summer12_WgPt20-30'          ,  isActive=False, useXSFile=True )
-    samples.AddSample('WgPt30-50'                   , path='job_summer12_WgPt30-50'          ,  isActive=False, useXSFile=True )
-    samples.AddSample('WgPt50-130'                   , path='job_summer12_WgPt50-130'          ,  isActive=False, useXSFile=True )
-    samples.AddSample('WgPt130'                      , path='job_summer12_WgPt130'          ,  isActive=False, useXSFile=True )
     samples.AddSample('WH_ZH_125'                    , path='job_summer12_WH_ZH_125'            ,  isActive=False, useXSFile=True )
     samples.AddSample('_Wjets'                        , path='job_summer12_Wjets'               ,  isActive=False, useXSFile=True, XSName='Wjets' )
     samples.AddSample('WjetsPhOlap'                  , path='job_summer12_WjetsPhOlap'       ,  isActive=False, useXSFile=True, XSName='Wjets' )
@@ -154,8 +150,8 @@ def config_samples(samples) :
                           )
     samples.AddSampleGroup( 'Zgammastar', legend_name='Z/#gamma * ', 
                             input_samples = [
-                                             'DYJetsToLLPhOlap'
-                                             #'DYJetsToLL'
+                                             #'DYJetsToLLPhOlap'
+                                             'DYJetsToLL'
                                              #'Zg',
                                             ],
                            plotColor=ROOT.kCyan,
@@ -189,27 +185,10 @@ def config_samples(samples) :
     samples.AddSampleGroup( 'Wgamma', legend_name='W#gamma', 
                            input_samples = [
                                             'Wg',
-                                            #'WgPt20-30',
-                                            #'WgPt30-50',
-                                            #'WgPt50-130',
-                                            #'WgPt130',
                            ],
                            plotColor=ROOT.kBlue-6,
                            isSignal=False,
                           )
-
-    #samples.AddSampleGroup( 'WgammaComb', legend_name='W#gamma Comb', 
-    #                       input_samples = [
-    #                                        #'Wg',
-    #                                        'WgPt20-30',
-    #                                        'WgPt30-50',
-    #                                        'WgPt50-130',
-    #                                        'WgPt130',
-    #                       ],
-    #                       plotColor=ROOT.kBlue,
-    #                       isSignal=False,
-    #                      )
-
 
     #samples.AddSampleGroup( 'Wgg', legend_name='W#gamma#gamma', 
     #                        input_samples = [
@@ -264,6 +243,22 @@ def config_samples(samples) :
                                plotColor=ROOT.kBlue,
                                isActive=False,
                            )
+    samples.AddSampleGroup( 'DiPhoton', legend_name='DiPhoton', 
+                           input_samples = [
+                                           'diphoton_box_10to25'                     ,
+                                           'diphoton_box_25to250'                     ,
+                                           'diphoton_box_250toInf'                     ,
+                           ],
+                           plotColor=ROOT.kYellow-3,
+                           isActive=False,
+                          )
+
+    samples.AddSampleGroup( 'VH', legend_name='WH/ZH, m_{H} = 125 GeV', 
+                           input_samples = [
+                                           'WH_ZH_125'                     ,
+                           ],
+                           plotColor=ROOT.kRed+2,
+                          )
     #samples.AddSampleGroup( 'DiBoson', legend_name='WW/WZ/ZZ', 
     #                       input_samples = [
     #                                       'WW_2l2nu'                ,
@@ -319,6 +314,23 @@ def config_samples(samples) :
     #                       plotColor=ROOT.kBlue-10,
     #                      )
 
+    samples.AddSampleGroup( 'Top', legend_name='Top', 
+                           input_samples = [
+                                           #'t_s'                     ,
+                                           #'t_t'                     ,
+                                           #'t_tW'                    ,
+                                           #'tbar_s'                  ,
+                                           #'tbar_t'                  ,
+                                           #'tbar_tW'                 ,
+                                           #'ttW'                     ,
+                                           #'ttZ'                     ,
+                                           #'ttg'                     ,
+                                           'ttjets_1l'               ,
+                                           'ttjets_2l'               ,
+                           ],
+                           plotColor=ROOT.kGreen-3,
+                          )
+
     samples.AddSampleGroup( 'MultiBoson', legend_name='Other Multiboson', 
                            input_samples = [
                                            'WWg'                     ,
@@ -343,66 +355,26 @@ def config_samples(samples) :
                           )
 
 
-    #samples.AddSampleGroup( 'Top1l', legend_name='tt #rightarrow l#nu jj + X', 
-    #                       input_samples = [
-    #                                       'ttjets_1l'               ,
-    #                       ],
-    #                       plotColor=ROOT.kGreen,
-    #                      )
-    #samples.AddSampleGroup( 'Top2l', legend_name='tt #rightarrow l#nu l#nu + X', 
-    #                       input_samples = [
-    #                                       'ttjets_2l'               ,
-    #                       ],
-    #                       plotColor=ROOT.kGreen-3,
-    #                      )
-
-    #samples.AddSampleGroup( 'Top2l', legend_name='tt #rightarrow l#nu l#nu + X', 
-    #                       input_samples = [
-    #                                       'ttjets_2l'               ,
-    #                       ],
-    #                       plotColor=ROOT.kGreen-3,
-    #                      )
-
-    samples.AddSampleGroup( 'Top', legend_name='Top', 
+    samples.AddSampleGroup( 'Top1l', legend_name='tt #rightarrow l#nu jj + X', 
                            input_samples = [
-                                           #'t_s'                     ,
-                                           #'t_t'                     ,
-                                           #'t_tW'                    ,
-                                           #'tbar_s'                  ,
-                                           #'tbar_t'                  ,
-                                           #'tbar_tW'                 ,
-                                           #'ttW'                     ,
-                                           #'ttZ'                     ,
-                                           #'ttg'                     ,
                                            'ttjets_1l'               ,
+                           ],
+                           plotColor=ROOT.kGreen,
+                          )
+    samples.AddSampleGroup( 'Top2l', legend_name='tt #rightarrow l#nu l#nu + X', 
+                           input_samples = [
                                            'ttjets_2l'               ,
                            ],
                            plotColor=ROOT.kGreen-3,
                           )
 
-    samples.AddSampleGroup( 'Topgamma', legend_name='Top + #gamma', 
+    samples.AddSampleGroup( 'Top2l', legend_name='tt #rightarrow l#nu l#nu + X', 
                            input_samples = [
-                                           'ttg',
+                                           'ttjets_2l'               ,
                            ],
-                           plotColor=ROOT.kGreen+4,
+                           plotColor=ROOT.kGreen-3,
                           )
 
-    samples.AddSampleGroup( 'DiPhoton', legend_name='DiPhoton', 
-                           input_samples = [
-                                           'diphoton_box_10to25'                     ,
-                                           'diphoton_box_25to250'                     ,
-                                           'diphoton_box_250toInf'                     ,
-                           ],
-                           plotColor=ROOT.kYellow-3,
-                           isActive=False,
-                          )
-
-    samples.AddSampleGroup( 'VH', legend_name='WH/ZH, m_{H} = 125 GeV', 
-                           input_samples = [
-                                           'WH_ZH_125'                     ,
-                           ],
-                           plotColor=ROOT.kRed+2,
-                          )
 #    samples.AddSampleGroup( 'MCBkg', legend_name='MCBkg', isActive=False,
 #                            input_samples = [
 #                                             #'DYJetsToLL',

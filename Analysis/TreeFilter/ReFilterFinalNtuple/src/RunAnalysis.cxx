@@ -147,7 +147,20 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
 
     int nPh = OUT::ph_n;
     if( !config.PassInt("cut_nPh", nPh ) ) keep_event = false;
+    if( !config.PassInt("cut_nMuTrig", OUT::mu_passtrig25_n ) ) keep_event = false;
+    if( !config.PassInt("cut_nElTrig", OUT::el_passtrig_n ) ) keep_event = false;
+    if( !config.PassInt("cut_nEl", OUT::el_n ) ) keep_event = false;
+    if( !config.PassInt("cut_nMu", OUT::mu_n ) ) keep_event = false;
 
+    if( !config.PassFloat( "cut_mgg", OUT::m_ph1_ph2 ) )  keep_event=false;
+    if( !config.PassFloat( "cut_dr_lep_ph1", OUT::dr_ph1_leadLep ) )  keep_event=false;
+    if( !config.PassFloat( "cut_dr_lep_ph2", OUT::dr_ph2_leadLep ) )  keep_event=false;
+    if( !config.PassFloat( "cut_dr_ph1_ph2", OUT::dr_ph1_ph2 ) )  keep_event=false;
+    if( !config.PassFloat( "cut_m_lepphph", OUT::m_leadLep_ph1_ph2 ) )  keep_event=false;
+    if( !config.PassFloat( "cut_m_lepph1", OUT::m_leadLep_ph1 ) )  keep_event=false;
+    if( !config.PassFloat( "cut_m_lepph2", OUT::m_leadLep_ph2 ) )  keep_event=false;
+    
+    
     if( OUT::ph_n > 1 ) {
         if( OUT::ph_pt->at(0) > OUT::ph_pt->at(1) ) {
             if( !config.PassBool( "cut_hasPixSeed_leadph12", OUT::ph_hasPixSeed->at(0) ) ) keep_event = false;

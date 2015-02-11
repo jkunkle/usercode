@@ -21,10 +21,9 @@ def get_keep_filter() :
 
     return ['.*']
 
-def config_analysis( alg_list ) :
+def config_analysis( alg_list, options ) :
     """ Configure analysis modules. Order is preserved """
 
-    
     # for complicated configurations, define a function
     # that returns the Filter object and append it to the
     # alg list.  Otherwise you can directly append 
@@ -34,6 +33,7 @@ def config_analysis( alg_list ) :
     alg_list.append( get_muon_sf() ) 
     alg_list.append( get_electron_sf() ) 
     alg_list.append( get_photon_sf() ) 
+    alg_list.append( get_pileup_sf(options) )
 
 def get_muon_sf() :
 
@@ -68,4 +68,15 @@ def get_photon_sf() :
     photon_sf.add_var( 'FilePathEvetoHighPt', '%s/hist_sf_eveto_highpt.root' %base_path )
     
     return photon_sf
+
+def get_pileup_sf(options) :
+
+    base_path = '%s/TreeFilter/ApplyScaleFactors/data' %_workarea
+
+    pileup_sf = Filter( 'AddPileupSF' )
+    pileup_sf.add_var( 'DataFilePath', '%s/Data_Pileup_2012_ReReco-600bins.root' % base_path)
+    pileup_sf.add_var( 'MCFilePath', options['PUDistMCFile'] )
+
+    return pileup_sf
+
 

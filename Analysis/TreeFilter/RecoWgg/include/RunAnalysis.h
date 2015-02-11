@@ -100,6 +100,7 @@ class RunModule : public virtual RunModuleBase {
         float GetElectronMomentumCorrection( float pt, float sceta, float eta, float r9, bool isData, int runNumber) ;
         void extractElectronCorrections( const std::string & filename );
         void extractElectronLinCorrections( const std::string & filename );
+        float calc_pu_weight( float puval, float mod=1.0 ) const;
 
      private :
 
@@ -312,6 +313,22 @@ namespace OUT {
 
     Float_t             avgPU; 
     Float_t             PUWeight;
+    Float_t             PUWeightDN5;
+    Float_t             PUWeightDN10;
+
+    Float_t             PUWeightUP5;
+    Float_t             PUWeightUP6;
+    Float_t             PUWeightUP7;
+    Float_t             PUWeightUP8;
+    Float_t             PUWeightUP9;
+    Float_t             PUWeightUP10;
+    Float_t             PUWeightUP11;
+    Float_t             PUWeightUP12;
+    Float_t             PUWeightUP13;
+    Float_t             PUWeightUP14;
+    Float_t             PUWeightUP15;
+    Float_t             PUWeightUP16;
+    Float_t             PUWeightUP17;
 };
 
 namespace MVAVars {

@@ -26,7 +26,10 @@ def config_analysis( alg_list, args ) :
     # run fake factor code after the event
     # level variables are calculated because some
     # variables are recalculated
-    alg_list.append( add_Z_event_weight() )
+    #alg_list.append( add_Z_event_weight() )
+
+    # add pu vars
+    alg_list.append( Filter('AddPUVars' ) )
 
 
 def add_Z_event_weight() :

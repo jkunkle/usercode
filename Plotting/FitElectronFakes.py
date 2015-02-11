@@ -35,6 +35,7 @@ p.add_argument('--ndkeys_exp_fine',     default=False, action='store_true',  des
 p.add_argument('--ndkeys_exp_coarse',     default=False, action='store_true',  dest='ndkeys_exp_coarse', help='Fit Signal MC Gaussian smeared and background Exponential shape, coarse eta bins')
 p.add_argument('--useCsev',     default=False, action='store_true',  dest='useCsev', help='Use conversion save electron veto instead of pixel seed veto')
 p.add_argument('--useTAndP',     default=False, action='store_true',  dest='useTAndP', help='Use tag and probe ntuples')
+p.add_argument('--mc',     default=False, action='store_true',  dest='mc', help='Use counting method on the MC')
 
 
 
@@ -538,6 +539,118 @@ def main() :
     ## Use MC template with cms shape bkg
     ##--------------------------
     #DoElectronFakeFitRatio( outputDir=options.outputDir,useHist='.EleFitData', useCoarseEta=False, useMCTemplate=True, doNDKeys=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
+
+    if options.mc :
+        DoElectronFakeCountRatio( outputDir=options.outputDir, sample='ZjetsZgamma', mode='truth_window' )
+        DoElectronFakeCountRatio( outputDir=options.outputDir, sample='ZjetsZgamma', mode='reco_window' )
+
+def DoElectronFakeCountRatio( outputDir, sample, mode='reco_window' ) :
+
+
+    subDir = 'ElectronFakeCountsMC'
+
+    draw_cmds = get_ratio_draw_commands( )
+
+    selection_nom = draw_cmds['nom'] 
+    selection_inv = draw_cmds['inv'] 
+
+    mass_binning = (100, 0, 200)
+
+    if mode == 'reco_window' :
+        ff_tests = {'central' : 'fabs( m_lepph1-91.2 ) < 10', 'full' : '' }
+    elif mode == 'truth_window' :
+        ff_tests = {'central' : 'fabs( true_m_leplep - m_lepph1 ) < 10', 'full' : '' }
+
+    # ----------------------------------------------
+    # define binning
+    # ----------------------------------------------
+    pt_bins = [(15,25), (25,40), (40,70)]
+    pt_bins_80 = [ (70, 1000000) ]
+
+    eta_bins = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5) ]
+    eta_bins_80 = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.4), (2.4, 2.5) ]
+
+    pt_eta_bins = {}
+    for pts in pt_bins :
+        pt_eta_bins[pts] = eta_bins
+        
+    for pts in pt_bins_80 :
+        pt_eta_bins[pts] = eta_bins_80
+
+    # ----------------------------------------------
+
+    results = {}
+
+    for ff_tag, ff_test in ff_tests.iteritems() :
+        results[ff_tag] = {}
+        if ff_test :
+            selection_nom = selection_nom + ' & %s' %ff_test
+            selection_inv = selection_inv + ' & %s' %ff_test
+
+        hists = get_3d_mass_ratio_histograms( selection_nom, selection_inv, sample, mass_binning, useAbsEta=True )
+
+
+        last_pt = max( [x[1] for x in pt_eta_bins.keys() ] )
+        for (ptmin, ptmax), eta_bins in pt_eta_bins.iteritems()  :
+
+            if options.ptmin > 0 and options.ptmin != ptmin :
+                continue
+
+            # If FindBin is given a value on the boundary it returns
+            # the bin above the boundary
+            # Therefore the max bin is 1 less than what is returned
+
+            for etaidx, (etamin, etamax) in enumerate( eta_bins ) :
+
+                if options.etabinmin >= 0 and options.etabinmin != etaidx :
+                    continue
+
+
+                result_bin = ( str( ptmin ), str(ptmax), '%.2f' %etamin, '%.2f' %etamax )
+                results[ff_tag][result_bin] = {}
+
+
+                for hist_tag, hist in hists.iteritems() :
+
+                    pt_bin_min = hist.GetYaxis().FindBin( ptmin )
+                    pt_bin_max = hist.GetYaxis().FindBin( ptmax ) - 1 
+
+                    eta_bin_min = hist.GetXaxis().FindBin( etamin )
+                    eta_bin_max = hist.GetXaxis().FindBin( etamax ) - 1
+
+                    print 'ptmin = %d, ptmax = %d, etamin = %f, etamax = %f ' %(ptmin, ptmax, etamin, etamax )
+                    print 'BIN : ptmin = %d, ptmax = %d, etamin = %d, etamax = %d ' %(pt_bin_min, pt_bin_max, eta_bin_min, eta_bin_max )
+
+                    if ptmax == last_pt :
+                        histname = 'hist%s%s_eta_%.2f-%.2f_pt_%d-max' %(ff_tag, hist_tag, etamin, etamax, ptmin)
+                    else :
+                        histname = 'hist%s%s_eta_%.2f-%.2f_pt_%d-%d' %(ff_tag, hist_tag, etamin, etamax, ptmin, ptmax)
+
+                    hist_proj = hist.ProjectionZ(histname, eta_bin_min, eta_bin_max, pt_bin_min, pt_bin_max )
+
+                    err = ROOT.Double()
+                    int = hist_proj.IntegralAndError(1, hist_proj.GetNbinsX(), err)
+                    results[ff_tag][result_bin][hist_tag] = ufloat( int, err )
+
+        
+                results[ff_tag][result_bin]['fake_factor'] = 0.0
+                if results[ff_tag][result_bin]['inv'] != 0 :
+                    results[ff_tag][result_bin]['fake_factor'] = results[ff_tag][result_bin]['nom']/results[ff_tag][result_bin]['inv']
+
+    for tag, ffres in results.iteritems() :
+        for bin, binres in ffres.iteritems() :
+            print 'Test = %s, bin = %s, fake factor = %s' %( tag, bin, binres['fake_factor'] )
+
+                    
+    print results
+    full_dir = '%s/%s' %(outputDir, subDir)
+    if not os.path.isdir( full_dir ) :
+        os.makedirs( full_dir )
+    ofile = open( '%s/results_%s.pickle' %(full_dir, mode ), 'w' )
+    pickle.dump( results, ofile )
+    ofile.close()
+
+
 
 def CompTrigNoTrig( outputDir=None ) :
 
@@ -1459,9 +1572,6 @@ def store_results( var, backgrounds=['bkg_model'] ) :
 
     xmin = var.getMin()
     xmax = var.getMax()
-
-    print xmin
-    print xmax
 
     hist_sig = sampMan.fit_objs['sig_model'].createHistogram('hist_sig_model', var, ROOT.RooFit.Binning( int((xmax-xmin)*10), xmin, xmax ) )
     hist_bkg = sampMan.fit_objs[backgrounds[0]].createHistogram('hist_bkg_model', var, ROOT.RooFit.Binning( int((xmax-xmin)*10), xmin, xmax ) )

@@ -193,6 +193,21 @@ class Sample :
 
             return branches
 
+class LegendConfig :
+
+    def __init__(self) : 
+        pass
+
+class LabelConfig :
+
+    def __init__(self) : 
+        pass
+
+class HistConfig :
+
+    def __init__(self) : 
+        pass
+
 class DrawConfig :
     """ Store and process all informaiton necessary for making a histogram """
 
@@ -794,7 +809,6 @@ class SampleManager :
             print 'Could not locate old sample'
             return None
 
-        print 'Create new sample with name ', newname
         newsample = copy.copy( oldsample )
         newsample.name = newname
         
@@ -939,8 +953,6 @@ class SampleManager :
     #--------------------------------
     def activate_sample(self, samp_name) :
         sel_samps = self.get_samples(name=samp_name)
-        for s in self.get_samples() :
-            print s.name
         if not sel_samps :
             print 'No sample with name %s' %samp_name
         elif len(sel_samps) > 1 :
@@ -1376,8 +1388,6 @@ class SampleManager :
         sample.hist = None
         if not hasattr(sample, 'file' ) :
             sample.file = ROOT.TFile.Open( filename, 'READ')
-        print filename
-        print name
         sample.hist = sample.file.Get(name).Clone()
         sample.hist.SetDirectory(0)
         sample.hist.Sumw2()
@@ -1457,12 +1467,14 @@ class SampleManager :
 
                 # just check if the replacement was done
                 if first_replace : # no replacement
+                    text += '    // Original selection : %s \n ' %config['selection']
                     text += '    float weight = %s; \n ' %config['cppselection']
                     text += '        if( weight != 0 ) { \n ' 
                     text += '        hist_%s->Fill(%s, weight); \n '  %(name, config['cppvar'])
                     text += '        } \n ' 
                 else :
                     text += '    else { \n'
+                    text += '        // Original selection : %s \n ' %config['selection']
                     text += '        float weight = %s; \n ' %config['cppselection']
                     text += '        if( weight != 0 ) { \n ' 
                     text += '        hist_%s->Fill(%s, weight); \n '  %(name, config['cppvar'])
@@ -1613,9 +1625,19 @@ class SampleManager :
             if not os.path.isdir( outputDir ) :
                 print 'Creating directory %s' %outputDir
                 os.makedirs(outputDir)
-    
-            histnamepdf = outputDir + '/' + filename+'.pdf'
-            histnameeps = outputDir + '/' + filename+'.eps'
+
+            print filename
+            filenamesplit = filename.split('.')
+            if len( filenamesplit ) > 1 :
+                filenamestrip = '.'.join( filenamesplit[:-1] )
+            else :
+                filenamestrip = filenamesplit[0]
+
+            histnameeps = outputDir + '/' + filenamestrip+'.eps'
+            if not (filename.count( '.pdf' ) or filename.count('.png') ):
+                histnamepdf = outputDir + '/' + filenamestrip+'.pdf'
+            else :
+                histnamepdf = outputDir + '/' +filename
     
             if len( self.curr_canvases ) == 0 :
                 print 'No canvases to save'
@@ -2103,7 +2125,7 @@ class SampleManager :
     def DrawHist(self, histpath, rebin=None, varRebinThresh=None, doratio=False, ylabel=None, xlabel=None, rlabel=None, logy=False, ymin=None, ymax=None, rmin=None, rmax=None, label_config={}, legend_config={} ) :
 
         self.clear_all()
-        self.extract_active_samples( histpath )
+        self.get_active_samples( histpath )
 
         if varRebinThresh is not None :
             self.variable_rebinning(varRebinThresh) 
@@ -2531,6 +2553,7 @@ class SampleManager :
 
                 if sample.hist is not None :
                     sample.hist.Delete()
+
                 sample.hist = thishist
                 if sample.hist is not None :
                     self.format_hist( sample )
@@ -2549,7 +2572,7 @@ class SampleManager :
         sampname = sample.name
     
         if not self.quiet : print 'Creating hist for %s' %sampname
-        if not self.quiet : print selection
+        if not self.quiet : print '%s : %s ' %( varexp, selection )
         if not self.quiet : print histpars
 
         ## check that this histogram hasn't been drawn
@@ -2571,12 +2594,12 @@ class SampleManager :
                     sample.hist = ROOT.TH2F( histname, '', len(histpars[0])-1, array('f', histpars[0]), len(histpars[1])-1, array('f', histpars[1]) )
                 else :
                     if len(histpars) != 6 :
-                        print 'varable expression requests a 2-d histogram, please provide 6 hist parameters, nbinsx, xmin, xmax, nbinsy, ymin, ymax'
+                        print 'varable expression, %s,  requests a 2-d histogram, please provide 6 hist parameters, nbinsx, xmin, xmax, nbinsy, ymin, ymax' %varexp
                         return
                     sample.hist = ROOT.TH2F( histname, '', histpars[0], histpars[1], histpars[2], histpars[3], histpars[4], histpars[5])
             elif varexp.count(':') == 2 and not varexp.count('::') : # make a 3-d histogram
                 if len(histpars) != 9 :
-                    print 'varable expression requests a 3-d histogram, please provide 6 hist parameters, nbinsx, xmin, xmax, nbinsy, ymin, ymax, nbinsz, zmin, zmax'
+                    print 'varable expression, %s,  requests a 3-d histogram, please provide 9 hist parameters, nbinsx, xmin, xmax, nbinsy, ymin, ymax, nbinsz, zmin, zmax' %varexp
                     return
                 sample.hist= ROOT.TH3F( histname, '',histpars[0], histpars[1], histpars[2], histpars[3], histpars[4], histpars[5], histpars[6], histpars[7], histpars[8] )
             else : # 1-d histogram
@@ -2627,7 +2650,6 @@ class SampleManager :
                 sample.failed_draw=True
 
             if sample.hist is not None :
-                print sample.hist
                 self.format_hist( sample )
 
         # Group draw parallelization
@@ -2888,7 +2910,7 @@ class SampleManager :
             hist.SetBinError( *( overbin + (0,) ) )
 
 
-    def extract_active_samples( self, histpath ) :
+    def get_active_samples( self, histpath ) :
 
         for sample in self.samples :
             if sample.isActive :
@@ -3271,6 +3293,7 @@ class SampleManager :
             topcan.SetMinimum(ymin)
             topcan.SetMaximum(ymax)
             self.set_stack_default_formatting( topcan, doratio, logy=draw_config.get_logy())
+
 
         # draw the data
         for dsamp in self.get_samples( name=datahists, isActive=True ):

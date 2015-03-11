@@ -45,7 +45,7 @@ el_cuts = {'elfull' :
           },
 }
 
-_asym_iso_syst = { (0, 0, 0) : 0.05, (5,3,3) : 0.05, (8,5,5) : 0.10, (10, 7, 7) : 0.15, (12, 9, 9) : 0.2, (15,11,11) : 0.25, (20, 16, 16) : 0.35 }
+_asym_iso_syst = { (0, 0, 0) : 0.1, (5,3,3) : 0.10, (8,5,5) : 0.15, (10, 7, 7) : 0.20, (12, 9, 9) : 0.25, (15,11,11) : 0.30, (20, 16, 16) : 0.5 }
 
 _ele_eta_bins        = {'EB': [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44) ], 'EE' : [(1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5)] }
 _ele_eta_bins_highpt = {'EB': [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44) ], 'EE' : [(1.57, 2.1), (2.1, 2.4), (2.4, 2.5)] }
@@ -170,9 +170,9 @@ def main() :
     global samplesWggInvLead
     global samplesWggInvSubl
 
-    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindLowPt_2014_12_23'
-    baseDirWelggCR = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindAll_2015_01_26'
-    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoEleVetoUnblindLowPt_2015_01_14'
+    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_02_20'
+    baseDirWelggCR = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_02_20'
+    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_02_20'
     #baseDirWgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindEleZCR_2014_12_23'
     baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2014_12_23'
     baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2014_12_23'
@@ -225,24 +225,24 @@ def main() :
 
     # define the map between pt bins and
     # the fit results we want to use
-    file_bin_map             [(bins[0], bins[1])] = path_nom
-    file_bin_map             [(bins[1], bins[2])] = path_nom
-    file_bin_map             [(bins[2], bins[3])] = path_nom
+    file_bin_map             [(bins[0], bins[1])] = path_mctemp
+    file_bin_map             [(bins[1], bins[2])] = path_mctemp
+    file_bin_map             [(bins[2], bins[3])] = path_mctemp
     file_bin_map             [(bins[3], 'max')  ] = path_nom
     #file_bin_map_syst             [(bins[0], bins[1])] = path_nom
     #file_bin_map_syst             [(bins[1], bins[2])] = path_nom
     #file_bin_map_syst             [(bins[2], bins[3])] = path_nom
     #file_bin_map_syst             [(bins[3], 'max')  ] = path_nom
 
-    file_bin_map_coarse      [(bins[0], bins[1])] = path_nom_coarse
-    file_bin_map_coarse      [(bins[1], bins[2])] = path_nom_coarse
+    file_bin_map_coarse      [(bins[0], bins[1])] = path_mctemp_coarse
+    file_bin_map_coarse      [(bins[1], bins[2])] = path_mctemp_coarse
     file_bin_map_coarse      [(bins[2], bins[3])] = path_mctemp_coarse
     file_bin_map_coarse      [(bins[3], 'max')  ] = path_nom_coarse
 
     file_bin_map_syst        [(bins[0], bins[1])] = path_mctemp
     file_bin_map_syst        [(bins[1], bins[2])] = path_mctemp
     file_bin_map_syst        [(bins[2], bins[3])] = path_mctemp
-    file_bin_map_syst        [(bins[3], 'max')  ] = path_mctemp
+    file_bin_map_syst        [(bins[3], 'max')  ] = path_nom
     #file_bin_map        [(bins[0], bins[1])] = path_mctemp
     #file_bin_map        [(bins[1], bins[2])] = path_mctemp
     #file_bin_map        [(bins[2], bins[3])] = path_mctemp
@@ -250,28 +250,29 @@ def main() :
 
     file_bin_map_coarse_syst [(bins[0], bins[1])] = path_mctemp_coarse
     file_bin_map_coarse_syst [(bins[1], bins[2])] = path_mctemp_coarse
-    file_bin_map_coarse_syst [(bins[2], bins[3])] = path_nom_coarse
-    file_bin_map_coarse_syst [(bins[3], 'max')  ] = path_mctemp_coarse
+    file_bin_map_coarse_syst [(bins[2], bins[3])] = path_mctemp_coarse
+    file_bin_map_coarse_syst [(bins[3], 'max')  ] = path_nom_coarse
 
     pt_bins = [int(x) for x in options.ptbins.split(',')]
 
     if options.baseDir is not None :
-        base_dir_ele = options.baseDir
-        base_dir_jet = '%s/JetFakeResultsSyst'%options.baseDir
-        outputDir='%s/BackgroundEstimates'%options.baseDir
-        MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDir )
-        MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDir, namePostfix='__zcr' )
-        MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elph1zcr', outputDir=outputDir, namePostfix='__ph1zcr' )
-        MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elph2zcr', outputDir=outputDir, namePostfix='__ph2zcr' )
-        #MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map_coarse, file_bin_map_coarse_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDir, namePostfix='__coarse', coarse=True )
-        #MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map_coarse, file_bin_map_coarse_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDir, namePostfix='__coarse__zcr', coarse=True )
+        for typedir in os.listdir( '%s/JetFakeResultsSyst'%options.baseDir ) :
+            base_dir_ele = options.baseDir
+            base_dir_jet = '%s/JetFakeResultsSyst/%s'%(options.baseDir, typedir )
+            outputDir='%s/BackgroundEstimates/%s/' %(options.baseDir, typedir )
+            MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDir )
+            MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDir, namePostfix='__zcr' )
+            #MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elph1zcr', outputDir=outputDir, namePostfix='__ph1zcr' )
+            #MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elph2zcr', outputDir=outputDir, namePostfix='__ph2zcr' )
+            #MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map_coarse, file_bin_map_coarse_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDir, namePostfix='__coarse', coarse=True )
+            #MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map_coarse, file_bin_map_coarse_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDir, namePostfix='__coarse__zcr', coarse=True )
 
-        MakeJetBkgEstimate( base_dir_jet, pt_bins, outputDir )
+            MakeJetBkgEstimate( base_dir_jet, pt_bins, outputDir )
 
-        MakeBkgEstimatePlots( outputDir, options.plotDir )
+            MakeBkgEstimatePlots( outputDir, options.plotDir )
 
-        #MakeDiPhotonCREleFakeFactors( )
-
+            ##MakeDiPhotonCREleFakeFactors( )
+ 
     print '^_^ FINSISHED ^_^'
     print 'It is safe to kill the program if it is hanging'
 
@@ -427,6 +428,9 @@ def MakeJetBkgEstimate( base_dir_jet, pt_bins, outputDir=None ) :
         if not os.path.isdir( outputDir ) :
             os.makedirs( outputDir )
 
+    print '---------------------------------------------'
+    print 'START JET FAKE, MUON CHANNEL'
+    print '---------------------------------------------'
     if jet_files_mu.values()[0] :
         subl_ptbins = [ ( '70', 'max', '15', '40' ), ( '70', 'max', '40', 'max' ) ]
         subl_ptbins = [ ]
@@ -450,6 +454,9 @@ def MakeJetBkgEstimate( base_dir_jet, pt_bins, outputDir=None ) :
         pickle.dump( pred_mu, file_muon )
         file_muon.close()
 
+    print '---------------------------------------------'
+    print 'START JET FAKE, ELECTRON CHANNEL WITH Z REJ CUTS'
+    print '---------------------------------------------'
     if jet_files_elfull.values()[0] :
         pred_elfull = get_jet_fake_results( jet_files_elfull, jet_files_elfull_syst, regions, pt_bins_jetfile,  jet_dir_key_map, base_dir_jet ) 
 
@@ -472,6 +479,9 @@ def MakeJetBkgEstimate( base_dir_jet, pt_bins, outputDir=None ) :
         pickle.dump( pred_elfull, file_elfull )
         file_elfull.close()
 
+    print '---------------------------------------------'
+    print 'START JET FAKE, ELECTRON CHANNEL IN Mlgg Z CR'
+    print '---------------------------------------------'
     if jet_files_elzcr.values()[0] :
         pred_elzcr  = get_jet_fake_results( jet_files_elzcr , jet_files_elzcr_syst    , regions, pt_bins_jetfile,  jet_dir_key_map, base_dir_jet ) 
 
@@ -496,53 +506,54 @@ def MakeJetBkgEstimate( base_dir_jet, pt_bins, outputDir=None ) :
         pickle.dump( pred_elzcr, file_elzcr)
         file_elzcr.close()
 
-    if jet_files_elph1zcr.values()[0] :
-        pred_elph1zcr  = get_jet_fake_results( jet_files_elph1zcr , jet_files_elph1zcr_syst    , regions, pt_bins_jetfile,  jet_dir_key_map, base_dir_jet ) 
+    # Remove other control regions for now
+    #if jet_files_elph1zcr.values()[0] :
+    #    pred_elph1zcr  = get_jet_fake_results( jet_files_elph1zcr , jet_files_elph1zcr_syst    , regions, pt_bins_jetfile,  jet_dir_key_map, base_dir_jet ) 
 
-        print '---------------------------------------------'
-        print 'JET FAKE RESULTS, ELECTRON CHANNEL IN Mlg1 Z CR'
-        print '---------------------------------------------'
-        for r1, r2 in regions :
+    #    print '---------------------------------------------'
+    #    print 'JET FAKE RESULTS, ELECTRON CHANNEL IN Mlg1 Z CR'
+    #    print '---------------------------------------------'
+    #    for r1, r2 in regions :
 
-            for idx, ptmin in enumerate(pt_bins_jetfile[:-1] ) :
-                ptmax = pt_bins_jetfile[idx+1]
+    #        for idx, ptmin in enumerate(pt_bins_jetfile[:-1] ) :
+    #            ptmax = pt_bins_jetfile[idx+1]
 
-                bin = (r1,r2,ptmin,ptmax)
+    #            bin = (r1,r2,ptmin,ptmax)
 
-                print 'Region %s-%s, pt %s-%s' %( r1,r2,ptmin,ptmax)
+    #            print 'Region %s-%s, pt %s-%s' %( r1,r2,ptmin,ptmax)
 
-                print 'Predicted Stat rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph1zcr['stat']['rf'][bin]['result'], pred_elph1zcr['stat']['fr'][bin]['result'], pred_elph1zcr['stat']['ff'][bin]['result'], (  pred_elph1zcr['stat']['rf'][bin]['result']+ pred_elph1zcr['stat']['fr'][bin]['result']+ pred_elph1zcr['stat']['ff'][bin]['result'] ) )
-                print 'Predicted Syst rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph1zcr['syst']['rf'][bin]['result'], pred_elph1zcr['syst']['fr'][bin]['result'], pred_elph1zcr['syst']['ff'][bin]['result'], (  pred_elph1zcr['syst']['rf'][bin]['result']+ pred_elph1zcr['syst']['fr'][bin]['result']+ pred_elph1zcr['syst']['ff'][bin]['result'] ) )
-                print 'Predicted Stat+Syst rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph1zcr['stat+syst']['rf'][bin]['result'], pred_elph1zcr['stat+syst']['fr'][bin]['result'], pred_elph1zcr['stat+syst']['ff'][bin]['result'], (  pred_elph1zcr['stat+syst']['rf'][bin]['result']+ pred_elph1zcr['stat+syst']['fr'][bin]['result'] + pred_elph1zcr['stat+syst']['ff'][bin]['result'] ) )
-
-
-        file_elph1zcr = open( outputDir + '/jet_fake_results__egg_ZCRPh1.pickle', 'w' )
-        pickle.dump( pred_elph1zcr, file_elph1zcr)
-        file_elph1zcr.close()
-
-    if jet_files_elph2zcr.values()[0] :
-        pred_elph2zcr  = get_jet_fake_results( jet_files_elph2zcr , jet_files_elph2zcr_syst    , regions, pt_bins_jetfile,  jet_dir_key_map, base_dir_jet ) 
-
-        print '---------------------------------------------'
-        print 'JET FAKE RESULTS, ELECTRON CHANNEL IN Mlg2 Z CR'
-        print '---------------------------------------------'
-        for r1, r2 in regions :
-
-            for idx, ptmin in enumerate(pt_bins_jetfile[:-1] ) :
-                ptmax = pt_bins_jetfile[idx+1]
-
-                bin = (r1,r2,ptmin,ptmax)
-
-                print 'Region %s-%s, pt %s-%s' %( r1,r2,ptmin,ptmax)
-
-                print 'Predicted Stat rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph2zcr['stat']['rf'][bin]['result'], pred_elph2zcr['stat']['fr'][bin]['result'], pred_elph2zcr['stat']['ff'][bin]['result'], (  pred_elph2zcr['stat']['rf'][bin]['result']+ pred_elph2zcr['stat']['fr'][bin]['result']+ pred_elph2zcr['stat']['ff'][bin]['result'] ) )
-                print 'Predicted Syst rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph2zcr['syst']['rf'][bin]['result'], pred_elph2zcr['syst']['fr'][bin]['result'], pred_elph2zcr['syst']['ff'][bin]['result'], (  pred_elph2zcr['syst']['rf'][bin]['result']+ pred_elph2zcr['syst']['fr'][bin]['result']+ pred_elph2zcr['syst']['ff'][bin]['result'] ) )
-                print 'Predicted Stat+Syst rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph2zcr['stat+syst']['rf'][bin]['result'], pred_elph2zcr['stat+syst']['fr'][bin]['result'], pred_elph2zcr['stat+syst']['ff'][bin]['result'], (  pred_elph2zcr['stat+syst']['rf'][bin]['result']+ pred_elph2zcr['stat+syst']['fr'][bin]['result'] + pred_elph2zcr['stat+syst']['ff'][bin]['result'] ) )
+    #            print 'Predicted Stat rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph1zcr['stat']['rf'][bin]['result'], pred_elph1zcr['stat']['fr'][bin]['result'], pred_elph1zcr['stat']['ff'][bin]['result'], (  pred_elph1zcr['stat']['rf'][bin]['result']+ pred_elph1zcr['stat']['fr'][bin]['result']+ pred_elph1zcr['stat']['ff'][bin]['result'] ) )
+    #            print 'Predicted Syst rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph1zcr['syst']['rf'][bin]['result'], pred_elph1zcr['syst']['fr'][bin]['result'], pred_elph1zcr['syst']['ff'][bin]['result'], (  pred_elph1zcr['syst']['rf'][bin]['result']+ pred_elph1zcr['syst']['fr'][bin]['result']+ pred_elph1zcr['syst']['ff'][bin]['result'] ) )
+    #            print 'Predicted Stat+Syst rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph1zcr['stat+syst']['rf'][bin]['result'], pred_elph1zcr['stat+syst']['fr'][bin]['result'], pred_elph1zcr['stat+syst']['ff'][bin]['result'], (  pred_elph1zcr['stat+syst']['rf'][bin]['result']+ pred_elph1zcr['stat+syst']['fr'][bin]['result'] + pred_elph1zcr['stat+syst']['ff'][bin]['result'] ) )
 
 
-        file_elph2zcr = open( outputDir + '/jet_fake_results__egg_ZCRPh2.pickle', 'w' )
-        pickle.dump( pred_elph2zcr, file_elph2zcr)
-        file_elph2zcr.close()
+    #    file_elph1zcr = open( outputDir + '/jet_fake_results__egg_ZCRPh1.pickle', 'w' )
+    #    pickle.dump( pred_elph1zcr, file_elph1zcr)
+    #    file_elph1zcr.close()
+
+    #if jet_files_elph2zcr.values()[0] :
+    #    pred_elph2zcr  = get_jet_fake_results( jet_files_elph2zcr , jet_files_elph2zcr_syst    , regions, pt_bins_jetfile,  jet_dir_key_map, base_dir_jet ) 
+
+    #    print '---------------------------------------------'
+    #    print 'JET FAKE RESULTS, ELECTRON CHANNEL IN Mlg2 Z CR'
+    #    print '---------------------------------------------'
+    #    for r1, r2 in regions :
+
+    #        for idx, ptmin in enumerate(pt_bins_jetfile[:-1] ) :
+    #            ptmax = pt_bins_jetfile[idx+1]
+
+    #            bin = (r1,r2,ptmin,ptmax)
+
+    #            print 'Region %s-%s, pt %s-%s' %( r1,r2,ptmin,ptmax)
+
+    #            print 'Predicted Stat rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph2zcr['stat']['rf'][bin]['result'], pred_elph2zcr['stat']['fr'][bin]['result'], pred_elph2zcr['stat']['ff'][bin]['result'], (  pred_elph2zcr['stat']['rf'][bin]['result']+ pred_elph2zcr['stat']['fr'][bin]['result']+ pred_elph2zcr['stat']['ff'][bin]['result'] ) )
+    #            print 'Predicted Syst rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph2zcr['syst']['rf'][bin]['result'], pred_elph2zcr['syst']['fr'][bin]['result'], pred_elph2zcr['syst']['ff'][bin]['result'], (  pred_elph2zcr['syst']['rf'][bin]['result']+ pred_elph2zcr['syst']['fr'][bin]['result']+ pred_elph2zcr['syst']['ff'][bin]['result'] ) )
+    #            print 'Predicted Stat+Syst rf = %s, predicted fr = %s, predicted ff = %s, total = %s' %( pred_elph2zcr['stat+syst']['rf'][bin]['result'], pred_elph2zcr['stat+syst']['fr'][bin]['result'], pred_elph2zcr['stat+syst']['ff'][bin]['result'], (  pred_elph2zcr['stat+syst']['rf'][bin]['result']+ pred_elph2zcr['stat+syst']['fr'][bin]['result'] + pred_elph2zcr['stat+syst']['ff'][bin]['result'] ) )
+
+
+    #    file_elph2zcr = open( outputDir + '/jet_fake_results__egg_ZCRPh2.pickle', 'w' )
+    #    pickle.dump( pred_elph2zcr, file_elph2zcr)
+    #    file_elph2zcr.close()
 
 def MakeBkgEstimatePlots( baseDir, plotDir ) :
 
@@ -568,6 +579,9 @@ def MakeBkgEstimatePlots( baseDir, plotDir ) :
         hist_sig_mgg  = samplesWmugg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
         save_hist( '%s/%s/Wgg/hist.root' %(baseDir, plotDir), hist_sig_mgg )
 
+        #hist_dip_mgg  = samplesWmugg.get_samples(name='OtherDiPhoton')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
+        #save_hist( '%s/%s/OtherDiPhoton/hist.root' %(baseDir, plotDir), hist_dip_mgg )
+
         hist_Zgg_mgg     = samplesWmugg.get_samples(name='Zgg')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
         hist_ZggFSR_mgg  = samplesWmugg.get_samples(name='ZgammagammaFSR')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
         #hist_Zgg_mgg.Add(hist_ZggFSR_mgg)
@@ -592,9 +606,9 @@ def MakeBkgEstimatePlots( baseDir, plotDir ) :
         save_electron_hists( draw_str_zcrph1, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph1 )
         save_electron_hists( draw_str_zcrph2, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph2 )
 
-    make_hist_from_pickle( samplesWmugg, baseDir + '/jet_fake_results__mgg.pickle'            , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='mgg', regions=regions )
+    make_hist_from_pickle( samplesWmugg, baseDir + '/jet_fake_results__mgg.pickle'            , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='mgg', regions=regions, sum_syst={4 : 0.14, 5 : 0.14, 6 : 0.14 , 7 : 0.14} )
     make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__egg_allZRejCuts.pickle', '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg', regions=regions )
-    make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results.pickle'            , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg', regions=regions, syst=baseDir + '/electron_fake_results_syst.pickle')
+    make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results.pickle'            , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg', regions=regions, sum_syst={4 : 0.39, 5 : 0.255, 6 : 0.41, 7 : 0.41}  )
 
     make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__ph1zcr.pickle'       , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg_zcrph1', regions=regions)
     make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__egg_ZCRPh1.pickle'        , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg_zcrph1', regions=regions )
@@ -615,6 +629,9 @@ def save_electron_hists( draw_str, plot_binning, plot_dir, hist_tag ) :
     hist_sig_egg  = samplesWelgg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
     save_hist( '%s/Wgg/hist.root' %(plot_dir), hist_sig_egg )
 
+    #hist_dip_egg  = samplesWelgg.get_samples(name='OtherDiPhoton')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
+    #save_hist( '%s/OtherDiPhoton/hist.root' %(plot_dir), hist_dip_egg )
+
     hist_Zgg_egg     = samplesWelgg.get_samples(name='Zgg')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
     hist_ZggFSR_egg  = samplesWelgg.get_samples(name='ZgammagammaFSR')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
     hist_Zg_egg  = samplesWelgg.get_samples(name='Zgamma')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
@@ -632,20 +649,27 @@ def save_electron_hists( draw_str, plot_binning, plot_dir, hist_tag ) :
     #save_hist( '%s/Top/hist.root' %(plot_dir), hist_Top_egg )
     #save_hist( '%s/MultiBoson/hist.root' %(plot_dir), hist_MB_egg )
 
-def add_syst_to_hist( hist, syst ) :
+def add_syst_to_hist( hist, syst, err_bin=[] ) :
 
-    for bin in range( 1, hist.GetNbinsX() +1 ) :
+    if not isinstance( err_bin, list ) :
+        err_bin = [err_bin]
+
+    bins = range( 1, hist.GetNbinsX() +1 )
+    if err_bin is not None :
+        bins = err_bin
+
+    for bin in bins :
         curr_err = hist.GetBinError( bin )
         curr_val = hist.GetBinContent( bin )
         new_err = math.sqrt( curr_err*curr_err + curr_val*syst*curr_val*syst )
 
         hist.SetBinError( bin, new_err )
 
-def make_hist_from_pickle( sampMan, input_file, output_hist, tag, regions, syst=None ) :
+def make_hist_from_pickle( sampMan, input_file, output_hist, tag, regions, syst=None, sum_syst={} ) :
 
     # get jet fake background estimate
     if not os.path.isfile( input_file) :
-        print 'Could not find input file %s', input_file
+        print 'Could not find input file %s' %input_file
         return
 
     ofile = open( input_file, 'r' )
@@ -694,6 +718,12 @@ def make_hist_from_pickle( sampMan, input_file, output_hist, tag, regions, syst=
     for ptbin in range( 1, hist.GetNbinsX()+1 ) :
         sum_hist.SetBinContent( ptbin, sum_data[ptbin].n )
         sum_hist.SetBinError( ptbin, sum_data[ptbin].s )
+
+
+    if sum_syst :
+        for bin, syst in sum_syst.iteritems() :
+            new_syst = math.sqrt( syst*syst + sum_hist.GetBinError(bin)*sum_hist.GetBinError( bin ) )
+            sum_hist.SetBinError( bin, new_syst )
 
     save_hist( output_hist, sum_hist )
     
@@ -785,6 +815,9 @@ def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_sy
     for bin, res in results_nom['lead'].iteritems() :
         results_comb['stat']['lead'][bin] = res['pred']
         results_comb['details']['lead'][bin] = res
+        # Calculate the systematic uncertainty 
+        # as the difference between the nominal
+        # and syst fake factor predictions
         if res['pred'] == 0 :
             results_comb['syst']['lead'][bin] = ufloat( res['pred'].n, res['pred'].n)
         else :
@@ -793,6 +826,9 @@ def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_sy
     for bin, res in results_nom['subl'].iteritems() :
         results_comb['stat']['subl'][bin] = res['pred']
         results_comb['details']['subl'][bin] = res
+        # Calculate the systematic uncertainty 
+        # as the difference between the nominal
+        # and syst fake factor predictions
         if res['pred'] == 0 :
             results_comb['syst']['subl'][bin] = ufloat( res['pred'].n, res['pred'].n)
         else :
@@ -811,9 +847,6 @@ def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_sy
     jet_files_subl      = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_subl      )
     jet_files_lead_syst = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_lead_syst )
     jet_files_subl_syst = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_subl_syst )
-
-    print 'jet_files_lead'
-    print jet_files_lead
 
     pt_bins_jetfile = [str(x) for x in pt_bins[:-1]]
     pt_bins_jetfile.append( 'max')
@@ -921,12 +954,16 @@ def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_sy
         results_subtracted['jetsyst']['sum'][bin] = {}
         results_subtracted['stat+syst']['sum'][bin] = {}
 
+        # add some additional information to the
+        # stat+syst entries
         results_subtracted['stat+syst']['sum'][bin]['lead'] = info_stat_lead
         results_subtracted['stat+syst']['sum'][bin]['subl'] = info_stat_subl
         results_subtracted['stat+syst']['sum'][bin]['jet_rf'] = jet_scaled['stat'][bin]['rf']
         results_subtracted['stat+syst']['sum'][bin]['jet_fr'] = jet_scaled['stat'][bin]['fr']
         results_subtracted['stat+syst']['sum'][bin]['jet_ff'] = jet_scaled['stat'][bin]['ff']
 
+        # stat uncertainty is just the 
+        # difference in the stat entries
         results_subtracted['stat']['sum'][bin]['result'] = info_stat_lead +info_stat_subl - ( jet_scaled['stat'][bin]['rf']['total'] + jet_scaled['stat'][bin]['fr']['total'] + jet_scaled['stat'][bin]['ff']['total'] )
 
         # for elesyst set jet uncertainties to zero
@@ -1236,7 +1273,6 @@ def make_background_estimate( base_dir_jet, jet_files, jet_files_syst, jet_dir_k
         pred_sum_syst = results['syst']['rf'][reg_bin]['result']+results['syst']['fr'][reg_bin]['result']+results['syst']['ff'][reg_bin]['result']
 
         if Ndata_tt > 0 and pred_sum.n > Ndata_tt.n :
-            raw_input('cont')
             print 'Changing prediction from %s to %s' %( pred_sum, ufloat( Ndata_tt.n, (pred_sum.s/pred_sum.n)*Ndata_tt.n ) )
             pred_sum = ufloat( Ndata_tt.n, (pred_sum.s/pred_sum.n)*Ndata_tt.n )
             pred_sum_syst = ufloat( Ndata_tt.n, (pred_sum_syst.s/pred_sum_syst.n)*Ndata_tt.n )

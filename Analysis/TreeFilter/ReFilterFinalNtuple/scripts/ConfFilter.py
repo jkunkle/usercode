@@ -23,11 +23,13 @@ def config_analysis( alg_list, args ) :
 
     #make_nominal_unblind( alg_list, args, blind_pt=None )
 
+    #make_nominal_unblind_noEleVeto( alg_list, args, blind_pt=None )
+
     #make_nominal_unbzrej( alg_list, args )
 
-    make_final_mu( alg_list, args, blind_pt = 40 )
+    make_final_mu( alg_list, args, blind_pt = None )
 
-    #make_final_el( alg_list, args, blind_pt = 40 )
+    #make_final_el( alg_list, args, blind_pt = None )
 
     #make_looseID_noEleVeto( alg_list, args )
     #
@@ -110,9 +112,6 @@ def make_final_el( alg_list, args, blind_pt = None ) :
         alg_list.append(filter_blind)
 
 
-
-    
-
 def make_nominal_unblind( alg_list, args, blind_pt=40 ) :
     
     filter_photon = Filter( 'FilterPhoton' )
@@ -128,6 +127,28 @@ def make_nominal_unblind( alg_list, args, blind_pt=40 ) :
 
     filter_event.cut_hasPixSeed_leadph12 = ' == False '
     filter_event.cut_hasPixSeed_sublph12 = ' == False '
+
+    alg_list.append( filter_event )
+
+    if blind_pt is not None :
+        isData = args.pop('isData', 'False')
+        filter_blind = Filter( 'FilterBlind' )
+        filter_blind.cut_ph_pt_lead = ' < %d ' %blind_pt
+        filter_blind.add_var( 'isData', isData )
+        alg_list.append(filter_blind)
+
+def make_nominal_unblind_noEleVeto( alg_list, args, blind_pt=40 ) :
+    
+    filter_photon = Filter( 'FilterPhoton' )
+    filter_photon.cut_ph_medium = ' == True '
+    alg_list.append(filter_photon)
+
+    filter_muon = Filter( 'FilterMuon' )
+    filter_muon.cut_mu_pt = ' > 10 '
+    alg_list.append(filter_muon)
+
+    filter_event = Filter('FilterEvent')
+    filter_event.cut_nPh = ' > 1 '
 
     alg_list.append( filter_event )
 

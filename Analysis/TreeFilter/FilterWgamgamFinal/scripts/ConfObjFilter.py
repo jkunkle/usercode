@@ -21,43 +21,89 @@ def get_keep_filter() :
 def config_analysis( alg_list, args ) :
     """ Configure analysis modules. Order is preserved """
 
+    #----------------------------------------
+    # Get the isData flag from the args
+    # so it isnt used in the args below
+    #----------------------------------------
+    isData = args.pop('isData', 'False')
+
+    #----------------------------------------
     # lepton and photon filters must be run 
     # before the jet filter
+    # to properly handle the overlap removal
+    #----------------------------------------
+
+    
+    #----------------------------------------
+    # Nominal muon filter
+    #----------------------------------------
     alg_list.append( get_muon_filter( ptcut=10 ) )
+
+    #----------------------------------------
+    # Nominal electron filter
+    #----------------------------------------
     alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=10 ) )
+    print 'SAVING MVA ELECTRONS'
+
+    #----------------------------------------
+    # Other electron filters
+    #----------------------------------------
     #alg_list.append( get_electron_filter( 'tightTrig' ) )
     #alg_list.append( get_electron_filter( None ) )
+
+    #----------------------------------------
+    # Nominal photon filter
+    #----------------------------------------
+    alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True ) )
+    print 'SAVING NOID PHOTONS, WITH ELE OLAP REMOVAL'
+
+    #----------------------------------------
+    # Other photon filters
+    #----------------------------------------
     #alg_list.append( get_photon_filter( 'looseNoSIEIE', ptcut=15 ) )
     #alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15, sort_by_id=True ) )
     #alg_list.append( get_photon_filter( id=None, eVeto='hasPixSeed', ptcut=15 ) )
     #alg_list.append( get_photon_filter( id='medium', eVeto='hasPixSeed', ptcut=15, sort_by_id=True) )
     #alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True ) )
-    alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=True ) )
-    alg_list.append( get_jet_filter(do_hists=False) )
-    #print 'SAVING Medium PHOTONS, WITH ELE OLAP'
-    print 'SAVING NOID PHOTONS, WITH ELE OLAP'
-    print 'SAVING MVA ELECTRONS'
 
-    
+    #----------------------------------------
+    # Nominal jet filter
+    #----------------------------------------
+    alg_list.append( get_jet_filter(do_hists=False) )
+
+    #----------------------------------------
+    # Calculate event level variables
+    #----------------------------------------
     alg_list.append( Filter( 'CalcEventVars' ) )
+
+    #----------------------------------------
+    # Calculate truth level variables
+    #----------------------------------------
     alg_list.append( Filter( 'BuildTruth' ) )
 
-    isData = args.pop('isData', 'False')
-
+    #----------------------------------------
+    # Set event level cuts that are passed
+    # from the scheduler
+    #----------------------------------------
     filter_event = Filter('FilterEvent')
     for cut, val in args.iteritems() :
         setattr(filter_event, cut, val)
 
     alg_list.append( filter_event )
 
-    filter_blind = Filter( 'FilterBlind' )
-    filter_blind.cut_ph_pt_lead = ' < 40 '
-    #filter_blind.cut_nPhPassMedium = ' < 2 '
-    #filter_blind.cut_m_lepphph= ' > 86.2 & < 96.2  '
-    #filter_blind.cut_m_lepph1= ' > 86.2 & < 96.2  '
-    #filter_blind.cut_m_lepph2= ' > 86.2 & < 96.2  '
-    filter_blind.add_var( 'isData', isData )
-    #alg_list.append(filter_blind)
+    ##----------------------------------------
+    ## Apply blinding
+    ## DISABLED
+    ##----------------------------------------
+    ## Apply blinding
+    #filter_blind = Filter( 'FilterBlind' )
+    #filter_blind.cut_ph_pt_lead = ' < 40 '
+    ##filter_blind.cut_nPhPassMedium = ' < 2 '
+    ##filter_blind.cut_m_lepphph= ' > 86.2 & < 96.2  '
+    ##filter_blind.cut_m_lepph1= ' > 86.2 & < 96.2  '
+    ##filter_blind.cut_m_lepph2= ' > 86.2 & < 96.2  '
+    #filter_blind.add_var( 'isData', isData )
+    ##alg_list.append(filter_blind)
 
 
 

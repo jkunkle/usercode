@@ -179,6 +179,7 @@ namespace OUT {
     std::vector<float>  *el_sigmaIEIE;
     std::vector<float>  *el_pfiso30;
     std::vector<float>  *el_pfiso40;
+    std::vector<int>    *el_charge;
     std::vector<Bool_t> *el_triggerMatch;
     std::vector<Bool_t> *el_hasMatchedConv;
     std::vector<Bool_t> *el_passTight;
@@ -204,14 +205,28 @@ namespace OUT {
     std::vector<float>  *mu_eta_uncorr;
     std::vector<float>  *mu_phi_uncorr;
     std::vector<float>  *mu_e_uncorr;
+    std::vector<Bool_t> *mu_isGlobal;
+    std::vector<Bool_t> *mu_isPF;
+    std::vector<float>  *mu_chi2;
+    std::vector<int>    *mu_nHits;
+    std::vector<int>    *mu_nMuStations;
+    std::vector<int>    *mu_nPixHits;
+    std::vector<int>    *mu_nTrkLayers;
+    std::vector<float>  *mu_d0;
+    std::vector<float>  *mu_z0;
     std::vector<float>  *mu_pfIso_ch;
     std::vector<float>  *mu_pfIso_nh;
     std::vector<float>  *mu_pfIso_pho;
     std::vector<float>  *mu_pfIso_pu;
     std::vector<float>  *mu_corrIso;
+    std::vector<float>  *mu_trkIso;
+    std::vector<int>    *mu_charge;
     std::vector<Bool_t> *mu_triggerMatch;
     std::vector<Bool_t> *mu_triggerMatchDiMu;
     std::vector<Bool_t> *mu_passTight;
+    std::vector<Bool_t> *mu_passTightNoIso;
+    std::vector<Bool_t> *mu_passTightNoD0;
+    std::vector<Bool_t> *mu_passTightNoIsoNoD0;
     std::vector<Bool_t> *mu_truthMatch;
     std::vector<float>  *mu_truthMinDR;
 

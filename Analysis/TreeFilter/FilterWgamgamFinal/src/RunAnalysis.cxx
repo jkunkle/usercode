@@ -157,6 +157,10 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("isEB_sublph12", &OUT::isEB_sublph12, "isEB_sublph12/O" );
     outtree->Branch("isEE_leadph12", &OUT::isEE_leadph12, "isEE_leadph12/O" );
     outtree->Branch("isEE_sublph12", &OUT::isEE_sublph12, "isEE_sublph12/O" );
+    outtree->Branch("truthMatchPh_leadph12", &OUT::truthMatchPh_leadph12, "truthMatchPh_leadph12/O" );
+    outtree->Branch("truthMatchPh_sublph12", &OUT::truthMatchPh_sublph12, "truthMatchPh_sublph12/O" );
+    outtree->Branch("truthMatchPhMomPID_leadph12", &OUT::truthMatchPhMomPID_leadph12, "truthMatchPhMomPID_leadph12/O" );
+    outtree->Branch("truthMatchPhMomPID_sublph12", &OUT::truthMatchPhMomPID_sublph12, "truthMatchPhMomPID_sublph12/O" );
 
     outtree->Branch("m_nearestToZ"   , &OUT::m_nearestToZ   , "m_nearestToZ/F"     );
     outtree->Branch("m_minZdifflepph", &OUT::m_minZdifflepph, "m_minZdifflepph/F"     );
@@ -471,7 +475,14 @@ void RunModule::FilterElectron( ModuleConfig & config ) const {
         if( !config.PassBool( "cut_el_tight", IN::el_passTight->at(idx)) ) continue;
         if( !config.PassBool( "cut_el_tightTrig", IN::el_passTightTrig->at(idx)) ) continue;
         if( !config.PassBool( "cut_el_mvaTrig", IN::el_passMvaTrig->at(idx)) ) continue;
-        if( !config.PassBool( "cut_el_mvaNonTrig", IN::el_passMvaNonTrig->at(idx)) ) continue;
+
+        // before making the mvaNonTrigCut, first check
+        // that the electron is not a triggered electron
+        if( ! ( IN::el_triggerMatch->at(idx) && IN::el_passMvaTrig->at(idx) ) ) {
+            if( !config.PassBool( "cut_el_mvaNonTrig", IN::el_passMvaNonTrig->at(idx)) ) continue;
+        }
+
+
 
         // Remove electrons that overlap with muons
         float mindr = 100.;
@@ -734,6 +745,9 @@ void RunModule::FilterMuon( ModuleConfig & config ) const {
         if( !config.PassFloat( "cut_mu_eta", fabs(IN::mu_eta->at(idx) ) ) ) continue;
         if( !config.PassFloat( "cut_mu_corriso", IN::mu_corrIso->at(idx)/IN::mu_pt->at(idx)) ) continue;
         if( !config.PassBool( "cut_mu_passTight", IN::mu_passTight->at(idx)) ) continue;
+        if( !config.PassBool( "cut_mu_passTightNoIso", IN::mu_passTightNoIso->at(idx)) ) continue;
+        if( !config.PassBool( "cut_mu_passTightNoD0", IN::mu_passTightNoD0->at(idx)) ) continue;
+        if( !config.PassBool( "cut_mu_passTightNoIsoNoD0", IN::mu_passTightNoIsoNoD0->at(idx)) ) continue;
 
         CopyPrefixIndexBranchesInToOut( "mu_", idx );
         OUT::mu_pt->pop_back();
@@ -1097,8 +1111,8 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     OUT::EventWeight = 1.0;
 
     TLorentzVector metlv;
-#ifdef EXISTS_pfMET
-    metlv.SetPtEtaPhiM( OUT::pfMET, 0.0, OUT::pfMETPhi, 0.0 );
+#ifdef EXISTS_pfType01MET
+    metlv.SetPtEtaPhiM( OUT::pfType01MET, 0.0, OUT::pfType01METPhi, 0.0 );
 #endif
 
     #ifdef EXISTS_el_n
@@ -1363,6 +1377,10 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
                 OUT::isEB_sublph12 = OUT::ph_IsEB->at(1);
                 OUT::isEE_leadph12 = OUT::ph_IsEE->at(0);
                 OUT::isEE_sublph12 = OUT::ph_IsEE->at(1);
+                OUT::truthMatchPh_leadph12 = OUT::ph_truthMatch_ph->at(0);
+                OUT::truthMatchPh_sublph12 = OUT::ph_truthMatch_ph->at(1);
+                OUT::truthMatchPhMomPID_leadph12 = OUT::ph_truthMatchMotherPID_ph->at(0);
+                OUT::truthMatchPhMomPID_sublph12 = OUT::ph_truthMatchMotherPID_ph->at(1);
             }
             else {
                 OUT::pt_leadph12 = photons[1].Pt();
@@ -1383,6 +1401,10 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
                 OUT::isEB_sublph12 = OUT::ph_IsEB->at(0);
                 OUT::isEE_leadph12 = OUT::ph_IsEE->at(1);
                 OUT::isEE_sublph12 = OUT::ph_IsEE->at(0);
+                OUT::truthMatchPh_leadph12 = OUT::ph_truthMatch_ph->at(1);
+                OUT::truthMatchPh_sublph12 = OUT::ph_truthMatch_ph->at(0);
+                OUT::truthMatchPhMomPID_leadph12 = OUT::ph_truthMatchMotherPID_ph->at(1);
+                OUT::truthMatchPhMomPID_sublph12 = OUT::ph_truthMatchMotherPID_ph->at(0);
             }
 
             if( sorted_leptons.size() > 0 ) {
@@ -1571,8 +1593,18 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     int nPhTruthMatchEl = 0;
     int nPhPassSIEIEAndEVeto =0;
 
+    std::vector<TLorentzVector> leptons;
+
     for( int i = 0; i < OUT::mu_n; ++i ) {
         nLep++;
+        TLorentzVector tlv;
+        tlv.SetPtEtaPhiE( OUT::mu_pt->at(i), 
+                          OUT::mu_eta->at(i), 
+                          OUT::mu_phi->at(i), 
+                          OUT::mu_e->at(i) );
+
+        leptons.push_back(tlv);
+        
         if( OUT::mu_pt->at(i) > 25 ) {
             nLep25++;
         }
@@ -1591,6 +1623,15 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
         nLep++;
         nElPh++;
         nEl++;
+
+        TLorentzVector tlv;
+        tlv.SetPtEtaPhiE( OUT::el_pt->at(i), 
+                          OUT::el_eta->at(i), 
+                          OUT::el_phi->at(i), 
+                          OUT::el_e->at(i) );
+
+        leptons.push_back(tlv);
+
         if( OUT::el_pt->at(i) > 25 ) {
             nLep25++;
         }
@@ -1601,7 +1642,7 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
             nLep10++;
         }
 
-        if( OUT::el_pt->at(i) > 30 && OUT::el_triggerMatch->at(i) && OUT::el_passMvaTrig->at(i) ) {
+        if( OUT::el_pt->at(i) > 25 && OUT::el_triggerMatch->at(i) && OUT::el_passMvaTrig->at(i) ) {
             nLepTrigMatch++;
             nElTrigMatch++;
         }
@@ -1640,6 +1681,14 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
             if( !config.PassBool( "cut_hasPixSeed_sublph12", OUT::ph_hasPixSeed->at(0) ) ) keep_event = false;
         }
     }
+
+    if( leptons.size() > 1 && config.HasCut( "cut_m_leplep" ) ) { 
+
+        float mass = (leptons[0] + leptons[1] ).M();
+
+        if( !config.PassFloat( "cut_m_leplep", mass ) ) keep_event = false;
+    }
+
 
     #endif //el_n
     #endif //mu_n

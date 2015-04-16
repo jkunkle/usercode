@@ -31,7 +31,8 @@ def main() :
     #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
     signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_12_08'
     bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_12_08'
-    run_full_fit( signal_base, bkg_base, lands=False, combine=True)
+    #run_full_fit( signal_base, bkg_base, lands=False, combine=True)
+    run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_04_13/BackgroundEstimatesNew/FinalPlots/')
 
 def run_onebin_fit(lands=False) :
 
@@ -97,6 +98,59 @@ def run_allbin_fit_mcbkg() :
 
     fit_allbin.create_config()
     ##fit_onebin.run_fit()
+
+def run_comb_fit( result_base ) :
+
+    file_electron = '%s/pt_leadph12_egg.pickle' %result_base
+    file_muon     = '%s/pt_leadph12_mgg.pickle' %result_base
+
+    results = {}
+    results['electron'] = file_electron
+    results['muon'] = file_muon
+
+    fit_allbin = FitConfig( name='comb_fit')
+
+    ptbins = ['15', '25', '40', '70', 'max']
+    for ch in results.keys() :
+
+        if ch=='electron' :
+            continue
+        for bidx, min in enumerate( ptbins[:-1] ) :
+            max = ptbins[bidx+1]
+
+            #if int(min) >= 40 :
+            #    continue
+
+            ch_bin = fit_allbin.create_channel(chName='bin__%s__%s_%s' %(ch, min, max))
+
+            # ---------------------------------
+            # separate systematics by channel
+            # ---------------------------------
+            ch_bin.AddSample( 'signal' , results[ch], ['detail', 'Wgg', 'bins', str(bidx+4), 'val'], isSig=True, err={'Lumi' : 1.1 }  )
+            ch_bin.AddSample( 'Zgg'    , results[ch], ['detail', 'ZggFSR', 'bins', str(bidx+4), 'val'], err={'Lumi' : 1.1, 'Syst_Zgg' : ( results[ch], ['detail', 'ZggFSR', 'bins', str(bidx+4), 'val']  ) } )
+            ch_bin.AddSample( 'jetfake', results[ch], ['detail', 'JetFake', 'bins', str(bidx+4), 'val'], 
+                                 err={
+                                      'Syst_jetfake__%s__sum_%s-%s'%(ch, min, max) : ( results[ch], ['detail', 'JetFake', 'bins', str(bidx+4), 'val'] ) , 
+                                      'Syst_jetfake_closure' : 1.10, 
+                                      } 
+                                )
+            if ch=='electron' :
+                ch_bin.AddSample( 'elefake', results[ch], ['detail', 'EleFake', 'bins', str(bidx+4), 'val'], 
+                                err={
+                                      'Syst_elefake__egg_%s-%s'%(min, max)  : (results[ch],['detail', 'EleFake', 'bins', str(bidx+4), 'val'] ),
+                                      'Syst_elefake_closure' : 1.15,
+                                    } 
+                                 )
+
+            else :
+                ch_bin.AddSample( 'elefake', )
+
+            ch_bin.AddData( results[ch], ['detail', 'Data', 'bins', str(bidx+4), 'val']  )
+
+
+    # lands config is the same as for combine
+    fit_allbin.create_lands_config()
+    fit_allbin.run_combine()
 
 def run_full_fit(event_base, bkg_base, lands=False, combine=False) :
 
@@ -607,11 +661,11 @@ class FitConfig :
 
     def run_combine(self)  :
         #os.system( 'Lands/test/lands.exe -d %s -M Asymptotic  -rMin 1 -rMax 10' %self.filename_lands )
-        #os.system( 'echo combine -M ProfileLikelihood --signif --rMin 1 --rMax 10 %s ' %self.filename_lands )
-        #os.system( 'combine -M ProfileLikelihood --signif --rMin 1 --rMax 10 %s ' %self.filename_lands )
+        os.system( 'echo combine -M ProfileLikelihood --signif --rMin 1 --rMax 10 %s ' %self.filename_lands )
+        os.system( 'combine -M ProfileLikelihood --signif --rMin 1 --rMax 10 %s ' %self.filename_lands )
 
-        os.system( 'echo combine -M MaxLikelihoodFit %s ' %self.filename_lands )
-        os.system( 'combine -M MaxLikelihoodFit %s ' %self.filename_lands )
+        #os.system( 'echo combine -M MaxLikelihoodFit %s ' %self.filename_lands )
+        #os.system( 'combine -M MaxLikelihoodFit %s ' %self.filename_lands )
 
     def generate_xml( self ) :
 

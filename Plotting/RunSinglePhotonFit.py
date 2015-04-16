@@ -40,6 +40,7 @@ p.add_argument('--outputDir',     default=None,  type=str ,        dest='outputD
 p.add_argument('--readHists',     default=False,action='store_true',   dest='readHists',         help='read histograms from root files instead of trees')
 p.add_argument('--quiet',     default=False,action='store_true',   dest='quiet',         help='disable information messages')
 p.add_argument('--syst_file',     default=None,  type=str ,        dest='syst_file',         help='Location of systematics file')
+p.add_argument('--fitvar',     default='sigmaIEIE',  type=str ,        dest='fitvar',         help='Variable to use in the fit')
 
 p.add_argument('--nom', default=False, action='store_true', dest='nom', help='run nom' )
 p.add_argument('--loose', default=False, action='store_true', dest='loose', help='run loose' )
@@ -71,7 +72,7 @@ sampManFit = None
 def get_default_draw_commands(ch='mu' ) :
 
     real_fake_cmds = {
-                      'real' :'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 ' , 
+                      'real' :'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && leadPhot_leadLepDR < 1 ' , 
                       'fake' :'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ',
                       'fakewin' :'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
                       'realwin' :'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
@@ -131,6 +132,8 @@ def get_default_binning(var='sigmaIEIE') :
         return { 'EB' : (30, 0, 45), 'EE' : (35, 0, 42) }
     elif var == 'neuIsoCorr' :
         return { 'EB' : (40, -2, 38), 'EE' : (30, -2, 43) }
+    elif var == 'phoIsoCorr' :
+        return { 'EB' : (53, -2.1, 35), 'EE' : (42, -2, 40) }
 
 _sieie_cuts  = { 'EB' : 0.011, 'EE' : 0.033 }
 _chIso_cuts  = { 'EB' : 1.5, 'EE' : 1.2 }
@@ -151,6 +154,10 @@ def get_default_cuts(var='sigmaIEIE') :
     elif var == 'neuIsoCorr' :
         return { 'EB' : { 'tight' : ( -2, 1.0-0.01  ), 'loose' : ( 1.0001, 40 ) },
                  'EE' : { 'tight' : ( -2, 1.5-0.01 ), 'loose' : ( 1.5001, 45 ) } 
+               }
+    elif var == 'phoIsoCorr' :
+        return { 'EB' : { 'tight' : ( -2.1, 0.7-0.001  ), 'loose' : ( 0.70001, 35 ) },
+                 'EE' : { 'tight' : ( -2, 1.0-0.001 ), 'loose' : ( 1.0001, 50 ) } 
                }
 
 
@@ -221,7 +228,7 @@ def main() :
         load_syst_file( options.syst_file )
 
     if options.nom :
-        RunNomFitting( outputDir = options.outputDir, ch=options.channel)
+        RunNomFitting( outputDir = options.outputDir, ch=options.channel, fitvar=options.fitvar)
 
 def load_syst_file( file ) :
 
@@ -232,21 +239,30 @@ def load_syst_file( file ) :
 
     ofile.close()
 
-def RunNomFitting( outputDir = None, ch='mu') :
+def RunNomFitting( outputDir = None, ch='mu', fitvar=None) :
 
     outputDirNom = None
     if outputDir is not None :
-        outputDirNom = outputDir + '/SinglePhotonResults/JetSinglePhotonFakeNomIso'
-        #outputDirNom = outputDir + '/SinglePhotonResults/ChHadIsoFits/JetSinglePhotonFakeNomIso'
+        if fitvar == 'sigmaIEIE' :
+            outputDirNom = outputDir + '/SinglePhotonResults/SigmaIEIEFits/JetSinglePhotonFakeNomIso'
+        elif fitvar == 'chIsoCorr' :
+            outputDirNom = outputDir + '/SinglePhotonResults/ChHadIsoFits/JetSinglePhotonFakeNomIso'
+        elif fitvar == 'neuIsoCorr' :
+            outputDirNom = outputDir + '/SinglePhotonResults/NeuHadIsoFits/JetSinglePhotonFakeNomIso'
+        elif fitvar == 'phoIsoCorr' :
+            outputDirNom = outputDir + '/SinglePhotonResults/PhoIsoFits/JetSinglePhotonFakeNomIso'
 
     ptbins = [15, 25, 40, 70, 1000000 ]
     #ptbins = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 100, 1000000 ]
 
-    iso_cuts_full = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-    fitvar = 'sigmaIEIE'
-
-    #iso_cuts_full = 'ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-    #fitvar = 'chIsoCorr'
+    if fitvar == 'sigmaIEIE' :
+        iso_cuts_full = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+    elif fitvar == 'chIsoCorr' :
+        iso_cuts_full = 'ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+    elif fitvar == 'neuIsoCorr' :
+        iso_cuts_full = 'ph_passChIsoCorrMedium[0] && ph_passSIEIEMedium[0] && ph_passPhoIsoCorrMedium[0] '
+    elif fitvar == 'phoIsoCorr' :
+        iso_cuts_full = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passSIEIEMedium[0] '
 
     do_nominal_fit( iso_cuts_full, ptbins=ptbins, fitvar=fitvar, ch=ch, outputDir = outputDirNom, systematics='Nom')
 

@@ -241,6 +241,10 @@ namespace OUT {
     Bool_t             isEE_leadph12;
     Bool_t             isEB_sublph12;
     Bool_t             isEE_sublph12;
+    Bool_t             truthMatchPh_leadph12;
+    Bool_t             truthMatchPh_sublph12;
+    Bool_t             truthMatchPhMomPID_leadph12;
+    Bool_t             truthMatchPhMomPID_sublph12;
 
 
     Float_t m_nearestToZ;

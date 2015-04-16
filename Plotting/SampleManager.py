@@ -807,6 +807,8 @@ class SampleManager :
             oldsample = _oldsample[0]
         else :
             print 'Could not locate old sample'
+            print 'new name = ', newname
+            print 'old name = ', oldname
             return None
 
         newsample = copy.copy( oldsample )
@@ -1217,7 +1219,9 @@ class SampleManager :
         for sample in all_samples :
             config_name = '%s/configs/config_%s.txt' %(compile_base, sample.name)
             entries = sample.chain.GetEntries()
-            file_evt_map = core.get_file_evt_map( [f.GetTitle() for f in sample.chain.GetListOfFiles()], nsplit=5, nFilesPerJob=0, totalEvents=None, treeName='ggNtuplizer/EventTree')
+            #file_evt_map = core.get_file_evt_map( [f.GetTitle() for f in sample.chain.GetListOfFiles()], nsplit=5, nFilesPerJob=0, totalEvents=None, treeName='ggNtuplizer/EventTree')
+            print '*******************************FIX*****************************'
+            file_evt_map = core.get_file_evt_map( [f.GetTitle() for f in sample.chain.GetListOfFiles()], nsplit=0, nFilesPerJob=1, totalEvents=None, treeName='ggNtuplizer/EventTree')
             #file_evt_map = [ ([f.GetTitle() for f in sample.chain.GetListOfFiles()], [(0, entries)] ) ]
             core.write_config([], config_name, sample.chain.GetName(), output_loc, '%s.root'%sample.name, file_evt_map, sample=sample.name, disableOutputTree=True )
             configs.append((entries, config_name))
@@ -1863,7 +1867,7 @@ class SampleManager :
         self.ReadSamples(self.samples_conf )
 
     #--------------------------------
-    def AddSample(self, name, path=None, filekey=None, isData=False, scale=None, isSignal=False, drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, isActive=True, displayErrBand=False, useXSFile=False, XSName=None, legend_name=None) :
+    def AddSample(self, name, path=None, filekey=None, isData=False, scale=None, isSignal=False, drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, isActive=True, required=False, displayErrBand=False, useXSFile=False, XSName=None, legend_name=None) :
         """ Create an entry for this sample """
 
         # get all root files under this sample
@@ -1917,6 +1921,12 @@ class SampleManager :
             # keep the order that this sample was added
             if not isData and not isSignal and isActive :
                 self.stack_order.append(name)
+
+        if not input_files and required :
+            print '***********************************************' 
+            print 'Sample, %s does not exist and is required by this module' %name
+            print '***********************************************' 
+            sys.exit(-1)
 
         print_prefix = "Reading %s (%s) " %(name, path )
         print_prefix = print_prefix.ljust(60)
@@ -2122,10 +2132,11 @@ class SampleManager :
             print 'WARNING - samplesConf does not implement a function called print_examples '
 
 
-    def DrawHist(self, histpath, rebin=None, varRebinThresh=None, doratio=False, ylabel=None, xlabel=None, rlabel=None, logy=False, ymin=None, ymax=None, rmin=None, rmax=None, label_config={}, legend_config={} ) :
+    def DrawHist(self, histpath, rebin=None, varRebinThresh=None, doratio=False, subtract_bkg=False, ylabel=None, xlabel=None, rlabel=None, logy=False, ymin=None, ymax=None, rmin=None, rmax=None, label_config={}, legend_config={} ) :
 
         self.clear_all()
-        self.get_active_samples( histpath )
+        for sample in self.samples :
+            self.get_hist( sample, histpath )
 
         if varRebinThresh is not None :
             self.variable_rebinning(varRebinThresh) 
@@ -2138,33 +2149,74 @@ class SampleManager :
         draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel} , label_config=label_config, legend_config=legend_config)
         self.MakeStack(draw_config )
 
+
         if ylabel is None :
             binwidth = self.get_samples(isActive=True)[0].hist.GetBinWidth(1)
             ylabel = 'Events / %.1f GeV' %binwidth
         if rlabel is None :
             rlabel = 'Data / MC'
 
+        datahists = ['Data']
+        if subtract_bkg :
+            new_data = self.clone_sample( 'Data', 'DataSub', temporary=True )
+            data_hist = self.get_samples( name='Data' )[0].hist
+            bkg_hist = self.get_samples( name='Background' )[0].hist
+            new_bkg = self.clone_sample( 'Background', 'BackgroundSub', temporary=True )
+
+            new_data.hist = data_hist.Clone( 'DataSub' )
+            new_bkg.hist = bkg_hist.Clone( 'BackgroundSub' )
+            for bin in range( 1, data_hist.GetNbinsX() + 1 ) :
+                data_val = data_hist.GetBinContent( bin )
+                data_err = data_hist.GetBinError( bin )
+                
+                bkg_val = bkg_hist.GetBinContent( bin )
+                bkg_err = bkg_hist.GetBinError( bin )
+
+                new_bkg.hist.SetBinContent( bin, 0. )
+
+                new_val = data_val - bkg_val
+                #new_err = math.sqrt( data_err*data_err + bkg_err*bkg_err )
+                new_err = data_err
+
+                new_data.hist.SetBinContent( bin, new_val )
+                new_data.hist.SetBinError( bin, new_err )
+
+            datahists = ['DataSub']
+
         errSamp = None
-        for samp in self.get_samples( isActive=True ) :
-            if samp.displayErrBand :
-                print samp.name
-                all_stack_hist = self.get_samples( name='__AllStack__' )[0].hist
-                if errSamp is None :
-                    errSamp = self.clone_sample( samp.name, 'err_band', temporary=True )
-                    errSamp.hist = all_stack_hist.Clone('err_band')
-                    for bin in range(1, errSamp.hist.GetNbinsX() + 1 ) :
-                        errSamp.hist.SetBinContent(bin, 0)
-                        errSamp.hist.SetBinError(bin, 0)
-                for bin in range(1, all_stack_hist.GetNbinsX()+1 ) :
+        err_samp_list = [ s for s in self.get_samples( isActive=True ) if s.displayErrBand ]
+        if subtract_bkg :
+            err_samp_list = self.get_samples( name='DataSub' )
+            #err_samp_list = []
+
+        for samp in err_samp_list :
+            bkg_name = '__AllStack__'
+            if subtract_bkg :
+                bkg_name = 'BackgroundSub'
+
+            all_stack_hist = self.get_samples( name=bkg_name )[0].hist
+            if errSamp is None :
+                errSamp = self.clone_sample( samp.name, 'err_band', temporary=True )
+                errSamp.hist = all_stack_hist.Clone('err_band')
+                for bin in range(1, errSamp.hist.GetNbinsX() + 1 ) :
+                    errSamp.hist.SetBinContent(bin, 0)
+                    errSamp.hist.SetBinError(bin, 0)
+            for bin in range(1, all_stack_hist.GetNbinsX()+1 ) :
+                # set the bin content to the stack sum
+                # unless the background is subtracted
+                # at which point it should be at zero
+                if not subtract_bkg :
                     errSamp.hist.SetBinContent( bin, all_stack_hist.GetBinContent( bin ) )
-                    curr_err = errSamp.hist.GetBinError( bin )
-                    this_err = samp.hist.GetBinError(bin)
-                    errSamp.hist.SetBinError( bin, math.sqrt( curr_err*curr_err + this_err*this_err )  )
+                curr_err = errSamp.hist.GetBinError( bin )
+                this_err = samp.hist.GetBinError(bin)
+                errSamp.hist.SetBinError( bin, math.sqrt( curr_err*curr_err + this_err*this_err )  )
 
         if errSamp is not None :
             errSamp.graph = ROOT.TGraphErrors( errSamp.hist )
 
-        self.DrawCanvas(self.curr_stack, draw_config, datahists=['Data'],sighists=self.get_signal_samples(), errhists=['err_band']  )
+
+
+        self.DrawCanvas(self.curr_stack, draw_config, datahists=datahists, sighists=self.get_signal_samples(), errhists=['err_band']  )
 
 
     #def Draw(self, varexp, selection, histpars, doratio=False, ylabel=None, xlabel=None, rlabel=None, logy=False, ymin=None, ymax=None, ymax_scale=None, rmin=None, rmax=None, useModel=False, treeHist=None, treeSelection=None, labelStyle=None, extra_label=None, extra_label_loc=None, generate_data_from_sample=None, replace_selection_for_sample={}, legendConfig=None  ) :
@@ -2836,8 +2888,10 @@ class SampleManager :
         elif isinstance( hist, ROOT.TH1 ) :
 
             nbinsx = hist.GetNbinsX()
-
+            #overflow
             self.combine_overflow_bin( hist, nbinsx, nbinsx+1 )
+            #underflow
+            self.combine_overflow_bin( hist, 1, 0 )
 
 
     def get_single_mod_bins( self, bin, bin_collection ) :

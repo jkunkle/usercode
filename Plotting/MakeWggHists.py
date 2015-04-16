@@ -90,16 +90,16 @@ def main() :
     global samplesLLG
     global samplesPhOlap
 
-    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2014_12_23'
-    baseDirWgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindLowPt_2014_12_23'
-    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_12_23'
+    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11'
+    baseDirWgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindAllNoEleVeto_2015_04_12'
+    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_04_11'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
 
-    sampleConfWgg = 'Modules/Wgamgam.py'
-    sampleConfWg  = 'Modules/Wgamgam.py'
-    sampleConfLLG = 'Modules/Wgamgam.py'
+    sampleConfWgg = 'Modules/PlotWgamgam.py'
+    sampleConfWg  = 'Modules/PlotWgamgam.py'
+    sampleConfLLG = 'Modules/PlotWgamgam.py'
     sampleConfPhOlap = 'Modules/PhOlapComp.py'
 
     samplesWgg     = SampleManager(baseDirWgg, treename, filename=filename, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
@@ -1613,78 +1613,6 @@ def MakePhotonJetFakePlots(save=False, detail=100 ) :
         raw_input('continue')
 
 
-    # ------------------------------------
-    # moved to another fuction
-    # keep temporarily in case of problems
-    #pt_bins = [(None, None)]
-    #for idx, min in enumerate( analysis_bins_mgg[:-1] ) :
-    #    max = analysis_bins_mgg[idx+1]
-    #    if min < 15 : 
-    #        continue
-    #    if max == analysis_bins_mgg[-1] :
-    #        pt_bins.append( (min, None) )
-    #        if min > 15 : # for sublead photon pt range
-    #            pt_bins.append( ( 15, None ) )
-    #    else :
-    #        pt_bins.append( (min, max) )
-    #        if min > 15 : # for sublead photon pt range
-    #            pt_bins.append( ( 15, max ) )
-
-    #for ptmin, ptmax in pt_bins :
-
-    #    cut_str = ''
-    #    name_str = ''
-
-    #    if ptmin is not None :
-    #        cut_str += ' && ph_pt[0] > %d' %ptmin
-    #        name_str = '__pt_%d-max' %ptmin
-    #    if ptmax is not None :
-    #        cut_str += ' && ph_pt[0] < %d' %ptmax
-    #        name_str = '__pt_%d-%d' %(ptmin, ptmax)
-
-    #    binning_nom = {'EB' : (60, 0, 0.03), 'EE' : (50, 0, 0.1)}
-    #    binning_two = {'EB' : [0, 0.011, 0.03], 'EE' : [0, 0.033, 0.1]}
-    #    for reg in ['EB', 'EE'] :
-
-    #        samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5  && %s && ph_Is%s[0] %s)'%(photon_cuts_nopix_nosieie, fsr_cut, reg, cut_str)]*2 + ['PUWeight * (mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_Is%s[0] && leadPhot_leadLepDR>0.4 %s )' %(photon_cuts_nopix_nosieie, reg, cut_str)], ['Data', 'Zgamma', 'Wgamma'], binning_nom[reg], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] } )
-
-    #        if save :
-    #            name = 'ph_sigmaIEIE__%s%s__CompDataRealPhotonMCTruthMatchPhoton'%(reg,name_str)
-    #            samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-    #        else :
-    #            raw_input('continue')
-
-    #        samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5 && %s && ph_Is%s[0] %s)'%(photon_cuts_nopix_nosieie, fsr_cut, reg,cut_str)]*2 + ['PUWeight * (mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_Is%s[0] && leadPhot_leadLepDR>0.4 %s )' %(photon_cuts_nopix_nosieie, reg, cut_str)], ['Data', 'Zgamma', 'Wgamma'], binning_two[reg], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] } )
-
-    #        if save :
-    #            name = 'ph_sigmaIEIE__%s%s__CompDataRealPhotonMCTruthMatchPhoton_twoBin'%(reg,name_str)
-    #            samplesWg.DumpStack(options.outputDir+'/'+subdir, name )
-    #            samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-    #        else :
-    #            samplesWg.DumpStack('test/'+subdir, 'test')
-    #            raw_input('continue')
-
-    #        for iso in [(5,3,3), (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20, 16, 16)] :
-
-    #            iso_str = '__iso%d-%d-%d' %(iso)
-
-    #            samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5  && %s && ph_Is%s[0] && ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d %s)'%(photon_cuts_noiso_nopix, fsr_cut, reg, iso[0], iso[1], iso[2], cut_str)]*2 + ['PUWeight * (mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_Is%s[0] && leadPhot_leadLepDR>0.4 && ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d %s )' %(photon_cuts_noiso_nopix, reg, iso[0], iso[1], iso[2], cut_str)], ['Data', 'Zgamma', 'Wgamma'], binning_nom[reg], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] } )
-
-    #            if save :
-    #                name = 'ph_sigmaIEIE__%s%s%s__CompDataRealPhotonMCTruthMatchPhoton'%(reg,iso_str,name_str)
-    #                samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-    #            else :
-    #                raw_input('continue')
-
-    #            samplesWg.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5 && %s && ph_Is%s[0] && ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d %s)'%(photon_cuts_noiso_nopix, fsr_cut, reg, iso[0], iso[1], iso[2], cut_str)]*2 + ['PUWeight * (mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_Is%s[0] && leadPhot_leadLepDR>0.4  && ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d %s )' %(photon_cuts_noiso_nopix, reg, iso[0], iso[1], iso[2], cut_str)], ['Data', 'Zgamma', 'Wgamma'], binning_two[reg], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'#sigma i#etai#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] } )
-
-    #            if save :
-    #                name = 'ph_sigmaIEIE__%s%s%s__CompDataRealPhotonMCTruthMatchPhoton_twoBin'%(reg,iso_str,name_str)
-    #                samplesWg.DumpStack(options.outputDir+'/'+subdir, name )
-    #                samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-    #            else :
-    #                raw_input('continue')
-
     samplesWg.CompareSelections( 'ph_pt[0]', ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && fabs( m_leplepph-91.2 ) < 5 && leadPhot_leadLepDR>0.3 && leadPhot_sublLepDR > 0.3 && (leadPhot_leadLepDR < 1.0 || leadPhot_sublLepDR < 1.0 ) &&  %s  )'%photon_cuts_nopix_nosieie]*2 + ['PUWeight * (ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 )' %photon_cuts_nopix_nosieie], ['Data', 'Zgamma', 'Wgamma'], (50, 0, 200 ), hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'photon p_{T} [GeV]', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config=samplesWg.config_legend(legendWiden=1.5, legend_entries=['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] ) )
 
     if save :
@@ -1820,6 +1748,9 @@ def MakePhotonJetFakePlots(save=False, detail=100 ) :
                 
             for ptmin, ptmax in pt_bins :
 
+                if ptmin < 15 :
+                    continue
+
                 pt_str  = ''
                 pt_name = ''
                 pt_lab  = ''
@@ -1874,7 +1805,7 @@ def MakePhotonJetFakePlots(save=False, detail=100 ) :
                     # Must use Wg samples because
                     # comparison is done with Wgamma sample
                     #-----------------------------
-            
+
                     samplesWg.CompareSelections( 'ph_%s[0]'%var, ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && %s && fabs( m_leplepph-91.2 ) < 5  && %s && ph_Is%s[0] && %s)'%(cuts_full, fsr_cut, reg, pt_str)]*2 + ['PUWeight * (mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 && ph_Is%s[0] && leadPhot_leadLepDR>0.4 && %s )' %(cuts_full, reg, pt_str)], ['Data', 'Zgamma', 'Wgamma'], binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':xlabels[var], 'ylabel':'Normalized Events', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] }, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{%s}{%s}' %(reglabels[reg],pt_lab), 'extra_label_loc':(0.2, 0.86)} )
 
                     if save :

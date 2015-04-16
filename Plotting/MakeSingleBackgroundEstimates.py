@@ -3,10 +3,9 @@ from argparse import ArgumentParser
 p = ArgumentParser()
 
                                                                                        
-p.add_argument('--outputDir',     default=None,  type=str ,        dest='outputDir',         help='output directory for histograms')
 p.add_argument('--baseDir',     default=None,  type=str ,        dest='baseDir',  required=True,       help='Input directory base')
 p.add_argument('--plotDir',     default='Plots',  type=str ,        dest='plotDir',  required=False,       help='Directory where plots are written')
-p.add_argument('--ptbins',     default='15,25,40,70,1000000',  type=str ,        dest='ptbins',  required=False,       help='PT bins to use')
+p.add_argument('--ptbins',     default='15,25,40,70,200',  type=str ,        dest='ptbins',  required=False,       help='PT bins to use')
 p.add_argument('--zcr',     default=False,  action='store_true', dest='zcr',   help='Make background estimate to Z control region')
 p.add_argument('--wcr',     default=False,  action='store_true', dest='wcr',   help='Make background estimate to W control region')
 
@@ -110,12 +109,15 @@ def main() :
 
     if options.zcr :
 
-        base_dir_jet_single = '%s/SinglePhotonResults' %options.baseDir
-        outputDirSingle='%s/SinglePhotonZCRBackgroundEstimates' %options.baseDir
+        for typedir in os.listdir( '%s/SinglePhotonResults'%options.baseDir ) :
 
-        MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['mu', 'el', 'murealcr', 'elrealcr'], outputDir=outputDirSingle )
+            base_dir_jet_single = '%s/SinglePhotonResults/%s' %(options.baseDir, typedir )
+            outputDirSingle='%s/SinglePhotonZCRBackgroundEstimates/%s' %(options.baseDir, typedir)
 
-        MakeSingleBkgEstimatePlots( outputDirSingle, options.plotDir, channels=['mu', 'el', 'murealcr', 'elrealcr'], makeEleFake=False )
+            #MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['mu', 'el', 'murealcr', 'elrealcr'], outputDir=outputDirSingle )
+            #MakeSingleBkgEstimatePlots( outputDirSingle, options.plotDir, channels=['mu', 'el', 'murealcr', 'elrealcr'], makeEleFake=False )
+            MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['mu'], outputDir=outputDirSingle )
+            MakeSingleBkgEstimatePlots( outputDirSingle, options.plotDir, channels=['mu'], makeEleFake=False )
 
     print '^_^ FINSISHED ^_^'
     print 'It is safe to kill the program if it is hanging'

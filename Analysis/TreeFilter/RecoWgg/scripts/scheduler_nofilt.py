@@ -31,20 +31,21 @@ jobs = [
         #(base_data, 'job_electron_2012c_Jan2012rereco', 400),
         #(base_data, 'job_electron_2012d_Jan22rereco', 500),
 
-        ##(base_data, 'job_2muon_2012a_Jan22rereco', 50),
-        ##(base_data, 'job_2muon_2012b_Jan22rereco', 100),
-        ##(base_data, 'job_2muon_2012c_Jan22rereco', 100),
-        ##(base_data, 'job_2muon_2012d_Jan22rereco', 100),
+        ###(base_data, 'job_2muon_2012a_Jan22rereco', 50),
+        ###(base_data, 'job_2muon_2012b_Jan22rereco', 100),
+        ###(base_data, 'job_2muon_2012c_Jan22rereco', 100),
+        ###(base_data, 'job_2muon_2012d_Jan22rereco', 100),
 
-        (base_mc2, 'job_summer12_DYJetsToLL', 300 ),
-        #(base_mc, 'job_summer12_Wjets', 400),
+        #(base_mc2, 'job_summer12_DYJetsToLL', 300 ),
         #(base_mc, 'job_summer12_Wg', 50),
         #(base_mc, 'job_summer12_Zg', 200),
         #(base_me, 'job_summer12_Zgg', 5 ),
         #(base_mc, 'job_summer12_Wgg_FSR', 20),
-        #(base_mc, 'job_summer12_WAA_ISR', 20),
+        (base_mc, 'job_summer12_WAA_ISR', 20),
+    
         #(base_mc, 'job_summer12_ttjets_1l', 200),
         #(base_mc, 'job_summer12_ttjets_2l', 100),
+        #(base_mc, 'job_summer12_Wjets', 400),
 
         #(base_mc, 'job_summer12_ttg', 20),
         #(base_mc, 'job_summer12_WH_ZH_125', 10),
@@ -122,10 +123,10 @@ module = 'ConfWgamgamReco.py'
 #output = 'RecoOutput_2014_12_05'
 #output = 'RecoOutputDiMuon_2014_11_27'
 #output = 'LepGammaNoEleVetoNewVar_2014_05_02'
-output = 'RecoOutput_2015_02_02'
+output = 'RecoOutputNoTrig_2015_04_05'
 
 nFilesPerJob = 1
-nProc = 5
+nProc = 6
 exename='RunAnalysisMC'
 treename='ggNtuplizer/EventTree'
 

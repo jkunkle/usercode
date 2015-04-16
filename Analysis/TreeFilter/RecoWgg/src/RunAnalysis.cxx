@@ -64,6 +64,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::el_sigmaIEIE              = 0;
     OUT::el_pfiso30                = 0;
     OUT::el_pfiso40                = 0;
+    OUT::el_charge                 = 0;
     OUT::el_triggerMatch           = 0;
     OUT::el_hasMatchedConv         = 0;
     OUT::el_passTight              = 0;
@@ -88,14 +89,28 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::mu_eta_uncorr             = 0;
     OUT::mu_phi_uncorr             = 0;
     OUT::mu_e_uncorr               = 0;
+    OUT::mu_isGlobal               = 0;
+    OUT::mu_isPF                   = 0;
+    OUT::mu_chi2                   = 0;
+    OUT::mu_nHits                  = 0;
+    OUT::mu_nMuStations            = 0;
+    OUT::mu_nPixHits               = 0;
+    OUT::mu_nTrkLayers             = 0;
+    OUT::mu_d0                     = 0;
+    OUT::mu_z0                     = 0;
     OUT::mu_pfIso_ch               = 0;
     OUT::mu_pfIso_nh               = 0;
     OUT::mu_pfIso_pho              = 0;
     OUT::mu_pfIso_pu               = 0;
     OUT::mu_corrIso                = 0;
+    OUT::mu_trkIso                 = 0;
+    OUT::mu_charge                 = 0;
     OUT::mu_triggerMatch           = 0;
     OUT::mu_triggerMatchDiMu       = 0;
     OUT::mu_passTight              = 0;
+    OUT::mu_passTightNoIso         = 0;
+    OUT::mu_passTightNoD0          = 0;
+    OUT::mu_passTightNoIsoNoD0     = 0;
     OUT::mu_truthMatch             = 0;
     OUT::mu_truthMinDR             = 0;
     OUT::ph_pt                     = 0;
@@ -199,6 +214,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("el_sigmaIEIE"              , &OUT::el_sigmaIEIE              );
     outtree->Branch("el_pfiso30"                , &OUT::el_pfiso30                );
     outtree->Branch("el_pfiso40"                , &OUT::el_pfiso40                );
+    outtree->Branch("el_charge"                 , &OUT::el_charge                 );
     outtree->Branch("el_triggerMatch"           , &OUT::el_triggerMatch           );
     outtree->Branch("el_hasMatchedConv"         , &OUT::el_hasMatchedConv         );
     outtree->Branch("el_passTight"              , &OUT::el_passTight              );
@@ -224,14 +240,28 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("mu_eta_uncorr"             , &OUT::mu_eta_uncorr             );
     outtree->Branch("mu_phi_uncorr"             , &OUT::mu_phi_uncorr             );
     outtree->Branch("mu_e_uncorr"               , &OUT::mu_e_uncorr               );
+    outtree->Branch("mu_isGlobal"               , &OUT::mu_isGlobal               );
+    outtree->Branch("mu_isPF"                   , &OUT::mu_isPF                   );
+    outtree->Branch("mu_chi2"                   , &OUT::mu_chi2                   );
+    outtree->Branch("mu_nHits"                  , &OUT::mu_nHits                  );
+    outtree->Branch("mu_nMuStations"            , &OUT::mu_nMuStations            );
+    outtree->Branch("mu_nPixHits"               , &OUT::mu_nPixHits               );
+    outtree->Branch("mu_nTrkLayers"             , &OUT::mu_nTrkLayers             );
+    outtree->Branch("mu_d0"                     , &OUT::mu_d0                     );
+    outtree->Branch("mu_z0"                     , &OUT::mu_z0                     );
     outtree->Branch("mu_pfIso_ch"               , &OUT::mu_pfIso_ch               );
     outtree->Branch("mu_pfIso_nh"               , &OUT::mu_pfIso_nh               );
     outtree->Branch("mu_pfIso_pho"              , &OUT::mu_pfIso_pho              );
     outtree->Branch("mu_pfIso_pu"               , &OUT::mu_pfIso_pu               );
     outtree->Branch("mu_corrIso"                , &OUT::mu_corrIso                );
+    outtree->Branch("mu_trkIso"                 , &OUT::mu_trkIso                 );
+    outtree->Branch("mu_charge"                 , &OUT::mu_charge                 );
     outtree->Branch("mu_triggerMatch"           , &OUT::mu_triggerMatch           );
     outtree->Branch("mu_triggerMatchDiMu"       , &OUT::mu_triggerMatchDiMu       );
     outtree->Branch("mu_passTight"              , &OUT::mu_passTight              );
+    outtree->Branch("mu_passTightNoIso"         , &OUT::mu_passTightNoIso         );
+    outtree->Branch("mu_passTightNoD0"          , &OUT::mu_passTightNoD0          );
+    outtree->Branch("mu_passTightNoIsoNoD0"     , &OUT::mu_passTightNoIsoNoD0     );
     outtree->Branch("mu_truthMatch"             , &OUT::mu_truthMatch             );
     outtree->Branch("mu_truthMinDR"             , &OUT::mu_truthMinDR             );
     
@@ -625,24 +655,38 @@ bool RunModule::ApplyModule( ModuleConfig & config ) {
 
 void RunModule::BuildMuon( ModuleConfig & config ) const {
 
-    OUT::mu_pt           -> clear();
-    OUT::mu_eta          -> clear();
-    OUT::mu_phi          -> clear();
-    OUT::mu_e            -> clear();
-    OUT::mu_pt_uncorr    -> clear();
-    OUT::mu_eta_uncorr   -> clear();
-    OUT::mu_phi_uncorr   -> clear();
-    OUT::mu_e_uncorr     -> clear();
-    OUT::mu_pfIso_ch     -> clear();
-    OUT::mu_pfIso_nh     -> clear();
-    OUT::mu_pfIso_pho    -> clear();
-    OUT::mu_pfIso_pu     -> clear();
-    OUT::mu_corrIso      -> clear();
-    OUT::mu_triggerMatch -> clear();
-    OUT::mu_triggerMatchDiMu -> clear();
-    OUT::mu_passTight-> clear();
-    OUT::mu_truthMatch   -> clear();
-    OUT::mu_truthMinDR   -> clear();
+    OUT::mu_pt                 -> clear();
+    OUT::mu_eta                -> clear();
+    OUT::mu_phi                -> clear();
+    OUT::mu_e                  -> clear();
+    OUT::mu_pt_uncorr          -> clear();
+    OUT::mu_eta_uncorr         -> clear();
+    OUT::mu_phi_uncorr         -> clear();
+    OUT::mu_e_uncorr           -> clear();
+    OUT::mu_isGlobal           -> clear();
+    OUT::mu_isPF               -> clear();
+    OUT::mu_chi2               -> clear();
+    OUT::mu_nHits              -> clear();
+    OUT::mu_nMuStations        -> clear();
+    OUT::mu_nPixHits           -> clear();
+    OUT::mu_nTrkLayers         -> clear();
+    OUT::mu_d0                 -> clear();
+    OUT::mu_z0                 -> clear();
+    OUT::mu_pfIso_ch           -> clear();
+    OUT::mu_pfIso_nh           -> clear();
+    OUT::mu_pfIso_pho          -> clear();
+    OUT::mu_pfIso_pu           -> clear();
+    OUT::mu_corrIso            -> clear();
+    OUT::mu_trkIso             -> clear();
+    OUT::mu_charge             -> clear();
+    OUT::mu_triggerMatch       -> clear();
+    OUT::mu_triggerMatchDiMu   -> clear();
+    OUT::mu_passTight          -> clear();
+    OUT::mu_passTightNoIso     -> clear();
+    OUT::mu_passTightNoD0      -> clear();
+    OUT::mu_passTightNoIsoNoD0 -> clear();
+    OUT::mu_truthMatch         -> clear();
+    OUT::mu_truthMinDR         -> clear();
     OUT::mu_n          = 0;
 
 #ifdef EXISTS_nMu
@@ -668,7 +712,7 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         float muPFIsoNH  = IN::muPFIsoR04_NH->at(idx);
         float muPFIsoPho = IN::muPFIsoR04_Pho->at(idx);
         float muPFIsoPU  = IN::muPFIsoR04_PU->at(idx);
-        float charge     = IN::muCharge->at(idx);
+        int charge       = IN::muCharge->at(idx);
 
 
         // trigger matching
@@ -701,18 +745,70 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         if( !config.PassFloat( "cut_abseta"     , fabs(eta)      ) ) continue;
 
         bool pass_tight = true;
+        bool pass_tightNoIso = true;
+        bool pass_tightNoD0 = true;
+        bool pass_tightNoIsoNoD0 = true;
 
-        if( !config.PassBool ( "cut_isGlobal"   , is_global_muon ) ) pass_tight = false;
-        if( !config.PassBool ( "cut_isPF"       , is_pf_muon     ) ) pass_tight = false;
-        if( !config.PassFloat( "cut_chi2"       , chi2           ) ) pass_tight = false;
-        if( !config.PassFloat( "cut_nMuonHits"  , nHits          ) ) pass_tight = false;
-        if( !config.PassFloat( "cut_nStations"  , muStations     ) ) pass_tight = false;
-        if( !config.PassFloat( "cut_nPixelHits" , nPixHit        ) ) pass_tight = false;
-        if( !config.PassFloat( "cut_nTrkLayers" , nTrkLayers     ) ) pass_tight = false;
-        if( !config.PassFloat( "cut_d0"         , fabs(d0)       ) ) pass_tight = false;
-        if( !config.PassFloat( "cut_z0"         , fabs(z0)       ) ) pass_tight = false;
-        if( !config.PassFloat( "cut_trkiso"     , tkIso/pt       ) ) pass_tight = false;
-        if( !config.PassFloat( "cut_corriso"    , corriso/pt     ) ) pass_tight = false;
+        if( !config.PassBool ( "cut_isGlobal"   , is_global_muon ) ) {
+            pass_tight = false;
+            pass_tightNoIso = false;
+            pass_tightNoD0 = false;
+            pass_tightNoIsoNoD0 = false;
+        }
+        if( !config.PassBool ( "cut_isPF"       , is_pf_muon     ) ) {
+            pass_tight = false;
+            pass_tightNoIso = false;
+            pass_tightNoD0 = false;
+            pass_tightNoIsoNoD0 = false;
+        }
+        if( !config.PassFloat( "cut_chi2"       , chi2           ) ) { 
+            pass_tight = false;
+            pass_tightNoIso = false;
+            pass_tightNoD0 = false;
+            pass_tightNoIsoNoD0 = false;
+        }
+        if( !config.PassFloat( "cut_nMuonHits"  , nHits          ) ) { 
+            pass_tight = false;
+            pass_tightNoIso = false;
+            pass_tightNoD0 = false;
+            pass_tightNoIsoNoD0 = false;
+        }
+        if( !config.PassFloat( "cut_nStations"  , muStations     ) ) { 
+            pass_tight = false;
+            pass_tightNoIso = false;
+            pass_tightNoD0 = false;
+            pass_tightNoIsoNoD0 = false;
+        }
+        if( !config.PassFloat( "cut_nPixelHits" , nPixHit        ) ) { 
+            pass_tight = false;
+            pass_tightNoIso = false;
+            pass_tightNoD0 = false;
+            pass_tightNoIsoNoD0 = false;
+        }
+        if( !config.PassFloat( "cut_nTrkLayers" , nTrkLayers     ) ) { 
+            pass_tight = false;
+            pass_tightNoIso = false;
+            pass_tightNoD0 = false;
+            pass_tightNoIsoNoD0 = false;
+        }
+        if( !config.PassFloat( "cut_d0"         , fabs(d0)       ) ) { 
+            pass_tight = false;
+            pass_tightNoIso = false;
+        }
+        if( !config.PassFloat( "cut_z0"         , fabs(z0)       ) ) { 
+            pass_tight = false;
+            pass_tightNoIso = false;
+            pass_tightNoD0 = false;
+            pass_tightNoIsoNoD0 = false;
+        }
+        if( !config.PassFloat( "cut_trkiso"     , tkIso/pt       ) ) { 
+            pass_tight = false;
+            pass_tightNoD0 = false;
+        }
+        if( !config.PassFloat( "cut_corriso"    , corriso/pt     ) ) { 
+            pass_tight = false;
+            pass_tightNoD0 = false;
+        }
 
         // evaluate tight cuts if requested
         if( eval_mu_tight && !pass_tight ) continue;
@@ -725,22 +821,36 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         TLorentzVector muon_uncorr;
         muon_uncorr.SetPtEtaPhiM( IN::muPt->at(idx), IN::muEta->at(idx), IN::muPhi->at(idx), 0.106 );
 
-        OUT::mu_pt           -> push_back(muon.Pt() );
-        OUT::mu_eta          -> push_back(muon.Eta());
-        OUT::mu_phi          -> push_back(muon.Phi());
-        OUT::mu_e            -> push_back(muon.E()  );
-        OUT::mu_pt_uncorr    -> push_back(muon_uncorr.Pt() );
-        OUT::mu_eta_uncorr   -> push_back(muon_uncorr.Eta());
-        OUT::mu_phi_uncorr   -> push_back(muon_uncorr.Phi());
-        OUT::mu_e_uncorr     -> push_back(muon_uncorr.E()  );
-        OUT::mu_pfIso_ch     -> push_back(muPFIsoCH);
-        OUT::mu_pfIso_nh     -> push_back(muPFIsoNH);
-        OUT::mu_pfIso_pho    -> push_back(muPFIsoPho);
-        OUT::mu_pfIso_pu     -> push_back(muPFIsoPU);
-        OUT::mu_corrIso      -> push_back(corriso);
-        OUT::mu_triggerMatch -> push_back( trigMatch );
-        OUT::mu_triggerMatchDiMu -> push_back( trigMatchDiMu );
-        OUT::mu_passTight     -> push_back( pass_tight );
+        OUT::mu_pt                 -> push_back(muon.Pt() );
+        OUT::mu_eta                -> push_back(muon.Eta());
+        OUT::mu_phi                -> push_back(muon.Phi());
+        OUT::mu_e                  -> push_back(muon.E()  );
+        OUT::mu_pt_uncorr          -> push_back(muon_uncorr.Pt() );
+        OUT::mu_eta_uncorr         -> push_back(muon_uncorr.Eta());
+        OUT::mu_phi_uncorr         -> push_back(muon_uncorr.Phi());
+        OUT::mu_e_uncorr           -> push_back(muon_uncorr.E()  );
+        OUT::mu_isGlobal           -> push_back( is_global_muon );
+        OUT::mu_isPF               -> push_back( is_pf_muon );
+        OUT::mu_chi2               -> push_back( chi2 );
+        OUT::mu_nHits              -> push_back( nHits );
+        OUT::mu_nMuStations        -> push_back( muStations );
+        OUT::mu_nPixHits           -> push_back( nPixHit );
+        OUT::mu_nTrkLayers         -> push_back( nTrkLayers );
+        OUT::mu_d0                 -> push_back( d0 );
+        OUT::mu_z0                 -> push_back( z0 );
+        OUT::mu_pfIso_ch           -> push_back(muPFIsoCH);
+        OUT::mu_pfIso_nh           -> push_back(muPFIsoNH);
+        OUT::mu_pfIso_pho          -> push_back(muPFIsoPho);
+        OUT::mu_pfIso_pu           -> push_back(muPFIsoPU);
+        OUT::mu_corrIso            -> push_back(corriso);
+        OUT::mu_trkIso             -> push_back(tkIso);
+        OUT::mu_charge             -> push_back(charge);
+        OUT::mu_triggerMatch       -> push_back( trigMatch );
+        OUT::mu_triggerMatchDiMu   -> push_back( trigMatchDiMu );
+        OUT::mu_passTight          -> push_back( pass_tight );
+        OUT::mu_passTightNoIso     -> push_back( pass_tightNoIso );
+        OUT::mu_passTightNoD0      -> push_back( pass_tightNoD0 );
+        OUT::mu_passTightNoIsoNoD0 -> push_back( pass_tightNoIsoNoD0 );
 
 
         std::vector<int> matchPID;
@@ -772,6 +882,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
     OUT::el_sigmaIEIE             -> clear();
     OUT::el_pfiso30               -> clear();
     OUT::el_pfiso40               -> clear();
+    OUT::el_charge                -> clear();
     OUT::el_triggerMatch          -> clear();
     OUT::el_hasMatchedConv        -> clear();
     OUT::el_passTight             -> clear();
@@ -824,6 +935,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         float hcalIso30    = IN::eleIsoHcalDR03->at(idx);
         float trkIso30     = IN::eleIsoTrkDR03->at(idx);
         float r9           = IN::eleR9->at(idx);
+        int   charge       = IN::eleCharge->at(idx);
 
         // trigger matching
         bool trigMatch = false;
@@ -1483,6 +1595,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         //
         OUT::el_pfiso30               -> push_back( pfiso30 );
         OUT::el_pfiso40               -> push_back( pfiso40 );
+        OUT::el_charge                -> push_back( charge );
         OUT::el_hasMatchedConv        -> push_back( convfit );
         OUT::el_passTight             -> push_back(pass_tight);
         OUT::el_passMedium            -> push_back(pass_medium);

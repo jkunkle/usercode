@@ -173,6 +173,7 @@ def config_and_run( options, package_name ) :
         if input_files :
             options.outputFile = input_files[0].split('/')[-1]
 
+    logging.info('Get Branch mapping')
     branches = get_branch_mapping(input_files, options.treeName )
 
     ImportedModule = import_module( options.module )
@@ -213,7 +214,10 @@ def config_and_run( options, package_name ) :
 
         # Write the c++ files having the branch definitions and 
         # SetBranchAddress calls
-        write_header_files(brdef_file_name, linkdef_file_name, branches, branches_to_keep )
+        # Write all output branches in the 
+        # header file so that the code will compile
+        # only the keep branches will be saved, however
+        write_header_files(brdef_file_name, linkdef_file_name, branches,[ br['name'] for br in branches ] )
 
         write_source_file(source_file_name, header_file_name, branches, branches_to_keep, write_expert_code=options.writeExpertCode )
 
@@ -295,7 +299,7 @@ def config_and_run( options, package_name ) :
         commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
 
         if options.resubmit :
-            commands = filter_jobs_for_resubmit( commands_orig, options.storagePath, options.outputDir, options.outputFile )
+            commands = filter_jobs_for_resubmit( commands_orig, options.storagePath, options.outputDir, options.outputFile, options.treeName )
         else :
             commands = commands_orig
 
@@ -322,7 +326,7 @@ def config_and_run( options, package_name ) :
             options.storagePath = None
 
         if options.resubmit :
-            commands = filter_jobs_for_resubmit( commands_orig, options.storagePath, options.outputDir, options.outputFile )
+            commands = filter_jobs_for_resubmit( commands_orig, options.storagePath, options.outputDir, options.outputFile, options.treeName )
         else :
             commands = commands_orig
 
@@ -333,6 +337,8 @@ def config_and_run( options, package_name ) :
             ##    get the event range
             wrapper = '%s/wrapper_%s.sh' %( options.outputDir, jobid) 
             file = open( wrapper, 'w' )
+            #file.write( 'source /afs/cern.ch/user/j/jkunkle/.bashrc \n' )
+            #file.write( 'source  /afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.28/x86_64-slc6-gcc47-opt/root/bin/thisroot.sh \n' )
             file.write( 'export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/contrib/gcc/4.6/x86_64-slc6-gcc46-opt/lib64:$LD_LIBRARY_PATH\n' )
             file.write( cmd + '\n' )
             file.close()
@@ -592,6 +598,7 @@ def get_branch_map_from_tree( tree ) :
 #-----------------------------------------------------------
 def check_and_filter_input_files( input_files, treename ) :
 
+    logging.info('Find jobs without output files')
     filtered_files = []
     if not isinstance(input_files, list) :
         input_files = [input_files]
@@ -612,6 +619,8 @@ def check_and_filter_input_files( input_files, treename ) :
 
         file.Close()
 
+
+    logging.info('Found %d jobs missing files' %len(filtered_files))
     return filtered_files
 
 def import_module( module ) :
@@ -710,7 +719,7 @@ def generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, option
 
     return commands
 
-def filter_jobs_for_resubmit( orig_commands, storagePath, outputDir, outputFile ) :
+def filter_jobs_for_resubmit( orig_commands, storagePath, outputDir, outputFile, treeName=None ) :
 
     commands = []
         
@@ -719,7 +728,6 @@ def filter_jobs_for_resubmit( orig_commands, storagePath, outputDir, outputFile 
             file_path = '%s/%s/' %(storagePath, jobid )
             exists = False
             for top, dirs, files, sizes in eosutil.walk_eos(file_path) :
-                print files
                 if outputFile in files :
                     exists = True
 
@@ -1038,8 +1046,8 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
 
         name = conf['name']
 
-        if name not in keep_branches :
-            continue
+        #if name not in keep_branches :
+        #    continue
 
         if conf['type'].count('vector') :
             modtype = conf['type'].replace('vector', 'std::vector')

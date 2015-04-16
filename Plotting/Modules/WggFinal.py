@@ -4,7 +4,7 @@ def config_samples(samples) :
 
     import ROOT
     samples.AddSample('Data'    , path='Data'    ,legend_name='Data',   isActive=True, plotColor=ROOT.kBlack, isData=True )
-    samples.AddSample('Wgg'     , path='Wgg'     ,legend_name='W#gamma#gamma Signal',   isActive=True, plotColor=ROOT.kRed-3, scale=1.0 )
+    samples.AddSample('Wgg'     , path='Wgg'     ,legend_name='W#gamma#gamma Signal',   isActive=True, plotColor=ROOT.kRed-3, scale=1.0, isSignal=False )
     samples.AddSample('ZggFSR'     , path='ZggFSR'     ,legend_name='Z#gamma#gamma',   isActive=True, plotColor=ROOT.kOrange-2, displayErrBand=True )
     samples.AddSample('OtherDiPhoton'     , path='OtherDiPhoton'     ,legend_name='Other di-photon',   isActive=True, plotColor=ROOT.kGray, displayErrBand=True )
     #samples.AddSample('Zg'     , path='Zg'     ,legend_name='Z#gamma',   isActive=True, plotColor=ROOT.kOrange+2, displayErrBand=True )

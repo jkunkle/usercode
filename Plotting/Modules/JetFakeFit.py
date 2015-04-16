@@ -308,6 +308,28 @@ def config_samples(samples) :
                           )
 
                                             
+    samples.AddSampleGroup( 'WZall', legend_name = 'WZall',
+                           input_samples=[
+                           'DYJetsToLLPhOlap', 
+                           'WjetsPhOlap',
+                           'Zgamma',
+                           'Wgamma',
+                           'Wgg',
+                           ],
+                           plotColor=ROOT.kSpring,
+                           isActive=False,
+                          )
+
+    samples.AddSampleGroup( 'ZjetsZgamma', legend_name = 'ZjetsZgamma',
+                           input_samples=[
+                           'DYJetsToLLPhOlap', 
+                           'Zgamma',
+                           ],
+                           plotColor=ROOT.kSpring,
+                           isActive=False,
+                          )
+
+                                            
 
     #samples.AddSampleGroup( 'Data', legend_name='Data (generated)', 
     #                        input_samples = [

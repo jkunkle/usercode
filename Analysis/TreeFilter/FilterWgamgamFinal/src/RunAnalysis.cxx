@@ -1642,7 +1642,7 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
             nLep10++;
         }
 
-        if( OUT::el_pt->at(i) > 25 && OUT::el_triggerMatch->at(i) && OUT::el_passMvaTrig->at(i) ) {
+        if( OUT::el_pt->at(i) > 30 && OUT::el_triggerMatch->at(i) && OUT::el_passMvaTrig->at(i) ) {
             nLepTrigMatch++;
             nElTrigMatch++;
         }

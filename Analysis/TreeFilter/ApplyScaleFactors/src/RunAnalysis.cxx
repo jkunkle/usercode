@@ -96,10 +96,10 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch( "mu_idSFUP"    ,  &OUT::mu_idSFUP    , "mu_idSFUP/F"    );
     outtree->Branch( "mu_idSFDN"    ,  &OUT::mu_idSFDN    , "mu_idSFDN/F"    );
 
-    outtree->Branch( "PUWeightUP5"  ,  &OUT::PUWeightUP5  , "PUWeightUP5/F"  );
-    outtree->Branch( "PUWeightUP10" ,  &OUT::PUWeightUP10 , "PUWeightUP10/F"  );
-    outtree->Branch( "PUWeightDN5"  ,  &OUT::PUWeightDN5  , "PUWeightDN5/F"  );
-    outtree->Branch( "PUWeightDN10" ,  &OUT::PUWeightDN10 , "PUWeightDN10/F"  );
+    //outtree->Branch( "PUWeightUP5"  ,  &OUT::PUWeightUP5  , "PUWeightUP5/F"  );
+    //outtree->Branch( "PUWeightUP10" ,  &OUT::PUWeightUP10 , "PUWeightUP10/F"  );
+    //outtree->Branch( "PUWeightDN5"  ,  &OUT::PUWeightDN5  , "PUWeightDN5/F"  );
+    //outtree->Branch( "PUWeightDN10" ,  &OUT::PUWeightDN10 , "PUWeightDN10/F"  );
 
     BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
 
@@ -160,6 +160,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 _sfhist_ph_eveto_highpt = dynamic_cast<TH2F*>(_sffile_ph_eveto_highpt->Get( "hist_sf_eveto_highpt" ) );
             }
         }
+	/*
         if( mod_conf.GetName() == "AddPileupSF" ) {
             std::map<std::string, std::string>::const_iterator itr;
             itr = mod_conf.GetInitData().find( "DataFilePath" );
@@ -175,6 +176,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 _sfhist_pileup_mc = dynamic_cast<TH1F*>(_sffile_pileup_mc->Get("ggNtuplizer/hPUTrue") );
             }
         }
+	*/
     }
 }
 
@@ -206,9 +208,11 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     if( config.GetName() == "AddPhotonSF" ) {
         AddPhotonSF( config );
     }
+    /*
     if( config.GetName() == "AddPileupSF" ) {
         AddPileupSF( config );
     }
+    */
 
     return keep_evt;
 

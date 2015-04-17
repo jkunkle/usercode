@@ -136,10 +136,10 @@ namespace OUT {
 
     // Nominal PUWeight already exists
     //float PUWeight;
-    float PUWeightUP5;
-    float PUWeightUP10;
-    float PUWeightDN5;
-    float PUWeightDN10;
+    //float PUWeightUP5;
+    //float PUWeightUP10;
+    //float PUWeightDN5;
+    //float PUWeightDN10;
 
 
     //Examples

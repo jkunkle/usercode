@@ -50,6 +50,10 @@ def config_analysis( alg_list, args ) :
     
     #make_looseID_invEleVetoSubl( alg_list, args )
 
+    #make_wgjj( alg_list, args) 
+
+    #make_zgjj( alg_list, args) 
+
 def make_final_mu( alg_list, args ) :
 
     filter_photon = Filter( 'FilterPhoton' )
@@ -285,3 +289,45 @@ def make_looseID_invEleVetoLead( alg_list, args ) :
 
     alg_list.append( filter_event )
 
+def make_wgjj( alg_list, args ) :
+
+    filter_muon = Filter( 'FilterMuon' )
+    filter_muon.cut_mu_pt = ' > 10 '
+    alg_list.append(filter_muon)
+
+    filter_jet = Filter( 'FilterJet' )
+    filter_jet.cut_jet_pt = ' > 30 '
+    alg_list.append(filter_jet)
+
+    filter_event = Filter('FilterEvent')
+    filter_event.cut_nPh = ' == 1 '
+    filter_event.cut_nLepTrig = ' > 0 '
+    filter_event.cut_nLep = ' == 1 '
+    filter_event.cut_nJet30 = ' > 1 '
+    filter_event.cut_nJet40 = ' > 0 '
+
+    filter_event.cut_mt_lep_met = ' > 30 '
+
+    alg_list.append( filter_event )
+
+    alg_list.append( Filter( 'CalcDiJetVars' ) )
+
+def make_zgjj( alg_list, args ) :
+
+    filter_muon = Filter( 'FilterMuon' )
+    filter_muon.cut_mu_pt = ' > 10 '
+    alg_list.append(filter_muon)
+
+    filter_jet = Filter( 'FilterJet' )
+    filter_jet.cut_jet_pt = ' > 30 '
+    alg_list.append(filter_jet)
+
+    filter_event = Filter('FilterEvent')
+    filter_event.cut_nPh = ' == 1 '
+    filter_event.cut_nLepTrig = ' > 0 '
+    filter_event.cut_nLep = ' == 2 '
+    filter_event.cut_nJet30 = ' > 1 '
+
+    alg_list.append( filter_event )
+
+    alg_list.append( Filter( 'CalcDiJetVars' ) )

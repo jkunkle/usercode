@@ -40,6 +40,7 @@ int main(int argc, char **argv)
 
 void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                             const CmdOptions & options, std::vector<ModuleConfig> &configs ) {
+
     // *************************
     // initialize trees
     // *************************

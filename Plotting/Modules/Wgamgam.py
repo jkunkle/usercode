@@ -60,26 +60,28 @@ def config_samples(samples) :
     samples.AddSample('ZZ_4tau'                      , path='job_summer12_ZZ_4tau'              ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZZ'                          , path='job_summer12_ZZZ'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('ZgElToPh'                     , path='job_summer12_ZgElToPh'             ,  isActive=False, useXSFile=True, XSName='Zg' )
-    samples.AddSample('ggZZ_2l2lgFSR'                , path='job_summer12_ggZZ_2l2lgFSR'        , isActive=False, useXSFile=True, XSName='ggZZ_2l2l' )
-    samples.AddSample('ggZZ_4lgFSR'                  , path='job_summer12_ggZZ_4lgFSR'          , isActive=False, useXSFile=True, XSName='ggZZ_4l' )
-    samples.AddSample('ttggFSR'                      , path='job_summer12_ttggFSR'              , isActive=False, useXSFile=True, XSName='ttg' )
-    samples.AddSample('WW_2l2nugFSR'                 , path='job_summer12_WW_2l2nugFSR'         , isActive=False, useXSFile=True, XSName='WW_2l2nu' )
-    samples.AddSample('WWggFSR'                      , path='job_summer12_WWggFSR'              , isActive=False, useXSFile=True, XSName='WWg' )
-    samples.AddSample('WWWgFSR'                      , path='job_summer12_WWWgFSR'              , isActive=False, useXSFile=True, XSName='WWW' )
-    samples.AddSample('WWZgFSR'                      , path='job_summer12_WWZgFSR'              , isActive=False, useXSFile=True, XSName='WWZ' )
-    samples.AddSample('WZ_3lnugFSR'                  , path='job_summer12_WZ_3lnugFSR'          , isActive=False, useXSFile=True, XSName='WZ_3lnu' )
-    samples.AddSample('WZZgFSR'                      , path='job_summer12_WZZgFSR'              , isActive=False, useXSFile=True, XSName='WZZ' )
-    #samples.AddSample('Zgg'                          , path='job_summer12_Zgg'                  , isActive=False, useXSFile=True, XSName='Zg' )
-    samples.AddSample('ZZ_2e2mugFSR'                 , path='job_summer12_ZZ_2e2mugFSR'         , isActive=False, useXSFile=True, XSName='ZZ_2e2mu' )
-    samples.AddSample('ZZ_2e2taugFSR'                , path='job_summer12_ZZ_2e2taugFSR'        , isActive=False, useXSFile=True, XSName='ZZ_2e2tau' )
-    samples.AddSample('ZZ_2l2nugFSR'                 , path='job_summer12_ZZ_2l2nugFSR'         , isActive=False, useXSFile=True, XSName='ZZ_2l2nu' )
-    samples.AddSample('ZZ_2l2qgFSR'                  , path='job_summer12_ZZ_2l2qgFSR'          , isActive=False, useXSFile=True, XSName='ZZ_2l2q' )
-    samples.AddSample('ZZ_2mu2taugFSR'               , path='job_summer12_ZZ_2mu2taugFSR'       , isActive=False, useXSFile=True, XSName='ZZ_2mu2tau' )
-    samples.AddSample('ZZ_2q2nugFSR'                 , path='job_summer12_ZZ_2q2nugFSR'         , isActive=False, useXSFile=True, XSName='ZZ_2q2nu' )
-    samples.AddSample('ZZ_4egFSR'                    , path='job_summer12_ZZ_4egFSR'            , isActive=False, useXSFile=True, XSName='ZZ_4e' )
-    samples.AddSample('ZZ_4mugFSR'                   , path='job_summer12_ZZ_4mugFSR'           , isActive=False, useXSFile=True, XSName='ZZ_4mu' )
-    samples.AddSample('ZZ_4taugFSR'                  , path='job_summer12_ZZ_4taugFSR'          , isActive=False, useXSFile=True, XSName='ZZ_4tau' )
-    samples.AddSample('ZZZgFSR'                      , path='job_summer12_ZZZgFSR'              , isActive=False, useXSFile=True, XSName='ZZZ' )
+    samples.AddSample('jfaulkne_WZA2PhFilt'          , path='job_jfaulkne_WZA2PhFilt'           , isActive=False, useXSFile=True, XSName='WZA' )
+    samples.AddSample('ggZZ_2l2l2PhFilt'                , path='job_summer12_ggZZ_2l2l2PhFilt'        , isActive=True, useXSFile=True, XSName='ggZZ_2l2l' )
+    samples.AddSample('ggZZ_4l2PhFilt'                  , path='job_summer12_ggZZ_4l2PhFilt'          , isActive=True, useXSFile=True, XSName='ggZZ_4l' )
+    #samples.AddSample('ttg2PhFilt'                      , path='job_summer12_ttg2PhFilt'              , isActive=True, useXSFile=True, XSName='ttg' )
+    ##samples.AddSample('WW_2l2nu2PhFilt'                 , path='job_summer12_WW_2l2nu2PhFilt'         , isActive=True, useXSFile=True, XSName='WW_2l2nu' )
+    #samples.AddSample('WWg2PhFilt'                      , path='job_summer12_WWg2PhFilt'              , isActive=True, useXSFile=True, XSName='WWg' )
+    #samples.AddSample('WWW2PhFilt'                      , path='job_summer12_WWW2PhFilt'              , isActive=True, useXSFile=True, XSName='WWW' )
+    #samples.AddSample('WWZ2PhFilt'                      , path='job_summer12_WWZ2PhFilt'              , isActive=True, useXSFile=True, XSName='WWZ' )
+    ##samples.AddSample('WZ_3lnu2PhFilt'                  , path='job_summer12_WZ_3lnu2PhFilt'          , isActive=True, useXSFile=True, XSName='WZ_3lnu' )
+    #samples.AddSample('WZZ2PhFilt'                      , path='job_summer12_WZZ2PhFilt'              , isActive=True, useXSFile=True, XSName='WZZ' )
+    ##samples.AddSample('Zgg'                          , path='job_summer12_Zgg'                  , isActive=False, useXSFile=True, XSName='Zg' )
+    #samples.AddSample('ZZ_2e2mu2PhFilt'                 , path='job_summer12_ZZ_2e2mu2PhFilt'         , isActive=True, useXSFile=True, XSName='ZZ_2e2mu' )
+    #samples.AddSample('ZZ_2e2tau2PhFilt'                , path='job_summer12_ZZ_2e2tau2PhFilt'        , isActive=True, useXSFile=True, XSName='ZZ_2e2tau' )
+    #samples.AddSample('ZZ_2l2nu2PhFilt'                 , path='job_summer12_ZZ_2l2nu2PhFilt'         , isActive=True, useXSFile=True, XSName='ZZ_2l2nu' )
+    #samples.AddSample('ZZ_2l2q2PhFilt'                  , path='job_summer12_ZZ_2l2q2PhFilt'          , isActive=True, useXSFile=True, XSName='ZZ_2l2q' )
+    #samples.AddSample('ZZ_2mu2tau2PhFilt'               , path='job_summer12_ZZ_2mu2tau2PhFilt'       , isActive=True, useXSFile=True, XSName='ZZ_2mu2tau' )
+    #samples.AddSample('ZZ_2q2nu2PhFilt'                 , path='job_summer12_ZZ_2q2nu2PhFilt'         , isActive=True, useXSFile=True, XSName='ZZ_2q2nu' )
+    #samples.AddSample('ZZ_4e2PhFilt'                    , path='job_summer12_ZZ_4e2PhFilt'            , isActive=True, useXSFile=True, XSName='ZZ_4e' )
+    #samples.AddSample('ZZ_4mu2PhFilt'                   , path='job_summer12_ZZ_4mu2PhFilt'           , isActive=True, useXSFile=True, XSName='ZZ_4mu' )
+    #samples.AddSample('ZZ_4tau2PhFilt'                  , path='job_summer12_ZZ_4tau2PhFilt'          , isActive=True, useXSFile=True, XSName='ZZ_4tau' )
+    #samples.AddSample('ZZZ2PhFilt'                      , path='job_summer12_ZZZ2PhFilt'              , isActive=True, useXSFile=True, XSName='ZZZ' )
+    samples.AddSample('Wgg_aQGC'                        , path='job_LNuAA_LM0123_Reweight'            , isActive=True, useXSFile=True, XSName='Wgg', isSignal=True, plotColor=ROOT.kRed )
 
 
     #samples.AddSample('MultiJet', path='job_MultiJet_2012a_Jan22rereco', isActive=True )
@@ -329,6 +331,7 @@ def config_samples(samples) :
                                            'ttjets_2l'               ,
                            ],
                            plotColor=ROOT.kGreen-3,
+                           isActive=False,
                           )
 
     samples.AddSampleGroup( 'MultiBoson', legend_name='Other Multiboson', 
@@ -355,19 +358,18 @@ def config_samples(samples) :
                           )
 
 
+    samples.AddSampleGroup( 'ttgamma', legend_name='tt #gamma', 
+                           input_samples = [
+                                           'ttg'               ,
+                           ],
+                           plotColor=ROOT.kGreen+4,
+                          )
     samples.AddSampleGroup( 'Top1l', legend_name='tt #rightarrow l#nu jj + X', 
                            input_samples = [
                                            'ttjets_1l'               ,
                            ],
                            plotColor=ROOT.kGreen,
                           )
-    samples.AddSampleGroup( 'Top2l', legend_name='tt #rightarrow l#nu l#nu + X', 
-                           input_samples = [
-                                           'ttjets_2l'               ,
-                           ],
-                           plotColor=ROOT.kGreen-3,
-                          )
-
     samples.AddSampleGroup( 'Top2l', legend_name='tt #rightarrow l#nu l#nu + X', 
                            input_samples = [
                                            'ttjets_2l'               ,

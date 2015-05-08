@@ -189,6 +189,36 @@ def config_and_run( options, package_name ) :
         print 'Will remove %d branches from output file : ' %( len(branches) - len(branches_to_keep))
         print '\n'.join( list( set( [ br['name'] for br in branches ] ) - set( branches_to_keep ) ) )
 
+    # -------------------------------
+    # gather module arguments
+    # put outputDir into the arguments
+    # so it can be picked up from the
+    # module
+    # -------------------------------
+    modargs = {}
+    if options.moduleArgs is not None :
+        modargs = eval( options.moduleArgs )
+    if 'outputDir' not in modargs :
+        modargs['outputDir'] = options.outputDir
+
+    # -------------------------------
+    # populate the alg_list from 
+    # the imported module
+    # -------------------------------
+    alg_list = []
+    try :
+        ImportedModule.config_analysis(alg_list, modargs)
+    except TypeError, e : 
+        logging.warning('********************************')
+        logging.warning('Could not call config_analysis with two arguments')
+        logging.warning('To maintain compatibility with the old method of using a single argument')
+        logging.warning('The function will be called in this way.')
+        logging.warning('Just in case the exception is,')
+        logging.warning(e)
+        logging.warning('********************************')
+
+        ImportedModule.config_analysis(alg_list)
+
 
     # get the executable name.  If .exe does not
     # appear as the extension, add it
@@ -217,7 +247,7 @@ def config_and_run( options, package_name ) :
         # Write all output branches in the 
         # header file so that the code will compile
         # only the keep branches will be saved, however
-        write_header_files(brdef_file_name, linkdef_file_name, branches,[ br['name'] for br in branches ] )
+        write_header_files(brdef_file_name, linkdef_file_name, branches,[ br['name'] for br in branches ], alg_list )
 
         write_source_file(source_file_name, header_file_name, branches, branches_to_keep, write_expert_code=options.writeExpertCode )
 
@@ -251,28 +281,6 @@ def config_and_run( options, package_name ) :
     # Using the path of this script to get an
     # absolute path
     exe_path = '%s/TreeFilter/%s/%s' %(workarea, package_name, options.exeName)
-
-
-    #gather module arguments
-    modargs = {}
-    if options.moduleArgs is not None :
-        modargs = eval( options.moduleArgs )
-    if 'outputDir' not in modargs :
-        modargs['outputDir'] = options.outputDir
-
-    alg_list = []
-    try :
-        ImportedModule.config_analysis(alg_list, modargs)
-    except TypeError, e : 
-        logging.warning('********************************')
-        logging.warning('Could not call config_analysis with two arguments')
-        logging.warning('To maintain compatibility with the old method of using a single argument')
-        logging.warning('The function will be called in this way.')
-        logging.warning('Just in case the exception is,')
-        logging.warning(e)
-        logging.warning('********************************')
-
-        ImportedModule.config_analysis(alg_list)
 
 
     # --------------------------
@@ -889,7 +897,7 @@ def write_config( alg_list, filename, treeName, outputDir, outputFile, files_lis
 
     cfile.close()
 
-def write_header_files( brdefname, linkdefname, branches, keep_branches=[] ) :
+def write_header_files( brdefname, linkdefname, branches, keep_branches=[], alg_list=[] ) :
 
     branch_header = open(brdefname, 'w')
     branch_header.write('#ifndef BRANCHDEFS_H\n')
@@ -905,9 +913,26 @@ def write_header_files( brdefname, linkdefname, branches, keep_branches=[] ) :
                         '//simply surround the offending code with #ifdef EXISTS_MYVAR ... #endif\n'
                         '//and if the variable does not exist the preprocessor will ignore that code\n')
 
+    #-----------------------
+    # Define a preprocessor variable
+    # for each input variable to
+    # allow the code to check if
+    # the variable exists
+    #-----------------------
     for conf in branches :
         name = conf['name']
         branch_header.write('#define EXISTS_%s\n'%name)
+
+    #-----------------------
+    # Define a preprocessor variable
+    # for each module that is scheduled
+    # to allow the code to check
+    # if that module is used
+    #-----------------------
+    all_filters = [f.name for f in alg_list]
+    all_filters = list( set( all_filters ) ) 
+    for filter in all_filters :
+        branch_header.write( '#define MODULE_%s\n' %filter )
     
     branch_header.write('//Define variables as extern below and declare them in the .cxx file to avoid multiple definitions\n')
     branch_header.write('namespace IN {\n');

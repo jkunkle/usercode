@@ -1,11 +1,13 @@
 import os
-output = '/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_04_13'
+output = '/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_04_20'
 #channels = ['mu', 'elzcr', 'elfull', 'elzcrinvpixsubl', 'elzcrinvpixlead', 'elfullinvpixsubl', 'elfullinvpixlead']
 channels = ['mu', 'elfull', 'elfullinvpixsubl', 'elfullinvpixlead']
-#jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
-jetfitvars = ['phoIsoCorr']
+jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
+#jetfitvars = ['sigmaIEIE', 'chIsoCorr']
+#jetfitvars = ['phoIsoCorr']
 jetffcorrinputs = ['nom', 'veryloose', 'loose', 'tight', 'None']
-corr_types = ['nom', 'asymcorr533', 'asymcorr855', 'asymcorr1077', 'asymcorr1299', 'asymcorr151111', 'asymcorr201616']
+#corr_types = ['nom', 'asymcorr533', 'asymcorr855', 'asymcorr1077', 'asymcorr1299', 'asymcorr151111', 'asymcorr201616']
+corr_types = ['nom', 'asymcorr533', 'asymcorr855', 'asymcorr1077', 'asymcorr1299']
 
 user_base = '/afs/cern.ch/user/j/jkunkle/usercode'
 run_base = '%s/Plotting' %(user_base)

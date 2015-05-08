@@ -224,6 +224,9 @@ class DrawConfig :
             self.selection = [self.selection]
 
         self.samples = samples
+    
+        if self.samples is not None and not isinstance( self.samples, list ) :
+            self.samples = [self.samples]
 
         self.histpars = histpars
         self.hist_config = hist_config
@@ -236,8 +239,11 @@ class DrawConfig :
         self.stack_dump_params = {}
 
         self.compare_hists = False
+        self.no_auto_draw = False
 
         self.hist_configs = collections.OrderedDict()
+
+        self.samp_man_id = None
 
     def doRatio(self) :
         return self.hist_config.get('doratio', False)
@@ -378,16 +384,23 @@ class DrawConfig :
     def get_unique_name( self, var ) :
 
         outname = ''
-
+        
         basename = var
-        if basename.count('[') :
-            basename = basename.split('[')[0]
+
+        # first remove brackets
+        while basename.count('[') :
+            pos_begin = basename.find( '[' )
+            pos_end = basename.find( ']', pos_begin )
+            basename = basename[:pos_begin] + basename[pos_end+1:]
         if basename.count('+') :
+            basename = basename.split('[')[0]
             basename = basename.replace('+', '_')
         if basename.count('(') :
             basename = basename.replace('(', '_')
         if basename.count(')') :
             basename = basename.replace(')', '_')
+        if basename.count(':') :
+            basename = basename.replace(':', '_')
 
         if basename in self.used_names :
             for i in range( 0, 1000000  ) :
@@ -428,6 +441,15 @@ class DrawConfig :
     def get_names( self ) :
         return self.hist_configs.keys()
 
+    def get_hist_type( self ) :
+
+        if self.var[0].count(':') == 2 :
+            return 'TH3F'
+        elif self.var[0].count(':') == 1 :
+            return 'TH2F'
+        else :
+            return 'TH1F'
+
     def get_hist_declarations( self ) :
 
         hist_decs = []
@@ -435,7 +457,7 @@ class DrawConfig :
         for name in self.hist_configs.keys() :
 
             if type( self.histpars ) is tuple : 
-                if self.var.count(':') == 1 : # 2-D histogram
+                if self.var[0].count(':') == 1 : # 2-D histogram
                     if len(self.histpars) == 2 and type( self.histpars[0] ) is list and type(self.histpars[1]) is list : #both axes are variably binned
                         text = 'double %sxarr[%d] = {'%(name, len(self.histpars[0])) + ','.join( [str(x) for x in self.histpars[0]] ) + '}; \n '
                         text += 'double %syarr[%d] = {'%(name, len(self.histpars[1])) + ','.join( [str(y) for y in self.histpars[1]] ) + '}; \n '
@@ -447,12 +469,12 @@ class DrawConfig :
                             return
                         text = r' hist_%s = new TH2F( "%s", "", %d, %f, %f, %d, %f, %f );' %( name, name, self.histpars[0], self.histpars[1], self.histpars[2], self.histpars[3], self.histpars[4], self.histpars[5]  ) 
                         hist_decs.append(text)
-                elif self.var.count(':') == 2 and not self.var.count('::') : # make a 3-d histogram
+                elif self.var[0].count(':') == 2 and not self.var[0].count('::') : # make a 3-d histogram
                     if len(self.histpars) != 9 :
-                        print 'varable expression requests a 3-d histogram, please provide 6 hist parameters, nbinsx, xmin, xmax, nbinsy, ymin, ymax, nbinsz, zmin, zmax'
+                        print 'varable expression requests a 3-d histogram, please provide 9 hist parameters, nbinsx, xmin, xmax, nbinsy, ymin, ymax, nbinsz, zmin, zmax'
                         return
-                        text = r' hist_%s = new TH2F( "%s", "", %d, %f, %f, %d, %f, %f, %d, %f, %f );' %( name, name, self.histpars[0], self.histpars[1], self.histpars[2], self.histpars[3], self.histpars[4], self.histpars[5], self.histpars[6], self.histpars[7], self.histpars[8]  ) 
-                        hist_decs.append(text)
+                    text = r' hist_%s = new TH3F( "%s", "", %d, %f, %f, %d, %f, %f, %d, %f, %f );' %( name, name, self.histpars[0], self.histpars[1], self.histpars[2], self.histpars[3], self.histpars[4], self.histpars[5], self.histpars[6], self.histpars[7], self.histpars[8]  ) 
+                    hist_decs.append(text)
                 else : # 1-d histogram
                     text = r' hist_%s = new TH1F( "%s", "", %d, %f, %f );' %( name, name, self.histpars[0], self.histpars[1], self.histpars[2] ) 
                     hist_decs.append(text)
@@ -580,7 +602,24 @@ class DrawConfig :
 
     def get_cpp_var_str(self, var, branches) :
 
-        return self.get_cpp_selection_str( var, branches )
+        # for a 1-D histogram the var can undergo the
+        # same modification as the selection str
+        # for 2-D and 3-D histograms the colon separating
+        # the variables should become a comma so that
+        # the Fill command works.  However the ordering
+        # of the var string and the Fill command is reversed
+        # eg for a 3-D histogram the var is varZ:varY:varX
+        # but the fill is Fill( varX, varY, varZ)
+
+        input_var = var
+        if var.count( ':' ) :
+            split_var = var.split( ':' )
+            split_var.reverse()
+            input_var = ','.join( split_var )
+
+        var_str = self.get_cpp_selection_str( input_var, branches )
+        return var_str
+
         ## for each branch, find all occurances of that branch
         ## and store the branch name and end of the name
         ## indexed by the start index
@@ -658,7 +697,7 @@ class DrawConfig :
         histname = str(uuid.uuid4())
 
         if type( self.histpars ) is tuple :
-            if self.var.count(':') == 1 : 
+            if self.var[0].count(':') == 1 : 
                 if len(self.histpars) == 2 and type( self.histpars[0] ) is list and type(self.histpars[1]) is list :
                     hist = ROOT.TH2F( histname, '', len(self.histpars[0])-1, array('f', self.histpars[0]), len(self.histpars[1])-1, array('f', self.histpars[1]) )
                 else :
@@ -666,7 +705,7 @@ class DrawConfig :
                         print 'varable expression requests a 2-d histogram, please provide 6 hist parameters, nbinsx, xmin, xmax, nbinsy, ymin, ymax'
                         return
                     hist = ROOT.TH2F( histname, '', self.histpars[0], self.histpars[1], self.histpars[2], self.histpars[3], self.histpars[4], self.histpars[5])
-            elif self.var.count(':') == 2 and not self.var.count('::') : # make a 3-d histogram
+            elif self.var[0].count(':') == 2 and not self.var.count('::') : # make a 3-d histogram
                 if len(self.histpars) != 9 :
                     print 'varable expression requests a 3-d histogram, please provide 6 hist parameters, nbinsx, xmin, xmax, nbinsy, ymin, ymax, nbinsz, zmin, zmax'
                     return
@@ -779,6 +818,12 @@ class SampleManager :
 
         self.collect_commands=False
 
+        # make a unique ID
+        # this is used to indicate
+        # to which SampleManger
+        # a DrawConfig was associated to
+        self.id = str(uuid.uuid4())
+
             
     #--------------------------------
     def create_sample( self, name, **kwargs ) :
@@ -802,14 +847,18 @@ class SampleManager :
     #--------------------------------
     def clone_sample( self, oldname, newname, **kwargs ) :
 
-        _oldsample = self.get_samples( name=oldname )
-        if _oldsample :
-            oldsample = _oldsample[0]
+        if isinstance( oldname, Sample ) :
+            oldsample = oldname
         else :
-            print 'Could not locate old sample'
-            print 'new name = ', newname
-            print 'old name = ', oldname
-            return None
+            _oldsample = self.get_samples( name=oldname )
+
+            if _oldsample :
+                oldsample = _oldsample[0]
+            else :
+                print 'Could not locate old sample'
+                print 'new name = ', newname
+                print 'old name = ', oldname
+                return None
 
         newsample = copy.copy( oldsample )
         newsample.name = newname
@@ -954,11 +1003,16 @@ class SampleManager :
 
     #--------------------------------
     def activate_sample(self, samp_name) :
-        sel_samps = self.get_samples(name=samp_name)
+        
+        name = samp_name
+        if not isinstance( samp_name, str ) :
+            name = samp_name.name
+
+        sel_samps = self.get_samples(name=name)
         if not sel_samps :
-            print 'No sample with name %s' %samp_name
+            print 'No sample with name %s' %name
         elif len(sel_samps) > 1 :
-            print 'Located multiple samples with name %s' %samp_name
+            print 'Located multiple samples with name %s' %name
         else :
             sel_samps[0].isActive=True
 
@@ -1109,11 +1163,28 @@ class SampleManager :
     def add_draw_config( self, varexp, selection, histpars, hist_config={}, label_config={}, legend_config={}, replace_selection_for_sample={}  ) :
         self.draw_commands.append( DrawConfig( varexp, selection, histpars, hist_config=hist_config, label_config=label_config, legend_config=legend_config, replace_selection_for_sample=replace_selection_for_sample ) )
 
+        self.draw_commands[-1].samp_man_id = self.id
+
+        return self.draw_commands[-1]
+
     #---------------------------------------
     def add_compare_config( self, varexp, selection, samples, histpars, hist_config={}, label_config={}, legend_config={}, replace_selection_for_sample={}  ) :
         self.draw_commands.append( DrawConfig( varexp, selection, histpars, samples=samples, hist_config=hist_config, label_config=label_config, legend_config=legend_config, replace_selection_for_sample=replace_selection_for_sample ) )
 
         self.draw_commands[-1].compare_hists=True
+
+        self.draw_commands[-1].samp_man_id = self.id
+
+        return self.draw_commands[-1]
+
+    #---------------------------------------
+    def queue_draw( self, draw_config ) :
+        self.draw_commands.append( draw_config )
+
+        self.draw_commands[-1].samp_man_id = self.id
+
+        self.draw_commands[-1].no_auto_draw=True
+
     #---------------------------------------
     def add_save_stack( self, filename, outputDir, canname=None) :
         if canname is None :
@@ -1125,7 +1196,7 @@ class SampleManager :
         self.draw_commands[-1].dump_stack( filename, outputDir )
 
     #---------------------------------------
-    def run_commands( self ) :
+    def run_commands( self, nsplit=0, nFilesPerJob=5 ) :
 
         self.collect_commands = False
 
@@ -1184,8 +1255,7 @@ class SampleManager :
             print 'No histograms were scheduled.  Aborting!'
             return
 
-
-        output_loc = '/tmp/jkunkle/drawn_histograms'
+        output_loc = '/tmp/jkunkle/drawn_histograms/%s' %self.id
 
         # create the source code file
         self.write_source_code( self.draw_commands, runsrc_file_name, draw_branches )
@@ -1219,10 +1289,7 @@ class SampleManager :
         for sample in all_samples :
             config_name = '%s/configs/config_%s.txt' %(compile_base, sample.name)
             entries = sample.chain.GetEntries()
-            #file_evt_map = core.get_file_evt_map( [f.GetTitle() for f in sample.chain.GetListOfFiles()], nsplit=5, nFilesPerJob=0, totalEvents=None, treeName='ggNtuplizer/EventTree')
-            print '*******************************FIX*****************************'
-            file_evt_map = core.get_file_evt_map( [f.GetTitle() for f in sample.chain.GetListOfFiles()], nsplit=0, nFilesPerJob=1, totalEvents=None, treeName='ggNtuplizer/EventTree')
-            #file_evt_map = [ ([f.GetTitle() for f in sample.chain.GetListOfFiles()], [(0, entries)] ) ]
+            file_evt_map = core.get_file_evt_map( [f.GetTitle() for f in sample.chain.GetListOfFiles()], nsplit=nsplit, nFilesPerJob=nFilesPerJob, totalEvents=None, treeName='ggNtuplizer/EventTree')
             core.write_config([], config_name, sample.chain.GetName(), output_loc, '%s.root'%sample.name, file_evt_map, sample=sample.name, disableOutputTree=True )
             configs.append((entries, config_name))
 
@@ -1250,15 +1317,18 @@ class SampleManager :
             else :
                 os.system( 'hadd %s/%s %s' %( comb_dir, base, ' '.join( files ) ) )
 
+        self.output_loc = comb_dir
 
         # Now get the histograms and draw
         for draw_config in self.draw_commands:
+            if draw_config.no_auto_draw : 
+                continue
             if draw_config.compare_hists :
-                self.CompareFromHistFiles( draw_config, comb_dir )
+                self.CompareFromHistFiles( draw_config )
             else :
-                self.DrawFromHistFiles( draw_config, comb_dir )
+                self.DrawFromHistFiles( draw_config )
 
-    def DrawFromHistFiles(self,  draw_config, output_loc ) :
+    def DrawFromHistFiles(self,  draw_config ) :
 
         self.clear_all()
 
@@ -1271,7 +1341,7 @@ class SampleManager :
                 all_samples.append( sample )
 
         for sample in all_samples :
-            filename = '%s/%s.root' %( output_loc, sample.name )
+            filename = '%s/%s.root' %( self.output_loc, sample.name )
             for name  in draw_config.hist_configs.keys() :
                 self.load_hist_from_file_cache( sample, name, filename )
 
@@ -1296,7 +1366,7 @@ class SampleManager :
             self.SaveStack( draw_config.stack_save_params['filename'], draw_config.stack_save_params['dirname'], draw_config.stack_save_params['canname'] )
                 
 
-    def CompareFromHistFiles(self, draw_config, output_loc ) :
+    def CompareFromHistFiles(self, draw_config ) :
 
         self.clear_all()
 
@@ -1323,7 +1393,7 @@ class SampleManager :
 
             if newsamp.IsGroupedSample() :
                 for subsamp in self.GetLowestGroupedSamples(newsamp) :
-                    filename = '%s/%s.root' %( output_loc, subsamp.name )
+                    filename = '%s/%s.root' %( self.output_loc, subsamp.name )
                     self.load_hist_from_file_cache( subsamp, name, filename, debug=True )
                     subsamp.hist.Draw()
 
@@ -1331,7 +1401,7 @@ class SampleManager :
                 newsamp.hist.Draw()
                     
             else :
-                filename = '%s/%s.root' %( output_loc, newsamp.name )
+                filename = '%s/%s.root' %( self.output_loc, newsamp.name )
                 self.load_hist_from_file_cache( newsamp , name, filename )
 
             created_samples.append(newsamp)
@@ -1384,6 +1454,56 @@ class SampleManager :
         if draw_config.stack_save_params :
             self.SaveStack( draw_config.stack_save_params['filename'], draw_config.stack_save_params['dirname'], draw_config.stack_save_params['canname'] )
             
+    def load_samples( self, draw_config ) :
+
+        if draw_config.samp_man_id is not None and draw_config.samp_man_id != self.id :
+            print 'Provided DrawConfig was not made with this SampleManager.  Exiting!'
+            return []
+
+        created_samples = []
+
+        if not draw_config.hist_configs :
+            print draw_config.samples[0].name
+            matched_samples = self.get_samples( name=draw_config.samples[0].name)
+            print matched_samples
+            if matched_samples :
+                if matched_samples[0].hist is not None :
+                    created_samples.append( matched_samples[0] )
+
+        else :
+            for name, conf in draw_config.hist_configs.iteritems() :
+
+            
+                newsamp = self.clone_sample( oldname=conf['sample'], newname=name, temporary=True )
+                print 'Create %s' %name
+
+                if newsamp.IsGroupedSample() :
+                    for subsamp in self.GetLowestGroupedSamples(newsamp) :
+                        filename = '%s/%s.root' %( self.output_loc, subsamp.name )
+                        self.load_hist_from_file_cache( subsamp, name, filename, debug=True )
+                        subsamp.hist.Draw()
+
+                    self.group_sample(newsamp, isModel=False)
+                        
+                else :
+                    filename = '%s/%s.root' %( self.output_loc, newsamp.name )
+                    self.load_hist_from_file_cache( newsamp , name, filename )
+
+                created_samples.append(newsamp)
+
+        if not created_samples :
+            print 'No hists were created'
+            return created_samples
+
+        if isinstance( draw_config.histpars, tuple) and len(draw_config.histpars) == 4 :
+            if isinstance( draw_config.histpars[3], list ) :
+                self.variable_rebinning(binning=draw_config.histpars[3], samples=created_samples) 
+            else :
+                self.variable_rebinning(threshold=draw_config.histpars[3], samples=created_samples) 
+
+        return created_samples
+
+
 
     def load_hist_from_file_cache( self, sample, name, filename, debug=False ) :
 
@@ -1503,6 +1623,9 @@ class SampleManager :
         text += '#include <vector>' + '\n'
         text += '#include "TTree.h"' + '\n'
         text += '#include "TChain.h"' + '\n'
+        text += '#include "TH1F.h"' + '\n'
+        text += '#include "TH2F.h"' + '\n'
+        text += '#include "TH3F.h"' + '\n'
         text += '#include "TLorentzVector.h"' + '\n'
         text += 'class RunModule : public virtual RunModuleBase {' + '\n'
         text += '    public :' + '\n'
@@ -1517,7 +1640,7 @@ class SampleManager :
 
         for draw_config in draw_commands :
             for name in draw_config.get_names() :
-                text += '        TH1F * hist_%s; '%name + '\n'
+                text += '        %s * hist_%s; '%(draw_config.get_hist_type(), name) + '\n'
 
         text += '            TFile * f;\n '
 
@@ -2290,7 +2413,6 @@ class SampleManager :
         self.clear_all()
 
         self.transient_data['command'] = command 
-        print command
 
         self.apply_lenged_conf( legendConfig )
 
@@ -2710,8 +2832,10 @@ class SampleManager :
 
     #def draw_hist( self, sample, varexp, histname, selection, draw_opt='' ) :
 
+    def create_hist_new( self, draw_config, sample=None, isModel=False ) :
 
-    def create_hist_new( self, draw_config, sample, isModel=False ) :
+        if sample is None :
+            sample = draw_config.samples[0]
 
         if isinstance( sample, str) :
             slist = self.get_samples( name=sample )
@@ -2721,9 +2845,7 @@ class SampleManager :
                 print 'Located multiple samples with name %s' %sample
             sample = slist[0]
 
-        sampname = sample.name
-    
-        if not self.quiet : print 'Creating hist for %s' %sampname
+        if not self.quiet : print 'Creating hist for %s' %sample.name
 
         # enable branches for all variables matched in the varexp and selection
 
@@ -3728,8 +3850,6 @@ class SampleManager :
 
             negsample = self.clone_sample( oldname=sname, newname='Neg%s' %sample, temporary=True )
             self.create_hist( sample, varexp, selection, histpars )
-            print varexp
-            print varexp.replace('[0]', '[1]')
             self.create_hist( negsample, '-1*'+varexp.replace('[0]', '[1]'), selection, histpars )
 
             sample.hist.Add( negsample.hist )
@@ -4244,7 +4364,6 @@ class SampleManager :
             if nbins == 2 :
                 nbins = 1
 
-            print nbins
             self.curr_hists[name] =  ROOT.TGraph(nbins)
             self.curr_hists[name].SetName(name)
 

@@ -1,6 +1,7 @@
 #CHANNELS=mu elzcr elfull elzcrinvpixsubl elzcrinvpixlead elfullinvpixsubl elfullinvpixlead
-CHANNELS=mu elfull elfullinvpixlead elfullinvpixsubl
+#CHANNELS=mu elfull elfullinvpixlead elfullinvpixsubl
 #CHANNELS=elzcr elfull elzcrinvpixsubl elzcrinvpixlead elfullinvpixsubl elfullinvpixlead
+CHANNELS=mu
 #CHANNELS=muZgg
 #CHANNELS=elfull 
 #CHANNELS=elzcr
@@ -19,15 +20,15 @@ CHANNELS=mu elfull elfullinvpixlead elfullinvpixsubl
 #CHANNELS=mu elzcr elfull elzcrinvpixsubl
 #CHANNELS=elzcrinvpixlead elzcrinvpixsubl elfullinvpixsubl elfullinvpixlead
 
-OUTPUTMAIN=~/Plots/WggPlots_2015_04_13
+OUTPUTMAIN=~/Plots/WggPlots_2015_04_30OLD
 OUTPUTJET=$(OUTPUTMAIN)/JetFakeResultsSyst
 SYSTFILE=$(OUTPUTMAIN)/JetFakeTemplatePlots/systematics.pickle
 
-#JETFITVARS=chIsoCorr
-#JETFITVARS=sigmaIEIE chIsoCorr phoIsoCorr
-JETFITVARS=phoIsoCorr
-JETFFCORRINPUTS=nom veryloose loose tight None
-#JETFFCORRINPUTS=nom
+#JETFITVARS=sigmaIEIE
+JETFITVARS=chIsoCorr
+#JETFITVARS=sigmaIEIE phoIsoCorr chIsoCorr
+#JETFFCORRINPUTS=nom veryloose loose tight None
+JETFFCORRINPUTS=veryloose
 PTBINS=15,25,40,70,1000000
 #PTBINS=15,1000000
 SINGLEOUTPUT=~/Plots/WggPlots_2015_03_06/
@@ -38,13 +39,13 @@ jet :
 	for item in $(CHANNELS) ; do \
 	    for var in $(JETFITVARS) ; do \
 	        for ffinput in $(JETFFCORRINPUTS) ; do \
-	            python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --nom --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput --quiet ; \
+	            #python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --nom --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput --quiet ; \
 	            python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --asymcorr533 --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput  --quiet;  \
-	            python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --asymcorr855 --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput  --quiet; \
-	            python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --asymcorr1077 --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput  --quiet;  \
-	            python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --asymcorr1299 --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput  --quiet; \
-	            python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --asymcorr151111 --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput  --quiet; \
-	            python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --asymcorr201616 --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput  --quiet; \
+	            #python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --asymcorr855 --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput  --quiet; \
+	            #python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --asymcorr1077 --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput  --quiet;  \
+	            #python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --asymcorr1299 --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput  --quiet; \
+	            #python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --asymcorr151111 --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput  --quiet; \
+	            #python RunMatrixFit.py --samplesConf $(MODULE) --fileName tree.root --treeName ggNtuplizer/EventTree   --xsFile cross_sections/wgamgam.py  --lumi 19400 --outputDir $(OUTPUTJET) --asymcorr201616 --channel $$item --syst_file $(SYSTFILE) --ptbins $(PTBINS) --fitvar $$var --ffcorr $$ffinput  --quiet; \
 		done \
 	    done \
 	done

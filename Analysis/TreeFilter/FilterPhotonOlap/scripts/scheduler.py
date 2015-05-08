@@ -19,14 +19,14 @@ if not options.run and not options.check :
 base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 
 jobs = [
-        #(base, 'job_summer12_DYJetsToLL'),
-        #(base, 'job_summer12_Wjets'),
+        (base, 'job_summer12_DYJetsToLL'),
+        (base, 'job_summer12_Wjets'),
         #(base, 'job_summer12_ttjets_1l'),
         #(base, 'job_summer12_ttjets_2l'),
 
         #(base, 'job_summer12_Wg'),
 
-        (base, 'job_summer12_Zg'),
+        #(base, 'job_summer12_Zg'),
 
         #(base, 'job_summer12_Zgg'),
         #(base, 'job_summer12_WgPt20-30'),
@@ -39,6 +39,13 @@ jobs = [
         #(base, 'job_summer12_WZ_3lnu'),
         #(base, 'job_summer12_ggZZ_2l2l'),
         #(base, 'job_summer12_ggZZ_4l'),
+
+        #(base, 'job_summer12_t_s'),
+        #(base, 'job_summer12_t_t'),
+        #(base, 'job_summer12_t_tW'),
+        #(base, 'job_summer12_tbar_s'),
+        #(base, 'job_summer12_tbar_t'),
+        #(base, 'job_summer12_tbar_tW'),
         #(base, 'job_summer12_WWW'),
         #(base, 'job_summer12_WWZ'),
         #(base, 'job_summer12_WWg'),
@@ -54,15 +61,10 @@ jobs = [
         #(base, 'job_summer12_ZZ_4mu'),
         #(base, 'job_summer12_ZZ_4tau'),
         #(base, 'job_summer12_ttg'),
-        #(base, 'job_summer12_t_s'),
-        #(base, 'job_summer12_t_t'),
-        #(base, 'job_summer12_t_tW'),
-        #(base, 'job_summer12_tbar_s'),
-        #(base, 'job_summer12_tbar_t'),
-        #(base, 'job_summer12_tbar_tW'),
         #(base, 'job_summer12_ttW'),
         #(base, 'job_summer12_ttZ'),
         #(base, 'job_jfaulkne_WZA'),
+
         #(base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_WAA_ISR'),
         #(base, 'job_summer12_ttinclusive'),
@@ -78,7 +80,7 @@ jobs = [
 #module_data = 'ConfLepGammaFilter_Data.py'
 #output_name = 'LepGamma_2013_11_04'
 #sub_base = ['LepGammaGammaFinalElUnblindAll_2015_04_12', 'LepGammaGammaFinalMuUnblindAll_2015_04_12', 'LepGammaGammaNoPhIDInvPixSeedLead_2015_04_12', 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_04_12', 'LepLepGammaNoPhID_2015_04_11', 'LepGammaGamma_NoPhID_2015_04_11', 'LepGammaGammaNomUnblindAllNoEleVeto_2015_04_12', 'LepGammaNoPhID_2015_04_11']
-sub_base = ['LepGammaGammaFinalElUnblindAll_2015_04_15', 'LepGammaGammaFinalMuUnblindAll_2015_04_15']
+sub_base = ['LepGammaJJNoPhID_2015_05_05', 'LepLepGammaJJNoPhID_2015_05_05']
 #sub_base = ['LepGammaGammaNoEleVetoUnblindLowPt_2015_01_14']
 #sub_base = ['LepLepGammaGammaNoPhIDDiMuonTrig_2014_11_28']
 
@@ -97,8 +99,8 @@ if options.resubmit :
 
 nproc=8
 module = 'ConfFilter.py'
-#suffix='PhOlap'
-suffix='2PhFilt'
+suffix='PhOlap'
+#suffix='2PhFilt'
 
 if options.run :
     for sb in sub_base :

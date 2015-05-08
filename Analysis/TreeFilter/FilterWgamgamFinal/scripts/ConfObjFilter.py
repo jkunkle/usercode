@@ -1,4 +1,3 @@
-from core import Filter
 
 def get_remove_filter() :
     """ Define list of regex strings to filter input branches to remove from the output.
@@ -63,7 +62,8 @@ def config_analysis( alg_list, args ) :
     # Nominal photon filter with no photon ID
     #----------------------------------------
     alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True ) )
-    print 'SAVING NOID PHOTONS, WITH ELE OLAP REMOVAL'
+    #alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.1) )
+    print 'SAVING NOID  PHOTONS, WITH OLAP REMOVAL'
 
     #----------------------------------------
     # Other photon filters
@@ -158,7 +158,7 @@ def get_electron_filter ( id, ptcut=10 ) :
 
     return filt
 
-def get_photon_filter ( id=None, eVeto=None, ptcut=10, sort_by_id='false', doElOlapRm=True, doTrigElOlapRm=True ) :
+def get_photon_filter( id=None, eVeto=None, ptcut=10, sort_by_id='false', doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.4 ) :
 
     if sort_by_id == True :
         sort_by_id = 'true'
@@ -174,12 +174,14 @@ def get_photon_filter ( id=None, eVeto=None, ptcut=10, sort_by_id='false', doElO
     #filt.cut_ph_abseta_crack = ' > 1.44 & < 1.57 '
     #filt.invert('cut_ph_abseta_crack')
 
-    filt.cut_mu_ph_dr = ' > 0.4 '
-    filt.cut_ph_ph_dr = ' > 0.4 '
+    if doMuOlapRm :
+        filt.cut_mu_ph_dr = ' > %f ' %olapDR
+    if doPhOlapRm :
+        filt.cut_ph_ph_dr = ' > %f ' %olapDR
     if doElOlapRm :
-        filt.cut_el_ph_dr = ' > 0.4 '
+        filt.cut_el_ph_dr = ' > %f ' %olapDR
     if doTrigElOlapRm :
-        filt.cut_trigel_ph_dr = ' > 0.4 '
+        filt.cut_trigel_ph_dr = ' > %f ' %olapDR
 
     #filt.add_var( 'PtScaleDownBarrel', '0.994' )
     #filt.add_var( 'PtScaleDownEndcap', '0.986' )

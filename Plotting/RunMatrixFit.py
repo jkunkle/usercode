@@ -8,18 +8,11 @@ import math
 import uuid
 import copy
 import imp
-import ROOT
 from array import array
 import random
 import collections
 import pickle
 import time
-from uncertainties import ufloat
-from uncertainties import unumpy
-
-from SampleManager import SampleManager
-from SampleManager import Sample
-from SampleManager import DrawConfig
 
 # Parse command-line options
 from argparse import ArgumentParser
@@ -61,6 +54,14 @@ p.add_argument('--channel', default='mu',  dest='channel', help='run this channe
 
 options = p.parse_args()
 
+import ROOT
+from uncertainties import ufloat
+from uncertainties import unumpy
+from SampleManager import SampleManager
+from SampleManager import Sample
+from SampleManager import DrawConfig
+
+
 
 if options.outputDir is not None :
     ROOT.gROOT.SetBatch(True)
@@ -72,10 +73,23 @@ common_ptbins = [15, 25, 40, 70, 1000000 ]
 if options.ptbins is not None :
     common_ptbins = [int(x) for x in options.ptbins.split(',')]
 
-_sieie_cuts  = { 'EB' : 0.011, 'EE' : 0.033 }
-_chIso_cuts  = { 'EB' : 1.5, 'EE' : 1.2 }
-_neuIso_cuts = { 'EB' : 1.0, 'EE' : 1.5 }
-_phoIso_cuts = { 'EB' : 0.7, 'EE' : 1.0 }
+_sieie_cuts  = { 'EB' : (0.011,0.029), 'EE' : (0.033, 0.087) }
+_chIso_cuts  = { 'EB' : (1.5, 19.5)  , 'EE' : (1.2,20.4) }
+_neuIso_cuts = { 'EB' : (1.0,20)     , 'EE' : (1.5,20.5) }
+_phoIso_cuts = { 'EB' : (0.7,20.3)   , 'EE' : (1.0,20) }
+
+def get_default_binning(var='sigmaIEIE') :
+
+    if var == 'sigmaIEIE' :
+        return { 'EB' : (30, 0, 0.03), 'EE' : (30, 0, 0.09) }
+    elif var == 'chIsoCorr' :
+        return { 'EB' : (30, 0, 45), 'EE' : (35, 0, 42) }
+    elif var == 'neuIsoCorr' :
+        return { 'EB' : (40, -2, 38), 'EE' : (30, -2, 43) }
+    elif var == 'phoIsoCorr' :
+        return { 'EB' : (53, -2.1, 35), 'EE' : (42, -2, 40) }
+
+
 
 def get_real_template_draw_commands( ch='mu' ) :
 
@@ -94,7 +108,7 @@ def get_fake_template_draw_commands( ch='mu' ) :
         return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 '
     else :
         return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_hasPixSeed[0]==0'
-def get_corr_fake_template_draw_commands( ch='mu', fitvar='sigmaIEIE', r1='EB', r2='EB', cuts='nom' ) :
+def get_corr_fake_template_draw_commands( ch='mu', fitvar='sigmaIEIE', r1='EB', r2='EB', leadPass=True, cuts='nom' ) :
 
 
     base_str = ''
@@ -107,41 +121,57 @@ def get_corr_fake_template_draw_commands( ch='mu', fitvar='sigmaIEIE', r1='EB', 
         base_str = 'mu_passtrig25_n>0 && mu_n==1 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > 15 && hasPixSeed_leadph12 == 0 && hasPixSeed_sublph12 == 0 '
 
     if fitvar == 'sigmaIEIE' :
+        if leadPass :
+            var_cut = ' && sieie_leadph12 < %f ' %_sieie_cuts[r1][0]
+        else :
+            var_cut = ' && sieie_leadph12 > %f && sieie_leadph12 < %f ' %(_sieie_cuts[r1])
         if cuts == 'nom' :
-            base_str += ' && ph_iso1299_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 9 '%( _chIso_cuts[r1], _chIso_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_iso1299_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 9 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'tight' :
-            base_str += ' && ph_iso1077_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 7 '%( _chIso_cuts[r1], _chIso_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_iso1077_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 7 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'loose' :
-            base_str += ' && ph_iso151111_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 11 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 11 '%( _chIso_cuts[r1], _chIso_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_iso151111_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 11 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 11 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'veryloose' :
-            base_str += ' && ph_iso201616_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 20 && chIsoCorr_sublph12 < 20 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 16 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 16 '%( _chIso_cuts[r1], _chIso_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_iso201616_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 20 && chIsoCorr_sublph12 < 20 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 16 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 16 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
     elif fitvar == 'chIsoCorr' :
+        if leadPass :
+            var_cut = ' && chIsoCorr_leadph12 < %f ' %_chIso_cuts[r1][0]
+        else :
+            var_cut = ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %(_chIso_cuts[r1])
         if cuts == 'nom' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 5 && phoIsoCorr_sublph12 < 5 ' %( _sieie_cuts[r1], _sieie_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 5 && phoIsoCorr_sublph12 < 5 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'tight' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 3 && phoIsoCorr_sublph12 < 3 ' %( _sieie_cuts[r1], _sieie_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 3 && phoIsoCorr_sublph12 < 3 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'loose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 < 7 ' %( _sieie_cuts[r1], _sieie_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 < 7 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'veryloose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 < 9 ' %( _sieie_cuts[r1], _sieie_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 < 9 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
     elif fitvar == 'phoIsoCorr' :
+        if leadPass :
+            var_cut = ' && phoIsoCorr_leadph12 < %f ' %_phoIso_cuts[r1][0]
+        else :
+            var_cut = ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %(_phoIso_cuts[r1])
         if cuts == 'nom' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10' %( _sieie_cuts[r1], _sieie_cuts[r2], _chIso_cuts[r1], _chIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
         if cuts == 'tight' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 8 && chIsoCorr_sublph12 < 8' %( _sieie_cuts[r1], _sieie_cuts[r2], _chIso_cuts[r1], _chIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 8 && chIsoCorr_sublph12 < 8   %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
         if cuts == 'loose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12' %( _sieie_cuts[r1], _sieie_cuts[r2], _chIso_cuts[r1], _chIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
         if cuts == 'veryloose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15' %( _sieie_cuts[r1], _sieie_cuts[r2], _chIso_cuts[r1], _chIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
     elif fitvar == 'neuIsoCorr' :
+        if leadPass :
+            var_cut = ' && neuIsoCorr_leadph12 < %f ' %_neuIso_cuts[r1][0]
+        else :
+            var_cut = ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %(_neuIso_cuts[r1])
         if cuts == 'nom' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 < 7' %(_sieie_cuts[r1], _sieie_cuts[r2], _chIso_cuts[r1], _chIso_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 < 7   %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'tight' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 8 && chIsoCorr_sublph12 < 8 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 5 && phoIsoCorr_sublph12 < 5' %(_sieie_cuts[r1], _sieie_cuts[r2], _chIso_cuts[r1], _chIso_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 8 && chIsoCorr_sublph12 < 8 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 5 && phoIsoCorr_sublph12 < 5     %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'loose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 < 9' %(_sieie_cuts[r1], _sieie_cuts[r2], _chIso_cuts[r1], _chIso_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 < 9   %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'veryloose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 11 && phoIsoCorr_sublph12 < 11' %(_sieie_cuts[r1], _sieie_cuts[r2], _chIso_cuts[r1], _chIso_cuts[r2], _phoIso_cuts[r1], _phoIso_cuts[r2] )
+            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 11 && phoIsoCorr_sublph12 < 11 %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
 
     return base_str
 
@@ -206,37 +236,34 @@ def get_default_samples(ch='mu' ) :
     #elif ch.count('el') :
     #    return { 'real' : {'Data' : 'Wgamma'}, 'fake' : {'Data' : 'ZjetsZgamma'}, 'target' : 'WZall' }
 
-def get_default_binning(var='sigmaIEIE') :
-
-    if var == 'sigmaIEIE' :
-        return { 'EB' : (30, 0, 0.03), 'EE' : (30, 0, 0.09) }
-    elif var == 'chIsoCorr' :
-        return { 'EB' : (30, 0, 45), 'EE' : (35, 0, 42) }
-    elif var == 'neuIsoCorr' :
-        return { 'EB' : (40, -2, 38), 'EE' : (30, -2, 43) }
-    elif var == 'phoIsoCorr' :
-        return { 'EB' : (53, -2.1, 35), 'EE' : (42, -2, 40) }
-
-
 
 def get_default_cuts(var='sigmaIEIE') :
 
     if var == 'sigmaIEIE' :
 
-        return { 'EB' : { 'tight' : ( 0, _sieie_cuts['EB']-0.0001  ), 'loose' : ( _sieie_cuts['EB']+0.0001, 0.0299 ) },
-                 'EE' : { 'tight' : ( 0, _sieie_cuts['EE']-0.0001 ), 'loose' : (  _sieie_cuts['EE']+0.0001, 0.099 ) } 
+        return { 'EB' : { 'tight' : ( 0, _sieie_cuts['EB'][0]-0.0001  ), 'loose' : ( _sieie_cuts['EB'][0]+0.0001,_sieie_cuts['EB'][1]-0.0001  ) },
+                 'EE' : { 'tight' : ( 0, _sieie_cuts['EE'][0]-0.0001 ), 'loose' : (  _sieie_cuts['EE'][0]+0.0001,_sieie_cuts['EE'][1]-0.0001  ) } 
                }
     elif var == 'chIsoCorr' :
-        return { 'EB' : { 'tight' : ( 0, 1.5-0.01  ), 'loose' : ( 1.5001, 45 ) },
-                 'EE' : { 'tight' : ( 0, 1.2-0.01 ), 'loose' : ( 1.2001, 42 ) } 
+        #return { 'EB' : { 'tight' : ( 0, 1.5-0.01  ), 'loose' : ( 1.5001, 45 ) },
+        #         'EE' : { 'tight' : ( 0, 1.2-0.01 ), 'loose' : ( 1.2001, 42 ) } 
+        #       }
+        return { 'EB' : { 'tight' : ( 0, _chIso_cuts['EB'][0]-0.01  ), 'loose' : ( _chIso_cuts['EB'][0] + 0.01, _chIso_cuts['EB'][1]-0.01 ) },
+                 'EE' : { 'tight' : ( 0, _chIso_cuts['EE'][0]-0.01 ) , 'loose' : ( _chIso_cuts['EE'][0] + 0.01, _chIso_cuts['EE'][1]-0.01 ) } 
                }
     elif var == 'neuIsoCorr' :
-        return { 'EB' : { 'tight' : ( -2, 1.0-0.01  ), 'loose' : ( 1.0001, 40 ) },
-                 'EE' : { 'tight' : ( -2, 1.5-0.01 ), 'loose' : ( 1.5001, 45 ) } 
+        #return { 'EB' : { 'tight' : ( -2, 1.0-0.01  ), 'loose' : ( 1.0001, 40 ) },
+        #         'EE' : { 'tight' : ( -2, 1.5-0.01 ), 'loose' : ( 1.5001, 45 ) } 
+        #       }
+        return { 'EB' : { 'tight' : ( -2, _neuIso_cuts['EB'][0]-0.01  ), 'loose' : ( _neuIso_cuts['EB'][0]+0.01, _neuIso_cuts['EB'][1]-0.01 ) },
+                 'EE' : { 'tight' : ( -2, _neuIso_cuts['EE'][0]-0.01 ) , 'loose' : ( _neuIso_cuts['EE'][0]+0.01, _neuIso_cuts['EE'][1]-0.01 ) } 
                }
     elif var == 'phoIsoCorr' :
-        return { 'EB' : { 'tight' : ( -2.1, 0.7-0.001  ), 'loose' : ( 0.70001, 35 ) },
-                 'EE' : { 'tight' : ( -2, 1.0-0.001 ), 'loose' : ( 1.0001, 50 ) } 
+        #return { 'EB' : { 'tight' : ( -2.1, 0.7-0.001  ), 'loose' : ( 0.70001, 35 ) },
+        #         'EE' : { 'tight' : ( -2, 1.0-0.001 ), 'loose' : ( 1.0001, 50 ) } 
+        #       }
+        return { 'EB' : { 'tight' : ( -2.1, _phoIso_cuts['EB'][0]-0.01  ), 'loose' : ( _phoIso_cuts['EB'][0]+0.01, _phoIso_cuts['EB'][1]-0.01 ) },
+                 'EE' : { 'tight' : ( -2, _phoIso_cuts['EE'][0]-0.01 )   , 'loose' : ( _phoIso_cuts['EE'][0]+0.01, _phoIso_cuts['EE'][1]-0.01 ) } 
                }
 
 syst_uncertainties={}
@@ -283,6 +310,7 @@ def get_syst_uncertainty(var, type, reg, ptrange, real_fake, tight_loose ) :
         return 0.0
 
     return reg_data[syst_ptrange]
+
 
              
 def main() :
@@ -334,21 +362,82 @@ def main() :
 
     if options.nom :
         RunNomFitting( outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr)
+        return
     if options.loose :
         RunLooseFitting( outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
+        return
 
     if options.asymcorr533 :
         RunCorrectedAsymFitting(vals=( 5,3,3 ), outputDir = options.outputDir , ch=options.channel, ffcorr=options.ffcorr )
+        return
     if options.asymcorr855 :
         RunCorrectedAsymFitting(vals=( 8,5,5 ), outputDir = options.outputDir , ch=options.channel, ffcorr=options.ffcorr )
+        return
     if options.asymcorr1077 :
         RunCorrectedAsymFitting( vals=( 10,7,7 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
+        return
     if options.asymcorr1299 :
         RunCorrectedAsymFitting( vals=( 12,9,9 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr)
+        return
     if options.asymcorr151111 :
         RunCorrectedAsymFitting( vals=( 15,11,11 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
+        return
     if options.asymcorr201616 :
         RunCorrectedAsymFitting( vals=( 20,16,16 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
+        return
+
+    all_samp_man = []
+    all_samp_man.append( sampManLG)
+    all_samp_man.append( sampManLLG)
+    all_samp_man.append( sampManData)
+    all_samp_man.append( sampManDataNOEV)
+    all_samp_man.append( sampManDataInvL)
+    all_samp_man.append( sampManDataInvS)
+
+    for s in all_samp_man  :
+        s.deactivate_all_samples()
+
+    #fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
+    fftypes = ['nom']
+    #channels = ['mu', 'elfull', 'elfullinvpixsubl', 'elfullinvpixlead']
+    #channels = ['elfullinvpixsubl', 'elfullinvpixlead']
+    channels = ['mu']
+    #jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
+    jetfitvars = ['sigmaIEIE']
+    calculators = []
+
+    corr_vals = [ (5,3,3), (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
+
+    #test_ptbins = [ [70, 1000000], [100, 1000000], [125, 1000000], [150,1000000], [175,1000000], [200,1000000], [225,1000000], [250,1000000], [275,1000000], [300,1000000], [325,1000000], [350,1000000], [375,1000000], [400, 1000000] ]
+    for ch in channels :
+        for var in jetfitvars :
+            for ffcorr in fftypes :
+                #calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
+                calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, outputDir=options.outputDir+'/JetFakeResultsSyst') )
+
+    #for cv in corr_vals :
+    #    for ch in channels :
+    #        for var in jetfitvars :
+    #            for ffcorr in fftypes :
+    #                #calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
+    #                calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+'/JetFakeResultsSyst') )
+
+    for calc in calculators :
+        draw_configs = calc.ConfigHists()
+        #for s in all_samp_man :
+        #    for dc in draw_configs :
+        #        if dc is not None and s.id == dc.samp_man_id :
+        #            s.create_hist_new( dc )
+        #
+        #calc.execute()
+
+    for s in all_samp_man  :
+        s.run_commands()
+
+    for calc in calculators :
+        calc.execute()
+
+    print '^_^ FINISHED ^_^'
 
 def load_syst_file( file ) :
 
@@ -451,7 +540,7 @@ def RunCorrectedAsymFitting(vals, outputDir = None, ch='mu', ffcorr='None') :
         fitvar = 'sigmaIEIE'
         iso_cuts_iso = ' ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
         iso_cuts_iso_fake = iso_cuts_iso 
-        #iso_cuts_iso_fake = ' ph_chIsoCorr[0] > 1.5 && ph_chIsoCorr[0] < 5 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+        #iso_cuts_iso_fake = ' ph_chIsoCorr[0] > 1.5 && ph_chIsoCorr[0] < 8 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]'
         # loosened iso cuts
         iso_cuts_noiso = ' ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(vals[0], vals[1], vals[2] )
         #iso_cuts_noiso = ' ph_chIsoCorr[0] > 1.5 && ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(vals[0], vals[1], vals[2] )
@@ -466,6 +555,7 @@ def RunCorrectedAsymFitting(vals, outputDir = None, ch='mu', ffcorr='None') :
         fitvar = 'chIsoCorr'
         iso_cuts_iso = ' ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
         iso_cuts_iso_fake = iso_cuts_iso 
+        #iso_cuts_iso_fake = ' !ph_passSIEIEMedium[0] &&  ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
         # loosened iso cuts
         iso_cuts_noiso = 'ph_passSIEIEMedium[0] &&  ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %( vals[1], vals[2] )
         loose_iso_cuts = (None, vals[1], vals[2] )
@@ -492,6 +582,7 @@ def RunCorrectedAsymFitting(vals, outputDir = None, ch='mu', ffcorr='None') :
         fitvar = 'phoIsoCorr'
         iso_cuts_iso = ' ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] '
         iso_cuts_iso_fake = iso_cuts_iso 
+        #iso_cuts_iso_fake = ' !ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] '
         # loosened iso cuts
         iso_cuts_noiso = 'ph_passSIEIEMedium[0] &&  ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d' %( vals[0], vals[1] )
         loose_iso_cuts = (vals[0], vals[1], None )
@@ -538,15 +629,21 @@ def do_nominal_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptra
 
     templates_corr = None
     if ffcorr != 'None' :
-        corr_template_str_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', ffcorr )
-        corr_template_str_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', ffcorr )
-        corr_template_str_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', ffcorr )
+        corr_template_str_leadFail_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=False, cuts=ffcorr )
+        corr_template_str_leadPass_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=True , cuts=ffcorr )
+        corr_template_str_leadFail_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=False, cuts=ffcorr )
+        corr_template_str_leadPass_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=True , cuts=ffcorr )
+        corr_template_str_leadFail_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=False, cuts=ffcorr )
+        corr_template_str_leadPass_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=True , cuts=ffcorr )
 
-        templates_corr = {}
+        templates_corr = {'leadPass' : {}, 'leadFail' : {}}
 
-        templates_corr[('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr[('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr[('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr['leadFail'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr['leadPass'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr['leadFail'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr['leadPass'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr['leadFail'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr['leadPass'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
 
     regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB')]
     for reg in regions :
@@ -666,120 +763,137 @@ def do_nominal_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptra
             print '---------------------------------'
             gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=sampManData )
 
-        # -----------------------
-        # inclusive result
-        # -----------------------
+
+        run_nominal_calculation( gg_hist, templates, templates_corr, reg, ptbins, ch, fitvar, ffcorr, systematics, subl_ptrange, outputDir )
+
+def run_nominal_calculation( gg_hist, templates, templates_corr, reg, ptbins, ch, fitvar, ffcorr, systematics=None, subl_ptrange=(None,None), outputDir=None ) :
+
+    # -----------------------
+    # inclusive result
+    # -----------------------
+
+    # project data hist
+    if isinstance( gg_hist, dict ) and 'leadPass' in gg_hist :
+        gg_hist_inclusive = {}
+        gg_hist_inclusive['leadPass'] = gg_hist['leadPass'].ProjectionX( 'gg_hist_px_lead_pass' )
+        gg_hist_inclusive['leadFail'] = gg_hist['leadFail'].ProjectionX( 'gg_hist_px_lead_fail' )
+        print 'Integral gg_hist_inclusive, leadPass ', gg_hist_inclusive['leadPass'].Integral()
+        print 'Integral gg_hist_inclusive, leadFail ', gg_hist_inclusive['leadFail'].Integral()
+    else :
+        gg_hist_inclusive = gg_hist.Project3D( 'yx' )
+        print 'Ingegral gg_hist_inclusive ', gg_hist_inclusive.Integral()
+
+    templates_inclusive = get_projected_templates( templates, lead_ptrange =(None,None), subl_ptrange=subl_ptrange )
+    templates_corr_inc = None
+    if templates_corr is not None :
+        templates_corr_inc = { }
+        templates_corr_inc['leadPass'] = templates_corr['leadPass'][(reg[0], reg[1])]['Data'].ProjectionX('px_pass')
+        templates_corr_inc['leadFail'] = templates_corr['leadFail'][(reg[0], reg[1])]['Data'].ProjectionX('px_fail')
+
+    # all results should be unblinded
+    ndim = 4
+
+    (results_inclusive_stat_data, results_inclusive_stat_temp, results_inclusive_syst_bkg, results_inclusive_syst_temp) = run_diphoton_fit(templates_inclusive, gg_hist_inclusive, reg[0], reg[1], templates_corr=templates_corr_inc, lead_ptrange=(None,None), subl_ptrange=subl_ptrange, outputDir=outputDir, outputPrefix='__%s'%ch, systematics=systematics, fitvar=fitvar, ndim=ndim )
+
+    namePostfix = '__ffcorr_%s__%s__%s-%s' %( ffcorr, ch, reg[0], reg[1] )
+
+    save_templates( templates_inclusive, outputDir, lead_ptrange=(None,None), subl_ptrange=(None,None), namePostfix=namePostfix )
+
+    namePostfix_statData = '__statData%s' %namePostfix
+    save_results( results_inclusive_stat_data, outputDir, namePostfix_statData )
+
+    namePostfix_statTemp = '__statTemp%s' %namePostfix
+    save_results( results_inclusive_stat_temp, outputDir, namePostfix_statTemp )
+
+    namePostfix_systBkg = '__systBkg%s' %namePostfix
+    save_results( results_inclusive_syst_bkg, outputDir, namePostfix_systBkg )
+
+    namePostfix_systTemp = '__systTemp%s' %namePostfix
+    save_results( results_inclusive_syst_temp, outputDir, namePostfix_systTemp )
+
+    # -----------------------
+    # pt binned results
+    # -----------------------
+    for idx, ptmin in enumerate(ptbins[:-1] ) :
+        ptmax = ptbins[idx+1]
+
+        # put lead range together (expected by following code)
+        if ptmax == ptbins[-1] : 
+            lead_ptrange = ( ptmin, None )
+        else :
+            lead_ptrange = ( ptmin, ptmax )
 
         # project data hist
-        gg_hist_inclusive = gg_hist.Project3D( 'yx' )
+        if isinstance( gg_hist, dict )  and 'leadPass' in gg_hist :
+            gg_hist_pt= {}
+            gg_hist_pt['leadPass'] = gg_hist['leadPass'].ProjectionX( 'gg_hist_px_lead_pass_%d_%d' %(ptmin,ptmax), gg_hist['leadPass'].GetYaxis().FindBin(ptmin), gg_hist['leadPass'].GetYaxis().FindBin(ptmax)-1 )
+            gg_hist_pt['leadFail'] = gg_hist['leadFail'].ProjectionX( 'gg_hist_px_lead_fail_%d_%d' %(ptmin,ptmax), gg_hist['leadFail'].GetYaxis().FindBin(ptmin), gg_hist['leadFail'].GetYaxis().FindBin(ptmax)-1 )
+        else :
+            gg_hist.GetZaxis().SetRange( gg_hist.GetZaxis().FindBin( ptmin), gg_hist.GetZaxis().FindBin( ptmax )-1 )
+            gg_hist_pt = gg_hist.Project3D( 'yx' )
 
-        templates_inclusive = get_projected_templates( templates, lead_ptrange =(None,None), subl_ptrange=subl_ptrange )
-        templates_corr_inc = None
+        # determine the proper
+        # sublead range given
+        # the input lead and
+        # sublead 
+        if subl_ptrange[0] is not None :
+            subl_min = subl_ptrange[0]
+        else :
+            subl_min = 15
+        if subl_ptrange[1] is not None :
+            if lead_ptrange[1] is None :
+                subl_max = subl_ptrange[1]
+            elif lead_ptrange[1] < subl_ptrange[1] :
+                subl_max = lead_ptrange[1]
+            else :
+                subl_max = subl_ptrange[1]
+        else :
+            subl_max = lead_ptrange[1]
+
+
+        # get templates
+        templates_pt = get_projected_templates( templates, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max ) )
+        templates_corr_pt = None
         if templates_corr is not None :
-            templates_corr_inc = templates_corr[(reg[0], reg[1])]['Data'].Project3D('yx')
+            templates_corr_pt = {}
+            full_temp_pass = templates_corr['leadPass'][(reg[0], reg[1])]['Data']
+            full_temp_fail = templates_corr['leadFail'][(reg[0], reg[1])]['Data']
+            templates_corr_pt['leadPass'] = full_temp_pass.ProjectionX('px_pass_%d_%d'%( ptmin, ptmax ),  full_temp_pass.GetYaxis().FindBin(ptmin), full_temp_pass.GetYaxis().FindBin(ptmax)-1 )
+            templates_corr_pt['leadFail'] = full_temp_fail.ProjectionX('px_fail_%d_%d'%( ptmin, ptmax ),  full_temp_fail.GetYaxis().FindBin(ptmin), full_temp_fail.GetYaxis().FindBin(ptmax)-1 )
 
         # all results should be unblinded
         ndim = 4
 
-        (results_inclusive_stat_data, results_inclusive_stat_temp, results_inclusive_syst_bkg, results_inclusive_syst_temp) = run_diphoton_fit(templates_inclusive, gg_hist_inclusive, reg[0], reg[1], templates_corr=templates_corr_inc, lead_ptrange=(None,None), subl_ptrange=subl_ptrange, outputDir=outputDir, outputPrefix='__%s'%ch, systematics=systematics, fitvar=fitvar, ndim=ndim )
+        # get results
+        (results_pt_stat_data, results_pt_stat_temp, results_pt_syst_bkg, results_pt_syst_temp) = run_diphoton_fit(templates_pt, gg_hist_pt, reg[0], reg[1], templates_corr=templates_corr_pt, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max ), outputDir=outputDir, outputPrefix='__%s' %ch, systematics=systematics, ndim=ndim, fitvar=fitvar )
 
-        namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
-        if ffcorr != 'None' :
-            namePostfix = '__ffcorr_%s%s' %( ffcorr, namePostfix)
+        namePostfix = '__ffcorr_%s__%s__%s-%s' %( ffcorr, ch, reg[0], reg[1] )
 
-        save_templates( templates_inclusive, outputDir, lead_ptrange=(None,None), subl_ptrange=(None,None), namePostfix=namePostfix )
+        if lead_ptrange[0] is not None :
+            if lead_ptrange[1] is None :
+                namePostfix += '__pt_%d-max' %lead_ptrange[0]
+            else :
+                namePostfix += '__pt_%d-%d' %(lead_ptrange[0], lead_ptrange[1] )
 
-        namePostfix_statData = '__statData%s' %namePostfix
-        save_results( results_inclusive_stat_data, outputDir, namePostfix_statData )
+        if subl_ptrange[0] is not None :
+            if subl_ptrange[1] is None :
+                namePostfix += '__subpt_%d-max' %subl_ptrange[0]
+            else :
+                namePostfix += '__subpt_%d-%d' %(subl_ptrange[0], subl_ptrange[1] )
 
-        namePostfix_statTemp = '__statTemp%s' %namePostfix
-        save_results( results_inclusive_stat_temp, outputDir, namePostfix_statTemp )
+        save_templates( templates_pt, outputDir, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max), namePostfix=namePostfix )
+
+        namePostfix_statData= '__statData%s' %namePostfix
+        save_results( results_pt_stat_data, outputDir, namePostfix_statData )
+
+        namePostfix_statTemp= '__statTemp%s' %namePostfix
+        save_results( results_pt_stat_temp, outputDir, namePostfix_statTemp)
 
         namePostfix_systBkg = '__systBkg%s' %namePostfix
-        save_results( results_inclusive_syst_bkg, outputDir, namePostfix_systBkg )
+        save_results( results_pt_syst_bkg, outputDir, namePostfix_systBkg )
 
         namePostfix_systTemp = '__systTemp%s' %namePostfix
-        save_results( results_inclusive_syst_temp, outputDir, namePostfix_systTemp )
-
-        # -----------------------
-        # pt binned results
-        # -----------------------
-        for idx, ptmin in enumerate(ptbins[:-1] ) :
-            ptmax = ptbins[idx+1]
-
-            # put lead range together (expected by following code)
-            if ptmax == ptbins[-1] : 
-                lead_ptrange = ( ptmin, None )
-            else :
-                lead_ptrange = ( ptmin, ptmax )
-
-            print 'ptmin = %d, ptmax = %d, Min Z bin = %d, max Z bin = %d' %( ptmin, ptmax, gg_hist.GetZaxis().FindBin( ptmin), gg_hist.GetZaxis().FindBin( ptmax )-1 )
-
-            # project data hist
-            gg_hist.GetZaxis().SetRange( gg_hist.GetZaxis().FindBin( ptmin), gg_hist.GetZaxis().FindBin( ptmax )-1 )
-            gg_hist_pt = gg_hist.Project3D( 'yx' )
-
-            # determine the proper
-            # sublead range given
-            # the input lead and
-            # sublead 
-            if subl_ptrange[0] is not None :
-                subl_min = subl_ptrange[0]
-            else :
-                subl_min = 15
-            if subl_ptrange[1] is not None :
-                if lead_ptrange[1] is None :
-                    subl_max = subl_ptrange[1]
-                elif lead_ptrange[1] < subl_ptrange[1] :
-                    subl_max = lead_ptrange[1]
-                else :
-                    subl_max = subl_ptrange[1]
-            else :
-                subl_max = lead_ptrange[1]
-
-
-            # get templates
-            templates_pt = get_projected_templates( templates, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max ) )
-            templates_corr_pt = None
-            if templates_corr is not None :
-                templates_corr[(reg[0], reg[1])]['Data'].GetZaxis().SetRange( templates_corr[(reg[0], reg[1])]['Data'].FindBin(ptmin), templates_corr[(reg[0], reg[1])]['Data'].FindBin(ptmax)-1 )
-                templates_corr_pt = templates_corr[(reg[0], reg[1])]['Data'].Project3D('yx')
-
-            # all results should be unblinded
-            ndim = 4
-
-            # get results
-            (results_pt_stat_data, results_pt_stat_temp, results_pt_syst_bkg, results_pt_syst_temp) = run_diphoton_fit(templates_pt, gg_hist_pt, reg[0], reg[1], templates_corr=templates_corr_pt, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max ), outputDir=outputDir, outputPrefix='__%s' %ch, systematics=systematics, ndim=ndim, fitvar=fitvar )
-
-            namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
-            if ffcorr != 'None' :
-                namePostfix = '__ffcorr_%s%s' %( ffcorr, namePostfix)
-
-            if lead_ptrange[0] is not None :
-                if lead_ptrange[1] is None :
-                    namePostfix += '__pt_%d-max' %lead_ptrange[0]
-                else :
-                    namePostfix += '__pt_%d-%d' %(lead_ptrange[0], lead_ptrange[1] )
-
-            if subl_ptrange[0] is not None :
-                if subl_ptrange[1] is None :
-                    namePostfix += '__subpt_%d-max' %subl_ptrange[0]
-                else :
-                    namePostfix += '__subpt_%d-%d' %(subl_ptrange[0], subl_ptrange[1] )
-
-            save_templates( templates_pt, outputDir, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max), namePostfix=namePostfix )
-
-            namePostfix_statData= '__statData%s' %namePostfix
-            save_results( results_pt_stat_data, outputDir, namePostfix_statData )
-
-            namePostfix_statTemp= '__statTemp%s' %namePostfix
-            save_results( results_pt_stat_temp, outputDir, namePostfix_statTemp)
-
-            namePostfix_systBkg = '__systBkg%s' %namePostfix
-            save_results( results_pt_syst_bkg, outputDir, namePostfix_systBkg )
-
-            namePostfix_systTemp = '__systTemp%s' %namePostfix
-            save_results( results_pt_syst_temp, outputDir, namePostfix_systTemp)
+        save_results( results_pt_syst_temp, outputDir, namePostfix_systTemp)
 
 
 def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_iso_fake=None, iso_cuts_noiso=None, loose_iso_cuts = None, ptbins=[], subl_ptrange=(None,None), fitvar='sigmaIEIE', ch='mu', ffcorr='None', outputDir=None, systematics=None ) :
@@ -822,14 +936,20 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_iso_fake=None, iso_cut
 
     templates_corr = None
     if ffcorr != 'None' :
-        corr_template_str_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', ffcorr )
-        corr_template_str_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', ffcorr )
-        corr_template_str_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', ffcorr )
+        corr_template_str_leadFail_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=False, cuts=ffcorr )
+        corr_template_str_leadPass_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=True,  cuts=ffcorr )
+        corr_template_str_leadFail_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=False, cuts=ffcorr )
+        corr_template_str_leadPass_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=True, cuts=ffcorr )
+        corr_template_str_leadFail_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=False, cuts=ffcorr )
+        corr_template_str_leadPass_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=True, cuts=ffcorr )
 
-        templates_corr = {}
-        templates_corr[('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr[('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr[('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr = {'leadPass' : {}, 'leadFail' : {}}
+        templates_corr['leadFail'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr['leadPass'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr['leadFail'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr['leadPass'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr['leadFail'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+        templates_corr['leadPass'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
 
     regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB') ]
 
@@ -879,8 +999,8 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_iso_fake=None, iso_cut
         if fitvar == 'sigmaIEIE' :
             # add object cuts to the selection
 
-            nom_iso_cuts_lead = 'chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _chIso_cuts[reg[0]], _neuIso_cuts[reg[0]], _phoIso_cuts[reg[0]])
-            nom_iso_cuts_subl = 'chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _chIso_cuts[reg[1]], _neuIso_cuts[reg[1]], _phoIso_cuts[reg[1]])
+            nom_iso_cuts_lead = 'chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _chIso_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+            nom_iso_cuts_subl = 'chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _chIso_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
 
             gg_selection_leadiso = gg_selection_leadiso + ' && ph_iso%d%d%d_n > 1 && %s ' %(loose_iso_cuts[0], loose_iso_cuts[1], loose_iso_cuts[2], nom_iso_cuts_lead )
             gg_selection_subliso = gg_selection_subliso + ' && ph_iso%d%d%d_n > 1 && %s ' %(loose_iso_cuts[0], loose_iso_cuts[1], loose_iso_cuts[2], nom_iso_cuts_subl )
@@ -892,48 +1012,48 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_iso_fake=None, iso_cut
 
         elif fitvar == 'chIsoCorr' :
 
-            nom_iso_cuts_lead = 'sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]], _neuIso_cuts[reg[0]], _phoIso_cuts[reg[0]])
-            nom_iso_cuts_subl = 'sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]], _neuIso_cuts[reg[1]], _phoIso_cuts[reg[1]])
+            nom_iso_cuts_lead = 'sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+            nom_iso_cuts_subl = 'sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
 
 
             gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
             gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
 
         
-            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]], loose_iso_cuts[1], loose_iso_cuts[2] )
-            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]],loose_iso_cuts[1], loose_iso_cuts[2] )
+            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], loose_iso_cuts[1], loose_iso_cuts[2] )
+            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],loose_iso_cuts[1], loose_iso_cuts[2] )
 
-            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]], _neuIso_cuts[reg[0]], _phoIso_cuts[reg[0]],_sieie_cuts[reg[1]], _neuIso_cuts[reg[1]], _phoIso_cuts[reg[1]] )
+            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
 
         elif fitvar == 'neuIsoCorr' :
 
-            nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]], _chIso_cuts[reg[0]], _phoIso_cuts[reg[0]])
-            nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]], _chIso_cuts[reg[1]], _phoIso_cuts[reg[1]])
+            nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+            nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
 
 
             gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
             gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
 
         
-            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]], loose_iso_cuts[0], loose_iso_cuts[2] )
-            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]],loose_iso_cuts[0], loose_iso_cuts[2] )
+            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], loose_iso_cuts[0], loose_iso_cuts[2] )
+            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],loose_iso_cuts[0], loose_iso_cuts[2] )
 
-            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]], _chIso_cuts[reg[0]], _phoIso_cuts[reg[0]],_sieie_cuts[reg[1]], _chIso_cuts[reg[1]], _phoIso_cuts[reg[1]] )
+            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
 
         elif fitvar == 'phoIsoCorr' :
 
-            nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]], _chIso_cuts[reg[0]], _phoIso_cuts[reg[0]])
-            nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]], _chIso_cuts[reg[1]], _phoIso_cuts[reg[1]])
+            nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+            nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
 
 
             gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
             gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
 
         
-            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]], loose_iso_cuts[0], loose_iso_cuts[1] )
-            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]],loose_iso_cuts[0], loose_iso_cuts[1] )
+            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], loose_iso_cuts[0], loose_iso_cuts[1] )
+            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],loose_iso_cuts[0], loose_iso_cuts[1] )
 
-            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]], _chIso_cuts[reg[0]], _phoIso_cuts[reg[0]],_sieie_cuts[reg[1]], _chIso_cuts[reg[1]], _phoIso_cuts[reg[1]] )
+            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
 
         # parse out the x and y binning
         ybinn = binning[reg[1]]
@@ -1037,82 +1157,110 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_iso_fake=None, iso_cut
             print gg_selection_bothiso
             print '---------------------------------'
             gg_hist_bothiso = clone_sample_and_draw( target_samp[0], var, gg_selection_bothiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManData )
+        run_corr_calculation( templates_leadiso, templates_subliso, templates_nom, templates_corr, gg_hist_leadiso, gg_hist_subliso, gg_hist_bothiso, reg, ptbins, ch, fitvar, ffcorr, systematics=systematics,subl_ptrange=subl_ptrange,outputDir=outputDir )
 
-        # all results should be unblinded
-        ndim = 4
+def run_corr_calculation( templates_leadiso, templates_subliso, templates_nom, templates_corr, gg_hist_leadiso, gg_hist_subliso, gg_hist_bothiso, reg, ptbins, ch, fitvar, ffcorr, systematics=None, subl_ptrange=(None,None), outputDir=None ) :
 
-        # -----------------------
-        # inclusive result
-        # -----------------------
-        # project data hist
+    # all results should be unblinded
+    ndim = 4
+
+    # -----------------------
+    # inclusive result
+    # -----------------------
+    # project data hist
+    if isinstance( gg_hist_leadiso, dict ) and 'leadPass' in gg_hist_leadiso :
+        gg_hist_leadiso_inclusive = {}
+        gg_hist_subliso_inclusive = {}
+        gg_hist_bothiso_inclusive = {}
+
+        gg_hist_leadiso_inclusive['leadPass'] = gg_hist_leadiso['leadPass'].ProjectionX('leadiso_px_pass')
+        gg_hist_leadiso_inclusive['leadFail'] = gg_hist_leadiso['leadFail'].ProjectionX('leadiso_px_fail')
+        gg_hist_subliso_inclusive['leadPass'] = gg_hist_subliso['leadPass'].ProjectionX('subliso_px_pass')
+        gg_hist_subliso_inclusive['leadFail'] = gg_hist_subliso['leadFail'].ProjectionX('subliso_px_fail')
+        gg_hist_bothiso_inclusive['leadPass'] = gg_hist_bothiso['leadPass'].ProjectionX('bothiso_px_pass')
+        gg_hist_bothiso_inclusive['leadFail'] = gg_hist_bothiso['leadFail'].ProjectionX('bothiso_px_fail')
+
+    else :
+
         gg_hist_leadiso_inclusive = gg_hist_leadiso.Project3D( 'yx' )
         gg_hist_subliso_inclusive = gg_hist_subliso.Project3D( 'yx' )
         gg_hist_bothiso_inclusive = gg_hist_bothiso.Project3D( 'yx' )
 
-        templates_leadiso_inclusive = get_projected_templates( templates_leadiso, lead_ptrange = (None,None), subl_ptrange=subl_ptrange )
-        templates_subliso_inclusive = get_projected_templates( templates_subliso, lead_ptrange = (None,None), subl_ptrange=subl_ptrange )
-        templates_nom_inclusive     = get_projected_templates( templates_nom, lead_ptrange = (None,None), subl_ptrange=subl_ptrange )
+    templates_leadiso_inclusive = get_projected_templates( templates_leadiso, lead_ptrange = (None,None), subl_ptrange=subl_ptrange )
+    templates_subliso_inclusive = get_projected_templates( templates_subliso, lead_ptrange = (None,None), subl_ptrange=subl_ptrange )
+    templates_nom_inclusive     = get_projected_templates( templates_nom, lead_ptrange = (None,None), subl_ptrange=subl_ptrange )
 
-        templates_corr_inc = None
-        if templates_corr is not None :
-            templates_corr_inc = templates_corr[(reg[0], reg[1])]['Data'].Project3D('yx')
+    templates_corr_inc = None
+    if templates_corr is not None :
+        templates_corr_inc = {}
+        templates_corr_inc['leadPass'] = templates_corr['leadPass'][(reg[0], reg[1])]['Data'].ProjectionX('px_pass')
+        templates_corr_inc['leadFail'] = templates_corr['leadFail'][(reg[0], reg[1])]['Data'].ProjectionX('px_fail')
 
-        (results_corr_stat_data, results_corr_stat_temp, results_corr_syst_bkg, results_corr_syst_temp)  = run_corrected_diphoton_fit(templates_leadiso_inclusive, templates_subliso_inclusive, gg_hist_leadiso_inclusive, gg_hist_subliso_inclusive, gg_hist_bothiso_inclusive, reg[0], reg[1], templates_corr = templates_corr_inc, fitvar=fitvar, lead_ptrange=(None,None), subl_ptrange=subl_ptrange, ndim=ndim,systematics=systematics)
+    (results_corr_stat_data, results_corr_stat_temp, results_corr_syst_bkg, results_corr_syst_temp)  = run_corrected_diphoton_fit(templates_leadiso_inclusive, templates_subliso_inclusive, gg_hist_leadiso_inclusive, gg_hist_subliso_inclusive, gg_hist_bothiso_inclusive, reg[0], reg[1], templates_corr = templates_corr_inc, fitvar=fitvar, lead_ptrange=(None,None), subl_ptrange=subl_ptrange, ndim=ndim,systematics=systematics)
 
-        namePostfix = '__%s__%s-%s' %( ch,reg[0], reg[1] )
-        if ffcorr != 'None' :
-            namePostfix = '__ffcorr_%s%s' %( ffcorr, namePostfix)
+    namePostfix = '__ffcorr_%s__%s__%s-%s' %( ffcorr, ch,reg[0], reg[1] )
 
-        save_templates( templates_nom_inclusive, outputDir, lead_ptrange=(None,None), subl_ptrange=(None,None),namePostfix=namePostfix )
+    save_templates( templates_nom_inclusive, outputDir, lead_ptrange=(None,None), subl_ptrange=(None,None),namePostfix=namePostfix )
 
-        namePostfix_statData = '__statData%s'%namePostfix
-        save_results( results_corr_stat_data, outputDir, namePostfix_statData)
+    namePostfix_statData = '__statData%s'%namePostfix
+    save_results( results_corr_stat_data, outputDir, namePostfix_statData)
 
-        namePostfix_statTemp = '__statTemp%s'%namePostfix
-        save_results( results_corr_stat_temp, outputDir, namePostfix_statTemp)
+    namePostfix_statTemp = '__statTemp%s'%namePostfix
+    save_results( results_corr_stat_temp, outputDir, namePostfix_statTemp)
 
-        namePostfix_systBkg = '__systBkg%s' %namePostfix
-        save_results( results_corr_syst_bkg, outputDir, namePostfix_systBkg)
+    namePostfix_systBkg = '__systBkg%s' %namePostfix
+    save_results( results_corr_syst_bkg, outputDir, namePostfix_systBkg)
 
-        namePostfix_systTemp = '__systTemp%s' %namePostfix
-        save_results( results_corr_syst_temp, outputDir, namePostfix_systTemp)
+    namePostfix_systTemp = '__systTemp%s' %namePostfix
+    save_results( results_corr_syst_temp, outputDir, namePostfix_systTemp)
 
-        # -----------------------
-        # pt binned results
-        # -----------------------
-        for idx, ptmin in enumerate(ptbins[:-1] ) :
+    # -----------------------
+    # pt binned results
+    # -----------------------
+    for idx, ptmin in enumerate(ptbins[:-1] ) :
 
-            ptmax = ptbins[idx+1]
+        ptmax = ptbins[idx+1]
 
-            # put lead range together (expected by following code)
-            if ptmax == ptbins[-1] : 
-                lead_ptrange = ( ptmin, None )
-            else :
-                lead_ptrange = ( ptmin, ptmax )
+        # put lead range together (expected by following code)
+        if ptmax == ptbins[-1] : 
+            lead_ptrange = ( ptmin, None )
+        else :
+            lead_ptrange = ( ptmin, ptmax )
 
-            # determine the proper
-            # sublead range given
-            # the input lead and
-            # sublead 
-            if subl_ptrange[0] is not None :
-                subl_min = subl_ptrange[0]
-            else :
-                subl_min = 15
-            if subl_ptrange[1] is not None :
-                if lead_ptrange[1] is None :
-                    subl_max = subl_ptrange[1]
-                elif lead_ptrange[1] < subl_ptrange[1] :
-                    subl_max = lead_ptrange[1]
-                else :
-                    subl_max = subl_ptrange[1]
-            else :
+        # determine the proper
+        # sublead range given
+        # the input lead and
+        # sublead 
+        if subl_ptrange[0] is not None :
+            subl_min = subl_ptrange[0]
+        else :
+            subl_min = 15
+        if subl_ptrange[1] is not None :
+            if lead_ptrange[1] is None :
+                subl_max = subl_ptrange[1]
+            elif lead_ptrange[1] < subl_ptrange[1] :
                 subl_max = lead_ptrange[1]
+            else :
+                subl_max = subl_ptrange[1]
+        else :
+            subl_max = lead_ptrange[1]
 
-            subl_max_name = str(subl_max)
-            if subl_max == None :
-                subl_max_name = 'max'
+        subl_max_name = str(subl_max)
+        if subl_max == None :
+            subl_max_name = 'max'
 
-            print 'ptleadmin = %d, ptleadmax = %d, ptsublmin = %d, ptsublmax = %s, Min Z bin = %d, max Z bin = %d, region = %s-%s' %( ptmin, ptmax, subl_min, subl_max_name, gg_hist_leadiso.GetZaxis().FindBin( ptmin), gg_hist_leadiso.GetZaxis().FindBin( ptmax )-1, reg[0], reg[1] )
+        if isinstance( gg_hist_leadiso, dict ) and 'leadPass' in gg_hist_leadiso :
+            gg_hist_leadiso_pt = {}
+            gg_hist_subliso_pt = {}
+            gg_hist_bothiso_pt = {}
+
+            gg_hist_leadiso_pt['leadPass'] = gg_hist_leadiso['leadPass'].ProjectionX( 'px_leadiso_pass_%d-%d' %(ptmin, ptmax), gg_hist_leadiso['leadPass'].GetYaxis().FindBin(ptmin), gg_hist_leadiso['leadPass'].GetYaxis().FindBin(ptmax) -1 )
+            gg_hist_leadiso_pt['leadFail'] = gg_hist_leadiso['leadFail'].ProjectionX( 'px_leadiso_fail_%d-%d' %(ptmin, ptmax), gg_hist_leadiso['leadFail'].GetYaxis().FindBin(ptmin), gg_hist_leadiso['leadFail'].GetYaxis().FindBin(ptmax) -1 )
+            gg_hist_subliso_pt['leadPass'] = gg_hist_subliso['leadPass'].ProjectionX( 'px_subliso_pass_%d-%d' %(ptmin, ptmax), gg_hist_subliso['leadPass'].GetYaxis().FindBin(ptmin), gg_hist_subliso['leadPass'].GetYaxis().FindBin(ptmax) -1 )
+            gg_hist_subliso_pt['leadFail'] = gg_hist_subliso['leadFail'].ProjectionX( 'px_subliso_fail_%d-%d' %(ptmin, ptmax), gg_hist_subliso['leadFail'].GetYaxis().FindBin(ptmin), gg_hist_subliso['leadFail'].GetYaxis().FindBin(ptmax) -1 )
+            gg_hist_bothiso_pt['leadPass'] = gg_hist_bothiso['leadPass'].ProjectionX( 'px_bothiso_pass_%d-%d' %(ptmin, ptmax), gg_hist_bothiso['leadPass'].GetYaxis().FindBin(ptmin), gg_hist_bothiso['leadPass'].GetYaxis().FindBin(ptmax) -1 )
+            gg_hist_bothiso_pt['leadFail'] = gg_hist_bothiso['leadFail'].ProjectionX( 'px_bothiso_fail_%d-%d' %(ptmin, ptmax), gg_hist_bothiso['leadFail'].GetYaxis().FindBin(ptmin), gg_hist_bothiso['leadFail'].GetYaxis().FindBin(ptmax) -1 )
+        else :
             # project data hist
             gg_hist_leadiso.GetZaxis().SetRange( gg_hist_leadiso.GetZaxis().FindBin( ptmin), gg_hist_leadiso.GetZaxis().FindBin( ptmax )-1 )
             gg_hist_leadiso_pt = gg_hist_leadiso.Project3D( 'yx' )
@@ -1123,53 +1271,54 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_iso_fake=None, iso_cut
             gg_hist_bothiso.GetZaxis().SetRange( gg_hist_bothiso.GetZaxis().FindBin( ptmin), gg_hist_bothiso.GetZaxis().FindBin( ptmax )-1 )
             gg_hist_bothiso_pt = gg_hist_bothiso.Project3D( 'yx' )
 
-                
-            # all results should be unblinded
-            ndim = 4
+            
+        # all results should be unblinded
+        ndim = 4
 
-            # get templates
-            templates_leadiso_pt = get_projected_templates( templates_leadiso, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max) )
-            templates_subliso_pt = get_projected_templates( templates_subliso, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max) )
-            templates_nom_pt = get_projected_templates( templates_nom, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max) )
+        # get templates
+        templates_leadiso_pt = get_projected_templates( templates_leadiso, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max) )
+        templates_subliso_pt = get_projected_templates( templates_subliso, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max) )
+        templates_nom_pt = get_projected_templates( templates_nom, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max) )
 
 
-            templates_corr_pt = None
-            if templates_corr is not None :
-                templates_corr[(reg[0], reg[1])]['Data'].GetZaxis().SetRange( templates_corr[(reg[0], reg[1])]['Data'].FindBin(ptmin), templates_corr[(reg[0], reg[1])]['Data'].FindBin(ptmax)-1 )
-                templates_corr_pt = templates_corr[(reg[0], reg[1])]['Data'].Project3D('yx')
+        templates_corr_pt = None
+        if templates_corr is not None :
+            templates_corr_pt = {}
+            full_temp_pass = templates_corr['leadPass'][(reg[0], reg[1])]['Data']
+            full_temp_fail = templates_corr['leadFail'][(reg[0], reg[1])]['Data']
+            templates_corr_pt['leadPass'] = full_temp_pass.ProjectionX('px_pass_%d_%d'%( ptmin,ptmax),  full_temp_pass.GetYaxis().FindBin(ptmin), full_temp_pass.GetYaxis().FindBin(ptmax)-1 )
+            templates_corr_pt['leadFail'] = full_temp_fail.ProjectionX('px_fail_%d_%d'%( ptmin,ptmax),  full_temp_fail.GetYaxis().FindBin(ptmin), full_temp_fail.GetYaxis().FindBin(ptmax)-1 )
 
-            # get results
-            (results_corr_pt_stat_data, results_corr_pt_stat_temp, results_corr_pt_syst_bkg, results_corr_pt_syst_temp) = run_corrected_diphoton_fit(templates_leadiso_pt, templates_subliso_pt, gg_hist_leadiso_pt, gg_hist_subliso_pt, gg_hist_bothiso_pt, reg[0], reg[1], templates_corr=templates_corr_pt, fitvar=fitvar, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max), ndim=ndim, systematics=systematics)
+        # get results
+        (results_corr_pt_stat_data, results_corr_pt_stat_temp, results_corr_pt_syst_bkg, results_corr_pt_syst_temp) = run_corrected_diphoton_fit(templates_leadiso_pt, templates_subliso_pt, gg_hist_leadiso_pt, gg_hist_subliso_pt, gg_hist_bothiso_pt, reg[0], reg[1], templates_corr=templates_corr_pt, fitvar=fitvar, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max), ndim=ndim, systematics=systematics)
 
-            namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
-            if ffcorr != 'None' :
-                namePostfix = '__ffcorr_%s%s' %( ffcorr, namePostfix)
+        namePostfix = '__ffcorr_%s__%s__%s-%s' %( ffcorr, ch, reg[0], reg[1] )
 
-            if lead_ptrange[0] is not None :
-                if lead_ptrange[1] is None :
-                    namePostfix += '__pt_%d-max' %lead_ptrange[0]
-                else :
-                    namePostfix += '__pt_%d-%d' %(lead_ptrange[0], lead_ptrange[1] )
+        if lead_ptrange[0] is not None :
+            if lead_ptrange[1] is None :
+                namePostfix += '__pt_%d-max' %lead_ptrange[0]
+            else :
+                namePostfix += '__pt_%d-%d' %(lead_ptrange[0], lead_ptrange[1] )
 
-            if subl_ptrange[0] is not None :
-                if subl_ptrange[1] is None :
-                    namePostfix += '__subpt_%d-max' %subl_ptrange[0]
-                else :
-                    namePostfix += '__subpt_%d-%d' %(subl_ptrange[0], subl_ptrange[1] )
+        if subl_ptrange[0] is not None :
+            if subl_ptrange[1] is None :
+                namePostfix += '__subpt_%d-max' %subl_ptrange[0]
+            else :
+                namePostfix += '__subpt_%d-%d' %(subl_ptrange[0], subl_ptrange[1] )
 
-            save_templates( templates_nom_pt, outputDir, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min,subl_max), namePostfix=namePostfix)
+        save_templates( templates_nom_pt, outputDir, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min,subl_max), namePostfix=namePostfix)
 
-            namePostfix_statData = '__statData%s' %namePostfix
-            save_results( results_corr_pt_stat_data, outputDir, namePostfix_statData)
+        namePostfix_statData = '__statData%s' %namePostfix
+        save_results( results_corr_pt_stat_data, outputDir, namePostfix_statData)
 
-            namePostfix_statTemp = '__statTemp%s' %namePostfix
-            save_results( results_corr_pt_stat_temp, outputDir, namePostfix_statTemp)
+        namePostfix_statTemp = '__statTemp%s' %namePostfix
+        save_results( results_corr_pt_stat_temp, outputDir, namePostfix_statTemp)
 
-            namePostfix_systBkg = '__systBkg%s' %namePostfix
-            save_results( results_corr_pt_syst_bkg, outputDir, namePostfix_systBkg)
+        namePostfix_systBkg = '__systBkg%s' %namePostfix
+        save_results( results_corr_pt_syst_bkg, outputDir, namePostfix_systBkg)
 
-            namePostfix_systTemp = '__systTemp%s' %namePostfix
-            save_results( results_corr_pt_syst_temp, outputDir, namePostfix_systTemp)
+        namePostfix_systTemp = '__systTemp%s' %namePostfix
+        save_results( results_corr_pt_syst_temp, outputDir, namePostfix_systTemp)
 
 def do_closure_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptrange=(None,None), ch='mu', ngen=None, corr_factor=0.0, outputDir=None ) :
 
@@ -1206,8 +1355,6 @@ def do_closure_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptra
         templates_inclusive = get_projected_templates( templates, lead_ptrange = (None,None), subl_ptrange=subl_ptrange )
 
         results_inclusive = run_generated_diphoton_fit(templates_inclusive, reg[0], reg[1], ngen, lead_ptrange=(None,None), subl_ptrange=subl_ptrange, corr_factor=corr_factor, outputDir=outputDir, outputPrefix='__%s'%ch )
-
-        print results_inclusive
 
         #namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
         #save_templates( templates_inclusive, outputDir, lead_ptrange=(None,None), subl_ptrange=(None,None), namePostfix=namePostfix )
@@ -1253,8 +1400,6 @@ def do_closure_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptra
 
             # get results
             results_pt = run_generated_diphoton_fit(templates_pt, reg[0], reg[1],ngen, lead_ptrange=lead_ptrange, subl_ptrange=subl_ptrange, corr_factor=corr_factor, outputDir=outputDir, outputPrefix='__%s' %ch )
-
-            print results_pt
 
             #namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
             #if lead_ptrange[0] is not None :
@@ -1380,17 +1525,50 @@ def run_corrected_diphoton_fit( templates_leadiso, templates_subliso, gg_hist_le
     plotbinning = get_default_binning()
     cuts = get_default_cuts(var=fitvar)
 
-    # Find the bins corresponding to the cuts
-    # lead photon on X axis, subl on Y axis
-    bins_lead_tight = ( gg_hist_leadiso.GetXaxis().FindBin( cuts[lead_reg]['tight'][0] ), gg_hist_leadiso.GetXaxis().FindBin( cuts[lead_reg]['tight'][1] ) )
-    bins_lead_loose = ( gg_hist_leadiso.GetXaxis().FindBin( cuts[lead_reg]['loose'][0] ), gg_hist_leadiso.GetXaxis().FindBin( cuts[lead_reg]['loose'][1] ) )
-    bins_subl_tight = ( gg_hist_leadiso.GetYaxis().FindBin( cuts[subl_reg]['tight'][0] ), gg_hist_leadiso.GetYaxis().FindBin( cuts[subl_reg]['tight'][1] ) )
-    bins_subl_loose = ( gg_hist_leadiso.GetYaxis().FindBin( cuts[subl_reg]['loose'][0] ), gg_hist_leadiso.GetYaxis().FindBin( cuts[subl_reg]['loose'][1] ) )
+    bins_lead_loose = ( None, None )
+    bins_lead_tight = ( None, None )
+    if isinstance( gg_hist_leadiso, dict ) :
 
-    print 'cuts, bins lead, tight = %f-%f ( %d - %d ) ' %( cuts[lead_reg]['tight'][0], cuts[lead_reg]['tight'][1], bins_lead_tight[0], bins_lead_tight[1] )
-    print 'cuts, bins lead, loose = %f-%f ( %d - %d ) ' %( cuts[lead_reg]['loose'][0], cuts[lead_reg]['loose'][1], bins_lead_loose[0], bins_lead_loose[1] )
-    print 'cuts, bins subl, tight = %f-%f ( %d - %d ) ' %( cuts[subl_reg]['tight'][0], cuts[subl_reg]['tight'][1], bins_subl_tight[0], bins_subl_tight[1] )
-    print 'cuts, bins subl, loose = %f-%f ( %d - %d ) ' %( cuts[subl_reg]['loose'][0], cuts[subl_reg]['loose'][1], bins_subl_loose[0], bins_subl_loose[1] )
+        # Find the bins corresponding to the cuts
+        # lead photon on X axis, subl on Y axis
+        bins_subl_tight = ( gg_hist_leadiso['leadPass'].GetXaxis().FindBin( cuts[subl_reg]['tight'][0] ), gg_hist_leadiso['leadPass'].GetXaxis().FindBin( cuts[subl_reg]['tight'][1] ) )
+        bins_subl_loose = ( gg_hist_leadiso['leadPass'].GetXaxis().FindBin( cuts[subl_reg]['loose'][0] ), gg_hist_leadiso['leadPass'].GetXaxis().FindBin( cuts[subl_reg]['loose'][1] ) )
+
+        # Integrate to the the data in the four regions
+        Ndata_TT_leadiso = gg_hist_leadiso['leadPass'].Integral( bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_TL_leadiso = gg_hist_leadiso['leadPass'].Integral( bins_subl_loose[0], bins_subl_loose[1] )
+        Ndata_LT_leadiso = gg_hist_leadiso['leadFail'].Integral( bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_LL_leadiso = gg_hist_leadiso['leadFail'].Integral( bins_subl_loose[0], bins_subl_loose[1] )
+
+        Ndata_TT_subliso = gg_hist_subliso['leadPass'].Integral( bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_TL_subliso = gg_hist_subliso['leadPass'].Integral( bins_subl_loose[0], bins_subl_loose[1] )
+        Ndata_LT_subliso = gg_hist_subliso['leadFail'].Integral( bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_LL_subliso = gg_hist_subliso['leadFail'].Integral( bins_subl_loose[0], bins_subl_loose[1] )
+
+        Ndata_TT_bothiso = gg_hist_bothiso['leadPass'].Integral( bins_subl_tight[0], bins_subl_tight[1] )
+        
+    else :
+
+        # Find the bins corresponding to the cuts
+        # lead photon on X axis, subl on Y axis
+        bins_lead_tight = ( gg_hist_leadiso.GetXaxis().FindBin( cuts[lead_reg]['tight'][0] ), gg_hist_leadiso.GetXaxis().FindBin( cuts[lead_reg]['tight'][1] ) )
+        bins_lead_loose = ( gg_hist_leadiso.GetXaxis().FindBin( cuts[lead_reg]['loose'][0] ), gg_hist_leadiso.GetXaxis().FindBin( cuts[lead_reg]['loose'][1] ) )
+        bins_subl_tight = ( gg_hist_leadiso.GetYaxis().FindBin( cuts[subl_reg]['tight'][0] ), gg_hist_leadiso.GetYaxis().FindBin( cuts[subl_reg]['tight'][1] ) )
+        bins_subl_loose = ( gg_hist_leadiso.GetYaxis().FindBin( cuts[subl_reg]['loose'][0] ), gg_hist_leadiso.GetYaxis().FindBin( cuts[subl_reg]['loose'][1] ) )
+
+        # Integrate to the the data in the four regions
+        Ndata_TT_leadiso = gg_hist_leadiso.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_TL_leadiso = gg_hist_leadiso.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_loose[0], bins_subl_loose[1] )
+        Ndata_LT_leadiso = gg_hist_leadiso.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_LL_leadiso = gg_hist_leadiso.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_loose[0], bins_subl_loose[1] )
+
+        Ndata_TT_subliso = gg_hist_subliso.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_TL_subliso = gg_hist_subliso.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_loose[0], bins_subl_loose[1] )
+        Ndata_LT_subliso = gg_hist_subliso.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_LL_subliso = gg_hist_subliso.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_loose[0], bins_subl_loose[1] )
+
+        Ndata_TT_bothiso = gg_hist_bothiso.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_tight[0], bins_subl_tight[1] )
+
 
     # arragnge the cuts by region
     eff_cuts = {}
@@ -1407,24 +1585,23 @@ def run_corrected_diphoton_fit( templates_leadiso, templates_subliso, gg_hist_le
     (stat_int_leadiso, syst_int_leadiso) = get_template_integrals( templates_leadiso, eff_cuts, lead_reg, subl_reg, lead_ptrange, subl_ptrange, var=fitvar, systematics=systematics )
     (stat_int_subliso, syst_int_subliso) = get_template_integrals( templates_subliso, eff_cuts, lead_reg, subl_reg, lead_ptrange, subl_ptrange, var=fitvar, systematics=systematics )
 
-    iso_eff_subl_tight = stat_int_subliso['subl']['fake']['tight'] / stat_int_leadiso['subl']['fake']['tight']
-    iso_eff_subl_loose = stat_int_subliso['subl']['fake']['loose'] / stat_int_leadiso['subl']['fake']['loose']
+    if stat_int_leadiso['subl']['fake']['tight'] != 0 :
+        iso_eff_subl_tight = stat_int_subliso['subl']['fake']['tight'] / stat_int_leadiso['subl']['fake']['tight']
+    else :
+        iso_eff_subl_tight = ufloat( 0, 0)
+    if stat_int_leadiso['subl']['fake']['loose'] != 0 :
+        iso_eff_subl_loose = stat_int_subliso['subl']['fake']['loose'] / stat_int_leadiso['subl']['fake']['loose']
+    else :
+        iso_eff_subl_loose = ufloat( 0, 0)
+    if stat_int_subliso['lead']['fake']['tight'] != 0 :
+        iso_eff_lead_tight = stat_int_leadiso['lead']['fake']['tight'] / stat_int_subliso['lead']['fake']['tight']
+    else :
+        iso_eff_lead_tight = ufloat( 0, 0)
+    if stat_int_subliso['lead']['fake']['loose'] != 0 :
+        iso_eff_lead_loose = stat_int_leadiso['lead']['fake']['loose'] / stat_int_subliso['lead']['fake']['loose']
+    else :
+        iso_eff_lead_loose = ufloat( 0, 0)
 
-    iso_eff_lead_tight = stat_int_leadiso['lead']['fake']['tight'] / stat_int_subliso['lead']['fake']['tight']
-    iso_eff_lead_loose = stat_int_leadiso['lead']['fake']['loose'] / stat_int_subliso['lead']['fake']['loose']
-
-    # Integrate to the the data in the four regions
-    Ndata_TT_leadiso = gg_hist_leadiso.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_tight[0], bins_subl_tight[1] )
-    Ndata_TL_leadiso = gg_hist_leadiso.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_loose[0], bins_subl_loose[1] )
-    Ndata_LT_leadiso = gg_hist_leadiso.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_tight[0], bins_subl_tight[1] )
-    Ndata_LL_leadiso = gg_hist_leadiso.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_loose[0], bins_subl_loose[1] )
-
-    Ndata_TT_subliso = gg_hist_subliso.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_tight[0], bins_subl_tight[1] )
-    Ndata_TL_subliso = gg_hist_subliso.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_loose[0], bins_subl_loose[1] )
-    Ndata_LT_subliso = gg_hist_subliso.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_tight[0], bins_subl_tight[1] )
-    Ndata_LL_subliso = gg_hist_subliso.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_loose[0], bins_subl_loose[1] )
-
-    Ndata_TT_bothiso = gg_hist_bothiso.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_tight[0], bins_subl_tight[1] )
 
     #-----------------------------------------
     # Use data with loosened iso on the Loose photon
@@ -1469,24 +1646,57 @@ def run_corrected_diphoton_fit( templates_leadiso, templates_subliso, gg_hist_le
     print eff_2d_syst_bkg
 
     if templates_corr is not None :
+
         eff_ff_2d_stat, eff_ff_2d_syst = generate_2d_corr_efficiencies( templates_corr, eff_cuts, lead_reg, subl_reg, lead_ptrange, subl_ptrange, var=fitvar )
+
         print 'REPLACE FF with correlated templates'
+        print 'eff_FF_TT before = %s, after = %s ' %( eff_2d_stat['eff_FF_TT'], eff_ff_2d_stat['eff_FF_TT'] )
+        print 'eff_FF_TL before = %s, after = %s ' %( eff_2d_stat['eff_FF_TL'], eff_ff_2d_stat['eff_FF_TL'] )
+        print 'eff_FF_LT before = %s, after = %s ' %( eff_2d_stat['eff_FF_LT'], eff_ff_2d_stat['eff_FF_LT'] )
+        print 'eff_FF_LL before = %s, after = %s ' %( eff_2d_stat['eff_FF_LL'], eff_ff_2d_stat['eff_FF_LL'] )
         eff_2d_stat['eff_FF_TT'] = eff_ff_2d_stat['eff_FF_TT']
         eff_2d_stat['eff_FF_TL'] = eff_ff_2d_stat['eff_FF_TL']
         eff_2d_stat['eff_FF_LT'] = eff_ff_2d_stat['eff_FF_LT']
         eff_2d_stat['eff_FF_LL'] = eff_ff_2d_stat['eff_FF_LL']
 
         # update the syst values, but keep the same uncertainties
-        eff_2d_syst_bkg['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, eff_ff_2d_syst['eff_FF_TT'].n*(eff_2d_syst_bkg['eff_FF_TT'].s/eff_2d_syst_bkg['eff_FF_TT'].n) )
-        eff_2d_syst_bkg['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, eff_ff_2d_syst['eff_FF_TL'].n*(eff_2d_syst_bkg['eff_FF_TL'].s/eff_2d_syst_bkg['eff_FF_TL'].n) )
-        eff_2d_syst_bkg['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, eff_ff_2d_syst['eff_FF_LT'].n*(eff_2d_syst_bkg['eff_FF_LT'].s/eff_2d_syst_bkg['eff_FF_LT'].n) )
-        eff_2d_syst_bkg['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, eff_ff_2d_syst['eff_FF_LL'].n*(eff_2d_syst_bkg['eff_FF_LL'].s/eff_2d_syst_bkg['eff_FF_LL'].n) )
+
+
+        if eff_2d_syst_bkg['eff_FF_TT'].n != 0 :
+            eff_2d_syst_bkg['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, eff_ff_2d_syst['eff_FF_TT'].n*(eff_2d_syst_bkg['eff_FF_TT'].s/eff_2d_syst_bkg['eff_FF_TT'].n) )
+        else :
+            eff_2d_syst_bkg['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, 0.0 )
+        if eff_2d_syst_bkg['eff_FF_TL'].n != 0 :
+            eff_2d_syst_bkg['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, eff_ff_2d_syst['eff_FF_TL'].n*(eff_2d_syst_bkg['eff_FF_TL'].s/eff_2d_syst_bkg['eff_FF_TL'].n) )
+        else :
+            eff_2d_syst_bkg['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, 0.0 )
+        if eff_2d_syst_bkg['eff_FF_LT'].n != 0 :
+            eff_2d_syst_bkg['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, eff_ff_2d_syst['eff_FF_LT'].n*(eff_2d_syst_bkg['eff_FF_LT'].s/eff_2d_syst_bkg['eff_FF_LT'].n) )
+        else :
+            eff_2d_syst_bkg['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, 0.0 )
+        if eff_2d_syst_bkg['eff_FF_LL'].n != 0 :
+            eff_2d_syst_bkg['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, eff_ff_2d_syst['eff_FF_LL'].n*(eff_2d_syst_bkg['eff_FF_LL'].s/eff_2d_syst_bkg['eff_FF_LL'].n) )
+        else :
+            eff_2d_syst_bkg['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, 0.0 )
 
         # update the syst values, but keep the same uncertainties
-        eff_2d_syst_temp['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, eff_ff_2d_syst['eff_FF_TT'].n*(eff_2d_syst_temp['eff_FF_TT'].s/eff_2d_syst_temp['eff_FF_TT'].n) )
-        eff_2d_syst_temp['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, eff_ff_2d_syst['eff_FF_TL'].n*(eff_2d_syst_temp['eff_FF_TL'].s/eff_2d_syst_temp['eff_FF_TL'].n) )
-        eff_2d_syst_temp['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, eff_ff_2d_syst['eff_FF_LT'].n*(eff_2d_syst_temp['eff_FF_LT'].s/eff_2d_syst_temp['eff_FF_LT'].n) )
-        eff_2d_syst_temp['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, eff_ff_2d_syst['eff_FF_LL'].n*(eff_2d_syst_temp['eff_FF_LL'].s/eff_2d_syst_temp['eff_FF_LL'].n) )
+        if eff_2d_syst_temp['eff_FF_TT'].n != 0 :
+            eff_2d_syst_temp['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, eff_ff_2d_syst['eff_FF_TT'].n*(eff_2d_syst_temp['eff_FF_TT'].s/eff_2d_syst_temp['eff_FF_TT'].n) )
+        else :
+            eff_2d_syst_temp['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, 0.0 )
+        if eff_2d_syst_temp['eff_FF_TL'].n != 0 :
+            eff_2d_syst_temp['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, eff_ff_2d_syst['eff_FF_TL'].n*(eff_2d_syst_temp['eff_FF_TL'].s/eff_2d_syst_temp['eff_FF_TL'].n) )
+        else :
+            eff_2d_syst_temp['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, 0.0 )
+        if eff_2d_syst_temp['eff_FF_LT'].n != 0 :
+            eff_2d_syst_temp['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, eff_ff_2d_syst['eff_FF_LT'].n*(eff_2d_syst_temp['eff_FF_LT'].s/eff_2d_syst_temp['eff_FF_LT'].n) )
+        else :
+            eff_2d_syst_temp['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, 0.0 )
+        if eff_2d_syst_temp['eff_FF_LL'].n != 0 :
+            eff_2d_syst_temp['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, eff_ff_2d_syst['eff_FF_LL'].n*(eff_2d_syst_temp['eff_FF_LL'].s/eff_2d_syst_temp['eff_FF_LL'].n) )
+        else :
+            eff_2d_syst_temp['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, 0.0 )
+
 
     eff_2d_nouncert = {}
     for key, val in eff_2d_stat.iteritems() :
@@ -1514,10 +1724,10 @@ def run_corrected_diphoton_fit( templates_leadiso, templates_subliso, gg_hist_le
 
         datacorr['TT'] = ufloat(0, 0)
 
-        text_results_stat_data      = collect_results( results_stat_data, datacorr, eff_2d_nouncert, templates_comb, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
-        text_results_stat_temp      = collect_results( results_stat_temp, datacorr, eff_2d_stat, templates_comb, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
-        text_results_syst_bkg  = collect_results( results_syst_bkg, datacorr, eff_2d_syst_bkg, templates_comb, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
-        text_results_syst_temp = collect_results( results_syst_temp, datacorr, eff_2d_syst_temp, templates_comb, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
+        text_results_stat_data = collect_results( results_stat_data, datacorr, eff_2d_nouncert , templates_comb, eff_cuts, ndim)
+        text_results_stat_temp = collect_results( results_stat_temp, datacorr, eff_2d_stat     , templates_comb, eff_cuts, ndim)
+        text_results_syst_bkg  = collect_results( results_syst_bkg , datacorr, eff_2d_syst_bkg , templates_comb, eff_cuts, ndim)
+        text_results_syst_temp = collect_results( results_syst_temp, datacorr, eff_2d_syst_temp, templates_comb, eff_cuts, ndim)
 
         
         print 'text_results_stat'
@@ -1551,10 +1761,10 @@ def run_corrected_diphoton_fit( templates_leadiso, templates_subliso, gg_hist_le
         results_syst_bkg= run_fit( datacorr_nostat, eff_2d_syst_bkg )
         results_syst_temp= run_fit( datacorr_nostat, eff_2d_syst_temp )
 
-        text_results_stat_data = collect_results( results_stat_data, datacorr, eff_2d_nouncert, templates_comb, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
-        text_results_stat_temp = collect_results( results_stat_temp, datacorr, eff_2d_stat, templates_comb, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
-        text_results_syst_bkg = collect_results( results_syst_bkg, datacorr, eff_2d_syst_bkg, templates_comb, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
-        text_results_syst_temp = collect_results( results_syst_temp, datacorr, eff_2d_syst_temp, templates_comb, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
+        text_results_stat_data = collect_results( results_stat_data, datacorr, eff_2d_nouncert , templates_comb, eff_cuts, ndim)
+        text_results_stat_temp = collect_results( results_stat_temp, datacorr, eff_2d_stat     , templates_comb, eff_cuts, ndim)
+        text_results_syst_bkg  = collect_results( results_syst_bkg , datacorr, eff_2d_syst_bkg , templates_comb, eff_cuts, ndim)
+        text_results_syst_temp = collect_results( results_syst_temp, datacorr, eff_2d_syst_temp, templates_comb, eff_cuts, ndim)
 
         
         print 'text_results_syst_bkg'
@@ -1595,7 +1805,6 @@ def run_generated_diphoton_fit( templates, lead_reg, subl_reg, n_data_gen, lead_
 
     # get 2-d efficiencies from 1-d inputs
     (eff_2d, eff_2d_syst_bkg, eff_2d_syst_temp) = generate_2d_efficiencies( templates, eff_cuts, lead_reg, subl_reg, lead_ptrange, subl_ptrange )
-    print eff_2d
 
     Ndata = {}
     Ndata['TT'] = 0
@@ -1609,11 +1818,6 @@ def run_generated_diphoton_fit( templates, lead_reg, subl_reg, n_data_gen, lead_
     eff_1d_lead_base['eff_F_L'] = eff_2d['eff_FF_LL'] + eff_2d['eff_FF_LT']
     eff_1d_subl_base['eff_F_T'] = eff_2d['eff_FF_TT'] + eff_2d['eff_FF_LT']
     eff_1d_subl_base['eff_F_L'] = eff_2d['eff_FF_LL'] + eff_2d['eff_FF_TL']
-
-    print 'eff_1d_lead'
-    print eff_1d_lead_base
-    print 'eff_1d_subl'
-    print eff_1d_subl_base
 
     # do FR
     #for tag in ['FR', 'RF', 'FF'] :
@@ -1731,8 +1935,6 @@ def run_generated_diphoton_fit( templates, lead_reg, subl_reg, n_data_gen, lead_
     Ndata['LT'] = ufloat( Ndata['LT'], math.sqrt( Ndata['LT'] ) )
     Ndata['LL'] = ufloat( Ndata['LL'], math.sqrt( Ndata['LL'] ) )
 
-    print Ndata
-
     if ndim == 3 :
         results = run_fit( {'TL': Ndata['TL'], 'LT' : Ndata['LT'], 'LL' : Ndata['LL']}, eff_2d )
     if ndim == 4 :
@@ -1792,8 +1994,6 @@ def run_generated_diphoton_fit( templates, lead_reg, subl_reg, n_data_gen, lead_
     text_results['Closure_LT'] = ( (text_results['Npred_RF_LT'] +text_results['Npred_FR_LT'] +text_results['Npred_FF_LT'] ) - Ndata['LT'] ) / Ndata['LT']
     text_results['Closure_LL'] = ( (text_results['Npred_RF_LL'] +text_results['Npred_FR_LL'] +text_results['Npred_FF_LL'] ) - Ndata['LL'] ) / Ndata['LL']
 
-    print text_results
-
 
 def run_diphoton_fit( templates, gg_hist, lead_reg, subl_reg, templates_corr=None, lead_ptrange=(None,None), subl_ptrange=(None,None), ndim=3, outputDir=None, outputPrefix='', systematics=None, fitvar=None) :
 
@@ -1812,21 +2012,37 @@ def run_diphoton_fit( templates, gg_hist, lead_reg, subl_reg, templates_corr=Non
 
     # Find the bins corresponding to the cuts
     # lead photon on X axis, subl on Y axis
-    bins_lead_tight = ( gg_hist.GetXaxis().FindBin( cuts[lead_reg]['tight'][0] ), gg_hist.GetXaxis().FindBin( cuts[lead_reg]['tight'][1] ) )
-    bins_lead_loose = ( gg_hist.GetXaxis().FindBin( cuts[lead_reg]['loose'][0] ), gg_hist.GetXaxis().FindBin( cuts[lead_reg]['loose'][1] ) )
-    bins_subl_tight = ( gg_hist.GetYaxis().FindBin( cuts[subl_reg]['tight'][0] ), gg_hist.GetYaxis().FindBin( cuts[subl_reg]['tight'][1] ) )
-    bins_subl_loose = ( gg_hist.GetYaxis().FindBin( cuts[subl_reg]['loose'][0] ), gg_hist.GetYaxis().FindBin( cuts[subl_reg]['loose'][1] ) )
+    if isinstance( gg_hist, dict ) :
+        bins_subl_tight = ( gg_hist['leadPass'].GetXaxis().FindBin( cuts[subl_reg]['tight'][0] ), gg_hist['leadPass'].GetXaxis().FindBin( cuts[subl_reg]['tight'][1] ) )
+        bins_subl_loose = ( gg_hist['leadPass'].GetXaxis().FindBin( cuts[subl_reg]['loose'][0] ), gg_hist['leadPass'].GetXaxis().FindBin( cuts[subl_reg]['loose'][1] ) )
 
-    print 'cuts, bins lead, tight = %f-%f ( %d - %d ) ' %( cuts[lead_reg]['tight'][0], cuts[lead_reg]['tight'][1], bins_lead_tight[0], bins_lead_tight[1] )
-    print 'cuts, bins lead, loose = %f-%f ( %d - %d ) ' %( cuts[lead_reg]['loose'][0], cuts[lead_reg]['loose'][1], bins_lead_loose[0], bins_lead_loose[1] )
-    print 'cuts, bins subl, tight = %f-%f ( %d - %d ) ' %( cuts[subl_reg]['tight'][0], cuts[subl_reg]['tight'][1], bins_subl_tight[0], bins_subl_tight[1] )
-    print 'cuts, bins subl, loose = %f-%f ( %d - %d ) ' %( cuts[subl_reg]['loose'][0], cuts[subl_reg]['loose'][1], bins_subl_loose[0], bins_subl_loose[1] )
+        print 'bins_subl_tight ', bins_subl_tight
+        print 'bins_subl_loose ', bins_subl_loose
 
-    # Integrate to the the data in the four regions
-    Ndata_TT = gg_hist.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_tight[0], bins_subl_tight[1] )
-    Ndata_TL = gg_hist.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_loose[0], bins_subl_loose[1] )
-    Ndata_LT = gg_hist.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_tight[0], bins_subl_tight[1] )
-    Ndata_LL = gg_hist.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_loose[0], bins_subl_loose[1] )
+
+        # Integrate to the the data in the four regions
+        Ndata_TT = gg_hist['leadPass'].Integral( bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_TL = gg_hist['leadPass'].Integral( bins_subl_loose[0], bins_subl_loose[1] )
+        Ndata_LT = gg_hist['leadFail'].Integral( bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_LL = gg_hist['leadFail'].Integral( bins_subl_loose[0], bins_subl_loose[1] )
+
+    else :
+
+        bins_lead_tight = ( gg_hist.GetXaxis().FindBin( cuts[lead_reg]['tight'][0] ), gg_hist.GetXaxis().FindBin( cuts[lead_reg]['tight'][1] ) )
+        bins_lead_loose = ( gg_hist.GetXaxis().FindBin( cuts[lead_reg]['loose'][0] ), gg_hist.GetXaxis().FindBin( cuts[lead_reg]['loose'][1] ) )
+        bins_subl_tight = ( gg_hist.GetYaxis().FindBin( cuts[subl_reg]['tight'][0] ), gg_hist.GetYaxis().FindBin( cuts[subl_reg]['tight'][1] ) )
+        bins_subl_loose = ( gg_hist.GetYaxis().FindBin( cuts[subl_reg]['loose'][0] ), gg_hist.GetYaxis().FindBin( cuts[subl_reg]['loose'][1] ) )
+
+        print 'bins_lead_tight ', bins_lead_tight
+        print 'bins_lead_loose ', bins_lead_loose
+        print 'bins_subl_tight ', bins_subl_tight
+        print 'bins_subl_loose ', bins_subl_loose
+
+        # Integrate to the the data in the four regions
+        Ndata_TT = gg_hist.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_TL = gg_hist.Integral( bins_lead_tight[0], bins_lead_tight[1], bins_subl_loose[0], bins_subl_loose[1] )
+        Ndata_LT = gg_hist.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_tight[0], bins_subl_tight[1] )
+        Ndata_LL = gg_hist.Integral( bins_lead_loose[0], bins_lead_loose[1], bins_subl_loose[0], bins_subl_loose[1] )
 
     # ufloat it!
     Ndata = {}
@@ -1851,7 +2067,6 @@ def run_diphoton_fit( templates, gg_hist, lead_reg, subl_reg, templates_corr=Non
 
     # get 2-d efficiencies from 1-d inputs
     (eff_2d_stat, eff_2d_syst_bkg, eff_2d_syst_temp) = generate_2d_efficiencies( templates, eff_cuts, lead_reg, subl_reg, lead_ptrange, subl_ptrange, var=fitvar, systematics=systematics )
-    print eff_2d_stat
     (eff_1d_stat, eff_1d_syst_bkg, eff_1d_syst_temp) =generate_1d_efficiencies( templates, eff_cuts, lead_reg, subl_reg, lead_ptrange, subl_ptrange, var=fitvar, systematics=systematics )
 
     if templates_corr is not None :
@@ -1864,16 +2079,44 @@ def run_diphoton_fit( templates, gg_hist, lead_reg, subl_reg, templates_corr=Non
         eff_2d_stat['eff_FF_LL'] = eff_ff_2d_stat['eff_FF_LL']
 
         # update the syst values, but keep the same uncertainties
-        eff_2d_syst_bkg['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, eff_ff_2d_syst['eff_FF_TT'].n*(eff_2d_syst_bkg['eff_FF_TT'].s/eff_2d_syst_bkg['eff_FF_TT'].n) )
-        eff_2d_syst_bkg['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, eff_ff_2d_syst['eff_FF_TL'].n*(eff_2d_syst_bkg['eff_FF_TL'].s/eff_2d_syst_bkg['eff_FF_TL'].n) )
-        eff_2d_syst_bkg['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, eff_ff_2d_syst['eff_FF_LT'].n*(eff_2d_syst_bkg['eff_FF_LT'].s/eff_2d_syst_bkg['eff_FF_LT'].n) )
-        eff_2d_syst_bkg['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, eff_ff_2d_syst['eff_FF_LL'].n*(eff_2d_syst_bkg['eff_FF_LL'].s/eff_2d_syst_bkg['eff_FF_LL'].n) )
+        if eff_2d_syst_bkg['eff_FF_TT'].n != 0 :
+            eff_2d_syst_bkg['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, eff_ff_2d_syst['eff_FF_TT'].n*(eff_2d_syst_bkg['eff_FF_TT'].s/eff_2d_syst_bkg['eff_FF_TT'].n) )
+        else : 
+            eff_2d_syst_bkg['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, 0.0 )
+
+        if eff_2d_syst_bkg['eff_FF_TL'].n != 0 :
+            eff_2d_syst_bkg['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, eff_ff_2d_syst['eff_FF_TL'].n*(eff_2d_syst_bkg['eff_FF_TL'].s/eff_2d_syst_bkg['eff_FF_TL'].n) )
+        else :
+            eff_2d_syst_bkg['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, 0.0 )
+
+        if eff_2d_syst_bkg['eff_FF_LT'].n != 0 :
+            eff_2d_syst_bkg['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, eff_ff_2d_syst['eff_FF_LT'].n*(eff_2d_syst_bkg['eff_FF_LT'].s/eff_2d_syst_bkg['eff_FF_LT'].n) )
+        else :
+            eff_2d_syst_bkg['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, 0.0 )
+
+        if eff_2d_syst_bkg['eff_FF_LL'].n != 0 :
+            eff_2d_syst_bkg['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, eff_ff_2d_syst['eff_FF_LL'].n*(eff_2d_syst_bkg['eff_FF_LL'].s/eff_2d_syst_bkg['eff_FF_LL'].n) )
+        else  :
+            eff_2d_syst_bkg['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, 0.0 )
 
         # update the syst values, but keep the same uncertainties
-        eff_2d_syst_temp['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, eff_ff_2d_syst['eff_FF_TT'].n*(eff_2d_syst_temp['eff_FF_TT'].s/eff_2d_syst_temp['eff_FF_TT'].n) )
-        eff_2d_syst_temp['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, eff_ff_2d_syst['eff_FF_TL'].n*(eff_2d_syst_temp['eff_FF_TL'].s/eff_2d_syst_temp['eff_FF_TL'].n) )
-        eff_2d_syst_temp['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, eff_ff_2d_syst['eff_FF_LT'].n*(eff_2d_syst_temp['eff_FF_LT'].s/eff_2d_syst_temp['eff_FF_LT'].n) )
-        eff_2d_syst_temp['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, eff_ff_2d_syst['eff_FF_LL'].n*(eff_2d_syst_temp['eff_FF_LL'].s/eff_2d_syst_temp['eff_FF_LL'].n) )
+        if eff_2d_syst_temp['eff_FF_TT'].n != 0 :
+            eff_2d_syst_temp['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, eff_ff_2d_syst['eff_FF_TT'].n*(eff_2d_syst_temp['eff_FF_TT'].s/eff_2d_syst_temp['eff_FF_TT'].n) )
+        else :
+            eff_2d_syst_temp['eff_FF_TT'] = ufloat( eff_ff_2d_syst['eff_FF_TT'].n, 0.0 )
+        if eff_2d_syst_temp['eff_FF_TL'].n != 0 :
+            eff_2d_syst_temp['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, eff_ff_2d_syst['eff_FF_TL'].n*(eff_2d_syst_temp['eff_FF_TL'].s/eff_2d_syst_temp['eff_FF_TL'].n) )
+        else :
+            eff_2d_syst_temp['eff_FF_TL'] = ufloat( eff_ff_2d_syst['eff_FF_TL'].n, 0.0 )
+        if eff_2d_syst_temp['eff_FF_LT'].n != 0 :
+            eff_2d_syst_temp['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, eff_ff_2d_syst['eff_FF_LT'].n*(eff_2d_syst_temp['eff_FF_LT'].s/eff_2d_syst_temp['eff_FF_LT'].n) )
+        else :
+            eff_2d_syst_temp['eff_FF_LT'] = ufloat( eff_ff_2d_syst['eff_FF_LT'].n, 0.0 )
+        if eff_2d_syst_temp['eff_FF_LL'].n != 0 :
+            eff_2d_syst_temp['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, eff_ff_2d_syst['eff_FF_LL'].n*(eff_2d_syst_temp['eff_FF_LL'].s/eff_2d_syst_temp['eff_FF_LL'].n) )
+        else :
+            eff_2d_syst_temp['eff_FF_LL'] = ufloat( eff_ff_2d_syst['eff_FF_LL'].n, 0.0 )
+
 
     eff_2d_nouncert = {}
     for key, val in eff_2d_stat.iteritems() :
@@ -1881,9 +2124,6 @@ def run_diphoton_fit( templates, gg_hist, lead_reg, subl_reg, templates_corr=Non
             eff_2d_nouncert[key] = ufloat( val.n, 0.0 )
         else :
             eff_2d_nouncert[key] = val
-
-    print 'EFF_1D'
-    print eff_1d_stat
 
     if ndim == 3 :
 
@@ -1920,7 +2160,6 @@ def run_diphoton_fit( templates, gg_hist, lead_reg, subl_reg, templates_corr=Non
         idxrf = 1
         idxfr = 2
         idxff = 3
-
 
     #save_normalized_template_hists( gg_hist, results, templates, eff_2d, bins_lead_loose, bins_subl_loose, ndim, lead_ptrange=lead_ptrange, subl_ptrange=subl_ptrange, outputDir=outputDir )
 
@@ -2001,288 +2240,289 @@ def run_diphoton_fit( templates, gg_hist, lead_reg, subl_reg, templates_corr=Non
 
     # make normalized template histograms
     # look at the leading photon distribution (X) while sublead is loose
-    gg_hist_proj_lead_subl_tight = gg_hist.ProjectionX( 'gg_hist_proj_lead_subl_tight', bins_subl_tight[0], bins_subl_tight[1] )
-    gg_hist_proj_subl_lead_tight = gg_hist.ProjectionY( 'gg_hist_proj_subl_lead_tight', bins_lead_tight[0], bins_lead_tight[1] )
-    gg_hist_proj_lead_subl_loose = gg_hist.ProjectionX( 'gg_hist_proj_lead_subl_loose', bins_subl_loose[0], bins_subl_loose[1] )
-    gg_hist_proj_subl_lead_loose = gg_hist.ProjectionY( 'gg_hist_proj_subl_lead_loose', bins_lead_loose[0], bins_lead_loose[1] )
+    if not isinstance( gg_hist, dict ) :
+        gg_hist_proj_lead_subl_tight = gg_hist.ProjectionX( 'gg_hist_proj_lead_subl_tight', bins_subl_tight[0], bins_subl_tight[1] )
+        gg_hist_proj_subl_lead_tight = gg_hist.ProjectionY( 'gg_hist_proj_subl_lead_tight', bins_lead_tight[0], bins_lead_tight[1] )
+        gg_hist_proj_lead_subl_loose = gg_hist.ProjectionX( 'gg_hist_proj_lead_subl_loose', bins_subl_loose[0], bins_subl_loose[1] )
+        gg_hist_proj_subl_lead_loose = gg_hist.ProjectionY( 'gg_hist_proj_subl_lead_loose', bins_lead_loose[0], bins_lead_loose[1] )
 
-    gg_hist_proj_lead = gg_hist.ProjectionX( 'gg_hist_proj_lead')
-    gg_hist_proj_subl = gg_hist.ProjectionY( 'gg_hist_proj_subl')
+        gg_hist_proj_lead = gg_hist.ProjectionX( 'gg_hist_proj_lead')
+        gg_hist_proj_subl = gg_hist.ProjectionY( 'gg_hist_proj_subl')
 
-    hist_temp_rr_subl_loose = templates['lead']['real']['Data'].Clone( 'hist_temp_rr_subl_loose' )
-    hist_temp_rr_subl_tight = templates['lead']['real']['Data'].Clone( 'hist_temp_rr_subl_tight' )
+        hist_temp_rr_subl_loose = templates['lead']['real']['Data'].Clone( 'hist_temp_rr_subl_loose' )
+        hist_temp_rr_subl_tight = templates['lead']['real']['Data'].Clone( 'hist_temp_rr_subl_tight' )
 
-    hist_temp_rf_subl_loose = templates['lead']['real']['Data'].Clone( 'hist_temp_rf_subl_loose' )
-    hist_temp_rf_subl_tight = templates['lead']['real']['Data'].Clone( 'hist_temp_rf_subl_tight' )
+        hist_temp_rf_subl_loose = templates['lead']['real']['Data'].Clone( 'hist_temp_rf_subl_loose' )
+        hist_temp_rf_subl_tight = templates['lead']['real']['Data'].Clone( 'hist_temp_rf_subl_tight' )
 
-    hist_temp_fr_subl_loose = templates['lead']['fake']['Data'].Clone( 'hist_temp_fr_subl_loose' )
-    hist_temp_fr_subl_tight = templates['lead']['fake']['Data'].Clone( 'hist_temp_fr_subl_tight' )
+        hist_temp_fr_subl_loose = templates['lead']['fake']['Data'].Clone( 'hist_temp_fr_subl_loose' )
+        hist_temp_fr_subl_tight = templates['lead']['fake']['Data'].Clone( 'hist_temp_fr_subl_tight' )
 
-    hist_temp_ff_subl_loose = templates['lead']['fake']['Data'].Clone( 'hist_temp_ff_subl_loose' )
-    hist_temp_ff_subl_tight = templates['lead']['fake']['Data'].Clone( 'hist_temp_ff_subl_tight' )
+        hist_temp_ff_subl_loose = templates['lead']['fake']['Data'].Clone( 'hist_temp_ff_subl_loose' )
+        hist_temp_ff_subl_tight = templates['lead']['fake']['Data'].Clone( 'hist_temp_ff_subl_tight' )
 
-    hist_temp_rr_lead_loose = templates['subl']['real']['Data'].Clone( 'hist_temp_rr_lead_loose' )
-    hist_temp_rr_lead_tight = templates['subl']['real']['Data'].Clone( 'hist_temp_rr_lead_tight' )
+        hist_temp_rr_lead_loose = templates['subl']['real']['Data'].Clone( 'hist_temp_rr_lead_loose' )
+        hist_temp_rr_lead_tight = templates['subl']['real']['Data'].Clone( 'hist_temp_rr_lead_tight' )
 
-    hist_temp_rf_lead_loose = templates['subl']['fake']['Data'].Clone( 'hist_temp_rf_lead_loose' )
-    hist_temp_rf_lead_tight = templates['subl']['fake']['Data'].Clone( 'hist_temp_rf_lead_tight' )
+        hist_temp_rf_lead_loose = templates['subl']['fake']['Data'].Clone( 'hist_temp_rf_lead_loose' )
+        hist_temp_rf_lead_tight = templates['subl']['fake']['Data'].Clone( 'hist_temp_rf_lead_tight' )
 
-    hist_temp_fr_lead_loose = templates['subl']['real']['Data'].Clone( 'hist_temp_fr_lead_loose' )
-    hist_temp_fr_lead_tight = templates['subl']['real']['Data'].Clone( 'hist_temp_fr_lead_tight' )
+        hist_temp_fr_lead_loose = templates['subl']['real']['Data'].Clone( 'hist_temp_fr_lead_loose' )
+        hist_temp_fr_lead_tight = templates['subl']['real']['Data'].Clone( 'hist_temp_fr_lead_tight' )
 
-    hist_temp_ff_lead_loose = templates['subl']['fake']['Data'].Clone( 'hist_temp_ff_lead_loose' )
-    hist_temp_ff_lead_tight = templates['subl']['fake']['Data'].Clone( 'hist_temp_ff_lead_tight' )
+        hist_temp_ff_lead_loose = templates['subl']['fake']['Data'].Clone( 'hist_temp_ff_lead_loose' )
+        hist_temp_ff_lead_tight = templates['subl']['fake']['Data'].Clone( 'hist_temp_ff_lead_tight' )
 
-    if templates['lead']['real']['Background'] is not None :
-        hist_temp_rr_subl_loose.Add( templates['lead']['real']['Background'] )
-        hist_temp_rr_subl_tight.Add( templates['lead']['real']['Background'] )
-        hist_temp_rf_subl_loose.Add( templates['lead']['real']['Background'] )
-        hist_temp_rf_subl_tight.Add( templates['lead']['real']['Background'] )
-    if templates['lead']['fake']['Background'] is not None :
-        hist_temp_fr_subl_loose.Add( templates['lead']['fake']['Background'] )
-        hist_temp_fr_subl_tight.Add( templates['lead']['fake']['Background'] )
-        hist_temp_ff_subl_loose.Add( templates['lead']['fake']['Background'] )
-        hist_temp_ff_subl_tight.Add( templates['lead']['fake']['Background'] )
-    if templates['subl']['real']['Background'] is not None :
-        hist_temp_rr_lead_loose.Add( templates['subl']['real']['Background'] )
-        hist_temp_rr_lead_tight.Add( templates['subl']['real']['Background'] )
-        hist_temp_fr_lead_loose.Add( templates['subl']['real']['Background'] )
-        hist_temp_fr_lead_tight.Add( templates['subl']['real']['Background'] )
-    if templates['subl']['fake']['Background'] is not None :
-        hist_temp_rf_lead_loose.Add( templates['subl']['fake']['Background'] )
-        hist_temp_rf_lead_tight.Add( templates['subl']['fake']['Background'] )
-        hist_temp_ff_lead_loose.Add( templates['subl']['fake']['Background'] )
-        hist_temp_ff_lead_tight.Add( templates['subl']['fake']['Background'] )
+        if templates['lead']['real']['Background'] is not None :
+            hist_temp_rr_subl_loose.Add( templates['lead']['real']['Background'] )
+            hist_temp_rr_subl_tight.Add( templates['lead']['real']['Background'] )
+            hist_temp_rf_subl_loose.Add( templates['lead']['real']['Background'] )
+            hist_temp_rf_subl_tight.Add( templates['lead']['real']['Background'] )
+        if templates['lead']['fake']['Background'] is not None :
+            hist_temp_fr_subl_loose.Add( templates['lead']['fake']['Background'] )
+            hist_temp_fr_subl_tight.Add( templates['lead']['fake']['Background'] )
+            hist_temp_ff_subl_loose.Add( templates['lead']['fake']['Background'] )
+            hist_temp_ff_subl_tight.Add( templates['lead']['fake']['Background'] )
+        if templates['subl']['real']['Background'] is not None :
+            hist_temp_rr_lead_loose.Add( templates['subl']['real']['Background'] )
+            hist_temp_rr_lead_tight.Add( templates['subl']['real']['Background'] )
+            hist_temp_fr_lead_loose.Add( templates['subl']['real']['Background'] )
+            hist_temp_fr_lead_tight.Add( templates['subl']['real']['Background'] )
+        if templates['subl']['fake']['Background'] is not None :
+            hist_temp_rf_lead_loose.Add( templates['subl']['fake']['Background'] )
+            hist_temp_rf_lead_tight.Add( templates['subl']['fake']['Background'] )
+            hist_temp_ff_lead_loose.Add( templates['subl']['fake']['Background'] )
+            hist_temp_ff_lead_tight.Add( templates['subl']['fake']['Background'] )
 
-    #normalize lead real template according to fit
-    hist_temp_rr_subl_loose.Scale( (p_RR_TL+p_RR_LL).n /hist_temp_rr_subl_loose.Integral() )
-    hist_temp_rr_subl_tight.Scale( (p_RR_TT+p_RR_LT).n /hist_temp_rr_subl_tight.Integral() )
+        #normalize lead real template according to fit
+        hist_temp_rr_subl_loose.Scale( (p_RR_TL+p_RR_LL).n /hist_temp_rr_subl_loose.Integral() )
+        hist_temp_rr_subl_tight.Scale( (p_RR_TT+p_RR_LT).n /hist_temp_rr_subl_tight.Integral() )
 
-    hist_temp_rf_subl_loose.Scale( (p_RF_TL+p_RF_LL).n /hist_temp_rf_subl_loose.Integral() )
-    hist_temp_rf_subl_tight.Scale( (p_RF_TT+p_RF_LT).n /hist_temp_rf_subl_tight.Integral() )
+        hist_temp_rf_subl_loose.Scale( (p_RF_TL+p_RF_LL).n /hist_temp_rf_subl_loose.Integral() )
+        hist_temp_rf_subl_tight.Scale( (p_RF_TT+p_RF_LT).n /hist_temp_rf_subl_tight.Integral() )
 
-    hist_temp_fr_subl_loose.Scale( (p_FR_TL+p_FR_LL).n /hist_temp_fr_subl_loose.Integral() )
-    hist_temp_fr_subl_tight.Scale( (p_FR_TT+p_FR_LT).n /hist_temp_fr_subl_tight.Integral() )
+        hist_temp_fr_subl_loose.Scale( (p_FR_TL+p_FR_LL).n /hist_temp_fr_subl_loose.Integral() )
+        hist_temp_fr_subl_tight.Scale( (p_FR_TT+p_FR_LT).n /hist_temp_fr_subl_tight.Integral() )
 
-    hist_temp_ff_subl_loose.Scale( (p_FF_TL+p_FF_LL).n /hist_temp_ff_subl_loose.Integral() )
-    hist_temp_ff_subl_tight.Scale( (p_FF_TT+p_FF_LT).n /hist_temp_ff_subl_tight.Integral() )
+        hist_temp_ff_subl_loose.Scale( (p_FF_TL+p_FF_LL).n /hist_temp_ff_subl_loose.Integral() )
+        hist_temp_ff_subl_tight.Scale( (p_FF_TT+p_FF_LT).n /hist_temp_ff_subl_tight.Integral() )
 
-    hist_temp_rr_lead_loose.Scale( (p_RR_LT+p_RR_LL).n /hist_temp_rr_lead_loose.Integral() )
-    hist_temp_rr_lead_tight.Scale( (p_RR_TT+p_RR_TL).n /hist_temp_rr_lead_tight.Integral() )
+        hist_temp_rr_lead_loose.Scale( (p_RR_LT+p_RR_LL).n /hist_temp_rr_lead_loose.Integral() )
+        hist_temp_rr_lead_tight.Scale( (p_RR_TT+p_RR_TL).n /hist_temp_rr_lead_tight.Integral() )
 
-    hist_temp_rf_lead_loose.Scale( (p_RF_LT+p_RF_LL).n /hist_temp_rf_lead_loose.Integral() )
-    hist_temp_rf_lead_tight.Scale( (p_RF_TT+p_RF_TL).n /hist_temp_rf_lead_tight.Integral() )
+        hist_temp_rf_lead_loose.Scale( (p_RF_LT+p_RF_LL).n /hist_temp_rf_lead_loose.Integral() )
+        hist_temp_rf_lead_tight.Scale( (p_RF_TT+p_RF_TL).n /hist_temp_rf_lead_tight.Integral() )
 
-    hist_temp_fr_lead_loose.Scale( (p_FR_LT+p_FR_LL).n /hist_temp_fr_lead_loose.Integral() )
-    hist_temp_fr_lead_tight.Scale( (p_FR_TT+p_FR_TL).n /hist_temp_fr_lead_tight.Integral() )
+        hist_temp_fr_lead_loose.Scale( (p_FR_LT+p_FR_LL).n /hist_temp_fr_lead_loose.Integral() )
+        hist_temp_fr_lead_tight.Scale( (p_FR_TT+p_FR_TL).n /hist_temp_fr_lead_tight.Integral() )
 
-    hist_temp_ff_lead_loose.Scale( (p_FF_LT+p_FF_LL).n /hist_temp_ff_lead_loose.Integral() )
-    hist_temp_ff_lead_tight.Scale( (p_FF_TT+p_FF_TL).n /hist_temp_ff_lead_tight.Integral() )
+        hist_temp_ff_lead_loose.Scale( (p_FF_LT+p_FF_LL).n /hist_temp_ff_lead_loose.Integral() )
+        hist_temp_ff_lead_tight.Scale( (p_FF_TT+p_FF_TL).n /hist_temp_ff_lead_tight.Integral() )
 
-    hist_temp_rr_proj_lead = hist_temp_rr_subl_loose.Clone( 'hist_temp_rr_proj_lead' )
-    hist_temp_rr_proj_lead.Add(hist_temp_rr_subl_tight )
-    hist_temp_rr_proj_subl = hist_temp_rr_lead_loose.Clone( 'hist_temp_rr_proj_subl' )
-    hist_temp_rr_proj_subl.Add(hist_temp_rr_lead_tight )
+        hist_temp_rr_proj_lead = hist_temp_rr_subl_loose.Clone( 'hist_temp_rr_proj_lead' )
+        hist_temp_rr_proj_lead.Add(hist_temp_rr_subl_tight )
+        hist_temp_rr_proj_subl = hist_temp_rr_lead_loose.Clone( 'hist_temp_rr_proj_subl' )
+        hist_temp_rr_proj_subl.Add(hist_temp_rr_lead_tight )
 
-    hist_temp_rf_proj_lead = hist_temp_rf_subl_loose.Clone( 'hist_temp_rf_proj_lead' )
-    hist_temp_rf_proj_lead.Add(hist_temp_rf_subl_tight )
-    hist_temp_rf_proj_subl = hist_temp_rf_lead_loose.Clone( 'hist_temp_rf_proj_subl' )
-    hist_temp_rf_proj_subl.Add(hist_temp_rf_lead_tight )
+        hist_temp_rf_proj_lead = hist_temp_rf_subl_loose.Clone( 'hist_temp_rf_proj_lead' )
+        hist_temp_rf_proj_lead.Add(hist_temp_rf_subl_tight )
+        hist_temp_rf_proj_subl = hist_temp_rf_lead_loose.Clone( 'hist_temp_rf_proj_subl' )
+        hist_temp_rf_proj_subl.Add(hist_temp_rf_lead_tight )
 
-    hist_temp_fr_proj_lead = hist_temp_fr_subl_loose.Clone( 'hist_temp_fr_proj_lead' )
-    hist_temp_fr_proj_lead.Add(hist_temp_fr_subl_tight )
-    hist_temp_fr_proj_subl = hist_temp_fr_lead_loose.Clone( 'hist_temp_fr_proj_subl' )
-    hist_temp_fr_proj_subl.Add(hist_temp_fr_lead_tight )
+        hist_temp_fr_proj_lead = hist_temp_fr_subl_loose.Clone( 'hist_temp_fr_proj_lead' )
+        hist_temp_fr_proj_lead.Add(hist_temp_fr_subl_tight )
+        hist_temp_fr_proj_subl = hist_temp_fr_lead_loose.Clone( 'hist_temp_fr_proj_subl' )
+        hist_temp_fr_proj_subl.Add(hist_temp_fr_lead_tight )
 
-    hist_temp_ff_proj_lead = hist_temp_ff_subl_loose.Clone( 'hist_temp_ff_proj_lead' )
-    hist_temp_ff_proj_lead.Add(hist_temp_ff_subl_tight )
-    hist_temp_ff_proj_subl = hist_temp_ff_lead_loose.Clone( 'hist_temp_ff_proj_subl' )
-    hist_temp_ff_proj_subl.Add(hist_temp_ff_lead_tight )
+        hist_temp_ff_proj_lead = hist_temp_ff_subl_loose.Clone( 'hist_temp_ff_proj_lead' )
+        hist_temp_ff_proj_lead.Add(hist_temp_ff_subl_tight )
+        hist_temp_ff_proj_subl = hist_temp_ff_lead_loose.Clone( 'hist_temp_ff_proj_subl' )
+        hist_temp_ff_proj_subl.Add(hist_temp_ff_lead_tight )
 
-    if fitvar == 'chIsoCorr' :
+        if fitvar == 'chIsoCorr' :
 
-        binwidth_eb = (plotbinning['EB'][2]-plotbinning['EB'][1])/float(plotbinning['EB'][0])
-        binwidth_ee = (plotbinning['EE'][2]-plotbinning['EE'][1])/float(plotbinning['EE'][0])
+            binwidth_eb = (plotbinning['EB'][2]-plotbinning['EB'][1])/float(plotbinning['EB'][0])
+            binwidth_ee = (plotbinning['EE'][2]-plotbinning['EE'][1])/float(plotbinning['EE'][0])
 
-        varbin = {} 
-        varbin['EB'] = [plotbinning['EB'][1], plotbinning['EB'][1]+binwidth_eb, plotbinning['EB'][2] ]
-        varbin['EE'] = [plotbinning['EE'][1], plotbinning['EE'][1]+binwidth_ee, plotbinning['EE'][2] ]
+            varbin = {} 
+            varbin['EB'] = [plotbinning['EB'][1], plotbinning['EB'][1]+binwidth_eb, plotbinning['EB'][2] ]
+            varbin['EE'] = [plotbinning['EE'][1], plotbinning['EE'][1]+binwidth_ee, plotbinning['EE'][2] ]
 
 
-        gg_hist_proj_lead_subl_tight = sampManData.do_variable_rebinning( gg_hist_proj_lead_subl_tight, varbin[lead_reg] )
-        gg_hist_proj_lead_subl_loose = sampManData.do_variable_rebinning( gg_hist_proj_lead_subl_loose, varbin[lead_reg] )
-        hist_temp_ff_subl_loose = sampManData.do_variable_rebinning( hist_temp_ff_subl_loose, varbin[lead_reg] )
-        hist_temp_ff_subl_tight = sampManData.do_variable_rebinning( hist_temp_ff_subl_tight, varbin[lead_reg] )
-        hist_temp_fr_subl_loose = sampManData.do_variable_rebinning( hist_temp_fr_subl_loose, varbin[lead_reg] )
-        hist_temp_fr_subl_tight = sampManData.do_variable_rebinning( hist_temp_fr_subl_tight, varbin[lead_reg] )
-        hist_temp_rf_subl_loose = sampManData.do_variable_rebinning( hist_temp_rf_subl_loose, varbin[lead_reg] )
-        hist_temp_rf_subl_tight = sampManData.do_variable_rebinning( hist_temp_rf_subl_tight, varbin[lead_reg] )
-        hist_temp_rr_subl_loose = sampManData.do_variable_rebinning( hist_temp_rr_subl_loose, varbin[lead_reg] )
-        hist_temp_rr_subl_tight = sampManData.do_variable_rebinning( hist_temp_rr_subl_tight, varbin[lead_reg] )
-        hist_temp_ff_proj_lead  = sampManData.do_variable_rebinning( hist_temp_ff_proj_lead , varbin[lead_reg] )
-        hist_temp_fr_proj_lead  = sampManData.do_variable_rebinning( hist_temp_fr_proj_lead , varbin[lead_reg] )
-        hist_temp_rf_proj_lead  = sampManData.do_variable_rebinning( hist_temp_rf_proj_lead , varbin[lead_reg] )
-        hist_temp_rr_proj_lead  = sampManData.do_variable_rebinning( hist_temp_rr_proj_lead , varbin[lead_reg] )
+            gg_hist_proj_lead_subl_tight = sampManData.do_variable_rebinning( gg_hist_proj_lead_subl_tight, varbin[lead_reg] )
+            gg_hist_proj_lead_subl_loose = sampManData.do_variable_rebinning( gg_hist_proj_lead_subl_loose, varbin[lead_reg] )
+            hist_temp_ff_subl_loose = sampManData.do_variable_rebinning( hist_temp_ff_subl_loose, varbin[lead_reg] )
+            hist_temp_ff_subl_tight = sampManData.do_variable_rebinning( hist_temp_ff_subl_tight, varbin[lead_reg] )
+            hist_temp_fr_subl_loose = sampManData.do_variable_rebinning( hist_temp_fr_subl_loose, varbin[lead_reg] )
+            hist_temp_fr_subl_tight = sampManData.do_variable_rebinning( hist_temp_fr_subl_tight, varbin[lead_reg] )
+            hist_temp_rf_subl_loose = sampManData.do_variable_rebinning( hist_temp_rf_subl_loose, varbin[lead_reg] )
+            hist_temp_rf_subl_tight = sampManData.do_variable_rebinning( hist_temp_rf_subl_tight, varbin[lead_reg] )
+            hist_temp_rr_subl_loose = sampManData.do_variable_rebinning( hist_temp_rr_subl_loose, varbin[lead_reg] )
+            hist_temp_rr_subl_tight = sampManData.do_variable_rebinning( hist_temp_rr_subl_tight, varbin[lead_reg] )
+            hist_temp_ff_proj_lead  = sampManData.do_variable_rebinning( hist_temp_ff_proj_lead , varbin[lead_reg] )
+            hist_temp_fr_proj_lead  = sampManData.do_variable_rebinning( hist_temp_fr_proj_lead , varbin[lead_reg] )
+            hist_temp_rf_proj_lead  = sampManData.do_variable_rebinning( hist_temp_rf_proj_lead , varbin[lead_reg] )
+            hist_temp_rr_proj_lead  = sampManData.do_variable_rebinning( hist_temp_rr_proj_lead , varbin[lead_reg] )
 
-        gg_hist_proj_subl_lead_tight = sampManData.do_variable_rebinning( gg_hist_proj_subl_lead_tight, varbin[subl_reg] )
-        gg_hist_proj_subl_lead_loose = sampManData.do_variable_rebinning( gg_hist_proj_subl_lead_loose, varbin[subl_reg] )
-        hist_temp_ff_lead_loose = sampManData.do_variable_rebinning( hist_temp_ff_lead_loose, varbin[subl_reg] )
-        hist_temp_ff_lead_tight = sampManData.do_variable_rebinning( hist_temp_ff_lead_tight, varbin[subl_reg] )
-        hist_temp_rf_lead_loose = sampManData.do_variable_rebinning( hist_temp_rf_lead_loose, varbin[subl_reg] )
-        hist_temp_rf_lead_tight = sampManData.do_variable_rebinning( hist_temp_rf_lead_tight, varbin[subl_reg] )
-        hist_temp_fr_lead_loose = sampManData.do_variable_rebinning( hist_temp_fr_lead_loose, varbin[subl_reg] )
-        hist_temp_fr_lead_tight = sampManData.do_variable_rebinning( hist_temp_fr_lead_tight, varbin[subl_reg] )
-        hist_temp_rr_lead_loose = sampManData.do_variable_rebinning( hist_temp_rr_lead_loose, varbin[subl_reg] )
-        hist_temp_rr_lead_tight = sampManData.do_variable_rebinning( hist_temp_rr_lead_tight, varbin[subl_reg] )
-        hist_temp_ff_proj_subl  = sampManData.do_variable_rebinning( hist_temp_ff_proj_subl , varbin[subl_reg] )
-        hist_temp_fr_proj_subl  = sampManData.do_variable_rebinning( hist_temp_fr_proj_subl , varbin[subl_reg] )
-        hist_temp_rf_proj_subl  = sampManData.do_variable_rebinning( hist_temp_rf_proj_subl , varbin[subl_reg] )
-        hist_temp_rr_proj_subl  = sampManData.do_variable_rebinning( hist_temp_rr_proj_subl , varbin[subl_reg] )
+            gg_hist_proj_subl_lead_tight = sampManData.do_variable_rebinning( gg_hist_proj_subl_lead_tight, varbin[subl_reg] )
+            gg_hist_proj_subl_lead_loose = sampManData.do_variable_rebinning( gg_hist_proj_subl_lead_loose, varbin[subl_reg] )
+            hist_temp_ff_lead_loose = sampManData.do_variable_rebinning( hist_temp_ff_lead_loose, varbin[subl_reg] )
+            hist_temp_ff_lead_tight = sampManData.do_variable_rebinning( hist_temp_ff_lead_tight, varbin[subl_reg] )
+            hist_temp_rf_lead_loose = sampManData.do_variable_rebinning( hist_temp_rf_lead_loose, varbin[subl_reg] )
+            hist_temp_rf_lead_tight = sampManData.do_variable_rebinning( hist_temp_rf_lead_tight, varbin[subl_reg] )
+            hist_temp_fr_lead_loose = sampManData.do_variable_rebinning( hist_temp_fr_lead_loose, varbin[subl_reg] )
+            hist_temp_fr_lead_tight = sampManData.do_variable_rebinning( hist_temp_fr_lead_tight, varbin[subl_reg] )
+            hist_temp_rr_lead_loose = sampManData.do_variable_rebinning( hist_temp_rr_lead_loose, varbin[subl_reg] )
+            hist_temp_rr_lead_tight = sampManData.do_variable_rebinning( hist_temp_rr_lead_tight, varbin[subl_reg] )
+            hist_temp_ff_proj_subl  = sampManData.do_variable_rebinning( hist_temp_ff_proj_subl , varbin[subl_reg] )
+            hist_temp_fr_proj_subl  = sampManData.do_variable_rebinning( hist_temp_fr_proj_subl , varbin[subl_reg] )
+            hist_temp_rf_proj_subl  = sampManData.do_variable_rebinning( hist_temp_rf_proj_subl , varbin[subl_reg] )
+            hist_temp_rr_proj_subl  = sampManData.do_variable_rebinning( hist_temp_rr_proj_subl , varbin[subl_reg] )
 
-    gg_hist_proj_subl_lead_tight.SetMarkerSize(1.1)
-    gg_hist_proj_subl_lead_tight.SetMarkerStyle(21)
-    gg_hist_proj_subl_lead_tight.SetMarkerColor(ROOT.kBlack)
-    gg_hist_proj_subl_lead_loose.SetMarkerSize(1.1)
-    gg_hist_proj_subl_lead_loose.SetMarkerStyle(21)
-    gg_hist_proj_subl_lead_loose.SetMarkerColor(ROOT.kBlack)
+        gg_hist_proj_subl_lead_tight.SetMarkerSize(1.1)
+        gg_hist_proj_subl_lead_tight.SetMarkerStyle(21)
+        gg_hist_proj_subl_lead_tight.SetMarkerColor(ROOT.kBlack)
+        gg_hist_proj_subl_lead_loose.SetMarkerSize(1.1)
+        gg_hist_proj_subl_lead_loose.SetMarkerStyle(21)
+        gg_hist_proj_subl_lead_loose.SetMarkerColor(ROOT.kBlack)
 
-    gg_hist_proj_lead_subl_tight.SetMarkerSize(1.1)
-    gg_hist_proj_lead_subl_tight.SetMarkerStyle(21)
-    gg_hist_proj_lead_subl_tight.SetMarkerColor(ROOT.kBlack)
-    gg_hist_proj_lead_subl_loose.SetMarkerSize(1.1)
-    gg_hist_proj_lead_subl_loose.SetMarkerStyle(21)
-    gg_hist_proj_lead_subl_loose.SetMarkerColor(ROOT.kBlack)
+        gg_hist_proj_lead_subl_tight.SetMarkerSize(1.1)
+        gg_hist_proj_lead_subl_tight.SetMarkerStyle(21)
+        gg_hist_proj_lead_subl_tight.SetMarkerColor(ROOT.kBlack)
+        gg_hist_proj_lead_subl_loose.SetMarkerSize(1.1)
+        gg_hist_proj_lead_subl_loose.SetMarkerStyle(21)
+        gg_hist_proj_lead_subl_loose.SetMarkerColor(ROOT.kBlack)
 
-    format_hist( hist_temp_rr_subl_loose, ROOT.kGreen )
-    format_hist( hist_temp_rr_subl_tight, ROOT.kGreen )
-    format_hist( hist_temp_rr_lead_loose, ROOT.kGreen )
-    format_hist( hist_temp_rr_lead_tight, ROOT.kGreen )
-    format_hist( hist_temp_rr_proj_subl , ROOT.kGreen )
-    format_hist( hist_temp_rr_proj_lead , ROOT.kGreen )
+        format_hist( hist_temp_rr_subl_loose, ROOT.kGreen )
+        format_hist( hist_temp_rr_subl_tight, ROOT.kGreen )
+        format_hist( hist_temp_rr_lead_loose, ROOT.kGreen )
+        format_hist( hist_temp_rr_lead_tight, ROOT.kGreen )
+        format_hist( hist_temp_rr_proj_subl , ROOT.kGreen )
+        format_hist( hist_temp_rr_proj_lead , ROOT.kGreen )
 
-    format_hist( hist_temp_rf_subl_loose, ROOT.kMagenta )
-    format_hist( hist_temp_rf_subl_tight, ROOT.kMagenta )
-    format_hist( hist_temp_rf_lead_loose, ROOT.kMagenta )
-    format_hist( hist_temp_rf_lead_tight, ROOT.kMagenta )
-    format_hist( hist_temp_rf_proj_subl , ROOT.kMagenta )
-    format_hist( hist_temp_rf_proj_lead , ROOT.kMagenta )
+        format_hist( hist_temp_rf_subl_loose, ROOT.kMagenta )
+        format_hist( hist_temp_rf_subl_tight, ROOT.kMagenta )
+        format_hist( hist_temp_rf_lead_loose, ROOT.kMagenta )
+        format_hist( hist_temp_rf_lead_tight, ROOT.kMagenta )
+        format_hist( hist_temp_rf_proj_subl , ROOT.kMagenta )
+        format_hist( hist_temp_rf_proj_lead , ROOT.kMagenta )
 
-    format_hist( hist_temp_fr_subl_loose, ROOT.kCyan )
-    format_hist( hist_temp_fr_subl_tight, ROOT.kCyan )
-    format_hist( hist_temp_fr_lead_loose, ROOT.kCyan )
-    format_hist( hist_temp_fr_lead_tight, ROOT.kCyan )
-    format_hist( hist_temp_fr_proj_subl , ROOT.kCyan )
-    format_hist( hist_temp_fr_proj_lead , ROOT.kCyan )
+        format_hist( hist_temp_fr_subl_loose, ROOT.kCyan )
+        format_hist( hist_temp_fr_subl_tight, ROOT.kCyan )
+        format_hist( hist_temp_fr_lead_loose, ROOT.kCyan )
+        format_hist( hist_temp_fr_lead_tight, ROOT.kCyan )
+        format_hist( hist_temp_fr_proj_subl , ROOT.kCyan )
+        format_hist( hist_temp_fr_proj_lead , ROOT.kCyan )
 
-    format_hist( hist_temp_ff_subl_loose, ROOT.kRed )
-    format_hist( hist_temp_ff_subl_tight, ROOT.kRed )
-    format_hist( hist_temp_ff_lead_loose, ROOT.kRed )
-    format_hist( hist_temp_ff_lead_tight, ROOT.kRed )
-    format_hist( hist_temp_ff_proj_subl , ROOT.kRed )
-    format_hist( hist_temp_ff_proj_lead , ROOT.kRed )
+        format_hist( hist_temp_ff_subl_loose, ROOT.kRed )
+        format_hist( hist_temp_ff_subl_tight, ROOT.kRed )
+        format_hist( hist_temp_ff_lead_loose, ROOT.kRed )
+        format_hist( hist_temp_ff_lead_tight, ROOT.kRed )
+        format_hist( hist_temp_ff_proj_subl , ROOT.kRed )
+        format_hist( hist_temp_ff_proj_lead , ROOT.kRed )
 
-    
+        
 
-    if lead_reg == 'EE' and gg_hist_proj_lead_subl_tight.GetNbinsX() > 100  :
-        gg_hist_proj_lead_subl_tight.Rebin(10)
-        gg_hist_proj_lead_subl_loose.Rebin(10)
-        hist_temp_ff_subl_loose.Rebin(10)
-        hist_temp_ff_subl_tight.Rebin(10)
-        hist_temp_fr_subl_loose.Rebin(10)
-        hist_temp_fr_subl_tight.Rebin(10)
-        hist_temp_rf_subl_loose.Rebin(10)
-        hist_temp_rf_subl_tight.Rebin(10)
-        hist_temp_rr_subl_loose.Rebin(10)
-        hist_temp_rr_subl_tight.Rebin(10)
+        if lead_reg == 'EE' and gg_hist_proj_lead_subl_tight.GetNbinsX() > 100  :
+            gg_hist_proj_lead_subl_tight.Rebin(10)
+            gg_hist_proj_lead_subl_loose.Rebin(10)
+            hist_temp_ff_subl_loose.Rebin(10)
+            hist_temp_ff_subl_tight.Rebin(10)
+            hist_temp_fr_subl_loose.Rebin(10)
+            hist_temp_fr_subl_tight.Rebin(10)
+            hist_temp_rf_subl_loose.Rebin(10)
+            hist_temp_rf_subl_tight.Rebin(10)
+            hist_temp_rr_subl_loose.Rebin(10)
+            hist_temp_rr_subl_tight.Rebin(10)
 
-        hist_temp_ff_proj_lead .Rebin(10)
-        hist_temp_fr_proj_lead .Rebin(10)
-        hist_temp_rf_proj_lead .Rebin(10)
-        hist_temp_rr_proj_lead .Rebin(10)
+            hist_temp_ff_proj_lead .Rebin(10)
+            hist_temp_fr_proj_lead .Rebin(10)
+            hist_temp_rf_proj_lead .Rebin(10)
+            hist_temp_rr_proj_lead .Rebin(10)
 
-    if subl_reg == 'EE' and gg_hist_proj_subl_lead_tight.GetNbinsX() > 100 :
-        gg_hist_proj_subl_lead_tight.Rebin(10)
-        gg_hist_proj_subl_lead_loose.Rebin(10)
-        hist_temp_ff_lead_loose.Rebin(10)
-        hist_temp_ff_lead_tight.Rebin(10)
-        hist_temp_rf_lead_loose.Rebin(10)
-        hist_temp_rf_lead_tight.Rebin(10)
-        hist_temp_fr_lead_loose.Rebin(10)
-        hist_temp_fr_lead_tight.Rebin(10)
-        hist_temp_rr_lead_loose.Rebin(10)
-        hist_temp_rr_lead_tight.Rebin(10)
+        if subl_reg == 'EE' and gg_hist_proj_subl_lead_tight.GetNbinsX() > 100 :
+            gg_hist_proj_subl_lead_tight.Rebin(10)
+            gg_hist_proj_subl_lead_loose.Rebin(10)
+            hist_temp_ff_lead_loose.Rebin(10)
+            hist_temp_ff_lead_tight.Rebin(10)
+            hist_temp_rf_lead_loose.Rebin(10)
+            hist_temp_rf_lead_tight.Rebin(10)
+            hist_temp_fr_lead_loose.Rebin(10)
+            hist_temp_fr_lead_tight.Rebin(10)
+            hist_temp_rr_lead_loose.Rebin(10)
+            hist_temp_rr_lead_tight.Rebin(10)
 
-        hist_temp_ff_proj_subl .Rebin(10)
-        hist_temp_fr_proj_subl .Rebin(10)
-        hist_temp_rf_proj_subl .Rebin(10)
-        hist_temp_rr_proj_subl .Rebin(10)
+            hist_temp_ff_proj_subl .Rebin(10)
+            hist_temp_fr_proj_subl .Rebin(10)
+            hist_temp_rf_proj_subl .Rebin(10)
+            hist_temp_rr_proj_subl .Rebin(10)
 
-    #can_proj_lead_subl_loose = ROOT.TCanvas('proj_lead_subl_loose', '')
-    #can_proj_lead_subl_tight = ROOT.TCanvas('proj_lead_subl_tight', '')
-    #can_proj_subl_lead_loose = ROOT.TCanvas('proj_subl_lead_loose', '')
-    #can_proj_subl_lead_tight = ROOT.TCanvas('proj_subl_lead_tight', '')
-    #can_proj_lead = ROOT.TCanvas('proj_lead', '')
-    #can_proj_subl = ROOT.TCanvas('proj_subl', '')
+        #can_proj_lead_subl_loose = ROOT.TCanvas('proj_lead_subl_loose', '')
+        #can_proj_lead_subl_tight = ROOT.TCanvas('proj_lead_subl_tight', '')
+        #can_proj_subl_lead_loose = ROOT.TCanvas('proj_subl_lead_loose', '')
+        #can_proj_subl_lead_tight = ROOT.TCanvas('proj_subl_lead_tight', '')
+        #can_proj_lead = ROOT.TCanvas('proj_lead', '')
+        #can_proj_subl = ROOT.TCanvas('proj_subl', '')
 
-    can_proj_lead_subl_loose = ROOT.TCanvas(str(uuid.uuid4()), '')
-    can_proj_lead_subl_tight = ROOT.TCanvas(str(uuid.uuid4()), '')
-    can_proj_subl_lead_loose = ROOT.TCanvas(str(uuid.uuid4()), '')
-    can_proj_subl_lead_tight = ROOT.TCanvas(str(uuid.uuid4()), '')
+        can_proj_lead_subl_loose = ROOT.TCanvas(str(uuid.uuid4()), '')
+        can_proj_lead_subl_tight = ROOT.TCanvas(str(uuid.uuid4()), '')
+        can_proj_subl_lead_loose = ROOT.TCanvas(str(uuid.uuid4()), '')
+        can_proj_subl_lead_tight = ROOT.TCanvas(str(uuid.uuid4()), '')
 
-    can_proj_lead = ROOT.TCanvas(str(uuid.uuid4()), '')
-    can_proj_subl = ROOT.TCanvas(str(uuid.uuid4()), '')
+        can_proj_lead = ROOT.TCanvas(str(uuid.uuid4()), '')
+        can_proj_subl = ROOT.TCanvas(str(uuid.uuid4()), '')
 
-    namePostfix = '__%s-%s' %( lead_reg, subl_reg )
-    if lead_ptrange[0] is not None :
-        if lead_ptrange[1] is None :
-            namePostfix += '__pt_%d-max' %( lead_ptrange[0])
-        else :
-            namePostfix += '__pt_%d-%d' %( lead_ptrange[0], lead_ptrange[1])
+        namePostfix = '__%s-%s' %( lead_reg, subl_reg )
+        if lead_ptrange[0] is not None :
+            if lead_ptrange[1] is None :
+                namePostfix += '__pt_%d-max' %( lead_ptrange[0])
+            else :
+                namePostfix += '__pt_%d-%d' %( lead_ptrange[0], lead_ptrange[1])
 
-    if subl_ptrange[0] is not None :
-        if subl_ptrange[1] is None :
-            namePostfix += '__sublpt_%d-max' %( subl_ptrange[0])
-        else :
-            namePostfix += '__sublpt_%d-%d' %( subl_ptrange[0], subl_ptrange[1])
+        if subl_ptrange[0] is not None :
+            if subl_ptrange[1] is None :
+                namePostfix += '__sublpt_%d-max' %( subl_ptrange[0])
+            else :
+                namePostfix += '__sublpt_%d-%d' %( subl_ptrange[0], subl_ptrange[1])
 
-    outputNamePLST = None
-    outputNamePLSL = None
-    outputNamePSLT = None
-    outputNamePSLL = None
-    outputNamePL = None
-    outputNamePS = None
-    if outputDir is not None :
-        outputNamePLST = outputDir + '/fit_with_data_proj_lead_subl_tight%s%s.pdf' %(outputPrefix, namePostfix)
-        outputNamePLSL = outputDir + '/fit_with_data_proj_lead_subl_loose%s%s.pdf' %(outputPrefix, namePostfix)
-        outputNamePSLT = outputDir + '/fit_with_data_proj_subl_lead_tight%s%s.pdf' %(outputPrefix, namePostfix)
-        outputNamePSLL = outputDir + '/fit_with_data_proj_subl_lead_loose%s%s.pdf' %(outputPrefix, namePostfix)
-        outputNamePL = outputDir + '/fit_with_data_proj_lead_%s%s.pdf' %(outputPrefix, namePostfix)
-        outputNamePS = outputDir + '/fit_with_data_proj_subl_%s%s.pdf' %(outputPrefix, namePostfix)
+        outputNamePLST = None
+        outputNamePLSL = None
+        outputNamePSLT = None
+        outputNamePSLL = None
+        outputNamePL = None
+        outputNamePS = None
+        if outputDir is not None :
+            outputNamePLST = outputDir + '/fit_with_data_proj_lead_subl_tight%s%s.pdf' %(outputPrefix, namePostfix)
+            outputNamePLSL = outputDir + '/fit_with_data_proj_lead_subl_loose%s%s.pdf' %(outputPrefix, namePostfix)
+            outputNamePSLT = outputDir + '/fit_with_data_proj_subl_lead_tight%s%s.pdf' %(outputPrefix, namePostfix)
+            outputNamePSLL = outputDir + '/fit_with_data_proj_subl_lead_loose%s%s.pdf' %(outputPrefix, namePostfix)
+            outputNamePL = outputDir + '/fit_with_data_proj_lead_%s%s.pdf' %(outputPrefix, namePostfix)
+            outputNamePS = outputDir + '/fit_with_data_proj_subl_%s%s.pdf' %(outputPrefix, namePostfix)
 
-    if fitvar == 'sigmaIEIE' :
-        labvar = '#sigma i#eta i#eta'
-    elif fitvar == 'chIsoCorr' :
-        labvar = 'chHadIso'
-    elif fitvar == 'neuIsoCorr' :
-        labvar = 'neuHadIso'
-    elif fitvar == 'phoIsoCorr' :
-        labvar = 'phoHadIso'
+        if fitvar == 'sigmaIEIE' :
+            labvar = '#sigma i#eta i#eta'
+        elif fitvar == 'chIsoCorr' :
+            labvar = 'chHadIso'
+        elif fitvar == 'neuIsoCorr' :
+            labvar = 'neuHadIso'
+        elif fitvar == 'phoIsoCorr' :
+            labvar = 'phoHadIso'
 
-    logy=False
+        logy=False
 
-    draw_template(can_proj_lead_subl_loose, [gg_hist_proj_lead_subl_loose, hist_temp_rr_subl_loose, hist_temp_rf_subl_loose, hist_temp_fr_subl_loose, hist_temp_ff_subl_loose], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePLSL, label='#splitline{Lead %s}{sublead loose}' %labvar, axis_label=labvar, logy=logy)
-    draw_template(can_proj_lead_subl_tight, [gg_hist_proj_lead_subl_tight, hist_temp_rr_subl_tight, hist_temp_rf_subl_tight, hist_temp_fr_subl_tight, hist_temp_ff_subl_tight], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePLST, label='#splitline{Lead %s}{sublead tight}' %labvar, axis_label=labvar, logy=logy )
+        draw_template(can_proj_lead_subl_loose, [gg_hist_proj_lead_subl_loose, hist_temp_rr_subl_loose, hist_temp_rf_subl_loose, hist_temp_fr_subl_loose, hist_temp_ff_subl_loose], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePLSL, label='#splitline{Lead %s}{sublead loose}' %labvar, axis_label=labvar, logy=logy)
+        draw_template(can_proj_lead_subl_tight, [gg_hist_proj_lead_subl_tight, hist_temp_rr_subl_tight, hist_temp_rf_subl_tight, hist_temp_fr_subl_tight, hist_temp_ff_subl_tight], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePLST, label='#splitline{Lead %s}{sublead tight}' %labvar, axis_label=labvar, logy=logy )
 
-    draw_template(can_proj_subl_lead_loose, [gg_hist_proj_subl_lead_loose, hist_temp_rr_lead_loose, hist_temp_rf_lead_loose, hist_temp_fr_lead_loose, hist_temp_ff_lead_loose], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePSLL, label='#splitline{Sublead %s}{lead loose}' %labvar, axis_label=labvar, logy=logy )
-    draw_template(can_proj_subl_lead_tight, [gg_hist_proj_subl_lead_tight, hist_temp_rr_lead_tight, hist_temp_rf_lead_tight, hist_temp_fr_lead_tight, hist_temp_ff_lead_tight], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePSLT, label='#splitline{Sublead %s}{lead tight}'  %labvar, axis_label=labvar, logy=logy)
+        draw_template(can_proj_subl_lead_loose, [gg_hist_proj_subl_lead_loose, hist_temp_rr_lead_loose, hist_temp_rf_lead_loose, hist_temp_fr_lead_loose, hist_temp_ff_lead_loose], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePSLL, label='#splitline{Sublead %s}{lead loose}' %labvar, axis_label=labvar, logy=logy )
+        draw_template(can_proj_subl_lead_tight, [gg_hist_proj_subl_lead_tight, hist_temp_rr_lead_tight, hist_temp_rf_lead_tight, hist_temp_fr_lead_tight, hist_temp_ff_lead_tight], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePSLT, label='#splitline{Sublead %s}{lead tight}'  %labvar, axis_label=labvar, logy=logy)
 
-    draw_template(can_proj_lead, [gg_hist_proj_lead, hist_temp_rr_proj_lead, hist_temp_rf_proj_lead, hist_temp_fr_proj_lead, hist_temp_ff_proj_lead], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePL, label='Lead %s' %labvar, axis_label=labvar )
-    draw_template(can_proj_subl, [gg_hist_proj_subl, hist_temp_rr_proj_subl, hist_temp_rf_proj_subl, hist_temp_fr_proj_subl, hist_temp_ff_proj_subl], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePL, label='Sublead %s' %labvar, axis_label=labvar )
+        draw_template(can_proj_lead, [gg_hist_proj_lead, hist_temp_rr_proj_lead, hist_temp_rf_proj_lead, hist_temp_fr_proj_lead, hist_temp_ff_proj_lead], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePL, label='Lead %s' %labvar, axis_label=labvar )
+        draw_template(can_proj_subl, [gg_hist_proj_subl, hist_temp_rr_proj_subl, hist_temp_rf_proj_subl, hist_temp_fr_proj_subl, hist_temp_ff_proj_subl], sampManData, normalize=False, first_hist_is_data=True, legend_entries=['Data', 'real+real prediction', 'real+fake prediction', 'fake+real prediction', 'fake+fake prediction' ], outputName=outputNamePL, label='Sublead %s' %labvar, axis_label=labvar )
 
-    text_results_stat_data = collect_results( results_stat_data,Ndata, eff_2d_nouncert, templates, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
-    text_results_stat_temp = collect_results( results_stat_temp,Ndata, eff_2d_stat, templates, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
-    text_results_syst_bkg = collect_results( results_syst_bkg,Ndata, eff_2d_syst_bkg, templates, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
-    text_results_syst_temp = collect_results( results_syst_temp,Ndata, eff_2d_syst_temp, templates, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim)
+    text_results_stat_data = collect_results( results_stat_data, Ndata, eff_2d_nouncert , templates, eff_cuts, ndim)
+    text_results_stat_temp = collect_results( results_stat_temp, Ndata, eff_2d_stat     , templates, eff_cuts, ndim)
+    text_results_syst_bkg  = collect_results( results_syst_bkg , Ndata, eff_2d_syst_bkg , templates, eff_cuts, ndim)
+    text_results_syst_temp = collect_results( results_syst_temp, Ndata, eff_2d_syst_temp, templates, eff_cuts, ndim)
 
     return text_results_stat_data, text_results_stat_temp, text_results_syst_bkg, text_results_syst_temp
     
@@ -2301,7 +2541,6 @@ def run_fit( data, efficiencies ) :
 
     # make the matrix
     matrix = generate_eff_matrix( efficiencies, ndim=len(data) )
-    print matrix
 
     #do the fit!  Invert the matrix and multiply the by counts vectors
     if len( data ) == 3 :
@@ -2471,7 +2710,7 @@ def run_fit_manual( data, eff ) :
 #        return
 
 
-def collect_results( results, data, efficiencies, templates, bins_lead_loose, bins_lead_tight, bins_subl_loose, bins_subl_tight, ndim  ) :
+def collect_results( results, data, efficiencies, templates, cuts, ndim  ) :
 
     text_results = collections.OrderedDict()
 
@@ -2523,6 +2762,11 @@ def collect_results( results, data, efficiencies, templates, bins_lead_loose, bi
 
     # add the template integrals to results
 
+    bins_lead_tight = ( templates['lead']['real']['Data'].GetXaxis().FindBin( cuts['lead']['tight'][0] ), templates['lead']['real']['Data'].GetXaxis().FindBin( cuts['lead']['tight'][1] ) )
+    bins_lead_loose = ( templates['lead']['real']['Data'].GetXaxis().FindBin( cuts['lead']['loose'][0] ), templates['lead']['real']['Data'].GetXaxis().FindBin( cuts['lead']['loose'][1] ) )
+    bins_subl_tight = ( templates['subl']['real']['Data'].GetXaxis().FindBin( cuts['subl']['tight'][0] ), templates['subl']['real']['Data'].GetXaxis().FindBin( cuts['subl']['tight'][1] ) )
+    bins_subl_loose = ( templates['subl']['real']['Data'].GetXaxis().FindBin( cuts['subl']['loose'][0] ), templates['subl']['real']['Data'].GetXaxis().FindBin( cuts['subl']['loose'][1] ) )
+     
     int_lead_real_loose = get_integral_and_error(templates['lead']['real']['Data'], bins_lead_loose )
     int_lead_real_tight = get_integral_and_error(templates['lead']['real']['Data'], bins_lead_tight )
     int_lead_fake_loose = get_integral_and_error(templates['lead']['fake']['Data'], bins_lead_loose )
@@ -2577,9 +2821,6 @@ def generate_1d_efficiencies( templates, cuts, lead_reg, subl_reg, lead_ptrange,
 def generate_2d_efficiencies( templates, cuts, lead_reg, subl_reg, lead_ptrange, subl_ptrange, var=None, systematics=None ) :
 
     (int_stat, int_syst) = get_template_integrals( templates, cuts, lead_reg, subl_reg, lead_ptrange, subl_ptrange, var=var, systematics=systematics )
-
-    print 'int_syst'
-    print int_syst
 
     # get efficiencies with three sources of uncertainty
     # 1) statistical uncertainty on templates
@@ -2720,39 +2961,43 @@ def generate_2d_corr_efficiencies( template, cuts, lead_reg, subl_reg, lead_ptra
     # integrate each region of the 2-d template
 
     #lead is on y axis, subl on x
-    bin_lead_tight = ( template.GetYaxis().FindBin( cuts['lead']['tight'][0] ), template.GetYaxis().FindBin( cuts['lead']['tight'][1] ) )
-    bin_lead_loose = ( template.GetYaxis().FindBin( cuts['lead']['loose'][0] ), template.GetYaxis().FindBin( cuts['lead']['loose'][1] ) )
-    bin_subl_tight = ( template.GetXaxis().FindBin( cuts['subl']['tight'][0] ), template.GetXaxis().FindBin( cuts['subl']['tight'][1] ) )
-    bin_subl_loose = ( template.GetXaxis().FindBin( cuts['subl']['loose'][0] ), template.GetXaxis().FindBin( cuts['subl']['loose'][1] ) )
-
-    print 'loose loose : lead = %d, %d, subl = %d, %d'  %( bin_lead_loose[0], bin_lead_loose[1], bin_subl_loose[0], bin_subl_loose[1] )
-
+    bin_subl_tight = ( template['leadPass'].GetXaxis().FindBin( cuts['subl']['tight'][0] ), template['leadPass'].GetXaxis().FindBin( cuts['subl']['tight'][1] ) )
+    bin_subl_loose = ( template['leadPass'].GetXaxis().FindBin( cuts['subl']['loose'][0] ), template['leadPass'].GetXaxis().FindBin( cuts['subl']['loose'][1] ) )
 
     err_lead_tight_subl_tight = ROOT.Double()
-    int_lead_tight_subl_tight = template.IntegralAndError( bin_subl_tight[0], bin_subl_tight[1], bin_lead_tight[0], bin_lead_tight[1], err_lead_tight_subl_tight )
+    int_lead_tight_subl_tight = template['leadPass'].IntegralAndError( bin_subl_tight[0], bin_subl_tight[1], err_lead_tight_subl_tight )
 
     err_lead_tight_subl_loose = ROOT.Double()
-    int_lead_tight_subl_loose = template.IntegralAndError( bin_subl_loose[0], bin_subl_loose[1], bin_lead_tight[0], bin_lead_tight[1], err_lead_tight_subl_loose )
+    int_lead_tight_subl_loose = template['leadPass'].IntegralAndError( bin_subl_loose[0], bin_subl_loose[1], err_lead_tight_subl_loose )
 
     err_lead_loose_subl_tight = ROOT.Double()
-    int_lead_loose_subl_tight = template.IntegralAndError( bin_subl_tight[0], bin_subl_tight[1], bin_lead_loose[0], bin_lead_loose[1], err_lead_loose_subl_tight )
+    int_lead_loose_subl_tight = template['leadFail'].IntegralAndError( bin_subl_tight[0], bin_subl_tight[1], err_lead_loose_subl_tight )
 
     err_lead_loose_subl_loose = ROOT.Double()
-    int_lead_loose_subl_loose = template.IntegralAndError( bin_subl_loose[0], bin_subl_loose[1], bin_lead_loose[0], bin_lead_loose[1], err_lead_loose_subl_loose )
+    int_lead_loose_subl_loose = template['leadFail'].IntegralAndError( bin_subl_loose[0], bin_subl_loose[1], err_lead_loose_subl_loose )
 
     int_tt = ufloat( int_lead_tight_subl_tight, err_lead_tight_subl_tight )
     int_tl = ufloat( int_lead_tight_subl_loose, err_lead_tight_subl_loose )
     int_lt = ufloat( int_lead_loose_subl_tight, err_lead_loose_subl_tight )
     int_ll = ufloat( int_lead_loose_subl_loose, err_lead_loose_subl_loose)
 
-    print int_tt
-    print int_tl
-    print int_lt
-    print int_ll
-    frac_tt = int_tt/( int_tt + int_tl + int_lt + int_ll )
-    frac_tl = int_tl/( int_tt + int_tl + int_lt + int_ll )
-    frac_lt = int_lt/( int_tt + int_tl + int_lt + int_ll )
-    frac_ll = int_ll/( int_tt + int_tl + int_lt + int_ll )
+    print '2d FF template N TT = ', int_tt
+    print '2d FF template N TL = ', int_tl
+    print '2d FF template N LT = ', int_lt
+    print '2d FF template N LL = ', int_ll
+
+    denominator = int_tt + int_tl + int_lt + int_ll
+
+    if denominator != 0 :
+        frac_tt = int_tt/( denominator )
+        frac_tl = int_tl/( denominator )
+        frac_lt = int_lt/( denominator )
+        frac_ll = int_ll/( denominator )
+    else :
+        frac_tt = ufloat(0,0)
+        frac_tl = ufloat(0,0)
+        frac_lt = ufloat(0,0)
+        frac_ll = ufloat(0,0)
 
     eff_stat = {}
     eff_syst = {}
@@ -2993,7 +3238,7 @@ def get_correlated_fake_fake_templates( selection, binning, sample, reg1, reg2, 
     else :
         fitvarmod = fitvar
 
-    var = 'pt_leadph12:%s_leadph12:%s_sublph12' %(fitvarmod, fitvarmod)#z:y:x
+    var = 'pt_leadph12:%s_sublph12' %(fitvarmod)#y:x
 
     selection = selection + ' && is%s_leadph12 && is%s_sublph12 ' %( reg1, reg2 )
 
@@ -3007,11 +3252,11 @@ def get_correlated_fake_fake_templates( selection, binning, sample, reg1, reg2, 
     if data_samp :
         print '---------------------------------'
         print ' Draw 2-D correlated Template for var %s        ' %fitvar
-        print 'Binning = ', ( binning[reg2][0], binning[reg2][1], binning[reg2][2], binning[reg1][0], binning[reg1][1], binning[reg1][2], 100, 0, 500  )
+        print 'Binning = ', ( binning[reg2][0], binning[reg2][1], binning[reg2][2], 100, 0, 500  )
         print selection
         print '---------------------------------'
     
-        template_hists['Data'] = clone_sample_and_draw( data_samp[0], var, selection, ( binning[reg2][0], binning[reg2][1], binning[reg2][2], binning[reg1][0], binning[reg1][1], binning[reg1][2], 100, 0, 500  ), useSampMan=sampMan ) 
+        template_hists['Data'] = clone_sample_and_draw( data_samp[0], var, selection, ( binning[reg2][0], binning[reg2][1], binning[reg2][2], 100, 0, 500  ), useSampMan=sampMan ) 
     else :
         print 'Data template sample not found!'
         
@@ -3053,8 +3298,6 @@ def solve_matrix_eq( matrix_ntries, vector_entries ) :
 
     matrix = unumpy.umatrix( mn, ms )
 
-    print matrix
-
     vs = []
     vn = []
     for row in vector_entries :
@@ -3070,12 +3313,10 @@ def solve_matrix_eq( matrix_ntries, vector_entries ) :
         print 'Failed to invert matrix, aborting'
         return unumpy.umatrix( [ [1]*len(vs) ], [ [0]*len(vs) ] )
 
-    print inv_matrix
-    print vector
-
     return inv_matrix*vector
 
 def clone_sample_and_draw( samp, var, sel, binning, useSampMan=None ) :
+
 
     if useSampMan is not None :
         newSamp = useSampMan.clone_sample( oldname=samp.name, newname=samp.name+str(uuid.uuid4()), temporary=True ) 
@@ -3086,6 +3327,19 @@ def clone_sample_and_draw( samp, var, sel, binning, useSampMan=None ) :
         newSamp = sampMan.clone_sample( oldname=samp.name, newname=samp.name+str(uuid.uuid4()), temporary=True ) 
         sampMan.create_hist( newSamp, var, sel, binning )
         return newSamp.hist
+
+def config_and_queue_hist( samp, var, sel, binning, useSampMan=None ) :
+
+    if useSampMan is not None :
+        useSampMan.activate_sample( samp )
+        draw_conf = DrawConfig( var, sel, binning, samples=samp )
+        useSampMan.queue_draw( draw_conf )
+        return draw_conf
+    else :
+        sampMan.activate_sample( samp )
+        draw_conf = DrawConfig( var, sel, binning, samples=samp )
+        sampMan.queue_draw( draw_conf)
+        return draw_conf
 
 def save_templates( templates, outputDir, lead_ptrange=(None,None), subl_ptrange=(None,None),namePostfix='' ) :
 
@@ -3251,6 +3505,701 @@ def draw_template(can, hists, sampMan, normalize=False, first_hist_is_data=False
             os.makedirs( os.path.dirname(outputName) )
 
         can.SaveAs( outputName )
+
+class RunNominalCalculation() :
+
+    iso_cuts = { 
+        'sigmaIEIE' : {
+            'lead' :'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
+            'subl' :'ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] ',
+        },
+        'chIsoCorr' : {
+            'lead' :'ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
+            'subl' :'ph_passSIEIEMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] ',
+        },
+        'neuIsoCorr' : {
+            'lead' : 'ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ', 
+            'subl' : 'ph_passSIEIEMedium[1] && ph_passChIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] ',
+        },
+       'phoIsoCorr' : {
+           'lead' : 'ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] ',
+           'subl' : 'ph_passSIEIEMedium[1] && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] ',
+       }
+    }
+
+    def __init__( self, **kwargs ) :
+
+        self.configs = {}
+        self.status = True
+
+        self.fitvar  = kwargs.get( 'fitvar', None )
+        self.channel = kwargs.get( 'channel', None )
+        self.ffcorr  = kwargs.get('ffcorr', 'None' )
+        self.subl_ptrange = kwargs.get( 'subl_ptrange', (None,None) )
+        self.ptbins  = kwargs.get( 'ptbins', [15,25,40,70,1000000] )
+        self.systematics = kwargs.get( 'systematics', 'Nom' )
+        self.outputDir = kwargs.get( 'outputDir', None )
+
+        
+        if self.fitvar is None :
+            print 'RunNominalCalculation.init -- ERROR, fitvar is required argument'
+            self.status = False
+            return
+
+        if self.channel is None :
+            print 'RunNominalCalculation.init -- ERROR, channel is required argument'
+            self.status = False
+            return
+
+        if self.outputDir is not None :
+            if self.fitvar == 'sigmaIEIE' :
+                self.outputDir = self.outputDir + '/SigmaIEIEFits/JetFakeTemplateFitPlotsNomIso'
+            elif self.fitvar == 'chIsoCorr' :
+                self.outputDir = self.outputDir + '/ChHadIsoFits/JetFakeTemplateFitPlotsNomIso'
+            elif self.fitvar == 'neuIsoCorr' :
+                self.outputDir = self.outputDir + '/NeuHadIsoFits/JetFakeTemplateFitPlotsNomIso'
+            elif self.fitvar == 'phoIsoCorr' :
+                self.outputDir = self.outputDir + '/PhoIsoFits/JetFakeTemplateFitPlotsNomIso'
+        
+
+    def ConfigHists(self, **kwargs ) :
+
+        if not self.status :
+            print 'RunNominalCalculation.ConfigHists -- ERROR, aborting because of previous errors'
+
+        fitvar = self.fitvar
+        ch = self.channel
+        ffcorr = self.ffcorr
+
+        self.template_name_base = 'nom__templates__ffcorr_%s__%s__%s' %(ffcorr, fitvar, ch )
+        self.data_name_base = 'nom__data__ffcorr_%s__%s__%s' %( ffcorr, fitvar, ch )
+        self.corr_name_base = 'nom__fftemplates__ffcorr_%s__%s__%s' %(ffcorr, fitvar, ch )
+
+        binning = get_default_binning(fitvar)
+        samples = get_default_samples(ch)
+
+        iso_cuts_lead = self.iso_cuts[fitvar]['lead']
+        iso_cuts_subl = self.iso_cuts[fitvar]['subl']
+
+        # generate templates for both EB and EE
+        real_template_str = get_real_template_draw_commands(ch ) + ' && %s' %iso_cuts_lead
+        if fitvar == 'sigmaIEIE' :
+            #print '*******************************DRAWING WITH CHHadISO WINDOW*******************************'
+            fake_template_str = get_fake_template_draw_commands(ch ) + ' && %s' %iso_cuts_lead
+            #fake_template_str = get_fake_window_template_draw_commands(ch )
+        else :
+            fake_template_str = get_fake_template_draw_commands(ch ) + ' && %s' %iso_cuts_lead
+
+
+        self.configs.update(config_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB', fitvar=fitvar, basename=self.template_name_base+'__real__EB', sampMan=sampManLG))
+        self.configs.update(config_single_photon_template(real_template_str, binning['EE'], samples['real'], 'EE', fitvar=fitvar, basename=self.template_name_base+'__real__EE', sampMan=sampManLG))
+        self.configs.update(config_single_photon_template(fake_template_str, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, basename=self.template_name_base+'__fake__EB', sampMan=sampManLLG))
+        self.configs.update(config_single_photon_template(fake_template_str, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, basename=self.template_name_base+'__fake__EE', sampMan=sampManLLG))
+
+        # get correlated fake-fake templates
+        corr_template_str_leadFail_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=False, cuts=ffcorr )
+        corr_template_str_leadPass_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=True , cuts=ffcorr )
+        corr_template_str_leadFail_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=False, cuts=ffcorr )
+        corr_template_str_leadPass_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=True , cuts=ffcorr )
+        corr_template_str_leadFail_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=False, cuts=ffcorr )
+        corr_template_str_leadPass_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=True , cuts=ffcorr )
+
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EB', sampMan=sampManDataNOEV  ) )
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EB', sampMan=sampManDataNOEV  ) )
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EE', sampMan=sampManDataNOEV  ) )
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EE', sampMan=sampManDataNOEV  ) )
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EE-EB', sampMan=sampManDataNOEV  ) )
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EE-EB', sampMan=sampManDataNOEV  ) )
+
+
+        count_var = None
+        if fitvar == 'sigmaIEIE' :
+            # if the channel inverts one of the pixel seeds then don't require the veto
+            # if its the muon channel don't require the veto
+            if ch.count('invpix') or ch == 'mu' :
+                count_var = 'ph_mediumNoSIEIENoEleVeto_n'
+            else :
+                count_var = 'ph_mediumNoSIEIE_n'
+        if fitvar == 'chIsoCorr' :
+            count_var = 'ph_mediumNoChIso_n'
+        if fitvar == 'neuIsoCorr' :
+            count_var = 'ph_mediumNoNeuIso_n'
+        if fitvar == 'phoIsoCorr' :
+            count_var = 'ph_mediumNoPhoIso_n'
+
+
+        # add regions onto the selection
+
+        regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB')]
+        for reg in regions :
+            if fitvar == 'sigmaIEIE' :
+                gg_selection = get_default_draw_commands(ch)['gg'] + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
+                gg_selection_leadPass = gg_selection + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
+                gg_selection_leadFail = gg_selection + ' && sieie_leadph12 > %f && sieie_leadph12 < %f' %( _sieie_cuts[reg[0]] )
+            elif fitvar == 'chIsoCorr' :
+                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+                gg_selection_leadPass = gg_selection + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
+                gg_selection_leadFail = gg_selection + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
+            elif fitvar == 'neuIsoCorr' :
+                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+                gg_selection_leadPass = gg_selection + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
+                gg_selection_leadFail = gg_selection + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
+            elif fitvar == 'phoIsoCorr' :
+                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+                gg_selection_leadPass = gg_selection + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
+                gg_selection_leadFail = gg_selection + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
+
+            # add subl pt cuts onto the selection
+            if self.subl_ptrange[0] is not None :
+                if self.subl_ptrange[1] is None :
+                    gg_selection_leadPass = gg_selection_leadPass + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+                    gg_selection_leadFail = gg_selection_leadFail + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+                else :
+                    gg_selection_leadPass = gg_selection_leadPass + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], self.subl_ptrange[1] )
+                    gg_selection_leadFail = gg_selection_leadFail + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], self.subl_ptrange[1] )
+
+            # parse out the x and y binning
+            ybinn = binning[reg[1]]
+            xbinn = binning[reg[0]]
+
+            # variable given to TTree.Draw
+            if fitvar == 'sigmaIEIE' :
+                var = 'pt_leadph12:sieie_sublph12' #z:y:x
+            elif fitvar == 'chIsoCorr' :
+                var = 'pt_leadph12:chIsoCorr_sublph12' #z:y:x
+            elif fitvar == 'neuIsoCorr' :
+                var = 'pt_leadph12:neuIsoCorr_sublph12' #z:y:x
+            elif fitvar == 'phoIsoCorr' :
+                var = 'pt_leadph12:phoIsoCorr_sublph12' #z:y:x
+
+            print 'USE var ', var
+
+            self.targetSampMan = sampManData
+            if ch.count('invpixlead' ) :
+                print 'USE sampManDataInvL'
+                self.targetSampMan = sampManDataInvL
+            elif ch.count('invpixsubl' ) :
+                print 'USE sampManDataInvS'
+                self.targetSampMan = sampManDataInvS
+            elif ch.count( 'mu' ) :
+                print 'USE sampManDataNOEV'
+                self.targetSampMan = sampManDataNOEV
+            else :
+                print 'USE sampManData'
+                self.targetSampMan = sampManData
+
+
+            target_samp = self.targetSampMan.get_samples(name=samples['target'])
+            print '---------------------------------'
+            print ' Config Data                       '
+            print gg_selection_leadPass
+            print ' Config Data                       '
+            print gg_selection_leadFail
+            print '---------------------------------'
+            self.configs[self.data_name_base+'__leadPass__%s-%s'%(reg[0],reg[1])] = config_and_queue_hist( target_samp[0], var, gg_selection_leadPass, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=self.targetSampMan )
+            self.configs[self.data_name_base+'__leadFail__%s-%s'%(reg[0],reg[1])] = config_and_queue_hist( target_samp[0], var, gg_selection_leadFail, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=self.targetSampMan )
+
+        print self.configs
+
+        return self.configs.values()
+        
+    def execute( self, **kwargs ):
+
+        print self.configs
+
+        regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB')]
+        for reg in regions :
+            templates = {'lead' :{'real' : {}, 'fake' : {} }, 'subl' : {'real' : {}, 'fake' : {} } }
+
+            templates['lead']['real'] = load_template_histograms( self.configs,'%s__real__%s' %(self.template_name_base, reg[0]) , sampManLG )
+            templates['subl']['real'] = load_template_histograms( self.configs,'%s__real__%s' %(self.template_name_base, reg[1]) , sampManLG )
+
+            templates['lead']['fake'] = load_template_histograms( self.configs,'%s__fake__%s' %(self.template_name_base, reg[0]) , sampManLLG )
+            templates['subl']['fake'] = load_template_histograms( self.configs,'%s__fake__%s' %(self.template_name_base, reg[1]) , sampManLLG )
+
+            templates_corr = None
+            if self.ffcorr != 'None' :
+                templates_corr = {'leadPass' : { reg : { 'Data' : None, 'Background' : None} }, 'leadFail' : { reg : { 'Data' : None, 'Background' : None} } }
+                templates_corr['leadPass'][reg]['Data'] = sampManDataNOEV.load_samples( self.configs['%s__leadPass__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
+                templates_corr['leadFail'][reg]['Data'] = sampManDataNOEV.load_samples( self.configs['%s__leadFail__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
+
+            gg_hist = {}
+            gg_hist['leadPass'] = self.targetSampMan.load_samples( self.configs['%s__leadPass__%s-%s' %(self.data_name_base, reg[0], reg[1])] )[0].hist
+            gg_hist['leadFail'] = self.targetSampMan.load_samples( self.configs['%s__leadFail__%s-%s' %(self.data_name_base, reg[0], reg[1])] )[0].hist
+
+            run_nominal_calculation( gg_hist, templates, templates_corr, reg, self.ptbins, self.channel, self.fitvar, self.ffcorr, systematics=self.systematics, subl_ptrange=self.subl_ptrange, outputDir=self.outputDir )
+
+
+class RunCorrectedAsymCalculation() :
+
+    def __init__( self, **kwargs ) :
+
+        self.configs = {}
+        self.status = True
+
+        self.vals              = kwargs.get( 'vals'              , None)
+        self.fitvar            = kwargs.get( 'fitvar'            , None )
+        self.channel           = kwargs.get( 'channel'           , None )
+        self.ffcorr            = kwargs.get( 'ffcorr'            , None )
+        self.ptbins            = kwargs.get( 'ptbins'            , [15,25,40,70,1000000] )
+        self.iso_cuts_iso      = kwargs.get( 'iso_cuts_iso'      , None )
+        self.iso_cuts_iso_fake = kwargs.get( 'iso_cuts_iso_fake' , None )
+        self.iso_cuts_noiso    = kwargs.get( 'iso_cuts_noiso'    , None )
+        self.subl_ptrange      = kwargs.get( 'subl_ptrange'      , (None,None) )
+        self.outputDir         = kwargs.get('outputDir'          , None )
+        
+        if self.fitvar is None :
+            print 'RunCorrectedAsymCalculation.init -- ERROR, fitvar is required argument'
+            self.status = False
+            return
+
+        if self.vals is None :
+            print 'RunCorrectedAsymCalculation.init -- ERROR, loose_vals is required argument'
+            self.status = False
+            return
+
+        if self.channel is None :
+            print 'RunCorrectedAsymCalculation.init -- ERROR, channel is required argument'
+            self.status = False
+            return
+
+        if self.outputDir is not None :
+            if self.fitvar == 'sigmaIEIE' :
+                self.outputDir = self.outputDir + '/SigmaIEIEFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(self.vals)
+            elif self.fitvar == 'chIsoCorr' :
+                self.outputDir = self.outputDir + '/ChHadIsoFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(self.vals)
+            elif self.fitvar == 'neuIsoCorr' :
+                self.outputDir = self.outputDir + '/NeuHadIsoFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(self.vals )
+            elif self.fitvar == 'phoIsoCorr' :
+                self.outputDir = self.outputDir + '/PhoIsoFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(self.vals )
+
+        if self.fitvar == 'sigmaIEIE' :
+            self.iso_cuts_iso = ' ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+            self.iso_cuts_iso_fake = self.iso_cuts_iso 
+            #self.iso_cuts_iso_fake = ' ph_chIsoCorr[0] > 1.5 && ph_chIsoCorr[0] < 8 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]'
+            # loosened iso cuts
+            self.iso_cuts_noiso = ' ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(self.vals[0], self.vals[1], self.vals[2] )
+            #self.iso_cuts_noiso = ' ph_chIsoCorr[0] > 1.5 && ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(self.vals[0], self.vals[1], self.vals[2] )
+            self.loose_iso_cuts = self.vals
+            self.systematics=('-'.join([str(v) for v in self.vals]))
+            #---------------------------------------------------
+
+        elif self.fitvar == 'chIsoCorr' :
+            #---------------------------------------------------
+            # for using ChHadIso templates
+            # iso cuts for isolated photons
+            self.iso_cuts_iso = ' ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+            self.iso_cuts_iso_fake = self.iso_cuts_iso 
+            #self.iso_cuts_iso_fake = ' !ph_passSIEIEMedium[0] &&  ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+            # loosened iso cuts
+            self.iso_cuts_noiso = 'ph_passSIEIEMedium[0] &&  ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %( self.vals[1], self.vals[2] )
+            self.loose_iso_cuts = (None, self.vals[1], self.vals[2] )
+            self.systematics = 'No Cut-%d-%d' %( self.vals[1], self.vals[2] )
+            #---------------------------------------------------
+
+        elif self.fitvar == 'neuIsoCorr' :
+            #---------------------------------------------------
+            # for using NeuHadIso templates
+            # iso cuts for isolated photons
+            self.iso_cuts_iso = ' ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
+            self.iso_cuts_iso_fake = self.iso_cuts_iso 
+            # loosened iso cuts
+            self.iso_cuts_noiso = 'ph_passSIEIEMedium[0] &&  ph_chIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %( self.vals[0], self.vals[2] )
+            self.loose_iso_cuts = (self.vals[0], None, self.vals[2] )
+            self.systematics = '%d-No Cut-%d' %( self.vals[0], self.vals[2] )
+            #---------------------------------------------------
+
+        elif self.fitvar == 'phoIsoCorr' :
+            #---------------------------------------------------
+            # for using NeuHadIso templates
+            # iso cuts for isolated photons
+            self.iso_cuts_iso = ' ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] '
+            self.iso_cuts_iso_fake = self.iso_cuts_iso 
+            #self.iso_cuts_iso_fake = ' !ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] '
+            # loosened iso cuts
+            self.iso_cuts_noiso = 'ph_passSIEIEMedium[0] &&  ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d' %( self.vals[0], self.vals[1] )
+            self.loose_iso_cuts = (self.vals[0], self.vals[1], None )
+            self.systematics = '%d-%d-No Cut' %( self.vals[0], self.vals[1] )
+            #---------------------------------------------------
+
+        
+
+    def ConfigHists(self, **kwargs ) :
+
+        if not self.status :
+            print 'RunCorrectedAsymCalculation.ConfigHists -- ERROR, aborting because of previous errors'
+
+        fitvar = self.fitvar
+        ch = self.channel
+        ffcorr = self.ffcorr
+
+        asym_name = 'asym-%s-%s-%s' %( self.vals )
+        
+
+        self.template_name_iso_base = '%s_templates_iso_ffcorr_%s__%s__%s' %( asym_name, ffcorr, fitvar, ch )
+        self.template_name_noiso_base = '%s_templates_noiso_ffcorr_%s__%s__%s' %( asym_name, ffcorr, fitvar, ch )
+        self.data_name_base = '%s__data__ffcorr_%s__%s__%s'%( asym_name, ffcorr, fitvar, ch )
+        self.corr_name_base = '%s__fftemplates__ffcorr_%s__%s__%s' %( asym_name, ffcorr, fitvar, ch )
+
+        binning = get_default_binning(fitvar)
+        samples = get_default_samples(ch)
+
+        real_template_str_iso = get_real_template_draw_commands(ch)
+        fake_template_str_iso = get_fake_template_draw_commands(ch)
+        if self.iso_cuts_iso is not None :
+            real_template_str_iso = real_template_str_iso + ' && ' + self.iso_cuts_iso
+            fake_template_str_iso = fake_template_str_iso + ' && ' + self.iso_cuts_iso_fake
+
+        real_template_str_noiso = get_real_template_draw_commands(ch )
+        fake_template_str_noiso = get_fake_template_draw_commands(ch )
+        if self.iso_cuts_noiso is not None :
+            real_template_str_noiso = real_template_str_noiso + ' && ' + self.iso_cuts_noiso
+            fake_template_str_noiso = fake_template_str_noiso + ' && ' + self.iso_cuts_noiso
+
+        self.configs.update(config_single_photon_template(real_template_str_iso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, basename=self.template_name_iso_base+'__real__EB', sampMan=sampManLG ) )
+        self.configs.update(config_single_photon_template(real_template_str_iso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, basename=self.template_name_iso_base+'__real__EE', sampMan=sampManLG ) )
+        self.configs.update(config_single_photon_template(fake_template_str_iso, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, basename=self.template_name_iso_base+'__fake__EB', sampMan=sampManLLG ) )
+        self.configs.update(config_single_photon_template(fake_template_str_iso, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, basename=self.template_name_iso_base+'__fake__EE', sampMan=sampManLLG ) )
+
+        self.configs.update(config_single_photon_template(real_template_str_noiso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, basename=self.template_name_noiso_base+'__real__EB', sampMan=sampManLG  ) )
+        self.configs.update(config_single_photon_template(real_template_str_noiso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, basename=self.template_name_noiso_base+'__real__EE', sampMan=sampManLG  ) )
+        self.configs.update(config_single_photon_template(fake_template_str_noiso, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, basename=self.template_name_noiso_base+'__fake__EB', sampMan=sampManLLG ) )
+        self.configs.update(config_single_photon_template(fake_template_str_noiso, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, basename=self.template_name_noiso_base+'__fake__EE', sampMan=sampManLLG ) )
+
+        if ffcorr != 'None' :
+            corr_template_str_leadFail_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=False, cuts=ffcorr )
+            corr_template_str_leadPass_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=True , cuts=ffcorr )
+            corr_template_str_leadFail_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=False, cuts=ffcorr )
+            corr_template_str_leadPass_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=True , cuts=ffcorr )
+            corr_template_str_leadFail_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=False, cuts=ffcorr )
+            corr_template_str_leadPass_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=True , cuts=ffcorr )
+
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EB', sampMan=sampManDataNOEV  ))
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EB', sampMan=sampManDataNOEV  ))
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EE', sampMan=sampManDataNOEV  ))
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EE', sampMan=sampManDataNOEV  ))
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EE-EB', sampMan=sampManDataNOEV  ))
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EE-EB', sampMan=sampManDataNOEV  ))
+
+        regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB') ]
+
+        for reg in regions :
+            
+            # add regions onto the selection
+            gg_selection_leadiso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            gg_selection_subliso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            gg_selection_bothiso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+
+            # add subl pt cuts onto the selection
+            if self.subl_ptrange[0] is not None :
+                if self.subl_ptrange[1] is None :
+                    gg_selection_leadiso = gg_selection_leadiso + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+                    gg_selection_subliso = gg_selection_subliso + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+                    gg_selection_bothiso = gg_selection_bothiso + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+                else :
+                    gg_selection_leadiso = gg_selection_leadiso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], sefl.subl_ptrange[1] )
+                    gg_selection_subliso = gg_selection_subliso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], sefl.subl_ptrange[1] )
+                    gg_selection_bothiso = gg_selection_bothiso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], sefl.subl_ptrange[1] )
+
+            if fitvar == 'sigmaIEIE' :
+                # add object cuts to the selection
+
+                nom_iso_cuts_lead = 'chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _chIso_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+                nom_iso_cuts_subl = 'chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _chIso_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+
+                gg_selection_leadiso = gg_selection_leadiso + ' && ph_iso%d%d%d_n > 1 && %s ' %(self.loose_iso_cuts[0], self.loose_iso_cuts[1], self.loose_iso_cuts[2], nom_iso_cuts_lead )
+                gg_selection_subliso = gg_selection_subliso + ' && ph_iso%d%d%d_n > 1 && %s ' %(self.loose_iso_cuts[0], self.loose_iso_cuts[1], self.loose_iso_cuts[2], nom_iso_cuts_subl )
+
+                gg_selection_leadiso = gg_selection_leadiso + ' && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %d ' %( self.loose_iso_cuts )
+                gg_selection_subliso = gg_selection_subliso + ' && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %d ' %( self.loose_iso_cuts )
+
+                gg_selection_bothiso = gg_selection_bothiso + ' && ph_mediumNoSIEIENoEleVeto_n > 1 '
+
+                gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
+                gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && sieie_leadph12 > %f && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]] )
+                gg_selection_subliso_leadPass = gg_selection_subliso + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
+                gg_selection_subliso_leadFail = gg_selection_subliso + ' && sieie_leadph12 > %f && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]] )
+                gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
+                gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && sieie_leadph12 > %f && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]] )
+
+            elif fitvar == 'chIsoCorr' :
+
+                nom_iso_cuts_lead = 'sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+                nom_iso_cuts_subl = 'sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+
+
+                gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
+                gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
+
+            
+                gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], self.loose_iso_cuts[1], self.loose_iso_cuts[2] )
+                gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],self.loose_iso_cuts[1], self.loose_iso_cuts[2] )
+
+                gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
+
+                gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
+                gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
+                gg_selection_subliso_leadPass = gg_selection_subliso + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
+                gg_selection_subliso_leadFail = gg_selection_subliso + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
+                gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
+                gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
+
+            elif fitvar == 'neuIsoCorr' :
+
+                nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+                nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+
+
+                gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
+                gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
+
+            
+                gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], self.loose_iso_cuts[0], self.loose_iso_cuts[2] )
+                gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],self.loose_iso_cuts[0], self.loose_iso_cuts[2] )
+
+                gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
+
+                gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
+                gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
+                gg_selection_subliso_leadPass = gg_selection_subliso + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
+                gg_selection_subliso_leadFail = gg_selection_subliso + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
+                gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
+                gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
+
+            elif fitvar == 'phoIsoCorr' :
+
+                nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+                nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+
+
+                gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
+                gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
+
+            
+                gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], self.loose_iso_cuts[0], self.loose_iso_cuts[1] )
+                gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],self.loose_iso_cuts[0], self.loose_iso_cuts[1] )
+
+                gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
+
+                gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
+                gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
+                gg_selection_subliso_leadPass = gg_selection_subliso + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
+                gg_selection_subliso_leadFail = gg_selection_subliso + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
+                gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
+                gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
+
+
+            # parse out the x and y binning
+            ybinn = binning[reg[1]]
+            xbinn = binning[reg[0]]
+
+            # variable given to TTree.Draw
+            #var = 'ph_pt[0]:ph_sigmaIEIE[1]:ph_sigmaIEIE[0]' #z:y:x
+            if fitvar == 'sigmaIEIE' :
+                var = 'pt_leadph12:sieie_sublph12' #y:x
+            elif fitvar == 'chIsoCorr' :
+                var = 'pt_leadph12:chIsoCorr_sublph12' #y:x
+            elif fitvar == 'neuIsoCorr' :
+                var = 'pt_leadph12:neuIsoCorr_sublph12' #y:x
+            elif fitvar == 'phoIsoCorr' :
+                var = 'pt_leadph12:phoIsoCorr_sublph12' #y:x
+
+            # get sample
+
+            self.targetSampMan = sampManData
+
+            # for certain channels, use a different SampleManager
+            if ch.count('invpixlead' ) :
+                print 'USE sampManDataInvL'
+                self.targetSampMan = sampManDataInvL
+
+            elif ch.count('invpixsubl' ) :
+                print 'USE sampManDataInvS'
+                self.targetSampMan = sampManDataInvS
+
+            elif ch.count('mu' ) :
+                print 'USE sampManDataNOEV'
+                self.targetSampMan = sampManDataNOEV
+
+            else :
+                print 'USE sampManData'
+                self.targetSampMan = sampManData
+
+            target_samp = self.targetSampMan.get_samples(name=samples['target'])
+
+            # draw and get back the hist
+            print '---------------------------------'
+            print ' Draw LeadIso                    '
+            print gg_selection_leadiso_leadPass
+            print ' Draw LeadIso                    '
+            print gg_selection_leadiso_leadFail
+            print '---------------------------------'
+            self.configs[self.data_name_base+'__leadPass__leadiso__%s-%s' %(reg)] = config_and_queue_hist( target_samp[0], var, gg_selection_leadiso_leadPass, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=self.targetSampMan)
+            self.configs[self.data_name_base+'__leadFail__leadiso__%s-%s' %(reg)] = config_and_queue_hist( target_samp[0], var, gg_selection_leadiso_leadFail, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=self.targetSampMan)
+            print '---------------------------------'
+            print ' Draw SublIso                    '
+            print gg_selection_subliso_leadPass
+            print ' Draw SublIso                    '
+            print gg_selection_subliso_leadFail
+            print '---------------------------------'
+            self.configs[self.data_name_base+'__leadPass__subliso__%s-%s' %(reg)] = config_and_queue_hist( target_samp[0], var, gg_selection_subliso_leadPass, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=self.targetSampMan)
+            self.configs[self.data_name_base+'__leadFail__subliso__%s-%s' %(reg)] = config_and_queue_hist( target_samp[0], var, gg_selection_subliso_leadFail, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=self.targetSampMan)
+            print '---------------------------------'
+            print ' Draw BothIso                    '
+            print gg_selection_bothiso_leadPass
+            print ' Draw BothIso                    '
+            print gg_selection_bothiso_leadFail
+            print '---------------------------------'
+            self.configs[self.data_name_base+'__leadPass__bothiso__%s-%s' %(reg)] = config_and_queue_hist( target_samp[0], var, gg_selection_bothiso_leadPass, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=self.targetSampMan)
+            self.configs[self.data_name_base+'__leadFail__bothiso__%s-%s' %(reg)] = config_and_queue_hist( target_samp[0], var, gg_selection_bothiso_leadFail, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=self.targetSampMan)
+
+        print self.configs
+
+        return self.configs.values()
+        
+    def execute( self, **kwargs ):
+
+        regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB')]
+        for reg in regions :
+            templates_leadiso = {'lead' : { 'real' : {}, 'fake' : {} }, 'subl' : {'real' : {}, 'fake' : {} } }
+            templates_subliso = {'lead' : { 'real' : {}, 'fake' : {} }, 'subl' : {'real' : {}, 'fake' : {} } }
+
+            templates_leadiso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_iso_base, reg[0]), sampManLG )
+            templates_leadiso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_noiso_base, reg[1]), sampManLG )
+            templates_leadiso['lead']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_iso_base, reg[0]), sampManLLG )
+            templates_leadiso['subl']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_noiso_base, reg[1]), sampManLLG )
+
+            templates_subliso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_noiso_base, reg[0]), sampManLG )
+            templates_subliso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_iso_base, reg[1]), sampManLG )
+            templates_subliso['lead']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_noiso_base, reg[0]), sampManLLG )
+            templates_subliso['subl']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_iso_base, reg[1]), sampManLLG )
+
+            templates_nom = {}
+            templates_nom['lead'] = {}
+            templates_nom['subl'] = {}
+            templates_nom['subl']['real'] = templates_subliso['subl']['real']
+            templates_nom['subl']['fake'] = templates_subliso['subl']['fake']
+            templates_nom['lead']['real'] = templates_leadiso['lead']['real']
+            templates_nom['lead']['fake'] = templates_leadiso['lead']['fake']
+
+            templates_corr = None
+            if self.ffcorr != 'None' :
+                templates_corr = {'leadPass' : { reg : { 'Data' : None, 'Background' : None} }, 'leadFail' : { reg : { 'Data' : None, 'Background' : None} } }
+                templates_corr['leadPass'][reg]['Data'] = sampManDataNOEV.load_samples( self.configs['%s__leadPass__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
+                templates_corr['leadFail'][reg]['Data'] = sampManDataNOEV.load_samples( self.configs['%s__leadFail__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
+
+            gg_hist_leadiso = {}
+            gg_hist_subliso = {}
+            gg_hist_bothiso = {}
+            gg_hist_leadiso['leadPass'] = self.targetSampMan.load_samples( self.configs['%s__leadPass__leadiso__%s-%s' %(self.data_name_base, reg[0], reg[1])] )[0].hist
+            gg_hist_leadiso['leadFail'] = self.targetSampMan.load_samples( self.configs['%s__leadFail__leadiso__%s-%s' %(self.data_name_base, reg[0], reg[1])] )[0].hist
+            gg_hist_subliso['leadPass'] = self.targetSampMan.load_samples( self.configs['%s__leadPass__subliso__%s-%s' %(self.data_name_base, reg[0], reg[1])] )[0].hist
+            gg_hist_subliso['leadFail'] = self.targetSampMan.load_samples( self.configs['%s__leadFail__subliso__%s-%s' %(self.data_name_base, reg[0], reg[1])] )[0].hist
+            gg_hist_bothiso['leadPass'] = self.targetSampMan.load_samples( self.configs['%s__leadPass__bothiso__%s-%s' %(self.data_name_base, reg[0], reg[1])] )[0].hist
+            gg_hist_bothiso['leadFail'] = self.targetSampMan.load_samples( self.configs['%s__leadFail__bothiso__%s-%s' %(self.data_name_base, reg[0], reg[1])] )[0].hist
+
+            run_corr_calculation( templates_leadiso, templates_subliso, templates_nom, templates_corr, gg_hist_leadiso, gg_hist_subliso, gg_hist_bothiso, reg, self.ptbins, self.channel, self.fitvar, self.ffcorr, systematics=self.systematics,subl_ptrange=self.subl_ptrange,outputDir=self.outputDir )
+            
+def config_single_photon_template( selection, binning, sample, reg, fitvar='sigmaIEIE', basename='', sampMan=None) :
+
+    if sampMan is None :
+        sampMan = sampManLG
+
+    if reg not in ['EB', 'EE'] :
+        print 'Region not specified correctly'
+        return None
+
+    var = 'ph_pt[0]:ph_%s[0]' %fitvar#y:x
+
+    selection = selection + ' && ph_Is%s[0] ' %( reg )
+
+    data_samp_name = sample['Data']
+    bkg_samp_name  = sample.get('Background', None)
+
+    template_configs = {}
+
+
+    data_samp = sampMan.get_samples(name=data_samp_name )
+
+    if data_samp :
+        print '---------------------------------'
+        print ' Draw Template for var %s        ' %fitvar
+        print 'Binning = ', binning
+        print selection
+        print '---------------------------------'
+    
+        template_configs[basename+'__Data'] = config_and_queue_hist( data_samp[0], var, selection, ( binning[0], binning[1], binning[2],100, 0, 500  ), useSampMan=sampMan ) 
+    else :
+        print 'Data template sample not found!'
+        
+    if bkg_samp_name is not None :
+        bkg_samp = sampMan.get_samples(name=bkg_samp_name )
+
+        if bkg_samp :
+            print '---------------------------------'
+            print ' Draw Template Background for var %s ' %fitvar
+            print selection
+            print '---------------------------------'
+            template_configs[basename+'__Background'] = config_and_queue_hist( bkg_samp[0], var, selection, ( binning[0], binning[1], binning[2],100, 0, 500  ), useSampMan=sampMan ) 
+        else :
+            print 'Background template sample not found!'
+    else :
+        template_configs[basename+'__Background']=None
+
+    return template_configs
+
+def config_correlated_fake_fake_templates( selection, binning, sample, reg1, reg2, fitvar='sigmaIEIE', basename='', sampMan=None) :
+
+    if sampMan is None :
+        sampMan = sampManLG
+
+    if reg1 not in ['EB', 'EE'] or reg2 not in ['EB', 'EE'] :
+        print 'Region not specified correctly'
+        return None
+
+    fitvarmod = ''
+    if fitvar == 'sigmaIEIE' :
+        fitvarmod = 'sieie'
+    else :
+        fitvarmod = fitvar
+
+    var = 'pt_leadph12:%s_sublph12' %(fitvarmod)#y:x
+
+    selection = selection + ' && is%s_leadph12 && is%s_sublph12 ' %( reg1, reg2 )
+
+    data_samp_name = sample['Data']
+    bkg_samp_name  = sample.get('Background', None)
+
+    template_configs = {}
+
+    data_samp = sampMan.get_samples(name=data_samp_name )
+
+    if data_samp :
+        print '---------------------------------'
+        print ' Draw 2-D correlated Template for var %s        ' %fitvar
+        print 'Binning = ', ( binning[reg2][0], binning[reg2][1], binning[reg2][2], 100, 0, 500  )
+        print selection
+        print '---------------------------------'
+    
+        template_configs[basename+'__Data'] = config_and_queue_hist( data_samp[0], var, selection, ( binning[reg2][0], binning[reg2][1], binning[reg2][2], 100, 0, 500  ), useSampMan=sampMan ) 
+    else :
+        print 'Data template sample not found!'
+        
+    template_configs[basename+'__Background']=None
+
+    return template_configs
+
+def load_template_histograms( configs, name_base, sampMan ) :
+
+    templates = {'Data' : None, 'Background' : None }
+
+    templates['Data'] = sampMan.load_samples( configs['%s__Data' %(name_base)] )[0].hist
+    if configs['%s__Background' %(name_base)] is None :
+        templates['Background'] = None
+    else :
+        templates['Background'] = sampMan.load_samples( configs['%s__Background' %(name_base) ] )[0].hist
+
+    return templates
 
 
 if __name__ == '__main__' :

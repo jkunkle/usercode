@@ -120,9 +120,9 @@ def main() :
         for idx, result in enumerate( scan_result ) :
             input = eff_scan_F_L_subl[idx]
 
-            hist_scan.SetPoint( idx, input.n, result.n )
+            hist_scan.SetPoint( idx, input.n, result['sum'].n )
 
-        marker = ROOT.TMarker(eff_F_L_subl.n,scan_nominal[0].n, 20 )
+        marker = ROOT.TMarker(eff_F_L_subl.n,scan_nominal[0]['sum'].n, 20 )
 
         hist_scan.Draw('AL')
         marker.Draw()
@@ -282,6 +282,11 @@ def main() :
         print 'FF_LT orig = ', eff_2d['FF_LT']
         print 'FF_LL orig = ', eff_2d['FF_LL']
 
+        eff_2d['FF_TT'] = ufloat( 0.029,0.016  )
+        eff_2d['FF_TL'] = ufloat( 0.067,0.025 )
+        eff_2d['FF_LT'] = ufloat( 0.144,0.034 )
+        eff_2d['FF_LL'] = ufloat( 0.76,0.04 )
+
         ## ChHadIso 15-25
         #eff_2d['FF_TT'] = ufloat( 0.068, 0.009)
         #eff_2d['FF_TL'] = ufloat( 0.063, 0.008)
@@ -301,10 +306,10 @@ def main() :
         #eff_2d['FF_LL'] = ufloat( 0.862 , 0.016  )
 
         # ChHadIso >70
-        eff_2d['FF_TT'] = ufloat( 0.003, 0.003)
-        eff_2d['FF_TL'] = ufloat( 0.031, 0.010)
-        eff_2d['FF_LT'] = ufloat( 0.042, 0.012)
-        eff_2d['FF_LL'] = ufloat( 0.924, 0.016)
+        #eff_2d['FF_TT'] = ufloat( 0.003, 0.003)
+        #eff_2d['FF_TL'] = ufloat( 0.031, 0.010)
+        #eff_2d['FF_LT'] = ufloat( 0.042, 0.012)
+        #eff_2d['FF_LL'] = ufloat( 0.924, 0.016)
 
         ## EMIso 15-25
         #eff_2d['FF_TT'] = ufloat( 0.035, 0.009)

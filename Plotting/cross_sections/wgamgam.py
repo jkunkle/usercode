@@ -49,6 +49,7 @@
                   'diphoton_box_25to250'   : { 'n_evt' : 1664550,   'cross_section' : 15.54, 'gen_eff' : 1.0, 'k_factor' : 1.3 },
                   'diphoton_box_250toInf'  : { 'n_evt' : 1664550,   'cross_section' : 0.00118, 'gen_eff' : 1.0, 'k_factor' : 1.3 },
                   'WH_ZH_125'              : { 'n_evt' : 100320,   'cross_section' : 0.002498161, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
+                  'WZA'              : { 'n_evt' : 497450,   'cross_section' : 0.0121, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
 
 
 }

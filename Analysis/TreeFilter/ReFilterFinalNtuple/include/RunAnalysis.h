@@ -2,6 +2,7 @@
 #define RUNANALYSIS_H
 
 #include "Core/AnalysisBase.h"
+#include "include/BranchDefs.h"
 
 #include <string>
 #include <vector>
@@ -21,7 +22,7 @@ class RunModule : public virtual RunModuleBase {
 
     public :
 
-        RunModule() {}
+        RunModule();
 
         // The run function must exist and be defined exactly as this
         // because it is defined in RunModuleBase 
@@ -43,16 +44,36 @@ class RunModule : public virtual RunModuleBase {
         // Examples :
         void FilterPhoton        ( ModuleConfig & config ) const;
         void FilterMuon        ( ModuleConfig & config ) const;
+        void FilterJet        ( ModuleConfig & config ) const;
         bool FilterEvent         ( ModuleConfig & config ) const;
         bool FilterBlind         ( ModuleConfig & config ) const;
+        void CalcDiJetVars        ( ModuleConfig & config ) const;
 
         bool _isData;
+
+   private :
+
+        float _m_w;
+        bool get_wgamma_nu_pz( const TLorentzVector lepton, TLorentzVector &metlv ) const;
+        bool calc_constrained_nu_momentum( const TLorentzVector lepton, const TLorentzVector met, float & result) const;
+        bool solve_quadratic( float Aval, float Bval, float Cval, float &solution1, float &solution2) const;
+                
 
 };
 
 // Ouput namespace 
 // Declare any output variables that you'll fill here
 namespace OUT {
+
+#ifdef MODULE_CalcDiJetVars
+    float zeppenfeld_w;
+    bool zeppenfeld_w_pos_desc;
+    float zeppenfeld_z;
+    float dphi_wg_jj;
+    float dphi_zg_jj;
+    float deta_j_j;
+    float m_j_j;
+#endif
 
 };
 

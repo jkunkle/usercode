@@ -195,6 +195,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 _sfhist_ph_eveto_highpt = dynamic_cast<TH2F*>(_sffile_ph_eveto_highpt->Get( "hist_sf_eveto_highpt" ) );
             }
         }
+	/*
         if( mod_conf.GetName() == "AddPileupSF" ) {
             std::map<std::string, std::string>::const_iterator itr;
             itr = mod_conf.GetInitData().find( "DataFilePath" );
@@ -213,6 +214,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 }
             }
         }
+	*/
     }
 }
 
@@ -244,9 +246,11 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     if( config.GetName() == "AddPhotonSF" ) {
         AddPhotonSF( config );
     }
+    /*
     if( config.GetName() == "AddPileupSF" ) {
         AddPileupSF( config );
     }
+    */
 
     return keep_evt;
 

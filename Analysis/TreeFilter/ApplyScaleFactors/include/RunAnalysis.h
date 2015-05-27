@@ -142,8 +142,7 @@ namespace OUT {
 #endif
 
 #ifdef MODULE_AddPileupSF
-    // Nominal PUWeight already exists
-    //float PUWeight;
+
 #ifndef EXISTS_PUWeightUP5
     float PUWeightUP5;
 #endif

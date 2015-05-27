@@ -8,7 +8,7 @@ def get_remove_filter() :
 
 def get_keep_filter() :
 
-    return ['pfMET.*', 'recoPfMET.*', 'pfType01MET.*', 'nVtxBS', 'nMC', 'mcPID', 'mcParentage', 'mcStatus', 'mcMomPID', 'mcGMomPID', 'mcPt', 'mcEta', 'mcPhi', 'mcE', 'nPU', 'puTrue', 'nVtx', 'nVtxBS', 'rho2012', 'isData', 'run', 'event', 'lumis', 'LHE*']
+    return ['pfMET.*', 'recoPfMET.*', 'pfType01MET.*', 'nVtxBS', 'nMC', 'mcPID', 'mcParentage', 'mcStatus', 'mcMomPID', 'mcGMomPID', 'mcPt', 'mcEta', 'mcPhi', 'mcE', 'nPU', 'puTrue', 'nVtx', 'nVtxBS', 'rho2012', 'isData', 'run', 'event', 'lumis', 'LHE*', 'pdf']
 
 def config_analysis( alg_list, args ) :
 

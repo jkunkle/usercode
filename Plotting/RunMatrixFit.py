@@ -16,43 +16,45 @@ import time
 
 # Parse command-line options
 from argparse import ArgumentParser
-p = ArgumentParser()
-p.add_argument('--fileName',     default='ntuple.root',  dest='fileName',        help='( Default ntuple.root ) Name of files')
-p.add_argument('--treeName',     default='events'     ,  dest='treeName',        help='( Default events ) Name tree in root file')
-p.add_argument('--samplesConf',  default=None,           dest='samplesConf',     help=('Use alternate sample configuration. '
-                                                                                       'Must be a python file that implements the configuration '
-                                                                                       'in the same manner as in the main() of this script.  If only '
-                                                                                       'the file name is given it is assumed to be in the same directory '
-                                                                                       'as this script, if a path is given, use that path' ) )
 
-                                                                                       
-p.add_argument('--xsFile',     default=None,  type=str ,        dest='xsFile',         help='path to cross section file.  When calling AddSample in the configuration module, set useXSFile=True to get weights from the provided file')
-p.add_argument('--lumi',     default=None,  type=float ,        dest='lumi',         help='Integrated luminosity (to use with xsFile)')
-p.add_argument('--outputDir',     default=None,  type=str ,        dest='outputDir',         help='output directory for histograms')
-p.add_argument('--readHists',     default=False,action='store_true',   dest='readHists',         help='read histograms from root files instead of trees')
-p.add_argument('--quiet',     default=False,action='store_true',   dest='quiet',         help='disable information messages')
-p.add_argument('--syst_file',     default=None,  type=str ,        dest='syst_file',         help='Location of systematics file')
-p.add_argument('--ptbins',     default=None,  type=str ,        dest='ptbins',         help='Comma separated list of pt bins')
-p.add_argument('--fitvar',     default='sigmaIEIE',  type=str ,        dest='fitvar',         help='Variable to fit, sigmaIEIE, chIsoCorr,neuIsoCorr,phoIsoCorr')
-p.add_argument('--ffcorr',     default='None',  type=str ,        dest='ffcorr',         help='Do ff correlated templates, None, nom, loose, tight')
-
-p.add_argument('--nom', default=False, action='store_true', dest='nom', help='run nom' )
-p.add_argument('--loose', default=False, action='store_true', dest='loose', help='run loose' )
-#p.add_argument('--asym533', default=False, action='store_true', dest='asym533', help='run asym533' )
-#p.add_argument('--asym855', default=False, action='store_true', dest='asym855', help='run asym855' )
-#p.add_argument('--asym1077', default=False, action='store_true', dest='asym1077', help='run asym1077' )
-#p.add_argument('--asym1299', default=False, action='store_true', dest='asym1299', help='run asym1299' )
-#p.add_argument('--asym151111', default=False, action='store_true', dest='asym151111', help='run asym151111' )
-#p.add_argument('--asym201616', default=False, action='store_true', dest='asym201616', help='run asym201616' )
-p.add_argument('--asymcorr533', default=False, action='store_true', dest='asymcorr533', help='run asymcorr533' )
-p.add_argument('--asymcorr855', default=False, action='store_true', dest='asymcorr855', help='run asymcorr855' )
-p.add_argument('--asymcorr1077', default=False, action='store_true', dest='asymcorr1077', help='run asymcorr1077' )
-p.add_argument('--asymcorr1299', default=False, action='store_true', dest='asymcorr1299', help='run asymcorr1299' )
-p.add_argument('--asymcorr151111', default=False, action='store_true', dest='asymcorr151111', help='run asymcorr151111' )
-p.add_argument('--asymcorr201616', default=False, action='store_true', dest='asymcorr201616', help='run asymcorr201616' )
-p.add_argument('--channel', default='mu',  dest='channel', help='run this channel' )
-
-options = p.parse_args()
+def parseArgs() :
+    p = ArgumentParser()
+    p.add_argument('--fileName',     default='ntuple.root',  dest='fileName',        help='( Default ntuple.root ) Name of files')
+    p.add_argument('--treeName',     default='events'     ,  dest='treeName',        help='( Default events ) Name tree in root file')
+    p.add_argument('--samplesConf',  default=None,           dest='samplesConf',     help=('Use alternate sample configuration. '
+                                                                                           'Must be a python file that implements the configuration '
+                                                                                           'in the same manner as in the main() of this script.  If only '
+                                                                                           'the file name is given it is assumed to be in the same directory '
+                                                                                           'as this script, if a path is given, use that path' ) )
+    
+                                                                                           
+    p.add_argument('--xsFile',     default=None,  type=str ,        dest='xsFile',         help='path to cross section file.  When calling AddSample in the configuration module, set useXSFile=True to get weights from the provided file')
+    p.add_argument('--lumi',     default=None,  type=float ,        dest='lumi',         help='Integrated luminosity (to use with xsFile)')
+    p.add_argument('--outputDir',     default=None,  type=str ,        dest='outputDir',         help='output directory for histograms')
+    p.add_argument('--readHists',     default=False,action='store_true',   dest='readHists',         help='read histograms from root files instead of trees')
+    p.add_argument('--quiet',     default=False,action='store_true',   dest='quiet',         help='disable information messages')
+    p.add_argument('--syst_file',     default=None,  type=str ,        dest='syst_file',         help='Location of systematics file')
+    p.add_argument('--ptbins',     default=None,  type=str ,        dest='ptbins',         help='Comma separated list of pt bins')
+    p.add_argument('--fitvar',     default='sigmaIEIE',  type=str ,        dest='fitvar',         help='Variable to fit, sigmaIEIE, chIsoCorr,neuIsoCorr,phoIsoCorr')
+    p.add_argument('--ffcorr',     default='None',  type=str ,        dest='ffcorr',         help='Do ff correlated templates, None, nom, loose, tight')
+    
+    p.add_argument('--nom', default=False, action='store_true', dest='nom', help='run nom' )
+    p.add_argument('--loose', default=False, action='store_true', dest='loose', help='run loose' )
+    #p.add_argument('--asym533', default=False, action='store_true', dest='asym533', help='run asym533' )
+    #p.add_argument('--asym855', default=False, action='store_true', dest='asym855', help='run asym855' )
+    #p.add_argument('--asym1077', default=False, action='store_true', dest='asym1077', help='run asym1077' )
+    #p.add_argument('--asym1299', default=False, action='store_true', dest='asym1299', help='run asym1299' )
+    #p.add_argument('--asym151111', default=False, action='store_true', dest='asym151111', help='run asym151111' )
+    #p.add_argument('--asym201616', default=False, action='store_true', dest='asym201616', help='run asym201616' )
+    p.add_argument('--asymcorr533', default=False, action='store_true', dest='asymcorr533', help='run asymcorr533' )
+    p.add_argument('--asymcorr855', default=False, action='store_true', dest='asymcorr855', help='run asymcorr855' )
+    p.add_argument('--asymcorr1077', default=False, action='store_true', dest='asymcorr1077', help='run asymcorr1077' )
+    p.add_argument('--asymcorr1299', default=False, action='store_true', dest='asymcorr1299', help='run asymcorr1299' )
+    p.add_argument('--asymcorr151111', default=False, action='store_true', dest='asymcorr151111', help='run asymcorr151111' )
+    p.add_argument('--asymcorr201616', default=False, action='store_true', dest='asymcorr201616', help='run asymcorr201616' )
+    p.add_argument('--channel', default='mu',  dest='channel', help='run this channel' )
+    
+    return p.parse_args()
 
 import ROOT
 from uncertainties import ufloat
@@ -63,16 +65,9 @@ from SampleManager import DrawConfig
 
 
 
-if options.outputDir is not None :
-    ROOT.gROOT.SetBatch(True)
-else :
-    ROOT.gROOT.SetBatch(False)
-
 
 common_ptbins = [15, 25, 40, 70, 1000000 ]
-if options.ptbins is not None :
-    common_ptbins = [int(x) for x in options.ptbins.split(',')]
-
+options=None
 _sieie_cuts  = { 'EB' : (0.011,0.029), 'EE' : (0.033, 0.087) }
 _chIso_cuts  = { 'EB' : (1.5, 19.5)  , 'EE' : (1.2,20.4) }
 _neuIso_cuts = { 'EB' : (1.0,20)     , 'EE' : (1.5,20.5) }
@@ -97,6 +92,7 @@ def get_real_template_draw_commands( ch='mu' ) :
     # in the muon channel remove the pixel seed veto
     if ch == 'mu' :
         return 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 '
+        #return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.3 && fabs( m_leplepph-91.2 ) < 5  && leadPhot_sublLepDR > 0.3 && ( leadPhot_sublLepDR < 1.0 || leadPhot_leadLepDR < 1.0 )'
         #return 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && leadPhot_leadLepDR < 1.5 &&  ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 '
     else :
         return 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && ph_hasPixSeed[0]==0 '
@@ -227,6 +223,7 @@ def get_default_samples(ch='mu' ) :
 
     if ch.count('mu') :
         return { 'real' : {'Data' : 'Wgamma'}, 'fake' : {'Data' : 'Muon', 'Background' : 'RealPhotonsZg'}, 'target' : 'Muon' }
+        #return { 'real' : {'Data' : 'Muon'}, 'fake' : {'Data' : 'Muon', 'Background' : 'RealPhotonsZg'}, 'target' : 'Muon' }
     elif ch.count('el') :
         return { 'real' : {'Data' : 'Wgamma'}, 'fake' : {'Data' : 'Muon', 'Background' : 'RealPhotonsZg'}, 'target' : 'Electron' }
 
@@ -397,13 +394,12 @@ def main() :
     for s in all_samp_man  :
         s.deactivate_all_samples()
 
-    #fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
-    fftypes = ['nom']
-    #channels = ['mu', 'elfull', 'elfullinvpixsubl', 'elfullinvpixlead']
-    #channels = ['elfullinvpixsubl', 'elfullinvpixlead']
+    fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
+    #channels = ['mu', 'elfull', 'elfullinvpixsubl', 'elfullinvpixlead', 'elzcr', 'elzcrinvpixsubl', 'elzcrinvpixlead']
     channels = ['mu']
-    #jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
-    jetfitvars = ['sigmaIEIE']
+    #channels = ['elfullinvpixsubl', 'elfullinvpixlead']
+    #channels = ['elzcr', 'elzcrinvpixsubl', 'elzcrinvpixlead']
+    jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
     calculators = []
 
     corr_vals = [ (5,3,3), (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
@@ -415,12 +411,12 @@ def main() :
                 #calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
                 calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, outputDir=options.outputDir+'/JetFakeResultsSyst') )
 
-    #for cv in corr_vals :
-    #    for ch in channels :
-    #        for var in jetfitvars :
-    #            for ffcorr in fftypes :
-    #                #calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
-    #                calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+'/JetFakeResultsSyst') )
+    for cv in corr_vals :
+        for ch in channels :
+            for var in jetfitvars :
+                for ffcorr in fftypes :
+                    #calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
+                    calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+'/JetFakeResultsSyst') )
 
     for calc in calculators :
         draw_configs = calc.ConfigHists()
@@ -3508,24 +3504,35 @@ def draw_template(can, hists, sampMan, normalize=False, first_hist_is_data=False
 
 class RunNominalCalculation() :
 
-    iso_cuts = { 
+    iso_cuts_real = { 
         'sigmaIEIE' : {
             'lead' :'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
-            'subl' :'ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] ',
         },
         'chIsoCorr' : {
             'lead' :'ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
-            'subl' :'ph_passSIEIEMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] ',
         },
         'neuIsoCorr' : {
             'lead' : 'ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ', 
-            'subl' : 'ph_passSIEIEMedium[1] && ph_passChIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] ',
         },
        'phoIsoCorr' : {
            'lead' : 'ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] ',
-           'subl' : 'ph_passSIEIEMedium[1] && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] ',
        }
     }
+    iso_cuts_fake = iso_cuts_real
+    #iso_cuts_fake = { 
+    #    'sigmaIEIE' : {
+    #        'lead' :'ph_chIsoCorr[0] > 1.5 && ph_chIsoCorr[0] < 8 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
+    #    },
+    #    'chIsoCorr' : {
+    #        'lead' :'!ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
+    #    },
+    #    'neuIsoCorr' : {
+    #        'lead' : '!ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ', 
+    #    },
+    #   'phoIsoCorr' : {
+    #       'lead' : '!ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] ',
+    #   }
+    #}
 
     def __init__( self, **kwargs ) :
 
@@ -3578,17 +3585,9 @@ class RunNominalCalculation() :
         binning = get_default_binning(fitvar)
         samples = get_default_samples(ch)
 
-        iso_cuts_lead = self.iso_cuts[fitvar]['lead']
-        iso_cuts_subl = self.iso_cuts[fitvar]['subl']
-
         # generate templates for both EB and EE
-        real_template_str = get_real_template_draw_commands(ch ) + ' && %s' %iso_cuts_lead
-        if fitvar == 'sigmaIEIE' :
-            #print '*******************************DRAWING WITH CHHadISO WINDOW*******************************'
-            fake_template_str = get_fake_template_draw_commands(ch ) + ' && %s' %iso_cuts_lead
-            #fake_template_str = get_fake_window_template_draw_commands(ch )
-        else :
-            fake_template_str = get_fake_template_draw_commands(ch ) + ' && %s' %iso_cuts_lead
+        real_template_str = get_real_template_draw_commands(ch ) + ' && %s' %self.iso_cuts_real[fitvar]['lead']
+        fake_template_str = get_fake_template_draw_commands(ch ) + ' && %s' %self.iso_cuts_fake[fitvar]['lead']
 
 
         self.configs.update(config_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB', fitvar=fitvar, basename=self.template_name_base+'__real__EB', sampMan=sampManLG))
@@ -4203,4 +4202,13 @@ def load_template_histograms( configs, name_base, sampMan ) :
 
 
 if __name__ == '__main__' :
+    options = parseArgs()
+    if options.outputDir is not None :
+        ROOT.gROOT.SetBatch(True)
+    else :
+        ROOT.gROOT.SetBatch(False)
+    
+    if options.ptbins is not None :
+        common_ptbins = [int(x) for x in options.ptbins.split(',')]
+
     main()

@@ -259,7 +259,7 @@ def main() :
     pt_bins = [int(x) for x in options.ptbins.split(',')]
 
     if options.baseDir is not None :
-        outputDirBase='%s/BackgroundEstimatesNew/' %(options.baseDir )
+        outputDirBase='%s/BackgroundEstimates/' %(options.baseDir )
         base_dir_ele = options.baseDir
         base_dir_jet = outputDirBase
         
@@ -268,12 +268,12 @@ def main() :
         MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullinvpixlead', outputDir=outputDirBase )
         MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullinvpixsubl', outputDir=outputDirBase )
 
-        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDirBase )
-        ##MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDir, namePostfix='__zcr' )
+        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcr', outputDir=outputDirBase )
+        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixlead', outputDir=outputDirBase )
+        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixsubl', outputDir=outputDirBase )
 
-        ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcr', outputDir=outputDirBase )
-        ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixlead', outputDir=outputDirBase )
-        ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixsubl', outputDir=outputDirBase )
+        MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDirBase )
+        MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDirBase, namePostfix='__zcr' )
 
 
         MakeBkgEstimatePlots( outputDirBase, options.plotDir )
@@ -599,6 +599,9 @@ def select_result_dir( base_dir, file_name ) :
     sorted_jet_dirs = jet_dir_key_map.keys()
     sorted_jet_dirs.sort()
 
+    #print '****************************FIX********************************'
+    #return jet_dir_key_map[(0,0,0)]
+
     selected_dir = None
     results_store = {}
     for syst_type in sorted_jet_dirs[1:] :
@@ -622,6 +625,9 @@ def select_result_dir( base_dir, file_name ) :
             continue
 
         selected_dir = jet_dir_key_map[syst_type]
+        print '************************************'
+        print 'USE RESULT DIR %s ' %jet_dir_key_map[syst_type]
+        print '************************************'
 
         break
 

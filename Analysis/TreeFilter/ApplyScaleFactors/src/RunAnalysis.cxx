@@ -48,10 +48,13 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     // *************************
     // Set defaults for added output variables
     // *************************
+#ifdef MODULE_AddElectronSF
     OUT::el_trigSF = -1;
     OUT::el_trigSFUP = -1;
     OUT::el_trigSFDN = -1;
+#endif
 
+#ifdef MODULE_AddPhotonSF
     OUT::ph_idSF = -1;
     OUT::ph_idSFUP = -1;
     OUT::ph_idSFDN = -1;
@@ -59,7 +62,9 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::ph_evetoSF = -1;
     OUT::ph_evetoSFUP = -1;
     OUT::ph_evetoSFDN = -1;
+#endif
 
+#ifdef MODULE_AddMuonSF
     OUT::mu_trigSF = -1;
     OUT::mu_trigSFUP = -1;
     OUT::mu_trigSFDN = -1;
@@ -71,21 +76,37 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::mu_idSF = -1;
     OUT::mu_idSFUP = -1;
     OUT::mu_idSFDN = -1;
+#endif
+
+#ifdef MODULE_AddPileupSF
+    OUT::PUWeightDN10 = -1;
+    OUT::PUWeightUP10 = -1;
+    OUT::PUWeightDN5 = -1;
+    OUT::PUWeightUP5 = -1;
+    OUT::PUWeight = -1;
+#endif
 
     // *************************
     // Declare Branches
     // *************************
 
     // Examples :
+#ifdef MODULE_AddElectronSF
     outtree->Branch( "el_trigSF"    ,  &OUT::el_trigSF    , "el_trigSF/F"    );
     outtree->Branch( "el_trigSFUP"  ,  &OUT::el_trigSFUP  , "el_trigSFUP/F"  );
     outtree->Branch( "el_trigSFDN"  ,  &OUT::el_trigSFDN  , "el_trigSFDN/F"  );
+#endif
+   
+#ifdef MODULE_AddPhotonSF
     outtree->Branch( "ph_idSF"      ,  &OUT::ph_idSF      , "ph_idSF/F"      );
     outtree->Branch( "ph_idSFUP"    ,  &OUT::ph_idSFUP    , "ph_idSFUP/F"    );
     outtree->Branch( "ph_idSFDN"    ,  &OUT::ph_idSFDN    , "ph_idSFDN/F"    );
     outtree->Branch( "ph_evetoSF"   ,  &OUT::ph_evetoSF   , "ph_evetoSF/F"   );
     outtree->Branch( "ph_evetoSFUP" ,  &OUT::ph_evetoSFUP , "ph_evetoSFUP/F" );
     outtree->Branch( "ph_evetoSFDN" ,  &OUT::ph_evetoSFDN , "ph_evetoSFDN/F" );
+#endif
+
+#ifdef MODULE_AddMuonSF
     outtree->Branch( "mu_trigSF"    ,  &OUT::mu_trigSF    , "mu_trigSF/F"    );
     outtree->Branch( "mu_trigSFUP"  ,  &OUT::mu_trigSFUP  , "mu_trigSFUP/F"  );
     outtree->Branch( "mu_trigSFDN"  ,  &OUT::mu_trigSFDN  , "mu_trigSFDN/F"  );
@@ -95,11 +116,25 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch( "mu_idSF"      ,  &OUT::mu_idSF      , "mu_idSF/F"      );
     outtree->Branch( "mu_idSFUP"    ,  &OUT::mu_idSFUP    , "mu_idSFUP/F"    );
     outtree->Branch( "mu_idSFDN"    ,  &OUT::mu_idSFDN    , "mu_idSFDN/F"    );
+#endif
 
+#ifdef MODULE_AddPileupSF
+#ifndef EXISTS_PUWeightUP5
     outtree->Branch( "PUWeightUP5"  ,  &OUT::PUWeightUP5  , "PUWeightUP5/F"  );
+#endif
+#ifndef EXISTS_PUWeightUP10
     outtree->Branch( "PUWeightUP10" ,  &OUT::PUWeightUP10 , "PUWeightUP10/F"  );
+#endif
+#ifndef EXISTS_PUWeightDN5
     outtree->Branch( "PUWeightDN5"  ,  &OUT::PUWeightDN5  , "PUWeightDN5/F"  );
+#endif
+#ifndef EXISTS_PUWeightDN10
     outtree->Branch( "PUWeightDN10" ,  &OUT::PUWeightDN10 , "PUWeightDN10/F"  );
+#endif
+#ifndef EXISTS_PUWeight
+    outtree->Branch( "PUWeight" ,  &OUT::PUWeight, "PUWeight/F"  );
+#endif
+#endif
 
     BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
 
@@ -173,6 +208,9 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 std::cout << "Load MC file " << itr->second << std::endl;
                 _sffile_pileup_mc = TFile::Open( (itr->second).c_str(), "READ" );
                 _sfhist_pileup_mc = dynamic_cast<TH1F*>(_sffile_pileup_mc->Get("ggNtuplizer/hPUTrue") );
+                if( _sfhist_pileup_mc == 0 ) {
+                    std::cout << "ERROR -- Did not find MC pileup histogram" << std::endl;
+                }
             }
         }
     }
@@ -216,6 +254,7 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
 
 void RunModule::AddElectronSF( ModuleConfig & /*config*/ ) const {
 
+#ifdef EXISTS_el_n
     OUT::el_trigSF   = 1.0;
     OUT::el_trigSFUP = 1.0;
     OUT::el_trigSFDN = 1.0;
@@ -248,10 +287,13 @@ void RunModule::AddElectronSF( ModuleConfig & /*config*/ ) const {
         }
     }
 
+#endif
 
 }
 
 void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
+
+#ifdef EXISTS_ph_n
 
     OUT::ph_idSF = 1.0;
     OUT::ph_idSFUP = 1.0;
@@ -335,6 +377,7 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
         OUT::ph_evetoSFDN = (sfs_eveto[0]-errs_eveto[0])*(sfs_eveto[1]-errs_eveto[1]);
     }
 
+#endif
 }
 
 void RunModule::AddPileupSF( ModuleConfig & /*config*/ ) const { 
@@ -350,6 +393,7 @@ void RunModule::AddPileupSF( ModuleConfig & /*config*/ ) const {
     }
 
     float puval = OUT::puTrue->at(0);
+    //float puval = OUT::puTrue[0];
     OUT::PUWeight     = calc_pu_weight( puval );
     OUT::PUWeightUP5  = calc_pu_weight( puval, 1.05 );
     OUT::PUWeightUP10 = calc_pu_weight( puval, 1.10 );
@@ -380,18 +424,18 @@ float RunModule::calc_pu_weight( float puval, float mod ) const {
     float val_sample = _sfhist_pileup_mc->GetBinContent( bin_sample );
 
 
-    float num = val_data/tot_data;
+    float num = val_data*mod/tot_data;
     float den = val_sample/tot_sample;
 
     float weight = num/den;
 
-    if( weight < 0.005 ) {
+    if( weight < 0.000005 ) {
         std::cout << "PUweight, " << weight << " is zero for PUVal " << puval << " will average over +- 2.5 to get non-zero value " << std::endl;
 
         int bin_min_sample = _sfhist_pileup_mc->FindBin(puval-2.5);
         int bin_max_sample = _sfhist_pileup_mc->FindBin(puval+2.5);
-        int bin_min_data = _sfhist_pileup_data->FindBin(puval*mod-2.5);
-        int bin_max_data = _sfhist_pileup_data->FindBin(puval*mod+2.5);
+        int bin_min_data = _sfhist_pileup_data->FindBin((puval*mod)-2.5);
+        int bin_max_data = _sfhist_pileup_data->FindBin((puval*mod)+2.5);
 
         if( puval*mod+2.5  > 60 ) {
             bin_max_data = 300;
@@ -405,7 +449,7 @@ float RunModule::calc_pu_weight( float puval, float mod ) const {
 
         weight = num/den;
 
-        if( weight < 0.005 ) {
+        if( weight < 0.000005 ) {
             std::cout << "PUweight is still zero!" << std::endl;
         }
 
@@ -414,6 +458,8 @@ float RunModule::calc_pu_weight( float puval, float mod ) const {
 }
 
 void RunModule::AddMuonSF( ModuleConfig & /*config*/ ) const { 
+
+#ifdef EXISTS_mu_n
 
     OUT::mu_trigSF = 1.0;
     OUT::mu_idSF   = 1.0;
@@ -525,6 +571,7 @@ void RunModule::AddMuonSF( ModuleConfig & /*config*/ ) const {
 
 
     }
+#endif
 }
 
 ValWithErr RunModule::GetValsFromGraph( const TGraphAsymmErrors *graph, float pt, bool debug ) const {

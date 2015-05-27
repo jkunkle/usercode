@@ -1,4 +1,4 @@
-
+import math
 import pickle
 from argparse import ArgumentParser
 
@@ -11,16 +11,16 @@ parser.add_argument( '--baseDir', default=None, required=True, dest='baseDir', h
 options = parser.parse_args()
 
 acceptances = { 'electron' : {
-                              ('15', '25') : 0.1684, 
-                              ('25', '40') : 0.1926,
-                              ('40', '70') : 0.2474,
-                              ('70', 'max') : 0.3095,
+                              ('15', '25')  : ufloat( 0.1505, 0.0091 ) , 
+                              ('25', '40')  : ufloat( 0.1828, 0.0083 ) ,
+                              ('40', '70')  : ufloat( 0.2237, 0.0091 ) ,
+                              ('70', 'max') : ufloat( 0.2777, 0.0103 ) ,
                              },
-                'muon'    : {
-                              ('15', '25') : 0.3494, 
-                              ('25', '40') : 0.3647,
-                              ('40', '70') : 0.3947,
-                              ('70', 'max') : 0.4233,
+                'muon'    : { 
+                              ('15', '25')  : ufloat( 0.3065, 0.0149 ) , 
+                              ('25', '40')  : ufloat( 0.3251, 0.0119 ) ,
+                              ('40', '70')  : ufloat( 0.3398, 0.0117 ) ,
+                              ('70', 'max') : ufloat( 0.3622, 0.0122 ) ,
                              },
 }
 
@@ -42,6 +42,7 @@ def main() :
     pt_bins = ['15', '25', '40', '70', 'max']
 
     lumi = ufloat( 19.4, 19.4*0.011 )
+    xs_data = {}
     for ch, res in results.iteritems() :
 
         print '***********************'
@@ -50,38 +51,76 @@ def main() :
 
         all_xs = []
 
+        xs_data[ch] = {}
+
         for idx, ptmin in enumerate( pt_bins[:-1] ) :
 
             ptmax = pt_bins[idx+1]
 
-            acceptance = ufloat( acceptances[ch][(ptmin,ptmax)], 0.0 )
+            acceptance = acceptances[ch][(ptmin,ptmax)]
 
             data = res['detail']['Data']['bins'][str(idx+4)]['val']
 
             bkg = ufloat( 0.0, 0.0 )
+            sig = ufloat( 0.0, 0.0 )
 
             bkg = bkg + res['detail']['ZggFSR']['bins'][str(idx+4)]['val']
             bkg = bkg + res['detail']['JetFake']['bins'][str(idx+4)]['val']
+            bkg = bkg + res['detail']['OtherDiPhoton']['bins'][str(idx+4)]['val']
 
             if ch=='electron' :
                 bkg = bkg + res['detail']['EleFake']['bins'][str(idx+4)]['val']
+
+            sig = sig + res['detail']['Wgg']['bins'][str(idx+4)]['val']
+            sig = ufloat( sig.n, math.sqrt( sig.n ) )
+
 
             data_minus_bkg = data - bkg
 
 
             cross_section = ( data_minus_bkg ) / ( acceptance * lumi )
+            cross_section_exp = ( sig + ufloat( 0.0, bkg.s) ) / ( acceptance * lumi )
+
+            xs_data[ch][( ptmin, ptmax)] = {'acceptance' : acceptance, 'bkg' : bkg, 'sig' : sig, 'data' : data, 'cross_section' : cross_section, 'cross_section_exp' : cross_section_exp }
 
             all_xs.append(cross_section)
 
-            print 'Pt big : %s - %s' %( ptmin, ptmax )
+            print 'Pt bin : %s - %s' %( ptmin, ptmax )
             print 'Data = %s, Background = %s, Diff = %s' %(data, bkg, data_minus_bkg)
+            print 'Signal = %s' %sig
             print 'acceptance = %s ' %acceptance
+            print 'Expected cross section = %s fb' %cross_section_exp
             print 'Cross section = %s fb' %cross_section
 
 
         sum_xs = reduce( lambda x, y : x + y, all_xs )
 
         print 'Summed cross section = %s fb' %sum_xs
+
+
+    rev_ptbins = list( pt_bins )
+    rev_ptbins.reverse()
+    for ch in results.keys() :
+        cross_section = ufloat( 0.0, 0.0 )
+        cross_section_exp = ufloat( 0.0, 0.0 )
+
+        print 'Reverse cumulative sum, channel = %s' %ch
+        
+        for idx, ptmax in enumerate( rev_ptbins[:-1] ) :
+            ptmin = rev_ptbins[idx+1]
+
+            cross_section = cross_section + xs_data[ch][( ptmin, ptmax )]['cross_section']
+            cross_section_exp = cross_section_exp + xs_data[ch][( ptmin, ptmax )]['cross_section_exp']
+
+            print 'Pt bin : %s - %s' %( ptmin, ptmax )
+            print 'Expected cross section = %s' %cross_section_exp
+            print 'Cross section = %s' %cross_section
+
+
+        
+
+
+
 
 
 

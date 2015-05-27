@@ -2,6 +2,7 @@
 #define RUNANALYSIS_H
 
 #include "Core/AnalysisBase.h"
+#include "include/BranchDefs.h"
 
 #include <string>
 #include <vector>
@@ -110,10 +111,13 @@ class RunModule : public virtual RunModuleBase {
 // Declare any output variables that you'll fill here
 namespace OUT {
 
+#ifdef MODULE_AddElectronSF
     float el_trigSF;
     float el_trigSFUP;
     float el_trigSFDN;
+#endif
 
+#ifdef MODULE_AddPhotonSF
     float ph_idSF;
     float ph_idSFUP;
     float ph_idSFDN;
@@ -121,7 +125,9 @@ namespace OUT {
     float ph_evetoSF;
     float ph_evetoSFUP;
     float ph_evetoSFDN;
+#endif
 
+#ifdef MODULE_AddMuonSF
     float mu_trigSF;
     float mu_trigSFUP;
     float mu_trigSFDN;
@@ -133,13 +139,27 @@ namespace OUT {
     float mu_idSF;
     float mu_idSFUP;
     float mu_idSFDN;
+#endif
 
+#ifdef MODULE_AddPileupSF
     // Nominal PUWeight already exists
     //float PUWeight;
+#ifndef EXISTS_PUWeightUP5
     float PUWeightUP5;
+#endif
+#ifndef EXISTS_PUWeightUP10
     float PUWeightUP10;
+#endif
+#ifndef EXISTS_PUWeightDN5
     float PUWeightDN5;
+#endif
+#ifndef EXISTS_PUWeightDN10
     float PUWeightDN10;
+#endif
+#ifndef EXISTS_PUWeight
+    float PUWeight;
+#endif
+#endif
 
 
     //Examples

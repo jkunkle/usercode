@@ -956,6 +956,8 @@ class SampleManager :
         common_results = list( reduce( lambda x,y : set(x) & set(y), each_results ) ) 
         if not common_results :
             print 'WARNING : Found zero samples matching criteria!  Available samples are : '
+            #assert( '' )
+            print kwargs
             for s in self.get_samples() :
                 print s.name
             return []
@@ -3477,11 +3479,12 @@ class SampleManager :
             dsamp.hist.Draw('PE same')
 
         # draw the signals
-        sigsamps = self.get_samples(name=sighists)
-        for samp in sighists : 
-            if samp.isActive :
-                samp.hist.SetLineWidth(3)
-                samp.hist.Draw('HIST same')
+        if sighists :
+            sigsamps = self.get_samples(name=sighists)
+            for samp in sighists : 
+                if samp.isActive :
+                    samp.hist.SetLineWidth(3)
+                    samp.hist.Draw('HIST same')
 
         if errhists :
             errsamps = self.get_samples(name=errhists )

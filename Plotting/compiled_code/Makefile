@@ -9,7 +9,8 @@
 # Tasks : CLEANUP
 ################################################################################
 
-BASE_DIR = /afs/cern.ch/user/j/jkunkle/usercode/Plotting/compiled_code
+#BASE_DIR = /afs/cern.ch/user/j/jkunkle/usercode/Plotting/compiled_code
+BASE_DIR = ${PWD}
 
 EXE_DIR = ./
 OBJ_DIR = $(BASE_DIR)/obj/

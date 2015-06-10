@@ -281,5 +281,68 @@ def config_samples(samples) :
                            isActive=False,
                           )
 
+
+    samples.AddSampleGroup( 'WjetsWgamma', legend_name = 'W+jets + W#gamma',
+                           input_samples=[
+                           'Wgamma', 
+                           'Inclusive W',
+                           ],
+                           plotColor=ROOT.kGray,
+                           isActive=False,
+                          )
+    samples.AddSampleGroup( 'ZjetsZgamma', legend_name = 'Z+jets + Z#gamma',
+                           input_samples=[
+                           'DYJetsToLLPhOlap', 
+                           'Zgamma',
+                           ],
+                           plotColor=ROOT.kSpring,
+                           isActive=False,
+                          )
+
+    samples.AddSampleGroup( 'WjetsZjets', legend_name = 'W+jets + Z+jets',
+                           input_samples=[
+                           'DYJetsToLLPhOlap', 
+                           'WjetsPhOlap',
+                           ],
+                           plotColor=ROOT.kSpring,
+                           isActive=False,
+                          )
+
+    samples.AddSampleGroup( 'RealPhotons', legend_name='Real photons', 
+                        input_samples = [
+                            'Zg',
+                        ],
+                           plotColor=ROOT.kYellow,
+                           scale=-1,
+                           isActive=False
+                          )
+
+    samples.AddSampleGroup( 'DataRealPhotonSub', legend_name='Fake photons', 
+                        input_samples = [
+                            'Data',
+                            'RealPhotons',
+                        ],
+                           plotColor=ROOT.kYellow,
+                           isActive=False,
+                          )
+
+    samples.AddSampleGroup( 'ElectronRealPhotonSub', legend_name='Fake photons', 
+                        input_samples = [
+                            'Electron',
+                            'RealPhotons',
+                        ],
+                           plotColor=ROOT.kYellow,
+                           isActive=False,
+                          )
+
+    samples.AddSampleGroup( 'MuonRealPhotonSub', legend_name='Fake photons', 
+                        input_samples = [
+                            'Muon',
+                            'RealPhotons',
+                        ],
+                           plotColor=ROOT.kYellow,
+                           isActive=False,
+                          )
+
 def print_examples() :
     pass

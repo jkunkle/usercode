@@ -6,6 +6,7 @@ import re
 import imp
 import ROOT
 import copy
+import getpass
 import uuid
 import itertools
 import eos_utilities
@@ -1209,8 +1210,14 @@ class SampleManager :
         #------------------------------------------------------------
 
         workarea = os.getenv('WorkArea')
+        user = getpass.getuser()
 
-        compile_base = '%s/../Plotting/compiled_code' %workarea
+        #compile_base = '%s/../Plotting/compiled_code' %workarea
+        compile_base = '/tmp/%s/compiled_code/%s' %(user,self.id)
+        os.makedirs( '%s/include' %compile_base)
+        os.makedirs( '%s/src' %compile_base)
+        os.makedirs( '%s/obj' %compile_base)
+        os.system( 'cp %s/../Plotting/compiled_code/Makefile %s '%( workarea, compile_base ))
 
         brdef_file_name = '%s/include/BranchDefs.h'  %( compile_base )
         header_file_name = '%s/include/BranchInit.h' %( compile_base )
@@ -1257,7 +1264,8 @@ class SampleManager :
             print 'No histograms were scheduled.  Aborting!'
             return
 
-        output_loc = '/tmp/jkunkle/drawn_histograms/%s' %self.id
+        output_loc = '/tmp/%s/drawn_histograms/%s' %(user,self.id)
+        os.makedirs( output_loc )
 
         # create the source code file
         self.write_source_code( self.draw_commands, runsrc_file_name, draw_branches )
@@ -1272,7 +1280,7 @@ class SampleManager :
         core.write_source_file(source_file_name, header_file_name, draw_branches )
 
         # compile
-        os.system( 'cd %s ; rm RunAnalysis ; make clean ; make ; cd - '%compile_base )
+        os.system( 'cd %s ; rm RunAnalysis ; make ; cd - '%compile_base )
 
         all_samples = []
         for sample in self.samples :

@@ -47,19 +47,16 @@ samplesWg = None
 samplesLLG = None
 samplesPhOlap= None
 
-#analysis_bins_mgg = [0, 5, 10, 15, 20, 25, 30, 40, 50, 100, 200 ] 
-#analysis_bins_egg = [0, 5, 10, 15, 20, 25, 30, 40, 50, 100, 200 ] 
-#analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 80, 200 ] 
-#analysis_bins_egg = [0, 5, 10, 15, 25, 40, 80, 200 ] 
-analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 200 ] 
-analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 200 ] 
+analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 200, 500 ] 
+analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 200, 500 ] 
+#analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 200 ] 
+#analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 200 ] 
 
 lead_dr_cut = 0.4
 subl_dr_cut = 0.4
-phot_dr_cut = 0.3
+phot_dr_cut = 0.4
 
 blind_lead_max = 40
-
 
 _baseline_cuts_mgg = ' mu_passtrig25_n>0 && mu_n==1 && ph_medium_n>1 && el_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && m_ph1_ph2>15 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
 _baseline_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && m_ph1_ph2>15 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
@@ -98,13 +95,17 @@ baseline_cuts_mmg = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1  && ph_hasPixSeed[
 
 def main() :
 
-    global samplesWgg
+    global samplesWggSp
+    global samplesWggMu
+    global samplesWggEl
     global samplesWg
     global samplesLLG
     global samplesPhOlap
 
     baseDirWg  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11'
-    baseDirWgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindAllNoEleVeto_2015_04_12'
+    baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindAllNoEleVeto_2015_04_12'
+    baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllLoose_2015_06_10'
+    baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllLoose_2015_06_10'
     baseDirLLG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_04_11'
 
     treename = 'ggNtuplizer/EventTree'
@@ -115,12 +116,16 @@ def main() :
     sampleConfLLG = 'Modules/PlotWgamgam.py'
     sampleConfPhOlap = 'Modules/PhOlapComp.py'
 
-    samplesWgg     = SampleManager(baseDirWgg, treename, filename=filename, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
+    samplesWggSp   = SampleManager(baseDirWggSp, treename, filename=filename, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
+    samplesWggMu   = SampleManager(baseDirWggMu, treename, filename=filename, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
+    samplesWggEl   = SampleManager(baseDirWggEl, treename, filename=filename, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     samplesWg      = SampleManager(baseDirWg , treename, filename=filename, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     samplesLLG     = SampleManager(baseDirLLG , treename, filename=filename, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     samplesPhOlap  = SampleManager(baseDirLLG , treename, filename=filename, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
 
-    samplesWgg    .ReadSamples( sampleConfWgg )
+    samplesWggSp    .ReadSamples( sampleConfWgg )
+    samplesWggMu    .ReadSamples( sampleConfWgg )
+    samplesWggEl    .ReadSamples( sampleConfWgg )
     samplesWg     .ReadSamples( sampleConfWg )
     samplesLLG    .ReadSamples( sampleConfLLG )
     samplesPhOlap .ReadSamples( sampleConfPhOlap )
@@ -130,7 +135,8 @@ def main() :
 
     if options.outputDir is not None :
         samplesWg.start_command_collection()
-        samplesWgg.start_command_collection()
+        samplesWggMu.start_command_collection()
+        samplesWggEl.start_command_collection()
         samplesLLG.start_command_collection()
 
     if options.makeAll or options.makeEvent :
@@ -164,9 +170,16 @@ def main() :
     if options.makeAll or options.makeJetFakeSyst:
         MakeJetFakeSystPlots() 
 
+    print 'run samplesWg'
     samplesWg.run_commands(nFilesPerJob=1)
-    samplesWgg.run_commands(nFilesPerJob=1)
+    print 'run samplesWggMu'
+    samplesWggMu.run_commands(nFilesPerJob=1)
+    print 'run samplesWggEl'
+    samplesWggEl.run_commands(nFilesPerJob=1)
+    print 'run samplesLLG'
     samplesLLG.run_commands(nFilesPerJob=1)
+    print '^_^ Finished ^_^'
+    print 'You can kill the program if it is hanging'
 #---------------------------------------
 # User functions
 #---------------------------------------
@@ -185,59 +198,55 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     zrej_cuts_egg     = _zrej_cuts_egg     + ph_cuts
     zcr_cuts_egg      = _zcr_cuts_egg      + ph_cuts
 
-    #if not activate_data :
-    #    samplesWgg.deactivate_sample( 'Data')
-    #    print 'DISABLE DATA'
-
-    #samplesWgg.activate_sample( 'ISR')
-    #samplesWgg.activate_sample( 'FSR')
-    #samplesWgg.deactivate_sample( 'Wgg')
+    samplesWggSp.activate_sample( 'ISR')
+    samplesWggSp.activate_sample( 'FSR')
+    samplesWggSp.deactivate_sample( 'Wgg')
 
     #------------------------------------
     # Make some plots with the 
     # lepton/photon cuts, but not 
     # the full baseline cuts
     #------------------------------------
-    samplesWgg.Draw('dr_ph1_leadLep', 'PUWeight * ( mu_passtrig25_n>0 && mu_n==1 && ph_medium_n>1 && dr_ph1_ph2>%.1f && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && el_n==0 %s )' %(phot_dr_cut, ph_cuts), (25, 0, 5 ) , hist_config={'ymin': 0.1, 'ymax':100000, 'logy':1, 'xlabel':'#Delta R( #mu, lead #gamma)', 'ylabel':'Events / 0.2',}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel', 'extra_label_loc':(0.2, 0.87)}, legend_config=samplesWgg.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double' ) )
+    samplesWggSp.Draw('dr_ph1_leadLep', 'PUWeight * ( mu_passtrig25_n>0 && mu_n==1 && ph_medium_n>1 && dr_ph1_ph2>%.1f && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && el_n==0 %s )' %(phot_dr_cut, ph_cuts), (25, 0, 5 ) , hist_config={'ymin': 0.1, 'ymax':100000, 'logy':1, 'xlabel':'#Delta R( #mu, lead #gamma)', 'ylabel':'Events / 0.2',}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel', 'extra_label_loc':(0.2, 0.87)}, legend_config=samplesWggSp.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double' ) )
 
     if save :
         name = 'dr_ph1_leadLep__mgg__noLepPhDRCuts__splitWggISRFSR'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggSp.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggSp.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('dr_ph2_leadLep', 'PUWeight * ( mu_passtrig25_n>0 && mu_n==1 && ph_medium_n>1 && dr_ph1_ph2>%.1f && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && el_n==0  %s )' %(phot_dr_cut, ph_cuts), (25, 0, 5 ) , hist_config={'ymin':0.1, 'ymax':10000, 'logy':1, 'xlabel':'#Delta R(#mu, sublead #gamma)', 'ylabel':'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel', 'extra_label_loc':(0.73, 0.87)}, legend_config=samplesWgg.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double'  ) )
+    samplesWggSp.Draw('dr_ph2_leadLep', 'PUWeight * ( mu_passtrig25_n>0 && mu_n==1 && ph_medium_n>1 && dr_ph1_ph2>%.1f && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && el_n==0  %s )' %(phot_dr_cut, ph_cuts), (25, 0, 5 ) , hist_config={'ymin':0.1, 'ymax':10000, 'logy':1, 'xlabel':'#Delta R(#mu, sublead #gamma)', 'ylabel':'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel', 'extra_label_loc':(0.73, 0.87)}, legend_config=samplesWggSp.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double'  ) )
 
     if save :
         name = 'dr_ph2_leadLep__mgg__noLepPhDRCuts__splitWggISRFSR'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggSp.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggSp.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('dr_ph2_leadLep', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && dr_ph1_ph2>%.1f && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && mu_n==0  %s )' %(phot_dr_cut, ph_cuts), (25, 0, 5 ) , hist_config={'ymin':0.1, 'ymax':50000, 'logy':1, 'xlabel':'#Delta R(e, sublead #gamma)', 'ylabel':'Events / 0.2' }, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.7, 0.87)}, legend_config=samplesWgg.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double'  )  )
+    samplesWggSp.Draw('dr_ph2_leadLep', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && dr_ph1_ph2>%.1f && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && mu_n==0  %s )' %(phot_dr_cut, ph_cuts), (25, 0, 5 ) , hist_config={'ymin':0.1, 'ymax':50000, 'logy':1, 'xlabel':'#Delta R(e, sublead #gamma)', 'ylabel':'Events / 0.2' }, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.7, 0.87)}, legend_config=samplesWggSp.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double'  )  )
 
     if save :
         name = 'dr_ph2_leadLep__egg__noLepPhDRCuts__splitWggISRFSR'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggSp.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggSp.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('dr_ph1_leadLep', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && dr_ph1_ph2>%.1f && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && mu_n==0  %s )' %(phot_dr_cut, ph_cuts), (25, 0, 5 ) , hist_config={'ymin':0.1, 'ymax':80000, 'logy':1, 'xlabel':'#Delta R(e, lead #gamma)', 'ylabel':'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.7, 0.87)}, legend_config=samplesWgg.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double'  )  )
+    samplesWggSp.Draw('dr_ph1_leadLep', 'PUWeight * ( el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && dr_ph1_ph2>%.1f && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && mu_n==0  %s )' %(phot_dr_cut, ph_cuts), (25, 0, 5 ) , hist_config={'ymin':0.1, 'ymax':80000, 'logy':1, 'xlabel':'#Delta R(e, lead #gamma)', 'ylabel':'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.7, 0.87)}, legend_config=samplesWggSp.config_legend( legendCompress=0.8, legendTranslateX=0.05, legendTranslateY=0.05, legendLoc='Double'  )  )
 
     if save :
         name = 'dr_ph1_leadLep__egg__noLepPhDRCuts__splitWggISRFSR'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggSp.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggSp.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
 
-    samplesWgg.deactivate_sample( 'ISR')
-    samplesWgg.deactivate_sample( 'FSR')
-    samplesWgg.activate_sample( 'Wgg')
+    samplesWggSp.deactivate_sample( 'ISR')
+    samplesWggSp.deactivate_sample( 'FSR')
+    samplesWggSp.activate_sample( 'Wgg')
 
     #-----------------------------------
     # Make baseline plots
@@ -245,87 +254,87 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     #-----------------------------------
     # 3 object  mass
     #-----------------------------------
-    samplesWgg.Draw('m_leadLep_ph1_ph2', 'PUWeight * ( %s )' %(baseline_cuts_egg), (60, 0, 300 ) , hist_config={'logy':0,  'xlabel':'M_{e,#gamma,#gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWggEl.Draw('m_leadLep_ph1_ph2', 'PUWeight * ( %s )' %(baseline_cuts_egg), (60, 0, 300 ) , hist_config={'logy':0,  'xlabel':'M_{e,#gamma,#gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
     if save :
         name = 'm_leadLep_ph1_ph2__egg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('m_leadLep_ph1_ph2', 'PUWeight * ( %s )' %(baseline_cuts_mgg), (60, 0, 300 ) , hist_config={'logy':0,  'xlabel':'M_{#mu,#gamma,#gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',   'extra_label_loc':(0.3, 0.86)} , legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWggMu.Draw('m_leadLep_ph1_ph2', 'PUWeight * ( %s )' %(baseline_cuts_mgg), (60, 0, 300 ) , hist_config={'logy':0,  'xlabel':'M_{#mu,#gamma,#gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',   'extra_label_loc':(0.3, 0.86)} , legend_config=samplesWggMu.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
 
     if save :
         name = 'm_leadLep_ph1_ph2__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
     #-----------------------------------
     # 2 object  mass (lep-lead)
     #-----------------------------------
-    samplesWgg.Draw('m_leadLep_ph1', 'PUWeight * ( %s )' %(baseline_cuts_egg), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, legendTranslateX=0.05 , ) )
+    samplesWggEl.Draw('m_leadLep_ph1', 'PUWeight * ( %s )' %(baseline_cuts_egg), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendWiden=1.3,legendCompress=1.3, legendTranslateX=0.05 , ) )
 
     if save :
         name = 'm_leadLep_ph1__egg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('m_leadLep_ph1', 'PUWeight * ( %s )' %(baseline_cuts_mgg), (40, 0, 200 ) , hist_config={'logy':0, 'ymin':0, 'ymax':55,  'xlabel':'M_{#mu, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWggMu.Draw('m_leadLep_ph1', 'PUWeight * ( %s )' %(baseline_cuts_mgg), (40, 0, 200 ) , hist_config={'logy':0, 'ymin':0, 'ymax':55,  'xlabel':'M_{#mu, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWggMu.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
 
     if save :
         name = 'm_leadLep_ph1__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
     #-----------------------------------
     # 2 object  mass (lep-subl)
     #-----------------------------------
-    samplesWgg.Draw('m_leadLep_ph2', 'PUWeight * ( %s )' %( baseline_cuts_egg ), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWggEl.Draw('m_leadLep_ph2', 'PUWeight * ( %s )' %( baseline_cuts_egg ), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWggEl.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
     if save :
         name = 'm_leadLep_ph2__egg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('m_leadLep_ph2', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{#mu, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWggMu.Draw('m_leadLep_ph2', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{#mu, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWggMu.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
 
     if save :
         name = 'm_leadLep_ph2__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
     #-----------------------------------
     # 2 object  mass (photons)
     #-----------------------------------
-    samplesWgg.Draw('m_ph1_ph2', 'PUWeight * ( %s )' %(baseline_cuts_egg), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'M_{#gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('m_ph1_ph2', 'PUWeight * ( %s )' %(baseline_cuts_egg), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'M_{#gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
 
     if save :
         name = 'm_ph1_ph2__egg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('m_ph1_ph2', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'M_{#gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
+    samplesWggMu.Draw('m_ph1_ph2', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'M_{#gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
 
     if save :
         name = 'm_ph1_ph2__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -336,21 +345,21 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # DR(gg)
     #-----------------------------------
 
-    samplesWgg.Draw('dr_ph1_ph2', 'PUWeight * ( %s )' %(baseline_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta R(#gamma, #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.6,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('dr_ph1_ph2', 'PUWeight * ( %s )' %(baseline_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta R(#gamma, #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=0.6,  legendWiden=1.2, ) )
 
     if save :
         name = 'dr_ph1_ph2__egg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('dr_ph1_ph2', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta R(#gamma, #gamma)', 'ylabel' : 'Events / 0.2'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
+    samplesWggMu.Draw('dr_ph1_ph2', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta R(#gamma, #gamma)', 'ylabel' : 'Events / 0.2'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
 
     if save :
         name = 'dr_ph1_ph2__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -358,21 +367,21 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # DPhi(gg)
     #-----------------------------------
 
-    samplesWgg.Draw('fabs(dphi_ph1_ph2)', 'PUWeight * ( %s )' %(baseline_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta #phi(#gamma, #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('fabs(dphi_ph1_ph2)', 'PUWeight * ( %s )' %(baseline_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta #phi(#gamma, #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2, ) )
 
     if save :
         name = 'dphi_ph1_ph2__egg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('fabs(dphi_ph1_ph2)', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta #phi(#gamma, #gamma)', 'ylabel' : 'Events / 0.1'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
+    samplesWggMu.Draw('fabs(dphi_ph1_ph2)', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta #phi(#gamma, #gamma)', 'ylabel' : 'Events / 0.1'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
 
     if save :
         name = 'dphi_ph1_ph2__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -381,21 +390,21 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # DR(l, lead)
     #-----------------------------------
 
-    samplesWgg.Draw('dr_ph1_leadLep', 'PUWeight * ( %s )' %(baseline_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta R(e, lead #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('dr_ph1_leadLep', 'PUWeight * ( %s )' %(baseline_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta R(e, lead #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2, ) )
 
     if save :
         name = 'dr_ph1_leadLep__egg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('dr_ph1_leadLep', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta R(#mu, lead #gamma)', 'ylabel' : 'Events / 0.2'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
+    samplesWggMu.Draw('dr_ph1_leadLep', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta R(#mu, lead #gamma)', 'ylabel' : 'Events / 0.2'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
 
     if save :
         name = 'dr_ph1_leadLep__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -403,21 +412,21 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # DPhi(l, lead )
     #-----------------------------------
 
-    samplesWgg.Draw('fabs(dphi_ph1_leadLep)', 'PUWeight * ( %s )' %(baseline_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta #phi(e, lead #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('fabs(dphi_ph1_leadLep)', 'PUWeight * ( %s )' %(baseline_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta #phi(e, lead #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2, ) )
 
     if save :
         name = 'dphi_ph1_leadLep__egg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('fabs(dphi_ph1_leadLep)', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (32, 0, 3.2 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta #phi(#mu, lead #gamma)', 'ylabel' : 'Events / 0.1'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
+    samplesWggMu.Draw('fabs(dphi_ph1_leadLep)', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (32, 0, 3.2 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta #phi(#mu, lead #gamma)', 'ylabel' : 'Events / 0.1'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
 
     if save :
         name = 'dphi_ph1_leadLep__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -425,21 +434,21 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # DR(l, subl)
     #-----------------------------------
 
-    samplesWgg.Draw('dr_ph1_sublLep', 'PUWeight * ( %s )' %(baseline_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta R(e, sublead #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('dr_ph1_sublLep', 'PUWeight * ( %s )' %(baseline_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta R(e, sublead #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2, ) )
 
     if save :
         name = 'dr_ph1_sublLep__egg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('dr_ph1_sublLep', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta R(#mu, sublead #gamma)', 'ylabel' : 'Events / 0.2'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
+    samplesWggMu.Draw('dr_ph1_sublLep', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta R(#mu, sublead #gamma)', 'ylabel' : 'Events / 0.2'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
 
     if save :
         name = 'dr_ph1_sublLep__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -447,21 +456,21 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # DPhi(l, subl )
     #-----------------------------------
 
-    samplesWgg.Draw('fabs(dphi_ph1_sublLep)', 'PUWeight * ( %s )' %(baseline_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta #phi(e, sublead #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('fabs(dphi_ph1_sublLep)', 'PUWeight * ( %s )' %(baseline_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,  'xlabel':'(#Delta #phi(e, sublead #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2, ) )
 
     if save :
         name = 'dphi_ph1_sublLep__egg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
-    samplesWgg.Draw('fabs(dphi_ph1_sublLep)', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta #phi(#mu, sublead #gamma)', 'ylabel' : 'Events / 0.1'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
+    samplesWggMu.Draw('fabs(dphi_ph1_sublLep)', 'PUWeight * ( %s )' %( baseline_cuts_mgg ), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':100 ,'xlabel':'(#Delta #phi(#mu, sublead #gamma)', 'ylabel' : 'Events / 0.1'  }, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=0.8,  legendWiden=1.2 , ) )
 
     if save :
         name = 'dphi_ph1_sublLep__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -469,85 +478,85 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # 2 object  mass (lep-lead)
     # electron + some Z rej cuts
     #-----------------------------------
-    samplesWgg.Draw('m_leadLep_ph1', 'PUWeight * (  %s  && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) )' %( baseline_cuts_egg ), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWggEl.Draw('m_leadLep_ph1', 'PUWeight * (  %s  && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) )' %( baseline_cuts_egg ), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWggEl.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
     if save :
         name = 'm_leadLep_ph1__egg__Cut_m_leadLep_ph1_ph2_10gevWindow'
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
 
-    samplesWgg.Draw('m_leadLep_ph2', 'PUWeight * ( %s && !(fabs(m_lepphph-91.2) < 5) )' %( baseline_cuts_egg), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWggEl.Draw('m_leadLep_ph2', 'PUWeight * ( %s && !(fabs(m_lepphph-91.2) < 5) )' %( baseline_cuts_egg), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWggEl.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
     if save :
         name = 'm_leadLep_ph2__egg__Cut_m_leadLep_ph1_ph2_10gevWindow'
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('m_leadLep_ph2', 'PUWeight * ( %s && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5) )' %(baseline_cuts_egg), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWgg.config_legend(legendWiden=1.3,legendCompress=1.4, ) )
+    samplesWggEl.Draw('m_leadLep_ph2', 'PUWeight * ( %s && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5) )' %(baseline_cuts_egg), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.3, 0.86) }, legend_config=samplesWggEl.config_legend(legendWiden=1.3,legendCompress=1.4, ) )
     if save :
         name = 'm_leadLep_ph2__egg__Cut_m_leadLep_ph1_ph2_10gevWindow__Cut_m_leadLep_ph1_10gevWindow'
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
 
     #-----------------------------------
     # electron + full Z rej cuts
     #-----------------------------------
-    samplesWgg.Draw('m_leadLep_ph1_ph2', 'PUWeight * ( %s )' %(zrej_cuts_egg), (60, 0, 300 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'M_{e, #gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWggEl.Draw('m_leadLep_ph1_ph2', 'PUWeight * ( %s )' %(zrej_cuts_egg), (60, 0, 300 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'M_{e, #gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'm_leadLep_ph1_ph2__egg__ZRejCuts'
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('m_leadLep_ph1', 'PUWeight * ( %s )' %(zrej_cuts_egg), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'M_{e, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWggEl.Draw('m_leadLep_ph1', 'PUWeight * ( %s )' %(zrej_cuts_egg), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'M_{e, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'm_leadLep_ph1__egg__ZRejCuts'
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('m_leadLep_ph2', 'PUWeight * ( %s )' %(zrej_cuts_egg), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWggEl.Draw('m_leadLep_ph2', 'PUWeight * ( %s )' %(zrej_cuts_egg), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'm_leadLep_ph2__egg__ZRejCuts'
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('m_ph1_ph2', 'PUWeight * ( %s )' %(zrej_cuts_egg), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'M_{#gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWggEl.Draw('m_ph1_ph2', 'PUWeight * ( %s )' %(zrej_cuts_egg), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'M_{#gamma, #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'm_ph1_ph2__egg__ZRejCuts'
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
     #-----------------------------------
     # DR(gg)
     #-----------------------------------
 
-    samplesWgg.Draw('dr_ph1_ph2', 'PUWeight * ( %s )' %(zrej_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta R(#gamma, #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('dr_ph1_ph2', 'PUWeight * ( %s )' %(zrej_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta R(#gamma, #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
 
     if save :
         name = 'dr_ph1_ph2__egg__ZRejCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -555,12 +564,12 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # DPhi(gg)
     #-----------------------------------
 
-    samplesWgg.Draw('fabs(dphi_ph1_ph2)', 'PUWeight * ( %s )' %(zrej_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta #phi(#gamma, #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('fabs(dphi_ph1_ph2)', 'PUWeight * ( %s )' %(zrej_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta #phi(#gamma, #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
 
     if save :
         name = 'dphi_ph1_ph2__egg__ZRejCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -568,12 +577,12 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # DR(l, lead)
     #-----------------------------------
 
-    samplesWgg.Draw('dr_ph1_leadLep', 'PUWeight * ( %s )' %(zrej_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta R(e, lead #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('dr_ph1_leadLep', 'PUWeight * ( %s )' %(zrej_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta R(e, lead #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
 
     if save :
         name = 'dr_ph1_leadLep__egg__ZRejCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -581,12 +590,12 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # DPhi(l, lead )
     #-----------------------------------
 
-    samplesWgg.Draw('fabs(dphi_ph1_leadLep)', 'PUWeight * ( %s )' %(zrej_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta #phi(e, lead #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('fabs(dphi_ph1_leadLep)', 'PUWeight * ( %s )' %(zrej_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta #phi(e, lead #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
 
     if save :
         name = 'dphi_ph1_leadLep__egg__ZRejCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -594,12 +603,12 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # DR(l, subl)
     #-----------------------------------
 
-    samplesWgg.Draw('dr_ph1_sublLep', 'PUWeight * ( %s )' %(zrej_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta R(e, sublead #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('dr_ph1_sublLep', 'PUWeight * ( %s )' %(zrej_cuts_egg), (25, 0, 5 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta R(e, sublead #gamma)', 'ylabel' : 'Events / 0.2'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
 
     if save :
         name = 'dr_ph1_sublLep__egg__ZRejCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -607,12 +616,12 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # DPhi(l, subl )
     #-----------------------------------
 
-    samplesWgg.Draw('fabs(dphi_ph1_sublLep)', 'PUWeight * ( %s )' %(zrej_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta #phi(e, sublead #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
+    samplesWggEl.Draw('fabs(dphi_ph1_sublLep)', 'PUWeight * ( %s )' %(zrej_cuts_egg), (32, 0, 3.2 ) , hist_config={'logy':0, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'(#Delta #phi(e, sublead #gamma)', 'ylabel' : 'Events / 0.1'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggEl.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2, ) )
 
     if save :
         name = 'dphi_ph1_sublLep__egg__ZRejCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
     else :
         raw_input('continue')
 
@@ -639,59 +648,59 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # --------------------------------------
     # muon channel , photon pT
     # --------------------------------------
-    samplesWgg.Draw('pt_leadph12', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
+    samplesWggMu.Draw('pt_leadph12', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
 
     if save :
         name = 'ph_pt_lead__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('pt_leadph12', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
+    samplesWggMu.Draw('pt_leadph12', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
 
     if save :
         name = 'ph_pt_lead__mgg__baselineCuts__varBins'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
 
-    samplesWgg.Draw('pt_sublph12', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
+    samplesWggMu.Draw('pt_sublph12', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
 
     if save :
         name = 'ph_pt_subl__mgg__baselineCuts'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('pt_sublph12', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
+    samplesWggMu.Draw('pt_sublph12', 'PUWeight * ( %s ) ' %baseline_cuts_mgg, (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
 
     if save :
         name = 'ph_pt_subl__mgg__baselineCuts__varBins'
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
     #----------------------
     # Subleading pt for
     # lead pt > 80 GeV
     #----------------------
-    samplesWgg.Draw('pt_sublph12', 'PUWeight * ( %s && pt_leadph12>%d ) ' %(baseline_cuts_mgg, analysis_bins_mgg[-2] ), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
+    samplesWggMu.Draw('pt_sublph12', 'PUWeight * ( %s && pt_leadph12>%d ) ' %(baseline_cuts_mgg, analysis_bins_mgg[-2] ), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
 
     if save :
         name = 'ph_pt_subl__mgg__baselineCuts__leadPt%d__varBins' %analysis_bins_mgg[-2]
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggMu.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
     #----------------------------------------
@@ -718,45 +727,45 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
             max = analysis_bins_mgg_mod[idx+1]
 
 
-            samplesWgg.Draw('pt_leadph12', 'PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d )' %(baseline_cuts_mgg, ec[0], ec[1], min, max), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
+            samplesWggMu.Draw('pt_leadph12', 'PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d )' %(baseline_cuts_mgg, ec[0], ec[1], min, max), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
 
             if save :
                 if idx+2 == len(analysis_bins_mgg_mod) :
                     name = 'ph_pt_lead__mgg__%s-%s__baselineCuts__ptbins_%d-max' %(ec[0], ec[1], min)
                 else :
                     name = 'ph_pt_lead__mgg__%s-%s__baselineCuts__ptbins_%d-%d' %(ec[0], ec[1],min, max)
-                samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-                samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+                samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
             else :
-                samplesWgg.DumpStack( )
+                samplesWggMu.DumpStack( )
                 raw_input('continue')
 
-            samplesWgg.Draw('pt_sublph12', 'PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d  )' %(baseline_cuts_mgg, ec[0], ec[1], min, max), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
+            samplesWggMu.Draw('pt_sublph12', 'PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d  )' %(baseline_cuts_mgg, ec[0], ec[1], min, max), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
 
             if save :
                 if idx+2 == len(analysis_bins_mgg_mod) :
                     name = 'ph_pt_subl__mgg__%s-%s__baselineCuts__ptbins_%d-max' %(ec[0], ec[1], min)
                 else :
                     name = 'ph_pt_subl__mgg__%s-%s__baselineCuts__ptbins_%d-%d' %(ec[0], ec[1],min, max)
-                samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-                samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+                samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
             else :
-                samplesWgg.DumpStack( )
+                samplesWggMu.DumpStack( )
                 raw_input('continue')
 
         for minl, maxl, mins, maxs in subl_bins :
 
-            samplesWgg.Draw('pt_leadph12', 'PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d && pt_sublph12 > %d && pt_sublph12 < %d )' %(baseline_cuts_mgg, ec[0], ec[1], minl, maxl, mins, maxs), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
+            samplesWggMu.Draw('pt_leadph12', 'PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d && pt_sublph12 > %d && pt_sublph12 < %d )' %(baseline_cuts_mgg, ec[0], ec[1], minl, maxl, mins, maxs), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) )
 
             if save :
                 if maxs == analysis_bins_mgg_mod[-1] :
                     name = 'ph_pt_lead__mgg__%s-%s__baselineCuts__ptbins_%d-max__subpt_%d-max' %(ec[0], ec[1], minl, mins)
                 else :
                     name = 'ph_pt_lead__mgg__%s-%s__baselineCuts__ptbins_%d-max__subpt_%d-%d' %(ec[0], ec[1],minl, mins, maxs)
-                samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-                samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+                samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
             else :
-                samplesWgg.DumpStack( )
+                samplesWggMu.DumpStack( )
                 raw_input('continue')
 
     #----------------------------------------
@@ -765,78 +774,78 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
 
     for ec, lab in zip(eta_cuts, eta_labels) :
 
-        samplesWgg.Draw('pt_leadph12', 'PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 )' %(baseline_cuts_mgg, ec[0], ec[1]), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) ) 
+        samplesWggMu.Draw('pt_leadph12', 'PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 )' %(baseline_cuts_mgg, ec[0], ec[1]), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1] )   , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}' %lab,  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=1.2, legendWiden=1.2 , ) ) 
 
         if save :
             name = 'ph_pt_lead__mgg__%s-%s__baselineCuts'%(ec[0],ec[1])
-            samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-            samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+            samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+            samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
         else :
-            samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+            samplesWggMu.DumpStack(options.outputDir+'/'+subdir, )
             raw_input('continue')
 
-        samplesWgg.Draw('pt_leadph12', 'PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 ) ' %(baseline_cuts_mgg, ec[0], ec[1]), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWgg.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
+        samplesWggMu.Draw('pt_leadph12', 'PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 ) ' %(baseline_cuts_mgg, ec[0], ec[1]), (analysis_bins_mgg[-1]/5, 0, analysis_bins_mgg[-1], analysis_bins_mgg ) , hist_config={'logy':1, 'ymin':0.1, 'ymax':1000 ,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel',  'extra_label_loc':(0.3, 0.86)}, legend_config=samplesWggMu.config_legend(legendLoc=None,legendCompress=1.2,  legendWiden=1.2 , ) )
 
         if save :
             name = 'ph_pt_lead__mgg__%s-%s__baselineCuts__varBins'%(ec[0],ec[1])
-            samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-            samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+            samplesWggMu.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+            samplesWggMu.DumpStack(options.outputDir+'/'+subdir, name)
         else :
-            samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+            samplesWggMu.DumpStack(options.outputDir+'/'+subdir, )
             raw_input('continue')
 
     # --------------------------------------
     # electron channel , photon pT
     # --------------------------------------
 
-    samplesWgg.Draw('pt_leadph12', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWggEl.Draw('pt_leadph12', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'ph_pt_lead__egg__allZRejCuts'
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('pt_leadph12', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ), hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWggEl.Draw('pt_leadph12', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ), hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'ph_pt_lead__egg__allZRejCuts__varBins'
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
 
-    samplesWgg.Draw('pt_sublph12', ' PUWeight * ( %s ) ' %zrej_cuts_egg ,(analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ),  hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWggEl.Draw('pt_sublph12', ' PUWeight * ( %s ) ' %zrej_cuts_egg ,(analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ),  hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'ph_pt_subl__egg__allZRejCuts'
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWgg.Draw('pt_sublph12', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWggEl.Draw('pt_sublph12', ' PUWeight * ( %s ) ' %zrej_cuts_egg, (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'ph_pt_subl__egg__allZRejCuts__varBins'
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
     #----------------------
     # Subleading pt for
     # lead pt > 80 GeV
     #----------------------
-    samplesWgg.Draw('pt_sublph12', ' PUWeight * ( %s && pt_leadph12 > %d ) ' %(zrej_cuts_egg, analysis_bins_egg[-2]), (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+    samplesWggEl.Draw('pt_sublph12', ' PUWeight * ( %s && pt_leadph12 > %d ) ' %(zrej_cuts_egg, analysis_bins_egg[-2]), (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
     if save :
         name = 'ph_pt_subl__egg__allZRejCuts__leadPt%d__varBins'%analysis_bins_egg[-2]
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-        samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+        samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
-        samplesWgg.DumpStack(options.outputDir+'/'+subdir, )
+        samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
     #-------------------------------------
@@ -861,69 +870,69 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
                     continue
                 max = binning_mod[idx+1]
 
-                samplesWgg.Draw('pt_leadph12', ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d )' %(cut, ec[0], ec[1], min, max), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+                samplesWggEl.Draw('pt_leadph12', ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d )' %(cut, ec[0], ec[1], min, max), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
                 if save :
                     if idx+2 == len(binning_mod) :
                         name = 'ph_pt_lead__egg__%s-%s__%s__ptbins_%d-max' %(ec[0], ec[1], label, min)
                     else :
                         name = 'ph_pt_lead__egg__%s-%s__%s__ptbins_%d-%d' %(ec[0], ec[1], label, min, max)
-                    samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-                    samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                    samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+                    samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
                 else :
-                    samplesWgg.DumpStack( )
+                    samplesWggEl.DumpStack( )
                     raw_input('continue')
 
-                samplesWgg.Draw('pt_sublph12', ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d )' %(cut, ec[0], ec[1], min, max), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+                samplesWggEl.Draw('pt_sublph12', ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d )' %(cut, ec[0], ec[1], min, max), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'sublead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
                 if save :
                     if idx+2 == len(binning_mod) :
                         name = 'ph_pt_subl__egg__%s-%s__%s__ptbins_%d-max' %(ec[0], ec[1], label,min)
                     else :
                         name = 'ph_pt_subl__egg__%s-%s__%s__ptbins_%d-%d' %(ec[0], ec[1],label, min, max)
-                    samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-                    samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                    samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+                    samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
                 else :
-                    samplesWgg.DumpStack( )
+                    samplesWggEl.DumpStack( )
                     raw_input('continue')
 
             for minl, maxl, mins, maxs in subl_bins :
 
-                samplesWgg.Draw('pt_leadph12', ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d && pt_sublph12 > %d && pt_sublph12 < %d )' %(cut, ec[0], ec[1], minl, maxl, mins, maxs), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+                samplesWggEl.Draw('pt_leadph12', ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %d && pt_leadph12 < %d && pt_sublph12 > %d && pt_sublph12 < %d )' %(cut, ec[0], ec[1], minl, maxl, mins, maxs), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
                 if save :
                     if maxs == analysis_bins_mgg_mod[-1] :
                         name = 'ph_pt_lead__egg__%s-%s__baselineCuts__ptbins_%d-max__subpt_%d-max' %(ec[0], ec[1], minl, mins)
                     else :
                         name = 'ph_pt_lead__egg__%s-%s__baselineCuts__ptbins_%d-max__subpt_%d-%d' %(ec[0], ec[1],minl, mins, max)
-                    samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
-                    samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
+                    samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                    samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
                 else :
-                    samplesWgg.DumpStack( )
+                    samplesWggEl.DumpStack( )
                     raw_input('continue')
 
         #-------------------------------------
         # make eta dependent cuts also
         #-------------------------------------
         for ec, lab in zip(eta_cuts, eta_labels) :
-            samplesWgg.Draw('pt_leadph12', ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 )' %(cut, ec[0], ec[1]), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+            samplesWggEl.Draw('pt_leadph12', ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 )' %(cut, ec[0], ec[1]), (40, 0, 200 ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%lab, 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
 
             if save :
                 name = 'ph_pt_lead__egg__%s-%s__%s'%(ec[0], ec[1], label)
-                samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-                samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+                samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
             else :
-                samplesWgg.DumpStack()
+                samplesWggEl.DumpStack()
                 raw_input('continue')
 
-            samplesWgg.Draw('pt_leadph12', ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 ) ' %(cut, ec[0], ec[1]), (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWgg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+            samplesWggEl.Draw('pt_leadph12', ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 ) ' %(cut, ec[0], ec[1]), (analysis_bins_egg[-1]/5, 0, analysis_bins_egg[-1], analysis_bins_egg ) , hist_config={'logy':1, 'ymin':0.5, 'ymax':100,  'xlabel':'lead photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel', 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWggEl.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
             if save :
                 name = 'ph_pt_lead__egg__%s-%s__%s__varBins'%(ec[0], ec[1], label)
-                samplesWgg.DumpStack(options.outputDir+'/'+subdir, name)
-                samplesWgg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
+                samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
             else :
-                samplesWgg.DumpStack()
+                samplesWggEl.DumpStack()
                 raw_input('continue')
 
     

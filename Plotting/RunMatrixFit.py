@@ -395,12 +395,17 @@ def main() :
         s.deactivate_all_samples()
 
     fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
-    #channels = ['mu', 'elfull', 'elfullinvpixsubl', 'elfullinvpixlead', 'elzcr', 'elzcrinvpixsubl', 'elzcrinvpixlead']
-    channels = ['mu']
+    #channels = ['mu', 'elfull', 'elfullinvpixsubl', 'elfullinvpixlead']
+    #channels = ['mu', 'elfull']
     #channels = ['elfullinvpixsubl', 'elfullinvpixlead']
-    #channels = ['elzcr', 'elzcrinvpixsubl', 'elzcrinvpixlead']
+    channels = ['elzcr', 'elzcrinvpixsubl', 'elzcrinvpixlead']
     jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
     calculators = []
+
+    ##mt_cuts = [' > 40 ' , ' < 40 ' ]
+    #mt_cuts = [' > 40 ' ]
+    #mt_cuts = [' < 40 ' ]
+    mt_cuts = [' > 0  ' ]
 
     corr_vals = [ (5,3,3), (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
 
@@ -408,15 +413,17 @@ def main() :
     for ch in channels :
         for var in jetfitvars :
             for ffcorr in fftypes :
-                #calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
-                calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, outputDir=options.outputDir+'/JetFakeResultsSyst') )
+                for mtc in mt_cuts :
+                    #calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
+                    calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, mt_cut=mtc, outputDir=options.outputDir+'/JetFakeResultsSyst') )
 
     for cv in corr_vals :
         for ch in channels :
             for var in jetfitvars :
                 for ffcorr in fftypes :
-                    #calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
-                    calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+'/JetFakeResultsSyst') )
+                    for mtc in mt_cuts :
+                        #calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
+                        calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, mt_cut=mtc, vals=cv, outputDir=options.outputDir+'/JetFakeResultsSyst') )
 
     for calc in calculators :
         draw_configs = calc.ConfigHists()
@@ -3546,6 +3553,7 @@ class RunNominalCalculation() :
         self.ptbins  = kwargs.get( 'ptbins', [15,25,40,70,1000000] )
         self.systematics = kwargs.get( 'systematics', 'Nom' )
         self.outputDir = kwargs.get( 'outputDir', None )
+        self.mt_cut = kwargs.get( 'mt_cut', ' > 40 ' )
 
         
         if self.fitvar is None :
@@ -3632,19 +3640,19 @@ class RunNominalCalculation() :
         regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB')]
         for reg in regions :
             if fitvar == 'sigmaIEIE' :
-                gg_selection = get_default_draw_commands(ch)['gg'] + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
+                gg_selection = get_default_draw_commands(ch)['gg'] + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 && mt_lep_met %s' %( count_var, reg[0], reg[1], self.mt_cut )
                 gg_selection_leadPass = gg_selection + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
                 gg_selection_leadFail = gg_selection + ' && sieie_leadph12 > %f && sieie_leadph12 < %f' %( _sieie_cuts[reg[0]] )
             elif fitvar == 'chIsoCorr' :
-                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s' %( reg[0], reg[1], self.mt_cut )
                 gg_selection_leadPass = gg_selection + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
                 gg_selection_leadFail = gg_selection + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
             elif fitvar == 'neuIsoCorr' :
-                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s ' %( reg[0], reg[1], self.mt_cut )
                 gg_selection_leadPass = gg_selection + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
                 gg_selection_leadFail = gg_selection + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
             elif fitvar == 'phoIsoCorr' :
-                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s ' %( reg[0], reg[1], self.mt_cut )
                 gg_selection_leadPass = gg_selection + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
                 gg_selection_leadFail = gg_selection + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
 
@@ -3746,6 +3754,7 @@ class RunCorrectedAsymCalculation() :
         self.iso_cuts_noiso    = kwargs.get( 'iso_cuts_noiso'    , None )
         self.subl_ptrange      = kwargs.get( 'subl_ptrange'      , (None,None) )
         self.outputDir         = kwargs.get('outputDir'          , None )
+        self.mt_cut            = kwargs.get('mt_cut'          , ' > 40 ')
         
         if self.fitvar is None :
             print 'RunCorrectedAsymCalculation.init -- ERROR, fitvar is required argument'
@@ -3885,9 +3894,9 @@ class RunCorrectedAsymCalculation() :
         for reg in regions :
             
             # add regions onto the selection
-            gg_selection_leadiso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-            gg_selection_subliso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-            gg_selection_bothiso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            gg_selection_leadiso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s' %( reg[0], reg[1], self.mt_cut )
+            gg_selection_subliso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s' %( reg[0], reg[1], self.mt_cut )
+            gg_selection_bothiso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s' %( reg[0], reg[1], self.mt_cut )
 
             # add subl pt cuts onto the selection
             if self.subl_ptrange[0] is not None :

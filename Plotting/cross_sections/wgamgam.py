@@ -1,4 +1,4 @@
-{
+{#Cross sections are in pb
                   #'DYJetsToLL'            : { 'n_evt' : 30459504 , 'cross_section' : 11050.0 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   #'DYJetsToLL'            : { 'n_evt' : 30459504 , 'cross_section' : 6911.7 , 'gen_eff' : 1.0 , 'k_factor' : 1.25 },
                   'DYJetsToLL'             : { 'n_evt' : 30458872, 'cross_section' : 3503.70 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
@@ -40,8 +40,8 @@
                   'Zgg'                    : { 'n_evt' : 199982, 'cross_section' : 0.125 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'gjet_pt20to40_doubleEM' : { 'n_evt' : 5907942  , 'cross_section' : 91800.0 , 'gen_eff' : 1.0 , 'k_factor' : 1.3 },
                   'gjet_pt40_doubleEM'     : { 'n_evt' : 5956149  , 'cross_section' : 8840.0 , 'gen_eff' : 1.0 , 'k_factor' : 1.3 },
-                  'ttW'                    : { 'n_evt' : 196046   , 'cross_section' : 214.9 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
-                  'ttZ'                    : { 'n_evt' : 210160   , 'cross_section' : 172.0 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
+                  'ttW'                    : { 'n_evt' : 196046   , 'cross_section' : 0.232 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
+                  'ttZ'                    : { 'n_evt' : 210160   , 'cross_section' : 0.2057 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'ttjets_1l'              : { 'n_evt' : 10629902 , 'cross_section' : 99.44 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'ttjets_2l'              : { 'n_evt' : 12019013 , 'cross_section' : 23.83 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'ttg'                    : { 'n_evt' : 1719954, 'cross_section' : 1.444 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
@@ -49,7 +49,15 @@
                   'diphoton_box_25to250'   : { 'n_evt' : 1664550,   'cross_section' : 15.54, 'gen_eff' : 1.0, 'k_factor' : 1.3 },
                   'diphoton_box_250toInf'  : { 'n_evt' : 1664550,   'cross_section' : 0.00118, 'gen_eff' : 1.0, 'k_factor' : 1.3 },
                   'WH_ZH_125'              : { 'n_evt' : 100320,   'cross_section' : 0.002498161, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
-                  'WZA'              : { 'n_evt' : 497450,   'cross_section' : 0.0121, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
+                  'WZA'                    : { 'n_evt' : 497450,   'cross_section' : 0.0121, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
+#from https://twiki.cern.ch/twiki/bin/view/CMS/SingleTopSigma8TeV
+                  'tbar_t'                 : { 'n_evt' : 1935072,   'cross_section' : 30.7, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
+                  'tbar_s'                 : { 'n_evt' : 139974,   'cross_section' : 1.76, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
+                  'tbar_tW'                : { 'n_evt' : 493460,   'cross_section' : 11.1, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
+                  't_t'                    : { 'n_evt' : 3758227,   'cross_section' : 56.4, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
+                  't_s'                    : { 'n_evt' : 259961,   'cross_section' : 3.79, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
+                  't_tW'                   : { 'n_evt' : 497658,   'cross_section' : 11.1, 'gen_eff' : 1.0, 'k_factor' : 1.0 },
+
 
 
 }

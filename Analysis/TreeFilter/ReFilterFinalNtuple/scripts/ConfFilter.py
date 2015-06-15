@@ -32,13 +32,15 @@ def config_analysis( alg_list, args ) :
             print '*********************************'
             s[1]( alg_list, args )
 
+
+
     #make_nominal_unblind( alg_list, args, blind_pt=None )
 
     #make_nominal_unblind_noEleVeto( alg_list, args, blind_pt=None )
 
     #make_nominal_unbzrej( alg_list, args )
 
-    #make_final_mu( alg_list, args, blind_pt = None )
+    #make_final_mu( alg_list, args, blind_pt = None, loose=True )
 
     #make_final_el( alg_list, args, blind_pt = None )
 
@@ -70,11 +72,15 @@ def make_final_mu( alg_list, args ) :
     filter_event.cut_nMu = ' == 1 '
     filter_event.cut_nEl = ' == 0 '
 
-    filter_event.cut_mgg = ' > 15 '
     filter_event.cut_dr_lep_ph1 = ' > 0.4 '
     filter_event.cut_dr_lep_ph2 = ' > 0.4 '
     filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
-    filter_event.cut_mt_lep_met = ' > 40 '
+
+    loose = args.get('loose', False )
+    print 'loose = ', loose
+    if not loose :
+        filter_event.cut_mgg = ' > 15 '
+        filter_event.cut_mt_lep_met = ' > 40 '
 
     alg_list.append( filter_event )
 
@@ -91,7 +97,6 @@ def make_final_mu( alg_list, args ) :
 
 
 def make_final_el( alg_list, args ) :
-
 
     filter_photon = Filter( 'FilterPhoton' )
     filter_photon.cut_ph_medium = ' == True '
@@ -110,15 +115,18 @@ def make_final_el( alg_list, args ) :
     filter_event.cut_hasPixSeed_leadph12 = ' == False '
     filter_event.cut_hasPixSeed_sublph12 = ' == False '
 
-    filter_event.cut_mgg = ' > 15 '
     filter_event.cut_dr_lep_ph1 = ' > 0.4 '
     filter_event.cut_dr_lep_ph2 = ' > 0.4 '
     filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
-    filter_event.cut_mt_lep_met = ' > 40 '
 
-    filter_event.cut_m_lepphph= ' > 86.2 & < 96.2  '
-    filter_event.cut_m_lepph1= ' > 86.2 & < 96.2  '
-    filter_event.cut_m_lepph2= ' > 86.2 & < 96.2  '
+    loose = args.get('loose', False )
+    print 'loose = ', loose
+    if not loose :
+        filter_event.cut_mt_lep_met = ' > 40 '
+        filter_event.cut_mgg = ' > 15 '
+        filter_event.cut_m_lepphph= ' > 86.2 & < 96.2  '
+        filter_event.cut_m_lepph1= ' > 86.2 & < 96.2  '
+        filter_event.cut_m_lepph2= ' > 86.2 & < 96.2  '
 
     filter_event.invert( 'cut_m_lepphph' )
     filter_event.invert( 'cut_m_lepph1' )

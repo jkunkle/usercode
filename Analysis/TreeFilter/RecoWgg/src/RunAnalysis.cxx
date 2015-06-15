@@ -189,6 +189,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::jet_pt                    = 0;
     OUT::jet_eta                   = 0;
     OUT::jet_phi                   = 0;
+    OUT::jet_JECUnc                = 0;
     OUT::jet_e                     = 0;
 
     // *************************
@@ -353,6 +354,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("jet_pt"                    , &OUT::jet_pt                    );
     outtree->Branch("jet_eta"                   , &OUT::jet_eta                   );
     outtree->Branch("jet_phi"                   , &OUT::jet_phi                   );
+    outtree->Branch("jet_JECUnc"                , &OUT::jet_JECUnc                );
     outtree->Branch("jet_e"                     , &OUT::jet_e                     );
 
     //outtree->Branch("avgPU"              , &OUT::avgPU, "avgPU/F"                        );
@@ -1644,6 +1646,7 @@ void RunModule::BuildJet( ModuleConfig & config ) const {
     OUT::jet_eta       -> clear();
     OUT::jet_phi       -> clear();
     OUT::jet_e         -> clear();
+    OUT::jet_JECUnc    -> clear();
     OUT::jet_n          = 0;
 
 #ifdef EXISTS_nJet
@@ -1661,6 +1664,7 @@ void RunModule::BuildJet( ModuleConfig & config ) const {
         OUT::jet_eta       -> push_back(eta);
         OUT::jet_phi       -> push_back(phi);
         OUT::jet_e         -> push_back(en);
+        OUT::jet_JECUnc    -> push_back( IN::jetJECUnc->at(idx) );
         OUT::jet_n++;
     }
 #endif

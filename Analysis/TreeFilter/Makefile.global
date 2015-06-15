@@ -44,13 +44,14 @@ endif
 ifeq ($(LOCATION), $(CERNLOC))
 	BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50 -L/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/lib
 	#BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.55.0_python2.7/x86_64-slc6-gcc47-opt/include/boost-1_55 -L/afs/cern.ch/sw/lcg/external/Boost/1.55.0_python2.7/x86_64-slc6-gcc47-opt/lib
-	LIBS         = $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem-gcc43-mt-1_50 -lboost_system-gcc43-mt-1_50 
+	LIBS         = $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem-gcc43-mt-1_50 -lboost_system-gcc43-mt-1_50
 endif
 
 ifeq ($(LOCATION), $(UMDLOC))
 	BOOSTFLAGS   = -I/cvmfs/cms.cern.ch/slc5_amd64_gcc481/external/boost/1.51.0-cms/include  -L/cvmfs/cms.cern.ch/slc5_amd64_gcc481/external/boost/1.51.0-cms/lib
 	LIBS         = -L/cvmfs/cms.cern.ch/slc5_amd64_gcc462/lcg/roofit/5.34.01-cms9/lib $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem -lboost_system
 endif
+
 
 DEBUG        = false
 INCLUDE      = $(ROOTCXXFLAGS) $(BOOSTFLAGS) $(COREINC)
@@ -77,6 +78,18 @@ LINKDEF = $(OBJ_DIR)/cintLib.so
 
 ifneq  ($(ADDTL_OBJ),) 
 	OBJECT_ADDTL = $(OBJ_DIR)/$(ADDTL_OBJ)
+endif
+
+ifneq  ($(ADDTL_INC),) 
+	INC_ADDTL = -I$(ADDTL_INC)
+endif
+
+ifneq  ($(ADDTL_LIB),) 
+	LIB_ADDTL = -L$(ADDTL_LIB)
+endif
+
+ifneq  ($(EXTERN_OBJ),) 
+	OBJ_EXTERN = $(EXTERN_OBJ)
 endif
 
 
@@ -111,11 +124,11 @@ $(LINKDEF):  $(SRC_DIR)/Dict.cxx
 
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cxx
 	mkdir -p $(OBJ_DIR)
-	g++ $(CXXFLAGS) -c $^ -o $@ -I../$(INC_DIR)
+	g++ $(CXXFLAGS) -c $^ -o $@ -I../$(INC_DIR) $(INC_ADDTL) 
 
 $(EXE): $(OBJECT_ANA) $(OBJECT_ADDTL) $(LINKDEF) 
 	@echo "LOCATION IS " $(LOCATION)
-	g++ $(CXXFLAGS) -o $@ -g $^ $(COREOBJ) $(LIBS) -I../$(INC_DIR)
+	g++ $(CXXFLAGS) -o $@ -g $^ $(COREOBJ) $(OBJ_EXTERN) $(LIBS) -I../$(INC_DIR) $(LIB_ADDTL)
 clean:
 	@echo -e "\n\n===> cleaning directories"
 	rm -f $(OBJ_DIR)/*.o ; rm -f $(SRC_DIR)/Dict.cxx

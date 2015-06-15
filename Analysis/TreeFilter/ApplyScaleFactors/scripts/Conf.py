@@ -34,6 +34,7 @@ def config_analysis( alg_list, options ) :
     alg_list.append( get_electron_sf() ) 
     alg_list.append( get_photon_sf() ) 
     #alg_list.append( get_pileup_sf(options) )
+    alg_list.append( Filter ( 'AddMETUncert' ) )
 
 def get_muon_sf() :
 

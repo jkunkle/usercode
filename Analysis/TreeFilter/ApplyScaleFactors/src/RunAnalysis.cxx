@@ -246,6 +246,9 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     if( config.GetName() == "AddPhotonSF" ) {
         AddPhotonSF( config );
     }
+    if( config.GetName() == "AddMETUncert" ) {
+        AddMETUncert( config );
+    }
     /*
     if( config.GetName() == "AddPileupSF" ) {
         AddPileupSF( config );
@@ -256,6 +259,11 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
 
 }
 
+void RunModule::AddMETUncert( ModuleConfig & /*config*/ ) const {
+
+}
+
+    
 void RunModule::AddElectronSF( ModuleConfig & /*config*/ ) const {
 
 #ifdef EXISTS_el_n

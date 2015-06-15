@@ -27,6 +27,7 @@ def main() :
         return
 
     id_vars =['sigmaIEIE', 'chIsoCorr', 'neuIsoCorr', 'phoIsoCorr' ]
+    _pt_order = [('15', '25'), ('25', '40'), ('40', '70'), ('70', '100'), ('100', 'max') ]
 
     all_syst = {}
 
@@ -220,14 +221,13 @@ def main() :
             for reg, reg_data in type_data.iteritems() :
                 all_syst[var][type][reg][ordered_pt[-1]] = all_syst[var][type][reg][ordered_pt[-2]]
 
-        replace_order = [('15', '25'), ('25', '40'), ('40', '70'), ('70', 'max') ]
 
         # don't let higher pt regions have smaller syst than lower pt regions
-        for ptidx, pt in enumerate(replace_order[:-1]) :
+        for ptidx, pt in enumerate(_pt_order[:-1]) :
             for type, type_data in all_syst[var].iteritems() :
                 for reg, reg_data in type_data.iteritems() :
-                    if all_syst[var][type][reg][pt] > all_syst[var][type][reg][replace_order[ptidx+1]] :
-                        all_syst[var][type][reg][replace_order[ptidx+1]] = all_syst[var][type][reg][pt]
+                    if all_syst[var][type][reg][pt] > all_syst[var][type][reg][_pt_order[ptidx+1]] :
+                        all_syst[var][type][reg][_pt_order[ptidx+1]] = all_syst[var][type][reg][pt]
 
     for var in id_vars :
         print 'ID variable %s : ' %var

@@ -1307,7 +1307,14 @@ class SampleManager :
         #configs.sort(reverse=True)
 
         run_cmds = ['%s/RunAnalysis --conf_file %s' %( compile_base, c[1] ) for c in configs ]
-        p=multiprocessing.Pool(6)
+        print run_cmds
+
+        nproc = 6
+        if len(run_cmds) < nproc :
+            nproc = len(run_cmds)
+
+        
+        p=multiprocessing.Pool(nproc)
         p.map(os.system, run_cmds)
 
         file_map = {}

@@ -57,51 +57,55 @@ def main() :
         ROOT.gROOT.SetBatch(True)
 
     if options.electron :
-        MakeElectronPlots(options.outputDir  )
+        MakeElectronPlots(options.outputDir, suffix='', ylabel='Events / bin'  )
+        MakeElectronPlots(options.outputDir, suffix='_perGeV', ylabel = 'Events / 5 GeV', logy=1  )
     if options.muon :
-        MakeMuonPlots(options.outputDir  )
+        MakeMuonPlots(options.outputDir, suffix='', ylabel='Events / bin'  )
+        MakeMuonPlots(options.outputDir, suffix='_perGeV', ylabel = 'Events / 5 GeV',logy=1  )
     if options.combined :
         MakeCombinedPlots( options.outputDir )
 
+    print '^.^ FINSHED ^.^'
+
 #---------------------------------------
-def MakeMuonPlots( outputDir ) :
+def MakeMuonPlots( outputDir, suffix='', ylabel='Events / bin', logy=0 ) :
 
     save = ( outputDir is not None )
 
-    samplesWgg.DrawHist( 'pt_leadph12_mgg', xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancy', 'extra_label' : 'Muon Channel', 'extra_label_loc' : (0.61, 0.6) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio )
+    samplesWgg.DrawHist( 'pt_leadph12_mgg%s' %suffix, xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : 'Muon Channel', 'extra_label_loc' : (0.61, 0.54) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=logy )
 
     if save :
-        name = 'pt_leadph12_mgg'
+        name = 'pt_leadph12_mgg%s' %suffix
         samplesWgg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
         samplesWgg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
     else :
         samplesWgg.DumpStack(doRatio=options.doRatio, details=True )
         raw_input('continue')
 
-    samplesWgg.DrawHist( 'pt_leadph12_mgg_EB-EB', xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Muon Channel}{Barrel-Barrel}', 'extra_label_loc' : (0.61, 0.60) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio )
+    samplesWgg.DrawHist( 'pt_leadph12_mgg_EB-EB%s' %suffix, xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Muon Channel}{Barrel-Barrel}', 'extra_label_loc' : (0.61, 0.52) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=logy )
 
     if save :
-        name = 'pt_leadph12_mgg_EB-EB'
+        name = 'pt_leadph12_mgg_EB-EB%s' %suffix
         samplesWgg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
         samplesWgg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
     else :
         samplesWgg.DumpStack(doRatio=options.doRatio, details=True )
         raw_input('continue')
 
-    samplesWgg.DrawHist( 'pt_leadph12_mgg_EE-EB', xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Muon Channel}{Endcap-Barrel}', 'extra_label_loc' : (0.61, 0.60) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio )
+    samplesWgg.DrawHist( 'pt_leadph12_mgg_EE-EB%s'%suffix, xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Muon Channel}{Endcap-Barrel}', 'extra_label_loc' : (0.61, 0.52) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=logy )
 
     if save :
-        name = 'pt_leadph12_mgg_EE-EB'
+        name = 'pt_leadph12_mgg_EE-EB%s'%suffix
         samplesWgg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
         samplesWgg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
     else :
         samplesWgg.DumpStack(doRatio=options.doRatio, details=True )
         raw_input('continue')
 
-    samplesWgg.DrawHist( 'pt_leadph12_mgg_EB-EE', xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Muon Channel}{Barrel-Endcap}', 'extra_label_loc' : (0.61, 0.60) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio )
+    samplesWgg.DrawHist( 'pt_leadph12_mgg_EB-EE%s'%suffix, xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Muon Channel}{Barrel-Endcap}', 'extra_label_loc' : (0.61, 0.52) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=logy )
 
     if save :
-        name = 'pt_leadph12_mgg_EB-EE'
+        name = 'pt_leadph12_mgg_EB-EE%s'%suffix
         samplesWgg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
         samplesWgg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
     else :
@@ -109,14 +113,14 @@ def MakeMuonPlots( outputDir ) :
         raw_input('continue')
 
 #---------------------------------------
-def MakeElectronPlots( outputDir ) :
+def MakeElectronPlots( outputDir, suffix='', ylabel='Events / bin', logy=0 ) :
 
     save = ( outputDir is not None )
 
-    samplesWgg.DrawHist( 'pt_leadph12_egg', xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancy', 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.61, 0.53) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio )
+    samplesWgg.DrawHist( 'pt_leadph12_egg%s'%suffix, xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.61, 0.46) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=logy )
 
     if save :
-        name = 'pt_leadph12_egg'
+        name = 'pt_leadph12_egg%s'%suffix
         samplesWgg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
         samplesWgg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
     else :
@@ -124,30 +128,30 @@ def MakeElectronPlots( outputDir ) :
         raw_input('continue')
 
 
-    samplesWgg.DrawHist( 'pt_leadph12_egg_EB-EB', xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Electron Channel}{Barrel-Barrel}', 'extra_label_loc' : (0.61, 0.53) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio )
+    samplesWgg.DrawHist( 'pt_leadph12_egg_EB-EB%s'%suffix, xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Electron Channel}{Barrel-Barrel}', 'extra_label_loc' : (0.61, 0.44) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=logy )
 
     if save :
-        name = 'pt_leadph12_egg_EB-EB'
+        name = 'pt_leadph12_egg_EB-EB%s'%suffix
         samplesWgg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
         samplesWgg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
     else :
         samplesWgg.DumpStack(doRatio=options.doRatio, details=True )
         raw_input('continue')
 
-    samplesWgg.DrawHist( 'pt_leadph12_egg_EE-EB', xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Electron Channel}{Endcap-Barrel}', 'extra_label_loc' : (0.61, 0.53) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio )
+    samplesWgg.DrawHist( 'pt_leadph12_egg_EE-EB%s'%suffix, xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Electron Channel}{Endcap-Barrel}', 'extra_label_loc' : (0.61, 0.44) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=logy )
 
     if save :
-        name = 'pt_leadph12_egg_EE-EB'
+        name = 'pt_leadph12_egg_EE-EB%s'%suffix
         samplesWgg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
         samplesWgg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
     else :
         samplesWgg.DumpStack(doRatio=options.doRatio, details=True )
         raw_input('continue')
 
-    samplesWgg.DrawHist( 'pt_leadph12_egg_EB-EE', xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Electron Channel}{Barrel-Endcap}', 'extra_label_loc' : (0.61, 0.53) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio )
+    samplesWgg.DrawHist( 'pt_leadph12_egg_EB-EE%s'%suffix, xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{Electron Channel}{Barrel-Endcap}', 'extra_label_loc' : (0.61, 0.44) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=logy )
 
     if save :
-        name = 'pt_leadph12_egg_EB-EE'
+        name = 'pt_leadph12_egg_EB-EE%s'%suffix
         samplesWgg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
         samplesWgg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
     else :

@@ -58,6 +58,7 @@ class RunModule : public virtual RunModuleBase {
         void AddMuonSF     ( ModuleConfig & config ) const;
         void AddPhotonSF   ( ModuleConfig & config ) const;
         void AddPileupSF   ( ModuleConfig & config ) const;
+        void AddMETUncert   ( ModuleConfig & config ) const;
 
         ValWithErr GetValsFromGraph( const TGraphAsymmErrors *, float pt, bool debug=true ) const;
         float calc_pu_weight( float puval, float mod=1.0 ) const;

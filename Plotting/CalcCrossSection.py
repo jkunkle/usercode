@@ -53,6 +53,7 @@ def main() :
 
         xs_data[ch] = {}
 
+
         for idx, ptmin in enumerate( pt_bins[:-1] ) :
 
             ptmax = pt_bins[idx+1]
@@ -64,7 +65,7 @@ def main() :
             bkg = ufloat( 0.0, 0.0 )
             sig = ufloat( 0.0, 0.0 )
 
-            bkg = bkg + res['detail']['ZggFSR']['bins'][str(idx+4)]['val']
+            bkg = bkg + res['detail']['Zgg']['bins'][str(idx+4)]['val']
             bkg = bkg + res['detail']['JetFake']['bins'][str(idx+4)]['val']
             bkg = bkg + res['detail']['OtherDiPhoton']['bins'][str(idx+4)]['val']
 
@@ -118,7 +119,11 @@ def main() :
 
 
         
+    ofile = open( '%s/cross_section_results.pickle' %(options.baseDir ), 'w' )
 
+    pickle.dump(xs_data, ofile )
+
+    ofile.close()
 
 
 

@@ -16,62 +16,62 @@ base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output'
 
 
 jobs_data = [
-        #(base, 'job_muon_2012a_Jan22rereco'),
-        #(base, 'job_muon_2012b_Jan22rereco'),
+        (base, 'job_muon_2012a_Jan22rereco'),
+        (base, 'job_muon_2012b_Jan22rereco'),
         (base, 'job_muon_2012c_Jan22rereco'),
-        #(base, 'job_muon_2012d_Jan22rereco'),
-        #(base, 'job_electron_2012a_Jan22rereco'),
-        #(base, 'job_electron_2012b_Jan22rereco'),
-        #(base, 'job_electron_2012c_Jan2012rereco'),
-        #(base, 'job_electron_2012d_Jan22rereco'),
+        (base, 'job_muon_2012d_Jan22rereco'),
+        (base, 'job_electron_2012a_Jan22rereco'),
+        (base, 'job_electron_2012b_Jan22rereco'),
+        (base, 'job_electron_2012c_Jan2012rereco'),
+        (base, 'job_electron_2012d_Jan22rereco'),
 ]
 jobs_mc = [
-        #(base, 'job_summer12_Wgg_FSR'),
-        #(base, 'job_summer12_WAA_ISR'),
-        #(base, 'job_summer12_DYJetsToLL'),
-        #(base, 'job_summer12_Wg'),
-        #(base, 'job_summer12_Zg'),
-        #(base, 'job_summer12_Zgg'),
-        #(base, 'job_summer12_Wjets'),
-        #(base, 'job_summer12_ttjets_1l'),
-        #(base, 'job_summer12_ttjets_2l'),
-        #(base, 'job_summer12_WH_ZH_125'),
-        #(base, 'job_summer12_WW_2l2nu'),
-        #(base, 'job_summer12_WZ_2l2q'),
-        #(base, 'job_summer12_WZ_3lnu'),
-        #(base, 'job_summer12_diphoton_box_10to25'),
-        #(base, 'job_summer12_diphoton_box_250toInf'),
-        #(base, 'job_summer12_diphoton_box_25to250'),
+        (base, 'job_summer12_Wgg_FSR'),
+        (base, 'job_summer12_WAA_ISR'),
+        (base, 'job_summer12_DYJetsToLL'),
+        (base, 'job_summer12_Wg'),
+        (base, 'job_summer12_Zg'),
+        (base, 'job_summer12_Zgg'),
+        (base, 'job_summer12_Wjets'),
+        (base, 'job_summer12_ttjets_1l'),
+        (base, 'job_summer12_ttjets_2l'),
+        (base, 'job_summer12_WH_ZH_125'),
+        (base, 'job_summer12_WW_2l2nu'),
+        (base, 'job_summer12_WZ_2l2q'),
+        (base, 'job_summer12_WZ_3lnu'),
+        (base, 'job_summer12_diphoton_box_10to25'),
+        (base, 'job_summer12_diphoton_box_250toInf'),
+        (base, 'job_summer12_diphoton_box_25to250'),
 
-        #(base, 'job_summer12_ggZZ_2l2l'),
-        #(base, 'job_summer12_ggZZ_4l'),
-        #(base, 'job_summer12_ZZZ'),
-        #(base, 'job_summer12_ZZ_2e2mu'),
-        #(base, 'job_summer12_ZZ_2e2tau'),
-        #(base, 'job_summer12_ZZ_2l2nu'),
-        #(base, 'job_summer12_ZZ_2l2q'),
-        #(base, 'job_summer12_ZZ_2mu2tau'),
-        #(base, 'job_summer12_ZZ_2q2nu'),
-        #(base, 'job_summer12_ZZ_4e'),
-        #(base, 'job_summer12_ZZ_4mu'),
-        #(base, 'job_summer12_ZZ_4tau'),
-        #(base, 'job_summer12_WWg'),
-        #(base, 'job_summer12_WZZ'),
-        #(base, 'job_summer12_WWW'),
-        #(base, 'job_summer12_WWZ'),
-        #(base, 'job_summer12_ttg'),
-        #(base, 'job_summer12_t_s'),
-        #(base, 'job_summer12_t_t'),
-        #(base, 'job_summer12_t_tW'),
-        #(base, 'job_summer12_tbar_s'),
-        #(base, 'job_summer12_tbar_t'),
-        #(base, 'job_summer12_tbar_tW'),
-        #(base, 'job_summer12_ttW'),
-        #(base, 'job_summer12_ttZ'),
-        #(base, 'job_jfaulkne_WZA'),
+        (base, 'job_summer12_ggZZ_2l2l'),
+        (base, 'job_summer12_ggZZ_4l'),
+        (base, 'job_summer12_ZZZ'),
+        (base, 'job_summer12_ZZ_2e2mu'),
+        (base, 'job_summer12_ZZ_2e2tau'),
+        (base, 'job_summer12_ZZ_2l2nu'),
+        (base, 'job_summer12_ZZ_2l2q'),
+        (base, 'job_summer12_ZZ_2mu2tau'),
+        (base, 'job_summer12_ZZ_2q2nu'),
+        (base, 'job_summer12_ZZ_4e'),
+        (base, 'job_summer12_ZZ_4mu'),
+        (base, 'job_summer12_ZZ_4tau'),
+        (base, 'job_summer12_WWg'),
+        (base, 'job_summer12_WZZ'),
+        (base, 'job_summer12_WWW'),
+        (base, 'job_summer12_WWZ'),
+        (base, 'job_summer12_ttg'),
+        (base, 'job_summer12_t_s'),
+        (base, 'job_summer12_t_t'),
+        (base, 'job_summer12_t_tW'),
+        (base, 'job_summer12_tbar_s'),
+        (base, 'job_summer12_tbar_t'),
+        (base, 'job_summer12_tbar_tW'),
+        (base, 'job_summer12_ttW'),
+        (base, 'job_summer12_ttZ'),
+        (base, 'job_jfaulkne_WZA'),
 
-        #(base, 'job_summer12_ttjets_1lPhOlap'),
-        #(base, 'job_summer12_ttjets_2lPhOlap'),
+        (base, 'job_summer12_ttjets_1lPhOlap'),
+        (base, 'job_summer12_ttjets_2lPhOlap'),
 
         ##(base, 'job_summer12_ttinclusive'),
         ##(base, 'QCD_Pt-40_doubleEMEnriched'),
@@ -97,32 +97,21 @@ else :
 if options.resubmit :
     command_base += ' --resubmit '
 
-#input = 'LepGammaGammaNoPhID_2014_12_23'
-input = 'LepGammaNoPhID_2015_04_08'
-#input = 'LepGammaGammaFullPhIDElPhScaleUp_2014_11_20'
-#output = 'LepGammaGammaTrigEleOlapUnblindLowPt_2015_01_02'
-#output = 'LepGammaGammaNomUnblindAll_2015_04_08'
-#output = 'LepGammaGammaFinalMuUnblindAll_2015_04_08'
-#output = 'LepGammaGammaFinalMuUnblindLowPt_2015_01_28'
-#output = 'LepGammaGammaNoPhIDVetoPixSeedBoth_2015_04_08'
-#output = 'LepGammaGammaFullPhIDElPhScaleUpFinal_2014_11_20'
-output = 'TEST'
-
 top_configs = [
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-    # 'output_name' : 'LepGammaGammaFinalElUnblindAll_2015_04_15',
-    # 'tag'         : 'elFinal'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-    # 'output_name' : 'LepGammaGammaFinalMuUnblindAll_2015_04_15',
-    # 'tag'         : 'muFinal'
-    #},
+    {   
+     'module'      : 'ConfFilter.py', 
+     'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : True},
+     'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
+     'output_name' : 'LepGammaGammaFinalElUnblindAllLoose_2015_06_10',
+     'tag'         : 'elFinal'
+    },
+    {   
+     'module'      : 'ConfFilter.py', 
+     'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : True},
+     'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
+     'output_name' : 'LepGammaGammaFinalMuUnblindAllLoose_2015_06_10',
+     'tag'         : 'muFinal'
+    },
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_nominal_unblind_noEleVeto', 'blind_pt' : 'None'},
@@ -151,13 +140,13 @@ top_configs = [
     # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_04_12',
     # 'tag'         : 'invSubl'
     #},
-    {   
-     'module'      : 'ConfFilter.py', 
-     'args'        : {'function' : 'make_wgjj'},
-     'input_name'  : 'LepGammaNoPhID_2015_04_11',
-     'output_name' : 'LepGammaJJNoPhID_2015_05_05',
-     'tag'         : 'wgjj'
-    },
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_wgjj'},
+    # 'input_name'  : 'LepGammaNoPhID_2015_04_11',
+    # 'output_name' : 'LepGammaJJNoPhID_2015_05_05',
+    # 'tag'         : 'wgjj'
+    #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_zgjj'},

@@ -320,6 +320,7 @@ namespace OUT {
     std::vector<float>  *jet_eta;
     std::vector<float>  *jet_phi;
     std::vector<float>  *jet_e;
+    std::vector<float>  *jet_JECUnc;
 
     Bool_t              passTrig_ele27WP80;
     Bool_t              passTrig_mu24eta2p1;

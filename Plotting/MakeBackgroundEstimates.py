@@ -463,7 +463,7 @@ def get_jet_fake_results_new( base_dir, file_key, uncertainties, result_dirs, ff
     print calc.alpha_array
     print calc.err_matrix
 
-    return ufloat(central_value, 0.5*max_diff )
+    return ufloat(central_value, final_unc )
 
                 
 def get_ff_var_uncertainties( result_dir,  file_key_ffvar) :

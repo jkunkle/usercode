@@ -1,3 +1,4 @@
+from core import Filter
 
 def get_remove_filter() :
     """ Define list of regex strings to filter input branches to remove from the output.

@@ -12,7 +12,7 @@ options = p.parse_args()
 if not options.run and not options.check :
     options.run = True
 
-base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output'
+base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output'
 base_orig_dy = 'root://eoscms//eos/cms/store/group/phys_smp/ggNtuples/mc'
 base_orig = 'root://eoscms//eos/cms/store/group/phys_egamma/cmkuo/'
 
@@ -95,7 +95,7 @@ else :
 if options.resubmit :
     command_base += ' --resubmit '
 
-input = 'LepGammaGammaFinalMuUnblindAllLoose_2015_06_10'
+input = 'LepGammaGammaTest_2015_06_17'
 output = 'TEST'
 
 module = 'Conf.py'

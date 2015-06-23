@@ -322,6 +322,12 @@ namespace OUT {
     std::vector<float>  *jet_e;
     std::vector<float>  *jet_JECUnc;
 
+    std::vector<int>    *jet_genIndex;
+    std::vector<float>  *jet_genPt;
+    std::vector<float>  *jet_genEta;
+    std::vector<float>  *jet_genPhi;
+    std::vector<float>  *jet_genE;
+
     Bool_t              passTrig_ele27WP80;
     Bool_t              passTrig_mu24eta2p1;
     Bool_t              passTrig_mu24;

@@ -21,17 +21,6 @@ import collections
 
 from SampleManager import SampleManager
 
-
-p = ArgumentParser()
-
-p.add_argument('--outputDir',     default=None,  type=str ,        dest='outputDir',         help='output directory for histograms')
-p.add_argument('--baseDir',     default=None,  type=str ,        dest='baseDir',  required=False,       help='Input directory base')
-p.add_argument('--plotDir',     default='Plots',  type=str ,        dest='plotDir',  required=False,       help='Directory where plots are written')
-p.add_argument('--ptbins',     default='15,25,40,70,1000000',  type=str ,        dest='ptbins',  required=False,       help='PT bins to use')
-p.add_argument('--mtcut',     default='> 40',  type=str ,        dest='mtcut',  required=False,       help='MT cut to use (default : > 40)')
-
-options = p.parse_args()
-
 samplesWelgg = None
 samplesWmugg = None
 samplesWggInvSubl = None
@@ -44,19 +33,8 @@ lead_dr_cut = 0.4
 subl_dr_cut = 0.4
 phot_dr_cut = 0.4
 
-el_cuts = {'elfull' : 
-            'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) && m_ph1_ph2>15 && mt_lep_met %s %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
-           'elzcr' :
-           'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1_ph2-91.2) < 10) && m_ph1_ph2>15 && mt_lep_met %s  %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
-           'elph1zcr' :
-           'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1-91.2) < 10) && m_ph1_ph2>15 && mt_lep_met %s  %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
-           'elph2zcr' :
-           'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph2-91.2) < 10) && m_ph1_ph2>15 && mt_lep_met %s %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
-           'elbase' : 
-           {'invlead' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && mu_n==0 && m_ph1_ph2>15 && mt_lep_met %s %s'%(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
-            'invsubl' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && mu_n==0 && m_ph1_ph2>15 && mt_lep_met %s %s'%(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts)
-          },
-}
+el_cuts = {}
+
 
 _asym_iso_syst = { (0, 0, 0) : 0.0, (5,3,3) : 0.10, (8,5,5) : 0.15, (10, 7, 7) : 0.20, (12, 9, 9) : 0.25, (15,11,11) : 0.30, (20, 16, 16) : 0.5 }
 
@@ -70,6 +48,30 @@ _eta_pt_bin_map_coarse = { ('15', '25') : _ele_eta_bins_coarse, ('25', '40') : _
 
 
 def main() :
+
+    p = ArgumentParser()
+    
+    p.add_argument('--outputDir',     default=None,  type=str ,        dest='outputDir',         help='output directory for histograms')
+    p.add_argument('--baseDir',     default=None,  type=str ,        dest='baseDir',  required=False,       help='Input directory base')
+    p.add_argument('--plotDir',     default='Plots',  type=str ,        dest='plotDir',  required=False,       help='Directory where plots are written')
+    p.add_argument('--ptbins',     default='15,25,40,70,1000000',  type=str ,        dest='ptbins',  required=False,       help='PT bins to use')
+    p.add_argument('--mtcut',     default='> 40',  type=str ,        dest='mtcut',  required=False,       help='MT cut to use (default : > 40)')
+    
+    options = p.parse_args()
+
+    el_cuts = {'elfull' : 
+                'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) && m_ph1_ph2>15 && mt_lep_met %s %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
+               'elzcr' :
+               'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1_ph2-91.2) < 10) && m_ph1_ph2>15 && mt_lep_met %s  %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
+               'elph1zcr' :
+               'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1-91.2) < 10) && m_ph1_ph2>15 && mt_lep_met %s  %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
+               'elph2zcr' :
+               'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph2-91.2) < 10) && m_ph1_ph2>15 && mt_lep_met %s %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
+               'elbase' : 
+               {'invlead' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && mu_n==0 && m_ph1_ph2>15 && mt_lep_met %s %s'%(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
+                'invsubl' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && mu_n==0 && m_ph1_ph2>15 && mt_lep_met %s %s'%(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts)
+              },
+    }
 
 
     global samplesWelgg
@@ -168,10 +170,10 @@ def main() :
         base_dir_ele = options.baseDir
         base_dir_jet = outputDirBase
         
-        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='mu', outputDir=outputDirBase )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='mu', outputDir=outputDirBase )
         MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfull', outputDir=outputDirBase )
-        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullinvpixlead', outputDir=outputDirBase )
-        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullinvpixsubl', outputDir=outputDirBase )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullinvpixlead', outputDir=outputDirBase )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullinvpixsubl', outputDir=outputDirBase )
 
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcr', outputDir=outputDirBase )
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixlead', outputDir=outputDirBase )
@@ -1978,5 +1980,6 @@ class FakeFactorManager :
         print 'Could Not locate FF for entries %s, %s, %s, %s' %( ent1min, ent1max, ent2min, ent2max)
         print self.ff_dict.keys()
         return -1
+
 if __name__ == '__main__' :
     main()

@@ -15,6 +15,8 @@ if not options.run and not options.check :
 #base = '/eos/cms/store/group/phys_egamma/cmkuo/'
 #base = '/eos/cms/store/user/jkunkle/Samples/ggNtuples'
 base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2015_04_05'
+base_nlo = r'/eos/cms/store/user/cranelli/WGamGam/NLO_ggNtuples'
+#base_nlo = r'/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 
 jobs = [
         #(base, 'job_electron_2012a_Jan22rereco'),
@@ -26,11 +28,13 @@ jobs = [
         #(base, 'job_muon_2012c_Jan22rereco'),
         #(base, 'job_muon_2012d_Jan22rereco'),
 
+         (base_nlo, 'job_NLO_WAA_ISR'),
+         #(base_nlo, 'job_NLO_WAA_FSR'),
 
         #(base, 'job_summer12_DYJetsToLL'),
         #(base, 'job_summer12_Zg'),
         #(base, 'job_summer12_Wg'),
-        (base, 'job_summer12_Wjets'),
+        #(base, 'job_summer12_Wjets'),
         #(base, 'job_summer12_ttjets_1l'),
         #(base, 'job_summer12_ttjets_2l'),
         #(base, 'job_summer12_Zgg'),
@@ -105,10 +109,15 @@ if options.resubmit :
 #        first = False
 
 top_configs = [ 
+                #{ 
+                #  'module'      : 'ConfBasic.py',
+                #  'output_name' : 'SingleLeptonLoose_2015_04_10',
+                #  'tag'         : 'singlLep',
+                #},
                 { 
-                  'module'      : 'ConfBasic.py',
-                  'output_name' : 'SingleLeptonLoose_2015_04_10',
-                  'tag'         : 'singlLep',
+                  'module'      : 'ConfTruth.py',
+                  'output_name' : 'WAANLOTruth_2015_06_23',
+                  'tag'         : 'truth',
                 },
 ]
 

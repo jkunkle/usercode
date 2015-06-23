@@ -6,7 +6,7 @@ def get_remove_filter() :
 
 def get_keep_filter() :
 
-    return ['mc.*', 'nMC']
+    return ['mc.*', 'nMC', 'LHE*', 'pdf', 'nPU', 'puTrue']
 
 def config_analysis( alg_list ) :
 

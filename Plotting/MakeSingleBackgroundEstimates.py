@@ -1,16 +1,5 @@
 # Parse command-line options
 from argparse import ArgumentParser
-p = ArgumentParser()
-
-                                                                                       
-p.add_argument('--baseDir',     default=None,  type=str ,        dest='baseDir',  required=True,       help='Input directory base')
-p.add_argument('--plotDir',     default='Plots',  type=str ,        dest='plotDir',  required=False,       help='Directory where plots are written')
-p.add_argument('--ptbins',     default='15,25,40,70,200',  type=str ,        dest='ptbins',  required=False,       help='PT bins to use')
-p.add_argument('--zcr',     default=False,  action='store_true', dest='zcr',   help='Make background estimate to Z control region')
-p.add_argument('--wcr',     default=False,  action='store_true', dest='wcr',   help='Make background estimate to W control region')
-
-options = p.parse_args()
-
 import sys
 import os
 import re
@@ -19,13 +8,23 @@ import uuid
 import copy
 import pickle
 import imp
-import ROOT
 from array import array
 from uncertainties import ufloat
 
+
+p = ArgumentParser()
+
+p.add_argument('--baseDir',     default=None,  type=str ,        dest='baseDir',  required=True,       help='Input directory base')
+p.add_argument('--plotDir',     default='Plots',  type=str ,        dest='plotDir',  required=False,       help='Directory where plots are written')
+p.add_argument('--ptbins',     default='15,25,40,70,200',  type=str ,        dest='ptbins',  required=False,       help='PT bins to use')
+p.add_argument('--zcr',     default=False,  action='store_true', dest='zcr',   help='Make background estimate to Z control region')
+p.add_argument('--wcr',     default=False,  action='store_true', dest='wcr',   help='Make background estimate to W control region')
+
+options = p.parse_args()
+
+import ROOT
 from SampleManager import SampleManager
 from MakeBackgroundEstimates import get_dirs_and_files, get_mapped_directory, save_hist, add_syst_to_hist
-
 ROOT.gROOT.SetBatch(True)
 
 samplesLLG = None
@@ -40,7 +39,7 @@ el_cuts = {
            'singleelw' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==1 && ph_hasPixSeed[0]==1 && dr_ph1_leadLep > %.1f && mu_n==0 ' %( lead_dr_cut ),
            'elw' : 'el_passtrig_n>0 && el_n==1 && ph_medium_n==1 && leadPhot_leadLepDR > %.1f '%( lead_dr_cut ),
            'elwzcr' : 'el_passtrig_n>0 && el_n==1 && ph_medium_n==1 && leadPhot_leadLepDR > %.1f && fabs(m_lepph1-91.2) < 10' %( lead_dr_cut ),
-           'muw' : 'mu_passtrig25_n>0 && mu_n==1 && ph_medium_n==1 && leadPhot_leadLepDR > %.1f ' %(lead_dr_cut ),
+           'muw' : ' mu_passtrig25_n>0 && mu_n==1 && ph_medium_n==1 && leadPhot_leadLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 80 ',
            'el' : 'el_passtrig_n>0 && el_n==2 && ph_medium_n==1 && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f && m_leplep>60 && m_leplepph > 105' %( lead_dr_cut, lead_dr_cut ) ,
            'mu' : 'mu_passtrig25_n>0 && mu_n==2 && ph_medium_n==1 && leadPhot_leadLepDR>%.1f  && leadPhot_sublLepDR>%.1f && el_n==0 && m_leplep>60 && m_leplepph > 105' %( lead_dr_cut, lead_dr_cut ) ,
            'elrealcr' : 'el_passtrig_n>0 && el_n==2 && ph_medium_n==1 && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f && m_leplep>60 && m_leplepph >81 && m_leplepph < 101' %( lead_dr_cut, lead_dr_cut ) ,
@@ -49,11 +48,12 @@ el_cuts = {
 
 def main() :
 
+
     global samplesLLG
     global samplesLG
 
-    baseDirLLG  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_04_11'
-    baseDirLG   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11'
+    baseDirLLG  = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_04_11'
+    baseDirLG   = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
@@ -98,14 +98,16 @@ def main() :
         #file_bin_map_syst = {'ElectronFakeFitsRatioExpBkg' : [(_ptbins[0], _ptbins[1]), (_ptbins[1], _ptbins[2]), (_ptbins[2], _ptbins[3]),(_ptbins[3], 'max') ] }
 
         base_dir_ele_single = options.baseDir
-        base_dir_jet_single = '%s/SinglePhotonResults' %options.baseDir
+        base_dir_jet_single = '%s/SinglePhotonResults/SigmaIEIEFits' %options.baseDir
         outputDirSingle='%s/SinglePhotonWCRBackgroundEstimates' %options.baseDir
 
-        MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst, el_selection='elw', outputDir=outputDirSingle )
-        MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst, el_selection='elwzcr', outputDir=outputDirSingle, namePostfix='__zcr' )
-        MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['elw', 'elwzcr', 'elwinvpixlead', 'elwzcrinvpixlead'],outputDir=outputDirSingle )
+        #MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst, el_selection='elw', outputDir=outputDirSingle )
+        #MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst, el_selection='elwzcr', outputDir=outputDirSingle, namePostfix='__zcr' )
+        #MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['elw', 'elwzcr', 'elwinvpixlead', 'elwzcrinvpixlead'],outputDir=outputDirSingle )
+        MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['muw'],outputDir=outputDirSingle )
 
-        MakeSingleBkgEstimatePlots( outputDirSingle, options.plotDir, channels=['elw', 'elwzcr'] )
+        #MakeSingleBkgEstimatePlots( outputDirSingle, options.plotDir, channels=['elw', 'elwzcr'] )
+        MakeSingleBkgEstimatePlots( outputDirSingle, options.plotDir, channels=['muw'] )
 
     if options.zcr :
 

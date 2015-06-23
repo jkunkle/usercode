@@ -49,8 +49,10 @@ samplesPhOlap= None
 
 #analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 200, 500 ] 
 #analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 200, 500 ] 
-analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 200 ] 
-analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 200 ] 
+analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 150 ] 
+analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 150 ] 
+
+eveto_bins = [15, 20, 25, 30, 40, 50, 70, 1000000]
 
 lead_dr_cut = 0.4
 subl_dr_cut = 0.4
@@ -1171,10 +1173,10 @@ def MakeLepGammaPlots( save=False, detail=100) :
     #-------------------------------------
 
     binnings = [analysis_bins_mgg, analysis_bins_egg, analysis_bins_mgg, analysis_bins_egg, analysis_bins_egg]
-    cuts = [baseline_cuts_mg, baseline_cuts_eg+' && m_lepph1 > 105 ', baseline_cuts_mg+' && mt_lep_met > 60 ', baseline_cuts_eg+' && mt_lep_met > 60  && m_lepph1 > 105', zcr_cuts_eg ]
-    channels  =['Muon', 'Electron', 'Muon', 'Electron', 'Electron']
-    tags = ['mg', 'eg', 'mg', 'eg', 'eg']
-    labels = ['baselineCuts', 'baselineCuts', 'mtCut','mtCut',  'ZCR']
+    cuts = [baseline_cuts_mg, baseline_cuts_eg+' && m_lepph1 > 105 ', baseline_cuts_mg+' && mt_lep_met > 60 ', baseline_cuts_mg+' && mt_lep_met > 60 && ph_hasPixSeed[0]==0 ', baseline_cuts_eg+' && mt_lep_met > 60  && m_lepph1 > 105', zcr_cuts_eg ]
+    channels  =['Muon', 'Electron', 'Muon', 'Muon', 'Electron', 'Electron']
+    tags = ['mg', 'eg', 'mg', 'mg', 'eg', 'eg']
+    labels = ['baselineCuts', 'baselineCuts', 'mtCut', 'mtCutPixSeedVeto', 'mtCut',  'ZCR']
     eta_cuts = ['EB', 'EE']
     eta_labels = ['Barrel photon', 'Endcap photon']
 
@@ -1216,17 +1218,18 @@ def MakeLepGammaPlots( save=False, detail=100) :
                 raw_input('continue')
 
             for idx, min in enumerate(binning_mod[:-1]) :
+ 
                 if min < 15 : 
                     continue
                 max = binning_mod[idx+1]
 
-                samplesWg.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[0] && ph_pt[0]>%d && ph_pt[0]<%d )' %(cut, ec, min, max), (40, 0, 200 ) , hist_config={'logy':1,  'xlabel':'photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{%s Channel}{%s}'%(channel, lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+                samplesWg.Draw('mt_lep_met', ' PUWeight * ( %s && ph_Is%s[0] && ph_pt[0]>%d && ph_pt[0]<%d )' %(cut, ec, min, max), (80, 0, 400 ) , hist_config={'logy':1,  'xlabel':'photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{%s Channel}{%s}'%(channel, lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
                 if save :
                     if idx+2 == len(binning_mod) :
-                        name = 'ph_pt__%s__%s__%s__ptbins_%d-max' %(tag, ec, label, min)
+                        name = 'mt_lep_met__%s__%s__%s__ptbins_%d-max' %(tag, ec, label, min)
                     else :
-                        name = 'ph_pt__%s__%s__%s__ptbins_%d-%d' %(tag, ec, label, min, max)
+                        name = 'mt_lep_met__%s__%s__%s__ptbins_%d-%d' %(tag, ec, label, min, max)
                     samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
                     samplesWg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
                 else :
@@ -1287,6 +1290,32 @@ def MakeLepLepGammaPlots( save=False, detail=100) :
         else :
             samplesLLG.DumpStack( )
             raw_input('continue')
+
+        #---------------------
+        # Plots for photon eveto scale factor
+        #---------------------
+        for idx, ptmin in enumerate( eveto_bins[:-1] ) :
+            ptmax = eveto_bins[idx+1]
+
+            samplesLLG.Draw('m_leplepph', ' PUWeight * ( %s && ph_Is%s[0] && ph_pt[0] > %d && ph_pt[0] < %d && m_leplep > 15 && m_leplep < 80 )' %(baseline_cuts_mmg, ec, ptmin, ptmax), (60, 0, 300 ) , hist_config={'logy':1,  'ymin' : 1, 'ymax' : 50000,  'xlabel':'M_{#mu#mu#gamma} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+
+            if save :
+                name = 'm_leplepph__FSRmedium__mmg__%s__pt_%d-%d' %(ec, ptmin, ptmax)
+                samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
+                samplesLLG.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+            else :
+                samplesLLG.DumpStack( )
+                raw_input('continue')
+
+            samplesLLG.Draw('m_leplepph', ' PUWeight * ( %s && ph_Is%s[0] && ph_hasPixSeed[0]==0 && ph_pt[0] > %d && ph_pt[0] < %d && m_leplep > 15 && m_leplep < 80 )' %(baseline_cuts_mmg, ec, ptmin, ptmax), (60, 0, 300 ) , hist_config={'logy':1,  'ymin' : 1, 'ymax' : 50000,  'xlabel':'M_{#mu#mu#gamma} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+
+            if save :
+                name = 'm_leplepph__FSReveto__mmg__%s__pt_%s-%s' %(ec, ptmin, ptmax)
+                samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
+                samplesLLG.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+            else :
+                samplesLLG.DumpStack( )
+                raw_input('continue')
 
         samplesLLG.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[0] && m_leplep>60)' %(baseline_cuts_eeg, ec), (40, 0, 200 ) , hist_config={'logy':1,  'xlabel':'photon p_{T} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 

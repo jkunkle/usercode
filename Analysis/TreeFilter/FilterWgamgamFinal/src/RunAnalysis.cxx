@@ -828,6 +828,7 @@ void RunModule::BuildTruth( ModuleConfig & config ) const {
     int lepidx = 0;
     int phidx = 0;
     int genphidx = 0;
+
     for( int idx = 0; idx < IN::nMC; ++idx ) {
 
         if( IN::mcStatus->at(idx) == 1 && std::find(accept_pid_lep.begin(), accept_pid_lep.end(), abs(IN::mcPID->at(idx)) ) != accept_pid_lep.end() && std::find(accept_MotherPid_lep.begin(), accept_MotherPid_lep.end(), abs(IN::mcMomPID->at(idx)) ) != accept_MotherPid_lep.end() ) {
@@ -954,6 +955,8 @@ void RunModule::BuildTruth( ModuleConfig & config ) const {
                                         IN::mcEta->at(mcidx),
                                         IN::mcPhi->at(mcidx),
                                         IN::mcE->at(mcidx) );
+
+                    if( qrklv.Pt() < 0.001 ) continue;
 
                     float dr = qrklv.DeltaR( phlv );
                     if( dr < qrkminDR ) {

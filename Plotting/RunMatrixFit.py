@@ -395,7 +395,7 @@ def main() :
         s.deactivate_all_samples()
 
     fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
-    channels = ['mu', 'elfull', 'elfullinvpixsubl', 'elfullinvpixlead']
+    channels = ['elfull', 'elfullinvpixsubl', 'elfullinvpixlead']
     #channels = ['mu', 'elfull']
     #channels = ['elfullinvpixsubl', 'elfullinvpixlead']
     #channels = ['elzcr', 'elzcrinvpixsubl', 'elzcrinvpixlead']
@@ -403,19 +403,20 @@ def main() :
     calculators = []
 
     ##mt_cuts = [' > 40 ' , ' < 40 ' ]
-    #mt_cuts = [' > 40 ' ]
-    mt_cuts = [' < 40 ' ]
+    mt_cuts = [' > 40 ' ]
+    #mt_cuts = [' < 40 ' ]
     #mt_cuts = [' > 0  ' ]
 
     corr_vals = [ (5,3,3), (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
 
     #test_ptbins = [ [70, 1000000], [100, 1000000], [125, 1000000], [150,1000000], [175,1000000], [200,1000000], [225,1000000], [250,1000000], [275,1000000], [300,1000000], [325,1000000], [350,1000000], [375,1000000], [400, 1000000] ]
+    pt_bins = [ 15, 25, 40, 70, 100,1000000] 
     for ch in channels :
         for var in jetfitvars :
             for ffcorr in fftypes :
                 for mtc in mt_cuts :
                     #calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
-                    calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, mt_cut=mtc, outputDir=options.outputDir+'/JetFakeResultsSyst') )
+                    calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, mt_cut=mtc, ptbins=pt_bins, outputDir=options.outputDir+'/JetFakeResultsSyst') )
 
     for cv in corr_vals :
         for ch in channels :
@@ -423,7 +424,7 @@ def main() :
                 for ffcorr in fftypes :
                     for mtc in mt_cuts :
                         #calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
-                        calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, mt_cut=mtc, vals=cv, outputDir=options.outputDir+'/JetFakeResultsSyst') )
+                        calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, mt_cut=mtc, vals=cv, ptbins=pt_bins, outputDir=options.outputDir+'/JetFakeResultsSyst') )
 
     for calc in calculators :
         draw_configs = calc.ConfigHists()

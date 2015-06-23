@@ -192,6 +192,12 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::jet_JECUnc                = 0;
     OUT::jet_e                     = 0;
 
+    OUT::jet_genIndex              = 0;
+    OUT::jet_genPt                 = 0;
+    OUT::jet_genEta                = 0;
+    OUT::jet_genPhi                = 0;
+    OUT::jet_genE                  = 0;
+
     // *************************
     // Declare Branches
     // *************************
@@ -356,6 +362,12 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("jet_phi"                   , &OUT::jet_phi                   );
     outtree->Branch("jet_JECUnc"                , &OUT::jet_JECUnc                );
     outtree->Branch("jet_e"                     , &OUT::jet_e                     );
+
+    outtree->Branch("jet_genIndex"              , &OUT::jet_genIndex              );
+    outtree->Branch("jet_genPt"                 , &OUT::jet_genPt                 );
+    outtree->Branch("jet_genEta"                , &OUT::jet_genEta                );
+    outtree->Branch("jet_genPhi"                , &OUT::jet_genPhi                );
+    outtree->Branch("jet_genE"                  , &OUT::jet_genE                  );
 
     //outtree->Branch("avgPU"              , &OUT::avgPU, "avgPU/F"                        );
     outtree->Branch("PUWeight"       , &OUT::PUWeight    , "PUWeight/F"       );
@@ -1647,7 +1659,13 @@ void RunModule::BuildJet( ModuleConfig & config ) const {
     OUT::jet_phi       -> clear();
     OUT::jet_e         -> clear();
     OUT::jet_JECUnc    -> clear();
+    OUT::jet_genIndex  -> clear();
+    OUT::jet_genPt     -> clear();
+    OUT::jet_genEta    -> clear();
+    OUT::jet_genPhi    -> clear();
+    OUT::jet_genE      -> clear();
     OUT::jet_n          = 0;
+
 
 #ifdef EXISTS_nJet
     for( int idx = 0; idx < IN::nJet; ++idx ) {
@@ -1665,6 +1683,13 @@ void RunModule::BuildJet( ModuleConfig & config ) const {
         OUT::jet_phi       -> push_back(phi);
         OUT::jet_e         -> push_back(en);
         OUT::jet_JECUnc    -> push_back( IN::jetJECUnc->at(idx) );
+
+        OUT::jet_genIndex  ->push_back( IN::jetGenJetIndex->at(idx) );
+        OUT::jet_genPt     ->push_back( IN::jetGenJetPt   ->at(idx) );
+        OUT::jet_genEta    ->push_back( IN::jetGenJetEta  ->at(idx) );
+        OUT::jet_genPhi    ->push_back( IN::jetGenJetPhi  ->at(idx) );
+        OUT::jet_genE      ->push_back( IN::jetGenJetEn   ->at(idx) );
+            
         OUT::jet_n++;
     }
 #endif

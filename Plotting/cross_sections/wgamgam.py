@@ -12,6 +12,8 @@
                   #'WJetsToLNu2'           : { 'n_evt' : 3052436 , 'cross_section' : 6781.0 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'WAA_ISR'                : { 'n_evt' : 1000310  , 'cross_section' : 0.319 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'Wgg_FSR'                : { 'n_evt' : 1003920  , 'cross_section' : 1.84 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
+                  'NLO_WAA_ISR'            : { 'n_evt' : 994907   , 'cross_section' : 0.1592, 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
+                  'NLO_WAA_FSR'            : { 'n_evt' : 996800   , 'cross_section' : 1.137 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'WZ_2l2q'                : { 'n_evt' : 3215990  , 'cross_section' : 5.995 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'WZ_3lnu'                : { 'n_evt' : 2017979  , 'cross_section' : 1.057 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'Wg'                     : { 'n_evt' : 4877150  , 'cross_section' : 553.92 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },

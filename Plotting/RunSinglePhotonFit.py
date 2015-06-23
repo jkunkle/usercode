@@ -33,6 +33,7 @@ p.add_argument('--outputDir',     default=None,  type=str ,        dest='outputD
 p.add_argument('--quiet',     default=False,action='store_true',   dest='quiet',         help='disable information messages')
 p.add_argument('--syst_file',     default=None,  type=str ,        dest='syst_file',         help='Location of systematics file')
 p.add_argument('--fitvar',     default='sigmaIEIE',  type=str ,        dest='fitvar',         help='Variable to use in the fit')
+p.add_argument('--ptbins',     default='15,25,40,70,1000000',  type=str ,        dest='ptbins',         help='list of pt bins')
 
 p.add_argument('--channel', default='mu',  dest='channel', help='run this channel' )
 
@@ -78,11 +79,15 @@ def get_default_draw_commands(ch='mu' ) :
     elif ch == 'elrealcr' :
         gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==2 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && mu_n==0 && m_leplep>60 && m_leplepph > 81 && m_leplepph < 101',}
     elif ch=='muw' :
-        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 80',}
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && leadPhot_leadLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 80',}
     elif ch=='muw_tp_medium' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && leadPhot_leadLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 60',}
     elif ch=='muw_tp_eveto' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && ph_hasPixSeed[0] == 0 && leadPhot_leadLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 60',}
+    elif ch=='muzpeak_tp_eveto' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && ph_hasPixSeed[0]==0 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_HoverE12[0] < 0.05 && m_leplep>81 && m_leplep < 101',}
+    elif ch=='muzpeak_tp_medium' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_HoverE12[0] < 0.05 && m_leplep>81 && m_leplep < 101',}
     elif ch=='elw' :
         gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 &&  leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && mu_n==0 && mt_lep_met > 80',}
     elif ch == 'elwzcr' :
@@ -192,8 +197,8 @@ def main() :
     global sampManLLG
     global sampManFit
 
-    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11/'
-    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_04_11/'
+    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11/'
+    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_04_11/'
     fit_dir  = options.fitPath
 
     sampManLG    = SampleManager(base_dir_lg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
@@ -240,8 +245,7 @@ def RunNomFitting( outputDir = None, ch='mu', fitvar=None) :
         elif fitvar == 'phoIsoCorr' :
             outputDirNom = outputDir + '/SinglePhotonResults/PhoIsoFits/JetSinglePhotonFakeNomIso'
 
-    ptbins = [15, 25, 40, 70, 1000000 ]
-    #ptbins = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 100, 1000000 ]
+    ptbins = [int(x) for x in options.ptbins.split(',') ]
 
     if fitvar == 'sigmaIEIE' :
         iso_cuts_full = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '

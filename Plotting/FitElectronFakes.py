@@ -260,6 +260,110 @@ def get_fit_defaults( histname, useGaussSig=False, useLandauSig=False, usePolyBk
                                                                  'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
                                                                  'fit_min': 40, 'fit_max' : 160 }
 
+    alts['bw_cmsshape']['fit_nom_eta_0.00-0.10_pt_70-100']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.26, 'Power' : 30, 'cms_alpha' : 172, 
+                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 60, 'nbkg' : 130, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_nom_eta_0.10-0.50_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :200 , 'nbkg' : 150, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_0.00-1.44_pt_70-100']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 172, 
+                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.054, 'cms_peak' : 91, 'nsig' :150 , 'nbkg' : 70, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_0.50-1.00_pt_70-100']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 172, 
+                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.054, 'cms_peak' : 91, 'nsig' :150 , 'nbkg' : 70, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_nom_eta_0.50-1.00_pt_70-100']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 172, 
+                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.054, 'cms_peak' : 91, 'nsig' :150 , 'nbkg' : 70, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_0.00-0.10_pt_70-100']    = { 'Bias' : -0.03, 'Width' : 2.5 , 'Cut' : -0.3, 'Power' : 30, 'cms_alpha' : 150, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.02, 'cms_peak' : 87, 'nsig' : 40, 'nbkg' : 40, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_0.10-0.50_pt_70-100']    = { 'Bias' : -0.05, 'Width' : 2 , 'Cut' : -0.2, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 40, 'nbkg' : 40, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_1.00-1.44_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_1.57-2.10_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_nom_eta_2.10-2.40_pt_70-100']    = { 'Bias' : 1.76, 'Width' : 1.7 , 'Cut' : -0.57, 'Power' : 8, 'cms_alpha' : 200, 
+                                                                 'cms_beta' : 0.006, 'cms_gamma' : 0.0002, 'cms_peak' : 88.7, 'nsig' : 80, 'nbkg' : 400, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_2.10-2.40_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+
+    alts['bw_cmsshape']['fit_inv_eta_2.40-2.50_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+
+    alts['bw_cmsshape']['fit_nom_eta_2.40-2.50_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+
+    alts['bw_cmsshape']['fit_nom_eta_1.57-2.50_pt_70-100']    = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -1.2, 'Power' : 30, 'cms_alpha' : 200, 
+                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+
+    alts['bw_cmsshape']['fit_nom_eta_0.00-0.10_pt_100-max']    = { 'Bias' : -0.6, 'Width' : 2.5 , 'Cut' : -0.28, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.008, 'cms_gamma' : 0.01, 'cms_peak' : 88, 'nsig' :50 , 'nbkg' : 10, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_0.00-0.10_pt_100-max']    = { 'Bias' : 2, 'Width' : 2.5 , 'Cut' : -0.8, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.013, 'cms_gamma' : 0.013, 'cms_peak' : 92, 'nsig' :50 , 'nbkg' : 10, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_0.10-0.50_pt_100-max']    = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -3.0, 'Power' : 12, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 94, 'nsig' :200 , 'nbkg' : 150, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_nom_eta_0.10-0.50_pt_100-max']    = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -3.0, 'Power' : 12, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 94, 'nsig' :200 , 'nbkg' : 150, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_nom_eta_0.50-1.00_pt_100-max']    = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -3.0, 'Power' : 12, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 94, 'nsig' :200 , 'nbkg' : 150, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_0.50-1.00_pt_100-max']    = { 'Bias' : -0.6, 'Width' : 2.5 , 'Cut' : -0.3, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 94, 'nsig' :200 , 'nbkg' : 150, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_0.00-1.44_pt_100-max']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 172, 
+                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.054, 'cms_peak' : 91, 'nsig' :150 , 'nbkg' : 70, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_0.50-1.00_pt_100-max']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.001, 'cms_gamma' : 0.01, 'cms_peak' : 88, 'nsig' :150 , 'nbkg' : 70, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_1.00-1.44_pt_100-max']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.001, 'cms_gamma' : 0.01, 'cms_peak' : 88, 'nsig' :150 , 'nbkg' : 70, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_0.00-0.10_pt_100-max']    = { 'Bias' : -0.7, 'Width' : 2 , 'Cut' : -0.2, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.06, 'cms_peak' : 90, 'nsig' : 40, 'nbkg' : 40, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_0.10-0.50_pt_100-max']    = { 'Bias' : -0.05, 'Width' : 2 , 'Cut' : -0.2, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 40, 'nbkg' : 40, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_1.00-1.44_pt_100-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_1.57-2.10_pt_100-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_nom_eta_2.10-2.40_pt_100-max']    = { 'Bias' : 2, 'Width' : 2.5 , 'Cut' : -3.0, 'Power' : 8, 'cms_alpha' : 100, 
+                                                                 'cms_beta' : 0.03, 'cms_gamma' : 0.001, 'cms_peak' : 88.7, 'nsig' : 80, 'nbkg' : 400, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_nom_eta_2.40-2.50_pt_100-max']    = { 'Bias' : 2, 'Width' : 2.5 , 'Cut' : -4.0, 'Power' : 5, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.032, 'cms_peak' : 90.0, 'nsig' : 80, 'nbkg' : 400, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+    alts['bw_cmsshape']['fit_inv_eta_2.10-2.40_pt_100-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -1.4, 'Power' : 10, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+
+    alts['bw_cmsshape']['fit_nom_eta_2.10-2.40_pt_100-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -1.4, 'Power' : 10, 'cms_alpha' : 180, 
+                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+
+    alts['bw_cmsshape']['fit_inv_eta_1.57-2.50_pt_100-max']    = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -1.2, 'Power' : 30, 'cms_alpha' : 200, 
+                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
+                                                                 'fit_min': 40, 'fit_max' : 160 }
+
+
     alts['Gauss_cmsshape']['fit_nom_eta_0.00-0.10_pt_15-25']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 60, 
                                                                  'cms_beta' : 0.03, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 1500, 'nbkg' : 200, 
                                                                  'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
@@ -759,7 +863,7 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
     #pt_bins_80 = [ 70, 100, 1000000 ]
 
     pt_bins = [(15,25), (25,40), (40,70), (15, 40), (15, 70), (15, 1000000) ]
-    pt_bins_80 = [ (70, 1000000) ]
+    pt_bins_80 = [ (70, 100), (100, 1000000) ]
 
     #eta_bins = [-2.5, -2.1, -1.57, -1.44, -0.1, 0.1, 1.44, 1.57, 2.1, 2.5]
     eta_bins = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5) ]

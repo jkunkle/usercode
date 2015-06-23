@@ -8,17 +8,24 @@ import ROOT
 import os
 import pickle
 import collections
+from array import array
 
-_photon_hist_eta_pt_bins = ( 250, 0.0, 2.5, 101, 0, 101 )
+_photon_hist_eta_pt_bins = ( [0, 1.44, 1.57, 2.4], [15,20,25,30,40,50,70,100] )
 
-uncert_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_12_08/SinglePhotonResults/JetSinglePhotonFakeNomIso'
+uncert_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_06_05/SinglePhotonResults/SigmaIEIEFits/JetSinglePhotonFakeNomIso'
 _photon_jet_fake_uncert_files = { 'mmg_eveto' : { 
-                                   ('EB', '15', '25')  : uncert_base+'/results__mu_tp_eveto_tight__EB__pt_15-25.pickle',
-                                   ('EB', '25', '40')  : uncert_base+'/results__mu_tp_eveto_tight__EB__pt_25-40.pickle',
-                                   ('EB', '40', '70')  : uncert_base+'/results__mu_tp_eveto_tight__EB__pt_40-70.pickle',
-                                   ('EE', '15', '25')  : uncert_base+'/results__mu_tp_eveto_tight__EE__pt_15-25.pickle',
-                                   ('EE', '25', '40')  : uncert_base+'/results__mu_tp_eveto_tight__EE__pt_25-40.pickle',
-                                   ('EE', '40', '70')  : uncert_base+'/results__mu_tp_eveto_tight__EE__pt_40-70.pickle',
+                                   ('EB', '15', '20')  : uncert_base+'/results__muzpeak_tp_eveto__EB__pt_15-20.pickle',
+                                   ('EB', '20', '25')  : uncert_base+'/results__muzpeak_tp_eveto__EB__pt_20-25.pickle',
+                                   ('EB', '25', '30')  : uncert_base+'/results__muzpeak_tp_eveto__EB__pt_25-30.pickle',
+                                   ('EB', '30', '40')  : uncert_base+'/results__muzpeak_tp_eveto__EB__pt_30-40.pickle',
+                                   ('EB', '40', '50')  : uncert_base+'/results__muzpeak_tp_eveto__EB__pt_40-50.pickle',
+                                   ('EE', '15', '20')  : uncert_base+'/results__muzpeak_tp_eveto__EE__pt_15-20.pickle',
+                                   ('EE', '20', '25')  : uncert_base+'/results__muzpeak_tp_eveto__EE__pt_20-25.pickle',
+                                   ('EE', '25', '30')  : uncert_base+'/results__muzpeak_tp_eveto__EE__pt_25-30.pickle',
+                                   ('EE', '30', '40')  : uncert_base+'/results__muzpeak_tp_eveto__EE__pt_30-40.pickle',
+                                   ('EE', '40', '50')  : uncert_base+'/results__muzpeak_tp_eveto__EE__pt_40-50.pickle',
+                                   ('EB', '50', '70')  : uncert_base+'/results__muzpeak_tp_eveto__EB__pt_50-70.pickle',
+                                   ('EE', '50', '70')  : uncert_base+'/results__muzpeak_tp_eveto__EE__pt_50-70.pickle',
                                  },
                                   'mg_eveto_highpt' : {
                                    ('EB', '70', 'max') : uncert_base+'/results__muw_tp_eveto__EB__pt_70-max.pickle',
@@ -26,12 +33,18 @@ _photon_jet_fake_uncert_files = { 'mmg_eveto' : {
                                   },
 
                                   'mmg_medium' : {
-                                   ('EB', '15', '25')  : uncert_base+'/results__mu_tp_medium_tight__EB__pt_15-25.pickle',
-                                   ('EB', '25', '40')  : uncert_base+'/results__mu_tp_medium_tight__EB__pt_25-40.pickle',
-                                   ('EB', '40', '70')  : uncert_base+'/results__mu_tp_medium_tight__EB__pt_40-70.pickle',
-                                   ('EE', '15', '25')  : uncert_base+'/results__mu_tp_medium_tight__EE__pt_15-25.pickle',
-                                   ('EE', '25', '40')  : uncert_base+'/results__mu_tp_medium_tight__EE__pt_25-40.pickle',
-                                   ('EE', '40', '70')  : uncert_base+'/results__mu_tp_medium_tight__EE__pt_40-70.pickle',
+                                   ('EB', '15', '20')  : uncert_base+'/results__muzpeak_tp_medium__EB__pt_15-20.pickle',
+                                   ('EB', '20', '25')  : uncert_base+'/results__muzpeak_tp_medium__EB__pt_20-25.pickle',
+                                   ('EB', '25', '30')  : uncert_base+'/results__muzpeak_tp_medium__EB__pt_25-30.pickle',
+                                   ('EB', '30', '40')  : uncert_base+'/results__muzpeak_tp_medium__EB__pt_30-40.pickle',
+                                   ('EB', '40', '50')  : uncert_base+'/results__muzpeak_tp_medium__EB__pt_40-50.pickle',
+                                   ('EE', '15', '20')  : uncert_base+'/results__muzpeak_tp_medium__EE__pt_15-20.pickle',
+                                   ('EE', '20', '25')  : uncert_base+'/results__muzpeak_tp_medium__EE__pt_20-25.pickle',
+                                   ('EE', '25', '30')  : uncert_base+'/results__muzpeak_tp_medium__EE__pt_25-30.pickle',
+                                   ('EE', '30', '40')  : uncert_base+'/results__muzpeak_tp_medium__EE__pt_30-40.pickle',
+                                   ('EE', '40', '50')  : uncert_base+'/results__muzpeak_tp_medium__EE__pt_40-50.pickle',
+                                   ('EB', '50', '70')  : uncert_base+'/results__muzpeak_tp_medium__EB__pt_50-70.pickle',
+                                   ('EE', '50', '70')  : uncert_base+'/results__muzpeak_tp_medium__EE__pt_50-70.pickle',
                                   },
                                   'mg_medium_highpt' : {
                                    ('EB', '70', 'max') : uncert_base+'/results__muw_tp_medium__EB__pt_70-max.pickle',
@@ -68,7 +81,7 @@ def get_normalization_draw_commands_in( ch ) :
     if   ch=='mmg_medium' :
         return 'mu_passtrig25_n>0 && mu_n>1 && ph_n==1 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep > 81 && m_leplep < 101'
     elif ch=='mmg_eveto' :
-        return 'mu_passtrig25_n>0 && mu_n>1 && ph_n==1 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep > 81 && m_leplep < 101'
+        return 'mu_passtrig25_n>0 && mu_n>1 && ph_n==1 && ph_hasPixSeed[0]==0 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep > 81 && m_leplep < 101'
     else :
         return None
 
@@ -77,7 +90,7 @@ def get_normalization_draw_commands_out( ch ) :
     if   ch=='mmg_medium' :
         return 'mu_passtrig25_n>0 && mu_n>1 && ph_n==1 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep < 80 && m_leplep > 15 && m_leplepph > 76 && m_leplepph < 106'
     elif ch=='mmg_eveto' :
-        return 'mu_passtrig25_n>0 && mu_n>1 && ph_n==1 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep < 80 && m_leplep > 15 && m_leplepph > 76 && m_leplepph < 106'
+        return 'mu_passtrig25_n>0 && mu_n>1 && ph_n==1 && ph_hasPixSeed[0]==0 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep < 80 && m_leplep > 15 && m_leplepph > 76 && m_leplepph < 106'
     else :
         return None
 
@@ -99,8 +112,8 @@ def main() :
     global sampManMMG
     global sampManMG
 
-    base_dir_mmg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2014_12_23'
-    base_dir_mg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2014_12_23'
+    base_dir_mmg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_04_11'
+    base_dir_mg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
@@ -123,19 +136,24 @@ def main() :
         subdir = 'PhotonEfficiencies'
         outputDir = options.outputDir + '/' + subdir
 
-        pt_bins = [15, 25, 40, 70]
+        pt_bins = [15, 20, 25, 30, 40, 50, 70]
 
         #eff_medium_data = GetPhotonEfficiencies( data_sample='Muon'  , numerator = 'mmg_medium', denominator='mmg_loose' , pt_bins=pt_bins, bkg_sample='DYJetsToLLPhOlap', outputDir=outputDir+'/DataLLCut' )
         eff_eveto_data  = GetPhotonEfficiencies( data_sample='Muon'  , numerator = 'mmg_eveto' , denominator='mmg_medium', pt_bins=pt_bins, bkg_sample='DYJetsToLLPhOlap', outputDir=outputDir+'/DataLLCut' )
         #eff_medium_mc   = GetPhotonEfficiencies( data_sample='Zgamma', numerator = 'mmg_medium', denominator='mmg_loose' , pt_bins=pt_bins, bkg_sample=None, outputDir=outputDir+'/MCLLCut' )
         eff_eveto_mc    = GetPhotonEfficiencies( data_sample='Zgamma', numerator = 'mmg_eveto' , denominator='mmg_medium', pt_bins=pt_bins, bkg_sample=None, outputDir=outputDir+'/MCLLCut' )
 
-        pt_min_high = 70
+        pt_bins_high = [70]
 
         #eff_medium_data = GetPhotonEfficienciesHighPt( data_sample='Muon'  , numerator='mmg_medium', denominator='mmg_loose' , pt_min=pt_min_high, outputDir=outputDir+'/DataLLCut' )
-        eff_eveto_data_highpt  = GetPhotonEfficienciesHighPt( data_sample='Muon'  , numerator='mg_eveto_highpt' , denominator='mg_medium_highpt', minpt=pt_min_high, useBkgEstimate=True, outputDir=outputDir+'/DataLLCut' )
+        eff_eveto_data_highpt  = GetPhotonEfficienciesHighPt( data_sample='Muon'  , numerator='mg_eveto_highpt' , denominator='mg_medium_highpt', ptbins=pt_bins_high, useBkgEstimate=True, outputDir=outputDir+'/DataLLCut' )
         #eff_medium_mc   = GetPhotonEfficienciesHighPt( data_sample='Zgamma', numerator='mmg_medium', denominator='mmg_loose' , pt_min=pt_min_high, outputDir=outputDir+'/MCLLCut' )
-        eff_eveto_mc_highpt    = GetPhotonEfficienciesHighPt( data_sample='Wgamma', numerator='mg_eveto_highpt' , denominator='mg_medium_highpt', minpt=pt_min_high, useBkgEstimate=False, outputDir=outputDir+'/MCLLCut' )
+        eff_eveto_mc_highpt    = GetPhotonEfficienciesHighPt( data_sample='Wgamma', numerator='mg_eveto_highpt' , denominator='mg_medium_highpt', ptbins=pt_bins_high, useBkgEstimate=False, outputDir=outputDir+'/MCLLCut' )
+
+        for bin, eff in eff_eveto_data_highpt.iteritems() :
+            eff_eveto_data[bin] = eff
+        for bin, eff in eff_eveto_mc_highpt.iteritems() :
+            eff_eveto_mc[bin] = eff
 
         print 'Eveto data '
         for bin, eff in eff_eveto_data.iteritems() :
@@ -145,22 +163,13 @@ def main() :
         for bin, eff in eff_eveto_mc.iteritems() :
             print 'Bin = %s, eff = %s' %(bin, eff)
 
-        print 'Eveto data HighPt'
-        for bin, eff in eff_eveto_data_highpt.iteritems() :
-            print 'Bin = %s, eff = %s' %(bin, eff)
-
-        print 'Eveto MC HighPt'
-        for bin, eff in eff_eveto_mc_highpt.iteritems() :
-            print 'Bin = %s, eff = %s' %(bin, eff)
-
-
         #MakeScaleFactor( eff_medium_data, eff_medium_mc, tag='sf_medium_nom' , binning=_photon_hist_eta_pt_bins, outputDir=outputDir )
         MakeScaleFactor( eff_eveto_data , eff_eveto_mc , tag='sf_eveto_nom'  , binning=_photon_hist_eta_pt_bins, outputDir=outputDir )
-        MakeScaleFactor( eff_eveto_data_highpt , eff_eveto_mc_highpt , tag='sf_eveto_highpt'  , binning=_photon_hist_eta_pt_bins, outputDir=outputDir )
+        #MakeScaleFactor( eff_eveto_data_highpt , eff_eveto_mc_highpt , tag='sf_eveto_highpt'  , binning=_photon_hist_eta_pt_bins, outputDir=outputDir )
         #MakeScaleFactor( eff_medium_data_llcut, eff_medium_mc_llcut, tag='sf_medium_llcut' , binning=_photon_hist_eta_pt_bins, outputDir=outputDir )
         #MakeScaleFactor( eff_eveto_data_llcut , eff_eveto_mc_llcut , tag='sf_eveto_llcut'  , binning=_photon_hist_eta_pt_bins, outputDir=outputDir )
 
-def GetPhotonEfficienciesHighPt( data_sample, numerator, denominator, minpt=70, useBkgEstimate=False,  outputDir=None ) :
+def GetPhotonEfficienciesHighPt( data_sample, numerator, denominator, ptbins=[], useBkgEstimate=False,  outputDir=None ) :
 
     eta_reg = ['EB', 'EE']
 
@@ -177,22 +186,30 @@ def GetPhotonEfficienciesHighPt( data_sample, numerator, denominator, minpt=70, 
             etamin = 1.57
             etamax = 2.50
 
-        label_num = 'hist_num_%s_%s_%d-max' %( numerator, reg, minpt)
-        label_den = 'hist_den_%s_%s_%d-max' %( denominator, reg, minpt)
+        for idx, minpt in enumerate( ptbins ) :
+            if idx == (len(ptbins)-1) :
+                maxpt = 'max'
+                ptstr = '%d-max' %minpt
+            else :
+                maxpt = ptbins[idx+1]
+                ptstr = '%d-%d' %(minpt, maxpt)
 
-        bin = ( str(etamin), str(etamax), str(minpt), 'max' )
+            label_num = 'hist_num_%s_%s_%s' %( numerator, reg, ptstr)
+            label_den = 'hist_den_%s_%s_%s' %( denominator, reg, ptstr)
 
-        # ----------------------------
-        # Numerator
-        # ----------------------------
+            bin = ( str(etamin), str(etamax), str(minpt), str(maxpt) )
 
-        eff_num = GetEfficiencyIntegralsHighPt( data_sample=data_sample, draw_tag=numerator, label=label_num, eta_reg=reg, minpt=minpt, useBkgEstimate=useBkgEstimate)
-        eff_den = GetEfficiencyIntegralsHighPt( data_sample=data_sample, draw_tag=denominator, label=label_den, eta_reg=reg, minpt=minpt, useBkgEstimate=useBkgEstimate)
+            # ----------------------------
+            # Numerator
+            # ----------------------------
 
-        results[bin] = {}
-        results[bin]['num'] = eff_num
-        results[bin]['den'] = eff_den
-        results[bin]['eff'] = eff_num['result']/eff_den['result']
+            eff_num = GetEfficiencyIntegralsHighPt( data_sample=data_sample, draw_tag=numerator, label=label_num, eta_reg=reg, minpt=minpt, maxpt=maxpt, useBkgEstimate=useBkgEstimate)
+            eff_den = GetEfficiencyIntegralsHighPt( data_sample=data_sample, draw_tag=denominator, label=label_den, eta_reg=reg, minpt=minpt, maxpt=maxpt, useBkgEstimate=useBkgEstimate)
+
+            results[bin] = {}
+            results[bin]['num'] = eff_num
+            results[bin]['den'] = eff_den
+            results[bin]['eff'] = eff_num['result']/eff_den['result']
 
     return results
 
@@ -327,7 +344,7 @@ def GetEfficiencyIntegrals( data_sample, draw_tag, label, eta_reg, minpt, maxpt,
         results['result'] = val_data
         return results
 
-def GetEfficiencyIntegralsHighPt( data_sample, draw_tag, label, eta_reg, minpt, useBkgEstimate=False ) :
+def GetEfficiencyIntegralsHighPt( data_sample, draw_tag, label, eta_reg, minpt, maxpt='max', useBkgEstimate=False ) :
 
     mass_binning = (200, 0, 200 )
 
@@ -335,6 +352,8 @@ def GetEfficiencyIntegralsHighPt( data_sample, draw_tag, label, eta_reg, minpt, 
 
     draw_base = get_default_draw_commands( draw_tag )
     draw_full = '%s && ph_Is%s[0] && ph_pt[0] > %d ' %( draw_base, eta_reg, minpt )
+    if maxpt != 'max' :
+        draw_full += ' && ph_pt[0] < %d' %maxpt
 
     hist_data = clone_sample_and_draw( sampManMG, data_samp[0], 'mt_lep_met', 'PUWeight * ( %s )' %draw_full, mass_binning )
     hist_data.SetName( label+'_data' )
@@ -342,7 +361,7 @@ def GetEfficiencyIntegralsHighPt( data_sample, draw_tag, label, eta_reg, minpt, 
     err_data = ROOT.Double()
     int_data = hist_data.IntegralAndError(  1, hist_data.GetNbinsX(), err_data )
 
-    reg_bin = ( eta_reg, str(minpt), 'max')
+    reg_bin = ( eta_reg, str(minpt), str(maxpt))
 
     if useBkgEstimate :
 
@@ -375,7 +394,9 @@ def GetEfficiencyIntegralsHighPt( data_sample, draw_tag, label, eta_reg, minpt, 
         return results
 
 def MakeScaleFactor( numerator, denominator, tag, binning, outputDir=None ) :
+    
 
+    # numerator is data, denominator is MC
     scale_factors = {}
     for bin, res_num in numerator.iteritems() :
 
@@ -394,7 +415,7 @@ def MakeScaleFactor( numerator, denominator, tag, binning, outputDir=None ) :
             scale_factors[bin] = res_num['eff'] / res_den['eff']
 
 
-    hist_sf = ROOT.TH2F( 'hist_%s' %tag, 'hist_%s' %tag, *binning )
+    hist_sf = ROOT.TH2F( 'hist_%s' %tag, 'hist_%s' %tag, len(binning[0])-1, array( 'f', binning[0]), len(binning[1])-1, array('f', binning[1]) )
 
     print 'GOt Scale factor'
     print scale_factors
@@ -416,12 +437,21 @@ def MakeScaleFactor( numerator, denominator, tag, binning, outputDir=None ) :
         if not os.path.isdir( outputDir ) :
             os.makedirs( outputDir )
         file_sf = ROOT.TFile.Open( '%s/hist_%s.root' %( outputDir, tag ), 'RECREATE' )
+        print 'Write root file ', file_sf.GetName()
         hist_sf.Write()
         file_sf.Close()
 
         file_pick = open( '%s/results_%s.pickle' %(outputDir, tag), 'w' )
         pickle.dump( scale_factors, file_pick )
         file_pick.close()
+
+        file_num = open( '%s/details_data_%s.pickle' %(outputDir, tag), 'w' )
+        pickle.dump( numerator, file_num )
+        file_num.close()
+
+        file_den = open( '%s/details_mc_%s.pickle' %(outputDir, tag), 'w' )
+        pickle.dump( denominator, file_den )
+        file_den.close()
 
 def pair_pt_eta_bins( bin_list ) :
 

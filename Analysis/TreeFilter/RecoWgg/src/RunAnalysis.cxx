@@ -2401,7 +2401,7 @@ float RunModule::calc_pu_weight( float puval, float mod ) const {
     float val_sample = puweight_sample_hist->GetBinContent( bin_sample );
 
 
-    float num = val_data/tot_data;
+    float num = val_data*mod/tot_data;
     float den = val_sample/tot_sample;
 
     float weight = num/den;

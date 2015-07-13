@@ -12,7 +12,7 @@ options = p.parse_args()
 if not options.run and not options.check :
     options.run = True
 
-base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output'
+base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output'
 
 
 jobs_data = [
@@ -26,23 +26,25 @@ jobs_data = [
         (base, 'job_electron_2012d_Jan22rereco'),
 ]
 jobs_mc = [
+        (base, 'job_NLO_WAA_FSR'),
+        (base, 'job_NLO_WAA_ISR'),
         (base, 'job_summer12_Wgg_FSR'),
         (base, 'job_summer12_WAA_ISR'),
+        (base, 'job_summer12_Zgg'),
         (base, 'job_summer12_DYJetsToLL'),
         (base, 'job_summer12_Wg'),
         (base, 'job_summer12_Zg'),
-        (base, 'job_summer12_Zgg'),
         (base, 'job_summer12_Wjets'),
-        (base, 'job_summer12_ttjets_1l'),
-        (base, 'job_summer12_ttjets_2l'),
+        (base, 'job_summer12_ttjets_1lPhOlap'),
+        (base, 'job_summer12_ttjets_2lPhOlap'),
         (base, 'job_summer12_WH_ZH_125'),
         (base, 'job_summer12_WW_2l2nu'),
         (base, 'job_summer12_WZ_2l2q'),
         (base, 'job_summer12_WZ_3lnu'),
-        (base, 'job_summer12_diphoton_box_10to25'),
-        (base, 'job_summer12_diphoton_box_250toInf'),
-        (base, 'job_summer12_diphoton_box_25to250'),
 
+        (base, 'job_summer12_DYJetsToLLPhOlap'),
+        (base, 'job_summer12_WgPhOlap'),
+        (base, 'job_summer12_WjetsPhOlap'),
         (base, 'job_summer12_ggZZ_2l2l'),
         (base, 'job_summer12_ggZZ_4l'),
         (base, 'job_summer12_ZZZ'),
@@ -70,16 +72,19 @@ jobs_mc = [
         (base, 'job_summer12_ttZ'),
         (base, 'job_jfaulkne_WZA'),
 
+        #(base, 'job_summer12_diphoton_box_10to25'),
+        #(base, 'job_summer12_diphoton_box_250toInf'),
+        #(base, 'job_summer12_diphoton_box_25to250'),
         (base, 'job_summer12_ttjets_1lPhOlap'),
         (base, 'job_summer12_ttjets_2lPhOlap'),
 
-        ##(base, 'job_summer12_ttinclusive'),
-        ##(base, 'QCD_Pt-40_doubleEMEnriched'),
-        ##(base, 'job_summer12_WgPt50-130'),
-        ##(base, 'job_summer12_WgPt130'),
-        ##(base, 'job_summer12_WgPt30-50'),
-        ##(base, 'job_summer12_WgPt20-30'),
-        ##(base, 'job_summer12_DiPhotonBorn_Pt-10To25'),
+        ###(base, 'job_summer12_ttinclusive'),
+        ###(base, 'QCD_Pt-40_doubleEMEnriched'),
+        ###(base, 'job_summer12_WgPt50-130'),
+        ###(base, 'job_summer12_WgPt130'),
+        ###(base, 'job_summer12_WgPt30-50'),
+        ###(base, 'job_summer12_WgPt20-30'),
+        ###(base, 'job_summer12_DiPhotonBorn_Pt-10To25'),
 ]
 
 if options.local :
@@ -98,62 +103,300 @@ if options.resubmit :
     command_base += ' --resubmit '
 
 top_configs = [
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 40 '},
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
+    # 'output_name' : 'LepGammaGammaFinalMuUnblindAll_2015_07_05',
+    # 'tag'         : 'muFinal'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 40 '},
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
+    # 'output_name' : 'LepGammaGammaFinalElUnblindAll_2015_07_05',
+    # 'tag'         : 'elFinal'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 0 ', 'zmasscr' : True },
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
+    # 'output_name' : 'LepGammaGammaFinalElZCR_2015_07_02',
+    # 'tag'         : 'elFinalInvPixLead'
+    #},
     {   
      'module'      : 'ConfFilter.py', 
-     'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : True},
+     'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 0 ', 'nozmass' : True , 'invpixsubl' : True },
      'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-     'output_name' : 'LepGammaGammaFinalElUnblindAllLoose_2015_06_10',
-     'tag'         : 'elFinal'
+     'output_name' : 'LepGammaGammaFinalElNoZCutInvPixSubl_2015_07_02',
+     'tag'         : 'elFinalInvPixSubl'
     },
     {   
      'module'      : 'ConfFilter.py', 
-     'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : True},
+     'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 0 ', 'nozmass' : True , 'invpixlead' : True },
      'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-     'output_name' : 'LepGammaGammaFinalMuUnblindAllLoose_2015_06_10',
-     'tag'         : 'muFinal'
+     'output_name' : 'LepGammaGammaFinalElNoZCutInvPixLead_2015_07_06',
+     'tag'         : 'elFinalInvPixLead'
     },
     #{   
     # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_nominal_unblind_noEleVeto', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-    # 'output_name' : 'LepGammaGammaNomUnblindAllNoEleVeto_2015_04_12',
-    # 'tag'         : 'nomUnblind'
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertMuonUP'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMetUncertMuonUPFinal_2015_06_29',
+    # 'tag'         : 'muFinalMETMUUP'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_looseID_bothEleVeto', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-    # 'output_name' : 'LepGammaGammaNoPhIDVetoPixSeedBoth_2015_04_12',
-    # 'tag'         : 'vetoBoth'
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertMuonDN'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMetUncertMuonDNFinal_2015_06_29',
+    # 'tag'         : 'muFinalMETMUDN'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_looseID_invEleVetoLead', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedLead_2015_04_12',
-    # 'tag'         : 'invLead'
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertEMUP'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMetUncertEMUPFinal_2015_06_29',
+    # 'tag'         : 'muFinalMETEMUP'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_looseID_invEleVetoSubl', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_04_12',
-    # 'tag'         : 'invSubl'
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertEMDN'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMetUncertEMDNFinal_2015_06_29',
+    # 'tag'         : 'muFinalMETEMDN'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_wgjj'},
-    # 'input_name'  : 'LepGammaNoPhID_2015_04_11',
-    # 'output_name' : 'LepGammaJJNoPhID_2015_05_05',
-    # 'tag'         : 'wgjj'
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertJESUP'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMetUncertJESUPFinal_2015_06_29',
+    # 'tag'         : 'muFinalMETJESUP'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_zgjj'},
-    # 'input_name'  : 'LepLepGammaNoPhID_2015_04_11',
-    # 'output_name' : 'LepLepGammaJJNoPhID_2015_05_05',
-    # 'tag'         : 'zgjj'
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertJESDN'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMetUncertJESDNFinal_2015_06_29',
+    # 'tag'         : 'muFinalMETJESDN'
     #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertJERUP'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMetUncertJERUPFinal_2015_06_29',
+    # 'tag'         : 'muFinalMETJERUP'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertJERDN'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMetUncertJERDNFinal_2015_06_29',
+    # 'tag'         : 'muFinalMETJERDN'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertUnClusUP'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMetUncertUnClusUPFinal_2015_06_29',
+    # 'tag'         : 'muFinalMETUnClusUP'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertUnClusDN'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMetUncertUnClusDNFinal_2015_06_29',
+    # 'tag'         : 'muFinalMETUnClusDN'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertMuonUP'},
+    # 'input_name'  : 'LepGammaGammaFinalElMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMetUncertMuonUPFinal_2015_06_29',
+    # 'tag'         : 'elFinalMETMUUP'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertMuonDN'},
+    # 'input_name'  : 'LepGammaGammaFinalElMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMetUncertMuonDNFinal_2015_06_29',
+    # 'tag'         : 'elFinalMETMUDN'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertEMUP'},
+    # 'input_name'  : 'LepGammaGammaFinalElMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMetUncertEMUPFinal_2015_06_29',
+    # 'tag'         : 'elFinalMETEMUP'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertEMDN'},
+    # 'input_name'  : 'LepGammaGammaFinalElMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMetUncertEMDNFinal_2015_06_29',
+    # 'tag'         : 'elFinalMETEMDN'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertJESUP'},
+    # 'input_name'  : 'LepGammaGammaFinalElMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMetUncertJESUPFinal_2015_06_29',
+    # 'tag'         : 'elFinalMETJESUP'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertJESDN'},
+    # 'input_name'  : 'LepGammaGammaFinalElMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMetUncertJESDNFinal_2015_06_29',
+    # 'tag'         : 'elFinalMETJESDN'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertJERUP'},
+    # 'input_name'  : 'LepGammaGammaFinalElMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMetUncertJERUPFinal_2015_06_29',
+    # 'tag'         : 'elFinalMETJERUP'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertJERDN'},
+    # 'input_name'  : 'LepGammaGammaFinalElMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMetUncertJERDNFinal_2015_06_29',
+    # 'tag'         : 'elFinalMETJERDN'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertUnClusUP'},
+    # 'input_name'  : 'LepGammaGammaFinalElMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMetUncertUnClusUPFinal_2015_06_29',
+    # 'tag'         : 'elFinalMETUnClusUP'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertUnClusDN'},
+    # 'input_name'  : 'LepGammaGammaFinalElMETUncert_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMetUncertUnClusDNFinal_2015_06_29',
+    # 'tag'         : 'elFinalMETUnClusDN'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_met'},
+    # 'input_name'  : 'LepGammaGammaFinalMuEGammaEScaleUP_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuEGammaEScaleUPFinal_2015_06_29',
+    # 'tag'         : 'muFinalEGUP'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_met'},
+    # 'input_name'  : 'LepGammaGammaFinalMuEGammaEScaleDN_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuEGammaEScaleDNFinal_2015_06_29',
+    # 'tag'         : 'muFinalEGDN'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_met'},
+    # 'input_name'  : 'LepGammaGammaFinalElEGammaEScaleUP_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElEGammaEScaleUPFinal_2015_06_29',
+    # 'tag'         : 'elFinalEGUP'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_met'},
+    # 'input_name'  : 'LepGammaGammaFinalElEGammaEScaleDN_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElEGammaEScaleDNFinal_2015_06_29',
+    # 'tag'         : 'elFinalEGDN'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_met'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMuonEScaleUP_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMuonEScaleUPFinal_2015_06_29',
+    # 'tag'         : 'muFinalMUUP'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_met'},
+    # 'input_name'  : 'LepGammaGammaFinalMuMuonEScaleDN_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalMuMuonEScaleDNFinal_2015_06_29',
+    # 'tag'         : 'muFinalMUDN'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_met'},
+    # 'input_name'  : 'LepGammaGammaFinalElMuonEScaleUP_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMuonEScaleUPFinal_2015_06_29',
+    # 'tag'         : 'elFinalMUUP'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_met'},
+    # 'input_name'  : 'LepGammaGammaFinalElMuonEScaleDN_2015_06_29',
+    # 'output_name' : 'LepGammaGammaFinalElMuonEScaleDNFinal_2015_06_29',
+    # 'tag'         : 'elFinalMUDN'
+    #},
+    ##{   
+    ## 'module'      : 'ConfFilter.py', 
+    ## 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False},
+    ## 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
+    ## 'output_name' : 'LepGammaGammaFinalMuUnblindAll_2015_04_12',
+    ## 'tag'         : 'muFinal'
+    ##},
+    ##{   
+    ## 'module'      : 'ConfFilter.py', 
+    ## 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : True, 'notrig' : True},
+    ## 'input_name'  : 'LepGammaGammaNoPhIDSoft_2015_06_29',
+    ## 'output_name' : 'LepGammaGammaFinalElLowPtLoose_2015_06_29',
+    ## 'tag'         : 'elFinal'
+    ##},
+    ##{   
+    ## 'module'      : 'ConfFilter.py', 
+    ## 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : True, 'notrig' : True},
+    ## 'input_name'  : 'LepGammaGammaNoPhIDSoft_2015_06_29',
+    ## 'output_name' : 'LepGammaGammaFinalMuLowPtLoose_2015_06_29',
+    ## 'tag'         : 'muFinal'
+    ##},
+    ##{   
+    ## 'module'      : 'ConfFilter.py', 
+    ## 'args'        : {'function' : 'make_nominal_unblind_noEleVeto', 'blind_pt' : 'None'},
+    ## 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
+    ## 'output_name' : 'LepGammaGammaNomUnblindAllNoEleVeto_2015_04_12',
+    ## 'tag'         : 'nomUnblind'
+    ##},
+    ##{   
+    ## 'module'      : 'ConfFilter.py', 
+    ## 'args'        : {'function' : 'make_looseID_bothEleVeto', 'blind_pt' : 'None'},
+    ## 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
+    ## 'output_name' : 'LepGammaGammaNoPhIDVetoPixSeedBoth_2015_04_12',
+    ## 'tag'         : 'vetoBoth'
+    ##},
+    ##{   
+    ## 'module'      : 'ConfFilter.py', 
+    ## 'args'        : {'function' : 'make_looseID_invEleVetoLead', 'blind_pt' : 'None'},
+    ## 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
+    ## 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedLead_2015_04_12',
+    ## 'tag'         : 'invLead'
+    ##},
+    ##{   
+    ## 'module'      : 'ConfFilter.py', 
+    ## 'args'        : {'function' : 'make_looseID_invEleVetoSubl', 'blind_pt' : 'None'},
+    ## 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
+    ## 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_04_12',
+    ## 'tag'         : 'invSubl'
+    ##},
+    ##{   
+    ## 'module'      : 'ConfFilter.py', 
+    ## 'args'        : {'function' : 'make_wgjj'},
+    ## 'input_name'  : 'LepGammaNoPhID_2015_04_11',
+    ## 'output_name' : 'LepGammaJJNoPhID_2015_06_25',
+    ## 'tag'         : 'wgjj'
+    ##},
+    ##{   
+    ## 'module'      : 'ConfFilter.py', 
+    ## 'args'        : {'function' : 'make_zgjj'},
+    ## 'input_name'  : 'LepLepGammaNoPhID_2015_04_11',
+    ## 'output_name' : 'LepLepGammaJJNoPhID_2015_05_05',
+    ## 'tag'         : 'zgjj'
+    ##},
 ]
 
 
@@ -175,15 +418,17 @@ if options.run :
 
             module_str = '{ '
             for key, val in module_arg.iteritems() :
-                module_str += '\'%s\' : \'%s\',' %( key, val)
-
+                if isinstance( val, basestring ) :
+                    module_str += '\'%s\' : \'%s\',' %( key, val)
+                else :
+                    module_str += '\'%s\' : %s,' %( key, val)
             module_str += '}'
             
 
             command = command_base %{ 'base' : base, 'job' : job, 'nFilesPerJob' : nFilesPerJob, 'input' : config['input_name'], 'output' : config['output_name'], 'nproc' : nProc, 'exename' : job_exename, 'treename' : treename, 'module' : config['module'], 'moduleArgs' : module_str }
 
-            if not first :
-                command += ' --noCompile '
+            #if not first :
+            #    command += ' --noCompile '
 
             print command
             os.system(command)
@@ -198,13 +443,16 @@ if options.run :
 
             module_str = '{ '
             for key, val in module_arg.iteritems() :
-                module_str += '\'%s\' : \'%s\',' %( key, val)
+                if isinstance( val, basestring ) :
+                    module_str += '\'%s\' : \'%s\',' %( key, val)
+                else :
+                    module_str += '\'%s\' : %s,' %( key, val)
 
             module_str += '}'
 
             command = command_base %{ 'base' : base, 'job' : job, 'nFilesPerJob' : nFilesPerJob, 'input' : config['input_name'], 'output' : config['output_name'], 'nproc' : nProc, 'exename' : job_exename, 'treename' : treename, 'module' : config['module'], 'moduleArgs' : module_str }
-            if not first :
-                command += ' --noCompile '
+            #if not first :
+            #    command += ' --noCompile '
 
             print command
             os.system(command)

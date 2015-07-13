@@ -220,7 +220,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 _sfhist_ph_eveto_highpt = dynamic_cast<TH2F*>(_sffile_ph_eveto_highpt->Get( "hist_sf_eveto_highpt" ) );
             }
         }
-	/*
+	
         if( mod_conf.GetName() == "AddPileupSF" ) {
             std::map<std::string, std::string>::const_iterator itr;
             itr = mod_conf.GetInitData().find( "DataFilePath" );
@@ -239,7 +239,21 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 }
             }
         }
-	*/
+        if( mod_conf.GetName() == "VaryEGammaScale" ) {
+            std::map<std::string, std::string>::const_iterator itr;
+            itr = mod_conf.GetInitData().find( "Direction" );
+            if( itr != mod_conf.GetInitData().end() ) {
+                _egamma_var = itr->second;
+            }
+        }
+        if( mod_conf.GetName() == "VaryMuonScale" ) {
+            std::map<std::string, std::string>::const_iterator itr;
+            itr = mod_conf.GetInitData().find( "Direction" );
+            if( itr != mod_conf.GetInitData().end() ) {
+                _muon_var = itr->second;
+            }
+        }
+	
     }
 
     // -------------------------------------
@@ -309,14 +323,195 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     if( config.GetName() == "AddMETUncert" ) {
         AddMETUncert( config );
     }
-    /*
-    Pileup variations should already be applied
+    if( config.GetName() == "VaryEGammaScale" ) {
+        VaryEGammaScale( config );
+    }
+    if( config.GetName() == "VaryMuonScale" ) {
+        VaryMuonScale( config );
+    }
+    
     if( config.GetName() == "AddPileupSF" ) {
         AddPileupSF( config );
     }
-    */
+    
 
     return keep_evt;
+
+}
+
+void RunModule::VaryMuonScale( ModuleConfig & /*config*/ ) const {
+
+#ifdef MODULE_VaryMuonScale
+
+    ClearOutputPrefix("mu_");
+    for( int midx = 0 ; midx < IN::mu_n; ++midx ) {
+
+        float pt  = IN::mu_pt->at(midx);
+        float eta = IN::mu_eta->at(midx);
+        float phi = IN::mu_phi->at(midx);
+        float en  = IN::mu_e->at(midx);
+
+        TLorentzVector lvorig;
+        lvorig.SetPtEtaPhiE( pt, eta, phi, en );
+
+        float mass = lvorig.M();
+
+        float unc=0.002;
+
+        if( _muon_var == "UP" ) {
+            pt = pt + pt*unc;
+        }
+        else if( _muon_var == "DN" ) {
+            pt = pt - pt*unc;
+        }
+        else {
+            std::cout << "VaryMuonScale : ERROR -- variation direction must be UP or DN" << std::endl;
+        }
+
+        TLorentzVector lvnew;
+        lvnew.SetPtEtaPhiM( pt, eta, phi, mass );
+
+        CopyPrefixIndexBranchesInToOut( "mu_", midx );
+        OUT::mu_pt->pop_back();
+        OUT::mu_e ->pop_back();
+        OUT::mu_pt->push_back(lvnew.Pt());
+        OUT::mu_e ->push_back(lvnew.E());
+    }
+#endif
+}
+
+void RunModule::VaryEGammaScale( ModuleConfig & /*config*/ ) const {
+
+    std::cout << "IN VARYEGAMMA" << std::endl;
+
+#ifdef MODULE_VaryEGammaScale
+    std::cout << "IN VARYEGAMMA2" << std::endl;
+
+    // remove the output variables so we can 
+    // write new ones
+    ClearOutputPrefix("el_");
+
+    for( int eidx = 0 ; eidx < IN::el_n; ++eidx ) {
+
+        float pt  = IN::el_pt->at(eidx);
+        float eta = IN::el_eta->at(eidx);
+        float phi = IN::el_phi->at(eidx);
+        float en  = IN::el_e->at(eidx);
+
+        TLorentzVector lvorig;
+        lvorig.SetPtEtaPhiE( pt, eta, phi, en );
+
+        float mass = lvorig.M();
+
+        float unc;
+        if( fabs( eta ) < 1.44 ) {
+            unc = 0.006;
+        }
+        else {
+            unc = 0.015;
+        }
+
+        if( _egamma_var == "UP" ) {
+            pt = pt + pt*unc;
+        }
+        else if( _egamma_var == "DN" ) {
+            pt = pt - pt*unc;
+        }
+        else {
+            std::cout << "VaryEGammaScale : ERROR -- variation direction must be UP or DN" << std::endl;
+        }
+
+        TLorentzVector lvnew;
+        lvnew.SetPtEtaPhiM( pt, eta, phi, mass );
+
+        CopyPrefixIndexBranchesInToOut( "el_", eidx );
+        OUT::el_pt->pop_back();
+        OUT::el_e ->pop_back();
+        OUT::el_pt->push_back(lvnew.Pt());
+        OUT::el_e ->push_back(lvnew.E());
+    }
+
+    // remove the output variables so we can 
+    // write new ones
+    ClearOutputPrefix("ph_");
+
+    for( int pidx = 0 ; pidx < IN::ph_n; ++pidx ) {
+
+        float pt  = IN::ph_pt->at(pidx);
+        float eta = IN::ph_eta->at(pidx);
+        float phi = IN::ph_phi->at(pidx);
+
+        TLorentzVector lvorig;
+        lvorig.SetPtEtaPhiM( pt, eta, phi, 0.0 );
+
+        float unc;
+        if( fabs( eta ) < 1.44 ) {
+            unc = 0.006;
+        }
+        else {
+            unc = 0.015;
+        }
+
+        if( _egamma_var == "UP" ) {
+            pt = pt + pt*unc;
+        }
+        else if( _egamma_var == "DN" ) {
+            pt = pt - pt*unc;
+        }
+        else {
+            std::cout << "VaryEGammaScale : ERROR -- variation direction must be UP or DN" << std::endl;
+        }
+
+        TLorentzVector lvnew;
+        lvnew.SetPtEtaPhiM( pt, eta, phi, 0. );
+
+        CopyPrefixIndexBranchesInToOut( "ph_", pidx );
+        OUT::ph_pt->pop_back();
+        OUT::ph_pt->push_back(lvnew.Pt());
+    }
+
+    // also do it for leading / subleading
+    if( OUT::isEB_leadph12 ) {
+        if( _egamma_var == "UP" ) {
+            OUT::pt_leadph12 = OUT::pt_leadph12 * ( 1 + 0.006 );
+        }
+        else {
+            OUT::pt_leadph12 = OUT::pt_leadph12 * ( 1 - 0.006 );
+        }
+    }
+    if( OUT::isEE_leadph12 ) {
+        if( _egamma_var == "UP" ) {
+            OUT::pt_leadph12 = OUT::pt_leadph12 * ( 1 + 0.015 );
+        }
+        else {
+            OUT::pt_leadph12 = OUT::pt_leadph12 * ( 1 - 0.015 );
+        }
+    }
+
+    std::cout << OUT::isEB_sublph12  << std::endl;
+
+    if( OUT::isEB_sublph12 ) {
+        if( _egamma_var == "UP" ) {
+            std::cout << OUT::pt_sublph12 << std::endl;
+            OUT::pt_sublph12 = OUT::pt_sublph12 * ( 1 + 0.006 );
+            std::cout << OUT::pt_sublph12 << std::endl;
+        }
+        
+        else {
+            OUT::pt_sublph12 = OUT::pt_sublph12 * ( 1 - 0.006 );
+        }
+    }
+    if( OUT::isEE_sublph12 ) {
+        if( _egamma_var == "UP" ) {
+            OUT::pt_sublph12 = OUT::pt_sublph12 * ( 1 + 0.015 );
+        }
+        else {
+            OUT::pt_sublph12 = OUT::pt_sublph12 * ( 1 - 0.015 );
+        }
+    }
+
+
+#endif
 
 }
 
@@ -422,9 +617,9 @@ void RunModule::AddMETUncert( ModuleConfig & /*config*/ ) const {
         TLorentzVector ellv;
         ellv.SetPtEtaPhiE( pt, eta, phi, en );
 
-        if( pt >= 30 ) {
+        //if( pt >= 30 ) {
             leptons.push_back( ellv );
-        }
+        //}
 
 
 
@@ -447,9 +642,9 @@ void RunModule::AddMETUncert( ModuleConfig & /*config*/ ) const {
         TLorentzVector mulv;
         mulv.SetPtEtaPhiE( pt, eta, phi, en );
 
-        if( pt >= 25 ) {
+        //if( pt >= 25 ) {
             leptons.push_back( mulv );
-        }
+       // }
         muons_index.push_back( idx );
         muons_orig.push_back( mulv );
 
@@ -517,21 +712,38 @@ void RunModule::AddMETUncert( ModuleConfig & /*config*/ ) const {
     OUT::pfType01METUncertUnClusUP = metlv_unclus_up.Pt();
     OUT::pfType01METUncertUnClusDN = metlv_unclus_dn.Pt();
 
-    OUT::mt_lep_metUncertMuonUP    = Utils::calc_mt( leptons[0], metlv_mu_up    );
-    OUT::mt_lep_metUncertMuonDN    = Utils::calc_mt( leptons[0], metlv_mu_dn    );
-    OUT::mt_lep_metUncertEMUP      = Utils::calc_mt( leptons[0], metlv_em_up    );
-    OUT::mt_lep_metUncertEMDN      = Utils::calc_mt( leptons[0], metlv_em_dn    );
-    OUT::mt_lep_metUncertJESUP     = Utils::calc_mt( leptons[0], metlv_jes_up   );
-    OUT::mt_lep_metUncertJESDN     = Utils::calc_mt( leptons[0], metlv_jes_dn   );
-    OUT::mt_lep_metUncertJERUP     = Utils::calc_mt( leptons[0], metlv_jer_up   );
-    OUT::mt_lep_metUncertJERDN     = Utils::calc_mt( leptons[0], metlv_jer_dn   );
-    OUT::mt_lep_metUncertUnClusUP  = Utils::calc_mt( leptons[0], metlv_unclus_up);
-    OUT::mt_lep_metUncertUnClusDN  = Utils::calc_mt( leptons[0], metlv_unclus_dn);
 
+    if( leptons.size() > 0 ) {
+        OUT::mt_lep_metUncertMuonUP    = Utils::calc_mt( leptons[0], metlv_mu_up    );
+        OUT::mt_lep_metUncertMuonDN    = Utils::calc_mt( leptons[0], metlv_mu_dn    );
+        OUT::mt_lep_metUncertEMUP      = Utils::calc_mt( leptons[0], metlv_em_up    );
+        OUT::mt_lep_metUncertEMDN      = Utils::calc_mt( leptons[0], metlv_em_dn    );
+        OUT::mt_lep_metUncertJESUP     = Utils::calc_mt( leptons[0], metlv_jes_up   );
+        OUT::mt_lep_metUncertJESDN     = Utils::calc_mt( leptons[0], metlv_jes_dn   );
+        OUT::mt_lep_metUncertJERUP     = Utils::calc_mt( leptons[0], metlv_jer_up   );
+        OUT::mt_lep_metUncertJERDN     = Utils::calc_mt( leptons[0], metlv_jer_dn   );
+        OUT::mt_lep_metUncertUnClusUP  = Utils::calc_mt( leptons[0], metlv_unclus_up);
+        OUT::mt_lep_metUncertUnClusDN  = Utils::calc_mt( leptons[0], metlv_unclus_dn);
+    }
+    else { 
+        std::cout << "No LEPTON " << std::endl;
+        OUT::mt_lep_metUncertMuonUP    = OUT::mt_lep_met;
+        OUT::mt_lep_metUncertMuonDN    = OUT::mt_lep_met;
+        OUT::mt_lep_metUncertEMUP      = OUT::mt_lep_met;
+        OUT::mt_lep_metUncertEMDN      = OUT::mt_lep_met;
+        OUT::mt_lep_metUncertJESUP     = OUT::mt_lep_met;
+        OUT::mt_lep_metUncertJESDN     = OUT::mt_lep_met;
+        OUT::mt_lep_metUncertJERUP     = OUT::mt_lep_met;
+        OUT::mt_lep_metUncertJERDN     = OUT::mt_lep_met;
+        OUT::mt_lep_metUncertUnClusUP  = OUT::mt_lep_met;
+        OUT::mt_lep_metUncertUnClusDN  = OUT::mt_lep_met;
+    }
 
+#endif
 }
 
 void RunModule::GetJetsJER( const std::vector<int> &jets_index, const std::string &var, std::vector<TLorentzVector> & out_jets ) const {
+#ifdef MODULE_AddMETUncert
 
     for( std::vector<int>::const_iterator idxitr = jets_index.begin(); idxitr != jets_index.end(); ++idxitr ) {
 
@@ -633,6 +845,7 @@ float RunModule::FindJetJERCorr( const std::vector<std::pair< std::pair<float, f
 
 void RunModule::GetJetsJES( const std::vector<int> &jets_index, const std::string &var, std::vector<TLorentzVector> & out_jets ) const {
 
+#ifdef MODULE_AddMETUncert
     for( std::vector<int>::const_iterator idxitr = jets_index.begin(); idxitr != jets_index.end(); ++idxitr ) {
 
         int idx = *(idxitr);
@@ -664,10 +877,12 @@ void RunModule::GetJetsJES( const std::vector<int> &jets_index, const std::strin
 
         out_jets.push_back(newlv);
     }
+#endif
 }
 
 void RunModule::GetElectronsScaled( const std::vector<int> &eles_index, const std::string &var, std::vector<TLorentzVector> & out_eles ) const {
 
+#ifdef MODULE_AddMETUncert
     for( std::vector<int>::const_iterator idxitr = eles_index.begin(); idxitr != eles_index.end(); ++idxitr ) {
 
         int idx = *(idxitr);
@@ -705,11 +920,13 @@ void RunModule::GetElectronsScaled( const std::vector<int> &eles_index, const st
 
     }
 
+#endif
 }
 
 
 void RunModule::GetPhotonsScaled( const std::vector<int> &phots_index, const std::string &var, std::vector<TLorentzVector> & out_phots ) const {
 
+#ifdef MODULE_AddMETUncert
     for( std::vector<int>::const_iterator idxitr = phots_index.begin(); idxitr != phots_index.end(); ++idxitr ) {
 
         int idx = *(idxitr);
@@ -743,11 +960,13 @@ void RunModule::GetPhotonsScaled( const std::vector<int> &phots_index, const std
 
     }
 
+#endif
 }
 
 
 void RunModule::GetMuonsScaled( const std::vector<int> &muons_index, const std::string &var, std::vector<TLorentzVector> & out_muons ) const {
 
+#ifdef MODULE_AddMETUncert
     for( std::vector<int>::const_iterator idxitr = muons_index.begin(); idxitr != muons_index.end(); ++idxitr ) {
 
         int idx = *(idxitr);
@@ -781,6 +1000,7 @@ void RunModule::GetMuonsScaled( const std::vector<int> &muons_index, const std::
 
     }
 
+#endif
 }
 
 
@@ -899,8 +1119,13 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
 
         // switch between highpt and lowpt
         if( pt < 70 ) {
+            // FIX for hist only going to 2.4
+            if( feta > 2.4 && feta < 2.5 ) {
+                feta = 2.39;
+            }
+
             if( _sfhist_ph_eveto->GetBinContent( _sfhist_ph_eveto->FindBin(feta, pt) ) == 0 ) {
-                std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
+                if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
             }
             sfs_eveto.push_back( _sfhist_ph_eveto->GetBinContent( _sfhist_ph_eveto->FindBin(feta, pt) ) );
             errs_eveto.push_back( _sfhist_ph_eveto->GetBinError( _sfhist_ph_eveto->FindBin(feta, pt) ) );
@@ -908,15 +1133,23 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
         else {
             
             if( pt >= max_pt_highpt ) {
+                // FIX for hist only going to 2.4
+                if( feta > 2.4 && feta < 2.5 ) {
+                    feta = 2.39;
+                }
                 if( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, max_pt_highpt-1) ) == 0 ) {
-                    std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
+                    if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
                 }
                 sfs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, max_pt_highpt-1 )) );
                 errs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinError( _sfhist_ph_eveto_highpt->FindBin(feta, max_pt_highpt-1 ) ));
             }
             else {
+                // FIX for hist only going to 2.4
+                if( feta > 2.4 && feta < 2.5 ) {
+                    feta = 2.39;
+                }
                 if( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, pt) ) == 0 ) {
-                    std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
+                    if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
                 }
                 sfs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, pt )) );
                 errs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinError( _sfhist_ph_eveto_highpt->FindBin(feta, pt ) ));

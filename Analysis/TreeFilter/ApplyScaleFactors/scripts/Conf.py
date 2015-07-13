@@ -1,5 +1,7 @@
 from core import Filter
 import os
+import sys
+import inspect
 
 _workarea = os.getenv( 'WorkArea' )
 
@@ -24,19 +26,26 @@ def get_keep_filter() :
 def config_analysis( alg_list, options ) :
     """ Configure analysis modules. Order is preserved """
 
-    # for complicated configurations, define a function
-    # that returns the Filter object and append it to the
-    # alg list.  Otherwise you can directly append 
-    # a Filter object to the list
-    # There is no restriction on the naming or inputs to these funtions
+    print options
 
-    alg_list.append( get_muon_sf() ) 
-    alg_list.append( get_electron_sf() ) 
-    alg_list.append( get_photon_sf() ) 
+    # run on the function provided through
+    # the args
+    for s in inspect.getmembers(sys.modules[__name__]) :
+        if s[0] in options['functions'].split(',') :
+            print '*********************************'
+            print 'RUN %s' %( s[0] )
+            print '*********************************'
+            alg_list.append( s[1]( options['args'] ) )
+
+    print alg_list
+
+    #alg_list.append( get_muon_sf() ) 
+    #alg_list.append( get_electron_sf() ) 
+    #alg_list.append( get_photon_sf() ) 
     #alg_list.append( get_pileup_sf(options) )
-    alg_list.append( Filter ( 'AddMETUncert' ) )
+    #alg_list.append( Filter ( 'AddMETUncert' ) )
 
-def get_muon_sf() :
+def get_muon_sf(options) :
 
     base_path = '%s/TreeFilter/ApplyScaleFactors/data' %_workarea
 
@@ -48,7 +57,7 @@ def get_muon_sf() :
 
     return muon_sf
 
-def get_electron_sf() :
+def get_electron_sf(options) :
 
     base_path = '%s/TreeFilter/ApplyScaleFactors/data' %_workarea
 
@@ -58,7 +67,7 @@ def get_electron_sf() :
 
     return electron_sf
 
-def get_photon_sf() :
+def get_photon_sf(options) :
 
     base_path = '%s/TreeFilter/ApplyScaleFactors/data' %_workarea
 
@@ -79,5 +88,30 @@ def get_pileup_sf(options) :
     pileup_sf.add_var( 'MCFilePath', options['PUDistMCFile'] )
 
     return pileup_sf
+
+def vary_egamma_scale_up (options) :
+    print 'GOTHERE'
+    egamma_vary = Filter( 'VaryEGammaScale' )
+    egamma_vary.add_var( 'Direction', 'UP' )
+    return egamma_vary
+
+def vary_egamma_scale_dn(options) :
+    egamma_vary = Filter( 'VaryEGammaScale' )
+    egamma_vary.add_var( 'Direction', 'DN' )
+    return egamma_vary
+
+def vary_muon_scale_up (options) :
+    muon_vary = Filter( 'VaryMuonScale' )
+    muon_vary.add_var( 'Direction', 'UP' )
+    return muon_vary
+
+def vary_muon_scale_dn(options) :
+    muon_vary = Filter( 'VaryMuonScale' )
+    muon_vary.add_var( 'Direction', 'DN' )
+    return muon_vary
+
+def vary_met_uncert(options) :
+    return Filter( 'AddMETUncert' )
+
 
 

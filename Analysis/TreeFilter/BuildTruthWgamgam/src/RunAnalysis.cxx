@@ -224,14 +224,27 @@ void RunModule::BuildLepton( ModuleConfig & config ) const {
     //    accept_pid.push_back(15);
     //}
 
-    if( config.PassBool("cut_incWMother", true ) ) {
+    if( !config.PassBool("cut_incWMother", false ) ) {
         accept_mother.push_back(24);
     }
-    if( config.PassBool("cut_incZMother", true ) ) {
+    if( !config.PassBool("cut_incZMother", false ) ) {
         accept_mother.push_back(23);
     }
-    if( config.PassBool("cut_incTauMother", true ) ) {
+    if( !config.PassBool("cut_incTauMother", false) ) {
         accept_mother.push_back(15);
+    }
+    if( !config.PassBool("cut_incQMother", false ) ) {
+        accept_mother.push_back(1);
+        accept_mother.push_back(2);
+        accept_mother.push_back(3);
+        accept_mother.push_back(4);
+        accept_mother.push_back(5);
+        accept_mother.push_back(-1);
+        accept_mother.push_back(-2);
+        accept_mother.push_back(-3);
+        accept_mother.push_back(-4);
+        accept_mother.push_back(-5);
+        accept_mother.push_back(21);
     }
 
     //std::cout << "EVENT"<< std::endl;
@@ -293,11 +306,27 @@ void RunModule::BuildNeutrino( ModuleConfig & config ) const {
     OUT::nu_n          = 0;
 
     std::vector<int> accept_mother;
-    if( config.PassBool("cut_incWMother", true ) ) {
+    if( !config.PassBool("cut_incWMother", false ) ) {
         accept_mother.push_back(24);
     }
-    if( config.PassBool("cut_incZMother", true ) ) {
+    if( !config.PassBool("cut_incZMother", false ) ) {
         accept_mother.push_back(23);
+    }
+    if( !config.PassBool("cut_incTauMother", false) ) {
+        accept_mother.push_back(15);
+    }
+    if( !config.PassBool("cut_incQMother", false ) ) {
+        accept_mother.push_back(1);
+        accept_mother.push_back(2);
+        accept_mother.push_back(3);
+        accept_mother.push_back(4);
+        accept_mother.push_back(5);
+        accept_mother.push_back(-1);
+        accept_mother.push_back(-2);
+        accept_mother.push_back(-3);
+        accept_mother.push_back(-4);
+        accept_mother.push_back(-5);
+        accept_mother.push_back(21);
     }
 
     for( int idx = 0; idx < IN::nMC; ++idx ) {
@@ -328,7 +357,8 @@ void RunModule::BuildWboson( ModuleConfig & /*config*/ ) const {
     OUT::w_n          = 0;
 
     for( int idx = 0; idx < IN::nMC; ++idx ) {
-        if( abs(IN::mcPID->at(idx)) == 24 && IN::mcStatus->at(idx) == 3 ) {
+        //if( abs(IN::mcPID->at(idx)) == 24 && IN::mcStatus->at(idx) == 3 ) {
+        if( abs(IN::mcPID->at(idx)) == 24 && IN::mcStatus->at(idx) == 22 ) {
             OUT::w_pt        -> push_back(IN::mcPt->at(idx)     );
             OUT::w_eta       -> push_back(IN::mcEta->at(idx)    );
             OUT::w_phi       -> push_back(IN::mcPhi->at(idx)    );

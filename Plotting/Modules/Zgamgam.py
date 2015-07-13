@@ -16,6 +16,7 @@ def config_samples(samples) :
     samples.AddSample('ZgPhOlap'                           , path='job_summer12_ZgPhOlap'             ,  isActive=False, useXSFile=True, XSName='Zg' )
     samples.AddSample('ZggFSR'                           , path='job_summer12_ZggFSR'             ,  isActive=False, useXSFile=True, XSName='Zg' )
     samples.AddSample('ZggFSR2'                           , path='job_summer12_ZggFSR2'             ,  isActive=False, useXSFile=True, XSName='Zg' )
+    samples.AddSample('Zg2PhFilt'                           , path='job_summer12_Zg2PhFilt'             ,  isActive=False, useXSFile=True, XSName='Zg' )
     samples.AddSample('Zgg'                          , path='job_summer12_Zgg'                  ,  isActive=False, useXSFile=True )
 
 
@@ -55,11 +56,11 @@ def config_samples(samples) :
 
     samples.AddSampleGroup( 'Zgamma', legend_name='Z#gamma', 
                            input_samples = [
-                                            'Zg',
+                                            'Zg2PhFilt',
                            ],
                            plotColor=ROOT.kOrange-4,
                            isSignal=False,
-                           isActive=False,
+                           isActive=True,
                           )
     samples.AddSampleGroup( 'ZgammagammaFSR', legend_name='Z#gamma#gamma FSR', 
                            input_samples = [
@@ -67,7 +68,7 @@ def config_samples(samples) :
                            ],
                            plotColor=ROOT.kOrange-4,
                            isSignal=False,
-                           isActive=True,
+                           isActive=False,
                           )
     samples.AddSampleGroup( 'Zgammagamma', legend_name='Z#gamma#gamma', 
                            input_samples = [

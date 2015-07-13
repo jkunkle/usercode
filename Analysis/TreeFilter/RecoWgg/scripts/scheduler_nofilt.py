@@ -126,7 +126,7 @@ module = 'ConfWgamgamReco.py'
 #output = 'RecoOutput_2014_12_05'
 #output = 'RecoOutputDiMuon_2014_11_27'
 #output = 'LepGammaNoEleVetoNewVar_2014_05_02'
-output = 'RecoOutput_2015_04_05'
+output = 'RecoOutputNoTrig_2015_06_29'
 
 nFilesPerJob = 1
 nProc = 6

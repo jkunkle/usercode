@@ -145,6 +145,9 @@ namespace OUT {
     Int_t   ph_medium_n;
     Int_t   ph_mediumNoEleVeto_n;
     Int_t   ph_mediumNoSIEIENoEleVeto_n;
+    Int_t   ph_mediumNoChIsoNoEleVeto_n;
+    Int_t   ph_mediumNoNeuIsoNoEleVeto_n;
+    Int_t   ph_mediumNoPhoIsoNoEleVeto_n;
     Int_t   ph_mediumNoIso_n;
     Int_t   ph_mediumNoChIso_n;
     Int_t   ph_mediumNoNeuIso_n;

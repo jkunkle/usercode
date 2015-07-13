@@ -83,9 +83,9 @@ jobs = [
 ]
 #command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s/ --fileKey tree.root --outputDir /tmp/jkunkle/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/ConfBasic.py --enableKeepFilter --nFilesPerJob %(nfiles)d --nproc %(nproc)d --confFileName %(job)s.txt '
 if options.local :
-    command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/ConfBasic.py --nFilesPerJob %(nFilesPerJob)d --nproc 5 --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s  --enableKeepFilter'
+    command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --nFilesPerJob %(nFilesPerJob)d --nproc 5 --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s  --enableKeepFilter'
 else :
-    command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/ConfBasic.py --nFilesPerJob %(nFilesPerJob)d --batch --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s  --enableKeepFilter'
+    command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName %(treename)s --module scripts/%(module)s --nFilesPerJob %(nFilesPerJob)d --batch --confFileName %(tag)s_%(job)s.txt --exeName %(exe)s  --enableKeepFilter'
 
 check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s/%(job)s --filteredDS /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --treeNameOrig %(treename)s --histNameFilt ggNtuplizer/filter --fileKeyOrig tree.root --fileKeyFilt tree.root'
 
@@ -115,7 +115,7 @@ top_configs = [
                 #  'tag'         : 'singlLep',
                 #},
                 { 
-                  'module'      : 'ConfTruth.py',
+                  'module'      : 'ConfTruthFilter.py',
                   'output_name' : 'WAANLOTruth_2015_06_23',
                   'tag'         : 'truth',
                 },

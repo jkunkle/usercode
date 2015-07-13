@@ -32,9 +32,7 @@ ph_cuts = ''
 lead_dr_cut = 0.4
 subl_dr_cut = 0.4
 phot_dr_cut = 0.4
-
-el_cuts = {}
-
+_mgg_cut = 0
 
 _asym_iso_syst = { (0, 0, 0) : 0.0, (5,3,3) : 0.10, (8,5,5) : 0.15, (10, 7, 7) : 0.20, (12, 9, 9) : 0.25, (15,11,11) : 0.30, (20, 16, 16) : 0.5 }
 
@@ -59,17 +57,20 @@ def main() :
     
     options = p.parse_args()
 
+    ptmin = int(options.ptbins.split(',')[0])
+
+    global el_cuts
     el_cuts = {'elfull' : 
-                'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) && m_ph1_ph2>15 && mt_lep_met %s %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
+                'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) && m_ph1_ph2>%.1f && mt_lep_met %s && pt_leadph12 > %d && pt_sublph12 > %d %s ' %(lead_dr_cut, subl_dr_cut, _mgg_cut, options.mtcut, ptmin, ptmin, ph_cuts),
                'elzcr' :
-               'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1_ph2-91.2) < 10) && m_ph1_ph2>15 && mt_lep_met %s  %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
+               'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1_ph2-91.2) < 10) && m_ph1_ph2>%.1f && mt_lep_met %s  && pt_leadph12 > %d && pt_sublph12 > %d  %s ' %(lead_dr_cut, subl_dr_cut, _mgg_cut, options.mtcut, ptmin, ptmin, ph_cuts),
                'elph1zcr' :
-               'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1-91.2) < 10) && m_ph1_ph2>15 && mt_lep_met %s  %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
+               'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph1-91.2) < 10) && m_ph1_ph2>%.1f && mt_lep_met %s  && pt_leadph12 > %d && pt_sublph12 > %d  %s ' %(lead_dr_cut, subl_dr_cut, _mgg_cut, options.mtcut, ptmin, ptmin, ph_cuts),
                'elph2zcr' :
-               'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph2-91.2) < 10) && m_ph1_ph2>15 && mt_lep_met %s %s ' %(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
+               'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%f && dr_ph2_leadLep>%f && mu_n==0 && (fabs(m_leadLep_ph2-91.2) < 10) && m_ph1_ph2>%.1f && mt_lep_met %s && pt_leadph12 > %d && pt_sublph12 > %d  %s ' %(lead_dr_cut, subl_dr_cut, _mgg_cut, options.mtcut, ptmin, ptmin, ph_cuts),
                'elbase' : 
-               {'invlead' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && mu_n==0 && m_ph1_ph2>15 && mt_lep_met %s %s'%(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts),
-                'invsubl' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && mu_n==0 && m_ph1_ph2>15 && mt_lep_met %s %s'%(lead_dr_cut, subl_dr_cut, options.mtcut, ph_cuts)
+               {'invlead' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && mu_n==0 && m_ph1_ph2>%.1f && mt_lep_met %s && pt_leadph12 > %d && pt_sublph12 > %d  %s'%(lead_dr_cut, subl_dr_cut, _mgg_cut, options.mtcut, ptmin, ptmin, ph_cuts),
+                'invsubl' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && mu_n==0 && m_ph1_ph2>%.1f && mt_lep_met %s && pt_leadph12 > %d && pt_sublph12 > %d  %s'%(lead_dr_cut, subl_dr_cut, _mgg_cut, options.mtcut, ptmin, ptmin, ph_cuts)
               },
     }
 
@@ -80,18 +81,19 @@ def main() :
     global samplesWggInvLead
     global samplesWggInvSubl
 
-    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_04_12'
-    baseDirWelggCR = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_04_12'
-    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_04_12'
-    #baseDirWgg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNomUnblindEleZCR_2014_12_23'
-    baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_04_12'
-    baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_04_12'
+    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_07_05'
+    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElZCR_2015_07_02'
+    baseDirWelggCR = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElZCR_2015_07_02'
+    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_07_05'
+    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllLowMt_2015_06_30'
+    #baseDirWelggCR = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllLowMt_2015_06_30'
+    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllLowMt_2015_06_30'
+    baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutInvPixLead_2015_07_06'
+    baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutInvPixSubl_2015_07_06'
 
-    #baseDirWgg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaCSEVUnblindLowPt_2014_12_23'
     #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvCSEVLead_2014_12_23'
     #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvCSEVSubl_2014_12_23'
 
-    #baseDirWgg        = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaTrigEleOlapUnblindLowPt_2015_01_02'
     #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDTrigEleOlapInvPixSeedLead_2015_01_02'
     #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDTrigEleOlapInvPixSeedSubl_2015_01_02'
 
@@ -135,33 +137,48 @@ def main() :
 
     # define the map between pt bins and
     # the fit results we want to use
-    file_bin_map             [(bins[0], bins[1])] = path_mctemp
-    file_bin_map             [(bins[1], bins[2])] = path_mctemp
-    file_bin_map             [(bins[2], bins[3])] = path_mctemp
-    file_bin_map             [(bins[3], 'max')  ] = path_nom
-    #file_bin_map_syst             [(bins[0], bins[1])] = path_nom
-    #file_bin_map_syst             [(bins[1], bins[2])] = path_nom
-    #file_bin_map_syst             [(bins[2], bins[3])] = path_nom
-    #file_bin_map_syst             [(bins[3], 'max')  ] = path_nom
 
-    file_bin_map_coarse      [(bins[0], bins[1])] = path_mctemp_coarse
-    file_bin_map_coarse      [(bins[1], bins[2])] = path_mctemp_coarse
-    file_bin_map_coarse      [(bins[2], bins[3])] = path_mctemp_coarse
-    file_bin_map_coarse      [(bins[3], 'max')  ] = path_nom_coarse
+    # go up to the second-to-last bin
+    for bidx in range( 0, len( bins ) - 2 ) :
+        file_bin_map            [(bins[bidx], bins[bidx+1])] = path_mctemp
+        file_bin_map_coarse     [(bins[bidx], bins[bidx+1])] = path_mctemp_coarse
+        file_bin_map_syst       [(bins[bidx], bins[bidx+1])] = path_mctemp
+        file_bin_map_coarse_syst[(bins[bidx], bins[bidx+1])] = path_mctemp_coarse
 
-    file_bin_map_syst        [(bins[0], bins[1])] = path_mctemp
-    file_bin_map_syst        [(bins[1], bins[2])] = path_mctemp
-    file_bin_map_syst        [(bins[2], bins[3])] = path_mctemp
-    file_bin_map_syst        [(bins[3], 'max')  ] = path_nom
-    #file_bin_map        [(bins[0], bins[1])] = path_mctemp
-    #file_bin_map        [(bins[1], bins[2])] = path_mctemp
-    #file_bin_map        [(bins[2], bins[3])] = path_mctemp
-    #file_bin_map        [(bins[3], 'max')  ] = path_mctemp
+    # do the last bin
+    file_bin_map[(bins[-2], 'max')] = path_nom
+    file_bin_map_coarse[(bins[-2], 'max')  ] = path_nom_coarse
+    file_bin_map_syst[(bins[-2], 'max')  ] = path_nom
+    file_bin_map_coarse_syst [(bins[-2], 'max')  ] = path_nom_coarse
 
-    file_bin_map_coarse_syst [(bins[0], bins[1])] = path_mctemp_coarse
-    file_bin_map_coarse_syst [(bins[1], bins[2])] = path_mctemp_coarse
-    file_bin_map_coarse_syst [(bins[2], bins[3])] = path_mctemp_coarse
-    file_bin_map_coarse_syst [(bins[3], 'max')  ] = path_nom_coarse
+
+    #file_bin_map             [(bins[0], bins[1])] = path_mctemp
+    #file_bin_map             [(bins[1], bins[2])] = path_mctemp
+    #file_bin_map             [(bins[2], bins[3])] = path_mctemp
+    #file_bin_map             [(bins[3], 'max')  ] = path_nom
+    ##file_bin_map_syst             [(bins[0], bins[1])] = path_nom
+    ##file_bin_map_syst             [(bins[1], bins[2])] = path_nom
+    ##file_bin_map_syst             [(bins[2], bins[3])] = path_nom
+    ##file_bin_map_syst             [(bins[3], 'max')  ] = path_nom
+
+    #file_bin_map_coarse      [(bins[0], bins[1])] = path_mctemp_coarse
+    #file_bin_map_coarse      [(bins[1], bins[2])] = path_mctemp_coarse
+    #file_bin_map_coarse      [(bins[2], bins[3])] = path_mctemp_coarse
+    #file_bin_map_coarse      [(bins[3], 'max')  ] = path_nom_coarse
+
+    #file_bin_map_syst        [(bins[0], bins[1])] = path_mctemp
+    #file_bin_map_syst        [(bins[1], bins[2])] = path_mctemp
+    #file_bin_map_syst        [(bins[2], bins[3])] = path_mctemp
+    #file_bin_map_syst        [(bins[3], 'max')  ] = path_nom
+    ##file_bin_map        [(bins[0], bins[1])] = path_mctemp
+    ##file_bin_map        [(bins[1], bins[2])] = path_mctemp
+    ##file_bin_map        [(bins[2], bins[3])] = path_mctemp
+    ##file_bin_map        [(bins[3], 'max')  ] = path_mctemp
+
+    #file_bin_map_coarse_syst [(bins[0], bins[1])] = path_mctemp_coarse
+    #file_bin_map_coarse_syst [(bins[1], bins[2])] = path_mctemp_coarse
+    #file_bin_map_coarse_syst [(bins[2], bins[3])] = path_mctemp_coarse
+    #file_bin_map_coarse_syst [(bins[3], 'max')  ] = path_nom_coarse
 
     pt_bins = [int(x) for x in options.ptbins.split(',')]
 
@@ -170,10 +187,10 @@ def main() :
         base_dir_ele = options.baseDir
         base_dir_jet = outputDirBase
         
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='mu', outputDir=outputDirBase )
+        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='mu', outputDir=outputDirBase )
         MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfull', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullinvpixlead', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullinvpixsubl', outputDir=outputDirBase )
+        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullinvpixlead', outputDir=outputDirBase )
+        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullinvpixsubl', outputDir=outputDirBase )
 
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcr', outputDir=outputDirBase )
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixlead', outputDir=outputDirBase )
@@ -182,7 +199,7 @@ def main() :
         MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDirBase )
         #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDirBase, namePostfix='__zcr' )
 
-        MakeBkgEstimatePlots( outputDirBase, options.plotDir )
+        MakeBkgEstimatePlots( outputDirBase, options.plotDir, minpt=pt_bins[0] )
 
         for typedir in os.listdir( '%s/JetFakeResultsSyst'%options.baseDir ) :
             base_dir_ele = options.baseDir
@@ -329,6 +346,7 @@ def MakeJetBkgEstimateNew( base_dir_jet, pt_bins, channel, outputDir=None ) :
     for key in result_dic.keys() :
         result_dic[key] = {'rf' : {}, 'fr' : {}, 'ff' : {}, 'sum' : {} }
 
+    strsublptmin = pt_bins_jetfile[0]
     for idx, strptmin in enumerate(pt_bins_jetfile[:-1]) :
         strptmax = pt_bins_jetfile[idx+1]
 
@@ -343,6 +361,7 @@ def MakeJetBkgEstimateNew( base_dir_jet, pt_bins, channel, outputDir=None ) :
 
                 print 'var : %s, ptmin = %s, ptmax = %s, r1 = %s, r2 = %s ' %( var, strptmin, strptmax, r1, r2)
 
+                #file_key_generic = 'results__statData__ffcorr_nom__%s__%s-%s__pt_%s-%s__subpt_%s-max.pickle' %(  channel, r1, r2, strptmin, strptmax, strsublptmin )
                 file_key_generic = 'results__statData__ffcorr_nom__%s__%s-%s__pt_%s-%s.pickle' %(  channel, r1, r2, strptmin, strptmax )
                 result_dir = select_result_dir( '%s/%s' %( base_dir_jet, var), file_key_generic )
 
@@ -352,14 +371,15 @@ def MakeJetBkgEstimateNew( base_dir_jet, pt_bins, channel, outputDir=None ) :
                 # uncertainties.  The uncertainty
                 # is a difference in the central values
                 # so any of the uncertainty files can be used
+                #file_key_ffvar = 'results__%s__ffcorr_(?P<ffvar>\w+)__%s__%s-%s__pt_%s-%s__subpt_%s-max.pickle' %( uncertainties.keys()[0], channel, r1, r2, strptmin, strptmax, strsublptmin  )
                 file_key_ffvar = 'results__%s__ffcorr_(?P<ffvar>\w+)__%s__%s-%s__pt_%s-%s.pickle' %( uncertainties.keys()[0], channel, r1, r2, strptmin, strptmax )
                 ff_var_unc = get_ff_var_uncertainties( '%s/%s/%s' %(base_dir_jet, var, result_dir), file_key_ffvar )
                 ff_var_systs[var] = ff_var_unc
 
 
             # key to match all other uncertainty variations
-            file_key = 'results__(?P<uncertainty>\w+)__ffcorr_nom__%s__%s-%s__pt_%s-%s.pickle' %(  channel, r1, r2, strptmin, strptmax )
-            #file_key = 'results__(?P<uncertainty>\w+)__%s__%s-%s__pt_%s-%s.pickle' %(  channel, r1, r2, strptmin, strptmax )
+            #file_key = 'results__(?P<uncertainty>\w+)__ffcorr_nom__%s__%s-%s__pt_%s-%s__subpt_%s-max.pickle' %(  channel, r1, r2, strptmin, strptmax, strsublptmin  )
+            file_key = 'results__(?P<uncertainty>\w+)__%s__%s-%s__pt_%s-%s.pickle' %(  channel, r1, r2, strptmin, strptmax )
 
             results = get_jet_fake_results_new( base_dir_jet, file_key, uncertainties, found_result_dirs, ff_var_systs )
 
@@ -746,7 +766,7 @@ def MakeJetBkgEstimate( base_dir_jet, pt_bins, channel, outputDir=None ) :
     #    pickle.dump( pred_elph2zcr, file_elph2zcr)
     #    file_elph2zcr.close()
 
-def MakeBkgEstimatePlots( baseDir, plotDir ) :
+def MakeBkgEstimatePlots( baseDir, plotDir, minpt=15 ) :
 
     # first make the nominal estimates
 
@@ -761,9 +781,13 @@ def MakeBkgEstimatePlots( baseDir, plotDir ) :
         else :
             reg_str = ' !(isEE_leadph12 && isEE_sublph12 )'
             reg_tag = ''
+
+        weight_str = 'mu_idSF * mu_trigSF * mu_isoSF * el_trigSF * ph_idSF * '
     
         #samplesWmugg.Draw( 'pt_leadph12', 'PUWeight * (mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 %s  ) ' %(reg_str), plot_binning )
-        samplesWmugg.Draw( 'pt_leadph12', 'PUWeight * ( %s  ) ' %(reg_str), plot_binning )
+
+        # Draw without weight
+        samplesWmugg.Draw( 'pt_leadph12', ' PUWeight  * ( pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(minpt, minpt, reg_str), plot_binning )
 
         #----------------------------
         # Data mgg
@@ -784,6 +808,9 @@ def MakeBkgEstimatePlots( baseDir, plotDir ) :
         hist_data_lgg_pergev = hist_data_lgg.Clone( hist_data_lgg.GetName() + '_perGeV' )
         make_pergev_hist( hist_data_lgg, hist_data_lgg_pergev)
         save_hist( '%s/%s/Muon/Data/hist.root' %(baseDir, plotDir), hist_data_lgg_pergev )
+
+        # Draw with weight
+        samplesWmugg.Draw( 'pt_leadph12', weight_str + ' PUWeight  * ( pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(minpt, minpt, reg_str), plot_binning )
 
         #----------------------------
         # Wgg mgg
@@ -848,21 +875,21 @@ def MakeBkgEstimatePlots( baseDir, plotDir ) :
         make_pergev_hist( hist_ZggFSR_lgg, hist_ZggFSR_lgg_pergev)
         save_hist( '%s/%s/Muon/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_lgg_pergev )
 
-        draw_str_nom = 'PUWeight * ( %s ) ' %reg_str
-        draw_str_zcr = 'PUWeight * (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph1_ph2-91.2)<10) %s ) ' %reg_str
-        draw_str_zcrph1 = 'PUWeight * (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph1-91.2)<10) %s ) ' %reg_str
-        draw_str_zcrph2 = 'PUWeight * (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph2-91.2)<10) %s ) ' %reg_str
+        draw_str_nom = 'PUWeight * ( pt_leadph12 > %d && pt_sublph12 > %d &&  %s ) ' %(minpt, minpt, reg_str)
+        draw_str_zcr =  'PUWeight  *  (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > %.1f && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph1_ph2-91.2)<10) &&  pt_leadph12 > %d && pt_sublph12 > %d && %s ) ' %(_mgg_cut, minpt, minpt, reg_str)
+        draw_str_zcrph1 =  'PUWeight  *  (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > %.1f && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph1-91.2)<10) &&  pt_leadph12 > %d && pt_subph12 > %d &&  %s ) ' %(_mgg_cut, minpt, minpt, reg_str)
+        draw_str_zcrph2 =  'PUWeight * (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > %.1f && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph2-91.2)<10) &&  pt_leadph12 > %d && pt_subph12 > %d &&  %s ) ' %(_mgg_cut, minpt, minpt, reg_str)
 
         hist_tag_nom    = 'egg%s' %reg_tag
         hist_tag_zcr    = 'egg_zcr%s' %reg_tag
         hist_tag_zcrph1 = 'egg_zcrph1%s' %reg_tag
         hist_tag_zcrph2 = 'egg_zcrph2%s' %reg_tag
 
-        save_electron_hists( draw_str_nom   , plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_nom    )
-        save_electron_hists( draw_str_nom   , plot_binning, '%s/%s/Electron' %(baseDir, plotDir), 'lgg'    )
-        #save_electron_hists( draw_str_zcr   , plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcr    )
-        #save_electron_hists( draw_str_zcrph1, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph1 )
-        #save_electron_hists( draw_str_zcrph2, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph2 )
+        save_electron_hists( draw_str_nom    , weight_str, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_nom    )
+        save_electron_hists( draw_str_nom    , weight_str, plot_binning, '%s/%s/Electron' %(baseDir, plotDir), 'lgg'    )
+        save_electron_hists( draw_str_zcr   , weight_str, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcr    )
+        #save_electron_hists( draw_str_zcrph1, weight_str, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph1 )
+        #save_electron_hists( draw_str_zcrph2, weight_str, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph2 )
 
     make_hist_from_pickle( samplesWmugg, baseDir + '/jet_fake_results__mu.pickle'            , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='mgg', regions=regions )
     make_hist_from_pickle( samplesWmugg, baseDir + '/jet_fake_results__mu.pickle'            , '%s/%s/Muon/JetFake/hist.root' %(baseDir, plotDir), tag='lgg', regions=regions )
@@ -876,8 +903,8 @@ def MakeBkgEstimatePlots( baseDir, plotDir ) :
     #make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__ph1zcr.pickle'       , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg_zcrph1', regions=regions)
     #make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__egg_ZCRPh1.pickle'        , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg_zcrph1', regions=regions )
 
-    #make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__zcr.pickle'       , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg_zcr', regions=regions)
-    #make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__egg_ZCR.pickle'        , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg_zcr', regions=regions )
+    make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__zcr.pickle'       , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg_zcr', regions=regions)
+    make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__egg_ZCR.pickle'        , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg_zcr', regions=regions )
 
     #make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__ph2zcr.pickle'       , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg_zcrph2', regions=regions)
     #make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__egg_ZCRPh2.pickle'        , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg_zcrph2', regions=regions )
@@ -891,8 +918,10 @@ def MakeBkgEstimatePlots( baseDir, plotDir ) :
         os.system( 'hadd %s/%s/hist.root %s/%s/Electron/%s/hist.root %s/%s/Muon/%s/hist.root' %( summed_dir, dir, baseDir,plotDir,dir, baseDir,plotDir, dir)  )
         os.system( 'cp %s/%s/Electron/EleFake/hist.root %s/EleFake/hist.root ' %( baseDir, plotDir, summed_dir ) )
 
-def save_electron_hists( draw_str, plot_binning, plot_dir, hist_tag ) :
+def save_electron_hists( draw_str, weight_str, plot_binning, plot_dir, hist_tag ) :
 
+    
+    # draw without weight
     samplesWelgg.Draw( 'pt_leadph12', draw_str, plot_binning )
 
     #---------------------------
@@ -904,6 +933,9 @@ def save_electron_hists( draw_str, plot_binning, plot_dir, hist_tag ) :
     hist_data_egg_pergev = hist_data_egg.Clone( hist_data_egg.GetName() + '_perGeV' )
     make_pergev_hist( hist_data_egg, hist_data_egg_pergev)
     save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_egg_pergev )
+
+    # draw with weight
+    samplesWelgg.Draw( 'pt_leadph12', weight_str+draw_str, plot_binning )
 
     #---------------------------
     # Wgg egg
@@ -1004,10 +1036,10 @@ def make_hist_from_pickle( sampMan, input_file, output_hist, tag, regions, syst=
 
             databin = ( reg[0] ,reg[1], str( min), maxval )
 
-            print databin
+            if databin not in data['stat+syst']['sum'] :
+                print 'Skipping bin %s that does not exist' %(str(databin))
+                continue 
 
-            print data
-            print data['stat+syst']['sum'].keys()
             hist.SetBinContent( ptbin, data['stat+syst']['sum'][databin]['result'].n )
             hist.SetBinError( ptbin, data['stat+syst']['sum'][databin]['result'].s )
 

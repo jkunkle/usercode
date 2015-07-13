@@ -42,12 +42,13 @@ class RunModule : public virtual RunModuleBase {
         // return values, or inputs to these functions, but
         // you must of course handle them in the source file
         // Examples :
-        void FilterPhoton        ( ModuleConfig & config ) const;
-        void FilterMuon        ( ModuleConfig & config ) const;
+        void FilterPhoton     ( ModuleConfig & config ) const;
+        void FilterMuon       ( ModuleConfig & config ) const;
+        void FilterElectron   ( ModuleConfig & config ) const;
         void FilterJet        ( ModuleConfig & config ) const;
-        bool FilterEvent         ( ModuleConfig & config ) const;
-        bool FilterBlind         ( ModuleConfig & config ) const;
-        void CalcDiJetVars        ( ModuleConfig & config ) const;
+        bool FilterEvent      ( ModuleConfig & config ) const;
+        bool FilterBlind      ( ModuleConfig & config ) const;
+        void CalcDiJetVars    ( ModuleConfig & config ) const;
 
         bool _isData;
 
@@ -73,6 +74,13 @@ namespace OUT {
     float dphi_zg_jj;
     float deta_j_j;
     float m_j_j;
+    float dr_j_j;
+    float dphi_j1_met;
+    float dphi_j2_met;
+    float dr_ph_j1;
+    float dr_ph_j2;
+    float dr_lep_j1;
+    float dr_lep_j2;
 #endif
 
 };

@@ -10,7 +10,7 @@ import pickle
 import collections
 from array import array
 
-_photon_hist_eta_pt_bins = ( [0, 1.44, 1.57, 2.4], [15,20,25,30,40,50,70,100] )
+_photon_hist_eta_pt_bins = ( [0, 1.44, 1.57, 2.5], [15,20,25,30,40,50,70,100] )
 
 uncert_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_06_05/SinglePhotonResults/SigmaIEIEFits/JetSinglePhotonFakeNomIso'
 _photon_jet_fake_uncert_files = { 'mmg_eveto' : { 

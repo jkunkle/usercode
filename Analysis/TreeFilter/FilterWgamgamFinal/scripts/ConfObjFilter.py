@@ -37,7 +37,9 @@ def config_analysis( alg_list, args ) :
     #----------------------------------------
     # Nominal muon filter
     #----------------------------------------
+    print 'MUON PT CUT = 10'
     alg_list.append( get_muon_filter( id='Tight',  ptcut=10 ) )
+    #alg_list.append( get_muon_filter( id='Tight',  ptcut=5 ) )
 
     #----------------------------------------
     # Loose muon filter
@@ -49,8 +51,10 @@ def config_analysis( alg_list, args ) :
     # Nominal electron filter
     #----------------------------------------
     #print '************************************NO ELE ID**********************'
+    print 'ELECTRON PT CUT = 10'
     #alg_list.append( get_electron_filter( None, ptcut=10 ) )
     alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=10 ) )
+    #alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=5 ) )
     print 'SAVING MVA ELECTRONS'
 
     #----------------------------------------
@@ -62,7 +66,9 @@ def config_analysis( alg_list, args ) :
     #----------------------------------------
     # Nominal photon filter with no photon ID
     #----------------------------------------
+    print 'PHOTON PT CUT = 15'
     alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True ) )
+    #alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=10, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True ) )
     #alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.1) )
     print 'SAVING NOID  PHOTONS, WITH OLAP REMOVAL'
 

@@ -54,6 +54,13 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
 
     outtree->Branch("deta_j_j"         , &OUT::deta_j_j         , "deta_j_j/F"       );
     outtree->Branch("m_j_j"         , &OUT::m_j_j         , "m_j_j/F"       );
+    outtree->Branch("dr_j_j"        , &OUT::dr_j_j        , "dr_j_j/F"      );
+    outtree->Branch("dphi_j1_met"   , &OUT::dphi_j1_met   , "dphi_j1_met/F"      );
+    outtree->Branch("dphi_j2_met"   , &OUT::dphi_j2_met   , "dphi_j2_met/F"      );
+    outtree->Branch("dr_ph_j1"      , &OUT::dr_ph_j1      , "dr_ph_j1/F"      );
+    outtree->Branch("dr_ph_j2"      , &OUT::dr_ph_j2      , "dr_ph_j2/F"      );
+    outtree->Branch("dr_lep_j1"     , &OUT::dr_lep_j1     , "dr_lep_j1/F"      );
+    outtree->Branch("dr_lep_j2"     , &OUT::dr_lep_j2     , "dr_lep_j2/F"      );
 #endif
     
     BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
@@ -96,6 +103,10 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
         FilterMuon( config );
     }
 
+    if( config.GetName() == "FilterElectron" ) {
+        FilterElectron( config );
+    }
+
     if( config.GetName() == "FilterJet" ) {
         FilterJet( config );
     }
@@ -131,6 +142,7 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
     for( int idx = 0; idx < IN::ph_n ; ++idx ) {
 
         if( !config.PassBool( "cut_ph_medium", IN::ph_passMedium->at(idx) ) ) continue;
+        if( !config.PassFloat( "cut_ph_pt", IN::ph_pt->at(idx) ) ) continue;
 
         CopyPrefixIndexBranchesInToOut( "ph_", idx );
         OUT::ph_n++;
@@ -149,6 +161,20 @@ void RunModule::FilterMuon( ModuleConfig & config ) const {
 
         CopyPrefixIndexBranchesInToOut( "mu_", idx );
         OUT::mu_n++;
+
+    }
+}
+void RunModule::FilterElectron( ModuleConfig & config ) const {
+
+    OUT::el_n = 0;
+    ClearOutputPrefix("el_");
+
+    for( int idx = 0; idx < IN::el_n ; ++idx ) {
+
+        if( !config.PassFloat( "cut_el_pt", IN::el_pt->at(idx) ) ) continue;
+
+        CopyPrefixIndexBranchesInToOut( "el_", idx );
+        OUT::el_n++;
 
     }
 }
@@ -197,6 +223,37 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     if( !config.PassFloat( "cut_mt_lep_met", OUT::mt_lep_met) )  keep_event=false;
     if( !config.PassFloat( "cut_met", OUT::pfType01MET) )  keep_event=false;
     
+    // uncertainty variations
+#ifdef EXISTS_mt_lep_metUncertMuonUP
+    if( !config.PassFloat( "cut_mt_lep_metUncertMuonUP", OUT::mt_lep_metUncertMuonUP ) ) keep_event=false;
+#endif
+#ifdef EXISTS_mt_lep_metUncertMuonDN
+    if( !config.PassFloat( "cut_mt_lep_metUncertMuonDN", OUT::mt_lep_metUncertMuonDN ) ) keep_event=false;
+#endif
+#ifdef EXISTS_mt_lep_metUncertEMUP
+    if( !config.PassFloat( "cut_mt_lep_metUncertEMUP", OUT::mt_lep_metUncertEMUP ) ) keep_event=false;
+#endif
+#ifdef EXISTS_mt_lep_metUncertEMDN
+    if( !config.PassFloat( "cut_mt_lep_metUncertEMDN", OUT::mt_lep_metUncertEMDN ) ) keep_event=false;
+#endif
+#ifdef EXISTS_mt_lep_metUncertJESUP
+    if( !config.PassFloat( "cut_mt_lep_metUncertJESUP", OUT::mt_lep_metUncertJESUP ) ) keep_event=false;
+#endif
+#ifdef EXISTS_mt_lep_metUncertJESDN
+    if( !config.PassFloat( "cut_mt_lep_metUncertJESDN", OUT::mt_lep_metUncertJESDN ) ) keep_event=false;
+#endif
+#ifdef EXISTS_mt_lep_metUncertJERUP
+    if( !config.PassFloat( "cut_mt_lep_metUncertJERUP", OUT::mt_lep_metUncertJERUP ) ) keep_event=false;
+#endif
+#ifdef EXISTS_mt_lep_metUncertJERDN
+    if( !config.PassFloat( "cut_mt_lep_metUncertJERDN", OUT::mt_lep_metUncertJERDN ) ) keep_event=false;
+#endif
+#ifdef EXISTS_mt_lep_metUncertUnClusUP
+    if( !config.PassFloat( "cut_mt_lep_metUncertUnClusUP", OUT::mt_lep_metUncertUnClusUP ) ) keep_event=false;
+#endif
+#ifdef EXISTS_mt_lep_metUncertUnClusDN
+    if( !config.PassFloat( "cut_mt_lep_metUncertUnClusDN", OUT::mt_lep_metUncertUnClusDN ) ) keep_event=false;
+#endif
     
     if( OUT::ph_n > 1 ) {
         if( OUT::ph_pt->at(0) > OUT::ph_pt->at(1) ) {
@@ -299,7 +356,15 @@ void RunModule::CalcDiJetVars( ModuleConfig & /*config*/ ) const {
     OUT::zeppenfeld_z = 0.0;
     OUT::dphi_zg_jj = 0.0;
     OUT::deta_j_j = 0.0;
+    OUT::dr_j_j = 0.0;
     OUT::m_j_j = 0.0;
+
+    OUT::dphi_j1_met = 0.0;
+    OUT::dphi_j2_met = 0.0;
+    OUT::dr_ph_j1 = 0.0;
+    OUT::dr_ph_j2 = 0.0;
+    OUT::dr_lep_j1 = 0.0;
+    OUT::dr_lep_j2 = 0.0;
 
     if( OUT::jet_n > 1 ) {
 
@@ -314,10 +379,17 @@ void RunModule::CalcDiJetVars( ModuleConfig & /*config*/ ) const {
 
         OUT::deta_j_j = jet1lv.Eta() - jet2lv.Eta();
         OUT::m_j_j = (jet1lv + jet2lv).M();
+        OUT::dr_j_j = jet1lv.DeltaR(jet2lv);
+
+        OUT::dphi_j1_met = jet1lv.DeltaPhi( metlv );
+        OUT::dphi_j2_met = jet2lv.DeltaPhi( metlv );
 
         if( OUT::ph_n>0 ) {
             TLorentzVector phlv;
             phlv.SetPtEtaPhiM( OUT::ph_pt->at(0), OUT::ph_eta->at(0), OUT::ph_phi->at(0), 0.0 );
+
+            OUT::dr_ph_j1 = phlv.DeltaR( jet1lv );
+            OUT::dr_ph_j2 = phlv.DeltaR( jet2lv );
 
             if( leptons.size() > 0  ) {
                 float solved_pz = -1;
@@ -346,6 +418,10 @@ void RunModule::CalcDiJetVars( ModuleConfig & /*config*/ ) const {
                 OUT::zeppenfeld_z = fabs( rap_zg - ( rap_j1 + rap_j2 )/2.0 );
             }
         } 
+        if( leptons.size() > 0  ) {
+            OUT::dr_lep_j1 = leptons[0].DeltaR( jet1lv );
+            OUT::dr_lep_j2 = leptons[0].DeltaR( jet2lv );
+        }
     }
 #endif
 }

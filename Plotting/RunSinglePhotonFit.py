@@ -33,6 +33,7 @@ p.add_argument('--outputDir',     default=None,  type=str ,        dest='outputD
 p.add_argument('--quiet',     default=False,action='store_true',   dest='quiet',         help='disable information messages')
 p.add_argument('--syst_file',     default=None,  type=str ,        dest='syst_file',         help='Location of systematics file')
 p.add_argument('--fitvar',     default='sigmaIEIE',  type=str ,        dest='fitvar',         help='Variable to use in the fit')
+p.add_argument('--pid',     default='Medium',  type=str ,        dest='pid',         help='PID to use (Medium, Tight)')
 p.add_argument('--ptbins',     default='15,25,40,70,1000000',  type=str ,        dest='ptbins',         help='list of pt bins')
 
 p.add_argument('--channel', default='mu',  dest='channel', help='run this channel' )
@@ -57,21 +58,24 @@ sampManFit = None
 
 def get_real_template_draw_commands( ch='mu') :
 
-    return 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && leadPhot_leadLepDR < 1 '
+    return 'mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && leadPhot_leadLepDR < 1 '
 
 def get_fake_template_draw_commands( ch='mu' ) :
 
-    return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 '
+    return 'mu_passtrig25_n>0 && mu_n==2 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 '
 
 def get_fake_window_template_draw_commands( ch='mu' ) :
-     return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
+    if ch.count('mu') :
+         return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
+    else :
+         return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
 #'realwin' :'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
 
 def get_default_draw_commands(ch='mu' ) :
 
     gg_cmds = {}
     if ch=='mu' :
-        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && el_n==0 && m_leplep>60 && m_leplepph > 105' }
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4  && el_n==0 && m_leplep>60 && m_leplepph > 105' }
     elif ch=='murealcr' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 leadPhot_leadLepDR>0.4  && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && el_n==0 && m_leplep>60 && m_leplepph > 81 && m_leplepph < 101' }
     elif ch == 'el' :
@@ -103,7 +107,7 @@ def get_default_draw_commands(ch='mu' ) :
     elif ch=='muzjj_highmjj' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && m_leplep>70 && m_leplep < 110  && jet_n>1 && m_j_j > 400 ',}
     elif ch=='muzjj_lowmjj' :                                                      
-        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 &&  jet_n>1 && m_j_j > 200 && m_j_j < 400',}
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && mu_pt[0] > 20 && mu_pt[1] > 20 && ph_n==1 && ph_pt[0] > 25 && ph_IsEB[0] && m_leplep>70 && m_leplep<120 && dr_ph1_leadLep>0.5 && dr_ph1_sublLep>0.5 && m_j_j > 150 && m_j_j < 400',}
 
     return gg_cmds
 
@@ -125,29 +129,29 @@ def get_default_binning(var='sigmaIEIE') :
     elif var == 'phoIsoCorr' :
         return { 'EB' : (53, -2.1, 35), 'EE' : (42, -2, 40) }
 
-_sieie_cuts  = { 'EB' : 0.011, 'EE' : 0.033 }
-_chIso_cuts  = { 'EB' : 1.5, 'EE' : 1.2 }
-_neuIso_cuts = { 'EB' : 1.0, 'EE' : 1.5 }
-_phoIso_cuts = { 'EB' : 0.7, 'EE' : 1.0 }
+_sieie_cuts  = { 'Medium' : { 'EB' : 0.011, 'EE' : 0.033 },  'Tight' : { 'EB' : 0.011, 'EE' : 0.031 } }
+_chIso_cuts  = { 'Medium' : { 'EB' : 1.5, 'EE' : 1.2 }    ,  'Tight' : { 'EB' : 0.7, 'EE' : 0.5 }     }
+_neuIso_cuts = { 'Medium' : { 'EB' : 1.0, 'EE' : 1.5 }    ,  'Tight' : { 'EB' : 0.4, 'EE' : 1.5 }     }
+_phoIso_cuts = { 'Medium' : { 'EB' : 0.7, 'EE' : 1.0 }    ,  'Tight' : { 'EB' : 0.5, 'EE' : 1.0 }     }
 
-def get_default_cuts(var='sigmaIEIE') :
+def get_default_cuts(var='sigmaIEIE', pid='Medium') :
 
     if var == 'sigmaIEIE' :
 
-        return { 'EB' : { 'tight' : ( 0, _sieie_cuts['EB']-0.0001  ), 'loose' : ( _sieie_cuts['EB']+0.0001, 0.0299 ) },
-                 'EE' : { 'tight' : ( 0, _sieie_cuts['EE']-0.0001 ), 'loose' : (  _sieie_cuts['EE']+0.0001, 0.099 ) } 
+        return { 'EB' : { 'tight' : ( 0, _sieie_cuts[pid]['EB']-0.0001  ), 'loose' : ( _sieie_cuts[pid]['EB']+0.0001, 0.0299 ) },
+                 'EE' : { 'tight' : ( 0, _sieie_cuts[pid]['EE']-0.0001 ), 'loose' : (  _sieie_cuts[pid]['EE']+0.0001, 0.066 ) } 
                }
     elif var == 'chIsoCorr' :
-        return { 'EB' : { 'tight' : ( 0, 1.5-0.01  ), 'loose' : ( 1.5001, 45 ) },
-                 'EE' : { 'tight' : ( 0, 1.2-0.01 ), 'loose' : ( 1.2001, 42 ) } 
+        return { 'EB' : { 'tight' : ( 0, _chIso_cuts[pid]['EB']-0.01 ), 'loose' : ( _chIso_cuts[pid]['EB']+0.01, 45 ) },
+                 'EE' : { 'tight' : ( 0, _chIso_cuts[pid]['EE']-0.01 ), 'loose' : ( _chIso_cuts[pid]['EE']+0.01, 42 ) } 
                }
     elif var == 'neuIsoCorr' :
-        return { 'EB' : { 'tight' : ( -2, 1.0-0.01  ), 'loose' : ( 1.0001, 40 ) },
-                 'EE' : { 'tight' : ( -2, 1.5-0.01 ), 'loose' : ( 1.5001, 45 ) } 
+        return { 'EB' : { 'tight' : ( -2,_neuIso_cuts[pid]['EB']-0.01   ), 'loose' : ( _neuIso_cuts[pid]['EB']+0.01 , 40 ) },
+                 'EE' : { 'tight' : ( -2,_neuIso_cuts[pid]['EE']-0.01   ), 'loose' : ( _neuIso_cuts[pid]['EE']+0.01 , 45 ) } 
                }
     elif var == 'phoIsoCorr' :
-        return { 'EB' : { 'tight' : ( -2.1, 0.7-0.001  ), 'loose' : ( 0.70001, 35 ) },
-                 'EE' : { 'tight' : ( -2, 1.0-0.001 ), 'loose' : ( 1.0001, 50 ) } 
+        return { 'EB' : { 'tight' : ( -2.1,_phoIso_cuts[pid]['EB']-0.001   ), 'loose' : (_phoIso_cuts[pid]['EB']+0.001  , 35 ) },
+                 'EE' : { 'tight' : ( -2  ,_phoIso_cuts[pid]['EE']-0.001   ), 'loose' : (_phoIso_cuts[pid]['EE']+0.001  , 50 ) } 
                }
 
 
@@ -197,8 +201,8 @@ def main() :
     global sampManLLG
     global sampManFit
 
-    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11/'
-    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_04_11/'
+    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_06_29/'
+    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_06_29/'
     fit_dir  = options.fitPath
 
     sampManLG    = SampleManager(base_dir_lg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
@@ -221,7 +225,7 @@ def main() :
     if options.syst_file is not None :
         load_syst_file( options.syst_file )
 
-    RunNomFitting( outputDir = options.outputDir, ch=options.channel, fitvar=options.fitvar)
+    RunNomFitting( outputDir = options.outputDir, ch=options.channel, fitvar=options.fitvar, pid=options.pid)
 
 def load_syst_file( file ) :
 
@@ -232,7 +236,7 @@ def load_syst_file( file ) :
 
     ofile.close()
 
-def RunNomFitting( outputDir = None, ch='mu', fitvar=None) :
+def RunNomFitting( outputDir = None, ch='mu', fitvar=None, pid='Medium') :
 
     outputDirNom = None
     if outputDir is not None :
@@ -245,18 +249,34 @@ def RunNomFitting( outputDir = None, ch='mu', fitvar=None) :
         elif fitvar == 'phoIsoCorr' :
             outputDirNom = outputDir + '/SinglePhotonResults/PhoIsoFits/JetSinglePhotonFakeNomIso'
 
-    ptbins = [int(x) for x in options.ptbins.split(',') ]
+    ptbins = [float(x) for x in options.ptbins.split(',') ]
 
-    if fitvar == 'sigmaIEIE' :
-        iso_cuts_full = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-    elif fitvar == 'chIsoCorr' :
-        iso_cuts_full = 'ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-    elif fitvar == 'neuIsoCorr' :
-        iso_cuts_full = 'ph_passChIsoCorrMedium[0] && ph_passSIEIEMedium[0] && ph_passPhoIsoCorrMedium[0] '
-    elif fitvar == 'phoIsoCorr' :
-        iso_cuts_full = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passSIEIEMedium[0] '
+    if ch.count('mu') or ch =='elwzcrinvpixlead' :
+        if fitvar == 'sigmaIEIE' :
+            #iso_cuts_full = 'ph_n==1 && ph_passChIsoCorr%s[0] && ph_passNeuIsoCorr%s[0] && ph_passPhoIsoCorr%s[0] '%(pid,pid,pid)
+            #iso_cuts_full = 'ph_n>0 && ph_passChIsoCorr%s[0] && ph_passNeuIsoCorr%s[0] && ph_passPhoIsoCorr%s[0] '%(pid,pid,pid)
+            iso_cuts_full = 'ph_mediumNoSIEIENoEleVeto_n == 1 '
+            #iso_cuts_full = 'ph_mediumNoSIEIE_n == 1 '
+        elif fitvar == 'chIsoCorr' :
+            #iso_cuts_full = 'ph_n==1 && ph_passSIEIE%s[0] && ph_passNeuIsoCorr%s[0] && ph_passPhoIsoCorr%s[0] '%(pid,pid,pid)
+            iso_cuts_full = 'ph_mediumNoChIsoNoEleVeto_n == 1 '
+        elif fitvar == 'neuIsoCorr' :
+            #iso_cuts_full = 'ph_n==1 && ph_passChIsoCorr%s[0] && ph_passSIEIE%s[0] && ph_passPhoIsoCorr%s[0] '%(pid,pid,pid)
+            iso_cuts_full = 'ph_mediumNoNeuIsoNoEleVeto_n == 1 '
+        elif fitvar == 'phoIsoCorr' :
+            #iso_cuts_full = 'ph_n==1 && ph_passChIsoCorr%s[0] && ph_passNeuIsoCorr%s[0] && ph_passSIEIE%s[0] '%(pid,pid,pid)
+            iso_cuts_full = 'ph_mediumNoPhoIsoNoEleVeto_n == 1 '
+    else :
+        if fitvar == 'sigmaIEIE' :
+            iso_cuts_full = 'ph_mediumNoSIEIE_n == 1 '
+        elif fitvar == 'chIsoCorr' :
+            iso_cuts_full = 'ph_mediumNoChIso_n == 1 '
+        elif fitvar == 'neuIsoCorr' :
+            iso_cuts_full = 'ph_mediumNoNeuIso_n == 1 '
+        elif fitvar == 'phoIsoCorr' :
+            iso_cuts_full = 'ph_mediumNoPhoIso_n == 1 '
 
-    do_nominal_fit( iso_cuts_full, ptbins=ptbins, fitvar=fitvar, ch=ch, outputDir = outputDirNom, systematics='Nom')
+    do_nominal_fit( iso_cuts_full, ptbins=ptbins, fitvar=fitvar, ch=ch,pid=pid, outputDir = outputDirNom, systematics='Nom')
 
     #iso_cuts = 'ph_chIsoCorr[0] < 8 && ph_neuIsoCorr[0] < 5 && ph_phoIsoCorr[0] < 5'
     #asym_cuts = [(5,3,3), (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20, 16, 16) ]
@@ -269,7 +289,7 @@ def RunNomFitting( outputDir = None, ch='mu', fitvar=None) :
     #    do_nominal_fit( iso_cuts, ptbins=ptbins, ch=ch, outputDir = outputDirAsym, systematics='Nom', iso_cuts_data=iso_cuts)
 
 
-def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), fitvar='sigmaIEIE', ch='mu', outputDir=None, systematics=None, iso_cuts_data=None ) :
+def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), fitvar='sigmaIEIE', ch='mu', pid='Medium', outputDir=None, systematics=None, iso_cuts_data=None ) :
 
     binning = get_default_binning(var=fitvar)
     samples = get_default_samples(ch)
@@ -297,12 +317,12 @@ def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), fitvar='sigma
         templates['lead']['fake'] = templates_reg[reg]['fake']
 
         # add regions onto the selection
-        #gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_mediumNoSIEIE_n > 0 && ph_Is%s[0]' %( reg)
-        gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n > 0 && ph_Is%s[0]' %( reg)
-        if iso_cuts_data is not None :
-            gg_selection = gg_selection + ' && %s ' %( iso_cuts_data )
-        elif iso_cuts is not None :
-            gg_selection = gg_selection + ' && %s ' %( iso_cuts )
+        gg_selection = get_default_draw_commands(ch)['gg'] + ' && %s && ph_Is%s[0]' %( iso_cuts, reg)
+        #gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n > 0 && ph_Is%s[0]' %( reg)
+        #if iso_cuts_data is not None :
+        #    gg_selection = gg_selection + ' && %s ' %( iso_cuts_data )
+        #elif iso_cuts is not None :
+        #    gg_selection = gg_selection + ' && %s ' %( iso_cuts )
 
         # parse out the x and y binning
         xbinn = binning[reg]
@@ -325,7 +345,7 @@ def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), fitvar='sigma
 
         templates_inclusive = get_projected_templates( templates, lead_ptrange =(None,None) )
 
-        (results_inclusive_stat, results_inclusive_syst) = run_photon_fit(templates_inclusive, gg_hist_inclusive, reg, fitvar=fitvar, lead_ptrange=(None,None), outputDir=outputDir, outputPrefix='__%s'%ch, systematics=systematics )
+        (results_inclusive_stat, results_inclusive_syst) = run_photon_fit(templates_inclusive, gg_hist_inclusive, reg, fitvar=fitvar, pid=pid, lead_ptrange=(None,None), outputDir=outputDir, outputPrefix='__%s'%ch, systematics=systematics )
 
         namePostfix = '__%s__%s' %( ch, reg )
         save_templates( templates_inclusive, outputDir, lead_ptrange=(None,None), namePostfix=namePostfix )
@@ -365,7 +385,7 @@ def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), fitvar='sigma
             #        templates_pt['lead']['fake'][key] = val
 
             # get results
-            (results_pt_stat, results_pt_syst) = run_photon_fit(templates_pt, gg_hist_pt, reg, fitvar=fitvar, lead_ptrange=lead_ptrange, outputDir=outputDir, outputPrefix='__%s' %ch, systematics=systematics )
+            (results_pt_stat, results_pt_syst) = run_photon_fit(templates_pt, gg_hist_pt, reg, fitvar=fitvar, pid=pid, lead_ptrange=lead_ptrange, outputDir=outputDir, outputPrefix='__%s' %ch, systematics=systematics )
 
             namePostfix = '__%s__%s' %( ch, reg )
             if lead_ptrange[0] is not None :
@@ -412,7 +432,7 @@ def get_projected_templates( templates, lead_ptrange=(None,None) ) :
     return templates_proj
 
 
-def run_photon_fit( templates, gg_hist, lead_reg, fitvar='sigmaIEIE', lead_ptrange=(None,None), outputDir=None, outputPrefix='', systematics=None ) :
+def run_photon_fit( templates, gg_hist, lead_reg, fitvar='sigmaIEIE', pid='Medium', lead_ptrange=(None,None), outputDir=None, outputPrefix='', systematics=None ) :
 
     accept_reg = ['EB', 'EE']
     if lead_reg not in accept_reg :
@@ -422,7 +442,7 @@ def run_photon_fit( templates, gg_hist, lead_reg, fitvar='sigmaIEIE', lead_ptran
     # get the defaults
     samples = get_default_samples()
     plotbinning = get_default_binning(var=fitvar)
-    cuts = get_default_cuts(var=fitvar)
+    cuts = get_default_cuts(var=fitvar, pid=pid)
 
     # Find the bins corresponding to the cuts
     # lead photon on X axis, subl on Y axis
@@ -530,165 +550,6 @@ def run_fit( data, efficiencies ) :
     results = solve_matrix_eq( matrix, [data['T'], data['L']] )
 
     return results 
-
-def run_fit_manual( data, eff ) :
-
-    # matrix is 
-    # ----------------------
-    # RF_TL FR_TL FF_TL
-    # RF_LT FR_LT FF_LT
-    # RF_LL FR_LL FF_LL
-    
-    # RF_TL = (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']
-    # FR_TL = (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']
-    # FF_TL = (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']
-    # RF_LT = eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])
-    # FR_LT = eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])
-    # FF_LT = eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])
-    # RF_LL = eff['eff_R_L_lead']*eff['eff_F_L_subl']
-    # FR_LL = eff['eff_F_L_lead']*eff['eff_R_L_subl']
-    # FF_LL = eff['eff_F_L_lead']*eff['eff_F_L_subl']
-    # RF_TT = (1-eff['eff_R_L_lead'])*(1-eff['eff_F_L_subl'])
-    # FR_TT = (1-eff['eff_F_L_lead'])*(1-eff['eff_R_L_subl'])
-    # FF_TT = (1-eff['eff_F_L_lead'])*(1-eff['eff_F_L_subl'])
-
-    # determinant = RF_TL*FR_LT*FF_LL + FR_TL*FF_LT*RF_LL + FF_TL*RF_LT*FR_LL - FF_TL*FR_LT*RF_LL - FR_TL*RF_LT*FF_LL - RF_TL*FF_LT*FR_LL
-    # determinant = (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl'] 
-    #             + (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-    #             + (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-    #             - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-    #             - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-    #             - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-    
-    # Inverted matrix
-    # Inv_11 = FR_LT*FF_LL-FF_LT*FR_LL
-    # Inv_12 = FF_TL*FR_LL-FR_TL*FF_LL
-    # Inv_13 = FR_TL*FF_LT-FF_TL*FR_LT
-    # Inv_21 = FF_LT*RF_LL-RF_LT*FF_LL
-    # Inv_22 = RF_TL*FF_LL-FF_TL*RF_LL
-    # Inv_23 = FF_TL*RF_LT-RF_TL*FF_LT
-    # Inv_31 = RF_LT*FR_LL-FR_LT*RF_LL
-    # Inv_32 = FR_TL*RF_LL-RF_TL*FR_LL
-    # Inv_33 = RF_TL*FR_LT-FR_TL*RF_LT
-
-    # Inv_11 = eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-    #        - eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-    # Inv_12 = (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-    #        - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-    # Inv_13 = (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])
-    #        - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])
-    # Inv_21 = eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-    #        - eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-    # Inv_22 = (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-    #        - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-    # Inv_23 = (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])
-    #        - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])
-    # Inv_31 = eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-    #        - eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-    # Inv_32 = (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-    #        - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-    # Inv_33 = (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])
-    #        - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])
-
-    # alpha_rf = (1/determinant) * ( Inv_11 * Data['TL'] + Inv_12*Data['LT'] + Inv_13 * Data['LL'])
-    # alpha_fr = (1/determinant) * ( Inv_21 * Data['TL'] + Inv_22*Data['LT'] + Inv_23 * Data['LL'])
-    # alpha_ff = (1/determinant) * ( Inv_31 * Data['TL'] + Inv_32*Data['LT'] + Inv_33 * Data['LL'])
-    alpha_rf = ( (1.0/( (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl'] 
-                      + (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                      + (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-                      - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                      - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-                      - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl'] ) )
-              * ( (  eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-                   - eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl'] )*data['TL']
-                + (  (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-                   - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*eff['eff_F_L_subl'] )*data['LT']
-                + (   (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])
-                    - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl']) )*data['LL']
-              ) )
-
-    alpha_fr = ( (1.0/( (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']     
-                    + (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                    + (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-                    - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                    - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-                    - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl'] ) )
-            * ( (   eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                  - eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl'] )*data['TL'] 
-              + (   (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-                  - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*eff['eff_F_L_subl'] )*data['LT']
-              + (   (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])
-                  - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl']) ) *data['LL']
-              ) )
-                
-    alpha_ff = ( (1.0/( (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']    
-                    + (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                    + (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-                    - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                    - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-                    - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl'] ) )
-            * ( (   eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-                  - eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl'] )*data['TL']
-              + (  (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                 - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*eff['eff_R_L_subl'] ) * data['LT']
-              + (   (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])
-                  - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl']) )*data['LL']
-              ) )
-
-
-    nPred_RF_TT = ( (1-eff['eff_R_L_lead'])*(1-eff['eff_F_L_subl'])* 
-                      ( (1.0/( (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl'] 
-                      + (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                      + (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-                      - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                      - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-                      - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl'] ) )
-              * ( (  eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-                   - eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl'] )*data['TL']
-                + (  (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-                   - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*eff['eff_F_L_subl'] )*data['LT']
-                + (   (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])
-                    - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl']) )*data['LL']
-              ) ) )
-
-    nPred_FR_TT = ( (1-eff['eff_F_L_lead'])*(1-eff['eff_R_L_subl'])* 
-                   ( (1.0/( (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']     
-                    + (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                    + (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-                    - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                    - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-                    - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl'] ) )
-            * ( (   eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                  - eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl'] )*data['TL'] 
-              + (   (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-                  - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*eff['eff_F_L_subl'] )*data['LT']
-              + (   (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])
-                  - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl']) ) *data['LL']
-              ) ) )
-
-    nPred_FF_TT = ( (1-eff['eff_F_L_lead'])*(1-eff['eff_F_L_subl'])* 
-                  ( (1.0/( (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']    
-                    + (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                    + (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-                    - (1-eff['eff_F_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                    - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_F_L_subl']
-                    - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl'] ) )
-            * ( (   eff['eff_R_L_lead']*(1-eff['eff_F_L_subl'])*eff['eff_F_L_lead']*eff['eff_R_L_subl']
-                  - eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])*eff['eff_R_L_lead']*eff['eff_F_L_subl'] )*data['TL']
-              + (  (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*eff['eff_F_L_subl']
-                 - (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*eff['eff_R_L_subl'] ) * data['LT']
-              + (   (1-eff['eff_R_L_lead'])*eff['eff_F_L_subl']*eff['eff_F_L_lead']*(1-eff['eff_R_L_subl'])
-                  - (1-eff['eff_F_L_lead'])*eff['eff_R_L_subl']*eff['eff_R_L_lead']*(1-eff['eff_F_L_subl']) )*data['LL']
-              ) ) )
-       
-    return {'alpha_RF' : alpha_rf, 'alpha_FR' : alpha_fr, 'alpha_FF' : alpha_ff, 'pred_RF_TT' : nPred_RF_TT, 'pred_FR_TT' : nPred_FR_TT, 'pred_FF_TT' : nPred_FF_TT }
-       
-       
-#def save_normalized_template_hists( data_hist, results, templates, efficiencies, bins_lead_loose, bins_subl_loose, ndim, lead_ptrange=None, subl_ptrange=None, outputDir=None ) :
-#    
-#    if outputDir is None :
-#        return
-
 
 def collect_results( results, data, efficiencies, templates, bins_lead_loose, bins_lead_tight ) :
 

@@ -58,29 +58,49 @@ def config_analysis( alg_list, args ) :
 
 def make_final_mu( alg_list, args ) :
 
+    loose = args.get('loose', False )
+    print 'loose = ', loose
+
+    notrig = args.get('notrig', False )
+    print 'notrig = ', notrig
+
+    mtvar = args.get('mt_var', 'mt_lep_met')
+    print 'mtvar = ', mtvar
+
+    mtcut = args.get('mtcut', ' > 40')
+    print 'mtcut = ', mtcut
+
     filter_photon = Filter( 'FilterPhoton' )
     filter_photon.cut_ph_medium = ' == True '
+    if not loose :
+        filter_photon.cut_ph_pt = ' > 15 '
     alg_list.append(filter_photon)
 
-    filter_muon = Filter( 'FilterMuon' )
-    filter_muon.cut_mu_pt = ' > 10 '
-    alg_list.append(filter_muon)
+    if not loose :
+        filter_muon = Filter( 'FilterMuon' )
+        filter_muon.cut_mu_pt = ' > 10 '
+        alg_list.append(filter_muon)
+
+        filter_ele = Filter( 'FilterElectron' )
+        filter_ele.cut_el_pt = ' > 10 '
+        alg_list.append(filter_ele)
 
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' == 2 '
-    filter_event.cut_nMuTrig = ' > 0 '
     filter_event.cut_nMu = ' == 1 '
     filter_event.cut_nEl = ' == 0 '
+
+    if not notrig :
+        filter_event.cut_nMuTrig = ' > 0 '
 
     filter_event.cut_dr_lep_ph1 = ' > 0.4 '
     filter_event.cut_dr_lep_ph2 = ' > 0.4 '
     filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
 
-    loose = args.get('loose', False )
-    print 'loose = ', loose
     if not loose :
-        filter_event.cut_mgg = ' > 15 '
-        filter_event.cut_mt_lep_met = ' > 40 '
+        # remove diphoton mass cut
+        #filter_event.cut_mgg = ' > 15 '
+        setattr( filter_event, 'cut_%s' %mtvar, mtcut )
 
     alg_list.append( filter_event )
 
@@ -98,39 +118,83 @@ def make_final_mu( alg_list, args ) :
 
 def make_final_el( alg_list, args ) :
 
+    loose = args.get('loose', False )
+    print 'loose = ', loose
+
+    nozmass = args.get('nozmass', False )
+    print 'nozmass = ', nozmass
+
+    zmasscr = args.get('zmasscr', False )
+    print 'zmasscr = ', zmasscr
+
+    notrig = args.get('notrig', False )
+    print 'notrig = ', notrig
+
+    invpixlead = args.get('invpixlead', False )
+    print 'invpixlead = ', invpixlead
+
+    invpixsubl = args.get('invpixsubl', False )
+    print 'invpixsubl = ', invpixsubl
+
+    mtvar = args.get('mt_var', 'mt_lep_met')
+    print 'mtvar = ', mtvar
+
+    mtcut = args.get('mtcut', ' > 40')
+    print 'mtcut = ', mtcut
+
     filter_photon = Filter( 'FilterPhoton' )
     filter_photon.cut_ph_medium = ' == True '
+    if not loose :
+        filter_photon.cut_ph_pt = ' > 15 '
+
     alg_list.append(filter_photon)
 
-    filter_muon = Filter( 'FilterMuon' )
-    filter_muon.cut_mu_pt = ' > 10 '
-    alg_list.append(filter_muon)
+    if not loose :
+        filter_muon = Filter( 'FilterMuon' )
+        filter_muon.cut_mu_pt = ' > 10 '
+        alg_list.append(filter_muon)
+    
+        filter_ele = Filter( 'FilterElectron' )
+        filter_ele.cut_el_pt = ' > 10 '
+        alg_list.append(filter_ele)
 
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' == 2 '
-    filter_event.cut_nElTrig = ' > 0 '
     filter_event.cut_nEl = ' == 1 '
     filter_event.cut_nMu = ' == 0 '
 
-    filter_event.cut_hasPixSeed_leadph12 = ' == False '
-    filter_event.cut_hasPixSeed_sublph12 = ' == False '
+    if not notrig :
+        filter_event.cut_nElTrig = ' > 0 '
+
+    if invpixlead :
+        filter_event.cut_hasPixSeed_leadph12 = ' == True '
+    else :
+        filter_event.cut_hasPixSeed_leadph12 = ' == False '
+    if invpixsubl :
+        filter_event.cut_hasPixSeed_sublph12 = ' == True '
+    else :
+        filter_event.cut_hasPixSeed_sublph12 = ' == False '
 
     filter_event.cut_dr_lep_ph1 = ' > 0.4 '
     filter_event.cut_dr_lep_ph2 = ' > 0.4 '
     filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
 
-    loose = args.get('loose', False )
-    print 'loose = ', loose
     if not loose :
-        filter_event.cut_mt_lep_met = ' > 40 '
-        filter_event.cut_mgg = ' > 15 '
-        filter_event.cut_m_lepphph= ' > 86.2 & < 96.2  '
-        filter_event.cut_m_lepph1= ' > 86.2 & < 96.2  '
-        filter_event.cut_m_lepph2= ' > 86.2 & < 96.2  '
+        setattr( filter_event, 'cut_%s' %mtvar, mtcut )
+        # remove mgg Cut
+        #filter_event.cut_mgg = ' > 15 '
+        if not nozmass :
+            if zmasscr :
+                filter_event.cut_m_lepphph= ' > 86.2 & < 96.2  '
+            else :
+                filter_event.cut_m_lepphph= ' > 86.2 & < 96.2  '
+                filter_event.cut_m_lepph1= ' > 86.2 & < 96.2  '
+                filter_event.cut_m_lepph2= ' > 86.2 & < 96.2  '
+                filter_event.invert( 'cut_m_lepphph' )
+                filter_event.invert( 'cut_m_lepph1' )
+                filter_event.invert( 'cut_m_lepph2' )
 
-    filter_event.invert( 'cut_m_lepphph' )
-    filter_event.invert( 'cut_m_lepph1' )
-    filter_event.invert( 'cut_m_lepph2' )
+
 
     alg_list.append( filter_event )
 

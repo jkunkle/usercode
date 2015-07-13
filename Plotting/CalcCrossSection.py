@@ -10,17 +10,33 @@ parser.add_argument( '--baseDir', default=None, required=True, dest='baseDir', h
 
 options = parser.parse_args()
 
+## FOR EB_EB
+#acceptances = { 'electron' : {
+#                              ('15', '25')  : ufloat( 0.1645, 0.0134 ) , 
+#                              ('25', '40')  : ufloat( 0.1654, 0.0119 ) ,
+#                              ('40', '70')  : ufloat( 0.2187, 0.0232 ) ,
+#                              ('70', 'max') : ufloat( 0.2777, 0.0416 ) ,
+#                             },
+#                'muon'    : { 
+#                              ('15', '25')  : ufloat( 0.2737, 0.0180 ) , 
+#                              ('25', '40')  : ufloat( 0.2823, 0.0169 ) ,
+#                              ('40', '70')  : ufloat( 0.3249, 0.0151 ) ,
+#                              ('70', 'max') : ufloat( 0.3386, 0.0168) ,
+#                             },
+#}
+
+# FOR EB_EB+EB_EE+EE_EB, > 40
 acceptances = { 'electron' : {
-                              ('15', '25')  : ufloat( 0.1505, 0.0091 ) , 
-                              ('25', '40')  : ufloat( 0.1828, 0.0083 ) ,
-                              ('40', '70')  : ufloat( 0.2237, 0.0091 ) ,
-                              ('70', 'max') : ufloat( 0.2777, 0.0103 ) ,
+                              ('15', '25')  : ufloat( 0.1344, 0.0094 ) , 
+                              ('25', '40')  : ufloat( 0.1442, 0.0095 ) ,
+                              ('40', '70')  : ufloat( 0.1896, 0.0219) ,
+                              ('70', 'max') : ufloat( 0.2418, 0.0385 ) ,
                              },
                 'muon'    : { 
-                              ('15', '25')  : ufloat( 0.3065, 0.0149 ) , 
-                              ('25', '40')  : ufloat( 0.3251, 0.0119 ) ,
-                              ('40', '70')  : ufloat( 0.3398, 0.0117 ) ,
-                              ('70', 'max') : ufloat( 0.3622, 0.0122 ) ,
+                              ('15', '25')  : ufloat( 0.2570, 0.0134 ) , 
+                              ('25', '40')  : ufloat( 0.2529, 0.0097 ) ,
+                              ('40', '70')  : ufloat( 0.2824, 0.0106 ) ,
+                              ('70', 'max') : ufloat( 0.3000, 0.0117) ,
                              },
 }
 
@@ -40,8 +56,10 @@ def main() :
     ofile_muon.close()
 
     pt_bins = ['15', '25', '40', '70', 'max']
+    #pt_bins = ['40', '70', 'max']
 
-    lumi = ufloat( 19.4, 19.4*0.011 )
+    lumi = ufloat( 19.4, 19.4*0.026 )
+    #lumi = ufloat( 19.4, 0.0 )
     xs_data = {}
     for ch, res in results.iteritems() :
 
@@ -75,6 +93,9 @@ def main() :
             sig = sig + res['detail']['Wgg']['bins'][str(idx+4)]['val']
             sig = ufloat( sig.n, math.sqrt( sig.n ) )
 
+            #bkg = ufloat( bkg.n, 0.0 )
+
+            #data = ufloat( data.n , 0.0 )
 
             data_minus_bkg = data - bkg
 
@@ -101,6 +122,8 @@ def main() :
 
     rev_ptbins = list( pt_bins )
     rev_ptbins.reverse()
+    cross_section_tot = ufloat( 0.0, 0.0 )
+    cross_section_tot_exp = ufloat( 0.0, 0.0 )
     for ch in results.keys() :
         cross_section = ufloat( 0.0, 0.0 )
         cross_section_exp = ufloat( 0.0, 0.0 )
@@ -113,9 +136,16 @@ def main() :
             cross_section = cross_section + xs_data[ch][( ptmin, ptmax )]['cross_section']
             cross_section_exp = cross_section_exp + xs_data[ch][( ptmin, ptmax )]['cross_section_exp']
 
+
             print 'Pt bin : %s - %s' %( ptmin, ptmax )
             print 'Expected cross section = %s' %cross_section_exp
             print 'Cross section = %s' %cross_section
+            if ptmin == '15' :
+                cross_section_tot = cross_section_tot + cross_section
+                cross_section_tot_exp = cross_section_tot_exp   + cross_section_exp
+
+    print 'Total Expected cross section = %s' %cross_section_tot_exp
+    print 'Total Cross section = %s' %cross_section_tot
 
 
         

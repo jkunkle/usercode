@@ -18,10 +18,10 @@ base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2015_04_05'
 #base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputDiMuon_2014_11_27'
 #base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2014_10_30'
 jobs_data = [
-        (base, 'job_electron_2012a_Jan22rereco'),
-        (base, 'job_electron_2012b_Jan22rereco'),
-        (base, 'job_electron_2012c_Jan2012rereco'),
-        (base, 'job_electron_2012d_Jan22rereco'),
+        #(base, 'job_electron_2012a_Jan22rereco'),
+        #(base, 'job_electron_2012b_Jan22rereco'),
+        #(base, 'job_electron_2012c_Jan2012rereco'),
+        #(base, 'job_electron_2012d_Jan22rereco'),
         #(base, 'job_muon_2012a_Jan22rereco'),
         #(base, 'job_muon_2012b_Jan22rereco'),
         #(base, 'job_muon_2012c_Jan22rereco'),
@@ -65,7 +65,7 @@ jobs_data = [
 ]
 
 jobs_mc = [
-        (base, 'job_summer12_DYJetsToLL'),
+        #(base, 'job_summer12_DYJetsToLL'),
         #(base, 'job_summer12_Zg'),
         #(base, 'job_summer12_Wg'),
         #(base, 'job_summer12_Wjets'),
@@ -74,8 +74,8 @@ jobs_mc = [
         #(base, 'job_summer12_Zgg'),
         #(base, 'job_summer12_WAA_ISR'),
         #(base, 'job_summer12_Wgg_FSR'),
-        #(base, 'job_NLO_WAA_ISR'),
-        #(base, 'job_NLO_WAA_FSR'),
+        (base, 'job_NLO_WAA_ISR'),
+        (base, 'job_NLO_WAA_FSR'),
         #(base, 'job_summer12_ttg'),
         #(base, 'job_summer12_WgPt130'),
         #(base, 'job_summer12_WgPt50-130'),
@@ -141,30 +141,37 @@ top_configs = [
                 #  'module'      : 'ConfObjFilter.py',
                 #  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\' }',
                 #  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\', \'isData\' : \' == True\' }',
-                #  'output_name' : 'LepGammaNoPhID_2015_04_11',
+                #  'output_name' : 'LepGammaNoPhID_2015_06_29',
                 #  'tag'         : 'lg',
                 #},
                 #{ 
                 #  'module'      : 'ConfObjFilter.py',
                 #  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 1\', \'cut_nPh\' : \'> 0\' }',
                 #  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 1\', \'cut_nPh\' : \'> 0\', \'isData\' : \' == True\' }',
-                #  'output_name' : 'LepLepGammaNoPhID_2015_04_11',
+                #  'output_name' : 'LepLepGammaNoPhID_2015_06_29',
                 #  'tag'         : 'llg',
                 #},
+                { 
+                  'module'      : 'ConfObjFilter.py',
+                  'args_mc'     : '{ \'cut_nLepTrigMatchSoft\' : \' > 0 \', \'cut_nPh\' : \'> 1\' }',
+                  'args_data'   : '{ \'cut_nLepTrigMatchSoft\' : \' > 0 \', \'cut_nPh\' : \'> 1\', \'isData\' : \' == True\' }',
+                  'output_name' : 'LepGammaGammaNoPhIDSoft_2015_06_29',
+                  'tag'         : 'lgs',
+                },
                 #{ 
                 #  'module'      : 'ConfObjFilter.py',
                 #  'args_mc'     : '{ \'cut_nLep\' : \' > 0 \', \'cut_nPh\' : \'> 1\' }',
                 #  'args_data'   : '{ \'cut_nLep\' : \' > 0 \', \'cut_nPh\' : \'> 1\', \'isData\' : \' == True\' }',
-                #  'output_name' : 'LepGammaGammaNoPhIDLooseLep_2015_04_20',
+                #  'output_name' : 'LepGammaGammaNoPhIDLowPt_2015_06_29',
                 #  'tag'         : 'lgg',
                 #},
-                { 
-                  'module'      : 'ConfObjFilter.py',
-                  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 1\'}',
-                  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 1\', \'isData\' : \' == True\' }',
-                  'output_name' : 'LepLepEl_2015_06_23',
-                  'tag'         : 'll',
-                },
+                #{ 
+                #  'module'      : 'ConfObjFilter.py',
+                #  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 1\'}',
+                #  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 1\', \'isData\' : \' == True\' }',
+                #  'output_name' : 'LepLepEl_2015_06_23',
+                #  'tag'         : 'll',
+                #},
 ]
 
 

@@ -958,9 +958,9 @@ class SampleManager :
         if not common_results :
             print 'WARNING : Found zero samples matching criteria!  Available samples are : '
             #assert( '' )
-            print kwargs
-            for s in self.get_samples() :
-                print s.name
+            #print kwargs
+            #for s in self.get_samples() :
+            #    print s.name
             return []
 
         return common_results
@@ -1330,7 +1330,9 @@ class SampleManager :
         os.makedirs( comb_dir )
         for base, files in file_map.iteritems() :
             if len(files) == 1 :
-                os.system( 'cp %s %s/' %(files[0], comb_dir ) )
+                cp_cmd = 'cp %s %s/' %(files[0], comb_dir )
+                print cp_cmd
+                os.system( cp_cmd )
             else :
                 os.system( 'hadd %s/%s %s' %( comb_dir, base, ' '.join( files ) ) )
 
@@ -1503,7 +1505,7 @@ class SampleManager :
                     self.group_sample(newsamp, isModel=False)
                         
                 else :
-                    filename = '%s/%s.root' %( self.output_loc, newsamp.name )
+                    filename = '%s/%s.root' %( self.output_loc, conf['sample'].name )
                     self.load_hist_from_file_cache( newsamp , name, filename )
 
                 created_samples.append(newsamp)
@@ -1778,6 +1780,7 @@ class SampleManager :
                 filenamestrip = filenamesplit[0]
 
             histnameeps = outputDir + '/' + filenamestrip+'.eps'
+            #histnameeps = outputDir + '/' + filenamestrip+'.C'
             if not (filename.count( '.pdf' ) or filename.count('.png') ):
                 histnamepdf = outputDir + '/' + filenamestrip+'.pdf'
             else :
@@ -1945,15 +1948,19 @@ class SampleManager :
             if not os.path.isdir(outputDir ) :
                 os.makedirs( outputDir )
 
-            txtfile = open( outputDir + '/' + txtname, 'w')
-            for line in lines :
-                txtfile.write( line + '\n' )
-            txtfile.close()
+            ##txtfile = open( outputDir + '/' + txtname, 'w')
+            #txtfile = open( txtname, 'w')
+            #for line in lines :
+            #    txtfile.write( line + '\n' )
+            #txtfile.close()
+            #os.system( 'mv %s %s' %( txtname, outputDir ) )
 
-            latexfile = open(outputDir + '/' + latexname, 'w')
-            for line in latex_lines  :
-                latexfile.write( line + '\n' )
-            latexfile.close()
+            ##latexfile = open(outputDir + '/' + latexname, 'w')
+            #latexfile = open(latexname, 'w')
+            #for line in latex_lines  :
+            #    latexfile.write( line + '\n' )
+            #latexfile.close()
+            #os.system( 'mv %s %s' %( latexname, outputDir ) )
 
             # write a pickle file
             stack_entries.update(signal_entries)
@@ -1963,6 +1970,7 @@ class SampleManager :
             stack_entries['Total Expected'] = bkg_sum+sig_sum
 
             picfile = open( outputDir + '/' + picname, 'w' )
+            picfile = open( picname, 'w' )
             pickle.dump( stack_entries, picfile )
             picfile.close()
 
@@ -2065,6 +2073,7 @@ class SampleManager :
         if not input_files and required :
             print '***********************************************' 
             print 'Sample, %s does not exist and is required by this module' %name
+            print self.base_path
             print '***********************************************' 
             sys.exit(-1)
 

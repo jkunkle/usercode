@@ -27,7 +27,7 @@ def main() :
         return
 
     id_vars =['sigmaIEIE', 'chIsoCorr', 'neuIsoCorr', 'phoIsoCorr' ]
-    _pt_order = [('15', '25'), ('25', '40'), ('40', '70'), ('70', '100'), ('100', 'max') ]
+    _pt_order = [('15', '25'), ('25', '40'), ('40', '70'), ('70', 'max') ]
 
     all_syst = {}
 

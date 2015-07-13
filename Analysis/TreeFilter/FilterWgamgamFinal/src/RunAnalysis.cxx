@@ -58,31 +58,34 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("isBlinded", &OUT::isBlinded );
     outtree->Branch("EventWeight", &OUT::EventWeight, "EventWeight/F" );
 
-    outtree->Branch("mu_pt25_n"                   , &OUT::mu_pt25_n                   , "mu_pt25_n/I"        );
-    outtree->Branch("mu_passtrig_n"               , &OUT::mu_passtrig_n               , "mu_passtrig_n/I"        );
-    outtree->Branch("mu_passtrig25_n"             , &OUT::mu_passtrig25_n             , "mu_passtrig25_n/I"        );
-    outtree->Branch("el_pt25_n"                   , &OUT::el_pt25_n                   , "el_pt25_n/I"        );
-    outtree->Branch("el_passtrig_n"               , &OUT::el_passtrig_n               , "el_passtrig_n/I"        );
-    outtree->Branch("el_passtrig28_n"             , &OUT::el_passtrig28_n             , "el_passtrig28_n/I"        );
-    outtree->Branch("ph_mediumNoSIEIE_n"          , &OUT::ph_mediumNoSIEIE_n          , "ph_mediumNoSIEIE_n/I" );
-    outtree->Branch("ph_medium_n"                 , &OUT::ph_medium_n                 , "ph_medium_n/I" );
-    outtree->Branch("ph_mediumNoEleVeto_n"        , &OUT::ph_mediumNoEleVeto_n        , "ph_mediumNoEleVeto_n/I" );
-    outtree->Branch("ph_mediumNoSIEIENoEleVeto_n" , &OUT::ph_mediumNoSIEIENoEleVeto_n , "ph_mediumNoSIEIENoEleVeto_n/I" );
-    outtree->Branch("ph_mediumNoIso_n"            , &OUT::ph_mediumNoIso_n            , "ph_mediumNoIso_n/I" );
-    outtree->Branch("ph_mediumNoChIso_n"          , &OUT::ph_mediumNoChIso_n          , "ph_mediumNoChIso_n/I" );
-    outtree->Branch("ph_mediumNoNeuIso_n"         , &OUT::ph_mediumNoNeuIso_n         , "ph_mediumNoNeuIso_n/I" );
-    outtree->Branch("ph_mediumNoPhoIso_n"         , &OUT::ph_mediumNoPhoIso_n         , "ph_mediumNoPhoIso_n/I" );
-    outtree->Branch("ph_mediumNoChIsoNoNeuIso_n"  , &OUT::ph_mediumNoChIsoNoNeuIso_n  , "ph_mediumNoChIsoNoNeuIso_n/I" );
-    outtree->Branch("ph_mediumNoChIsoNoPhoIso_n"  , &OUT::ph_mediumNoChIsoNoPhoIso_n  , "ph_mediumNoChIsoNoPhoIso_n/I" );
-    outtree->Branch("ph_mediumNoNeuIsoNoPhoIso_n" , &OUT::ph_mediumNoNeuIsoNoPhoIso_n , "ph_mediumNoNeuIsoNoPhoIso_n/I" );
-    outtree->Branch("ph_iso533_n"                 , &OUT::ph_iso533_n                 , "ph_iso533_n/I" );
-    outtree->Branch("ph_iso855_n"                 , &OUT::ph_iso855_n                 , "ph_iso855_n/I" );
-    outtree->Branch("ph_iso1077_n"                , &OUT::ph_iso1077_n                , "ph_iso1077_n/I" );
-    outtree->Branch("ph_iso1299_n"                , &OUT::ph_iso1299_n                , "ph_iso1299_n/I" );
-    outtree->Branch("ph_iso151111_n"              , &OUT::ph_iso151111_n              , "ph_iso151111_n/I" );
-    outtree->Branch("ph_iso201616_n"              , &OUT::ph_iso201616_n              , "ph_iso201616_n/I" );
-    outtree->Branch("ph_trigMatch_el"             , &OUT::ph_trigMatch_el             );
-    outtree->Branch("ph_elMinDR"                  , &OUT::ph_elMinDR                  );
+    outtree->Branch("mu_pt25_n"                    , &OUT::mu_pt25_n                    , "mu_pt25_n/I"        );
+    outtree->Branch("mu_passtrig_n"                , &OUT::mu_passtrig_n                , "mu_passtrig_n/I"        );
+    outtree->Branch("mu_passtrig25_n"              , &OUT::mu_passtrig25_n              , "mu_passtrig25_n/I"        );
+    outtree->Branch("el_pt25_n"                    , &OUT::el_pt25_n                    , "el_pt25_n/I"        );
+    outtree->Branch("el_passtrig_n"                , &OUT::el_passtrig_n                , "el_passtrig_n/I"        );
+    outtree->Branch("el_passtrig28_n"              , &OUT::el_passtrig28_n              , "el_passtrig28_n/I"        );
+    outtree->Branch("ph_mediumNoSIEIE_n"           , &OUT::ph_mediumNoSIEIE_n           , "ph_mediumNoSIEIE_n/I" );
+    outtree->Branch("ph_medium_n"                  , &OUT::ph_medium_n                  , "ph_medium_n/I" );
+    outtree->Branch("ph_mediumNoEleVeto_n"         , &OUT::ph_mediumNoEleVeto_n         , "ph_mediumNoEleVeto_n/I" );
+    outtree->Branch("ph_mediumNoSIEIENoEleVeto_n"  , &OUT::ph_mediumNoSIEIENoEleVeto_n  , "ph_mediumNoSIEIENoEleVeto_n/I" );
+    outtree->Branch("ph_mediumNoChIsoNoEleVeto_n"  , &OUT::ph_mediumNoChIsoNoEleVeto_n  , "ph_mediumNoChIsoNoEleVeto_n/I" );
+    outtree->Branch("ph_mediumNoNeuIsoNoEleVeto_n" , &OUT::ph_mediumNoNeuIsoNoEleVeto_n , "ph_mediumNoNeuIsoNoEleVeto_n/I" );
+    outtree->Branch("ph_mediumNoPhoIsoNoEleVeto_n" , &OUT::ph_mediumNoPhoIsoNoEleVeto_n , "ph_mediumNoPhoIsoNoEleVeto_n/I" );
+    outtree->Branch("ph_mediumNoIso_n"             , &OUT::ph_mediumNoIso_n             , "ph_mediumNoIso_n/I" );
+    outtree->Branch("ph_mediumNoChIso_n"           , &OUT::ph_mediumNoChIso_n           , "ph_mediumNoChIso_n/I" );
+    outtree->Branch("ph_mediumNoNeuIso_n"          , &OUT::ph_mediumNoNeuIso_n          , "ph_mediumNoNeuIso_n/I" );
+    outtree->Branch("ph_mediumNoPhoIso_n"          , &OUT::ph_mediumNoPhoIso_n          , "ph_mediumNoPhoIso_n/I" );
+    outtree->Branch("ph_mediumNoChIsoNoNeuIso_n"   , &OUT::ph_mediumNoChIsoNoNeuIso_n   , "ph_mediumNoChIsoNoNeuIso_n/I" );
+    outtree->Branch("ph_mediumNoChIsoNoPhoIso_n"   , &OUT::ph_mediumNoChIsoNoPhoIso_n   , "ph_mediumNoChIsoNoPhoIso_n/I" );
+    outtree->Branch("ph_mediumNoNeuIsoNoPhoIso_n"  , &OUT::ph_mediumNoNeuIsoNoPhoIso_n  , "ph_mediumNoNeuIsoNoPhoIso_n/I" );
+    outtree->Branch("ph_iso533_n"                  , &OUT::ph_iso533_n                  , "ph_iso533_n/I" );
+    outtree->Branch("ph_iso855_n"                  , &OUT::ph_iso855_n                  , "ph_iso855_n/I" );
+    outtree->Branch("ph_iso1077_n"                 , &OUT::ph_iso1077_n                 , "ph_iso1077_n/I" );
+    outtree->Branch("ph_iso1299_n"                 , &OUT::ph_iso1299_n                 , "ph_iso1299_n/I" );
+    outtree->Branch("ph_iso151111_n"               , &OUT::ph_iso151111_n               , "ph_iso151111_n/I" );
+    outtree->Branch("ph_iso201616_n"               , &OUT::ph_iso201616_n               , "ph_iso201616_n/I" );
+    outtree->Branch("ph_trigMatch_el"              , &OUT::ph_trigMatch_el             );
+    outtree->Branch("ph_elMinDR"                   , &OUT::ph_elMinDR                  );
     
     outtree->Branch("leadPhot_pt"         , &OUT::leadPhot_pt         , "leadPhot_pt/F"       );
     outtree->Branch("sublPhot_pt"         , &OUT::sublPhot_pt        , "sublPhot_pt/F"        );
@@ -1057,6 +1060,9 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     OUT::ph_medium_n                 = 0;
     OUT::ph_mediumNoEleVeto_n        = 0;
     OUT::ph_mediumNoSIEIENoEleVeto_n = 0;
+    OUT::ph_mediumNoChIsoNoEleVeto_n = 0;
+    OUT::ph_mediumNoNeuIsoNoEleVeto_n= 0;
+    OUT::ph_mediumNoPhoIsoNoEleVeto_n= 0;
     OUT::ph_mediumNoIso_n            = 0;
     OUT::ph_mediumNoChIso_n          = 0;
     OUT::ph_mediumNoNeuIso_n         = 0;
@@ -1283,6 +1289,15 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
                 OUT::ph_medium_n++;
             }
 
+        }
+        if( OUT::ph_HoverE12->at(idx) < 0.05 && OUT::ph_passSIEIEMedium->at(idx)  && OUT::ph_passNeuIsoCorrMedium->at(idx) && OUT::ph_passPhoIsoCorrMedium->at(idx) ) { // replace with ph_passHOverEMedium 
+            OUT::ph_mediumNoChIsoNoEleVeto_n++;
+        }
+        if( OUT::ph_HoverE12->at(idx) < 0.05 && OUT::ph_passSIEIEMedium->at(idx)  && OUT::ph_passChIsoCorrMedium->at(idx) && OUT::ph_passPhoIsoCorrMedium->at(idx) ) { // replace with ph_passHOverEMedium 
+            OUT::ph_mediumNoNeuIsoNoEleVeto_n++;
+        }
+        if( OUT::ph_HoverE12->at(idx) < 0.05 && OUT::ph_passSIEIEMedium->at(idx)  && OUT::ph_passChIsoCorrMedium->at(idx) && OUT::ph_passNeuIsoCorrMedium->at(idx) ) { // replace with ph_passHOverEMedium 
+            OUT::ph_mediumNoPhoIsoNoEleVeto_n++;
         }
            
         bool match_eltrig = false;
@@ -1591,6 +1606,7 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     int nLep20 = 0;
     int nLep10 = 0;
     int nLepTrigMatch = 0;
+    int nLepTrigMatchSoft = 0;
     int nElTrigMatch = 0;
     int nElPh = 0;
     int nEl = 0;
@@ -1619,8 +1635,11 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
             nLep10++;
         }
 
-        if( OUT::mu_pt->at(i) > 25 && OUT::mu_triggerMatch->at(i) ) {
-            nLepTrigMatch++;
+        if( OUT::mu_triggerMatch->at(i) ) {
+            nLepTrigMatchSoft++;
+            if( OUT::mu_pt->at(i) > 25 ) {
+                nLepTrigMatch++;
+            }
         }
     }
     for( int i = 0; i < OUT::el_n; ++i ) {
@@ -1646,9 +1665,12 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
             nLep10++;
         }
 
-        if( OUT::el_pt->at(i) > 30 && OUT::el_triggerMatch->at(i) && OUT::el_passMvaTrig->at(i) ) {
-            nLepTrigMatch++;
-            nElTrigMatch++;
+        if( OUT::el_triggerMatch->at(i) && OUT::el_passMvaTrig->at(i) ) {
+            nLepTrigMatchSoft++;
+            if( OUT::el_pt->at(i) > 30 ) {
+                nLepTrigMatch++;
+                nElTrigMatch++;
+            }
         }
     }
 
@@ -1667,6 +1689,7 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     if( !config.PassInt( "cut_nLep20", nLep20 ) ) keep_event=false;
     if( !config.PassInt( "cut_nLep10", nLep10 ) ) keep_event=false;
     if( !config.PassInt( "cut_nLepTrigMatch", nLepTrigMatch ) ) keep_event=false;
+    if( !config.PassInt( "cut_nLepTrigMatch", nLepTrigMatchSoft ) ) keep_event=false;
     if( !config.PassInt( "cut_nElTrigMatch", nElTrigMatch ) ) keep_event=false;
     if( !config.PassInt( "cut_nPh", nPh ) )   keep_event = false;
     if( !config.PassInt( "cut_nElPh", nElPh ) )   keep_event = false;

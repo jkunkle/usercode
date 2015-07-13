@@ -49,30 +49,31 @@ samplesPhOlap= None
 
 #analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 200, 500 ] 
 #analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 200, 500 ] 
-analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 150 ] 
-analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 150 ] 
+analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 90, 150 ] 
+analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 90, 150 ] 
 
 eveto_bins = [15, 20, 25, 30, 40, 50, 70, 1000000]
 
 lead_dr_cut = 0.4
 subl_dr_cut = 0.4
 phot_dr_cut = 0.4
+m_ph1_ph2_cut = 0
 
 blind_lead_max = 40
 
-_baseline_cuts_mgg = ' mu_passtrig25_n>0 && mu_n==1 && ph_medium_n>1 && el_n==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
-_baseline_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
-_zrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && dr_ph1_ph2>%.1f && m_ph1_ph2>15 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f  && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
-_zcr_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && dr_ph1_ph2>%.1f && m_ph1_ph2>15 && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && ( (fabs(m_leadLep_ph1_ph2-91.2) < 5) || (fabs(m_leadLep_ph1-91.2) < 5)  || (fabs(m_leadLep_ph2-91.2) < 5) ) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
+_baseline_cuts_mgg = ' mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoEleVeto_n==2 && el_n==0 && dr_ph1_ph2>%(drgg).1f && dr_ph1_leadLep>%(drg1l).1f && dr_ph2_leadLep>%(drg2l).1f '%{'drgg' : phot_dr_cut, 'drg1l' : lead_dr_cut, 'drg2l' : subl_dr_cut}
+_baseline_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_medium_n==2 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%(drgg).1f && dr_ph1_leadLep>%(drg1l).1f && dr_ph2_leadLep>%(drg2l).1f '%{'drgg' : phot_dr_cut, 'drg1l' : lead_dr_cut, 'drg2l' : subl_dr_cut}
+_zrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_medium_n==2 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && dr_ph1_ph2>%(drgg).1f && dr_ph1_leadLep>%(drg1l).1f && dr_ph2_leadLep>%(drg2l).1f  && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) ' %{'drgg' : phot_dr_cut, 'drg1l' : lead_dr_cut, 'drg2l' : subl_dr_cut}
+_zcr_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  && dr_ph1_ph2>%(drgg).1f && dr_ph1_leadLep>%(drg1l).1f && dr_ph2_leadLep>%(drg2l).1f && ( (fabs(m_leadLep_ph1_ph2-91.2) < 5) || (fabs(m_leadLep_ph1-91.2) < 5)  || (fabs(m_leadLep_ph2-91.2) < 5) ) '  %{'drgg' : phot_dr_cut, 'drg1l' : lead_dr_cut, 'drg2l' : subl_dr_cut}
 
-invPixLead_cuts_egg         = ' el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && mu_n==0 && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
-invPixSubl_cuts_egg         = ' el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
+invPixLead_cuts_egg         = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
+invPixSubl_cuts_egg         = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
 
-invPixLead_zrej_cuts_egg    = ' el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && mu_n==0 && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
-invPixSubl_zrej_cuts_egg    = ' el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
+invPixLead_zrej_cuts_egg    = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
+invPixSubl_zrej_cuts_egg    = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
 
-invPixLead_invzrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && mu_n==0 && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && ((fabs(m_leadLep_ph1_ph2-91.2) < 5) || (fabs(m_leadLep_ph1-91.2) < 5) || (fabs(m_leadLep_ph2-91.2) < 5) ) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
-invPixSubl_invzrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_medium_n>1 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && ((fabs(m_leadLep_ph1_ph2-91.2) < 5) || (fabs(m_leadLep_ph1-91.2) < 5) || (fabs(m_leadLep_ph2-91.2) < 5) ) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
+invPixLead_invzrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && ((fabs(m_leadLep_ph1_ph2-91.2) < 5) || (fabs(m_leadLep_ph1-91.2) < 5) || (fabs(m_leadLep_ph2-91.2) < 5) ) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
+invPixSubl_invzrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && ((fabs(m_leadLep_ph1_ph2-91.2) < 5) || (fabs(m_leadLep_ph1-91.2) < 5) || (fabs(m_leadLep_ph2-91.2) < 5) ) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
 
 #------------------------------
 # basic photon cuts
@@ -91,6 +92,7 @@ _photon_cuts_nopix_nophoiso = _photon_cuts_noiso_nopix + ' && ph_passChIsoCorrMe
 #------------------------------
 baseline_cuts_mg = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1  && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && el_n==0 '%(lead_dr_cut)
 baseline_cuts_eg = ' el_passtrig_n>0 && el_n==1 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && mu_n==0 '%(lead_dr_cut)
+baseline_cuts_eg_noPixVeto = ' el_passtrig_n>0 && el_n==1 && ph_n==1 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && mu_n==0 '%(lead_dr_cut)
 zcr_cuts_eg      = ' el_passtrig_n>0 && el_n==1 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && mu_n==0 && m_lepph1 > 76 && m_lepph1 < 106 '%(lead_dr_cut)
 
 baseline_cuts_mmg = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1  && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f && el_n==0'%(lead_dr_cut, lead_dr_cut)
@@ -105,11 +107,11 @@ def main() :
     global samplesLLG
     global samplesPhOlap
 
-    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11'
+    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_06_29'
     baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNomUnblindAllNoEleVeto_2015_04_12'
     baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllLoose_2015_06_10'
     baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllLoose_2015_06_10'
-    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_04_11'
+    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_06_29'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
@@ -267,7 +269,7 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     MakeEventPlotSuite( channel='egg', sampMan=samplesWggEl, cuts=baseline_cuts_egg, nom_label_loc=(0.2, 0.86), double_label_loc=label_loc_d_el, suffix='__baselineCuts', subdir=subdir, outputDir=options.outputDir, save=save )
     MakeEventPlotSuite( channel='mgg', sampMan=samplesWggMu, cuts=baseline_cuts_mgg, nom_label_loc=(0.2, 0.86), double_label_loc=label_loc_d_mu, suffix='__baselineCuts', subdir=subdir, outputDir=options.outputDir, save=save )
 
-    mass_met_cuts = ' && m_ph1_ph2 > 15 && mt_lep_met > 40 '
+    mass_met_cuts = ' && m_ph1_ph2 > %d && mt_lep_met > 40 ' %( m_ph1_ph2_cut )
 
     MakeEventPlotSuite( channel='egg', sampMan=samplesWggEl, cuts=baseline_cuts_egg+mass_met_cuts, nom_label_loc=(0.2, 0.86), double_label_loc=label_loc_d_el, suffix='__massMetCuts', subdir=subdir, outputDir=options.outputDir, save=save  )
     MakeEventPlotSuite( channel='mgg', sampMan=samplesWggMu, cuts=baseline_cuts_mgg+mass_met_cuts, nom_label_loc=(0.2, 0.86), double_label_loc=label_loc_d_mu, suffix='__massMetCuts', subdir=subdir, outputDir=options.outputDir, save=save  )
@@ -1172,11 +1174,11 @@ def MakeLepGammaPlots( save=False, detail=100) :
     # make eta-pt dependent cuts
     #-------------------------------------
 
-    binnings = [analysis_bins_mgg, analysis_bins_egg, analysis_bins_mgg, analysis_bins_egg, analysis_bins_egg]
-    cuts = [baseline_cuts_mg, baseline_cuts_eg+' && m_lepph1 > 105 ', baseline_cuts_mg+' && mt_lep_met > 60 ', baseline_cuts_mg+' && mt_lep_met > 60 && ph_hasPixSeed[0]==0 ', baseline_cuts_eg+' && mt_lep_met > 60  && m_lepph1 > 105', zcr_cuts_eg ]
-    channels  =['Muon', 'Electron', 'Muon', 'Muon', 'Electron', 'Electron']
-    tags = ['mg', 'eg', 'mg', 'mg', 'eg', 'eg']
-    labels = ['baselineCuts', 'baselineCuts', 'mtCut', 'mtCutPixSeedVeto', 'mtCut',  'ZCR']
+    binnings = [analysis_bins_mgg, analysis_bins_egg, eveto_bins, analysis_bins_mgg, analysis_bins_egg, analysis_bins_egg]
+    cuts = [baseline_cuts_mg, baseline_cuts_eg_noPixVeto, baseline_cuts_eg+' && m_lepph1 > 105 ', baseline_cuts_mg+' && mt_lep_met > 60 ', baseline_cuts_mg+' && mt_lep_met > 60 && ph_hasPixSeed[0]==0 ', baseline_cuts_eg+' && mt_lep_met > 60  && m_lepph1 > 105', zcr_cuts_eg ]
+    channels  =['Muon', 'Electron', 'Electron', 'Muon', 'Muon', 'Electron', 'Electron']
+    tags = ['mg', 'eg', 'eg', 'mg', 'mg', 'eg', 'eg']
+    labels = ['baselineCuts', 'baselineCutsNoMassCut', 'baselineCuts', 'mtCut', 'mtCutPixSeedVeto', 'mtCut',  'ZCR']
     eta_cuts = ['EB', 'EE']
     eta_labels = ['Barrel photon', 'Endcap photon']
 
@@ -1230,6 +1232,19 @@ def MakeLepGammaPlots( save=False, detail=100) :
                         name = 'mt_lep_met__%s__%s__%s__ptbins_%d-max' %(tag, ec, label, min)
                     else :
                         name = 'mt_lep_met__%s__%s__%s__ptbins_%d-%d' %(tag, ec, label, min, max)
+                    samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
+                    samplesWg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
+                else :
+                    samplesWg.DumpStack( )
+                    raw_input('continue')
+
+                samplesWg.Draw('m_lepph1', ' PUWeight * ( %s && ph_Is%s[0] && ph_pt[0]>%d && ph_pt[0]<%d )' %(cut, ec, min, max), (80, 0, 400 ) , hist_config={'logy':1,  'xlabel':'photon p_{T} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{%s Channel}{%s}'%(channel, lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+
+                if save :
+                    if idx+2 == len(binning_mod) :
+                        name = 'm_lepph1__%s__%s__%s__ptbins_%d-max' %(tag, ec, label, min)
+                    else :
+                        name = 'm_lepph1__%s__%s__%s__ptbins_%d-%d' %(tag, ec, label, min, max)
                     samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
                     samplesWg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
                 else :
@@ -1845,10 +1860,18 @@ def MakeJetFakeSystPlots(save=True ) :
                     pt_bins.append( (min, None) )
                     if min > 15 : # for sublead photon pt range
                         pt_bins.append( (15, None) )
+                    if min > 25 :
+                        pt_bins.append( ( 25, None ) )
+                    if min > 40 :
+                        pt_bins.append( ( 40, None ) )
                 else :
                     pt_bins.append( (min, max) )
                     if min > 15 : # for sublead photon pt range
                         pt_bins.append( (15, max) )
+                    if min > 25 : # for sublead photon pt range
+                        pt_bins.append( (25, max) )
+                    if min > 40 : # for sublead photon pt range
+                        pt_bins.append( (40, max) )
 
 
             for reg in ['EB', 'EE'] :
@@ -1884,7 +1907,7 @@ def MakeJetFakeSystPlots(save=True ) :
                             samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
                         else :
                             raw_input('continue')
-            
+           
     var_bins_ee = [0, 0.033, 0.1] 
     var_bins_eb = [0, 0.011, 0.03] 
     binning = {'EB': (30, 0, 0.03), 'EE':  (20, 0, 0.1), 'EB__varBins' : [0, 0.011, 0.03], 'EE__varBins' : [0, 0.033, 0.1] }
@@ -1898,10 +1921,18 @@ def MakeJetFakeSystPlots(save=True ) :
             pt_bins.append( (ptmin, None ) )
             if ptmin > 15 :
                 pt_bins.append( ( 15, None ) )
+            if ptmin > 25 :
+                pt_bins.append( ( 25, None ) )
+            if ptmin > 40 :
+                pt_bins.append( ( 40, None ) )
         else :
             pt_bins.append( (ptmin, ptmax ) )
             if ptmin > 15 :
                 pt_bins.append( ( 15, ptmax ) )
+            if ptmin > 25 :
+                pt_bins.append( ( 25, ptmax ) )
+            if ptmin > 40 :
+                pt_bins.append( ( 40, ptmax ) )
 
     draw_samples = ['Zgammastar', 'MuonRealPhotonSub']
     for samp in draw_samples :
@@ -1990,10 +2021,18 @@ def MakeJetFakeSystPlots(save=True ) :
                     pt_bins.append( (min, None) )
                     if min > 15 : # for sublead photon pt range
                         pt_bins.append( (15, None) )
+                    if min > 25 : # for sublead photon pt range
+                        pt_bins.append( (25, None) )
+                    if min > 40 : # for sublead photon pt range
+                        pt_bins.append( (40, None) )
                 else :
                     pt_bins.append( (min, max) )
                     if min > 15 : # for sublead photon pt range
                         pt_bins.append( (15, max) )
+                    if min > 25 : # for sublead photon pt range
+                        pt_bins.append( (25, max) )
+                    if min > 40 : # for sublead photon pt range
+                        pt_bins.append( (40, max) )
 
                 
             for ptmin, ptmax in pt_bins :
@@ -2166,7 +2205,7 @@ def MakeJetFakeSystPlots(save=True ) :
     #-----------------------------------
     #-----------------------------------
 
-    photon_cuts_looseiso = 'mu_passtrig25_n==0 && mu_n==1 && ph_n==2 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 >0.3 && m_ph1_ph2 > 15 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && chIsoCorr_leadph12 < 5 && neuIsoCorr_leadph12 < 3 && phoIsoCorr_leadph12 < 3 && chIsoCorr_sublph12 < 5 && neuIsoCorr_sublph12 < 3 && phoIsoCorr_sublph12 < 3'
+    photon_cuts_looseiso = 'mu_passtrig25_n==0 && mu_n==1 && ph_n==2 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 >0.3 && m_ph1_ph2 > %d && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && chIsoCorr_leadph12 < 5 && neuIsoCorr_leadph12 < 3 && phoIsoCorr_leadph12 < 3 && chIsoCorr_sublph12 < 5 && neuIsoCorr_sublph12 < 3 && phoIsoCorr_sublph12 < 3' %(m_ph1_ph2_cut )
 
     samplesWg.Draw( 'sieie_leadph12', 'PUWeight * ( %s && isEB_leadph12 && isEB_sublph12 )' %photon_cuts_looseiso, (60, 0, 0.03), hist_config={'xlabel' : 'Lead photon #sigmai#etai#eta', 'ylabel':'Events / 0.0005'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel', 'extra_label_loc':(0.73, 0.87)} )
                 
@@ -2258,7 +2297,7 @@ def MakeJetFakeSystPlots(save=True ) :
     #-----------------------------------
     #-----------------------------------
 
-    photon_cuts_fulliso = 'mu_passtrig25_n==0 && mu_n==1 && ph_mediumNoSIEIE_n==2 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 >0.3 && m_ph1_ph2 > 15 '
+    photon_cuts_fulliso = 'mu_passtrig25_n==0 && mu_n==1 && ph_mediumNoSIEIE_n==2 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 >0.3 && m_ph1_ph2 > %d ' %(m_ph1_ph2_cut)
 
     samplesWg.Draw( 'sieie_leadph12', 'PUWeight * ( %s  && isEB_leadph12 && isEB_sublph12 )' %photon_cuts_fulliso, (60, 0, 0.03), hist_config={'xlabel' : 'Lead photon #sigmai#etai#eta', 'ylabel':'Events / 0.0005'}, label_config={'labelStyle':'fancy', 'extra_label':'Muon Channel', 'extra_label_loc':(0.73, 0.87)} )
                 
@@ -2349,7 +2388,7 @@ def MakeJetFakeSystPlots(save=True ) :
     # when the other photon fails sigmaIEIE
     #------------------------------------------
 
-    phph_base = 'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && dr_ph1_ph2 > 0.3 && m_ph1_ph2 >15 && dr_ph2_leadLep > 0.4 && dr_ph1_leadLep > 0.4  && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  '
+    phph_base = 'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && dr_ph1_ph2 > 0.3 && m_ph1_ph2 > %d && dr_ph2_leadLep > 0.4 && dr_ph1_leadLep > 0.4  && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0  ' %(m_ph1_ph2_cut)
 
     loose_subl = ' sieie_sublph12 > 0.013010 && sieie_sublph12 < 0.299000 '
     loose_lead = ' sieie_leadph12 > 0.013010 && sieie_leadph12 < 0.299000 '

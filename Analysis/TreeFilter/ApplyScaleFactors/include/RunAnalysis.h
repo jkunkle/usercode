@@ -57,11 +57,13 @@ class RunModule : public virtual RunModuleBase {
         // return values, or inputs to these functions, but
         // you must of course handle them in the source file
         // Examples :
-        void AddElectronSF ( ModuleConfig & config ) const;
-        void AddMuonSF     ( ModuleConfig & config ) const;
-        void AddPhotonSF   ( ModuleConfig & config ) const;
-        void AddPileupSF   ( ModuleConfig & config ) const;
-        void AddMETUncert   ( ModuleConfig & config ) const;
+        void AddElectronSF   ( ModuleConfig & config ) const;
+        void AddMuonSF       ( ModuleConfig & config ) const;
+        void AddPhotonSF     ( ModuleConfig & config ) const;
+        void AddPileupSF     ( ModuleConfig & config ) const;
+        void AddMETUncert    ( ModuleConfig & config ) const;
+        void VaryEGammaScale ( ModuleConfig & config ) const;
+        void VaryMuonScale   ( ModuleConfig & config ) const;
 
         ValWithErr GetValsFromGraph( const TGraphAsymmErrors *, float pt, bool debug=true ) const;
         float calc_pu_weight( float puval, float mod=1.0 ) const;
@@ -130,6 +132,9 @@ class RunModule : public virtual RunModuleBase {
         SimpleJetResolution *ak5PFCHSResolution;
 
         TRandom3 * rand;
+
+        std::string _muon_var;
+        std::string _egamma_var;
 
 
 

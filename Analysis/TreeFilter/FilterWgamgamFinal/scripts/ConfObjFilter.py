@@ -38,8 +38,8 @@ def config_analysis( alg_list, args ) :
     # Nominal muon filter
     #----------------------------------------
     print 'MUON PT CUT = 10'
-    alg_list.append( get_muon_filter( id='Tight',  ptcut=10 ) )
-    #alg_list.append( get_muon_filter( id='Tight',  ptcut=5 ) )
+    #alg_list.append( get_muon_filter( id='Tight',  ptcut=10 ) )
+    alg_list.append( get_muon_filter( id='Tight',  ptcut=10, etacut=2.1 ) )
 
     #----------------------------------------
     # Loose muon filter
@@ -54,6 +54,7 @@ def config_analysis( alg_list, args ) :
     print 'ELECTRON PT CUT = 10'
     #alg_list.append( get_electron_filter( None, ptcut=10 ) )
     alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=10 ) )
+    #alg_list.append( get_electron_filter( 'loose', ptcut=10 ) )
     #alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=5 ) )
     print 'SAVING MVA ELECTRONS'
 
@@ -67,10 +68,10 @@ def config_analysis( alg_list, args ) :
     # Nominal photon filter with no photon ID
     #----------------------------------------
     print 'PHOTON PT CUT = 15'
+    #alg_list.append( get_photon_filter( id=None, eVeto='hasPixSeed', ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False, doMuOlapRm=False, doPhOlapRm=False ) )
     alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True ) )
-    #alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=10, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True ) )
     #alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.1) )
-    print 'SAVING NOID  PHOTONS, WITH OLAP REMOVAL'
+    print 'SAVING NOID WITH EVETO  PHOTONS, WITH OLAP REMOVAL'
 
     #----------------------------------------
     # Other photon filters
@@ -127,6 +128,12 @@ def get_jet_filter( do_hists = False ) :
 
     filt = Filter ( 'FilterJet' ) 
 
+    filt.cut_jet_nhf = ' < 0.99 '
+    filt.cut_jet_nef = ' < 0.99 '
+    filt.cut_jet_chf = ' > 0 '
+    filt.cut_jet_cef = ' < 0.99 '
+    filt.cut_jet_n_constituents = ' > 1 '
+    filt.cut_jet_nch = ' > 0 '
 
     # redo overlap rm with photons and muons
     filt.cut_jet_ele_dr = ' > 0.4 '
@@ -205,7 +212,7 @@ def get_photon_filter( id=None, eVeto=None, ptcut=10, sort_by_id='false', doElOl
     return filt
 
 
-def get_muon_filter( id='Tight', ptcut=10 ) :
+def get_muon_filter( id='Tight', ptcut=10, etacut=2.1 ) :
 
     filt = Filter( 'FilterMuon' )
 
@@ -217,7 +224,7 @@ def get_muon_filter( id='Tight', ptcut=10 ) :
     if id is not None :
         setattr(filt,  'cut_mu_pass%s' %id, ' == True' )
     filt.cut_mu_pt = ' > %d' %ptcut
-    filt.cut_mu_eta = ' < 2.1 '
+    filt.cut_mu_eta = ' < %.1f '%etacut
     #filt.cut_mu_corriso = ' < 0.2  '
 
     

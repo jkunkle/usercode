@@ -30,8 +30,8 @@ def main() :
     #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_09_24'
     #signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
     #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
-    signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_06_05'
-    bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_06_05'
+    signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsNoMgg_2015_07_05'
+    bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsNoMgg_2015_07_05'
     #run_full_fit( signal_base, bkg_base, lands=False, combine=True)
 
     single_accept_results = ['electron_EB-EB', 'electron_EE-EB', 'electron_EB-EE', 'muon_EB-EB', 'muon_EE-EB', 'muon_EB-EE']
@@ -39,11 +39,12 @@ def main() :
 
     signif_single = {}
 
-    for res in single_accept_results :
-        for ptbin in single_accept_ptbins :
-            signif_single[(res, ptbin[0], ptbin[1])] = run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_06_05/FinalPlots/', res, ptbin)
+    print run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlotsNoMgg_2015_07_05/FinalPlots/')
+    #for res in single_accept_results :
+    #    for ptbin in single_accept_ptbins :
+    #        signif_single[(res, ptbin[0], ptbin[1])] = run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_06_05/FinalPlots/', res, ptbin)
 
-    print signif_single
+    #print signif_single
             
 
 def run_onebin_fit(lands=False) :

@@ -361,6 +361,98 @@ def make_looseID_invEleVetoLead( alg_list, args ) :
 
     alg_list.append( filter_event )
 
+def make_final_mumu( alg_list, args ) :
+
+    invpixlead = args.get('invpixlead', False )
+    print 'invpixlead = ', invpixlead
+
+    invpixsubl = args.get('invpixsubl', False )
+    print 'invpixsubl = ', invpixsubl
+
+    filter_photon = Filter( 'FilterPhoton' )
+    filter_photon.cut_ph_medium = ' == True '
+    filter_photon.cut_ph_pt = ' > 15 '
+    alg_list.append(filter_photon)
+
+    filter_muon = Filter( 'FilterMuon' )
+    filter_muon.cut_mu_pt = ' > 10 '
+    alg_list.append(filter_muon)
+
+    filter_ele = Filter( 'FilterElectron' )
+    filter_ele.cut_el_pt = ' > 10 '
+    alg_list.append(filter_ele)
+
+    filter_event = Filter('FilterEvent')
+    filter_event.cut_nPh = ' == 2 '
+    filter_event.cut_nMu = ' == 2 '
+    filter_event.cut_nEl = ' == 0 '
+
+    filter_event.cut_dr_lep_ph1 = ' > 0.4 '
+    filter_event.cut_dr_lep_ph2 = ' > 0.4 '
+    filter_event.cut_dr_subllep_ph1 = ' > 0.4 '
+    filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
+    filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
+
+    filter_event.cut_m_leplep = ' > 40 '
+
+    #if invpixlead :
+    #    filter_event.cut_hasPixSeed_leadph12 = ' == True '
+    #else :
+    #    filter_event.cut_hasPixSeed_leadph12 = ' == False '
+    #if invpixsubl :
+    #    filter_event.cut_hasPixSeed_sublph12 = ' == True '
+    #else :
+    #    filter_event.cut_hasPixSeed_sublph12 = ' == False '
+
+    alg_list.append( filter_event )
+
+def make_final_elel( alg_list, args ) :
+
+    invpixlead = args.get('invpixlead', False )
+    print 'invpixlead = ', invpixlead
+
+    invpixsubl = args.get('invpixsubl', False )
+    print 'invpixsubl = ', invpixsubl
+
+    filter_photon = Filter( 'FilterPhoton' )
+    filter_photon.cut_ph_medium = ' == True '
+    filter_photon.cut_ph_pt = ' > 15 '
+
+    alg_list.append(filter_photon)
+
+    filter_muon = Filter( 'FilterMuon' )
+    filter_muon.cut_mu_pt = ' > 10 '
+    alg_list.append(filter_muon)
+    
+    filter_ele = Filter( 'FilterElectron' )
+    filter_ele.cut_el_pt = ' > 10 '
+    alg_list.append(filter_ele)
+
+    filter_event = Filter('FilterEvent')
+    filter_event.cut_nPh = ' == 2 '
+    filter_event.cut_nEl = ' == 2 '
+    filter_event.cut_nMu = ' == 0 '
+
+    filter_event.cut_dr_lep_ph1 = ' > 0.4 '
+    filter_event.cut_dr_lep_ph2 = ' > 0.4 '
+    filter_event.cut_dr_subllep_ph1 = ' > 0.4 '
+    filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
+    filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
+
+    filter_event.cut_m_leplep = ' > 40 '
+
+    #if invpixlead :
+    #    filter_event.cut_hasPixSeed_leadph12 = ' == True '
+    #else :
+    #    filter_event.cut_hasPixSeed_leadph12 = ' == False '
+    #if invpixsubl :
+    #    filter_event.cut_hasPixSeed_sublph12 = ' == True '
+    #else :
+    #    filter_event.cut_hasPixSeed_sublph12 = ' == False '
+
+    alg_list.append( filter_event )
+
+
 def make_wgjj( alg_list, args ) :
 
     filter_muon = Filter( 'FilterMuon' )

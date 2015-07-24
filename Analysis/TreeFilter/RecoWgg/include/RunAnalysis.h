@@ -101,6 +101,7 @@ class RunModule : public virtual RunModuleBase {
         void extractElectronCorrections( const std::string & filename );
         void extractElectronLinCorrections( const std::string & filename );
         float calc_pu_weight( float puval, float mod=1.0 ) const;
+        float get_ele_eff_area( float sceta, int cone ) const;
 
      private :
 
@@ -322,15 +323,35 @@ namespace OUT {
     std::vector<float>  *jet_e;
     std::vector<float>  *jet_JECUnc;
 
+    std::vector<int>    *jet_NCH;
+    std::vector<int>    *jet_Nconstitutents;
+    std::vector<float>  *jet_NEF;
+    std::vector<float>  *jet_CEF;
+    std::vector<float>  *jet_CHF;
+    std::vector<float>  *jet_NHF;
+
+    std::vector<float>  *jet_CSV;
+
+    std::vector<Bool_t> *jet_PUIDLoose;
+    std::vector<Bool_t> *jet_PUIDMedium;
+    std::vector<Bool_t> *jet_PUIDTight;
+
+// jet gen variables do not exist for data
+#ifdef EXISTS_jetGenJetIndex
     std::vector<int>    *jet_genIndex;
     std::vector<float>  *jet_genPt;
     std::vector<float>  *jet_genEta;
     std::vector<float>  *jet_genPhi;
     std::vector<float>  *jet_genE;
-
+#endif 
     Bool_t              passTrig_ele27WP80;
     Bool_t              passTrig_mu24eta2p1;
     Bool_t              passTrig_mu24;
+    Bool_t              passTrig_mu17_mu8;
+    Bool_t              passTrig_mu17_Tkmu8;
+    Bool_t              passTrig_ele17_ele8_9;
+    Bool_t              passTrig_ele17_ele8_22;
+    
 
 
     Float_t             avgPU; 

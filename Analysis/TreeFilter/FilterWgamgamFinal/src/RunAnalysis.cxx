@@ -1684,6 +1684,9 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
         }
     }
 
+    if( !config.PassBool( "cut_SingleLepTrig", (OUT::passTrig_ele27WP80 || OUT::passTrig_mu24eta2p1 || OUT::passTrig_mu24 ) ) ) keep_event = false;
+    if( !config.PassBool( "cut_DiLepTrig", (OUT::passTrig_mu17_mu8 || OUT::passTrig_mu17_Tkmu8 || OUT::passTrig_ele17_ele8_22 || OUT::passTrig_ele17_ele8_9 ) ) ) keep_event = false;
+
     if( !config.PassInt( "cut_nLep", nLep ) ) keep_event=false;
     if( !config.PassInt( "cut_nLep25", nLep25 ) ) keep_event=false;
     if( !config.PassInt( "cut_nLep20", nLep20 ) ) keep_event=false;
@@ -1764,6 +1767,16 @@ void RunModule::FilterJet( ModuleConfig & config ) const {
 
         bool keep_jet = true;
 
+        if( !config.PassInt( "cut_jet_n_constituents", IN::jet_Nconstitutents->at(idx) ) )keep_jet =false;
+        if( !config.PassInt( "cut_jet_nch", IN::jet_NCH->at(idx) ) )   keep_jet = false;
+        if( !config.PassFloat( "cut_jet_nhf", IN::jet_NHF->at(idx) ) ) keep_jet = false;
+        if( !config.PassFloat( "cut_jet_nef", IN::jet_NEF->at(idx) ) ) keep_jet = false;
+        if( !config.PassFloat( "cut_jet_chf", IN::jet_CHF->at(idx) ) ) keep_jet = false;
+        if( !config.PassFloat( "cut_jet_cef", IN::jet_CEF->at(idx) ) ) keep_jet = false;
+
+        // don't continue if the jet should be rejected
+        if( !keep_jet ) continue;
+
         TLorentzVector jetlv;
         jetlv.SetPtEtaPhiE( IN::jet_pt->at(idx), 
                             IN::jet_eta->at(idx),
@@ -1820,7 +1833,7 @@ void RunModule::FilterJet( ModuleConfig & config ) const {
         if( !keep_jet ) continue;
 
         OUT::jet_n++;
-        CopyPrefixIndexBranchesInToOut( "jet_", idx );
+        CopyPrefixIndexBranchesInToOut( "jet_", idx, true );
 
     }
     #endif

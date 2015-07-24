@@ -20,7 +20,8 @@ CHANNELS=mu
 #CHANNELS=mu elzcr elfull elzcrinvpixsubl
 #CHANNELS=elzcrinvpixlead elzcrinvpixsubl elfullinvpixsubl elfullinvpixlead
 
-OUTPUTMAIN=~/Plots/WggPlotsNoMgg_2015_07_05
+#OUTPUTMAIN=~/Plots/WggPlotsNoMggSublPt30_2015_07_19
+OUTPUTMAIN=~/Plots/ZggPlots_2015_07_20
 #OUTPUTMAIN=~/Plots/WggPlots_2015_06_05
 OUTPUTJET=$(OUTPUTMAIN)/JetFakeResultsSyst
 SYSTFILE=$(OUTPUTMAIN)/JetFakeTemplatePlots/systematics.pickle
@@ -51,17 +52,18 @@ jet :
 	done
 
 newjet :
-	python RunMatrixFit.py --samplesConf Modules/JetFakeFit.py --fileName tree.root --treeName ggNtuplizer/EventTree --xsFile cross_sections/wgamgam.py --lumi 19400 --outputDir $(OUTPUTMAIN) --syst_file   $(SYSTFILE)
+	#python RunMatrixFit.py --samplesConf Modules/JetFakeFit.py --fileName tree.root --treeName ggNtuplizer/EventTree --xsFile cross_sections/wgamgam.py --lumi 19400 --outputDir $(OUTPUTMAIN) --syst_file   $(SYSTFILE)
+	python RunMatrixFit.py  --samplesConf Modules/JetFakeFit.py --samplesConfGG Modules/JetFakeFitZgg.py --fileName tree.root --treeName ggNtuplizer/EventTree --xsFile cross_sections/wgamgam.py --lumi 19400 --outputDir $(OUTPUTMAIN) --syst_file   $(SYSTFILE)
 
 
 
 ele :
-	python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --bw_cms_fine 
-	python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --bw_cms_coarse
-	#python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --bw_exp_fine 
-	#python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --bw_exp_coarse 
-	#python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --ndkeys_cms_fine 
-	#python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_04_11/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --ndkeys_cms_coarse
+	python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_16/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --bw_cms_fine 
+	python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_16/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --bw_cms_coarse
+	python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_16/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --bw_exp_fine 
+	python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_16/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --bw_exp_coarse 
+	python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_16/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --ndkeys_cms_fine 
+	python FitElectronFakes.py --baseDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_16/ --treeName ggNtuplizer/EventTree --fileName tree.root --lumi 19400 --samplesConf Modules/ElectronFake.py --outputDir $(OUTPUTMAIN) --ndkeys_cms_coarse
 
 tandp :
 	#python FitTagAndProbe.py  --muon --outputDir ~/Plots/WggPlots_2014_11_20
@@ -83,8 +85,8 @@ plots :
 
 background :
 	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 15,25,40,70,1000000 --plotDir $(PLOTDIR) --mtcut " > 40 "
-	python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 15,25,40,70,90,1000000 --plotDir $(PLOTDIR) --mtcut " > 40 "
-	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 15,25,40,70,1000000 --plotDir $(PLOTDIR)EleZCR --mtcut " > 0 "
+	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 30,40,70,1000000 --plotDir $(PLOTDIR) --mtcut " > 40 "
+	python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 15,25,40,1000000 --plotDir $(PLOTDIR) --mtcut " > -100 "
 	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN)LowMt --ptbins 15,25,40,70,1000000 --plotDir $(PLOTDIR) --mtcut " < 40 "
 
 singlebackground :

@@ -8,7 +8,7 @@ def get_remove_filter() :
 
 def get_keep_filter() :
 
-    return ['pfMET.*', 'recoPfMET.*', 'pfType01MET.*', 'nVtxBS', 'nMC', 'mcPID', 'mcParentage', 'mcStatus', 'mcMomPID', 'mcGMomPID', 'mcPt', 'mcEta', 'mcPhi', 'mcE', 'nPU', 'puTrue', 'nVtx', 'nVtxBS', 'rho2012', 'isData', 'run', 'event', 'lumis', 'LHE*', 'pdf']
+    return ['pfMET.*', 'recoPfMET.*', 'pfType01MET.*', 'nVtxBS', 'nMC', 'mcPID', 'mcParentage', 'mcStatus', 'mcMomPID', 'mcGMomPID', 'mcPt', 'mcEta', 'mcPhi', 'mcE', 'nPU', 'puTrue', 'nVtx', 'nVtxBS', 'rho2012', 'isData', 'run', 'event', 'lumis', 'LHE.*', 'pdf']
 
 def config_analysis( alg_list, args ) :
 
@@ -27,7 +27,8 @@ def config_analysis( alg_list, args ) :
 
     trig_filt = Filter('FilterTrigger')
     #trig_filt.cut_trigger = ' ==48 ' #HLT_Photon36_CaloId10_Iso50_Photon22_CaloId10_Iso50_v 
-    trig_filt.cut_trigger = '==17 | == 18 | == 19' # HLT_Ele27_WP80 || HLT_IsoMu24_eta2p1 || HLT_IsoMu24
+    #trig_filt.cut_trigger = '==17 | == 18 | == 19' # HLT_Ele27_WP80 || HLT_IsoMu24_eta2p1 || HLT_IsoMu24
+    trig_filt.cut_trigger = '==17 | == 18 | == 19 | == 13 | == 14 | == 9 | == 22 ' # HLT_Ele27_WP80 || HLT_IsoMu24_eta2p1 || HLT_IsoMu24 || HLT_Mu17_TkMu8 || HLT_Mu17_Mu8 || HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL || HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL
     #trig_filt.cut_trigger = '==13 | == 14 ' # HLT_mu17_mu8 || HLT_mu17_TkMu8
     alg_list.append(trig_filt)
 
@@ -37,17 +38,18 @@ def build_muon( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections
 
     filt.do_cutflow = do_cutflow
 
+    filt.cut_pt         = ' > 5 '
+
     filt.cut_isGlobal   = ' == True '
     filt.cut_isPF       = ' == True '
-    filt.cut_pt         = ' > 5 '
     filt.cut_abseta     = ' < 2.4'
     filt.cut_chi2       = ' < 10'
-    filt.cut_nTrkLayers = ' > 8 ' 
+    filt.cut_nTrkLayers = ' > 5 ' 
     filt.cut_nStations  = ' > 1'
     filt.cut_nPixelHits = ' > 0'
     filt.cut_d0         = ' < 0.2'
     filt.cut_z0         = ' < 0.5'
-    filt.cut_corriso    = ' < 0.2'
+    filt.cut_corriso    = ' < 0.12'
 
     ##filt.cut_trkiso     = ' < 0.1 '
 
@@ -80,8 +82,9 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
 
     filt.do_cutflow = do_cutflow
 
-    filt.cut_pt = ' > 5'
+    filt.cut_pt = ' > 5 '
     filt.cut_abssceta       = ' <2.5 '
+    #filt.cut_abssceta       = ' >= 1.479 & < 2.5'
     # no crack for now
     #filt.cut_abssceta_crack = ' > 1.44 & < 1.57 '
     #filt.invert('cut_abssceta_crack')
@@ -93,7 +96,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_d0_barrel_tight              = ' < 0.02 '
     filt.cut_z0_barrel_tight              = ' < 0.1 '
     filt.cut_eoverp_barrel_tight          = ' < 0.05 '
-    filt.cut_pfIso30_barrel_tight         = ' < 0.1 '
+    filt.cut_pfIsoCorr30_barrel_tight         = ' < 0.1 '
     filt.cut_convfit_barrel_tight         = ' == 0 '
     filt.cut_misshits_barrel_tight        = ' == 0 '
 
@@ -104,7 +107,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_d0_barrel_medium             = ' < 0.02 '
     filt.cut_z0_barrel_medium             = ' < 0.1 '
     filt.cut_eoverp_barrel_medium         = ' < 0.05 '
-    filt.cut_pfIso30_barrel_medium        = ' < 0.15 '
+    filt.cut_pfIsoCorr30_barrel_medium        = ' < 0.15 '
     filt.cut_convfit_barrel_medium        = ' == 0 '
     filt.cut_misshits_barrel_medium       = ' <= 1 '
 
@@ -115,7 +118,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_d0_barrel_loose              = ' < 0.02 '
     filt.cut_z0_barrel_loose              = ' < 0.2 '
     filt.cut_eoverp_barrel_loose          = ' < 0.05 '
-    filt.cut_pfIso30_barrel_loose         = ' < 0.15 '
+    filt.cut_pfIsoCorr30_barrel_loose         = ' < 0.15 '
     filt.cut_convfit_barrel_loose         = ' == 0 '
     filt.cut_misshits_barrel_loose        = ' <= 1 '
 
@@ -126,7 +129,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_d0_barrel_veryloose          = ' < 0.04 '
     filt.cut_z0_barrel_veryloose          = ' < 0.2 '
     #filt.cut_eoverp_barrel_veryloose     = ' < 0.05 ' #no cut
-    filt.cut_pfIso30_barrel_veryloose     = ' < 0.1 '
+    filt.cut_pfIsoCorr30_barrel_veryloose     = ' < 0.1 '
     #filt.cut_convfit_barrel_veryloose    = ' == 0 ' #no cut
     #filt.cut_misshits_barrel_veryloose   = ' == 0 ' #no cut
 
@@ -145,8 +148,8 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_d0_endcap_tight              = ' < 0.02 '
     filt.cut_z0_endcap_tight              = ' < 0.1 '
     filt.cut_eoverp_endcap_tight          = ' < 0.05 '
-    filt.cut_pfIso30_endcap_lowPt_tight   = ' < 0.1 '
-    filt.cut_pfIso30_endcap_highPt_tight  = ' < 0.15 '
+    filt.cut_pfIsoCorr30_endcap_lowPt_tight   = ' < 0.07 '
+    filt.cut_pfIsoCorr30_endcap_highPt_tight  = ' < 0.10 '
     filt.cut_convfit_endcap_tight         = ' == 0 '
     filt.cut_misshits_endcap_tight        = ' == 0 '
 
@@ -157,8 +160,8 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_d0_endcap_medium             = ' < 0.02 '
     filt.cut_z0_endcap_medium             = ' < 0.1 '
     filt.cut_eoverp_endcap_medium         = ' < 0.05 '
-    filt.cut_pfIso30_endcap_lowPt_medium  = ' < 0.1 '
-    filt.cut_pfIso30_endcap_highPt_medium = ' < 0.15 '
+    filt.cut_pfIsoCorr30_endcap_lowPt_medium  = ' < 0.1 '
+    filt.cut_pfIsoCorr30_endcap_highPt_medium = ' < 0.15 '
     filt.cut_convfit_endcap_medium        = ' == 0 '
     filt.cut_misshits_endcap_medium       = ' <= 1 '
 
@@ -169,8 +172,8 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_d0_endcap_loose              = ' < 0.02 '
     filt.cut_z0_endcap_loose              = ' < 0.2 '
     filt.cut_eoverp_endcap_loose          = ' < 0.05 '
-    filt.cut_pfIso30_endcap_lowPt_loose   = ' < 0.10 '
-    filt.cut_pfIso30_endcap_highPt_loose  = ' < 0.15 '
+    filt.cut_pfIsoCorr30_endcap_lowPt_loose   = ' < 0.10 '
+    filt.cut_pfIsoCorr30_endcap_highPt_loose  = ' < 0.15 '
     filt.cut_convfit_endcap_loose         = ' == 0 '
     filt.cut_misshits_endcap_loose        = ' <= 1 '
 
@@ -181,7 +184,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_d0_endcap_veryloose          = ' < 0.04 '
     filt.cut_z0_endcap_veryloose          = ' < 0.2 '
     #filt.cut_eoverp_endcap_veryloose     = ' < 0.05 ' #no cut
-    filt.cut_pfIso30_endcap_veryloose     = ' < 0.15 '
+    filt.cut_pfIsoCorr30_endcap_veryloose     = ' < 0.15 '
     #filt.cut_convfit_endcap_veryloose    = ' == 0 ' #no cut
     #filt.cut_misshits_endcap_veryloose   = ' == 0 ' #no cut
 
@@ -385,11 +388,11 @@ def build_jet( do_cutflow=False, do_hists=False ) :
     filt = Filter('BuildJet')
     filt.do_cutflow = do_cutflow
 
-    filt.cut_pt = ' > 30 '
+    filt.cut_pt = ' > 25 '
     filt.cut_abseta = ' < 4.5 '
 
-    filt.cut_jet_el_dr = ' > 0.4 '
-    filt.cut_jet_ph_dr = ' > 0.4 '
+    #filt.cut_jet_el_dr = ' > 0.4 '
+    #filt.cut_jet_ph_dr = ' > 0.4 '
 
     if do_hists :
         filt.add_hist( 'cut_pt', 100, 0, 500 )

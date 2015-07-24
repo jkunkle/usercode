@@ -2,7 +2,7 @@ def config_samples(samples) :
 
     import ROOT
 
-    samples.AddSample('DYJetsToLL'   , path='job_summer12_DYJetsToLL', plotColor=ROOT.kBlue )
+    #samples.AddSample('DYJetsToLL'   , path='job_summer12_DYJetsToLL', plotColor=ROOT.kBlue )
     samples.AddSample('Zg'           , path='job_summer12_Zg'    ,  plotColor=ROOT.kRed )
     samples.AddSample('DYJetsToLLPhOlap' , path='job_summer12_DYJetsToLLPhOlap'    ,  plotColor=ROOT.kRed, isActive=False )
 

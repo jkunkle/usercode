@@ -47,10 +47,10 @@ samplesWg = None
 samplesLLG = None
 samplesPhOlap= None
 
-#analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 200, 500 ] 
-#analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 200, 500 ] 
-analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 90, 150 ] 
-analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 90, 150 ] 
+analysis_bins_mgg = [0, 5, 10, 15, 25, 40, 70, 150 ] 
+analysis_bins_egg = [0, 5, 10, 15, 25, 40, 70, 150 ] 
+#analysis_bins_mgg = [0, 5, 10, 15, 35, 40, 70, 150 ] 
+#analysis_bins_egg = [0, 5, 10, 15, 35, 40, 70, 150 ] 
 
 eveto_bins = [15, 20, 25, 30, 40, 50, 70, 1000000]
 
@@ -107,18 +107,19 @@ def main() :
     global samplesLLG
     global samplesPhOlap
 
-    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_06_29'
-    baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNomUnblindAllNoEleVeto_2015_04_12'
-    baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllLoose_2015_06_10'
-    baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllLoose_2015_06_10'
-    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_06_29'
+    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_16'
+    #baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindAllNoEleVeto_2015_07_16'
+    baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_07_16'
+    baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_07_16'
+    baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_07_16'
+    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_07_16'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
 
     sampleConfWgg = 'Modules/PlotWgamgam.py'
-    sampleConfWg  = 'Modules/PlotWgamgam.py'
-    sampleConfLLG = 'Modules/PlotWgamgam.py'
+    sampleConfWg  = 'Modules/WgamgamForBkg.py'
+    sampleConfLLG = 'Modules/WgamgamForBkg.py'
     sampleConfPhOlap = 'Modules/PhOlapComp.py'
 
     samplesWggSp   = SampleManager(baseDirWggSp, treename, filename=filename, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
@@ -1858,20 +1859,20 @@ def MakeJetFakeSystPlots(save=True ) :
                     continue
                 if max == analysis_bins_mgg[-1] :
                     pt_bins.append( (min, None) )
-                    if min > 15 : # for sublead photon pt range
-                        pt_bins.append( (15, None) )
-                    if min > 25 :
-                        pt_bins.append( ( 25, None ) )
-                    if min > 40 :
-                        pt_bins.append( ( 40, None ) )
+                    if min > analysis_bins_mgg[3] : # for sublead photon pt range
+                        pt_bins.append( (analysis_bins_mgg[3], None) )
+                    if min > analysis_bins_mgg[4] :
+                        pt_bins.append( ( analysis_bins_mgg[4] , None ) )
+                    if min > analysis_bins_mgg[5] :
+                        pt_bins.append( (analysis_bins_mgg[5] , None ) )
                 else :
                     pt_bins.append( (min, max) )
-                    if min > 15 : # for sublead photon pt range
-                        pt_bins.append( (15, max) )
-                    if min > 25 : # for sublead photon pt range
-                        pt_bins.append( (25, max) )
-                    if min > 40 : # for sublead photon pt range
-                        pt_bins.append( (40, max) )
+                    if min > analysis_bins_mgg[3] : # for sublead photon pt range
+                        pt_bins.append( (analysis_bins_mgg[3], max) )
+                    if min > analysis_bins_mgg[4] : # for sublead photon pt range
+                        pt_bins.append( (analysis_bins_mgg[4], max) )
+                    if min > analysis_bins_mgg[5] : # for sublead photon pt range
+                        pt_bins.append( (analysis_bins_mgg[5], max) )
 
 
             for reg in ['EB', 'EE'] :
@@ -1919,20 +1920,20 @@ def MakeJetFakeSystPlots(save=True ) :
         ptmax = analysis_bins_mgg[idx+1]
         if ptmax == analysis_bins_mgg[-1] :
             pt_bins.append( (ptmin, None ) )
-            if ptmin > 15 :
-                pt_bins.append( ( 15, None ) )
-            if ptmin > 25 :
-                pt_bins.append( ( 25, None ) )
-            if ptmin > 40 :
-                pt_bins.append( ( 40, None ) )
+            if ptmin > analysis_bins_mgg[3] : # for sublead photon pt range
+                pt_bins.append( ( analysis_bins_mgg[3], None ) )
+            if ptmin > analysis_bins_mgg[4] : # for sublead photon pt range
+                pt_bins.append( ( analysis_bins_mgg[4], None ) )
+            if ptmin > analysis_bins_mgg[5] : # for sublead photon pt range
+                pt_bins.append( ( analysis_bins_mgg[5], None ) )
         else :
             pt_bins.append( (ptmin, ptmax ) )
-            if ptmin > 15 :
-                pt_bins.append( ( 15, ptmax ) )
-            if ptmin > 25 :
-                pt_bins.append( ( 25, ptmax ) )
-            if ptmin > 40 :
-                pt_bins.append( ( 40, ptmax ) )
+            if ptmin > analysis_bins_mgg[3] : # for sublead photon pt range
+                pt_bins.append( ( analysis_bins_mgg[3], ptmax ) )
+            if ptmin > analysis_bins_mgg[4] : # for sublead photon pt range
+                pt_bins.append( ( analysis_bins_mgg[4], ptmax ) )
+            if ptmin > analysis_bins_mgg[5] : # for sublead photon pt range
+                pt_bins.append( (analysis_bins_mgg[5] , ptmax ) )
 
     draw_samples = ['Zgammastar', 'MuonRealPhotonSub']
     for samp in draw_samples :
@@ -2019,20 +2020,20 @@ def MakeJetFakeSystPlots(save=True ) :
 
                 if max == analysis_bins_mgg[-1] :
                     pt_bins.append( (min, None) )
-                    if min > 15 : # for sublead photon pt range
-                        pt_bins.append( (15, None) )
-                    if min > 25 : # for sublead photon pt range
-                        pt_bins.append( (25, None) )
-                    if min > 40 : # for sublead photon pt range
-                        pt_bins.append( (40, None) )
+                    if min > analysis_bins_mgg[3] : # for sublead photon pt range
+                        pt_bins.append( (analysis_bins_mgg[3] , None) )
+                    if min > analysis_bins_mgg[4] : # for sublead photon pt range
+                        pt_bins.append( (analysis_bins_mgg[4], None) )
+                    if min > analysis_bins_mgg[5] : # for sublead photon pt range
+                        pt_bins.append( (analysis_bins_mgg[5], None) )
                 else :
                     pt_bins.append( (min, max) )
-                    if min > 15 : # for sublead photon pt range
-                        pt_bins.append( (15, max) )
-                    if min > 25 : # for sublead photon pt range
-                        pt_bins.append( (25, max) )
-                    if min > 40 : # for sublead photon pt range
-                        pt_bins.append( (40, max) )
+                    if min > analysis_bins_mgg[3] : # for sublead photon pt range
+                        pt_bins.append( (analysis_bins_mgg[3], max) )
+                    if min > analysis_bins_mgg[4] : # for sublead photon pt range
+                        pt_bins.append( (analysis_bins_mgg[4], max) )
+                    if min > analysis_bins_mgg[5] : # for sublead photon pt range
+                        pt_bins.append( (analysis_bins_mgg[5], max) )
 
                 
             for ptmin, ptmax in pt_bins :

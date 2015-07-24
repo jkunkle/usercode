@@ -1970,7 +1970,6 @@ class SampleManager :
             stack_entries['Total Expected'] = bkg_sum+sig_sum
 
             picfile = open( outputDir + '/' + picname, 'w' )
-            picfile = open( picname, 'w' )
             pickle.dump( stack_entries, picfile )
             picfile.close()
 

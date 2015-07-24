@@ -216,12 +216,16 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     if( !config.PassFloat( "cut_mgg", OUT::m_ph1_ph2 ) )  keep_event=false;
     if( !config.PassFloat( "cut_dr_lep_ph1", OUT::dr_ph1_leadLep ) )  keep_event=false;
     if( !config.PassFloat( "cut_dr_lep_ph2", OUT::dr_ph2_leadLep ) )  keep_event=false;
+    if( !config.PassFloat( "cut_dr_subllep_ph1", OUT::dr_ph1_sublLep ) )  keep_event=false;
+    if( !config.PassFloat( "cut_dr_subllep_ph2", OUT::dr_ph2_sublLep ) )  keep_event=false;
     if( !config.PassFloat( "cut_dr_ph1_ph2", OUT::dr_ph1_ph2 ) )  keep_event=false;
     if( !config.PassFloat( "cut_m_lepphph", OUT::m_leadLep_ph1_ph2 ) )  keep_event=false;
     if( !config.PassFloat( "cut_m_lepph1", OUT::m_leadLep_ph1 ) )  keep_event=false;
     if( !config.PassFloat( "cut_m_lepph2", OUT::m_leadLep_ph2 ) )  keep_event=false;
     if( !config.PassFloat( "cut_mt_lep_met", OUT::mt_lep_met) )  keep_event=false;
     if( !config.PassFloat( "cut_met", OUT::pfType01MET) )  keep_event=false;
+    if( !config.PassFloat( "cut_m_leplep", OUT::m_leplep) )  keep_event=false;
+
     
     // uncertainty variations
 #ifdef EXISTS_mt_lep_metUncertMuonUP

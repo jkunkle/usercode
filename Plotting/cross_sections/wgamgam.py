@@ -40,6 +40,7 @@
                   'ggZZ_4l'                : { 'n_evt' : 548760   , 'cross_section' : 4.8 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'Zg'                     : { 'n_evt' : 6588161  , 'cross_section' : 159.12 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'Zgg'                    : { 'n_evt' : 199982, 'cross_section' : 0.125 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
+                  #'Zgg'                    : { 'n_evt' : 199982, 'cross_section' : 0.7518 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },
                   'gjet_pt20to40_doubleEM' : { 'n_evt' : 5907942  , 'cross_section' : 91800.0 , 'gen_eff' : 1.0 , 'k_factor' : 1.3 },
                   'gjet_pt40_doubleEM'     : { 'n_evt' : 5956149  , 'cross_section' : 8840.0 , 'gen_eff' : 1.0 , 'k_factor' : 1.3 },
                   'ttW'                    : { 'n_evt' : 196046   , 'cross_section' : 0.232 , 'gen_eff' : 1.0 , 'k_factor' : 1.0 },

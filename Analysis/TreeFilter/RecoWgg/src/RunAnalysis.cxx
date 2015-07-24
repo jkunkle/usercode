@@ -192,11 +192,28 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::jet_JECUnc                = 0;
     OUT::jet_e                     = 0;
 
+    OUT::jet_NCH                   = 0;
+    OUT::jet_Nconstitutents        = 0;
+    OUT::jet_NEF                   = 0;
+    OUT::jet_CEF                   = 0;
+    OUT::jet_CHF                   = 0;
+    OUT::jet_NHF                   = 0;
+
+    OUT::jet_PUIDLoose             = 0;
+    OUT::jet_PUIDMedium            = 0;
+    OUT::jet_PUIDTight             = 0;
+
+    OUT::jet_CSV                   = 0;
+
+
+// jet gen variables do not exist for data
+#ifdef EXISTS_jetGenJetIndex
     OUT::jet_genIndex              = 0;
     OUT::jet_genPt                 = 0;
     OUT::jet_genEta                = 0;
     OUT::jet_genPhi                = 0;
     OUT::jet_genE                  = 0;
+#endif
 
     // *************************
     // Declare Branches
@@ -362,12 +379,25 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("jet_phi"                   , &OUT::jet_phi                   );
     outtree->Branch("jet_JECUnc"                , &OUT::jet_JECUnc                );
     outtree->Branch("jet_e"                     , &OUT::jet_e                     );
+    outtree->Branch("jet_NCH"                   , &OUT::jet_NCH);
+    outtree->Branch("jet_Nconstitutents"        , &OUT::jet_Nconstitutents);
+    outtree->Branch("jet_NEF"                   , &OUT::jet_NEF);
+    outtree->Branch("jet_CEF"                   , &OUT::jet_CEF);
+    outtree->Branch("jet_CHF"                   , &OUT::jet_CHF);
+    outtree->Branch("jet_NHF"                   , &OUT::jet_NHF);
+    outtree->Branch("jet_PUIDLoose"             , &OUT::jet_PUIDLoose);
+    outtree->Branch("jet_PUIDMedium"            , &OUT::jet_PUIDMedium);
+    outtree->Branch("jet_PUIDTight"             , &OUT::jet_PUIDTight);
+    outtree->Branch("jet_CSV"                   , &OUT::jet_CSV);
 
+// jet gen variables do not exist for data
+#ifdef EXISTS_jetGenJetIndex
     outtree->Branch("jet_genIndex"              , &OUT::jet_genIndex              );
     outtree->Branch("jet_genPt"                 , &OUT::jet_genPt                 );
     outtree->Branch("jet_genEta"                , &OUT::jet_genEta                );
     outtree->Branch("jet_genPhi"                , &OUT::jet_genPhi                );
     outtree->Branch("jet_genE"                  , &OUT::jet_genE                  );
+#endif
 
     //outtree->Branch("avgPU"              , &OUT::avgPU, "avgPU/F"                        );
     outtree->Branch("PUWeight"       , &OUT::PUWeight    , "PUWeight/F"       );
@@ -387,6 +417,14 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("PUWeightUP15"    , &OUT::PUWeightUP15 , "PUWeightUP15/F"    );
     outtree->Branch("PUWeightUP16"    , &OUT::PUWeightUP16 , "PUWeightUP16/F"    );
     outtree->Branch("PUWeightUP17"    , &OUT::PUWeightUP17 , "PUWeightUP17/F"    );
+
+    outtree->Branch("passTrig_ele27WP80"    , &OUT::passTrig_ele27WP80    , "passTrig_ele27WP80/O"     );
+    outtree->Branch("passTrig_mu24eta2p1"   , &OUT::passTrig_mu24eta2p1   , "passTrig_mu24eta2p1/O"    );
+    outtree->Branch("passTrig_mu24"         , &OUT::passTrig_mu24         , "passTrig_mu24/O"          );
+    outtree->Branch("passTrig_mu17_mu8"     , &OUT::passTrig_mu17_mu8     , "passTrig_mu17_mu8/O"      );
+    outtree->Branch("passTrig_mu17_Tkmu8"   , &OUT::passTrig_mu17_Tkmu8   , "passTrig_mu17_Tkmu8/O"    );
+    outtree->Branch("passTrig_ele17_ele8_9" , &OUT::passTrig_ele17_ele8_9 , "passTrig_ele17_ele8_9/O"  );
+    outtree->Branch("passTrig_ele17_ele8_22", &OUT::passTrig_ele17_ele8_22, "passTrig_ele17_ele8_22/O" );
 
     eval_el_tight       = false;
     eval_el_medium      = false;
@@ -924,9 +962,6 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         float d0           = fabs(IN::eleD0GV->at(idx));
         float z0           = fabs(IN::eleDzGV->at(idx));
         float hovere       = IN::eleHoverE->at(idx);
-        //float eoverp       = IN::eleEoverP->at(idx);
-        float pfiso30      = IN::elePFChIso03->at(idx);
-        float pfiso40      = IN::elePFChIso04->at(idx);
         int convfit      = IN::eleConvVtxFit->at(idx);
         int misshits       = IN::eleMissHits->at(idx);
         float ip3d         = IN::eleIP3D->at(idx);
@@ -941,19 +976,47 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         float sceta        = IN::eleSCEta->at(idx);
         float phi          = IN::elePhi->at(idx);
         float en           = IN::eleEn->at(idx);
+        float Ecalen       = IN::eleEcalEn->at(idx);
+        float pin          = IN::elePin->at(idx);
         float momentum     = en/(IN::eleEoverP->at(idx));
-        float eoverp       = fabs( (1/en) - (1/momentum) );
+        //float eoverp       = fabs( (1/en) - (1/momentum) );
+        float eoverp      = fabs( (1/Ecalen) - (1/pin) );
         float mva_trig     = IN::eleIDMVATrig->at(idx);
         float mva_nontrig  = IN::eleIDMVANonTrig->at(idx);
         float ecalIso30    = IN::eleIsoEcalDR03->at(idx);
         float hcalIso30    = IN::eleIsoHcalDR03->at(idx);
         float trkIso30     = IN::eleIsoTrkDR03->at(idx);
+        float phoIso30     = IN::elePFPhoIso03->at(idx);
+        float neuIso30     = IN::elePFNeuIso03->at(idx);
+        float chIso30      = IN::elePFChIso03->at(idx);
+        float phoIso40     = IN::elePFPhoIso04->at(idx);
+        float neuIso40     = IN::elePFNeuIso04->at(idx);
+        float chIso40      = IN::elePFChIso04->at(idx);
         float r9           = IN::eleR9->at(idx);
         int   charge       = IN::eleCharge->at(idx);
+
+        float rho = IN::rho2012;
 
         // trigger matching
         bool trigMatch = false;
         if( (IN::eleTrg->at(idx) & 0x1) == 0x1 ) trigMatch = true;
+
+        // effective areas isolation
+        float ea03 = get_ele_eff_area( sceta, 3 );
+        float ea04 = get_ele_eff_area( sceta, 4 );
+
+        float neuIsoCorr30 = phoIso30 + neuIso30 - ea03*rho;
+        float neuIsoCorr40 = phoIso40 + neuIso40 - ea04*rho;
+
+        if( neuIsoCorr30 < 0 ) {
+            neuIsoCorr30 = 0.0;
+        }
+        if( neuIsoCorr40 < 0 ) {
+            neuIsoCorr40 = 0.0;
+        }
+
+        float pfIsoCorr30 = chIso30 + neuIsoCorr30;
+        float pfIsoCorr40 = chIso40 + neuIsoCorr40;
 
         // electron mometum correction
         #ifdef EXISTS_isData
@@ -983,8 +1046,8 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
 
         if( !config.PassFloat( "cut_abseta"         , fabs(eta) ) ) continue;
         if( !config.PassFloat( "cut_abseta_crack"   , fabs(eta) ) ) continue;
-        if( !config.PassFloat( "cut_abssceta"       , fabs(eta) ) ) continue;
-        if( !config.PassFloat( "cut_abssceta_crack" , fabs(eta) ) ) continue;
+        if( !config.PassFloat( "cut_abssceta"       , fabs(sceta) ) ) continue;
+        if( !config.PassFloat( "cut_abssceta_crack" , fabs(sceta) ) ) continue;
 
         bool pass_tight             = true;
         bool pass_medium            = true;
@@ -1034,7 +1097,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_tight=false;
                     if( eval_el_tight ) continue;
                 }
-                if( !config.PassFloat( "cut_pfIso30_barrel_tight"   , pfiso30/pt   ) ) {
+                if( !config.PassFloat( "cut_pfIsoCorr30_barrel_tight"   , pfIsoCorr30/pt   ) ) {
                     pass_tight=false;
                     if( eval_el_tight ) continue;
                 }
@@ -1078,7 +1141,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_medium=false;
                     if( eval_el_medium ) continue;
                 }
-                if( !config.PassFloat( "cut_pfIso30_barrel_medium"   , pfiso30/pt   ) ) {
+                if( !config.PassFloat( "cut_pfIsoCorr30_barrel_medium"   , pfIsoCorr30/pt   ) ) {
                     pass_medium=false;
                     if( eval_el_medium ) continue;
                 }
@@ -1122,7 +1185,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_loose=false;
                     if( eval_el_loose ) continue;
                 }
-                if( !config.PassFloat( "cut_pfIso30_barrel_loose"   , pfiso30/pt   ) ) {
+                if( !config.PassFloat( "cut_pfIsoCorr30_barrel_loose"   , pfIsoCorr30/pt   ) ) {
                     pass_loose=false;
                     if( eval_el_loose ) continue;
                 }
@@ -1166,7 +1229,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }
-                if( !config.PassFloat( "cut_pfIso30_barrel_veryloose"   , pfiso30/pt   ) ) {
+                if( !config.PassFloat( "cut_pfIsoCorr30_barrel_veryloose"   , pfIsoCorr30/pt   ) ) {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }
@@ -1247,13 +1310,13 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     if( eval_el_tight ) continue;
                 }
                 if( pt < 20 ) {
-                  if( !config.PassFloat( "cut_pfIso30_endcap_lowPt_tight"   , pfiso30/pt   ) ) {
+                  if( !config.PassFloat( "cut_pfIsoCorr30_endcap_lowPt_tight"   , pfIsoCorr30/pt   ) ) {
                       pass_tight=false;
                     if( eval_el_tight ) continue;
                   }
                 }
                 else {
-                  if( !config.PassFloat( "cut_pfIso30_endcap_highPt_tight"   , pfiso30/pt   ) ) {
+                  if( !config.PassFloat( "cut_pfIsoCorr30_endcap_highPt_tight"   , pfIsoCorr30/pt   ) ) {
                       pass_tight=false;
                     if( eval_el_tight ) continue;
                   }
@@ -1300,13 +1363,13 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     if( eval_el_medium ) continue;
                 }
                 if( pt < 20 ) {
-                    if( !config.PassFloat( "cut_pfIso30_endcap_lowPt_medium"   , pfiso30/pt   ) ) {
+                    if( !config.PassFloat( "cut_pfIsoCorr30_endcap_lowPt_medium"   , pfIsoCorr30/pt   ) ) {
                         pass_medium=false;
                     if( eval_el_medium ) continue;
                     }
                 }
                 else {
-                    if( !config.PassFloat( "cut_pfIso30_endcap_highPt_medium"   , pfiso30/pt   ) ) {
+                    if( !config.PassFloat( "cut_pfIsoCorr30_endcap_highPt_medium"   , pfIsoCorr30/pt   ) ) {
                         pass_medium=false;
                     if( eval_el_medium ) continue;
                     }
@@ -1352,13 +1415,13 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     if( eval_el_loose ) continue;
                 }
                 if( pt < 20 ) {
-                    if( !config.PassFloat( "cut_pfIso30_endcap_lowPt_loose"   , pfiso30/pt   ) ) {
+                    if( !config.PassFloat( "cut_pfIsoCorr30_endcap_lowPt_loose"   , pfIsoCorr30/pt   ) ) {
                         pass_loose=false;
                     if( eval_el_loose ) continue;
                     }
                 }
                 else {
-                    if( !config.PassFloat( "cut_pfIso30_endcap_highPt_loose"   , pfiso30/pt   ) ) {
+                    if( !config.PassFloat( "cut_pfIsoCorr30_endcap_highPt_loose"   , pfIsoCorr30/pt   ) ) {
                         pass_loose=false;
                     if( eval_el_loose ) continue;
                     }
@@ -1403,7 +1466,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }
-                if( !config.PassFloat( "cut_pfIso30_endcap_veryloose"   , pfiso30/pt   ) ) {
+                if( !config.PassFloat( "cut_pfIsoCorr30_endcap_veryloose"   , pfIsoCorr30/pt   ) ) {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }
@@ -1500,7 +1563,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
             }
 
 
-            if( !config.PassFloat( "cut_relpfiso_mvanontrig"   , pfiso40/pt      ) ) {
+            if( !config.PassFloat( "cut_relpfiso_mvanontrig"   , pfIsoCorr40/pt      ) ) {
                 pass_mva_nontrig=false;
                 pass_mva_nontrig_onlyiso=false;
                 if( eval_el_mva_nontrig ) continue;
@@ -1566,7 +1629,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                 }
             }
 
-            if( !config.PassFloat( "cut_relpfiso_mvatrig"   , pfiso40/pt      ) ) {
+            if( !config.PassFloat( "cut_relpfiso_mvatrig"   , pfIsoCorr40/pt      ) ) {
                 pass_mva_trig=false;
                 pass_mva_trig_onlyiso=false;
                 if( eval_el_mva_trig ) continue;
@@ -1607,8 +1670,8 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         OUT::el_sigmaIEIE      -> push_back( sigmaIEIE );
         // sigmaIEIE cori
         //
-        OUT::el_pfiso30               -> push_back( pfiso30 );
-        OUT::el_pfiso40               -> push_back( pfiso40 );
+        OUT::el_pfiso30               -> push_back( pfIsoCorr30 );
+        OUT::el_pfiso40               -> push_back( pfIsoCorr40 );
         OUT::el_charge                -> push_back( charge );
         OUT::el_hasMatchedConv        -> push_back( convfit );
         OUT::el_passTight             -> push_back(pass_tight);
@@ -1652,18 +1715,80 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
 
 }        
 
+float RunModule::get_ele_eff_area( float sceta, int cone ) const {
+
+    float ea = -1;
+
+    if( cone == 3 ) {
+        if (fabs(sceta) < 1.0 )                              ea = 0.130;
+        else if (fabs(sceta) >= 1.0 && fabs(sceta) < 1.479 ) ea = 0.137;
+        else if (fabs(sceta) >= 1.479 && fabs(sceta) < 2.0 ) ea = 0.067;
+        else if (fabs(sceta) >= 2.0 && fabs(sceta) < 2.2 )   ea = 0.089;
+        else if (fabs(sceta) >= 2.2 && fabs(sceta) < 2.3 )   ea = 0.107;
+        else if (fabs(sceta) >= 2.3 && fabs(sceta) < 2.4 )   ea = 0.110;
+        else if (fabs(sceta) >= 2.4 )                        ea = 0.138;
+        else {
+            std::cout << "Did not get Effective Area for eta " << sceta << std::endl;
+        }
+
+        //if (fabs(sceta) >= 0.0 && fabs(sceta) < 1.0 ) ea = 0.13;
+        //if (fabs(sceta) >= 1.0 && fabs(sceta) < 1.479 ) ea = 0.14;
+        //if (fabs(sceta) >= 1.479 && fabs(sceta) < 2.0 ) ea = 0.07;
+        //if (fabs(sceta) >= 2.0 && fabs(sceta) < 2.2 ) ea = 0.09;
+        //if (fabs(sceta) >= 2.2 && fabs(sceta) < 2.3 ) ea = 0.11;
+        //if (fabs(sceta) >= 2.3 && fabs(sceta) < 2.4 ) ea = 0.11;
+        //if (fabs(sceta) >= 2.4 ) ea = 0.14;
+
+    }
+    else if( cone == 4 ) {
+
+        if (fabs(sceta) < 1.0 )                              ea = 0.208;
+        else if (fabs(sceta) >= 1.0 && fabs(sceta) < 1.479 ) ea = 0.209;
+        else if (fabs(sceta) >= 1.479 && fabs(sceta) < 2.0 ) ea = 0.115;
+        else if (fabs(sceta) >= 2.0 && fabs(sceta) < 2.2 )   ea = 0.143;
+        else if (fabs(sceta) >= 2.2 && fabs(sceta) < 2.3 )   ea = 0.183;
+        else if (fabs(sceta) >= 2.3 && fabs(sceta) < 2.4 )   ea = 0.194;
+        else if (fabs(sceta) >= 2.4 )                        ea = 0.261;
+        else {
+            std::cout << "Did not get Effective Area for eta " << sceta << std::endl;
+        }
+
+    }
+    else {
+        std::cout << "Cone size must be 3 or 4" << std::endl;
+    }
+
+    return ea;
+}
+
 void RunModule::BuildJet( ModuleConfig & config ) const {
 
-    OUT::jet_pt        -> clear();
-    OUT::jet_eta       -> clear();
-    OUT::jet_phi       -> clear();
-    OUT::jet_e         -> clear();
-    OUT::jet_JECUnc    -> clear();
-    OUT::jet_genIndex  -> clear();
-    OUT::jet_genPt     -> clear();
-    OUT::jet_genEta    -> clear();
-    OUT::jet_genPhi    -> clear();
-    OUT::jet_genE      -> clear();
+    OUT::jet_pt             -> clear();
+    OUT::jet_eta            -> clear();
+    OUT::jet_phi            -> clear();
+    OUT::jet_e              -> clear();
+    OUT::jet_JECUnc         -> clear();
+    OUT::jet_NCH            -> clear();
+    OUT::jet_Nconstitutents -> clear();
+    OUT::jet_NEF            -> clear();
+    OUT::jet_CEF            -> clear();
+    OUT::jet_CHF            -> clear();
+    OUT::jet_NHF            -> clear();
+
+    OUT::jet_PUIDLoose      -> clear();
+    OUT::jet_PUIDMedium     -> clear();
+    OUT::jet_PUIDTight      -> clear();
+
+    OUT::jet_CSV            -> clear();
+
+// jet gen variables do not exist for data
+#ifdef EXISTS_jetGenJetIndex
+    OUT::jet_genIndex       -> clear();
+    OUT::jet_genPt          -> clear();
+    OUT::jet_genEta         -> clear();
+    OUT::jet_genPhi         -> clear();
+    OUT::jet_genE           -> clear();
+#endif
     OUT::jet_n          = 0;
 
 
@@ -1678,17 +1803,34 @@ void RunModule::BuildJet( ModuleConfig & config ) const {
         if( !config.PassFloat( "cut_pt", pt ) ) continue;
         if( !config.PassFloat( "cut_abseta", eta ) ) continue;
 
-        OUT::jet_pt        -> push_back(pt);
-        OUT::jet_eta       -> push_back(eta);
-        OUT::jet_phi       -> push_back(phi);
-        OUT::jet_e         -> push_back(en);
-        OUT::jet_JECUnc    -> push_back( IN::jetJECUnc->at(idx) );
+        OUT::jet_pt             -> push_back(pt);
+        OUT::jet_eta            -> push_back(eta);
+        OUT::jet_phi            -> push_back(phi);
+        OUT::jet_e              -> push_back(en);
 
-        OUT::jet_genIndex  ->push_back( IN::jetGenJetIndex->at(idx) );
-        OUT::jet_genPt     ->push_back( IN::jetGenJetPt   ->at(idx) );
-        OUT::jet_genEta    ->push_back( IN::jetGenJetEta  ->at(idx) );
-        OUT::jet_genPhi    ->push_back( IN::jetGenJetPhi  ->at(idx) );
-        OUT::jet_genE      ->push_back( IN::jetGenJetEn   ->at(idx) );
+        OUT::jet_JECUnc         -> push_back( IN::jetJECUnc->at(idx) );
+
+        OUT::jet_NCH            -> push_back( IN::jetNCH->at(idx) );
+        OUT::jet_Nconstitutents -> push_back( IN::jetNConstituents->at(idx) );
+        OUT::jet_NEF            -> push_back( IN::jetNEF->at(idx) );
+        OUT::jet_CEF            -> push_back( IN::jetCEF->at(idx) );
+        OUT::jet_CHF            -> push_back( IN::jetCHF->at(idx) );
+        OUT::jet_NHF            -> push_back( IN::jetNHF->at(idx) );
+
+        OUT::jet_PUIDLoose      -> push_back( IN::jetPuJetIdL->at(idx) );
+        OUT::jet_PUIDMedium     -> push_back( IN::jetPuJetIdM->at(idx) );
+        OUT::jet_PUIDTight      -> push_back( IN::jetPuJetIdT->at(idx) );
+
+        OUT::jet_CSV            -> push_back( IN::jetCombinedSecondaryVtxBJetTags->at(idx) );
+
+// jet gen variables do not exist for data
+#ifdef EXISTS_jetGenJetIndex
+        OUT::jet_genIndex       ->push_back( IN::jetGenJetIndex->at(idx) );
+        OUT::jet_genPt          ->push_back( IN::jetGenJetPt   ->at(idx) );
+        OUT::jet_genEta         ->push_back( IN::jetGenJetEta  ->at(idx) );
+        OUT::jet_genPhi         ->push_back( IN::jetGenJetPhi  ->at(idx) );
+        OUT::jet_genE           ->push_back( IN::jetGenJetEn   ->at(idx) );
+#endif
             
         OUT::jet_n++;
     }
@@ -2705,6 +2847,10 @@ void RunModule::BuildTriggerBits( ModuleConfig & config ) const {
     OUT::passTrig_ele27WP80  = ( IN::HLT[IN::HLTIndex[17]] > 0 );
     OUT::passTrig_mu24eta2p1 = ( IN::HLT[IN::HLTIndex[18]] > 0 );
     OUT::passTrig_mu24       = ( IN::HLT[IN::HLTIndex[19]] > 0 );
+    OUT::passTrig_mu17_mu8   = ( IN::HLT[IN::HLTIndex[13]] > 0 );
+    OUT::passTrig_mu17_Tkmu8   = ( IN::HLT[IN::HLTIndex[14]] > 0 );
+    OUT::passTrig_ele17_ele8_9   = ( IN::HLT[IN::HLTIndex[9]] > 0 );
+    OUT::passTrig_ele17_ele8_22   = ( IN::HLT[IN::HLTIndex[22]] > 0 );
     
 }
 

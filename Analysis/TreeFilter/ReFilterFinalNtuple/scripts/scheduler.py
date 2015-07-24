@@ -12,18 +12,26 @@ options = p.parse_args()
 if not options.run and not options.check :
     options.run = True
 
-base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output'
+base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output'
 
 
 jobs_data = [
-        (base, 'job_muon_2012a_Jan22rereco'),
-        (base, 'job_muon_2012b_Jan22rereco'),
-        (base, 'job_muon_2012c_Jan22rereco'),
-        (base, 'job_muon_2012d_Jan22rereco'),
-        (base, 'job_electron_2012a_Jan22rereco'),
-        (base, 'job_electron_2012b_Jan22rereco'),
-        (base, 'job_electron_2012c_Jan2012rereco'),
-        (base, 'job_electron_2012d_Jan22rereco'),
+        #(base, 'job_muon_2012a_Jan22rereco'),
+        #(base, 'job_muon_2012b_Jan22rereco'),
+        #(base, 'job_muon_2012c_Jan22rereco'),
+        #(base, 'job_muon_2012d_Jan22rereco'),
+        #(base, 'job_electron_2012a_Jan22rereco'),
+        #(base, 'job_electron_2012b_Jan22rereco'),
+        #(base, 'job_electron_2012c_Jan2012rereco'),
+        #(base, 'job_electron_2012d_Jan22rereco'),
+        (base, 'job_2muon_2012a_Jan22rereco'),
+        (base, 'job_2muon_2012b_Jan22rereco'),
+        (base, 'job_2muon_2012c_Jan22rereco'),
+        (base, 'job_2muon_2012d_Jan22rereco'),
+        (base, 'job_2electron_2012a_Jan22rereco'),
+        (base, 'job_2electron_2012b_Jan22rereco'),
+        (base, 'job_2electron_2012c_Jan22rereco'),
+        (base, 'job_2electron_2012d_Jan22rereco'),
 ]
 jobs_mc = [
         (base, 'job_NLO_WAA_FSR'),
@@ -72,12 +80,10 @@ jobs_mc = [
         (base, 'job_summer12_ttZ'),
         (base, 'job_jfaulkne_WZA'),
 
-        #(base, 'job_summer12_diphoton_box_10to25'),
-        #(base, 'job_summer12_diphoton_box_250toInf'),
-        #(base, 'job_summer12_diphoton_box_25to250'),
-        (base, 'job_summer12_ttjets_1lPhOlap'),
-        (base, 'job_summer12_ttjets_2lPhOlap'),
 
+        ###(base, 'job_summer12_diphoton_box_10to25'),
+        ###(base, 'job_summer12_diphoton_box_250toInf'),
+        ###(base, 'job_summer12_diphoton_box_25to250'),
         ###(base, 'job_summer12_ttinclusive'),
         ###(base, 'QCD_Pt-40_doubleEMEnriched'),
         ###(base, 'job_summer12_WgPt50-130'),
@@ -102,20 +108,78 @@ else :
 if options.resubmit :
     command_base += ' --resubmit '
 
+check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s/%(input)s/%(job)s --filteredDS /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --treeNameOrig %(treename)s --histNameFilt ggNtuplizer/filter --fileKeyOrig tree.root --fileKeyFilt tree.root'
+
 top_configs = [
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 40 '},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-    # 'output_name' : 'LepGammaGammaFinalMuUnblindAll_2015_07_05',
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepGammaGammaFinalMuUnblindAll_2015_07_16',
     # 'tag'         : 'muFinal'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 40 '},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-    # 'output_name' : 'LepGammaGammaFinalElUnblindAll_2015_07_05',
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepGammaGammaFinalElUnblindAll_2015_07_16',
     # 'tag'         : 'elFinal'
+    #},
+    {   
+     'module'      : 'ConfFilter.py', 
+     'args'        : {'function' : 'make_final_mumu' },
+     'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
+     'output_name' : 'LepLepGammaGammaFinalMuMuUnblindForCutflow_2015_07_16',
+     'tag'         : 'muFinal'
+    },
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_elel' },
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepLepGammaGammaFinalElElUnblindAllNoPix_2015_07_13',
+    # 'tag'         : 'elFinal'
+    #},
+    #{
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_looseID_bothEleVeto', 'blind_pt' : 'None'},
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepLepGammaGammaNoPhIDVetoPixSeedBoth_2015_07_16',
+    # 'tag'         : 'vetoBoth'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_looseID_invEleVetoLead', 'blind_pt' : 'None'},
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepLepGammaGammaNoPhIDInvPixSeedLead_2015_07_16',
+    # 'tag'         : 'invLead'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_looseID_invEleVetoSubl', 'blind_pt' : 'None'},
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LeplepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16',
+    # 'tag'         : 'invSubl'
+    #},
+    #{
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_looseID_bothEleVeto', 'blind_pt' : 'None'},
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepGammaGammaNoPhIDVetoPixSeedBoth_2015_07_16',
+    # 'tag'         : 'vetoBoth'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_looseID_invEleVetoLead', 'blind_pt' : 'None'},
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedLead_2015_07_16',
+    # 'tag'         : 'invLead'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_looseID_invEleVetoSubl', 'blind_pt' : 'None'},
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16',
+    # 'tag'         : 'invSubl'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
@@ -124,20 +188,48 @@ top_configs = [
     # 'output_name' : 'LepGammaGammaFinalElZCR_2015_07_02',
     # 'tag'         : 'elFinalInvPixLead'
     #},
-    {   
-     'module'      : 'ConfFilter.py', 
-     'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 0 ', 'nozmass' : True , 'invpixsubl' : True },
-     'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-     'output_name' : 'LepGammaGammaFinalElNoZCutInvPixSubl_2015_07_02',
-     'tag'         : 'elFinalInvPixSubl'
-    },
-    {   
-     'module'      : 'ConfFilter.py', 
-     'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 0 ', 'nozmass' : True , 'invpixlead' : True },
-     'input_name'  : 'LepGammaGammaNoPhID_2015_04_11',
-     'output_name' : 'LepGammaGammaFinalElNoZCutInvPixLead_2015_07_06',
-     'tag'         : 'elFinalInvPixLead'
-    },
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 0 ', 'nozmass' : True , 'invpixsubl' : True },
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepGammaGammaFinalElNoZCutInvPixSubl_2015_07_16',
+    # 'tag'         : 'elFinalInvPixSubl'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 0 ', 'nozmass' : True , 'invpixlead' : True },
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepGammaGammaFinalElNoZCutInvPixLead_2015_07_16',
+    # 'tag'         : 'elFinalInvPixLead'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_elel', 'invpixsubl' : True },
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepLepGammaGammaFinalElInvPixSubl_2015_07_16',
+    # 'tag'         : 'elFinalInvPixSubl'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_elel', 'invpixlead' : True },
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepLepGammaGammaFinalElInvPixLead_2015_07_16',
+    # 'tag'         : 'elFinalInvPixLead'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mumu', 'invpixsubl' : True },
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepLepGammaGammaFinalMuInvPixSubl_2015_07_16',
+    # 'tag'         : 'elFinalInvPixSubl'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mumu', 'invpixlead' : True },
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
+    # 'output_name' : 'LepLepGammaGammaFinalMuInvPixLead_2015_07_16',
+    # 'tag'         : 'elFinalInvPixLead'
+    #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mt_var' : 'mt_lep_metUncertMuonUP'},
@@ -427,8 +519,8 @@ if options.run :
 
             command = command_base %{ 'base' : base, 'job' : job, 'nFilesPerJob' : nFilesPerJob, 'input' : config['input_name'], 'output' : config['output_name'], 'nproc' : nProc, 'exename' : job_exename, 'treename' : treename, 'module' : config['module'], 'moduleArgs' : module_str }
 
-            #if not first :
-            #    command += ' --noCompile '
+            if not first :
+                command += ' --noCompileWithCheck '
 
             print command
             os.system(command)
@@ -451,12 +543,29 @@ if options.run :
             module_str += '}'
 
             command = command_base %{ 'base' : base, 'job' : job, 'nFilesPerJob' : nFilesPerJob, 'input' : config['input_name'], 'output' : config['output_name'], 'nproc' : nProc, 'exename' : job_exename, 'treename' : treename, 'module' : config['module'], 'moduleArgs' : module_str }
-            #if not first :
-            #    command += ' --noCompile '
+            if not first :
+                command += ' --noCompileWithCheck '
 
             print command
             os.system(command)
             if first :
                 first = False
+
+if options.check :
+    for config in top_configs :
+    
+        for base, job in jobs_data :
+    
+            command = check_commands_base%{ 'base': base , 'job' : job, 'output' : config['output_name'], 'input' : config['input_name'], 'treename' : treename}
+            print command                                                                               
+            os.system(command)                                                                          
+                                                                                                        
+        for base, job in jobs_mc :                                                                      
+            command = check_commands_base%{ 'base': base , 'job' : job, 'output' : config['output_name'], 'input' : config['input_name'], 'treename' : treename}
+            print command
+            os.system(command)
+
+
+
 
 

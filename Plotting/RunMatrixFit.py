@@ -26,6 +26,8 @@ def parseArgs() :
                                                                                            'in the same manner as in the main() of this script.  If only '
                                                                                            'the file name is given it is assumed to be in the same directory '
                                                                                            'as this script, if a path is given, use that path' ) )
+
+    p.add_argument('--samplesConfGG',  default=None,           dest='samplesConfGG',     help='Use alternate sample configuration for diphoton events. '  )
     
                                                                                            
     p.add_argument('--xsFile',     default=None,  type=str ,        dest='xsFile',         help='path to cross section file.  When calling AddSample in the configuration module, set useXSFile=True to get weights from the provided file')
@@ -113,6 +115,10 @@ def get_corr_fake_template_draw_commands( ch='mu', fitvar='sigmaIEIE', r1='EB', 
     if ch == 'mu' :
         #base_str = '( (mu_passtrig25_n>0 && mu_n==1) || (el_passtrig_n>0 && el_n==1) ) && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f ' %_mgg_cut
         base_str = 'mu_passtrig25_n>0 && mu_n==1 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f '%_mgg_cut
+    elif ch=='muZgg' :
+        base_str = ' mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut
+    elif ch=='elZgg' :
+        base_str = ' mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut 
     else :
         #base_str = '( (mu_passtrig25_n>0 && mu_n==1) || (el_passtrig_n>0 && el_n==1) ) && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f && hasPixSeed_leadph12 == 0 && hasPixSeed_sublph12 == 0 ' %_mgg_cut
         base_str = 'mu_passtrig25_n>0 && mu_n==1 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f15 && hasPixSeed_leadph12 == 0 && hasPixSeed_sublph12 == 0 ' %_mgg_cut
@@ -186,7 +192,18 @@ def get_default_draw_commands( ch='mu' ) :
         #gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05' %_mgg_cut }
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 '%_mgg_cut }
     if ch=='muZgg' :
-        #gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 '%_mgg_cut }
+        gg_cmds = {'gg' : '(passTrig_mu17_mu8 || passTrig_mu17_Tkmu8) && mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut }
+    if ch=='elZgg' :
+        gg_cmds = {'gg' : '(passTrig_ele17_ele8_9 || passTrig_ele17_ele8_22) &&  el_n==2 && mu_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4  && m_leplep > 40 '%_mgg_cut }
+    if ch=='muZgginvpixlead' :
+        gg_cmds = {'gg' : '(passTrig_mu17_mu8 || passTrig_mu17_Tkmu8) &&  mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut }
+    if ch=='elZgginvpixlead' :
+        gg_cmds = {'gg' : '(passTrig_ele17_ele8_9 || passTrig_ele17_ele8_22) && el_n==2 && mu_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4  && m_leplep > 40 '%_mgg_cut }
+    if ch=='muZgginvpixsubl' :
+        gg_cmds = {'gg' : '(passTrig_mu17_mu8 || passTrig_mu17_Tkmu8) && mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut }
+    if ch=='elZgginvpixsubl' :
+        gg_cmds = {'gg' : '(passTrig_ele17_ele8_9 || passTrig_ele17_ele8_22) && el_n==2 && mu_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4  && m_leplep > 40 '%_mgg_cut }
+    if ch=='muZggDil' :
         gg_cmds = {'gg' : ' mu_n==2 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4  && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplepphph > 105 ' }
                
     elif ch == 'elzcr' :
@@ -320,16 +337,17 @@ def main() :
     global sampManDataInvL
     global sampManDataInvS
 
-    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDDiMuonTrig_2014_11_28'
-    base_dir_data         = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoPixSeedBoth_2015_04_12'
-    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_04_11'
-    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_04_12'
-    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_04_12'
-    #base_dir_data      = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDTrigEleOlapVetoPixSeedBoth_2015_01_02'
-    #base_dir_data_invl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDTrigEleOlapInvPixSeedLead_2015_01_02'
-    #base_dir_data_invs = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDTrigEleOlapInvPixSeedSubl_2015_01_02'
-    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_06_29'
-    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_06_29'
+    print '********************************FIX***********************'
+    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoPixSeedBoth_2015_07_16'
+    #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_07_16'
+    #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_07_16'
+    #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16'
+    base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_16'
+    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_16'
+    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedLead_2015_07_16'
+    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16'
+    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_07_16'
+    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_16'
 
     sampManLLG      = SampleManager(base_dir_llg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManLG       = SampleManager(base_dir_lg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
@@ -342,13 +360,11 @@ def main() :
 
         sampManLLG.ReadSamples( options.samplesConf )
         sampManLG.ReadSamples( options.samplesConf )
-        sampManDataNOEV.ReadSamples( options.samplesConf )
-        sampManDataInvL.ReadSamples( options.samplesConf )
-        sampManDataInvS.ReadSamples( options.samplesConf )
 
-        #print '********************************FIX***************************'
-        sampManData.ReadSamples( options.samplesConf )
-        #sampManData.ReadSamples( 'Modules/JetFakeFitZgg.py' )
+        sampManDataNOEV.ReadSamples( options.samplesConfGG )
+        sampManData.ReadSamples( options.samplesConfGG )
+        sampManDataInvL.ReadSamples( options.samplesConfGG )
+        sampManDataInvS.ReadSamples( options.samplesConfGG )
 
     if options.outputDir is not None :
         if not os.path.isdir( options.outputDir ) :
@@ -398,24 +414,27 @@ def main() :
 
     fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
     #channels = ['elfull', 'elfullinvpixsubl', 'elfullinvpixlead']
-    channels = ['elfullinvpixsubl', 'elfullinvpixlead']
+    #channels = ['elfullinvpixsubl', 'elfullinvpixlead']
     #channels = ['mu', 'elfull']
     #channels = ['muZgg']
+    channels = ['muZgginvpixsubl', 'elZgginvpixsubl']
     #channels = ['elfullinvpixsubl', 'elfullinvpixlead']
     #channels = ['elzcr', 'elzcrinvpixsubl', 'elzcrinvpixlead']
-    jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
+    #jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
+    jetfitvars = ['sigmaIEIE']
     calculators = []
 
     ##mt_cuts = [' > 40 ' , ' < 40 ' ]
     mt_cuts = [' > 40 ' ]
     #mt_cuts = [' < 40 ' ]
-    #mt_cuts = [' > 0  ' ]
+    #mt_cuts = [' > -100  ' ]
 
-    corr_vals = [ (5,3,3), (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
+    corr_vals = [ , (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
 
-    #test_ptbins = [ [70, 1000000], [100, 1000000], [125, 1000000], [150,1000000], [175,1000000], [200,1000000], [225,1000000], [250,1000000], [275,1000000], [300,1000000], [325,1000000], [350,1000000], [375,1000000], [400, 1000000] ]
     pt_bins = [ 15, 25, 40, 70, 1000000] 
-    #subl_ptrange = ( 15, None )
+    subl_ptrange = ( 15, None )
+    #pt_bins = [ 30, 40, 70, 1000000] 
+    #subl_ptrange = ( 30, None )
     for ch in channels :
         for var in jetfitvars :
             for ffcorr in fftypes :

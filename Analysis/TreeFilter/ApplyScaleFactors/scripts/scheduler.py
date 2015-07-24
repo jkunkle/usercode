@@ -12,7 +12,7 @@ options = p.parse_args()
 if not options.run and not options.check :
     options.run = True
 
-base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output'
+base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output'
 base_orig_dy = 'root://eoscms//eos/cms/store/group/phys_smp/ggNtuples/mc'
 base_orig = 'root://eoscms//eos/cms/store/group/phys_egamma/cmkuo/'
 base_chris = 'root://eoscms//eos/cms/store/user/cranelli/WGamGam/NLO_ggNtuples/'
@@ -29,12 +29,12 @@ jobs_data = [
         #(base, base_orig, 'job_electron_2012d_Jan22rereco'),
 ]
 jobs_mc = [
-        #(base, base_chris, 'job_NLO_WAA_FSR'),
-        #(base, base_chris, 'job_NLO_WAA_ISR'),
-        #(base,  base_orig_dy, 'job_summer12_DYJetsToLL'),
+        (base, base_chris, 'job_NLO_WAA_FSR'),
+        (base, base_chris, 'job_NLO_WAA_ISR'),
+        #base,  base_orig_dy, 'job_summer12_DYJetsToLL'),
         #(base, base_orig, 'job_summer12_Wg'),
-        #(base, base_orig, 'job_summer12_Zg2PhFilt'),
-        #(base, base_orig, 'job_summer12_Zgg'),
+        (base, base_orig, 'job_summer12_Zg'),
+        (base, base_orig, 'job_summer12_Zgg'),
         #(base, base_orig, 'job_summer12_Wjets'),
         #(base, base_orig, 'job_summer12_ttjets_1l'),
         #(base, base_orig, 'job_summer12_ttjets_2l'),
@@ -111,14 +111,14 @@ top_configs = [
     {   
      'module'      : 'Conf.py', 
      'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-     'input_name'  : 'LepGammaGammaFinalMuUnblindAll_2015_07_05',
+     'input_name'  : 'LepGammaGammaFinalMuUnblindAll_2015_07_16',
      'output_tag'  : 'WithSF',
      'tag'         : 'muFinalSF'
     },
     {   
      'module'      : 'Conf.py', 
      'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-     'input_name'  : 'LepGammaGammaFinalElUnblindAll_2015_07_05',
+     'input_name'  : 'LepGammaGammaFinalElUnblindAll_2015_07_16',
      'output_tag'  : 'WithSF',
     'tag'         : 'elFinalSF'
     },
@@ -206,7 +206,7 @@ if options.run :
             command = command_base %{ 'base' : base, 'job' : job, 'nFilesPerJob' : nFilesPerJob, 'input' : config['input_name'], 'output' : output, 'nproc' : nProc, 'exename' : job_exename, 'treename' : treename, 'module' : config['module'], 'moduleArgs' : module_str }
 
             if not first :
-                command += ' --noCompile '
+                command += ' --noCompileWithCheck '
             print command
             os.system(command)
             if first :
@@ -236,7 +236,7 @@ if options.run :
 
             command = command_base %{ 'base' : base, 'job' : job, 'nFilesPerJob' : nFilesPerJob, 'input' : config['input_name'], 'output' : output, 'nproc' : nProc, 'exename' : job_exename, 'treename' : treename, 'module' : config['module'], 'moduleArgs' : module_str }
             if not first :
-                command += ' --noCompile '
+                command += ' --noCompileWithCheck '
 
             print command
             os.system(command)

@@ -3,14 +3,14 @@
 def config_samples(samples) :
 
     import ROOT
-    samples.AddSample('electron_2012a_Jan22rereco'   , path='job_electron_2012a_Jan22rereco'    ,  isActive=False, scale=1.0 )
-    samples.AddSample('electron_2012b_Jan22rereco'   , path='job_electron_2012b_Jan22rereco'    ,  isActive=False, scale=1.0 )
-    samples.AddSample('electron_2012c_Jan2012rereco' , path='job_electron_2012c_Jan2012rereco'  ,  isActive=False, scale=1.0 )
-    samples.AddSample('electron_2012d_Jan22rereco'   , path='job_electron_2012d_Jan22rereco'    ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012a_Jan22rereco'       , path='job_2muon_2012a_Jan22rereco'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012b_Jan22rereco'       , path='job_2muon_2012b_Jan22rereco'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012c_Jan22rereco'       , path='job_2muon_2012c_Jan22rereco'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('muon_2012d_Jan22rereco'       , path='job_2muon_2012d_Jan22rereco'        ,  isActive=False, scale=1.0 )
+    samples.AddSample('electron_2012a'   , path='job_2electron_2012a_Jan22rereco'    ,  isActive=False, scale=1.0 )
+    samples.AddSample('electron_2012b'   , path='job_2electron_2012b_Jan22rereco'    ,  isActive=False, scale=1.0 )
+    samples.AddSample('electron_2012c'   , path='job_2electron_2012c_Jan22rereco'  ,  isActive=False, scale=1.0 )
+    samples.AddSample('electron_2012d'   , path='job_2electron_2012d_Jan22rereco'    ,  isActive=False, scale=1.0 )
+    samples.AddSample('muon_2012a'       , path='job_2muon_2012a_Jan22rereco'        ,  isActive=False, scale=1.0 )
+    samples.AddSample('muon_2012b'       , path='job_2muon_2012b_Jan22rereco'        ,  isActive=False, scale=1.0 )
+    samples.AddSample('muon_2012c'       , path='job_2muon_2012c_Jan22rereco'        ,  isActive=False, scale=1.0 )
+    samples.AddSample('muon_2012d'       , path='job_2muon_2012d_Jan22rereco'        ,  isActive=False, scale=1.0 )
     samples.AddSample('DYJetsToLLPhOlap'             , path='job_summer12_DYJetsToLLPhOlap'     ,  isActive=False, useXSFile=True, XSName='DYJetsToLL')
     samples.AddSample('ttjets_2l'                    , path='job_summer12_ttjets_2lPhOlap'            ,  isActive=False, useXSFile=True )
     samples.AddSample('Wg'                           , path='job_summer12_Wg'                  ,  isActive=False, useXSFile=True )
@@ -38,20 +38,20 @@ def config_samples(samples) :
 
     samples.AddSampleGroup( 'Muon', legend_name='Muon Data', 
                             input_samples = [
-                                             'muon_2012a_Jan22rereco',
-                                             'muon_2012b_Jan22rereco',
-                                             'muon_2012c_Jan22rereco',
-                                             'muon_2012d_Jan22rereco',
+                                             'muon_2012a',
+                                             'muon_2012b',
+                                             'muon_2012c',
+                                             'muon_2012d',
                                             ],
                            plotColor=ROOT.kBlack,
                            isData=True,
                           )
     samples.AddSampleGroup( 'Electron', legend_name='Electron Data', 
                             input_samples = [
-                                             'electron_2012a_Jan22rereco',
-                                             'electron_2012b_Jan22rereco',
-                                             'electron_2012c_Jan2012rereco',
-                                             'electron_2012d_Jan22rereco',
+                                             'electron_2012a',
+                                             'electron_2012b',
+                                             'electron_2012c',
+                                             'electron_2012d',
                                             ],
                            plotColor=ROOT.kBlack,
                            isData=True,

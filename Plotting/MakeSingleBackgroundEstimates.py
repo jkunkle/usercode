@@ -35,7 +35,9 @@ _ptbins = [int(x) for x in options.ptbins.split(',')]
 lead_dr_cut = 0.4
 
 el_cuts = {
-           'elwzcr' : 'el_passtrig_n>0 && el_n==1 && ph_medium_n==1 && leadPhot_leadLepDR > %.1f && fabs(m_lepph1-91.2) < 10' %( lead_dr_cut ),
+           'singleelwzcr' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==1 && ph_hasPixSeed[0]==1 && dr_ph1_leadLep > %.1f && mu_n==0 && m_leadLep_ph1 > 76 && m_leadLep_ph1 < 106 ' %( lead_dr_cut ),
+           'singleelw' : 'el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==1 && ph_hasPixSeed[0]==1 && dr_ph1_leadLep > %.1f && mu_n==0 && mt_lep_met > 80  ' %( lead_dr_cut ),
+           'elwzcr' : 'el_passtrig_n>0 && el_n==1 && ph_medium_n==1 && leadPhot_leadLepDR > %.1f && m_lepph1 > 76 && m_lepph1 < 106 ' %( lead_dr_cut ),
            'muw' : ' mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoEleVeto_n==1 && leadPhot_leadLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 80 ',
            'el' : 'el_passtrig_n>0 && el_n==2 && ph_medium_n==1 && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f && m_leplep>60 && m_leplepph > 105' %( lead_dr_cut, lead_dr_cut ) ,
            'mu' : 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoEleVeto_n==1 && leadPhot_leadLepDR>%.1f  && leadPhot_sublLepDR>%.1f && el_n==0 && m_leplep>60 && m_leplepph > 105' %( lead_dr_cut, lead_dr_cut ) ,
@@ -81,19 +83,21 @@ def main() :
 
     if options.wcr :
 
-        #file_bin_map = {'ElectronFakeFitsRatio' : [(15,20), (20,25), (25,30), (30,40), (40,50), (50,70), (70, 'max')] }
-        #file_bin_map_syst = {'ElectronFakeFitsRatioExpBkg' : [(15,20), (20,25), (25,30), (30,40), (40,50), (50,70), (70, 'max') ] }
-        #file_bin_map = {'ElectronFakeFitsRatioMCTemplateNDKeys' : [(15,20), (20,25), (25,30), (30, 35), (35, 40), (40, 45), (45, 50), (50,60), (60,70), (70,100), (100,'max') ] }
-        #file_bin_map = {'ElectronFakeFitsRatioExpBkg' : [(15,20), (20,25), (25,30), (30, 35), (35, 40), (40, 45), (45, 50), (50,60), (60,70), (70,100), (100,'max') ] }
-        #file_bin_map_syst = {'ElectronFakeFitsRatioExpBkg' : [(15,20), (20,25), (25,30), (30, 35), (35, 40), (40, 45), (45, 50), (50,60), (60,70), (70,100), (100,'max')] }
-        #file_bin_map = {'ElectronFakeFitsRatioMCTemplateNDKeysSubtractZgamma' : [(15,20), (20,25), (25,30), (30, 35), (35, 40), (40, 45), (45, 50), (50,60), (60,70), (70,100), (100,'max')] }
-        #file_bin_map_syst = {'ElectronFakeFitsRatioMCTemplateNDKeysSubtractZgamma' : [(15,20), (20,25), (25,30), (30, 35), (35, 40), (40, 45), (45, 50), (50,60), (60,70), (70,100), (100,'max')] }
-        #file_bin_map = {'ElectronFakeFitsRatioExpBkg' : [(_ptbins[0], _ptbins[1]), (_ptbins[1], _ptbins[2]), (_ptbins[2], _ptbins[3]), (_ptbins[3], 'max')] }
-        file_bin_map_syst = {'ElectronFakeFitsRatioExpBkg' : [(_ptbins[0], _ptbins[1]), (_ptbins[1], _ptbins[2]), (_ptbins[2], _ptbins[3]),(_ptbins[3], 'max') ] }
-        #file_bin_map = {'ElectronFakeFitsRatioMCTemplateNDKeys' : [(_ptbins[0], _ptbins[1]), (_ptbins[1], _ptbins[2]), (_ptbins[2], _ptbins[3]), (_ptbins[3], 'max')] }
-        file_bin_map = {'ElectronFakeFitsRatio' : [(_ptbins[0], _ptbins[1]), (_ptbins[1], _ptbins[2]), (_ptbins[2], _ptbins[3]), (_ptbins[3], 'max')] }
-        #file_bin_map = {'ElectronFakeFitsRatioMCTemplateNDKeysSubtractZgamma' : [(_ptbins[0], _ptbins[1]), (_ptbins[1], _ptbins[2]), (_ptbins[2], _ptbins[3]), (_ptbins[3], 'max')] }
-        #file_bin_map_syst = {'ElectronFakeFitsRatioExpBkg' : [(_ptbins[0], _ptbins[1]), (_ptbins[1], _ptbins[2]), (_ptbins[2], _ptbins[3]),(_ptbins[3], 'max') ] }
+        suffix = ''
+        path_nom           = 'ElectronFakeFitsRatio%s' %suffix 
+        path_mctemp        = 'ElectronFakeFitsRatio%sMCTemplateNDKeys' %suffix
+
+        file_bin_map = {}
+        file_bin_map_syst = {}
+
+        # go up to the second-to-last bin
+        for bidx in range( 0, len( _ptbins ) - 2 ) :
+            file_bin_map.setdefault(path_mctemp, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+            file_bin_map_syst.setdefault(path_mctemp, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+
+        # do the last bin
+        file_bin_map[path_nom] = [(_ptbins[-2], 'max')]
+        file_bin_map_syst[path_nom] = [(_ptbins[-2], 'max')  ]
 
         for typedir in os.listdir( '%s/SinglePhotonResults'%options.baseDir ) :
             base_dir_ele_single = options.baseDir
@@ -102,7 +106,7 @@ def main() :
 
             #MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['elwzcr', 'elwzcrinvpixlead'],outputDir=outputDirSingle )
             #MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst, el_selection='elw', outputDir=outputDirSingle )
-            #MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst, el_selection='elwzcr', outputDir=outputDirSingle, namePostfix='__zcr' )
+            MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst, el_selection='elwzcr', outputDir=outputDirSingle, namePostfix='__zcr' )
             #MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['muw'],outputDir=outputDirSingle )
 
             MakeSingleBkgEstimatePlots( outputDirSingle, options.plotDir, channels=['elwzcr'] )

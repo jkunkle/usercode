@@ -11,6 +11,7 @@ import subprocess
 import multiprocessing
 import logging
 import time
+import filecmp
 from argparse import ArgumentParser
 import eos_utilities as eosutil
 
@@ -90,6 +91,8 @@ def ParseArgs() :
     parser.add_argument('--noRun', dest='noRun', default=False, action='store_true', help='Just generate and compile, do not run the merging')
     
     parser.add_argument('--noCompile', dest='noCompile', default=False, action='store_true', help='Just run the merging.  Do not recompile')
+    
+    parser.add_argument('--noCompileWithCheck', dest='noCompileWithCheck', default=False, action='store_true', help='Recompile only if tree structure has changed')
     
     parser.add_argument('--debugCode', dest='debugCode', default=False, action='store_true', help='Place debugging statements in the written code')
     
@@ -225,54 +228,52 @@ def config_and_run( options, package_name ) :
     if re.match( '.*?\.exe', options.exeName ) is None :
         options.exeName = options.exeName + '.exe'
 
-    if not options.noCompile :
+    if options.noCompileWithCheck : 
 
-        lockfile = '.compile.lock'
-        lockname = '%s/TreeFilter/%s/%s' %( workarea, package_name, lockfile )
-        while os.path.isfile( lockname ) :
-            print 'Waiting for other compilation to finish.  If this is not expected, do ctrl-z; rm %s; fg ' %lockfile
-            time.sleep(10)
+        #-------------------------------------------
+        # use nCompileWithCheck when you want to 
+        # use the existing executable (as if using --noCompile)
+        # except when the tree content has changed
+        # The check is done by building new compilation files and
+        # doing a diff between the new and old files
+        # if a diff is found a compilation is triggered
+        #-------------------------------------------
 
-        file=open(lockname, 'w')
-        file.write('lock')
-        file.close()
+        old_brdef_file_name = '%s/TreeFilter/%s/include/BranchDefs.h' %( workarea, package_name )
+        old_header_file_name = '%s/TreeFilter/%s/include/BranchInit.h' %( workarea, package_name )
+        old_source_file_name = '%s/TreeFilter/%s/src/BranchInit.cxx' %(workarea, package_name )
+        old_linkdef_file_name = '%s/TreeFilter/%s/include/LinkDef.h' %(workarea, package_name )
 
-        brdef_file_name = '%s/TreeFilter/%s/include/BranchDefs.h' %( workarea, package_name )
-        header_file_name = '%s/TreeFilter/%s/include/BranchInit.h' %( workarea, package_name )
-        source_file_name = '%s/TreeFilter/%s/src/BranchInit.cxx' %(workarea, package_name )
-        linkdef_file_name = '%s/TreeFilter/%s/include/LinkDef.h' %(workarea, package_name )
+        new_brdef_file_name = '/tmp/BranchDefs.h' 
+        new_header_file_name = '/tmp/BranchInit.h'
+        new_source_file_name = '/tmp/BranchInit.cxx'
+        new_linkdef_file_name = '/tmp/LinkDef.h'
 
         # Write the c++ files having the branch definitions and 
         # SetBranchAddress calls
         # Write all output branches in the 
         # header file so that the code will compile
         # only the keep branches will be saved, however
-        write_header_files(brdef_file_name, linkdef_file_name, branches,[ br['name'] for br in branches ], alg_list )
+        write_header_files(new_brdef_file_name, new_linkdef_file_name, branches,[ br['name'] for br in branches ], alg_list )
 
-        write_source_file(source_file_name, header_file_name, branches, branches_to_keep, write_expert_code=options.writeExpertCode )
+        write_source_file(new_source_file_name, new_header_file_name, branches, branches_to_keep, write_expert_code=options.writeExpertCode )
 
-        # compile
-        logging.info('********************************')
-        logging.info('  Begin Compilation ' )
-        logging.info('********************************')
-        proc = subprocess.Popen(['make', 'clean'])
-        proc.wait()
+        if not (filecmp.cmp(  old_brdef_file_name, new_brdef_file_name ) and
+                filecmp.cmp(  old_header_file_name, new_header_file_name ) and
+                filecmp.cmp( old_source_file_name, new_source_file_name )  and
+                filecmp.cmp( old_linkdef_file_name, new_linkdef_file_name ) ) :
+
+            print '--------------------------------------'
+            print 'Difference found in processing code'
+            print 'Will use new code and will compile'
+            print '--------------------------------------'
+
+            compile_code( alg_list, branches, branches_to_keep, workarea, package_name, options.exeName, options.writeExpertCode)
 
 
-        proc = subprocess.Popen(['make', 'EXENAME=%s' %options.exeName])
-        retcode = proc.wait()
-        
-        # abort if non-zero return code
-        if retcode :
-            logging.error( 'Compilation failed.  Will not run' )
-            os.system('rm %s' %lockname)
+    elif not options.noCompile :
 
-            return
-        logging.info('********************************')
-        logging.info('  Compilation Finished ')
-        logging.info('********************************')
-
-        os.system('rm %s' %lockname)
+        compile_code( alg_list, branches, branches_to_keep, workarea, package_name, options.exeName, options.writeExpertCode)
 
 
     # Get the path of the executable.  First try the
@@ -435,6 +436,55 @@ def collect_input_files_eos( filesDir, filekey='.root', write_file_list=False, r
         return input_files
 
 
+#-----------------------------------------------------------
+def compile_code( alg_list, branches, branches_to_keep, workarea, package_name, exeName, writeExpertCode) :
+
+    lockfile = '.compile.lock'
+    lockname = '%s/TreeFilter/%s/%s' %( workarea, package_name, lockfile )
+    while os.path.isfile( lockname ) :
+        print 'Waiting for other compilation to finish.  If this is not expected, do ctrl-z; rm %s; fg ' %lockfile
+        time.sleep(10)
+
+    file=open(lockname, 'w')
+    file.write('lock')
+    file.close()
+
+    brdef_file_name = '%s/TreeFilter/%s/include/BranchDefs.h' %( workarea, package_name )
+    header_file_name = '%s/TreeFilter/%s/include/BranchInit.h' %( workarea, package_name )
+    source_file_name = '%s/TreeFilter/%s/src/BranchInit.cxx' %(workarea, package_name )
+    linkdef_file_name = '%s/TreeFilter/%s/include/LinkDef.h' %(workarea, package_name )
+
+    # Write the c++ files having the branch definitions and 
+    # SetBranchAddress calls
+    # Write all output branches in the 
+    # header file so that the code will compile
+    # only the keep branches will be saved, however
+    write_header_files(brdef_file_name, linkdef_file_name, branches,[ br['name'] for br in branches ], alg_list )
+
+    write_source_file(source_file_name, header_file_name, branches, branches_to_keep, write_expert_code=writeExpertCode )
+
+    # compile
+    logging.info('********************************')
+    logging.info('  Begin Compilation ' )
+    logging.info('********************************')
+    proc = subprocess.Popen(['make', 'clean'])
+    proc.wait()
+
+
+    proc = subprocess.Popen(['make', 'EXENAME=%s' %exeName])
+    retcode = proc.wait()
+    
+    # abort if non-zero return code
+    if retcode :
+        logging.error( 'Compilation failed.  Will not run' )
+        os.system('rm %s' %lockname)
+
+        return
+    logging.info('********************************')
+    logging.info('  Compilation Finished ')
+    logging.info('********************************')
+
+    os.system('rm %s' %lockname)
 #-----------------------------------------------------------
 def get_branch_mapping_from_trees( trees ) :
     """ get all branches with their types and size """
@@ -1017,7 +1067,7 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
     branch_header.write('void InitOUTTree( TTree * tree );\n')
     branch_header.write('void CopyInputVarsToOutput(std::string prefix = std::string() );\n')
     branch_header.write('void CopyPrefixBranchesInToOut( const std::string & prefix );\n' )
-    branch_header.write('void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index );\n')
+    branch_header.write('void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index, bool quiet=false );\n')
     branch_header.write('void ClearOutputPrefix ( const std::string & prefix );\n')
     if write_expert_code:
         branch_header.write('void CheckVectorSize ( const std::string & prefix, unsigned expected );\n')
@@ -1029,7 +1079,7 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
         branch_header.write('void Copy%sInToOut( std::string prefix = std::string() ); \n' %name)
 
         if br['type'].count('vector') :
-            branch_header.write('void Copy%sInToOutIndex( unsigned index, std::string prefix = std::string() ); \n' %name)
+            branch_header.write('void Copy%sInToOutIndex( unsigned index, std::string prefix = std::string(), bool quiet=false ); \n' %name)
             branch_header.write('void ClearOutput%s( std::string prefix ); \n' %name)
             if write_expert_code:
                 branch_header.write('void Check%sVectorSize( std::string prefix, unsigned expected  ); \n' %name)
@@ -1153,7 +1203,7 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
 
     branch_setting.write('}; \n\n' )
     
-    branch_setting.write('void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index ) { \n\n')
+    branch_setting.write('void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index, bool quiet ) { \n\n')
 
     branch_setting.write('// Just call each copy function with the prefix \n\n')
 
@@ -1163,7 +1213,7 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
             continue
 
         if conf['type'].count('vector') :
-            branch_setting.write( '    Copy%sInToOutIndex( index, prefix );\n' %name)
+            branch_setting.write( '    Copy%sInToOutIndex( index, prefix, quiet );\n' %name)
 
     branch_setting.write('}; \n\n' )
 
@@ -1233,13 +1283,15 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
         branch_setting.write('}; \n\n ')
 
         if conf['type'].count('vector') :
-            branch_setting.write('void Copy%sInToOutIndex( unsigned index, std::string  prefix ) { \n\n' %name)
+            branch_setting.write('void Copy%sInToOutIndex( unsigned index, std::string  prefix, bool quiet ) { \n\n' %name)
             branch_setting.write('    std::string my_name = "%s";\n' %name)
             branch_setting.write('    std::size_t pos = my_name.find( prefix ); \n')
             branch_setting.write('    // if the filter is given only continue if its matched at the beginning \n' )
             branch_setting.write('    if( prefix != "" &&  pos != 0 ) return; \n' )
             branch_setting.write('    if( index >= IN::%s->size() ) {\n ' %name)
+            branch_setting.write('        if( !quiet ) {\n ' )
             branch_setting.write('        std::cout << "Vector size exceeded for branch IN::%s" << std::endl;\n ' %name)
+            branch_setting.write('        }; \n')
             branch_setting.write('        return; \n ')
             branch_setting.write('    }; \n\n ')
             branch_setting.write('    //std::cout << "Copy varaible %s" << " at index " << index << ", prefix = " << prefix << std::endl; \n ' %name)

@@ -183,6 +183,8 @@ namespace OUT {
     Float_t mt_lepph2_met;
     Float_t mt_lepphph_met;
     Float_t m_leplep;
+    Float_t m_mumu;
+    Float_t m_elel;
     Float_t m_leplep_uncorr;
     Float_t m_lepph1;
     Float_t m_lepph2;

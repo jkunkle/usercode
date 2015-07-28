@@ -268,12 +268,17 @@ def config_and_run( options, package_name ) :
             print 'Will use new code and will compile'
             print '--------------------------------------'
 
-            compile_code( alg_list, branches, branches_to_keep, workarea, package_name, options.exeName, options.writeExpertCode)
+            comp_success = compile_code( alg_list, branches, branches_to_keep, workarea, package_name, options.exeName, options.writeExpertCode)
+
+            if not comp_success :
+                return
 
 
     elif not options.noCompile :
 
-        compile_code( alg_list, branches, branches_to_keep, workarea, package_name, options.exeName, options.writeExpertCode)
+        comp_success = compile_code( alg_list, branches, branches_to_keep, workarea, package_name, options.exeName, options.writeExpertCode)
+        if not comp_success :
+            return
 
 
     # Get the path of the executable.  First try the
@@ -479,12 +484,15 @@ def compile_code( alg_list, branches, branches_to_keep, workarea, package_name, 
         logging.error( 'Compilation failed.  Will not run' )
         os.system('rm %s' %lockname)
 
-        return
+        return False
+
     logging.info('********************************')
     logging.info('  Compilation Finished ')
     logging.info('********************************')
 
     os.system('rm %s' %lockname)
+
+    return True
 #-----------------------------------------------------------
 def get_branch_mapping_from_trees( trees ) :
     """ get all branches with their types and size """

@@ -1188,9 +1188,11 @@ void RunModule::AddPileupSF( ModuleConfig & /*config*/ ) const {
     OUT::PUWeightDN5  = 1.0;
     OUT::PUWeightDN10 = 1.0;
 
+#ifdef EXISTS_isData
     if( OUT::isData ) {
         return;
     }
+#endif
 
     float puval = OUT::puTrue->at(0);
     //float puval = OUT::puTrue[0];

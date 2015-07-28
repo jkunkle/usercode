@@ -2,6 +2,7 @@
 #define RUNANALYSIS_H
 
 #include "Core/AnalysisBase.h"
+#include "include/BranchDefs.h"
 
 #include <string>
 #include <vector>

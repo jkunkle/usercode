@@ -106,6 +106,8 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("mt_lepph2_met"       , &OUT::mt_lepph2_met      , "mt_lepph2_met/F"      );
     outtree->Branch("mt_lepphph_met"      , &OUT::mt_lepphph_met     , "mt_lepphph_met/F"     );
     outtree->Branch("m_leplep"            , &OUT::m_leplep           , "m_leplep/F"           );
+    outtree->Branch("m_mumu"            , &OUT::m_mumu           , "m_mumu/F"           );
+    outtree->Branch("m_elel"            , &OUT::m_elel           , "m_elel/F"           );
     outtree->Branch("m_leplep_uncorr"     , &OUT::m_leplep_uncorr    , "m_leplep_uncorr/F"    );
     outtree->Branch("m_lepph1"            , &OUT::m_lepph1           , "m_lepph1/F"           );
     outtree->Branch("m_lepph2"            , &OUT::m_lepph2           , "m_lepph2/F"           );
@@ -1097,6 +1099,8 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     OUT::mt_lepph2_met               = 0;
     OUT::mt_lepphph_met              = 0;
     OUT::m_leplep                    = 0;
+    OUT::m_mumu                      = 0;
+    OUT::m_elel                      = 0;
     OUT::m_leplep_uncorr             = 0;
     OUT::m_lepph1                    = 0;
     OUT::m_lepph2                    = 0;
@@ -1129,6 +1133,8 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     #ifdef EXISTS_mu_n
     #ifdef EXISTS_ph_n
     std::vector<TLorentzVector> leptons;
+    std::vector<TLorentzVector> muons;
+    std::vector<TLorentzVector> electrons;
     std::vector<TLorentzVector> leptons_uncorr;
     // map pt to a bool, int pair.  The bool is 1 if electron, 0 if muon.  The int is the index
     std::vector<std::pair<float, std::pair<bool, int > > > sorted_leptons;
@@ -1141,6 +1147,7 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
                           OUT::el_e->at(idx)
                         );
         leptons.push_back(lv);
+        electrons.push_back( lv );
         sorted_leptons.push_back( std::make_pair( lv.Pt(), std::make_pair( 1, idx ) ) );
 
 #ifdef EXISTS_el_pt_uncorr
@@ -1171,12 +1178,13 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     for( int idx = 0; idx < OUT::mu_n; idx++ ) {
 
         TLorentzVector lv;
-        lv.SetPtEtaPhiE(  OUT::mu_pt->at(idx),
+        lv.SetPtEtaPhiM(  OUT::mu_pt->at(idx),
                           OUT::mu_eta->at(idx),
                           OUT::mu_phi->at(idx),
-                          OUT::mu_e->at(idx)
+                          0.1057
                         );
         leptons.push_back(lv);
+        muons.push_back( lv );
         sorted_leptons.push_back( std::make_pair( lv.Pt(), std::make_pair( 0, idx ) ) );
 
         #ifdef EXISTS_mu_pt_uncorr
@@ -1464,6 +1472,12 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
         OUT::pt_thirdLepton = sorted_leptons[2].first;
     }
 
+    if( muons.size() > 1 ) {
+        OUT::m_mumu = ( muons[0] + muons[1] ).M();
+    }
+    if( electrons.size() > 1 ) {
+        OUT::m_elel = ( electrons[0] + electrons[1] ).M();
+    }
     if( leptons.size() > 1 ) {
         OUT::m_leplep = ( leptons[0] + leptons[1] ).M();
         OUT::pt_leplep = ( leptons[0] + leptons[1] ).Pt();

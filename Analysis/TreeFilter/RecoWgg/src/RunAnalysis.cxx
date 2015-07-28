@@ -1,5 +1,6 @@
 #include "include/RunAnalysis.h"
 
+#include <bitset>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -11,7 +12,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "include/BranchDefs.h"
 #include "include/BranchInit.h"
 #include "include/MuScleFitCorrector.h"
 #include "include/EnergyScaleCorrection_class.h"
@@ -647,20 +647,8 @@ bool RunModule::execute( std::vector<ModuleConfig> & configs ) {
 
 bool RunModule::ApplyModule( ModuleConfig & config ) {
 
-    // This bool is used for filtering
-    // If a module implements an event filter
-    // update this variable and return it
-    // to apply the filter
     bool keep_evt = true;
 
-    // This part is a bit hacked.  For each module that
-    // you write below, you have to put a call to that
-    // function with a matching name here.
-    // The name is used to match the name used
-    // in the python configuration.
-    // There are fancy ways to do this, but it
-    // would require the code to be much more complicated
-    
     //mcParentage && 0x12 == 0x12
     if( config.GetName() == "BuildElectron" ) {
         BuildElectron( config );
@@ -682,11 +670,6 @@ bool RunModule::ApplyModule( ModuleConfig & config ) {
     }
 
 
-    // If the module applies a filter the filter decision
-    // is passed back to here.  There is no requirement
-    // that a function returns a bool, but
-    // if you want the filter to work you need to do this
-    //
     if( config.GetName() == "FilterEvent" ) {
         keep_evt &= FilterEvent( config );
     }
@@ -749,8 +732,8 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         float phi = IN::muPhi->at(idx);
         unsigned int GlobalMuon = 1<<1;
         unsigned int PFMuon =  1<<5;
-        bool is_global_muon = IN::muType->at(idx) & GlobalMuon;
-        bool is_pf_muon = IN::muType->at(idx) & PFMuon;
+        bool is_global_muon = ( (IN::muType->at(idx) & GlobalMuon) != 0 );
+        bool is_pf_muon = ( (IN::muType->at(idx) & PFMuon) != 0 );
 
         float chi2       = IN::muChi2NDF->at(idx);
         int   nHits      = IN::muNumberOfValidMuonHits->at(idx);
@@ -777,7 +760,7 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         #ifdef EXISTS_isData
         if( apply_muon_corrections && !IN::isData ) {
             TLorentzVector muvec;
-            muvec.SetPtEtaPhiM( pt, eta, phi, 0.105 );
+            muvec.SetPtEtaPhiM( pt, eta, phi, 0.1057 );
             muCorr->applyPtCorrection( muvec, charge );
             muCorr->applyPtSmearing( muvec, charge, false );
             pt = muvec.Pt();
@@ -806,60 +789,71 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
             pass_tightNoIso = false;
             pass_tightNoD0 = false;
             pass_tightNoIsoNoD0 = false;
+            if( eval_mu_tight ) continue;
         }
         if( !config.PassBool ( "cut_isPF"       , is_pf_muon     ) ) {
             pass_tight = false;
             pass_tightNoIso = false;
             pass_tightNoD0 = false;
             pass_tightNoIsoNoD0 = false;
+            if( eval_mu_tight ) continue;
         }
         if( !config.PassFloat( "cut_chi2"       , chi2           ) ) { 
             pass_tight = false;
             pass_tightNoIso = false;
             pass_tightNoD0 = false;
             pass_tightNoIsoNoD0 = false;
+            if( eval_mu_tight ) continue;
         }
         if( !config.PassFloat( "cut_nMuonHits"  , nHits          ) ) { 
             pass_tight = false;
             pass_tightNoIso = false;
             pass_tightNoD0 = false;
             pass_tightNoIsoNoD0 = false;
+            if( eval_mu_tight ) continue;
         }
         if( !config.PassFloat( "cut_nStations"  , muStations     ) ) { 
             pass_tight = false;
             pass_tightNoIso = false;
             pass_tightNoD0 = false;
             pass_tightNoIsoNoD0 = false;
+            if( eval_mu_tight ) continue;
         }
         if( !config.PassFloat( "cut_nPixelHits" , nPixHit        ) ) { 
             pass_tight = false;
             pass_tightNoIso = false;
             pass_tightNoD0 = false;
             pass_tightNoIsoNoD0 = false;
+            if( eval_mu_tight ) continue;
         }
         if( !config.PassFloat( "cut_nTrkLayers" , nTrkLayers     ) ) { 
             pass_tight = false;
             pass_tightNoIso = false;
             pass_tightNoD0 = false;
             pass_tightNoIsoNoD0 = false;
+            if( eval_mu_tight ) continue;
         }
         if( !config.PassFloat( "cut_d0"         , fabs(d0)       ) ) { 
             pass_tight = false;
             pass_tightNoIso = false;
+            if( eval_mu_tight ) continue;
         }
         if( !config.PassFloat( "cut_z0"         , fabs(z0)       ) ) { 
             pass_tight = false;
             pass_tightNoIso = false;
             pass_tightNoD0 = false;
             pass_tightNoIsoNoD0 = false;
+            if( eval_mu_tight ) continue;
         }
         if( !config.PassFloat( "cut_trkiso"     , tkIso/pt       ) ) { 
             pass_tight = false;
             pass_tightNoD0 = false;
+            if( eval_mu_tight ) continue;
         }
         if( !config.PassFloat( "cut_corriso"    , corriso/pt     ) ) { 
             pass_tight = false;
             pass_tightNoD0 = false;
+            if( eval_mu_tight ) continue;
         }
 
         // evaluate tight cuts if requested
@@ -868,10 +862,10 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         OUT::mu_n++;
 
         TLorentzVector muon;
-        muon.SetPtEtaPhiM( pt, eta, phi, 0.106 );
+        muon.SetPtEtaPhiM( pt, eta, phi, 0.1057 );
 
         TLorentzVector muon_uncorr;
-        muon_uncorr.SetPtEtaPhiM( IN::muPt->at(idx), IN::muEta->at(idx), IN::muPhi->at(idx), 0.106 );
+        muon_uncorr.SetPtEtaPhiM( IN::muPt->at(idx), IN::muEta->at(idx), IN::muPhi->at(idx), 0.1057 );
 
         OUT::mu_pt                 -> push_back(muon.Pt() );
         OUT::mu_eta                -> push_back(muon.Eta());
@@ -976,11 +970,8 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         float sceta        = IN::eleSCEta->at(idx);
         float phi          = IN::elePhi->at(idx);
         float en           = IN::eleEn->at(idx);
-        float Ecalen       = IN::eleEcalEn->at(idx);
-        float pin          = IN::elePin->at(idx);
-        float momentum     = en/(IN::eleEoverP->at(idx));
-        //float eoverp       = fabs( (1/en) - (1/momentum) );
-        float eoverp      = fabs( (1/Ecalen) - (1/pin) );
+        float eoverp         = (IN::eleEoverP->at(idx));
+        float epdiff       = fabs( (1./en) - eoverp/en );
         float mva_trig     = IN::eleIDMVATrig->at(idx);
         float mva_nontrig  = IN::eleIDMVANonTrig->at(idx);
         float ecalIso30    = IN::eleIsoEcalDR03->at(idx);
@@ -1093,7 +1084,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_tight=false;
                     if( eval_el_tight ) continue;
                 }
-                if( !config.PassFloat( "cut_eoverp_barrel_tight"    , eoverp       ) ) {
+                if( !config.PassFloat( "cut_epdiff_barrel_tight"    , epdiff       ) ) {
                     pass_tight=false;
                     if( eval_el_tight ) continue;
                 }
@@ -1137,7 +1128,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_medium=false;
                     if( eval_el_medium ) continue;
                 }
-                if( !config.PassFloat( "cut_eoverp_barrel_medium"    , eoverp       ) ) {
+                if( !config.PassFloat( "cut_epdiff_barrel_medium"    , epdiff       ) ) {
                     pass_medium=false;
                     if( eval_el_medium ) continue;
                 }
@@ -1181,7 +1172,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_loose=false;
                     if( eval_el_loose ) continue;
                 }
-                if( !config.PassFloat( "cut_eoverp_barrel_loose"    , eoverp       ) ) {
+                if( !config.PassFloat( "cut_epdiff_barrel_loose"    , epdiff       ) ) {
                     pass_loose=false;
                     if( eval_el_loose ) continue;
                 }
@@ -1225,7 +1216,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }
-                if( !config.PassFloat( "cut_eoverp_barrel_veryloose"    , eoverp       ) ) {
+                if( !config.PassFloat( "cut_epdiff_barrel_veryloose"    , epdiff       ) ) {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }
@@ -1305,7 +1296,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_tight=false;
                     if( eval_el_tight ) continue;
                 }
-                if( !config.PassFloat( "cut_eoverp_endcap_tight"    , eoverp       ) ) {
+                if( !config.PassFloat( "cut_epdiff_endcap_tight"    , epdiff       ) ) {
                     pass_tight=false;
                     if( eval_el_tight ) continue;
                 }
@@ -1358,7 +1349,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_medium=false;
                     if( eval_el_medium ) continue;
                 }
-                if( !config.PassFloat( "cut_eoverp_endcap_medium"    , eoverp       ) ) {
+                if( !config.PassFloat( "cut_epdiff_endcap_medium"    , epdiff       ) ) {
                     pass_medium=false;
                     if( eval_el_medium ) continue;
                 }
@@ -1410,7 +1401,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_loose=false;
                     if( eval_el_loose ) continue;
                 }
-                if( !config.PassFloat( "cut_eoverp_endcap_loose"    , eoverp       ) ) {
+                if( !config.PassFloat( "cut_epdiff_endcap_loose"    , epdiff       ) ) {
                     pass_loose=false;
                     if( eval_el_loose ) continue;
                 }
@@ -1462,7 +1453,7 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }
-                if( !config.PassFloat( "cut_eoverp_endcap_veryloose"    , eoverp       ) ) {
+                if( !config.PassFloat( "cut_epdiff_endcap_veryloose"    , epdiff       ) ) {
                     pass_veryloose=false;
                     if( eval_el_veryloose ) continue;
                 }

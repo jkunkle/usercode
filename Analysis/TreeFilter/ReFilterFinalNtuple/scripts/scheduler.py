@@ -114,31 +114,52 @@ top_configs = [
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 40 '},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
-    # 'output_name' : 'LepGammaGammaFinalMuUnblindAll_2015_07_16',
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_30',
+    # 'output_name' : 'LepGammaGammaFinalMuUnblindAll_2015_08_01',
     # 'tag'         : 'muFinal'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'loose' : False, 'mtcut' : ' > 40 '},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
-    # 'output_name' : 'LepGammaGammaFinalElUnblindAll_2015_07_16',
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_30',
+    # 'output_name' : 'LepGammaGammaFinalElUnblindAll_2015_08_01',
     # 'tag'         : 'elFinal'
+    #},
+    #{
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_looseID_bothEleVeto', 'blind_pt' : 'None'},
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_30',
+    # 'output_name' : 'LepGammaGammaNoPhIDVetoPixSeedBoth_2015_08_01',
+    # 'tag'         : 'vetoBoth'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_looseID_invEleVetoLead', 'blind_pt' : 'None'},
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_30',
+    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedLead_2015_08_01',
+    # 'tag'         : 'invLead'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_looseID_invEleVetoSubl', 'blind_pt' : 'None'},
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_30',
+    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_08_01',
+    # 'tag'         : 'invSubl'
     #},
     {   
      'module'      : 'ConfFilter.py', 
      'args'        : {'function' : 'make_final_mumu' },
-     'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
-     'output_name' : 'LepLepGammaGammaFinalMuMuUnblindForCutflow_2015_07_16',
+     'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_30',
+     'output_name' : 'LepLepGammaGammaFinalMuMuUnblindAll_2015_08_01',
      'tag'         : 'muFinal'
     },
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_elel' },
-    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
-    # 'output_name' : 'LepLepGammaGammaFinalElElUnblindAllNoPix_2015_07_13',
-    # 'tag'         : 'elFinal'
-    #},
+    {   
+     'module'      : 'ConfFilter.py', 
+     'args'        : {'function' : 'make_final_elel' },
+     'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_30',
+     'output_name' : 'LepLepGammaGammaFinalElElUnblindAll_2015_08_01',
+     'tag'         : 'elFinal'
+    },
     #{
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_looseID_bothEleVeto', 'blind_pt' : 'None'},
@@ -158,27 +179,6 @@ top_configs = [
     # 'args'        : {'function' : 'make_looseID_invEleVetoSubl', 'blind_pt' : 'None'},
     # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
     # 'output_name' : 'LeplepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16',
-    # 'tag'         : 'invSubl'
-    #},
-    #{
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_looseID_bothEleVeto', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
-    # 'output_name' : 'LepGammaGammaNoPhIDVetoPixSeedBoth_2015_07_16',
-    # 'tag'         : 'vetoBoth'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_looseID_invEleVetoLead', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
-    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedLead_2015_07_16',
-    # 'tag'         : 'invLead'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_looseID_invEleVetoSubl', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_07_16',
-    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16',
     # 'tag'         : 'invSubl'
     #},
     #{   

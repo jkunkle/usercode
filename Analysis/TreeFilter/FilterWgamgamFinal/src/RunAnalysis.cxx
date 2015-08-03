@@ -57,6 +57,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     // *************************
     outtree->Branch("isBlinded", &OUT::isBlinded );
     outtree->Branch("EventWeight", &OUT::EventWeight, "EventWeight/F" );
+    outtree->Branch("ph_hasMatchedEle", &OUT::ph_hasMatchedEle );
 
     outtree->Branch("mu_pt25_n"                    , &OUT::mu_pt25_n                    , "mu_pt25_n/I"        );
     outtree->Branch("mu_passtrig_n"                , &OUT::mu_passtrig_n                , "mu_passtrig_n/I"        );
@@ -111,6 +112,12 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("m_leplep_uncorr"     , &OUT::m_leplep_uncorr    , "m_leplep_uncorr/F"    );
     outtree->Branch("m_lepph1"            , &OUT::m_lepph1           , "m_lepph1/F"           );
     outtree->Branch("m_lepph2"            , &OUT::m_lepph2           , "m_lepph2/F"           );
+    outtree->Branch("m_lep2ph1"            , &OUT::m_lep2ph1           , "m_lep2ph1/F"           );
+    outtree->Branch("m_lep2ph2"            , &OUT::m_lep2ph2           , "m_lep2ph2/F"           );
+    outtree->Branch("m_lepphlead"            , &OUT::m_lepphlead           , "m_lepphlead/F"           );
+    outtree->Branch("m_lepphsubl"            , &OUT::m_lepphsubl           , "m_lepphsubl/F"           );
+    outtree->Branch("m_lep2phlead"            , &OUT::m_lep2phlead           , "m_lep2phlead/F"           );
+    outtree->Branch("m_lep2phsubl"            , &OUT::m_lep2phsubl           , "m_lep2phsubl/F"           );
     outtree->Branch("m_leplepph"          , &OUT::m_leplepph         , "m_leplepph/F"         );
     outtree->Branch("m_leplepphph"        , &OUT::m_leplepphph       , "m_leplepphph/F"         );
     outtree->Branch("m_leplepph1"         , &OUT::m_leplepph1        , "m_leplepph1/F"         );
@@ -453,6 +460,9 @@ void RunModule::FilterElectron( ModuleConfig & config ) const {
     OUT::el_n = 0;
     ClearOutputPrefix("el_");
 
+    // save which photon overlaps with 
+    // electrons
+    std::vector<Bool_t> ph_matches_ele( OUT::ph_n, 0 );
     for( int idx = 0; idx < IN::el_n; idx++ ) {
 
         float elPt = IN::el_pt->at(idx);
@@ -488,12 +498,33 @@ void RunModule::FilterElectron( ModuleConfig & config ) const {
             if( !config.PassBool( "cut_el_mvaNonTrig", IN::el_passMvaNonTrig->at(idx)) ) continue;
         }
 
-
-
-        // Remove electrons that overlap with muons
-        float mindr = 100.;
         TLorentzVector el;
         el.SetPtEtaPhiE( IN::el_pt->at(idx), IN::el_eta->at(idx), IN::el_phi->at(idx), IN::el_e->at(idx ) );
+        // remove electrons that overlap with photons
+        float mindr = 100.;
+        for( int pidx = 0 ; pidx < OUT::ph_n; pidx++ ) {
+
+            TLorentzVector phlv;
+            phlv.SetPtEtaPhiM( OUT::ph_pt->at(pidx), 
+                               OUT::ph_eta->at(pidx),
+                               OUT::ph_phi->at(pidx),
+                               0.0 );
+        
+            float dr = phlv.DeltaR(el);
+            if( dr < mindr ) {
+                mindr = dr;
+            }
+            if( dr < 0.4 ) {
+                ph_matches_ele[pidx] = 1;
+            }
+        }
+
+
+        if( !config.PassFloat( "cut_ph_el_dr", mindr ) ) continue;
+
+
+        mindr = 100.;
+        // Remove electrons that overlap with muons
         for( int muidx = 0 ; muidx < OUT::mu_n; muidx++ ) {
             TLorentzVector mu;
             mu.SetPtEtaPhiE( OUT::mu_pt->at(muidx), OUT::mu_eta->at(muidx), OUT::mu_phi->at(muidx), OUT::mu_e->at(muidx ) );
@@ -512,6 +543,14 @@ void RunModule::FilterElectron( ModuleConfig & config ) const {
         OUT::el_n++;
 
     }
+
+    // store if the photon matched an 
+    // electron
+    OUT::ph_hasMatchedEle->clear();
+    for( int pidx = 0 ; pidx < OUT::ph_n; ++pidx ) {
+        OUT::ph_hasMatchedEle->push_back(ph_matches_ele[pidx] );
+    }
+            
     #endif
 
 }
@@ -522,6 +561,8 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
 
     OUT::ph_n = 0;
     ClearOutputPrefix("ph_");
+
+    OUT::ph_hasMatchedEle->clear();
 
     std::vector<int> ph_order;
     if( sort_photons_by_id ) {
@@ -638,7 +679,7 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
         CopyPrefixIndexBranchesInToOut( "ph_", idx );
         OUT::ph_pt->pop_back();
         OUT::ph_pt->push_back(phPt);
-        
+
         OUT::ph_n++;
 
     }
@@ -1104,6 +1145,12 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     OUT::m_leplep_uncorr             = 0;
     OUT::m_lepph1                    = 0;
     OUT::m_lepph2                    = 0;
+    OUT::m_lep2ph1                    = 0;
+    OUT::m_lep2ph2                    = 0;
+    OUT::m_lepphlead                    = 0;
+    OUT::m_lepphsubl                    = 0;
+    OUT::m_lep2phlead                    = 0;
+    OUT::m_lep2phsubl                    = 0;
     OUT::m_lepphph                   = 0;
     OUT::m_leplepph                  = 0;
     OUT::m_leplepphph                = 0;
@@ -1525,8 +1572,10 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
 
             OUT::mt_lepphph_met =Utils::calc_mt( leptons[0] + photons[leadidx] + photons[sublidx], metlv );
 
-            OUT::m_lepph1 = ( leptons[0] + photons[leadidx] ).M();
-            OUT::m_lepph2 = ( leptons[0] + photons[sublidx] ).M();
+            OUT::m_lepphlead = ( leptons[0] + photons[leadidx] ).M();
+            OUT::m_lepphsubl = ( leptons[0] + photons[sublidx] ).M();
+            OUT::m_lepph1 = ( leptons[0] + photons[0] ).M();
+            OUT::m_lepph2 = ( leptons[0] + photons[1] ).M();
             OUT::m_lepphph = ( leptons[0] + photons[leadidx] + photons[sublidx] ).M();
 
             OUT::pt_lepph1 = ( leptons[0] + photons[leadidx] ).Pt();
@@ -1534,8 +1583,8 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
             OUT::pt_lepphph = ( leptons[0] + photons[leadidx] + photons[sublidx] ).Pt();
 
             float zmass = 91.2;
-            float leaddiff = fabs( OUT::m_lepph1 - zmass);
-            float subldiff = fabs( OUT::m_lepph2 - zmass);
+            float leaddiff = fabs( OUT::m_lepphlead - zmass);
+            float subldiff = fabs( OUT::m_lepphsubl - zmass);
             if( leaddiff < subldiff ) {
                 OUT::m_minZdifflepph = leaddiff;
             }
@@ -1551,12 +1600,27 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
             OUT::mt_lepph1_met = Utils::calc_mt( leptons[0] + photons[leadidx], metlv );
 
             OUT::m_lepph1 = ( leptons[0] + photons[leadidx] ).M();
+            OUT::m_lepphlead = ( leptons[0] + photons[0] ).M();
             OUT::pt_lepph1 = ( leptons[0] + photons[leadidx] ).Pt();
 
         }
             
             
     }
+    if( leptons.size() > 1 ) {
+        if( photons.size() > 1 ) { 
+            int leadidx = sorted_photons[0].second;
+            int sublidx = sorted_photons[1].second;
+            OUT::m_lep2ph1 = ( leptons[1] + photons[leadidx] ).M();
+            OUT::m_lep2ph2 = ( leptons[1] + photons[sublidx] ).M();
+        }
+        else if( photons.size() == 1) {
+            int leadidx = sorted_photons[0].second;
+            OUT::m_lep2ph1 = ( leptons[1] + photons[leadidx] ).M();
+        }
+    }
+
+
     if( leptons.size() > 2 ) {
         std::vector< std::pair<float, float> > lep_pair_masses;
         for( unsigned i = 0; i < leptons.size() ; i++ ) {
@@ -1628,6 +1692,7 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     int nPhPassSIEIEAndEVeto =0;
 
     std::vector<TLorentzVector> leptons;
+    std::vector<TLorentzVector> photons;
 
     for( int i = 0; i < OUT::mu_n; ++i ) {
         nLep++;
@@ -1690,6 +1755,13 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
 
     for( int i = 0; i < OUT::ph_n; ++i ) {
         nElPh++;
+        TLorentzVector tlv;
+        tlv.SetPtEtaPhiM( OUT::ph_pt->at(i), 
+                          OUT::ph_eta->at(i), 
+                          OUT::ph_phi->at(i), 
+                          0.0);
+
+        photons.push_back(tlv);
         if( OUT::ph_truthMatch_el->at(i) ) {
             nPhTruthMatchEl++;
         }
@@ -1697,6 +1769,19 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
             nPhPassSIEIEAndEVeto++;
         }
     }
+
+    int n_overlap = 0;
+    int n_combs = 0;
+    for( unsigned int lidx = 0; lidx < leptons.size() ; lidx++ )  {
+        for( unsigned int pidx = 0; pidx < photons.size() ; pidx++ )  {
+            n_combs++;
+            float dr = leptons[lidx].DeltaR( photons[pidx] );
+
+            if( dr < 0.4 ) n_overlap++;
+        }
+    }
+
+    int n_not_overlap = n_combs - n_overlap;
 
     if( !config.PassBool( "cut_SingleLepTrig", (OUT::passTrig_ele27WP80 || OUT::passTrig_mu24eta2p1 || OUT::passTrig_mu24 ) ) ) keep_event = false;
     if( !config.PassBool( "cut_DiLepTrig", (OUT::passTrig_mu17_mu8 || OUT::passTrig_mu17_Tkmu8 || OUT::passTrig_ele17_ele8_22 || OUT::passTrig_ele17_ele8_9 ) ) ) keep_event = false;
@@ -1726,12 +1811,20 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
         }
     }
 
+    if( !config.PassInt( "cut_nNotOverlap", n_not_overlap ) )   keep_event = false;
+
+
     if( leptons.size() > 1 && config.HasCut( "cut_m_leplep" ) ) { 
 
         float mass = (leptons[0] + leptons[1] ).M();
 
         if( !config.PassFloat( "cut_m_leplep", mass ) ) keep_event = false;
     }
+
+    if( !config.PassFloat( "cut_m_lepph1", OUT::m_lepph1 ) ) keep_event = false;
+    if( !config.PassFloat( "cut_m_lepph2", OUT::m_lepph2 ) ) keep_event = false;
+    if( !config.PassFloat( "cut_m_lep2ph1", OUT::m_lep2ph1 ) ) keep_event = false;
+    if( !config.PassFloat( "cut_m_lep2ph2", OUT::m_lep2ph2 ) ) keep_event = false;
 
 
     #endif //el_n

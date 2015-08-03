@@ -14,8 +14,6 @@
 #include "TGraphAsymmErrors.h"
 #include "TH2F.h"
 #include "TRandom3.h"
-#include "external/CMSSW_5_3_28/src/CondFormats/JetMETObjects/interface/SimpleJetResolution.h"
-#include "external/CMSSW_5_3_28/src/CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 
 // The RunModule inherits from RunModuleBase (an Abstract Base Class )
 // defined in the Core package so that all
@@ -70,21 +68,6 @@ class RunModule : public virtual RunModuleBase {
 
     private :
 
-        void GetTruthJets( std::vector<TLorentzVector> & jets) const;
-        void GetJetsJER( const std::vector<int> &jets_index, const std::string &var, std::vector<TLorentzVector> &out_jets ) const;
-        void GetJetsJES( const std::vector<int> &jets_index, const std::string &var, std::vector<TLorentzVector> &out_jets ) const;
-        float FindJetJERCorr( const std::string &up_dn, float eta) const;
-        float FindJetJERCorr( const std::vector<std::pair< std::pair<float, float>, float > > & corrs, float eta) const;
-
-        void GetElectronsScaled( const std::vector<int> &eles_index, const std::string &var, std::vector<TLorentzVector> &out_eles ) const;
-        void GetPhotonsScaled  ( const std::vector<int> &phots_index, const std::string &var, std::vector<TLorentzVector> &out_phots ) const;
-        void GetMuonsScaled    ( const std::vector<int> &muons_index, const std::string &var, std::vector<TLorentzVector> &out_muons ) const;
-
-        void GetNewMet( const std::vector<TLorentzVector> &objs_to_remove, const std::vector<TLorentzVector> &objs_to_add, TLorentzVector & met_orig ) const ;
-        void GetUnClusNewMet( const std::vector<TLorentzVector> &hard_objs, float var, TLorentzVector & met_orig ) const ;
-
-    private :
-
         TFile *_sffile_mu_iso;
         TFile *_sffile_mu_id;
         TFile *_sffile_mu_trig;
@@ -123,19 +106,6 @@ class RunModule : public virtual RunModuleBase {
         TH1D *_sfhist_pileup_data;
         TH1F *_sfhist_pileup_mc;
 
-        std::vector<std::pair<std::pair<float, float>, float > > jet_res_corr_dn;
-        std::vector<std::pair<std::pair<float, float>, float > > jet_res_corr_up;
-
-        JetCorrectorParameters *AK5PFCHSPar;
-        JetCorrectorParameters *AK5PFPar;
-        SimpleJetResolution *ak5PFResolution;
-        SimpleJetResolution *ak5PFCHSResolution;
-
-        TRandom3 * rand;
-
-        std::string _muon_var;
-        std::string _egamma_var;
-
 
 
 };
@@ -172,31 +142,6 @@ namespace OUT {
     float mu_idSF;
     float mu_idSFUP;
     float mu_idSFDN;
-#endif
-
-#ifdef MODULE_AddMETUncert
-    float pfType01METUncertMuonUP;
-    float pfType01METUncertMuonDN;
-    float pfType01METUncertEMUP;
-    float pfType01METUncertEMDN;
-    float pfType01METUncertJESUP;
-    float pfType01METUncertJESDN;
-    float pfType01METUncertJERUP;
-    float pfType01METUncertJERDN;
-    float pfType01METUncertUnClusUP;
-    float pfType01METUncertUnClusDN;
-
-    float mt_lep_metUncertMuonUP;
-    float mt_lep_metUncertMuonDN;
-    float mt_lep_metUncertEMUP;
-    float mt_lep_metUncertEMDN;
-    float mt_lep_metUncertJESUP;
-    float mt_lep_metUncertJESDN;
-    float mt_lep_metUncertJERUP;
-    float mt_lep_metUncertJERDN;
-    float mt_lep_metUncertUnClusUP;
-    float mt_lep_metUncertUnClusDN;
-
 #endif
 
 #ifdef MODULE_AddPileupSF

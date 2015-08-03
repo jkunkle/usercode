@@ -385,7 +385,7 @@ def make_final_mumu( alg_list, args ) :
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' == 2 '
     filter_event.cut_nMu = ' == 2 '
-    filter_event.cut_nEl = ' == 0 '
+    #filter_event.cut_nEl = ' == 0 '
 
     filter_event.cut_dr_lep_ph1 = ' > 0.4 '
     filter_event.cut_dr_lep_ph2 = ' > 0.4 '
@@ -393,7 +393,7 @@ def make_final_mumu( alg_list, args ) :
     filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
     filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
 
-    filter_event.cut_m_leplep = ' > 40 '
+    filter_event.cut_m_mumu = ' > 40 '
 
     #if invpixlead :
     #    filter_event.cut_hasPixSeed_leadph12 = ' == True '
@@ -431,7 +431,7 @@ def make_final_elel( alg_list, args ) :
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' == 2 '
     filter_event.cut_nEl = ' == 2 '
-    filter_event.cut_nMu = ' == 0 '
+    #filter_event.cut_nMu = ' == 0 '
 
     filter_event.cut_dr_lep_ph1 = ' > 0.4 '
     filter_event.cut_dr_lep_ph2 = ' > 0.4 '
@@ -439,7 +439,7 @@ def make_final_elel( alg_list, args ) :
     filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
     filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
 
-    filter_event.cut_m_leplep = ' > 40 '
+    filter_event.cut_m_elel = ' > 40 '
 
     #if invpixlead :
     #    filter_event.cut_hasPixSeed_leadph12 = ' == True '

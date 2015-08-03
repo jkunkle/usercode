@@ -958,7 +958,7 @@ class SampleManager :
         if not common_results :
             print 'WARNING : Found zero samples matching criteria!  Available samples are : '
             #assert( '' )
-            #print kwargs
+            print kwargs
             #for s in self.get_samples() :
             #    print s.name
             return []

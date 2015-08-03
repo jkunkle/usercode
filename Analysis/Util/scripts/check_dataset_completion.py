@@ -5,6 +5,11 @@ import os
 import eos_utilities as eosutil
 import ROOT
 
+# disable file recovery
+ROOT.gEnv.SetValue('TFile.Recover', 'OFF' )
+#ROOT.gEnv.SaveLevel( ROOT.kEnvGlobal )
+
+
 
 def main() :
 

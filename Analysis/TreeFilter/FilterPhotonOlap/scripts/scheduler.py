@@ -24,8 +24,8 @@ base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 # end of the output jobs
 # ----------------------------
 
-#suffix='PhOlap'
-suffix='2PhFilt'
+suffix='PhOlap'
+#suffix='2PhFilt'
 
 jobs = [
         #(base, 'job_summer12_DYJetsToLL'),
@@ -33,9 +33,9 @@ jobs = [
         #(base, 'job_summer12_ttjets_1l'),
         #(base, 'job_summer12_ttjets_2l'),
 
-        #(base, 'job_summer12_Wg'),
+        (base, 'job_summer12_Wg'),
 
-        (base, 'job_summer12_Zg'),
+        #(base, 'job_summer12_Zg'),
         #(base, 'job_summer12_ZgWithSF'),
 
         #(base, 'job_summer12_Zgg'),
@@ -50,31 +50,31 @@ jobs = [
         #(base, 'job_summer12_ggZZ_2l2l'),
         #(base, 'job_summer12_ggZZ_4l'),
 
-        (base, 'job_summer12_WH_ZH_125'),
-        (base, 'job_summer12_t_s'),
-        (base, 'job_summer12_t_t'),
-        (base, 'job_summer12_t_tW'),
-        (base, 'job_summer12_tbar_s'),
-        (base, 'job_summer12_tbar_t'),
-        (base, 'job_summer12_tbar_tW'),
-        (base, 'job_summer12_WWW'),
-        (base, 'job_summer12_WWZ'),
-        (base, 'job_summer12_WWg'),
-        (base, 'job_summer12_WZZ'),
-        (base, 'job_summer12_ZZZ'),
-        (base, 'job_summer12_ZZ_2e2mu'),
-        (base, 'job_summer12_ZZ_2e2tau'),
-        (base, 'job_summer12_ZZ_2l2nu'),
-        (base, 'job_summer12_ZZ_2l2q'),
-        (base, 'job_summer12_ZZ_2mu2tau'),
-        (base, 'job_summer12_ZZ_2q2nu'),
-        (base, 'job_summer12_ZZ_4e'),
-        (base, 'job_summer12_ZZ_4mu'),
-        (base, 'job_summer12_ZZ_4tau'),
-        (base, 'job_summer12_ttg'),
-        (base, 'job_summer12_ttW'),
-        (base, 'job_summer12_ttZ'),
-        (base, 'job_jfaulkne_WZA'),
+        #(base, 'job_summer12_WH_ZH_125'),
+        #(base, 'job_summer12_t_s'),
+        #(base, 'job_summer12_t_t'),
+        #(base, 'job_summer12_t_tW'),
+        #(base, 'job_summer12_tbar_s'),
+        #(base, 'job_summer12_tbar_t'),
+        #(base, 'job_summer12_tbar_tW'),
+        #(base, 'job_summer12_WWW'),
+        #(base, 'job_summer12_WWZ'),
+        #(base, 'job_summer12_WWg'),
+        #(base, 'job_summer12_WZZ'),
+        #(base, 'job_summer12_ZZZ'),
+        #(base, 'job_summer12_ZZ_2e2mu'),
+        #(base, 'job_summer12_ZZ_2e2tau'),
+        #(base, 'job_summer12_ZZ_2l2nu'),
+        #(base, 'job_summer12_ZZ_2l2q'),
+        #(base, 'job_summer12_ZZ_2mu2tau'),
+        #(base, 'job_summer12_ZZ_2q2nu'),
+        #(base, 'job_summer12_ZZ_4e'),
+        #(base, 'job_summer12_ZZ_4mu'),
+        #(base, 'job_summer12_ZZ_4tau'),
+        #(base, 'job_summer12_ttg'),
+        #(base, 'job_summer12_ttW'),
+        #(base, 'job_summer12_ttZ'),
+        #(base, 'job_jfaulkne_WZA'),
 
         #(base, 'job_summer12_WH_ZH_125WithSF'),
         #(base, 'job_summer12_t_sWithSF'),
@@ -119,7 +119,7 @@ jobs = [
 #sub_base = ['LepGammaGammaFinalElUnblindAll_2015_04_12', 'LepGammaGammaFinalMuUnblindAll_2015_04_12', 'LepGammaGammaNoPhIDInvPixSeedLead_2015_04_12', 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_04_12', 'LepLepGammaNoPhID_2015_04_11', 'LepGammaGamma_NoPhID_2015_04_11', 'LepGammaGammaNomUnblindAllNoEleVeto_2015_04_12', 'LepGammaNoPhID_2015_04_11']
 #sub_base = ['LepGammaGammaNoEleVetoUnblindLowPt_2015_01_14']
 #sub_base = ['LepGammaGammaFinalElZCR_2015_07_02', 'LepGammaGammaFinalElNoZCutInvPixLead_2015_07_02', 'LepGammaGammaFinalElNoZCutInvPixSubl_2015_07_02']
-sub_base = ['LepLepGammaGammaFinalMuMuUnblindAllNoPix_2015_07_16', 'LepLepGammaGammaFinalElElUnblindAllNoPix_2015_07_16']
+sub_base = ['LepGammaGammaNoPhID_2015_07_30', 'LepLepGammaNoPhID_2015_07_30', 'LepGammaNoPhID_2015_07_30']
 
 #sub_base = ['LepGammaGammaNoPhID_2014_11_20',]
 

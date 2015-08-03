@@ -118,6 +118,8 @@ namespace OUT {
     std::vector<float>  *trueW_phi      ;
     std::vector<float>  *trueW_e        ;
 
+    std::vector<Bool_t> *ph_hasMatchedEle;
+
     Float_t trueleadlep_pt;
     Float_t truesubllep_pt;
     Float_t true_m_leplep;
@@ -188,6 +190,12 @@ namespace OUT {
     Float_t m_leplep_uncorr;
     Float_t m_lepph1;
     Float_t m_lepph2;
+    Float_t m_lep2ph1;
+    Float_t m_lep2ph2;
+    Float_t m_lepphlead;
+    Float_t m_lepphsubl;
+    Float_t m_lep2phlead;
+    Float_t m_lep2phsubl;
     Float_t m_leplepph;
     Float_t m_leplepphph;
     Float_t m_leplepph1;

@@ -107,12 +107,12 @@ def main() :
     global samplesLLG
     global samplesPhOlap
 
-    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_16'
+    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_30'
     #baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindAllNoEleVeto_2015_07_16'
-    baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_07_16'
-    baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_07_16'
-    baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_07_16'
-    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_07_16'
+    baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_07_30'
+    baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_08_01'
+    baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_08_01'
+    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_07_30'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
@@ -1761,20 +1761,23 @@ def MakeJetFakeSystPlots(save=True ) :
             else :
                 raw_input('continue')
             
-            cutname = 'ph_SCRChIso'
-            common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
-            samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passChIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 2 && %s[0] < 5 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 5 && %s[0] < 10 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 5 && %s[0] < 20 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 5 && %s[0] < 30 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 5 )' %( common_selection, cutname)], [samp]*6, bins_eb, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Ch Iso cut', ' 2 < Iso < 5', '5 < Iso < 10', '5 < Iso < 20', '5 < Iso < 30', 'Iso > 5']})
-            if save :
-                samplesLLG.SaveStack('ph_sigmaIEIE__EB__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
-            else :
-                raw_input('continue')
+            #-------------------------------------------------
+            # Not using SCRChIso
+            #-------------------------------------------------
+            #cutname = 'ph_SCRChIso'
+            #common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
+            #samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passChIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 2 && %s[0] < 5 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 5 && %s[0] < 10 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 5 && %s[0] < 20 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 5 && %s[0] < 30 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 5 )' %( common_selection, cutname)], [samp]*6, bins_eb, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Ch Iso cut', ' 2 < Iso < 5', '5 < Iso < 10', '5 < Iso < 20', '5 < Iso < 30', 'Iso > 5']})
+            #if save :
+            #    samplesLLG.SaveStack('ph_sigmaIEIE__EB__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
+            #else :
+            #    raw_input('continue')
 
-            common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
-            samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passChIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 2 && %s[0] < 5 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 5 && %s[0] < 10 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 5 && %s[0] < 20 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 5 && %s[0] < 30 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 5 )' %( common_selection, cutname)], [samp]*6, bins_ee, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Ch Iso cut', ' 2 < Iso < 5', '5 < Iso < 10', '5 < Iso < 20', '5 < Iso < 30', 'Iso > 5']})
-            if save :
-                samplesLLG.SaveStack('ph_sigmaIEIE__EE__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
-            else :
-                raw_input('continue')
+            #common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
+            #samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passChIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 2 && %s[0] < 5 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 5 && %s[0] < 10 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 5 && %s[0] < 20 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 5 && %s[0] < 30 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 5 )' %( common_selection, cutname)], [samp]*6, bins_ee, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Ch Iso cut', ' 2 < Iso < 5', '5 < Iso < 10', '5 < Iso < 20', '5 < Iso < 30', 'Iso > 5']})
+            #if save :
+            #    samplesLLG.SaveStack('ph_sigmaIEIE__EE__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
+            #else :
+            #    raw_input('continue')
 
             #--------------------------------------
             # Neutral Iso
@@ -1795,20 +1798,23 @@ def MakeJetFakeSystPlots(save=True ) :
             else :
                 raw_input('continue')
             
-            cutname = 'ph_SCRNeuIso'
-            common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
-            samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 1 && %s[0] < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 && %s[0] < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 )' %( common_selection, cutname)], [samp]*6, bins_eb, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1']})
-            if save :
-                samplesLLG.SaveStack('ph_sigmaIEIE__EB__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
-            else :
-                raw_input('continue')
+            #-------------------------------------------------
+            # Not using SCRNeuIso
+            #-------------------------------------------------
+            #cutname = 'ph_SCRNeuIso'
+            #common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
+            #samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 1 && %s[0] < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 && %s[0] < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 )' %( common_selection, cutname)], [samp]*6, bins_eb, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1']})
+            #if save :
+            #    samplesLLG.SaveStack('ph_sigmaIEIE__EB__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
+            #else :
+            #    raw_input('continue')
 
-            common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
-            samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 1 && %s[0] < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 && %s[0] < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 )' %( common_selection, cutname)], [samp]*6, bins_ee, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1']})
-            if save :
-                samplesLLG.SaveStack('ph_sigmaIEIE__EE__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
-            else :
-                raw_input('continue')
+            #common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
+            #samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 1 && %s[0] < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 && %s[0] < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 )' %( common_selection, cutname)], [samp]*6, bins_ee, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1']})
+            #if save :
+            #    samplesLLG.SaveStack('ph_sigmaIEIE__EE__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
+            #else :
+            #    raw_input('continue')
 
             #--------------------------------------
             # Photon Iso
@@ -1829,20 +1835,23 @@ def MakeJetFakeSystPlots(save=True ) :
             else :
                 raw_input('continue')
             
-            cutname = 'ph_SCRPhoIso'
-            common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
-            samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 1 && %s[0] < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 && %s[0] < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 )' %( common_selection, cutname)], [samp]*6, bins_eb, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1']})
-            if save :
-                samplesLLG.SaveStack('ph_sigmaIEIE__EB__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
-            else :
-                raw_input('continue')
+            #-------------------------------------------------
+            # Not using SCRPhoIso
+            #-------------------------------------------------
+            #cutname = 'ph_SCRPhoIso'
+            #common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEB[0]'
+            #samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 1 && %s[0] < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 && %s[0] < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 )' %( common_selection, cutname)], [samp]*6, bins_eb, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1']})
+            #if save :
+            #    samplesLLG.SaveStack('ph_sigmaIEIE__EB__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
+            #else :
+            #    raw_input('continue')
 
-            common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
-            samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 1 && %s[0] < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 && %s[0] < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 )' %( common_selection, cutname)], [samp]*6, bins_ee, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1']})
-            if save :
-                samplesLLG.SaveStack('ph_sigmaIEIE__EE__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
-            else :
-                raw_input('continue')
+            #common_selection = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_IsEE[0]'
+            #samplesLLG.CompareSelections( 'ph_sigmaIEIE[0]', ['PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] )' %common_selection, 'PUWeight * ( %s &&  %s[0] > 1 && %s[0] < 2 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 4 )' %( common_selection, cutname, cutname), 'PUWeight * ( %s && %s[0] > 2 && %s[0] < 6 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 && %s[0] < 10 )' %( common_selection, cutname, cutname),'PUWeight * ( %s && %s[0] > 2 )' %( common_selection, cutname)], [samp]*6, bins_ee, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta] ,'doratio':2, 'xlabel':'#sigma i#eta i#eta', 'ylabel':'Normalized Events / 0.002', 'rlabel':'Inverted Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.8}, legend_config={'legend_entries':['Nominal Neu Iso cut', ' 1 < Iso < 2', '2 < Iso < 4', '2 < Iso < 6', '2 < Iso < 10', 'Iso > 1']})
+            #if save :
+            #    samplesLLG.SaveStack('ph_sigmaIEIE__EE__mmg__%s__Comp%scuts' %(samp, cutname), options.outputDir+'/'+subdir, 'base')
+            #else :
+            #    raw_input('continue')
 
             #--------------------------------------
             # Mult Iso

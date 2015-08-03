@@ -177,7 +177,7 @@ def config_and_run( options, package_name ) :
             options.outputFile = input_files[0].split('/')[-1]
 
     logging.info('Get Branch mapping')
-    branches = get_branch_mapping(input_files, options.treeName )
+    branches = get_branch_mapping(input_files[0], options.treeName )
 
     ImportedModule = import_module( options.module )
 

@@ -337,17 +337,16 @@ def main() :
     global sampManDataInvL
     global sampManDataInvS
 
-    print '********************************FIX***********************'
-    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoPixSeedBoth_2015_07_16'
-    #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_07_16'
-    #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_07_16'
-    #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16'
-    base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_16'
-    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_16'
-    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedLead_2015_07_16'
-    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16'
-    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_07_16'
-    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_16'
+    base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoPixSeedBoth_2015_08_01'
+    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_07_30'
+    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_08_01'
+    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_08_01'
+    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_16'
+    #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_16'
+    #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedLead_2015_07_16'
+    #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16'
+    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_07_30'
+    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_30'
 
     sampManLLG      = SampleManager(base_dir_llg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManLG       = SampleManager(base_dir_lg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
@@ -414,14 +413,14 @@ def main() :
 
     fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
     #channels = ['elfull', 'elfullinvpixsubl', 'elfullinvpixlead']
-    #channels = ['elfullinvpixsubl', 'elfullinvpixlead']
+    channels = ['elfullinvpixsubl', 'elfullinvpixlead']
     #channels = ['mu', 'elfull']
     #channels = ['muZgg']
-    channels = ['muZgginvpixsubl', 'elZgginvpixsubl']
+    #channels = ['muZgginvpixsubl', 'elZgginvpixsubl']
     #channels = ['elfullinvpixsubl', 'elfullinvpixlead']
     #channels = ['elzcr', 'elzcrinvpixsubl', 'elzcrinvpixlead']
-    #jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
-    jetfitvars = ['sigmaIEIE']
+    jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
+    #jetfitvars = ['sigmaIEIE']
     calculators = []
 
     ##mt_cuts = [' > 40 ' , ' < 40 ' ]
@@ -429,7 +428,7 @@ def main() :
     #mt_cuts = [' < 40 ' ]
     #mt_cuts = [' > -100  ' ]
 
-    corr_vals = [ , (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
+    corr_vals = [(5,3,3) , (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
 
     pt_bins = [ 15, 25, 40, 70, 1000000] 
     subl_ptrange = ( 15, None )

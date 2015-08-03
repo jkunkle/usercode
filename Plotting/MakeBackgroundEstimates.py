@@ -188,22 +188,6 @@ def main() :
         #MakeBkgEstimatePlots( outputDirBase, options.plotDir, channelmu='mu', channelel='elfull', minpt=pt_bins[0] )
         MakeBkgEstimatePlots( outputDirBase, options.plotDir, channelmu='muZgg', channelel='elZgg', minpt=pt_bins[0] )
 
-        for typedir in os.listdir( '%s/JetFakeResultsSyst'%options.baseDir ) :
-            base_dir_ele = options.baseDir
-            base_dir_jet = '%s/JetFakeResultsSyst/%s'%(options.baseDir, typedir )
-            outputDir='%s/BackgroundEstimates/%s/' %(options.baseDir, typedir )
-            ##MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elph1zcr', outputDir=outputDir, namePostfix='__ph1zcr' )
-            ##MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elph2zcr', outputDir=outputDir, namePostfix='__ph2zcr' )
-            ##MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map_coarse, file_bin_map_coarse_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDir, namePostfix='__coarse', coarse=True )
-            ##MakeEleBkgEstimate( base_dir_ele, base_dir_jet, file_bin_map_coarse, file_bin_map_coarse_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDir, namePostfix='__coarse__zcr', coarse=True )
-
-            #MakeJetBkgEstimateNew( base_dir_jet, pt_bins, channel='mu', outputDir=outputDir )
-            #MakeJetBkgEstimate( base_dir_jet, pt_bins, channel='elfull', outputDir=outputDir )
-            #MakeJetBkgEstimate( base_dir_jet, pt_bins, channel='elzcr', outputDir=outputDir )
-
-            #MakeBkgEstimatePlots( outputDirBase, options.plotDir )
-
-            ##MakeDiPhotonCREleFakeFactors( )
  
     print '^_^ FINSISHED ^_^'
     print 'It is safe to kill the program if it is hanging'
@@ -758,7 +742,7 @@ def MakeBkgEstimatePlots( baseDir, plotDir, channelmu='mu', channelel='elfull', 
     # first make the nominal estimates
 
     regions = [('EB', 'EB'), ('EB' ,'EE'), ('EE', 'EB')]
-    plot_binning = [0,5,10,15,25,40,100]
+    plot_binning = [0,5,10,15,25,40,70,100]
 
     for reg in regions + [(None, None)] :
 

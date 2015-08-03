@@ -17,68 +17,79 @@ base_orig_dy = 'root://eoscms//eos/cms/store/group/phys_smp/ggNtuples/mc'
 base_orig = 'root://eoscms//eos/cms/store/group/phys_egamma/cmkuo/'
 base_chris = 'root://eoscms//eos/cms/store/user/cranelli/WGamGam/NLO_ggNtuples/'
 
+class JobConf( ) :
+
+    def __init__( self, base, pu_base, name, suffix='') :
+        self.base = base
+        self.pu_base = pu_base
+        self.name = name
+        self.suffix = suffix
 
 jobs_data = [
-        #(base, base_orig, 'job_muon_2012a_Jan22rereco'),
-        #(base, base_orig, 'job_muon_2012b_Jan22rereco'),
-        #(base, base_orig, 'job_muon_2012c_Jan22rereco'),
-        #(base, base_orig, 'job_muon_2012d_Jan22rereco'),
-        #(base, base_orig, 'job_electron_2012a_Jan22rereco'),
-        #(base, base_orig, 'job_electron_2012b_Jan22rereco'),
-        #(base, base_orig, 'job_electron_2012c_Jan2012rereco'),
-        #(base, base_orig, 'job_electron_2012d_Jan22rereco'),
+        #JobConf(base, base_orig, 'job_muon_2012a_Jan22rereco'),
+        #JobConf(base, base_orig, 'job_muon_2012b_Jan22rereco'),
+        #JobConf(base, base_orig, 'job_muon_2012c_Jan22rereco'),
+        #JobConf(base, base_orig, 'job_muon_2012d_Jan22rereco'),
+        #JobConf(base, base_orig, 'job_electron_2012a_Jan22rereco'),
+        #JobConf(base, base_orig, 'job_electron_2012b_Jan22rereco'),
+        #JobConf(base, base_orig, 'job_electron_2012c_Jan2012rereco'),
+        #JobConf(base, base_orig, 'job_electron_2012d_Jan22rereco'),
 ]
 jobs_mc = [
-        (base, base_chris, 'job_NLO_WAA_FSR'),
-        (base, base_chris, 'job_NLO_WAA_ISR'),
-        #base,  base_orig_dy, 'job_summer12_DYJetsToLL'),
-        #(base, base_orig, 'job_summer12_Wg'),
-        (base, base_orig, 'job_summer12_Zg'),
-        (base, base_orig, 'job_summer12_Zgg'),
-        #(base, base_orig, 'job_summer12_Wjets'),
-        #(base, base_orig, 'job_summer12_ttjets_1l'),
-        #(base, base_orig, 'job_summer12_ttjets_2l'),
+        JobConf(base, base_chris, 'job_NLO_WAA_FSR'),
+        JobConf(base, base_chris, 'job_NLO_WAA_ISR'),
+        JobConf(base,  base_orig_dy, 'job_summer12_DYJetsToLL'),
+        JobConf(base,  base_orig_dy, 'job_summer12_DYJetsToLL', 'PhOlap'),
+        JobConf(base, base_orig, 'job_summer12_Wg'),
+        JobConf(base, base_orig, 'job_summer12_Wg', 'PhOlap'),
+        JobConf(base, base_orig, 'job_summer12_Zg'),
+        JobConf(base, base_orig, 'job_summer12_Zgg'),
+        JobConf(base, base_orig, 'job_summer12_Wjets'),
+        JobConf(base, base_orig, 'job_summer12_ttjets_1l'),
+        JobConf(base, base_orig, 'job_summer12_ttjets_2l'),
+        JobConf(base, base_orig, 'job_summer12_ttjets_1l', 'PhOlap'),
+        JobConf(base, base_orig, 'job_summer12_ttjets_2l', 'PhOlap'),
 
-        (base, base_orig, 'job_summer12_ttg'),
-        (base, base_orig, 'job_summer12_WH_ZH_125'),
-        (base, base_orig, 'job_summer12_WWW'),
-        (base, base_orig, 'job_summer12_WWZ'),
-        (base, base_orig, 'job_summer12_WW_2l2nu'),
-        (base, base_orig, 'job_summer12_WWg'),
-        (base, base_orig, 'job_summer12_WZZ'),
-        (base, base_orig, 'job_summer12_ZZZ'),
-        (base, base_orig, 'job_summer12_ZZ_2e2mu'),
-        (base, base_orig, 'job_summer12_ZZ_2e2tau'),
-        (base, base_orig, 'job_summer12_ZZ_2l2nu'),
-        (base, base_orig, 'job_summer12_ZZ_2l2q'),
-        (base, base_orig, 'job_summer12_ZZ_2mu2tau'),
-        (base, base_orig, 'job_summer12_ZZ_2q2nu'),
-        (base, base_orig, 'job_summer12_ZZ_4e'),
-        (base, base_orig, 'job_summer12_ZZ_4mu'),
-        (base, base_orig, 'job_summer12_ZZ_4tau'),
-        (base, base_orig, 'job_summer12_ggZZ_2l2l'),
-        (base, base_orig, 'job_summer12_ggZZ_4l'),
-        (base, base_orig, 'job_summer12_t_s'),
-        (base, base_orig, 'job_summer12_t_t'),
-        (base, base_orig, 'job_summer12_t_tW'),
-        (base, base_orig, 'job_summer12_tbar_s'),
-        (base, base_orig, 'job_summer12_tbar_t'),
-        (base, base_orig, 'job_summer12_tbar_tW'),
-        (base, base_orig, 'job_summer12_ttW'),
-        (base, base_orig, 'job_summer12_ttZ'),
-        (base, base_orig, 'job_jfaulkne_WZA'),
+        JobConf(base, base_orig, 'job_summer12_ttg'),
+        JobConf(base, base_orig, 'job_summer12_WH_ZH_125'),
+        JobConf(base, base_orig, 'job_summer12_WWW'),
+        JobConf(base, base_orig, 'job_summer12_WWZ'),
+        JobConf(base, base_orig, 'job_summer12_WW_2l2nu'),
+        JobConf(base, base_orig, 'job_summer12_WWg'),
+        JobConf(base, base_orig, 'job_summer12_WZZ'),
+        JobConf(base, base_orig, 'job_summer12_ZZZ'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2e2mu'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2e2tau'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2l2nu'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2l2q'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2mu2tau'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2q2nu'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_4e'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_4mu'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_4tau'),
+        JobConf(base, base_orig, 'job_summer12_ggZZ_2l2l'),
+        JobConf(base, base_orig, 'job_summer12_ggZZ_4l'),
+        JobConf(base, base_orig, 'job_summer12_t_s'),
+        JobConf(base, base_orig, 'job_summer12_t_t'),
+        JobConf(base, base_orig, 'job_summer12_t_tW'),
+        JobConf(base, base_orig, 'job_summer12_tbar_s'),
+        JobConf(base, base_orig, 'job_summer12_tbar_t'),
+        JobConf(base, base_orig, 'job_summer12_tbar_tW'),
+        JobConf(base, base_orig, 'job_summer12_ttW'),
+        JobConf(base, base_orig, 'job_summer12_ttZ'),
+        JobConf(base, base_orig, 'job_jfaulkne_WZA'),
 
-        #(base, base_orig, 'job_summer12_diphoton_box_10to25'),
-        #(base, base_orig, 'job_summer12_diphoton_box_250toInf'),
-        #(base, base_orig, 'job_summer12_diphoton_box_25to250'),
+        #JobConf(base, base_orig, 'job_summer12_diphoton_box_10to25'),
+        #JobConf(base, base_orig, 'job_summer12_diphoton_box_250toInf'),
+        #JobConf(base, base_orig, 'job_summer12_diphoton_box_25to250'),
 
-        ##(base, 'job_summer12_ttinclusive'),
-        ##(base, 'QCD_Pt-40_doubleEMEnriched'),
-        ##(base, 'job_summer12_WgPt50-130'),
-        ##(base, 'job_summer12_WgPt130'),
-        ##(base, 'job_summer12_WgPt30-50'),
-        ##(base, 'job_summer12_WgPt20-30'),
-        ##(base, 'job_summer12_DiPhotonBorn_Pt-10To25'),
+        ##JobConf(base, 'job_summer12_ttinclusive'),
+        ##JobConf(base, 'QCD_Pt-40_doubleEMEnriched'),
+        ##JobConf(base, 'job_summer12_WgPt50-130'),
+        ##JobConf(base, 'job_summer12_WgPt130'),
+        ##JobConf(base, 'job_summer12_WgPt30-50'),
+        ##JobConf(base, 'job_summer12_WgPt20-30'),
+        ##JobConf(base, 'job_summer12_DiPhotonBorn_Pt-10To25'),
 ]
 
 if options.local :
@@ -111,14 +122,14 @@ top_configs = [
     {   
      'module'      : 'Conf.py', 
      'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-     'input_name'  : 'LepGammaGammaFinalMuUnblindAll_2015_07_16',
+     'input_name'  : 'LepGammaGammaFinalMuUnblindAll_2015_08_01',
      'output_tag'  : 'WithSF',
      'tag'         : 'muFinalSF'
     },
     {   
      'module'      : 'Conf.py', 
      'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-     'input_name'  : 'LepGammaGammaFinalElUnblindAll_2015_07_16',
+     'input_name'  : 'LepGammaGammaFinalElUnblindAll_2015_08_01',
      'output_tag'  : 'WithSF',
     'tag'         : 'elFinalSF'
     },
@@ -183,7 +194,12 @@ top_configs = [
 if options.run :
     for config in top_configs :
         first = True
-        for base, base_orig, job in jobs_data :
+        for job_conf in jobs_data :
+            base      = job_conf.base
+            base_orig = job_conf.pu_base
+            job       = job_conf.name
+            suffix    = job_conf.suffix
+
             if options.local :
                 job_exename = exename+'Data'
             else :
@@ -198,12 +214,12 @@ if options.run :
             module_str += '}'
 
             if 'output_name' in config :
-                output = '%s/%s/%s' %(base,config['output_name'],job)
+                output = '%s/%s/%s%s' %(base,config['output_name'],job, suffix)
             else :
-                output = '%s/%s/%s%s' %(base, config['input_name'], job, config['output_tag'])
+                output = '%s/%s/%s%s%s' %(base, config['input_name'], job, suffix,config['output_tag'])
             
 
-            command = command_base %{ 'base' : base, 'job' : job, 'nFilesPerJob' : nFilesPerJob, 'input' : config['input_name'], 'output' : output, 'nproc' : nProc, 'exename' : job_exename, 'treename' : treename, 'module' : config['module'], 'moduleArgs' : module_str }
+            command = command_base %{ 'base' : base, 'job' : job+suffix, 'nFilesPerJob' : nFilesPerJob, 'input' : config['input_name'], 'output' : output, 'nproc' : nProc, 'exename' : job_exename, 'treename' : treename, 'module' : config['module'], 'moduleArgs' : module_str }
 
             if not first :
                 command += ' --noCompileWithCheck '
@@ -213,7 +229,13 @@ if options.run :
                 first = False
 
         first = True
-        for base, base_orig, job in jobs_mc :
+        for job_conf in jobs_mc :
+
+            base      = job_conf.base
+            base_orig = job_conf.pu_base
+            job       = job_conf.name
+            suffix    = job_conf.suffix
+
             if options.local :
                 job_exename = exename+'MC'
             else :
@@ -229,12 +251,12 @@ if options.run :
             module_str += '}'
 
             if 'output_name' in config :
-                output = '%s/%s/%s' %(base,config['output_name'],job)
+                output = '%s/%s/%s%s' %(base,config['output_name'],job, suffix)
             else :
-                output = '%s/%s/%s%s' %(base, config['input_name'], job, config['output_tag'])
+                output = '%s/%s/%s%s%s' %(base, config['input_name'], job, suffix, config['output_tag'])
             
 
-            command = command_base %{ 'base' : base, 'job' : job, 'nFilesPerJob' : nFilesPerJob, 'input' : config['input_name'], 'output' : output, 'nproc' : nProc, 'exename' : job_exename, 'treename' : treename, 'module' : config['module'], 'moduleArgs' : module_str }
+            command = command_base %{ 'base' : base, 'job' : job+suffix, 'nFilesPerJob' : nFilesPerJob, 'input' : config['input_name'], 'output' : output, 'nproc' : nProc, 'exename' : job_exename, 'treename' : treename, 'module' : config['module'], 'moduleArgs' : module_str }
             if not first :
                 command += ' --noCompileWithCheck '
 

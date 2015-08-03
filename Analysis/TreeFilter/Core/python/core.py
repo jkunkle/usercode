@@ -12,6 +12,7 @@ import multiprocessing
 import logging
 import time
 import filecmp
+import uuid
 from argparse import ArgumentParser
 import eos_utilities as eosutil
 
@@ -244,10 +245,14 @@ def config_and_run( options, package_name ) :
         old_source_file_name = '%s/TreeFilter/%s/src/BranchInit.cxx' %(workarea, package_name )
         old_linkdef_file_name = '%s/TreeFilter/%s/include/LinkDef.h' %(workarea, package_name )
 
-        new_brdef_file_name = '/tmp/BranchDefs.h' 
-        new_header_file_name = '/tmp/BranchInit.h'
-        new_source_file_name = '/tmp/BranchInit.cxx'
-        new_linkdef_file_name = '/tmp/LinkDef.h'
+        tmpname = str( uuid.uuid4() )
+
+        new_brdef_file_name = '/tmp/%s/BranchDefs.h'  %tmpname
+        new_header_file_name = '/tmp/%s/BranchInit.h' %tmpname
+        new_source_file_name = '/tmp/%s/BranchInit.cxx' %tmpname
+        new_linkdef_file_name = '/tmp/%s/LinkDef.h' %tmpname
+
+        os.mkdir( '/tmp/%s' %tmpname )
 
         # Write the c++ files having the branch definitions and 
         # SetBranchAddress calls

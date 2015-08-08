@@ -553,10 +553,6 @@ def get_matching_regex( full_list, match ) :
 
     return matches
 
-        
-
-
-
 def MakeJetBkgEstimate( base_dir_jet, pt_bins, channel, outputDir=None ) :
 
     print '--------------------------------------'
@@ -754,13 +750,13 @@ def MakeBkgEstimatePlots( baseDir, plotDir, channelmu='mu', channelel='elfull', 
             reg_tag = ''
 
         weight_str = 'mu_idSF * mu_trigSF * mu_isoSF * el_trigSF * ph_idSF * '
-        if channelmu == 'muZgg' :
-            weight_str = ''
+        event_weight = ' ( 1.0 * ( EventWeights_weight[0] > 0 ) - 1.0 * ( EventWeights_weight[0] < 0 ) ) * '
+        weight_str_signal = weight_str + event_weight
     
         #samplesWmugg.Draw( 'pt_leadph12', 'PUWeight * (mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 %s  ) ' %(reg_str), plot_binning )
 
         # Draw without weight
-        samplesWmugg.Draw( 'pt_leadph12', ' PUWeight  * ( pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(minpt, minpt, reg_str), plot_binning )
+        samplesWmugg.create_hist( 'Data', 'pt_leadph12', ' PUWeight  * ( pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(minpt, minpt, reg_str), plot_binning )
 
         #----------------------------
         # Data mgg
@@ -783,7 +779,7 @@ def MakeBkgEstimatePlots( baseDir, plotDir, channelmu='mu', channelel='elfull', 
         save_hist( '%s/%s/Muon/Data/hist.root' %(baseDir, plotDir), hist_data_lgg_pergev )
 
         # Draw with weight
-        samplesWmugg.Draw( 'pt_leadph12', weight_str + ' PUWeight  * ( pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(minpt, minpt, reg_str), plot_binning )
+        samplesWmugg.create_hist( 'Wgg', 'pt_leadph12', weight_str_signal + ' PUWeight  * ( pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(minpt, minpt, reg_str), plot_binning )
 
         #----------------------------
         # Wgg mgg
@@ -804,9 +800,35 @@ def MakeBkgEstimatePlots( baseDir, plotDir, channelmu='mu', channelel='elfull', 
         hist_sig_lgg_pergev = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV' )
         make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev)
         save_hist( '%s/%s/Muon/Wgg/hist.root' %(baseDir, plotDir), hist_sig_lgg_pergev )
+
+        #----------------------------
+        # Zgg mgg
+        #----------------------------
+        # Draw with weight
+        samplesWmugg.create_hist( 'Zgammagamma', 'pt_leadph12', weight_str_signal + ' PUWeight  * ( pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(minpt, minpt, reg_str), plot_binning )
+
+        hist_ZggFSR_mgg  = samplesWmugg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
+        add_syst_to_hist( hist_ZggFSR_mgg, 0.15 )
+        save_hist( '%s/%s/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_mgg )
+
+        hist_ZggFSR_mgg_pergev = hist_ZggFSR_mgg.Clone( hist_ZggFSR_mgg.GetName() + '_perGeV' )
+        make_pergev_hist( hist_ZggFSR_mgg, hist_ZggFSR_mgg_pergev)
+        save_hist( '%s/%s/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_mgg_pergev )
+        #----------------------------
+        # Zgg lgg
+        #----------------------------
+        hist_ZggFSR_lgg  = samplesWmugg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
+        add_syst_to_hist( hist_ZggFSR_lgg, 0.15 )
+        save_hist( '%s/%s/Muon/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_lgg )
+
+        hist_ZggFSR_lgg_pergev = hist_ZggFSR_lgg.Clone( hist_ZggFSR_lgg.GetName() + '_perGeV' )
+        make_pergev_hist( hist_ZggFSR_lgg, hist_ZggFSR_lgg_pergev)
+        save_hist( '%s/%s/Muon/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_lgg_pergev )
+
         #----------------------------
         # Other Di Photon mgg
         #----------------------------
+        samplesWmugg.create_hist( 'OtherDiPhoton', 'pt_leadph12', weight_str + ' PUWeight  * ( pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(minpt, minpt, reg_str), plot_binning )
         hist_dip_mgg  = samplesWmugg.get_samples(name='OtherDiPhoton')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
         save_hist( '%s/%s/OtherDiPhoton/hist.root' %(baseDir, plotDir), hist_dip_mgg )
 
@@ -827,27 +849,6 @@ def MakeBkgEstimatePlots( baseDir, plotDir, channelmu='mu', channelel='elfull', 
         #add_syst_to_hist( hist_Zgg_mgg, 0.15 )
         #save_hist( '%s/%s/Zgg/hist.root' %(baseDir, plotDir), hist_Zgg_mgg )
 
-        #----------------------------
-        # Zgg mgg
-        #----------------------------
-        hist_ZggFSR_mgg  = samplesWmugg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
-        add_syst_to_hist( hist_ZggFSR_mgg, 0.15 )
-        save_hist( '%s/%s/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_mgg )
-
-        hist_ZggFSR_mgg_pergev = hist_ZggFSR_mgg.Clone( hist_ZggFSR_mgg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_ZggFSR_mgg, hist_ZggFSR_mgg_pergev)
-        save_hist( '%s/%s/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_mgg_pergev )
-        #----------------------------
-        # Zgg lgg
-        #----------------------------
-        hist_ZggFSR_lgg  = samplesWmugg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-        add_syst_to_hist( hist_ZggFSR_lgg, 0.15 )
-        save_hist( '%s/%s/Muon/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_lgg )
-
-        hist_ZggFSR_lgg_pergev = hist_ZggFSR_lgg.Clone( hist_ZggFSR_lgg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_ZggFSR_lgg, hist_ZggFSR_lgg_pergev)
-        save_hist( '%s/%s/Muon/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_lgg_pergev )
-
         draw_str_nom = 'PUWeight * ( pt_leadph12 > %d && pt_sublph12 > %d &&  %s ) ' %(minpt, minpt, reg_str)
         draw_str_zcr =  'PUWeight  *  (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > %.1f && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph1_ph2-91.2)<10) &&  pt_leadph12 > %d && pt_sublph12 > %d && %s ) ' %(_mgg_cut, minpt, minpt, reg_str)
         draw_str_zcrph1 =  'PUWeight  *  (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > %.1f && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph1-91.2)<10) &&  pt_leadph12 > %d && pt_subph12 > %d &&  %s ) ' %(_mgg_cut, minpt, minpt, reg_str)
@@ -858,11 +859,11 @@ def MakeBkgEstimatePlots( baseDir, plotDir, channelmu='mu', channelel='elfull', 
         hist_tag_zcrph1 = 'egg_zcrph1%s' %reg_tag
         hist_tag_zcrph2 = 'egg_zcrph2%s' %reg_tag
 
-        save_electron_hists( draw_str_nom    , weight_str, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_nom    )
-        save_electron_hists( draw_str_nom    , weight_str, plot_binning, '%s/%s/Electron' %(baseDir, plotDir), 'lgg'    )
-        save_electron_hists( draw_str_zcr   , weight_str, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcr    )
-        #save_electron_hists( draw_str_zcrph1, weight_str, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph1 )
-        #save_electron_hists( draw_str_zcrph2, weight_str, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph2 )
+        save_electron_hists( draw_str_nom    , weight_str, event_weight, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_nom    )
+        save_electron_hists( draw_str_nom    , weight_str, event_weight, plot_binning, '%s/%s/Electron' %(baseDir, plotDir), 'lgg'    )
+        save_electron_hists( draw_str_zcr   , weight_str, event_weight, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcr    )
+        #save_electron_hists( draw_str_zcrph1, weight_str, event_weight, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph1 )
+        #save_electron_hists( draw_str_zcrph2, weight_str, event_weight, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph2 )
 
     make_hist_from_pickle( samplesWmugg, baseDir + '/jet_fake_results__%s.pickle'%channelmu            , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='mgg', regions=regions )
     make_hist_from_pickle( samplesWmugg, baseDir + '/jet_fake_results__%s.pickle'%channelmu            , '%s/%s/Muon/JetFake/hist.root' %(baseDir, plotDir), tag='lgg', regions=regions )
@@ -891,11 +892,11 @@ def MakeBkgEstimatePlots( baseDir, plotDir, channelmu='mu', channelel='elfull', 
         os.system( 'hadd %s/%s/hist.root %s/%s/Electron/%s/hist.root %s/%s/Muon/%s/hist.root' %( summed_dir, dir, baseDir,plotDir,dir, baseDir,plotDir, dir)  )
         os.system( 'cp %s/%s/Electron/EleFake/hist.root %s/EleFake/hist.root ' %( baseDir, plotDir, summed_dir ) )
 
-def save_electron_hists( draw_str, weight_str, plot_binning, plot_dir, hist_tag ) :
+def save_electron_hists( draw_str, weight_str, event_weight, plot_binning, plot_dir, hist_tag ) :
 
     
     # draw without weight
-    samplesWelgg.Draw( 'pt_leadph12', draw_str, plot_binning )
+    samplesWelgg.create_hist( 'Data', 'pt_leadph12', draw_str, plot_binning )
 
     #---------------------------
     # Data egg
@@ -908,7 +909,7 @@ def save_electron_hists( draw_str, weight_str, plot_binning, plot_dir, hist_tag 
     save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_egg_pergev )
 
     # draw with weight
-    samplesWelgg.Draw( 'pt_leadph12', weight_str+draw_str, plot_binning )
+    samplesWelgg.create_hist( 'Wgg', 'pt_leadph12', weight_str+event_weight+draw_str, plot_binning )
 
     #---------------------------
     # Wgg egg
@@ -921,38 +922,30 @@ def save_electron_hists( draw_str, weight_str, plot_binning, plot_dir, hist_tag 
     save_hist( '%s/Wgg/hist.root' %(plot_dir), hist_sig_egg_pergev )
 
     #---------------------------
+    # Zgg egg
+    #---------------------------
+    samplesWelgg.create_hist( 'Zgammagamma', 'pt_leadph12', weight_str+event_weight+draw_str, plot_binning )
+    hist_ZggFSR_egg  = samplesWelgg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
+
+    add_syst_to_hist( hist_ZggFSR_egg, 0.15 )
+
+    save_hist( '%s/Zgg/hist.root' %(plot_dir), hist_ZggFSR_egg )
+
+    hist_ZggFSR_egg_pergev = hist_ZggFSR_egg.Clone( hist_ZggFSR_egg.GetName() + '_perGeV' )
+    make_pergev_hist( hist_ZggFSR_egg, hist_ZggFSR_egg_pergev)
+    save_hist( '%s/Zgg/hist.root' %(plot_dir), hist_ZggFSR_egg_pergev )
+
+
+    #---------------------------
     # OtherDiPhoton egg
     #---------------------------
+    samplesWelgg.create_hist( 'OtherDiPhoton', 'pt_leadph12', weight_str+draw_str, plot_binning )
     hist_dip_egg  = samplesWelgg.get_samples(name='OtherDiPhoton')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
     save_hist( '%s/OtherDiPhoton/hist.root' %(plot_dir), hist_dip_egg )
 
     hist_dip_egg_pergev = hist_dip_egg.Clone( hist_dip_egg.GetName() + '_perGeV' )
     make_pergev_hist( hist_dip_egg, hist_dip_egg_pergev)
     save_hist( '%s/OtherDiPhoton/hist.root' %(plot_dir), hist_dip_egg_pergev )
-
-    #---------------------------
-    # Zgg egg
-    #---------------------------
-    #hist_Zgg_egg     = samplesWelgg.get_samples(name='Zgg')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
-    hist_ZggFSR_egg  = samplesWelgg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
-    #hist_Zg_egg  = samplesWelgg.get_samples(name='Zgamma')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
-    #hist_Top_egg  = samplesWelgg.get_samples(name='Top')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
-    #hist_MB_egg  = samplesWelgg.get_samples(name='MultiBoson')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
-
-    #add_syst_to_hist( hist_Zgg_egg, 0.15 )
-    add_syst_to_hist( hist_ZggFSR_egg, 0.15 )
-    #add_syst_to_hist( hist_Zg_egg, 0.15 )
-
-    #hist_Zgg_egg.Add(hist_ZggFSR_egg)
-    save_hist( '%s/Zgg/hist.root' %(plot_dir), hist_ZggFSR_egg )
-    #save_hist( '%s/Zgg/hist.root' %(plot_dir), hist_Zgg_egg )
-    #save_hist( '%s/Zg/hist.root' %(plot_dir), hist_Zg_egg )
-    #save_hist( '%s/Top/hist.root' %(plot_dir), hist_Top_egg )
-    #save_hist( '%s/MultiBoson/hist.root' %(plot_dir), hist_MB_egg )
-
-    hist_ZggFSR_egg_pergev = hist_ZggFSR_egg.Clone( hist_ZggFSR_egg.GetName() + '_perGeV' )
-    make_pergev_hist( hist_ZggFSR_egg, hist_ZggFSR_egg_pergev)
-    save_hist( '%s/Zgg/hist.root' %(plot_dir), hist_ZggFSR_egg_pergev )
 
 def add_syst_to_hist( hist, syst, err_bin=[] ) :
 

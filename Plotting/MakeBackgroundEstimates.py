@@ -84,19 +84,16 @@ def main() :
     global samplesWggInvSubl
 
 
-    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_07_16'
-    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_07_16'
-    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAllNoPix_2015_07_16'
-    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalMuMuUnblindAllNoPix_2015_07_16'
-    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElZCR_2015_07_02'
-    baseDirWelggCR = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAllNoPix_2015_07_16'
-    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllLowMt_2015_06_30'
-    #baseDirWelggCR = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllLowMt_2015_06_30'
-    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllLowMt_2015_06_30'
-    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutInvPixLead_2015_07_16'
-    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutInvPixSubl_2015_07_16'
-    baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElInvPixLead_2015_07_16'
-    baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElInvPixSubl_2015_07_16'
+    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_08_01'
+    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_08_01'
+    baseDirWelggCR = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_08_01'
+    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_08_01'
+    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalMuMuUnblindAll_2015_08_01'
+    #baseDirWelggCR = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_08_01'
+    baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutInvPixLead_2015_08_01'
+    baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutInvPixSubl_2015_08_01'
+    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElInvPixLead_2015_07_16'
+    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElInvPixSubl_2015_07_16'
 
     #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvCSEVLead_2014_12_23'
     #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvCSEVSubl_2014_12_23'
@@ -107,8 +104,8 @@ def main() :
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
 
-    #sampleConfWgg = 'Modules/WgamgamForBkg.py'
-    sampleConfWgg = 'Modules/ZgamgamForBkg.py'
+    sampleConfWgg = 'Modules/WgamgamForBkg.py'
+    #sampleConfWgg = 'Modules/ZgamgamForBkg.py'
 
     samplesWelgg = SampleManager(baseDirWelgg, treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
     samplesWelggCR = SampleManager(baseDirWelggCR, treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
@@ -165,9 +162,9 @@ def main() :
         outputDirBase='%s/BackgroundEstimates/' %(options.baseDir )
         base_dir_ele = options.baseDir
         base_dir_jet = outputDirBase
-        
-        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muZgg', outputDir=outputDirBase )
-        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elZgg', outputDir=outputDirBase )
+       
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muZgg', outputDir=outputDirBase )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elZgg', outputDir=outputDirBase )
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elZgginvpixlead', outputDir=outputDirBase )
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elZgginvpixsubl', outputDir=outputDirBase )
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muZgginvpixlead', outputDir=outputDirBase )
@@ -183,10 +180,12 @@ def main() :
         ###MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixsubl', outputDir=outputDirBase )
 
         #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfull', outputDir=outputDirBase )
-        ##MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDirBase, namePostfix='__zcr' )
+        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDirBase, namePostfix='__zcr' )
 
-        #MakeBkgEstimatePlots( outputDirBase, options.plotDir, channelmu='mu', channelel='elfull', minpt=pt_bins[0] )
-        MakeBkgEstimatePlots( outputDirBase, options.plotDir, channelmu='muZgg', channelel='elZgg', minpt=pt_bins[0] )
+        plot_binning = [0,5,10,15,25,40,70,100]
+
+        MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='mu', channelel='elfull', minpt=pt_bins[0] )
+        #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muZgg', channelel='elZgg', minpt=pt_bins[0] )
 
  
     print '^_^ FINSISHED ^_^'
@@ -737,12 +736,11 @@ def MakeJetBkgEstimate( base_dir_jet, pt_bins, channel, outputDir=None ) :
     #    pickle.dump( pred_elph2zcr, file_elph2zcr)
     #    file_elph2zcr.close()
 
-def MakeBkgEstimatePlots( baseDir, plotDir, channelmu='mu', channelel='elfull', minpt=15 ) :
+def MakeBkgEstimatePlots( baseDir, plotDir, plot_binning, channelmu='mu', channelel='elfull', minpt=15 ) :
 
     # first make the nominal estimates
 
     regions = [('EB', 'EB'), ('EB' ,'EE'), ('EE', 'EB')]
-    plot_binning = [0,5,10,15,25,40,70,100]
 
     for reg in regions + [(None, None)] :
 

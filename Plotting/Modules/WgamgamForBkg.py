@@ -14,9 +14,6 @@ def config_samples(samples) :
     samples.AddSample('DYJetsToLL'                   , path='job_summer12_DYJetsToLL'         ,  isActive=False, useXSFile=True )
 
     samples.AddSample('DYJetsToLLPhOlap'             , path='job_summer12_DYJetsToLLPhOlap'     ,  isActive=False, required=True, useXSFile=True, XSName='DYJetsToLL')
-    samples.AddSample('diphoton_box_10to25'          , path='job_summer12_diphoton_box_10to25'  ,  isActive=False, useXSFile=True )
-    samples.AddSample('diphoton_box_250toInf'        , path='job_summer12_diphoton_box_250toInf',  isActive=False, useXSFile=True )
-    samples.AddSample('diphoton_box_25to250'         , path='job_summer12_diphoton_box_25to250' ,  isActive=False, useXSFile=True )
     samples.AddSample('tbar_s'                       , path='job_summer12_tbar_s'               ,  isActive=False, required=False, useXSFile=True )
     samples.AddSample('tbar_t'                       , path='job_summer12_tbar_t'               ,  isActive=False, required=False, useXSFile=True )
     samples.AddSample('tbar_tW'                      , path='job_summer12_tbar_tW'              ,  isActive=False, required=False, useXSFile=True )
@@ -47,8 +44,9 @@ def config_samples(samples) :
     #samples.AddSample('Zgg'                          , path='job_summer12_ZgTwoPhot'                  ,  isActive=False, useXSFile=True, XSName='Zg' )
     #samples.AddSample('Zg'                           , path='job_summer12_ZgOnePhot'                   ,  isActive=False, useXSFile=True )
     samples.AddSample('Zg'                           , path='job_summer12_Zg'                   ,  isActive=False, useXSFile=True, XSName='Zg' )
-    samples.AddSample('Zg2PhFilt'                    , path='job_summer12_Zg2PhFiltWithSF'            ,  isActive=False, required=False, useXSFile=True, XSName='Zg' )
-    samples.AddSample('Zgg'                          , path='job_summer12_Zgg'                  ,  isActive=False, useXSFile=True )
+    samples.AddSample('Zg2PhFilt'                    , path='job_summer12_ZgWithSF2PhFilt'            ,  isActive=False, required=False, useXSFile=True, XSName='Zg' )
+    samples.AddSample('Zgg'                          , path='job_summer12_ZggWithSF'                  ,  isActive=False, useXSFile=True )
+    samples.AddSample('ZggNLO'                       , path='llaa_nlo_part1_ggNtupleWithSF'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2e2mu'                     , path='job_summer12_ZZ_2e2mu'             ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2e2tau'                    , path='job_summer12_ZZ_2e2tau'            ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2l2nu'                     , path='job_summer12_ZZ_2l2nu'             ,  isActive=False, useXSFile=True )
@@ -59,7 +57,7 @@ def config_samples(samples) :
     samples.AddSample('ZZ_4mu'                       , path='job_summer12_ZZ_4mu'               ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_4tau'                      , path='job_summer12_ZZ_4tau'              ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZZ'                          , path='job_summer12_ZZZ'                  ,  isActive=False, useXSFile=True )
-    samples.AddSample('ZgElToPh'                     , path='job_summer12_ZgElToPh'             ,  isActive=False, useXSFile=True, XSName='Zg' )
+    #samples.AddSample('ZgElToPh'                     , path='job_summer12_ZgElToPh'             ,  isActive=False, useXSFile=True, XSName='Zg' )
 
     samples.AddSample('jfaulkne_WZAWithSF2PhFilt'          , path='job_jfaulkne_WZAWithSF2PhFilt'           , isActive=False, useXSFile=True, XSName='WZA' )
     samples.AddSample('tbar_sWithSF2PhFilt'                , path='job_summer12_tbar_sWithSF2PhFilt'        , isActive=False, useXSFile=True, XSName='tbar_s')
@@ -140,7 +138,7 @@ def config_samples(samples) :
 
     samples.AddSampleGroup( 'Zgammagamma', legend_name='Z#gamma#gamma', 
                             input_samples = [
-                                             'ZgWithSF2PhFilt',
+                                             'ZggNLO',
                                             ],
                            plotColor=ROOT.kOrange-2,
                            isSignal=False,

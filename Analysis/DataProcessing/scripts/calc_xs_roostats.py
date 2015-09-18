@@ -30,8 +30,8 @@ def main() :
     #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_09_24'
     #signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
     #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
-    signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsNoMgg_2015_07_05'
-    bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsNoMgg_2015_07_05'
+    signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_09_10'
+    bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_09_10'
     #run_full_fit( signal_base, bkg_base, lands=False, combine=True)
 
     single_accept_results = ['electron_EB-EB', 'electron_EE-EB', 'electron_EB-EE', 'muon_EB-EB', 'muon_EE-EB', 'muon_EB-EE']
@@ -39,7 +39,7 @@ def main() :
 
     signif_single = {}
 
-    print run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlotsNoMgg_2015_07_05/FinalPlots/')
+    print run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_09_10/FinalPlots/')
     #for res in single_accept_results :
     #    for ptbin in single_accept_ptbins :
     #        signif_single[(res, ptbin[0], ptbin[1])] = run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_06_05/FinalPlots/', res, ptbin)
@@ -114,19 +114,19 @@ def run_allbin_fit_mcbkg() :
 
 def run_comb_fit( result_base, accept_results=None, ptbins=['15','25', '40', '70', 'max'] ) :
 
-    file_electronEBEB = '%s/pt_leadph12_egg_EB-EB.pickle' %result_base
-    file_muon    = '%s/pt_leadph12_mgg_EB-EB.pickle' %result_base
+    file_electronEBEB = '%s/pt_leadph12_elfullhighmt_EB-EB.pickle' %result_base
+    file_muon    = '%s/pt_leadph12_muhighmt_EB-EB.pickle' %result_base
 
     results = {}
     #results['electron'] ='%s/pt_leadph12_egg.pickle' %result_base
     #results['muon'] ='%s/pt_leadph12_mgg.pickle' %result_base
 
-    results['electron_EB-EB'] ='%s/pt_leadph12_egg_EB-EB.pickle' %result_base
-    results['electron_EB-EE'] ='%s/pt_leadph12_egg_EB-EE.pickle' %result_base
-    results['electron_EE-EB'] ='%s/pt_leadph12_egg_EE-EB.pickle' %result_base
-    results['muon_EB-EB'] = '%s/pt_leadph12_mgg_EB-EB.pickle' %result_base
-    results['muon_EB-EE'] = '%s/pt_leadph12_mgg_EB-EE.pickle' %result_base
-    results['muon_EE-EB'] = '%s/pt_leadph12_mgg_EE-EB.pickle' %result_base
+    results['electron_EB-EB'] ='%s/pt_leadph12_elfullhighmt_EB-EB.pickle' %result_base
+    results['electron_EB-EE'] ='%s/pt_leadph12_elfullhighmt_EB-EE.pickle' %result_base
+    results['electron_EE-EB'] ='%s/pt_leadph12_elfullhighmt_EE-EB.pickle' %result_base
+    results['muon_EB-EB'] = '%s/pt_leadph12_muhighmt_EB-EB.pickle' %result_base
+    results['muon_EB-EE'] = '%s/pt_leadph12_muhighmt_EB-EE.pickle' %result_base
+    results['muon_EE-EB'] = '%s/pt_leadph12_muhighmt_EE-EB.pickle' %result_base
 
     fit_allbin = FitConfig( name='comb_fit')
 
@@ -149,19 +149,19 @@ def run_comb_fit( result_base, accept_results=None, ptbins=['15','25', '40', '70
             # ---------------------------------
             # separate systematics by channel
             # ---------------------------------
-            ch_bin.AddSample( 'signal' , results[ch], ['detail', 'Wgg', 'bins', str(bidx+4), 'val'], isSig=True, err={'Lumi' : 1.1 }  )
-            ch_bin.AddSample( 'Zgg'    , results[ch], ['detail', 'Zgg', 'bins', str(bidx+4), 'val'], err={'Lumi' : 1.1, 'Syst_Zgg' : ( results[ch], ['detail', 'Zgg', 'bins', str(bidx+4), 'val']  ) } )
-            ch_bin.AddSample( 'OtherDiPhoton'    , results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+4), 'val'], err={'Lumi' : 1.1, 'Syst_OtherDiPhoton' : ( results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+4), 'val']  ) } )
-            ch_bin.AddSample( 'jetfake', results[ch], ['detail', 'JetFake', 'bins', str(bidx+4), 'val'], 
+            ch_bin.AddSample( 'signal' , results[ch], ['detail', 'Wgg', 'bins', str(bidx+1), 'val'], isSig=True, err={'Lumi' : 1.1 }  )
+            ch_bin.AddSample( 'Zgg'    , results[ch], ['detail', 'Zgg', 'bins', str(bidx+1), 'val'], err={'Lumi' : 1.1, 'Syst_Zgg' : ( results[ch], ['detail', 'Zgg', 'bins', str(bidx+1), 'val']  ) } )
+            ch_bin.AddSample( 'OtherDiPhoton'    , results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+1), 'val'], err={'Lumi' : 1.1, 'Syst_OtherDiPhoton' : ( results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+1), 'val']  ) } )
+            ch_bin.AddSample( 'jetfake', results[ch], ['detail', 'JetFake', 'bins', str(bidx+1), 'val'], 
                                  err={
-                                      'Syst_jetfake__%s__sum_%s-%s'%(ch, min, max) : ( results[ch], ['detail', 'JetFake', 'bins', str(bidx+4), 'val'] ) , 
+                                      'Syst_jetfake__%s__sum_%s-%s'%(ch, min, max) : ( results[ch], ['detail', 'JetFake', 'bins', str(bidx+1), 'val'] ) , 
                                       'Syst_jetfake_closure' : 1.10, 
                                       } 
                                 )
             if ch.count('electron') :
-                ch_bin.AddSample( 'elefake', results[ch], ['detail', 'EleFake', 'bins', str(bidx+4), 'val'], 
+                ch_bin.AddSample( 'elefake', results[ch], ['detail', 'EleFake', 'bins', str(bidx+1), 'val'], 
                                 err={
-                                      'Syst_elefake__egg_%s-%s'%(min, max)  : (results[ch],['detail', 'EleFake', 'bins', str(bidx+4), 'val'] ),
+                                      'Syst_elefake__egg_%s-%s'%(min, max)  : (results[ch],['detail', 'EleFake', 'bins', str(bidx+1), 'val'] ),
                                       'Syst_elefake_closure' : 1.15,
                                     } 
                                  )
@@ -169,7 +169,7 @@ def run_comb_fit( result_base, accept_results=None, ptbins=['15','25', '40', '70
             else :
                 ch_bin.AddSample( 'elefake', )
 
-            ch_bin.AddData( results[ch], ['detail', 'Data', 'bins', str(bidx+4), 'val']  )
+            ch_bin.AddData( results[ch], ['detail', 'Data', 'bins', str(bidx+1), 'val']  )
 
 
     # lands config is the same as for combine
@@ -262,8 +262,8 @@ def run_full_fit(event_base, bkg_base, lands=False, combine=False) :
                 # ---------------------------------
                 # separate systematics by channel
                 # ---------------------------------
-                ch_bin.AddSample( 'signal' , results_file, ['detail', 'Wgg', 'bins', str(bidx+4), 'val'], isSig=True, err={'Lumi' : 1.1 }  )
-                ch_bin.AddSample( 'Zgg'    , results_file, ['detail', 'ZggFSR', 'bins', str(bidx+4), 'val'], isSig=True, err={'Lumi' : 1.1, 'Normalization' : 1.15 }  )
+                ch_bin.AddSample( 'signal' , results_file, ['detail', 'Wgg', 'bins', str(bidx+1), 'val'], isSig=True, err={'Lumi' : 1.1 }  )
+                ch_bin.AddSample( 'Zgg'    , results_file, ['detail', 'ZggFSR', 'bins', str(bidx+1), 'val'], isSig=True, err={'Lumi' : 1.1, 'Normalization' : 1.15 }  )
                 ch_bin.AddSample( 'jetfake', file_jet[ch], ['stat+syst', 'sum', (r1, r2, min,max), 'result'], 
                                  err={'Stat_jetfake__%s__sum_%s-%s_%s-%s'%(ch, r1, r2, min, max) : ( file_jet[ch], ['stat', 'sum', (r1, r2, min,max), 'result'] ) ,
                                       'Syst_jetfake__%s__sum_%s-%s_%s-%s'%(ch, r1, r2, min, max) : ( file_jet[ch], ['syst', 'sum', (r1, r2, min,max), 'result'] ) , 
@@ -281,8 +281,8 @@ def run_full_fit(event_base, bkg_base, lands=False, combine=False) :
                 ## ---------------------------------
                 ## don't separate systematics by channel
                 ## ---------------------------------
-                #ch_bin.AddSample( 'signal' , results_file, ['detail', 'Wgg', 'bins', str(bidx+4), 'val'], isSig=True, err={'Lumi' : 1.1 }  )
-                #ch_bin.AddSample( 'Zgg'    , results_file, ['detail', 'ZggFSR', 'bins', str(bidx+4), 'val'], isSig=True, err={'Lumi' : 1.1, 'Normalization' : 1.15 }  )
+                #ch_bin.AddSample( 'signal' , results_file, ['detail', 'Wgg', 'bins', str(bidx+1), 'val'], isSig=True, err={'Lumi' : 1.1 }  )
+                #ch_bin.AddSample( 'Zgg'    , results_file, ['detail', 'ZggFSR', 'bins', str(bidx+1), 'val'], isSig=True, err={'Lumi' : 1.1, 'Normalization' : 1.15 }  )
                 #ch_bin.AddSample( 'jetfake', file_jet[ch], ['stat+syst', 'sum', (r1, r2, min,max), 'result'], 
                 #                 err={'Stat_jetfake__%s__sum'%(ch) : ( file_jet[ch], ['stat', 'sum', (r1, r2, min,max), 'result'] ) ,
                 #                      'Syst_jetfake__%s__sum'%(ch) : ( file_jet[ch], ['syst', 'sum', (r1, r2, min,max), 'result'] ) , 
@@ -300,7 +300,7 @@ def run_full_fit(event_base, bkg_base, lands=False, combine=False) :
                 if ch=='mgg' :
                     ch_bin.AddSample( 'elefake', )
 
-                ch_bin.AddData( results_file, ['detail', 'Data', 'bins', str(bidx+4), 'val']  )
+                ch_bin.AddData( results_file, ['detail', 'Data', 'bins', str(bidx+1), 'val']  )
                 #ch_bin.AddData( use_sample_sum=True, generate=True)
 
             #for minl, maxl, mins, maxs in  sublbins :

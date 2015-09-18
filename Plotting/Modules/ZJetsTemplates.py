@@ -12,6 +12,7 @@ def config_samples(samples) :
     samples.AddSample('muon_2012c_Jan22rereco'       , path='job_muon_2012c_Jan22rereco'        ,  isActive=False, scale=1.0 )
     samples.AddSample('muon_2012d_Jan22rereco'       , path='job_muon_2012d_Jan22rereco'        ,  isActive=False, scale=1.0 )
     samples.AddSample('Zg'                           , path='job_summer12_Zg'                   ,  isActive=False, useXSFile=True )
+    samples.AddSample('Wg'                           , path='job_summer12_Wg'                   ,  isActive=True, useXSFile=True )
 
 
     samples.AddSampleGroup( 'Muon', legend_name='Muon Data', 

@@ -64,6 +64,7 @@ namespace OUT {
     int                probe_nConvTrk;
     Bool_t             probe_passtrig;
     Bool_t             probe_hasPixSeed;
+    Bool_t             probe_hasMatchedEle;
     Bool_t             probe_eleVeto;
     float              m_tagprobe;
     float              dr_tagprobe;

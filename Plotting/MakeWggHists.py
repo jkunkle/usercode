@@ -90,13 +90,13 @@ _photon_cuts_nopix_nophoiso = _photon_cuts_noiso_nopix + ' && ph_passChIsoCorrMe
 #------------------------------
 # single photon cuts
 #------------------------------
-baseline_cuts_mg = ' mu_passtrig25_n>0 && mu_n==1 && ph_n==1  && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && el_n==0 '%(lead_dr_cut)
-baseline_cuts_eg = ' el_passtrig_n>0 && el_n==1 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && mu_n==0 '%(lead_dr_cut)
-baseline_cuts_eg_noPixVeto = ' el_passtrig_n>0 && el_n==1 && ph_n==1 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && mu_n==0 '%(lead_dr_cut)
-zcr_cuts_eg      = ' el_passtrig_n>0 && el_n==1 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && mu_n==0 && m_lepph1 > 76 && m_lepph1 < 106 '%(lead_dr_cut)
+baseline_cuts_mg = ' mu_passtrig25_n>0  && ph_n==1  && ph_passMedium[0] && leadPhot_leadLepDR>%.1f '%(lead_dr_cut)
+baseline_cuts_eg = ' el_passtrig_n>0 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f '%(lead_dr_cut)
+baseline_cuts_eg_noPixVeto = ' el_passtrig_n>0 && ph_n==1 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f  '%(lead_dr_cut)
+zcr_cuts_eg      = ' el_passtrig_n>0 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && m_lepph1 > 76 && m_lepph1 < 106 '%(lead_dr_cut)
 
-baseline_cuts_mmg = ' mu_passtrig25_n>0 && mu_n==2 && ph_n==1  && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f && el_n==0'%(lead_dr_cut, lead_dr_cut)
-baseline_cuts_eeg = ' el_passtrig_n>0 && el_n==2 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f && mu_n==0 '%(lead_dr_cut, lead_dr_cut)
+baseline_cuts_mmg = ' mu_passtrig25_n>0 && mu_n>1 && ph_n==1  && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f '%(lead_dr_cut, lead_dr_cut)
+baseline_cuts_eeg = ' el_passtrig_n>0 && el_n>1 && ph_n==1  && ph_hasPixSeed[0]==0 && ph_passMedium[0] && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f '%(lead_dr_cut, lead_dr_cut)
 
 def main() :
 
@@ -107,12 +107,12 @@ def main() :
     global samplesLLG
     global samplesPhOlap
 
-    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_30'
+    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_09_09'
     #baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindAllNoEleVeto_2015_07_16'
-    baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_07_30'
-    baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_08_01'
-    baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_08_01'
-    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_07_30'
+    baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_09_09'
+    baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_09_09'
+    baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_09_09'
+    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_09_09'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'

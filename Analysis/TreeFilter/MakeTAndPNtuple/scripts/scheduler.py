@@ -11,22 +11,23 @@ options = p.parse_args()
 if not options.run and not options.check :
     options.run = True
 
-base = r'/eos/cms/store/user/jkunkle/Wgamgam/LepGammaNoPhIDNoEleOlap_2014_12_29'
+#base = r'/eos/cms/store/user/jkunkle/Wgamgam/LepGammaMediumPhID_2015_08_17'
 #base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2014_12_05'
+base = r'/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/GammaGammaMediumPhID_2015_09_14/'
 
 jobs_data = [
-    (base, 'job_electron_2012a_Jan22rereco'),
-    (base, 'job_electron_2012b_Jan22rereco'),
-    (base, 'job_electron_2012c_Jan2012rereco'),
-    (base, 'job_electron_2012d_Jan22rereco'),
+    #(base, 'job_electron_2012a_Jan22rereco'),
+    #(base, 'job_electron_2012b_Jan22rereco'),
+    #(base, 'job_electron_2012c_Jan2012rereco'),
+    #(base, 'job_electron_2012d_Jan22rereco'),
     #(base, 'job_muon_2012a_Jan22rereco'),
     #(base, 'job_muon_2012b_Jan22rereco'),
     #(base, 'job_muon_2012c_Jan22rereco'),
     #(base, 'job_muon_2012d_Jan22rereco'),
 ]
 jobs_mc = [
-    (base, 'job_summer12_DYJetsToLLPhOlap'),
-    #(base, 'job_summer12_DYJetsToLL'),
+    #(base, 'job_summer12_DYJetsToLLPhOlap'),
+    (base, 'job_summer12_DYJetsToLL'),
     #(base, 'job_summer12_Zg'),
     #(base, 'job_summer12_Wg'),
     #(base, 'job_summer12_Wjets'),
@@ -71,18 +72,18 @@ jobs_mc = [
 
 ]
 
-output_name = 'TAndPElFF_2015_01_01'
+output_name = 'TAndPGG_2015_09_14'
 #output_name = 'TAndPMuMu_2014_11_27'
-module = 'ConfTAndP.py'
+module = 'ConfGGTAndP.py'
 #module = 'ConfMuonTAndP.py'
 treename='ggNtuplizer/EventTree'
 
 if options.local :
-    command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(input)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc 6 --enableRemoveFilter  --disableOutputTree'
+    command_base = 'python scripts/filter.py  --filesDir %(input)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc 6 --enableRemoveFilter  --disableOutputTree'
 
 else :
 
-    command_base = 'python scripts/filter.py  --filesDir root://eoscms/%(input)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --batch --enableRemoveFilter --disableOutputTree'
+    command_base = 'python scripts/filter.py  --filesDir %(input)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(output)s/%(job)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --batch --enableRemoveFilter --disableOutputTree'
 
 if options.resubmit :
     command_base += ' --resubmit'

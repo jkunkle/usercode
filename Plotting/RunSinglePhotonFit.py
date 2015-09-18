@@ -58,7 +58,7 @@ sampManFit = None
 
 def get_real_template_draw_commands( ch='mu') :
 
-    return 'mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && leadPhot_leadLepDR < 1 '
+    return 'mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25  '
 
 def get_fake_template_draw_commands( ch='mu' ) :
 
@@ -83,7 +83,11 @@ def get_default_draw_commands(ch='mu' ) :
     elif ch == 'elrealcr' :
         gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==2 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_hasPixSeed[0]==0 && mu_n==0 && m_leplep>60 && m_leplepph > 81 && m_leplepph < 101',}
     elif ch=='muw' :
-        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && leadPhot_leadLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 80',}
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met > 40',}
+    elif ch=='muwtight' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met > 80',}
+    elif ch=='muwlowmt' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met < 40',}
     elif ch=='muw_tp_medium' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && leadPhot_leadLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 60',}
     elif ch=='muw_tp_eveto' :
@@ -93,13 +97,29 @@ def get_default_draw_commands(ch='mu' ) :
     elif ch=='muzpeak_tp_medium' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==2 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && ph_HoverE12[0] < 0.05 && m_leplep>81 && m_leplep < 101',}
     elif ch=='elw' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 &&  leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && mu_n==0 && mt_lep_met > 80',}
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==0  && mt_trigel_met > 60',}
+    elif ch=='elwsr' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==0  && mt_trigel_met > 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 )',}
+    elif ch=='elwsrtight' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==0  && mt_trigel_met > 80 && !( m_trigelph1 > 76 && m_trigelph1 < 106 )',}
+    elif ch=='elwsrlowmt' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==0  && mt_trigel_met < 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 )',}
     elif ch == 'elwzcr' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 &&  leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_HoverE12[0] < 0.05 && mu_n==0 && m_lepph1 > 76 && m_lepph1 < 106 ',}
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==0  && m_trigelph1 > 76 && m_trigelph1 < 106 ',}
+    elif ch == 'elwzcrloose' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==0  && m_trigelph1 > 50 && m_trigelph1 < 106 ',}
     elif ch == 'elwinvpixlead' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 &&  leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==1 && ph_HoverE12[0] < 0.05 && mu_n==0 ',}
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==1  && mt_trigel_met > 60 ',}
     elif ch == 'elwzcrinvpixlead' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 &&  leadPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==1 && ph_HoverE12[0] < 0.05 && mu_n==0 && m_lepph1 > 76 && m_lepph1 < 106 ',}
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==1  && m_trigelph1 > 76 && m_trigelph1 < 106 ',}
+    elif ch == 'elwzcrlooseinvpixlead' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==1  && m_trigelph1 > 50 && m_trigelph1 < 106 ',}
+    elif ch=='elwsrinvpixlead' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==1  && mt_trigel_met > 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 )',}
+    elif ch=='elwsrtightinvpixlead' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==1  && mt_trigel_met > 80 && !( m_trigelph1 > 76 && m_trigelph1 < 106 )',}
+    elif ch=='elwsrlowmtinvpixlead' :
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && ph_hasPixSeed[0]==1  && mt_trigel_met < 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 )',}
     elif ch=='muwjj_lowmjj' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && leadPhot_leadLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 30 && jet_n>1 && m_j_j > 200 && m_j_j < 400',}
     elif ch=='muwjj_highmjj' :
@@ -121,7 +141,7 @@ def get_default_samples(ch='mu' ) :
 def get_default_binning(var='sigmaIEIE') :
 
     if var == 'sigmaIEIE' :
-        return { 'EB' : (30, 0, 0.03), 'EE' : (200, 0, 0.1) }
+        return { 'EB' : (30, 0, 0.03), 'EE' : (30, 0, 0.099) }
     elif var == 'chIsoCorr' :
         return { 'EB' : (30, 0, 45), 'EE' : (35, 0, 42) }
     elif var == 'neuIsoCorr' :
@@ -201,9 +221,10 @@ def main() :
     global sampManLLG
     global sampManFit
 
-    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_06_29/'
-    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_06_29/'
+    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_09_09/'
+    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_09_09/'
     fit_dir  = options.fitPath
+    print fit_dir
 
     sampManLG    = SampleManager(base_dir_lg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManLLG   = SampleManager(base_dir_llg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
@@ -250,6 +271,12 @@ def RunNomFitting( outputDir = None, ch='mu', fitvar=None, pid='Medium') :
             outputDirNom = outputDir + '/SinglePhotonResults/PhoIsoFits/JetSinglePhotonFakeNomIso'
 
     ptbins = [float(x) for x in options.ptbins.split(',') ]
+    #eta_bins = {'EB' : [(0.00, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44)],
+    #            'EE' : [(1.57, 2.10), (2.10, 2.20), (2.20, 2.40), (2.40, 2.50 ) ] }
+
+    eta_bins = {'EB' : [(0.00, 1.44)],
+                'EE' : [(1.57, 2.50 ) ] }
+
 
     if ch.count('mu') or ch =='elwzcrinvpixlead' :
         if fitvar == 'sigmaIEIE' :
@@ -276,7 +303,7 @@ def RunNomFitting( outputDir = None, ch='mu', fitvar=None, pid='Medium') :
         elif fitvar == 'phoIsoCorr' :
             iso_cuts_full = 'ph_mediumNoPhoIso_n == 1 '
 
-    do_nominal_fit( iso_cuts_full, ptbins=ptbins, fitvar=fitvar, ch=ch,pid=pid, outputDir = outputDirNom, systematics='Nom')
+    do_nominal_fit( iso_cuts_full, ptbins=ptbins, etabins=eta_bins, fitvar=fitvar, ch=ch,pid=pid, outputDir = outputDirNom, systematics='Nom')
 
     #iso_cuts = 'ph_chIsoCorr[0] < 8 && ph_neuIsoCorr[0] < 5 && ph_phoIsoCorr[0] < 5'
     #asym_cuts = [(5,3,3), (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20, 16, 16) ]
@@ -289,10 +316,12 @@ def RunNomFitting( outputDir = None, ch='mu', fitvar=None, pid='Medium') :
     #    do_nominal_fit( iso_cuts, ptbins=ptbins, ch=ch, outputDir = outputDirAsym, systematics='Nom', iso_cuts_data=iso_cuts)
 
 
-def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), fitvar='sigmaIEIE', ch='mu', pid='Medium', outputDir=None, systematics=None, iso_cuts_data=None ) :
+def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), etabins={}, fitvar='sigmaIEIE', ch='mu', pid='Medium', outputDir=None, systematics=None, iso_cuts_data=None ) :
 
     binning = get_default_binning(var=fitvar)
     samples = get_default_samples(ch)
+
+    eta_binning = {'EB' : ( 144, 0, 1.44), 'EE' : ( 93, 1.57, 2.50 ) }
 
     # generate templates for both EB and EE
     real_template_str = get_real_template_draw_commands(ch ) + ' && %s' %iso_cuts
@@ -306,6 +335,21 @@ def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), fitvar='sigma
     templates_reg['EE']['real'] = get_single_photon_template(real_template_str, binning['EE'], samples['real'], 'EE', sampMan=sampManLG , fitvar=fitvar)
     templates_reg['EB']['fake'] = get_single_photon_template(fake_template_str, binning['EB'], samples['fake'], 'EB', sampMan=sampManLLG, fitvar=fitvar)
     templates_reg['EE']['fake'] = get_single_photon_template(fake_template_str, binning['EE'], samples['fake'], 'EE', sampMan=sampManLLG, fitvar=fitvar)
+
+    #---------------------------------------
+    # make finer binned templates in eta
+    #---------------------------------------
+    templates_eta = {}
+    for reg, bins in etabins.iteritems() :
+        for etamin, etamax in bins :
+            etabin = ('%.2f' %etamin, '%.2f'%etamax)
+            templates_eta.setdefault( etabin, {} )
+            real_template_str_eta = real_template_str + ' && fabs(ph_eta[0]) > %f && fabs(ph_eta[0] ) < %f ' %( etamin, etamax )
+            fake_template_str_eta = fake_template_str + ' && fabs(ph_eta[0]) > %f && fabs(ph_eta[0] ) < %f ' %( etamin, etamax )
+
+            templates_eta[etabin]['real'] = get_single_photon_template( real_template_str_eta, binning[reg], samples['real'], reg, sampMan=sampManLG, fitvar=fitvar )
+            templates_eta[etabin]['fake'] = get_single_photon_template( fake_template_str_eta, binning[reg], samples['fake'], reg, sampMan=sampManLLG, fitvar=fitvar )
+
 
     regions = [ 'EB', 'EE' ]
     for reg in regions :
@@ -325,16 +369,16 @@ def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), fitvar='sigma
         #    gg_selection = gg_selection + ' && %s ' %( iso_cuts )
 
         # parse out the x and y binning
-        xbinn = binning[reg]
+        varbinn = binning[reg]
 
         # variable given to TTree.Draw
-        var = 'ph_pt[0]:ph_%s[0]'%fitvar #y:x
+        var = 'fabs(ph_eta[0]):ph_pt[0]:ph_%s[0]'%fitvar #z:y:x
 
         # get sample
         target_samp = sampManFit.get_samples(name=samples['target'])
 
         # draw and get back the hist
-        gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], 100, 0, 500), sampMan=sampManFit )
+        gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( varbinn[0], varbinn[1], varbinn[2], 40, 0, 200, eta_binning[reg][0], eta_binning[reg][1], eta_binning[reg][2]), sampMan=sampManFit )
 
         # -----------------------
         # inclusive result
@@ -372,7 +416,7 @@ def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), fitvar='sigma
             print 'ptmin = %d, ptmax = %d, Min Z bin = %d, max Z bin = %d' %( ptmin, ptmax, gg_hist.GetZaxis().FindBin( ptmin), gg_hist.GetZaxis().FindBin( ptmax )-1 )
 
             # project data hist
-            gg_hist_pt = gg_hist.ProjectionX( 'px_%d_%d' %( ptmin, ptmax), gg_hist.GetYaxis().FindBin( ptmin), gg_hist.GetYaxis().FindBin( ptmax )-1 )
+            gg_hist_pt = gg_hist.ProjectionX( 'px_%d_%d' %( ptmin, ptmax), gg_hist.GetYaxis().FindBin( ptmin), gg_hist.GetYaxis().FindBin( ptmax )-1, 0, -1 )
                 
             # get templates
             # if in the last pt bin, use the 
@@ -401,6 +445,37 @@ def do_nominal_fit( iso_cuts, ptbins=[], subl_ptrange=(None,None), fitvar='sigma
 
             save_results( results_pt_syst, outputDir, namePostfix_syst )
 
+            # -----------------------
+            # eta binned results
+            # -----------------------
+            for etamin, etamax in etabins[reg] :
+                etabin = ('%.2f' %etamin, '%.2f'%etamax)
+
+                templates_etabin = {}
+                templates_etabin['lead'] = {}
+                templates_etabin['lead']['real'] = templates_eta[etabin]['real']
+                templates_etabin['lead']['fake'] = templates_eta[etabin]['fake']
+
+                gg_hist_pt_eta = gg_hist.ProjectionX( 'px_%d_%d' %( ptmin, ptmax), gg_hist.GetYaxis().FindBin( ptmin), gg_hist.GetYaxis().FindBin( ptmax )-1, 
+                                                                                   gg_hist.GetZaxis().FindBin( etamin), gg_hist.GetZaxis().FindBin( etamax )-1 )
+
+                templates_pt_eta = get_projected_templates( templates_etabin, lead_ptrange=lead_ptrange_templates ) 
+
+                (results_pt_eta_stat, results_pt_eta_syst) = run_photon_fit(templates_pt_eta, gg_hist_pt_eta, reg, fitvar=fitvar, pid=pid, lead_ptrange=lead_ptrange, outputDir=outputDir, outputPrefix='__%s' %ch, systematics=systematics )
+
+                namePostfix = '__%s__%s-%s' %( ch, etabin[0], etabin[1] )
+                if lead_ptrange[0] is not None :
+                    if lead_ptrange[1] is None :
+                        namePostfix += '__pt_%d-max' %lead_ptrange[0]
+                    else :
+                        namePostfix += '__pt_%d-%d' %(lead_ptrange[0], lead_ptrange[1] )
+
+                save_templates( templates_pt_eta, outputDir, lead_ptrange=lead_ptrange, namePostfix=namePostfix )
+                save_results( results_pt_eta_stat, outputDir, namePostfix )
+
+                namePostfix_syst = '__syst%s' %namePostfix
+
+                save_results( results_pt_eta_syst, outputDir, namePostfix_syst )
 
 def get_projected_templates( templates, lead_ptrange=(None,None) ) :
 
@@ -785,8 +860,7 @@ def solve_matrix_eq( matrix_ntries, vector_entries ) :
         inv_matrix = matrix.getI()
     except :
         print 'Failed to invert matrix, aborting'
-        raise
-        return None
+        return unumpy.umatrix( [0.0, 0.0], [0.0, 0.0] )
 
     print inv_matrix
     print vector

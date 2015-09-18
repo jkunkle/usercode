@@ -93,7 +93,7 @@ def get_real_template_draw_commands( ch='mu' ) :
 
 
     # in the muon channel remove the pixel seed veto
-    if ch == 'mu' :
+    if ch == 'mu' or ch=='muhighmt' or ch =='mulowmt' :
         return 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 '
         #return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.3 && fabs( m_leplepph-91.2 ) < 5  && leadPhot_sublLepDR > 0.3 && ( leadPhot_sublLepDR < 1.0 || leadPhot_leadLepDR < 1.0 )'
         #return 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && leadPhot_leadLepDR < 1.5 &&  ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 '
@@ -103,18 +103,17 @@ def get_real_template_draw_commands( ch='mu' ) :
 def get_fake_template_draw_commands( ch='mu' ) :
 
     # in the muon channel remove the pixel seed veto
-    if ch == 'mu' :
+    if ch == 'mu' or ch=='muhighmt' or ch =='mulowmt' :
         return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 '
     else :
         return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_hasPixSeed[0]==0'
 def get_corr_fake_template_draw_commands( ch='mu', fitvar='sigmaIEIE', r1='EB', r2='EB', leadPass=True, cuts='nom' ) :
 
-
     base_str = ''
     # in the muon channel remove the pixel seed veto
-    if ch == 'mu' :
+    if ch == 'mu' or ch=='muhighmt' or ch =='mulowmt' :
         #base_str = '( (mu_passtrig25_n>0 && mu_n==1) || (el_passtrig_n>0 && el_n==1) ) && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f ' %_mgg_cut
-        base_str = 'mu_passtrig25_n>0 && mu_n==1 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f '%_mgg_cut
+        base_str = 'mu_passtrig25_n>0  && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f '%_mgg_cut
     elif ch=='muZgg' :
         base_str = ' mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut
     elif ch=='elZgg' :
@@ -181,65 +180,54 @@ def get_corr_fake_template_draw_commands( ch='mu', fitvar='sigmaIEIE', r1='EB', 
 
 def get_fake_window_template_draw_commands( ch='mu' ) :
 
-    if ch == 'mu' :
+    if ch == 'mu' or ch=='muhighmt' or ch =='mulowmt' :
         return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 2 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
     else :
         return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_chIsoCorr[0] > 2 && ph_chIsoCorr[0] < 10 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_hasPixSeed[0]==0',
 
 def get_default_draw_commands( ch='mu' ) :
 
-    if ch=='mu' :
-        #gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && leadPhot_leadLepDR>0.4 && sublPhot_leadLepDR>0.4 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05' %_mgg_cut }
-        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 '%_mgg_cut }
-    if ch=='muZgg' :
-        gg_cmds = {'gg' : '(passTrig_mu17_mu8 || passTrig_mu17_Tkmu8) && mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut }
-    if ch=='elZgg' :
-        gg_cmds = {'gg' : '(passTrig_ele17_ele8_9 || passTrig_ele17_ele8_22) &&  el_n==2 && mu_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4  && m_leplep > 40 '%_mgg_cut }
-    if ch=='muZgginvpixlead' :
-        gg_cmds = {'gg' : '(passTrig_mu17_mu8 || passTrig_mu17_Tkmu8) &&  mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut }
-    if ch=='elZgginvpixlead' :
-        gg_cmds = {'gg' : '(passTrig_ele17_ele8_9 || passTrig_ele17_ele8_22) && el_n==2 && mu_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4  && m_leplep > 40 '%_mgg_cut }
-    if ch=='muZgginvpixsubl' :
-        gg_cmds = {'gg' : '(passTrig_mu17_mu8 || passTrig_mu17_Tkmu8) && mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut }
-    if ch=='elZgginvpixsubl' :
-        gg_cmds = {'gg' : '(passTrig_ele17_ele8_9 || passTrig_ele17_ele8_22) && el_n==2 && mu_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4  && m_leplep > 40 '%_mgg_cut }
-    if ch=='muZggDil' :
-        gg_cmds = {'gg' : ' mu_n==2 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4  && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplepphph > 105 ' }
-               
-    elif ch == 'elzcr' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 &&  (fabs(m_leadLep_ph1_ph2-91.2) < 5) '%_mgg_cut,}
-    elif ch == 'elph1zcr' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 &&  (fabs(m_leadLep_ph1-91.2) < 5) '%_mgg_cut,}
-    elif ch == 'elph2zcr' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 &&  (fabs(m_leadLep_ph2-91.2) < 5) '%_mgg_cut,}
-    elif ch == 'elfull' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 &&  !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5)'%_mgg_cut,}
-    elif ch == 'elinvpixlead' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 '%_mgg_cut,}
-    elif ch == 'elinvpixsubl' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 '%_mgg_cut,}
-    elif ch == 'elfullinvpixlead' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4  && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5)'%_mgg_cut,}
-    elif ch == 'elfullinvpixsubl' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4  && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5)'%_mgg_cut,}
-    elif ch == 'elzcrinvpixlead' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && (fabs(m_leadLep_ph1_ph2-91.2) < 5) '%_mgg_cut,}
-    elif ch == 'elzcrinvpixsubl' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && (fabs(m_leadLep_ph1_ph2-91.2) < 5) '%_mgg_cut,}
-    elif ch == 'elph1zcrinvpixlead' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && (fabs(m_leadLep_ph1-91.2) < 5) '%_mgg_cut,}
-    elif ch == 'elph1zcrinvpixsubl' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && (fabs(m_leadLep_ph1-91.2) < 5) '%_mgg_cut,}
-    elif ch == 'elph2zcrinvpixlead' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && (fabs(m_leadLep_ph2-91.2) < 5) '%_mgg_cut,}
-    elif ch == 'elph2zcrinvpixsubl' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && el_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && (fabs(m_leadLep_ph2-91.2) < 5) '%_mgg_cut,}
+    el_base = ' el_passtrig_n>0 && mu_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f ' %( _mgg_cut )
 
-    return gg_cmds
+    # main Wgg commands
+    draw_commands = {
+        'mu' : ' mu_passtrig25_n>0 && el_n==0 && mu_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f '%_mgg_cut,
+        'elzcr' : el_base + ' && (fabs(m_trigelphph-91.2) < 5) ',
+        'elloose' : el_base,
+        'elfull' : el_base + ' && !(fabs(m_trigelphph-91.2) < 5) && !(fabs(m_trigelph1-91.2) < 5)  && !(fabs(m_trigelph2-91.2) < 5)',
+        'elph1zcr' : el_base + ' &&  (fabs(m_trigelph1-91.2) < 5) ',
+        'elph2zcr' : el_base + ' &&  (fabs(m_trigelph2-91.2) < 5) ',
+    }
+    # add low/high mT selections
+    draw_keys = draw_commands.keys()
+    for key in draw_keys :
+        val = draw_commands[key]
+        if key.count( 'el' ) :
+            draw_commands[key+'lowmt']  = val + ' && mt_trigel_met < 40 '
+            draw_commands[key+'highmt'] = val + ' && mt_trigel_met > 40 '
+        else :
+            draw_commands[key+'lowmt']  = val + ' && mt_trigmu_met < 40 '
+            draw_commands[key+'highmt'] = val + ' && mt_trigmu_met > 40 '
+
+    # add inverted selections
+    # should be the same as non-inverted 
+    # cases
+    draw_keys = draw_commands.keys()
+    for key in draw_keys :
+        val = draw_commands[key]
+        draw_commands[key+'invpixlead'] = val 
+        draw_commands[key+'invpixsubl'] = val 
+   
+
+    # add Zgg selections
+    draw_commands['muZgg'] = '(passTrig_mu17_mu8 || passTrig_mu17_Tkmu8) && mu_n==2 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_mumu > 40  '%_mgg_cut
+    draw_commands['elZgg'] = '(passTrig_ele17_ele8_9 || passTrig_ele17_ele8_22) &&  el_n==2 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4  && m_elel > 40 '%_mgg_cut
+
+    return draw_commands.get( ch, None )
 
 def get_default_samples(ch='mu' ) :
 
-    if ch.count('mu') :
+    if ch.count('mu')  :
         return { 'real' : {'Data' : 'Wgamma'}, 'fake' : {'Data' : 'Muon', 'Background' : 'RealPhotonsZg'}, 'target' : 'Muon' }
         #return { 'real' : {'Data' : 'Muon'}, 'fake' : {'Data' : 'Muon', 'Background' : 'RealPhotonsZg'}, 'target' : 'Muon' }
     elif ch.count('el') :
@@ -337,16 +325,28 @@ def main() :
     global sampManDataInvL
     global sampManDataInvS
 
-    base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoPixSeedBoth_2015_08_01'
-    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_07_30'
-    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_08_01'
-    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_08_01'
-    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_16'
-    #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_16'
+    base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoPixSeedBoth_2015_09_09'
+    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_09_09'
+    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_09_09'
+    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_09_09'
+
+    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithEleOlapVetoPixSeedBoth_2015_09_03'
+    #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithEleOlap_2015_09_03'
+    #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithEleOlapInvPixSeedLead_2015_09_03'
+    #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithEleOlapInvPixSeedSubl_2015_09_03'
+
+    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDNoEleVetoVetoPixSeedBoth_2015_08_31'
+    #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDNoEleVeto_2015_08_31'
+    #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDNoEleVetoInvPixSeedLead_2015_08_31'
+    #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDNoEleVetoInvPixSeedSubl_2015_08_31'
+    #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_08_01'
+    #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_08_01'
+    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_30'
+    #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_30'
     #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedLead_2015_07_16'
     #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16'
-    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_07_30'
-    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_30'
+    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_09_09'
+    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_09_09'
 
     sampManLLG      = SampleManager(base_dir_llg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManLG       = SampleManager(base_dir_lg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
@@ -411,43 +411,55 @@ def main() :
     for s in all_samp_man  :
         s.deactivate_all_samples()
 
-    fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
-    #channels = ['elfull', 'elfullinvpixsubl', 'elfullinvpixlead']
-    channels = ['elfullinvpixsubl', 'elfullinvpixlead']
-    #channels = ['mu', 'elfull']
-    #channels = ['muZgg']
-    #channels = ['muZgginvpixsubl', 'elZgginvpixsubl']
-    #channels = ['elfullinvpixsubl', 'elfullinvpixlead']
-    #channels = ['elzcr', 'elzcrinvpixsubl', 'elzcrinvpixlead']
-    jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
-    #jetfitvars = ['sigmaIEIE']
+    #fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
+    fftypes = ['nom']
+    #jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
+    jetfitvars = ['sigmaIEIE']
+
+    channels = ['muhighmt']
+    #channels = ['mulowmt']
+    #channels=['mu']
+    ##channels = ['muZgg', 'elZgg']
+    #channels = ['ellooselowmt']
+    #channels = ['ellooselowmtinvpixlead']
+    #channels = ['ellooselowmtinvpixsubl']
+
+    #channels = ['elfullhighmt']
+    #channels = ['elfullhighmtinvpixlead']
+    #channels = ['elfullhighmtinvpixsubl']
+
+    #channels = ['elfulllowmt']
+    #channels = ['elfulllowmtinvpixlead']
+    #channels = ['elfulllowmtinvpixsubl']
+
+    #channels = ['elzcrhighmt']
+    #channels = ['elzcrhighmtinvpixlead']
+    #channels = ['elzcrhighmtinvpixsubl']
+
+    #channels = ['elzcr']
+    #channels = ['elzcrinvpixlead']
+    #channels = ['elzcrinvpixsubl']
+
     calculators = []
 
-    ##mt_cuts = [' > 40 ' , ' < 40 ' ]
-    mt_cuts = [' > 40 ' ]
-    #mt_cuts = [' < 40 ' ]
-    #mt_cuts = [' > -100  ' ]
+    #corr_vals = [(5,3,3) , (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
+    corr_vals = [(5,3,3)]
 
-    corr_vals = [(5,3,3) , (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
-
-    pt_bins = [ 15, 25, 40, 70, 1000000] 
+    pt_bins = [ 15, 25, 40, 70, 1000000 ] 
     subl_ptrange = ( 15, None )
     #pt_bins = [ 30, 40, 70, 1000000] 
-    #subl_ptrange = ( 30, None )
     for ch in channels :
         for var in jetfitvars :
             for ffcorr in fftypes :
-                for mtc in mt_cuts :
-                    #calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
-                    calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, mt_cut=mtc, ptbins=pt_bins, subl_ptrange=subl_ptrange, outputDir=options.outputDir+'/JetFakeResultsSyst') )
+                #calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
+                calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, ptbins=pt_bins, subl_ptrange=subl_ptrange, outputDir=options.outputDir+'/JetFakeResultsSyst') )
 
     for cv in corr_vals :
         for ch in channels :
             for var in jetfitvars :
                 for ffcorr in fftypes :
-                    for mtc in mt_cuts :
-                        #calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
-                        calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, mt_cut=mtc, vals=cv, ptbins=pt_bins, subl_ptrange=subl_ptrange, outputDir=options.outputDir+'/JetFakeResultsSyst') )
+                    #calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
+                    calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, ptbins=pt_bins, subl_ptrange=subl_ptrange, outputDir=options.outputDir+'/JetFakeResultsSyst') )
 
     for calc in calculators :
         draw_configs = calc.ConfigHists()
@@ -688,7 +700,7 @@ def do_nominal_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptra
         if fitvar == 'sigmaIEIE' :
             # if the channel inverts one of the pixel seeds then don't require the veto
             # if its the muon channel don't require the veto
-            if ch.count('invpix') or ch == 'mu' :
+            if ch.count('invpix') or ch == 'mu' or ch=='mulowmt' or ch=='muhighmt' :
                 count_var = 'ph_mediumNoSIEIENoEleVeto_n'
             else :
                 count_var = 'ph_mediumNoSIEIE_n'
@@ -706,19 +718,19 @@ def do_nominal_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptra
         # add regions onto the selection
 
         if fitvar == 'sigmaIEIE' :
-            gg_selection = get_default_draw_commands(ch)['gg'] + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
+            gg_selection = get_default_draw_commands(ch) + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
         elif fitvar == 'chIsoCorr' :
-            gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
         elif fitvar == 'neuIsoCorr' :
-            gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
         elif fitvar == 'phoIsoCorr' :
-            gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
 
-        #gg_selection = get_default_draw_commands(ch)['gg'] + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
+        #gg_selection = get_default_draw_commands(ch) + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
 
-        #gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_iso151111_n > 1 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1])
-        #gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_iso533_n > 1 && is%s_leadph12 && is%s_sublph12 && chIsoCorr_leadph12 < 3 && neuIsoCorr_leadph12 < 2 && phoIsoCorr_leadph12 < 2 && chIsoCorr_sublph12 < 3 && neuIsoCorr_sublph12 < 2 && phoIsoCorr_sublph12 < 2  ' %( reg[0], reg[1])
-        #gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_iso533_n > 1 && chIsoCorr_leadph12 < 3 && neuIsoCorr_leadph12 < 2 && phoIsoCorr_leadph12 < 2 && chIsoCorr_sublph12 < 3 && neuIsoCorr_sublph12 < 2 && phoIsoCorr_sublph12 < 2 && ( ( ph_pt[0] > ph_pt[1] && is%s_leadph12 && is%s_sublph12 ) || ( ph_pt[0] <= ph_pt[1] && is%s_sublph12 && is%s_leadph12) ) ' %( reg[0], reg[1], reg[0], reg[1])
+        #gg_selection = get_default_draw_commands(ch) + ' && ph_iso151111_n > 1 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1])
+        #gg_selection = get_default_draw_commands(ch) + ' && ph_iso533_n > 1 && is%s_leadph12 && is%s_sublph12 && chIsoCorr_leadph12 < 3 && neuIsoCorr_leadph12 < 2 && phoIsoCorr_leadph12 < 2 && chIsoCorr_sublph12 < 3 && neuIsoCorr_sublph12 < 2 && phoIsoCorr_sublph12 < 2  ' %( reg[0], reg[1])
+        #gg_selection = get_default_draw_commands(ch) + ' && ph_iso533_n > 1 && chIsoCorr_leadph12 < 3 && neuIsoCorr_leadph12 < 2 && phoIsoCorr_leadph12 < 2 && chIsoCorr_sublph12 < 3 && neuIsoCorr_sublph12 < 2 && phoIsoCorr_sublph12 < 2 && ( ( ph_pt[0] > ph_pt[1] && is%s_leadph12 && is%s_sublph12 ) || ( ph_pt[0] <= ph_pt[1] && is%s_sublph12 && is%s_leadph12) ) ' %( reg[0], reg[1], reg[0], reg[1])
         #if iso_cuts_lead is not None :
         #    gg_selection = gg_selection + ' && %s ' %( iso_cuts_lead )
         #if iso_cuts_subl is not None :
@@ -849,6 +861,7 @@ def run_nominal_calculation( gg_hist, templates, templates_corr, reg, ptbins, ch
             lead_ptrange = ( ptmin, None )
         else :
             lead_ptrange = ( ptmin, ptmax )
+
 
         # project data hist
         if isinstance( gg_hist, dict )  and 'leadPass' in gg_hist :
@@ -1008,9 +1021,9 @@ def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_iso_fake=None, iso_cut
 
         
         # add regions onto the selection
-        gg_selection_leadiso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-        gg_selection_subliso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-        gg_selection_bothiso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+        gg_selection_leadiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+        gg_selection_subliso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+        gg_selection_bothiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
 
         # add subl pt cuts onto the selection
         if subl_ptrange[0] is not None :
@@ -2200,7 +2213,7 @@ def run_diphoton_fit( templates, gg_hist, lead_reg, subl_reg, templates_corr=Non
          p_RF_TL = results_stat_data.item(0)*eff_2d_stat['eff_RF_TL']
          p_RF_LT = results_stat_data.item(0)*eff_2d_stat['eff_RF_LT']
          p_RF_LL = results_stat_data.item(0)*eff_2d_stat['eff_RF_LL']
-         p_FR_TT = results_stat_data.item(1)*eff_2d_stat['eff_FR_LT']
+         p_FR_TT = results_stat_data.item(1)*eff_2d_stat['eff_FR_TT']
          p_FR_TL = results_stat_data.item(1)*eff_2d_stat['eff_FR_TL']
          p_FR_LT = results_stat_data.item(1)*eff_2d_stat['eff_FR_LT']
          p_FR_LL = results_stat_data.item(1)*eff_2d_stat['eff_FR_LL']
@@ -2217,7 +2230,7 @@ def run_diphoton_fit( templates, gg_hist, lead_reg, subl_reg, templates_corr=Non
          p_RF_TL = results_stat_data.item(1)*eff_2d_stat['eff_RF_TL']
          p_RF_LT = results_stat_data.item(1)*eff_2d_stat['eff_RF_LT']
          p_RF_LL = results_stat_data.item(1)*eff_2d_stat['eff_RF_LL']
-         p_FR_TT = results_stat_data.item(2)*eff_2d_stat['eff_FR_LT']
+         p_FR_TT = results_stat_data.item(2)*eff_2d_stat['eff_FR_TT']
          p_FR_TL = results_stat_data.item(2)*eff_2d_stat['eff_FR_TL']
          p_FR_LT = results_stat_data.item(2)*eff_2d_stat['eff_FR_LT']
          p_FR_LL = results_stat_data.item(2)*eff_2d_stat['eff_FR_LL']
@@ -3577,7 +3590,6 @@ class RunNominalCalculation() :
         self.ptbins  = kwargs.get( 'ptbins', [15,25,40,70,1000000] )
         self.systematics = kwargs.get( 'systematics', 'Nom' )
         self.outputDir = kwargs.get( 'outputDir', None )
-        self.mt_cut = kwargs.get( 'mt_cut', ' > 40 ' )
 
         
         if self.fitvar is None :
@@ -3647,7 +3659,7 @@ class RunNominalCalculation() :
         if fitvar == 'sigmaIEIE' :
             # if the channel inverts one of the pixel seeds then don't require the veto
             # if its the muon channel don't require the veto
-            if ch.count('invpix') or ch == 'mu' :
+            if ch.count('invpix') or ch == 'mu' or ch == 'mulowmt' or ch == 'muhighmt' :
                 count_var = 'ph_mediumNoSIEIENoEleVeto_n'
             else :
                 count_var = 'ph_mediumNoSIEIE_n'
@@ -3664,19 +3676,19 @@ class RunNominalCalculation() :
         regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB')]
         for reg in regions :
             if fitvar == 'sigmaIEIE' :
-                gg_selection = get_default_draw_commands(ch)['gg'] + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 && mt_lep_met %s' %( count_var, reg[0], reg[1], self.mt_cut )
+                gg_selection = get_default_draw_commands(ch) + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
                 gg_selection_leadPass = gg_selection + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
                 gg_selection_leadFail = gg_selection + ' && sieie_leadph12 > %f && sieie_leadph12 < %f' %( _sieie_cuts[reg[0]] )
             elif fitvar == 'chIsoCorr' :
-                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s' %( reg[0], reg[1], self.mt_cut )
+                gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
                 gg_selection_leadPass = gg_selection + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
                 gg_selection_leadFail = gg_selection + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
             elif fitvar == 'neuIsoCorr' :
-                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s ' %( reg[0], reg[1], self.mt_cut )
+                gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
                 gg_selection_leadPass = gg_selection + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
                 gg_selection_leadFail = gg_selection + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
             elif fitvar == 'phoIsoCorr' :
-                gg_selection = get_default_draw_commands(ch)['gg'] + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s ' %( reg[0], reg[1], self.mt_cut )
+                gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
                 gg_selection_leadPass = gg_selection + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
                 gg_selection_leadFail = gg_selection + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
 
@@ -3778,7 +3790,6 @@ class RunCorrectedAsymCalculation() :
         self.iso_cuts_noiso    = kwargs.get( 'iso_cuts_noiso'    , None )
         self.subl_ptrange      = kwargs.get( 'subl_ptrange'      , (None,None) )
         self.outputDir         = kwargs.get('outputDir'          , None )
-        self.mt_cut            = kwargs.get('mt_cut'          , ' > 40 ')
         
         if self.fitvar is None :
             print 'RunCorrectedAsymCalculation.init -- ERROR, fitvar is required argument'
@@ -3918,9 +3929,9 @@ class RunCorrectedAsymCalculation() :
         for reg in regions :
             
             # add regions onto the selection
-            gg_selection_leadiso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s' %( reg[0], reg[1], self.mt_cut )
-            gg_selection_subliso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s' %( reg[0], reg[1], self.mt_cut )
-            gg_selection_bothiso = get_default_draw_commands(ch)['gg'] + ' && is%s_leadph12 && is%s_sublph12 && mt_lep_met %s' %( reg[0], reg[1], self.mt_cut )
+            gg_selection_leadiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            gg_selection_subliso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            gg_selection_bothiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
 
             # add subl pt cuts onto the selection
             if self.subl_ptrange[0] is not None :

@@ -143,6 +143,7 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
 
         if( !config.PassBool( "cut_ph_medium", IN::ph_passMedium->at(idx) ) ) continue;
         if( !config.PassFloat( "cut_ph_pt", IN::ph_pt->at(idx) ) ) continue;
+        if( !config.PassBool( "cut_hasPixSeed", IN::ph_hasPixSeed->at(idx) ) ) continue;
 
         CopyPrefixIndexBranchesInToOut( "ph_", idx );
         OUT::ph_n++;
@@ -216,15 +217,29 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     if( !config.PassFloat( "cut_mgg", OUT::m_ph1_ph2 ) )  keep_event=false;
     if( !config.PassFloat( "cut_dr_lep_ph1", OUT::dr_ph1_leadLep ) )  keep_event=false;
     if( !config.PassFloat( "cut_dr_lep_ph2", OUT::dr_ph2_leadLep ) )  keep_event=false;
+    if( !config.PassFloat( "cut_dr_trigele_ph1", OUT::dr_ph1_trigEle ) )  keep_event=false;
+    if( !config.PassFloat( "cut_dr_trigele_ph2", OUT::dr_ph2_trigEle ) )  keep_event=false;
     if( !config.PassFloat( "cut_dr_subllep_ph1", OUT::dr_ph1_sublLep ) )  keep_event=false;
     if( !config.PassFloat( "cut_dr_subllep_ph2", OUT::dr_ph2_sublLep ) )  keep_event=false;
+    if( !config.PassFloat( "cut_leadPhot_trigElDR", OUT::leadPhot_trigElDR) )  keep_event=false;
+    if( !config.PassFloat( "cut_sublPhot_trigElDR", OUT::sublPhot_trigElDR) )  keep_event=false;
+    if( !config.PassFloat( "cut_leadPhot_trigMuDR", OUT::leadPhot_trigMuDR) )  keep_event=false;
+    if( !config.PassFloat( "cut_sublPhot_trigMuDR", OUT::sublPhot_trigMuDR) )  keep_event=false;
     if( !config.PassFloat( "cut_dr_ph1_ph2", OUT::dr_ph1_ph2 ) )  keep_event=false;
     if( !config.PassFloat( "cut_m_lepphph", OUT::m_leadLep_ph1_ph2 ) )  keep_event=false;
     if( !config.PassFloat( "cut_m_lepph1", OUT::m_leadLep_ph1 ) )  keep_event=false;
     if( !config.PassFloat( "cut_m_lepph2", OUT::m_leadLep_ph2 ) )  keep_event=false;
+    if( !config.PassFloat( "cut_m_trigelphph", OUT::m_trigelphph ) )  keep_event=false;
+    if( !config.PassFloat( "cut_m_trigelph1" , OUT::m_trigelph1 ) )  keep_event=false;
+    if( !config.PassFloat( "cut_m_trigelph2" , OUT::m_trigelph2 ) )  keep_event=false;
     if( !config.PassFloat( "cut_mt_lep_met", OUT::mt_lep_met) )  keep_event=false;
     if( !config.PassFloat( "cut_met", OUT::pfType01MET) )  keep_event=false;
     if( !config.PassFloat( "cut_m_leplep", OUT::m_leplep) )  keep_event=false;
+    if( !config.PassFloat( "cut_mt_trigel_met", OUT::mt_trigel_met) )  keep_event=false;
+    if( !config.PassFloat( "cut_mt_trigmu_met", OUT::mt_trigmu_met) )  keep_event=false;
+
+    bool isEEEE = OUT::isEE_leadph12 && OUT::isEE_sublph12;
+    if( !config.PassBool( "cut_isEEEE", isEEEE ) ) keep_event = false;
 
     
     // uncertainty variations

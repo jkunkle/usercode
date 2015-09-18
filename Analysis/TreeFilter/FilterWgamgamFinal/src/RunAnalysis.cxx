@@ -57,17 +57,18 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     // *************************
     outtree->Branch("isBlinded", &OUT::isBlinded );
     outtree->Branch("EventWeight", &OUT::EventWeight, "EventWeight/F" );
-    outtree->Branch("ph_hasMatchedEle", &OUT::ph_hasMatchedEle );
 
     outtree->Branch("mu_pt25_n"                    , &OUT::mu_pt25_n                    , "mu_pt25_n/I"        );
     outtree->Branch("mu_passtrig_n"                , &OUT::mu_passtrig_n                , "mu_passtrig_n/I"        );
     outtree->Branch("mu_passtrig25_n"              , &OUT::mu_passtrig25_n              , "mu_passtrig25_n/I"        );
     outtree->Branch("el_pt25_n"                    , &OUT::el_pt25_n                    , "el_pt25_n/I"        );
     outtree->Branch("el_passtrig_n"                , &OUT::el_passtrig_n                , "el_passtrig_n/I"        );
+    outtree->Branch("el_passtrigL_n"               , &OUT::el_passtrigL_n               , "el_passtrigL_n/I"        );
     outtree->Branch("el_passtrig28_n"              , &OUT::el_passtrig28_n              , "el_passtrig28_n/I"        );
     outtree->Branch("ph_mediumNoSIEIE_n"           , &OUT::ph_mediumNoSIEIE_n           , "ph_mediumNoSIEIE_n/I" );
     outtree->Branch("ph_medium_n"                  , &OUT::ph_medium_n                  , "ph_medium_n/I" );
     outtree->Branch("ph_mediumNoEleVeto_n"         , &OUT::ph_mediumNoEleVeto_n         , "ph_mediumNoEleVeto_n/I" );
+    outtree->Branch("ph_mediumFailEleVeto_n"       , &OUT::ph_mediumFailEleVeto_n       , "ph_mediumFailEleVeto_n/I" );
     outtree->Branch("ph_mediumNoSIEIENoEleVeto_n"  , &OUT::ph_mediumNoSIEIENoEleVeto_n  , "ph_mediumNoSIEIENoEleVeto_n/I" );
     outtree->Branch("ph_mediumNoChIsoNoEleVeto_n"  , &OUT::ph_mediumNoChIsoNoEleVeto_n  , "ph_mediumNoChIsoNoEleVeto_n/I" );
     outtree->Branch("ph_mediumNoNeuIsoNoEleVeto_n" , &OUT::ph_mediumNoNeuIsoNoEleVeto_n , "ph_mediumNoNeuIsoNoEleVeto_n/I" );
@@ -88,16 +89,10 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("ph_trigMatch_el"              , &OUT::ph_trigMatch_el             );
     outtree->Branch("ph_elMinDR"                   , &OUT::ph_elMinDR                  );
     
-    outtree->Branch("leadPhot_pt"         , &OUT::leadPhot_pt         , "leadPhot_pt/F"       );
-    outtree->Branch("sublPhot_pt"         , &OUT::sublPhot_pt        , "sublPhot_pt/F"        );
-    outtree->Branch("leadPhot_lepDR"      , &OUT::leadPhot_lepDR     , "leadPhot_lepDR/F"     );
-    outtree->Branch("sublPhot_lepDR"      , &OUT::sublPhot_lepDR     , "sublPhot_lepDR/F"     );
-    outtree->Branch("ph_phDR"             , &OUT::ph_phDR            , "ph_phDR/F"            );
-    outtree->Branch("phPhot_lepDR"        , &OUT::phPhot_lepDR       , "phPhot_lepDR/F"       );
-    outtree->Branch("leadPhot_lepDPhi"    , &OUT::leadPhot_lepDPhi   , "leadPhot_lepDPhi/F"   );
-    outtree->Branch("sublPhot_lepDPhi"    , &OUT::sublPhot_lepDPhi   , "sublPhot_lepDPhi/F"   );
-    outtree->Branch("ph_phDPhi"           , &OUT::ph_phDPhi          , "ph_phDPhi/F"          );
-    outtree->Branch("phPhot_lepDPhi"      , &OUT::phPhot_lepDPhi     , "phPhot_lepDPhi/F"     );
+    outtree->Branch("leadPhot_sublPhotDR"             , &OUT::leadPhot_sublPhotDR            , "leadPhot_sublPhotDR/F"            );
+    outtree->Branch("leadPhot_sublPhotDPhi"           , &OUT::leadPhot_sublPhotDPhi          , "leadPhot_sublPhotDPhi/F"          );
+    outtree->Branch("dphi_met_leadPhot"        , &OUT::dphi_met_leadPhot       , "dphi_met_leadPhot/F"       );
+    outtree->Branch("dphi_met_sublPhot"        , &OUT::dphi_met_sublPhot       , "dphi_met_sublPhot/F"       );
     outtree->Branch("dphi_met_lep1"       , &OUT::dphi_met_lep1      , "dphi_met_lep1/F"      );
     outtree->Branch("dphi_met_lep2"       , &OUT::dphi_met_lep2      , "dphi_met_lep2/F"      );
     outtree->Branch("dphi_met_ph1"        , &OUT::dphi_met_ph1       , "dphi_met_ph1/F"       );
@@ -106,14 +101,16 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("mt_lepph1_met"       , &OUT::mt_lepph1_met      , "mt_lepph1_met/F"      );
     outtree->Branch("mt_lepph2_met"       , &OUT::mt_lepph2_met      , "mt_lepph2_met/F"      );
     outtree->Branch("mt_lepphph_met"      , &OUT::mt_lepphph_met     , "mt_lepphph_met/F"     );
+    outtree->Branch("mt_trigel_met"          , &OUT::mt_trigel_met         , "mt_trigel_met/F"         );
+    outtree->Branch("mt_trigmu_met"          , &OUT::mt_trigmu_met         , "mt_trigmu_met/F"         );
     outtree->Branch("m_leplep"            , &OUT::m_leplep           , "m_leplep/F"           );
     outtree->Branch("m_mumu"            , &OUT::m_mumu           , "m_mumu/F"           );
     outtree->Branch("m_elel"            , &OUT::m_elel           , "m_elel/F"           );
     outtree->Branch("m_leplep_uncorr"     , &OUT::m_leplep_uncorr    , "m_leplep_uncorr/F"    );
+    outtree->Branch("m_trigelph1"         , &OUT::m_trigelph1        , "m_trigelph1/F"           );
+    outtree->Branch("m_trigelph2"         , &OUT::m_trigelph2        , "m_trigelph2/F"           );
     outtree->Branch("m_lepph1"            , &OUT::m_lepph1           , "m_lepph1/F"           );
     outtree->Branch("m_lepph2"            , &OUT::m_lepph2           , "m_lepph2/F"           );
-    outtree->Branch("m_lep2ph1"            , &OUT::m_lep2ph1           , "m_lep2ph1/F"           );
-    outtree->Branch("m_lep2ph2"            , &OUT::m_lep2ph2           , "m_lep2ph2/F"           );
     outtree->Branch("m_lepphlead"            , &OUT::m_lepphlead           , "m_lepphlead/F"           );
     outtree->Branch("m_lepphsubl"            , &OUT::m_lepphsubl           , "m_lepphsubl/F"           );
     outtree->Branch("m_lep2phlead"            , &OUT::m_lep2phlead           , "m_lep2phlead/F"           );
@@ -123,7 +120,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("m_leplepph1"         , &OUT::m_leplepph1        , "m_leplepph1/F"         );
     outtree->Branch("m_leplepph2"         , &OUT::m_leplepph2        , "m_leplepph2/F"         );
     outtree->Branch("m_lepphph"           , &OUT::m_lepphph          , "m_lepphph/F"          );
-    outtree->Branch("m_leplepZ"           , &OUT::m_leplepZ          , "m_leplepZ/F"          );
+    outtree->Branch("m_trigelphph"        , &OUT::m_trigelphph       , "m_trigelphph/F"          );
     outtree->Branch("m_3lep"              , &OUT::m_3lep             , "m_3lep/F"             );
     outtree->Branch("m_4lep"              , &OUT::m_4lep             , "m_4lep/F"             );
     outtree->Branch("pt_leplep"           , &OUT::pt_leplep          , "pt_leplep/F"          );
@@ -137,10 +134,23 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("leadPhot_sublLepDR"  , &OUT::leadPhot_sublLepDR , "leadPhot_sublLepDR/F" );
     outtree->Branch("sublPhot_leadLepDR"  , &OUT::sublPhot_leadLepDR , "sublPhot_leadLepDR/F" );
     outtree->Branch("sublPhot_sublLepDR"  , &OUT::sublPhot_sublLepDR , "sublPhot_sublLepDR/F" );
+    outtree->Branch("leadPhot_trigElDR"  , &OUT::leadPhot_trigElDR , "leadPhot_trigElDR/F" );
+    outtree->Branch("sublPhot_trigElDR"  , &OUT::sublPhot_trigElDR , "sublPhot_trigElDR/F" );
+    outtree->Branch("leadPhot_trigMuDR"  , &OUT::leadPhot_trigMuDR , "leadPhot_trigMuDR/F" );
+    outtree->Branch("sublPhot_trigMuDR"  , &OUT::sublPhot_trigMuDR , "sublPhot_trigMuDR/F" );
+    outtree->Branch("m_leadPhot_leadLep"  , &OUT::m_leadPhot_leadLep , "m_leadPhot_leadLep/F" );
+    outtree->Branch("m_leadPhot_trigEl"   , &OUT::m_leadPhot_trigEl  , "m_leadPhot_trigEl/F" );
+    outtree->Branch("m_sublPhot_leadLep"  , &OUT::m_sublPhot_leadLep , "m_sublPhot_leadLep/F" );
+    outtree->Branch("m_sublPhot_trigEl"   , &OUT::m_sublPhot_trigEl  , "m_sublPhot_trigEl/F" );
+    outtree->Branch("m_leadPhot_sublPhot_trigEl"   , &OUT::m_leadPhot_sublPhot_trigEl  , "m_leadPhot_sublPhot_trigEl/F" );
     outtree->Branch("dr_ph1_leadLep"      , &OUT::dr_ph1_leadLep     , "dr_ph1_leadLep/F"     );
     outtree->Branch("dr_ph1_sublLep"      , &OUT::dr_ph1_sublLep     , "dr_ph1_sublLep/F"     );
     outtree->Branch("dr_ph2_leadLep"      , &OUT::dr_ph2_leadLep     , "dr_ph2_leadLep/F"     );
     outtree->Branch("dr_ph2_sublLep"      , &OUT::dr_ph2_sublLep     , "dr_ph2_sublLep/F"     );
+    outtree->Branch("dr_ph1_trigEle"      , &OUT::dr_ph1_trigEle     , "dr_ph1_trigEle/F"     );
+    outtree->Branch("dr_ph2_trigEle"      , &OUT::dr_ph2_trigEle     , "dr_ph2_trigEle/F"     );
+    outtree->Branch("dr_ph1_trigMu"      , &OUT::dr_ph1_trigMu     , "dr_ph1_trigMu/F"     );
+    outtree->Branch("dr_ph2_trigMu"      , &OUT::dr_ph2_trigMu     , "dr_ph2_trigMu/F"     );
     outtree->Branch("dphi_ph1_leadLep"      , &OUT::dphi_ph1_leadLep     , "dphi_ph1_leadLep/F"     );
     outtree->Branch("dphi_ph1_sublLep"      , &OUT::dphi_ph1_sublLep     , "dphi_ph1_sublLep/F"     );
     outtree->Branch("dphi_ph2_leadLep"      , &OUT::dphi_ph2_leadLep     , "dphi_ph2_leadLep/F"     );
@@ -152,6 +162,8 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("m_leadLep_ph1_ph2"   , &OUT::m_leadLep_ph1_ph2  , "m_leadLep_ph1_ph2/F"  );
     outtree->Branch("m_leadLep_ph1"       , &OUT::m_leadLep_ph1      , "m_leadLep_ph1/F"      );
     outtree->Branch("m_leadLep_ph2"       , &OUT::m_leadLep_ph2      , "m_leadLep_ph2/F"      );
+    outtree->Branch("m_sublLep_ph1"       , &OUT::m_sublLep_ph1      , "m_sublLep_ph1/F"      );
+    outtree->Branch("m_sublLep_ph2"       , &OUT::m_sublLep_ph2      , "m_sublLep_ph2/F"      );
     outtree->Branch("pt_leadph12"         , &OUT::pt_leadph12        , "pt_leadph12/F"        );
     outtree->Branch("pt_sublph12"         , &OUT::pt_sublph12        , "pt_sublph12/F"        );
     outtree->Branch("eta_leadph12"        , &OUT::eta_leadph12       , "eta_leadph12/F"       );
@@ -174,9 +186,6 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("truthMatchPh_sublph12", &OUT::truthMatchPh_sublph12, "truthMatchPh_sublph12/O" );
     outtree->Branch("truthMatchPhMomPID_leadph12", &OUT::truthMatchPhMomPID_leadph12, "truthMatchPhMomPID_leadph12/O" );
     outtree->Branch("truthMatchPhMomPID_sublph12", &OUT::truthMatchPhMomPID_sublph12, "truthMatchPhMomPID_sublph12/O" );
-
-    outtree->Branch("m_nearestToZ"   , &OUT::m_nearestToZ   , "m_nearestToZ/F"     );
-    outtree->Branch("m_minZdifflepph", &OUT::m_minZdifflepph, "m_minZdifflepph/F"     );
 
     outtree->Branch("truelep_n", &OUT::truelep_n, "truelep_n/I" );
     outtree->Branch("trueph_n", &OUT::trueph_n, "tureph_n/I"  );
@@ -546,10 +555,6 @@ void RunModule::FilterElectron( ModuleConfig & config ) const {
 
     // store if the photon matched an 
     // electron
-    OUT::ph_hasMatchedEle->clear();
-    for( int pidx = 0 ; pidx < OUT::ph_n; ++pidx ) {
-        OUT::ph_hasMatchedEle->push_back(ph_matches_ele[pidx] );
-    }
             
     #endif
 
@@ -561,8 +566,6 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
 
     OUT::ph_n = 0;
     ClearOutputPrefix("ph_");
-
-    OUT::ph_hasMatchedEle->clear();
 
     std::vector<int> ph_order;
     if( sort_photons_by_id ) {
@@ -623,6 +626,7 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
 
         float min_el_dr = 100.0;
         float min_trigel_dr = 100.0;
+        bool found_trigel = false;
 
         for( int eidx = 0; eidx < OUT::el_n; eidx++ ) {
             TLorentzVector ellv;
@@ -636,8 +640,14 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
                 min_el_dr = dr;
             }
 
+            // count the leading trigger
+            // matched electron which
+            // will be the first in the list
             if( OUT::el_triggerMatch->at(eidx) && OUT::el_passMvaTrig->at(eidx) && ellv.Pt() > 30 && dr < min_trigel_dr ) {
-                min_trigel_dr = dr;
+                if( !found_trigel ) {
+                    min_trigel_dr = dr;
+                    found_trigel = true;
+                }
             }
         }
 
@@ -1093,82 +1103,132 @@ bool RunModule::FilterTruth( ModuleConfig & config ) const {
 
 void RunModule::CalcEventVars( ModuleConfig & config ) const {
 
-    OUT::mu_pt25_n                   = 0;
-    OUT::mu_passtrig_n               = 0;
-    OUT::mu_passtrig25_n             = 0;
-    OUT::el_pt25_n                   = 0;
-    OUT::el_passtrig_n               = 0;
-    OUT::el_passtrig28_n             = 0;
-    OUT::ph_mediumNoSIEIE_n          = 0;
-    OUT::ph_medium_n                 = 0;
-    OUT::ph_mediumNoEleVeto_n        = 0;
-    OUT::ph_mediumNoSIEIENoEleVeto_n = 0;
-    OUT::ph_mediumNoChIsoNoEleVeto_n = 0;
-    OUT::ph_mediumNoNeuIsoNoEleVeto_n= 0;
-    OUT::ph_mediumNoPhoIsoNoEleVeto_n= 0;
-    OUT::ph_mediumNoIso_n            = 0;
-    OUT::ph_mediumNoChIso_n          = 0;
-    OUT::ph_mediumNoNeuIso_n         = 0;
-    OUT::ph_mediumNoPhoIso_n         = 0;
-    OUT::ph_mediumNoChIsoNoNeuIso_n  = 0;
-    OUT::ph_mediumNoChIsoNoPhoIso_n  = 0;
-    OUT::ph_mediumNoNeuIsoNoPhoIso_n = 0;
-    OUT::ph_iso533_n                 = 0;
-    OUT::ph_iso855_n                 = 0;
-    OUT::ph_iso1077_n                = 0;
-    OUT::ph_iso1299_n                = 0;
-    OUT::ph_iso151111_n              = 0;
-    OUT::ph_iso201616_n              = 0;
-    OUT::ph_trigMatch_el->clear();
-    OUT::ph_elMinDR     ->clear();
-    OUT::leadPhot_pt                 = 0;
-    OUT::sublPhot_pt                 = 0;
-    OUT::leadPhot_lepDR              = 0;
-    OUT::sublPhot_lepDR              = 0;
-    OUT::ph_phDR                     = 0;
-    OUT::phPhot_lepDR                = 0;
-    OUT::leadPhot_lepDPhi            = 0;
-    OUT::sublPhot_lepDPhi            = 0;
-    OUT::ph_phDPhi                   = 0;
-    OUT::phPhot_lepDPhi              = 0;
-    OUT::dphi_met_lep1               = 0;
-    OUT::dphi_met_lep2               = 0;
-    OUT::dphi_met_ph1                = 0;
-    OUT::dphi_met_ph2                = 0;
-    OUT::mt_lep_met                  = 0;
-    OUT::mt_lepph1_met               = 0;
-    OUT::mt_lepph2_met               = 0;
-    OUT::mt_lepphph_met              = 0;
-    OUT::m_leplep                    = 0;
-    OUT::m_mumu                      = 0;
-    OUT::m_elel                      = 0;
-    OUT::m_leplep_uncorr             = 0;
-    OUT::m_lepph1                    = 0;
-    OUT::m_lepph2                    = 0;
+    OUT::mu_pt25_n                    = 0;
+    OUT::mu_passtrig_n                = 0;
+    OUT::mu_passtrig25_n              = 0;
+    OUT::el_pt25_n                    = 0;
+    OUT::el_passtrig_n                = 0;
+    OUT::el_passtrigL_n               = 0;
+    OUT::el_passtrig28_n              = 0;
+    OUT::ph_mediumNoSIEIE_n           = 0;
+    OUT::ph_medium_n                  = 0;
+    OUT::ph_mediumNoEleVeto_n         = 0;
+    OUT::ph_mediumFailEleVeto_n       = 0;
+    OUT::ph_mediumNoSIEIENoEleVeto_n  = 0;
+    OUT::ph_mediumNoChIsoNoEleVeto_n  = 0;
+    OUT::ph_mediumNoNeuIsoNoEleVeto_n = 0;
+    OUT::ph_mediumNoPhoIsoNoEleVeto_n = 0;
+    OUT::ph_mediumNoIso_n             = 0;
+    OUT::ph_mediumNoChIso_n           = 0;
+    OUT::ph_mediumNoNeuIso_n          = 0;
+    OUT::ph_mediumNoPhoIso_n          = 0;
+    OUT::ph_mediumNoChIsoNoNeuIso_n   = 0;
+    OUT::ph_mediumNoChIsoNoPhoIso_n   = 0;
+    OUT::ph_mediumNoNeuIsoNoPhoIso_n  = 0;
+    OUT::ph_iso533_n                  = 0;
+    OUT::ph_iso855_n                  = 0;
+    OUT::ph_iso1077_n                 = 0;
+    OUT::ph_iso1299_n                 = 0;
+    OUT::ph_iso151111_n               = 0;
+    OUT::ph_iso201616_n               = 0;
+    OUT::leadPhot_sublPhotDR          = 0;
+    OUT::leadPhot_sublPhotDPhi        = 0;
+    OUT::phPhot_lepDPhi               = 0;
+    OUT::dphi_met_lep1                = 0;
+    OUT::dphi_met_lep2                = 0;
+    OUT::dphi_met_ph1                 = 0;
+    OUT::dphi_met_ph2                 = 0;
+    OUT::mt_lep_met                   = 0;
+    OUT::mt_lepph1_met                = 0;
+    OUT::mt_lepph2_met                = 0;
+    OUT::mt_lepphph_met               = 0;
+    OUT::mt_trigel_met                = 0;
+    OUT::mt_trigmu_met                = 0;
+    OUT::m_leplep                     = 0;
+    OUT::m_mumu                       = 0;
+    OUT::m_elel                       = 0;
+    OUT::m_leplep_uncorr              = 0;
+    OUT::m_lepph1                     = 0;
+    OUT::m_lepph2                     = 0;
+    OUT::m_trigelph1                  = 0;
+    OUT::m_trigelph2                  = 0;
     OUT::m_lep2ph1                    = 0;
     OUT::m_lep2ph2                    = 0;
-    OUT::m_lepphlead                    = 0;
-    OUT::m_lepphsubl                    = 0;
-    OUT::m_lep2phlead                    = 0;
-    OUT::m_lep2phsubl                    = 0;
-    OUT::m_lepphph                   = 0;
-    OUT::m_leplepph                  = 0;
-    OUT::m_leplepphph                = 0;
-    OUT::m_leplepph1                = 0;
-    OUT::m_leplepph2                = 0;
-    OUT::m_leplepZ                   = 0;
-    OUT::m_3lep                      = 0;
-    OUT::m_4lep                      = 0;
-    OUT::pt_leplep                   = 0;
-    OUT::pt_lepph1                   = 0;
-    OUT::pt_lepph2                   = 0;
-    OUT::pt_lepphph                  = 0;
-    OUT::pt_leplepph                 = 0;
-    OUT::pt_secondLepton             = 0;
-    OUT::pt_thirdLepton              = 0;
-    OUT::m_nearestToZ                = 0;
-    OUT::m_minZdifflepph             = 0;
+    OUT::m_lepphlead                  = 0;
+    OUT::m_lepphsubl                  = 0;
+    OUT::m_lep2phlead                 = 0;
+    OUT::m_lep2phsubl                 = 0;
+    OUT::m_leplepph                   = 0;
+    OUT::m_leplepphph                 = 0;
+    OUT::m_leplepph1                  = 0;
+    OUT::m_leplepph2                  = 0;
+    OUT::m_lepphph                    = 0;
+    OUT::m_trigelphph                 = 0;
+    OUT::m_phph                       = 0;
+    OUT::m_3lep                       = 0;
+    OUT::m_4lep                       = 0;
+    OUT::pt_phph                      = 0;
+    OUT::pt_leplep                    = 0;
+    OUT::pt_lepph1                    = 0;
+    OUT::pt_lepph2                    = 0;
+    OUT::pt_lepphph                   = 0;
+    OUT::pt_leplepph                  = 0;
+    OUT::pt_secondLepton              = 0;
+    OUT::pt_thirdLepton               = 0;
+    OUT::leadPhot_leadLepDR           = 0;
+    OUT::leadPhot_sublLepDR           = 0;
+    OUT::sublPhot_leadLepDR           = 0;
+    OUT::sublPhot_sublLepDR           = 0;
+    OUT::leadPhot_trigElDR            = 0;
+    OUT::sublPhot_trigElDR            = 0;
+    OUT::leadPhot_trigMuDR            = 0;
+    OUT::sublPhot_trigMuDR            = 0;
+    OUT::m_leadPhot_leadLep           = 0;
+    OUT::m_leadPhot_trigEl            = 0;
+    OUT::m_sublPhot_leadLep           = 0;
+    OUT::m_sublPhot_trigEl            = 0;
+    OUT::m_leadPhot_sublPhot_trigEl   = 0;
+    OUT::dphi_met_leadPhot            = 0;
+    OUT::dphi_met_sublPhot            = 0;
+    OUT::dr_ph1_leadLep               = 0;
+    OUT::dr_ph1_sublLep               = 0;
+    OUT::dr_ph2_leadLep               = 0;
+    OUT::dr_ph2_sublLep               = 0;
+    OUT::dr_ph1_trigEle               = 0;
+    OUT::dr_ph2_trigEle               = 0;
+    OUT::dr_ph1_trigMu                = 0;
+    OUT::dr_ph2_trigMu                = 0;
+    OUT::dphi_ph1_leadLep             = 0;
+    OUT::dphi_ph1_sublLep             = 0;
+    OUT::dphi_ph2_leadLep             = 0;
+    OUT::dphi_ph2_sublLep             = 0;
+    OUT::m_ph1_ph2                    = 0;
+    OUT::dr_ph1_ph2                   = 0;
+    OUT::dphi_ph1_ph2                 = 0; 
+    OUT::pt_ph1_ph2                   = 0; 
+    OUT::m_leadLep_ph1_ph2            = 0; 
+    OUT::m_leadLep_ph1                = 0; 
+    OUT::m_leadLep_ph2                = 0; 
+    OUT::m_sublLep_ph1                = 0; 
+    OUT::m_sublLep_ph2                = 0; 
+    OUT::pt_leadph12                  = 0;
+    OUT::pt_sublph12                  = 0;
+    OUT::eta_leadph12                 = 0;
+    OUT::eta_sublph12                 = 0;
+    OUT::hasPixSeed_leadph12          = 0;
+    OUT::hasPixSeed_sublph12          = 0;
+    OUT::sieie_leadph12               = 0;
+    OUT::sieie_sublph12               = 0;
+    OUT::chIsoCorr_leadph12           = 0;
+    OUT::chIsoCorr_sublph12           = 0;
+    OUT::neuIsoCorr_leadph12          = 0;
+    OUT::neuIsoCorr_sublph12          = 0;
+    OUT::phoIsoCorr_leadph12          = 0;
+    OUT::phoIsoCorr_sublph12          = 0;
 
+
+    OUT::ph_trigMatch_el->clear();
+    OUT::ph_elMinDR     ->clear();
     OUT::EventWeight = 1.0;
 
     TLorentzVector metlv;
@@ -1182,6 +1242,8 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     std::vector<TLorentzVector> leptons;
     std::vector<TLorentzVector> muons;
     std::vector<TLorentzVector> electrons;
+    std::vector<TLorentzVector> trigelectrons;
+    std::vector<TLorentzVector> trigmuons;
     std::vector<TLorentzVector> leptons_uncorr;
     // map pt to a bool, int pair.  The bool is 1 if electron, 0 if muon.  The int is the index
     std::vector<std::pair<float, std::pair<bool, int > > > sorted_leptons;
@@ -1218,6 +1280,11 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
 
         if( lv.Pt() > 30 && OUT::el_triggerMatch->at(idx) && OUT::el_passMvaTrig->at(idx) ) {
             OUT::el_passtrig_n++;
+            trigelectrons.push_back( lv );
+           
+        }
+        if( lv.Pt() > 30 && OUT::el_triggerMatch->at(idx) && OUT::el_passLoose->at(idx) ) {
+            OUT::el_passtrigL_n++;
         }
 
     }
@@ -1258,6 +1325,7 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
         }
         if( lv.Pt() > 25 && fabs(lv.Eta()) < 2.1 && OUT::mu_triggerMatch->at(idx) ) {
             OUT::mu_passtrig25_n++;
+            trigmuons.push_back(lv);
         }
     }
 
@@ -1343,6 +1411,9 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
             if( OUT::ph_passSIEIEMedium->at(idx) && OUT::ph_hasPixSeed->at(idx)==0 ) {
                 OUT::ph_medium_n++;
             }
+            if( OUT::ph_passSIEIEMedium->at(idx) && OUT::ph_hasPixSeed->at(idx)==1 ) {
+                OUT::ph_mediumFailEleVeto_n++;
+            }
 
         }
         if( OUT::ph_HoverE12->at(idx) < 0.05 && OUT::ph_passSIEIEMedium->at(idx)  && OUT::ph_passNeuIsoCorrMedium->at(idx) && OUT::ph_passPhoIsoCorrMedium->at(idx) ) { // replace with ph_passHOverEMedium 
@@ -1397,26 +1468,77 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
 
     // fill variables for pT sorted photons
     if( sorted_photons.size() > 0 ) { 
+        unsigned leadidx = sorted_photons[0].second;
+        
+        OUT::dphi_met_leadPhot = photons[leadidx].DeltaPhi( metlv );
         if( sorted_leptons.size() > 0 ) {
-            OUT::leadPhot_leadLepDR = photons[sorted_photons[0].second].DeltaR(leptons[sorted_leptons[0].second.second]);
+            unsigned leadlepidx = sorted_leptons[0].second.second;
+            OUT::leadPhot_leadLepDR = photons[leadidx].DeltaR(leptons[leadlepidx]);
+            OUT::m_leadPhot_leadLep = ( leptons[0] + photons[leadidx] ).M();
             if( sorted_leptons.size() > 1 ) {
-                OUT::leadPhot_sublLepDR = photons[sorted_photons[0].second].DeltaR(leptons[sorted_leptons[1].second.second]);
+                unsigned subllepidx = sorted_leptons[1].second.second;
+                OUT::leadPhot_sublLepDR = photons[leadidx].DeltaR(leptons[subllepidx]);
             }
         }
+        if( trigelectrons.size() > 0 ) {
+            OUT::m_leadPhot_trigEl = ( trigelectrons[0] + photons[leadidx] ).M();
+            OUT::leadPhot_trigElDR = photons[leadidx].DeltaR(trigelectrons[0]);
+        }
+        if( trigmuons.size() > 0 ) {
+            OUT::leadPhot_trigMuDR = photons[leadidx].DeltaR(trigmuons[0]);
+        }
         if( sorted_photons.size() > 1 ) {
-            OUT::ph_phDR    = photons[sorted_photons[0].second].DeltaR(photons[sorted_photons[1].second]);
-            OUT::ph_phDPhi    = photons[sorted_photons[0].second].DeltaPhi(photons[sorted_photons[1].second]);
+            int leadidx = sorted_photons[0].second;
+            int sublidx = sorted_photons[1].second;
+            OUT::leadPhot_sublPhotDR    = photons[leadidx].DeltaR(photons[sublidx]);
+            OUT::leadPhot_sublPhotDPhi    = photons[leadidx].DeltaPhi(photons[sublidx]);
+            OUT::dphi_met_sublPhot = photons[sublidx].DeltaPhi( metlv );
             if( sorted_leptons.size() > 0 ) {
-                OUT::sublPhot_leadLepDR = photons[sorted_photons[1].second].DeltaR(leptons[sorted_leptons[0].second.second]);
+                unsigned leadlepidx = sorted_leptons[0].second.second;
+                OUT::sublPhot_leadLepDR = photons[sublidx].DeltaR(leptons[leadlepidx]);
+                OUT::m_sublPhot_leadLep = ( leptons[leadlepidx] + photons[sublidx] ).M();
                 if( sorted_leptons.size() > 1 ) {
-                    OUT::sublPhot_sublLepDR = photons[sorted_photons[1].second].DeltaR(leptons[sorted_leptons[1].second.second]);
-                    OUT::sublPhot_sublLepDR = photons[sorted_photons[1].second].DeltaR(leptons[sorted_leptons[1].second.second]);
+                    unsigned subllepidx = sorted_leptons[1].second.second;
+                    OUT::sublPhot_sublLepDR = photons[sublidx].DeltaR(leptons[subllepidx]);
                 }
             }
+            if( trigelectrons.size() > 0 ) {
+                OUT::m_sublPhot_trigEl = ( trigelectrons[0] + photons[sublidx] ).M();
+                OUT::m_leadPhot_sublPhot_trigEl = ( trigelectrons[0] + photons[leadidx] + photons[sublidx] ).M();
+                OUT::sublPhot_trigElDR = photons[sublidx].DeltaR(trigelectrons[0]);
+            }
+            if( trigmuons.size() > 0 ) {
+                OUT::sublPhot_trigMuDR = photons[sublidx].DeltaR(trigmuons[0]);
+            }
+
+            OUT::pt_leadph12 = photons[leadidx].Pt();
+            OUT::pt_sublph12 = photons[sublidx].Pt();
+            OUT::eta_leadph12 = photons[leadidx].Eta();
+            OUT::eta_sublph12 = photons[sublidx].Eta();
+            OUT::hasPixSeed_leadph12 = OUT::ph_hasPixSeed->at(leadidx);
+            OUT::hasPixSeed_sublph12 = OUT::ph_hasPixSeed->at(sublidx);
+            OUT::sieie_leadph12 = OUT::ph_sigmaIEIE->at(leadidx);
+            OUT::sieie_sublph12 = OUT::ph_sigmaIEIE->at(sublidx);
+            OUT::chIsoCorr_leadph12 = OUT::ph_chIsoCorr->at(leadidx);
+            OUT::chIsoCorr_sublph12 = OUT::ph_chIsoCorr->at(sublidx);
+            OUT::neuIsoCorr_leadph12 = OUT::ph_neuIsoCorr->at(leadidx);
+            OUT::neuIsoCorr_sublph12 = OUT::ph_neuIsoCorr->at(sublidx);
+            OUT::phoIsoCorr_leadph12 = OUT::ph_phoIsoCorr->at(leadidx);
+            OUT::phoIsoCorr_sublph12 = OUT::ph_phoIsoCorr->at(sublidx);
+            OUT::isEB_leadph12 = OUT::ph_IsEB->at(leadidx);
+            OUT::isEB_sublph12 = OUT::ph_IsEB->at(sublidx);
+            OUT::isEE_leadph12 = OUT::ph_IsEE->at(leadidx);
+            OUT::isEE_sublph12 = OUT::ph_IsEE->at(sublidx);
+            OUT::truthMatchPh_leadph12 = OUT::ph_truthMatch_ph->at(leadidx);
+            OUT::truthMatchPh_sublph12 = OUT::ph_truthMatch_ph->at(sublidx);
+            OUT::truthMatchPhMomPID_leadph12 = OUT::ph_truthMatchMotherPID_ph->at(leadidx);
+            OUT::truthMatchPhMomPID_sublph12 = OUT::ph_truthMatchMotherPID_ph->at(sublidx);
+
         }
     }
     // fill variables for default sorted photons
     if( photons.size() > 0 ) { 
+        OUT::dphi_met_ph1 = photons[0].DeltaPhi( metlv );
         if( sorted_leptons.size() > 0 ) {
             OUT::dr_ph1_leadLep = photons[0].DeltaR(leptons[sorted_leptons[0].second.second]);
             OUT::dphi_ph1_leadLep = photons[0].DeltaPhi(leptons[sorted_leptons[0].second.second]);
@@ -1425,6 +1547,22 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
                 OUT::dr_ph1_sublLep = photons[0].DeltaR(leptons[sorted_leptons[1].second.second]);
                 OUT::dphi_ph1_sublLep = photons[0].DeltaPhi(leptons[sorted_leptons[1].second.second]);
             }
+
+            OUT::mt_lepph1_met = Utils::calc_mt( leptons[0] + photons[0], metlv );
+            OUT::m_lepph1 = ( leptons[0] + photons[0] ).M();
+        }
+
+
+        if( trigelectrons.size() > 0 ) {
+            OUT::dr_ph1_trigEle = photons[0].DeltaR( trigelectrons[0] );
+            OUT::m_trigelph1 = ( photons[0] + trigelectrons[0] ).M();
+        }
+        if( trigmuons.size() > 0 ) {
+            OUT::dr_ph1_trigMu = photons[0].DeltaR( trigmuons[0] );
+        }
+        if( sorted_leptons.size() > 1) {
+            unsigned subllepidx = sorted_leptons[1].second.second;
+            OUT::m_sublLep_ph1 = ( leptons[subllepidx] + photons[0] ).M();
         }
         if( photons.size() > 1 ) {
 
@@ -1432,54 +1570,7 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
             OUT::dphi_ph1_ph2 = photons[0].DeltaPhi(photons[1]);
             OUT::m_ph1_ph2 = (photons[0] + photons[1]).M();
             OUT::pt_ph1_ph2 = (photons[0] + photons[1]).Pt();
-            if( photons[0].Pt() > photons[1].Pt() ) {
-                OUT::pt_leadph12 = photons[0].Pt();
-                OUT::pt_sublph12 = photons[1].Pt();
-                OUT::eta_leadph12 = photons[0].Eta();
-                OUT::eta_sublph12 = photons[1].Eta();
-                OUT::hasPixSeed_leadph12 = OUT::ph_hasPixSeed->at(0);
-                OUT::hasPixSeed_sublph12 = OUT::ph_hasPixSeed->at(1);
-                OUT::sieie_leadph12 = OUT::ph_sigmaIEIE->at(0);
-                OUT::sieie_sublph12 = OUT::ph_sigmaIEIE->at(1);
-                OUT::chIsoCorr_leadph12 = OUT::ph_chIsoCorr->at(0);
-                OUT::chIsoCorr_sublph12 = OUT::ph_chIsoCorr->at(1);
-                OUT::neuIsoCorr_leadph12 = OUT::ph_neuIsoCorr->at(0);
-                OUT::neuIsoCorr_sublph12 = OUT::ph_neuIsoCorr->at(1);
-                OUT::phoIsoCorr_leadph12 = OUT::ph_phoIsoCorr->at(0);
-                OUT::phoIsoCorr_sublph12 = OUT::ph_phoIsoCorr->at(1);
-                OUT::isEB_leadph12 = OUT::ph_IsEB->at(0);
-                OUT::isEB_sublph12 = OUT::ph_IsEB->at(1);
-                OUT::isEE_leadph12 = OUT::ph_IsEE->at(0);
-                OUT::isEE_sublph12 = OUT::ph_IsEE->at(1);
-                OUT::truthMatchPh_leadph12 = OUT::ph_truthMatch_ph->at(0);
-                OUT::truthMatchPh_sublph12 = OUT::ph_truthMatch_ph->at(1);
-                OUT::truthMatchPhMomPID_leadph12 = OUT::ph_truthMatchMotherPID_ph->at(0);
-                OUT::truthMatchPhMomPID_sublph12 = OUT::ph_truthMatchMotherPID_ph->at(1);
-            }
-            else {
-                OUT::pt_leadph12 = photons[1].Pt();
-                OUT::pt_sublph12 = photons[0].Pt();
-                OUT::eta_leadph12 = photons[1].Eta();
-                OUT::eta_sublph12 = photons[0].Eta();
-                OUT::hasPixSeed_leadph12 = OUT::ph_hasPixSeed->at(1);
-                OUT::hasPixSeed_sublph12 = OUT::ph_hasPixSeed->at(0);
-                OUT::sieie_leadph12 = OUT::ph_sigmaIEIE->at(1);
-                OUT::sieie_sublph12 = OUT::ph_sigmaIEIE->at(0);
-                OUT::chIsoCorr_leadph12 = OUT::ph_chIsoCorr->at(1);
-                OUT::chIsoCorr_sublph12 = OUT::ph_chIsoCorr->at(0);
-                OUT::neuIsoCorr_leadph12 = OUT::ph_neuIsoCorr->at(1);
-                OUT::neuIsoCorr_sublph12 = OUT::ph_neuIsoCorr->at(0);
-                OUT::phoIsoCorr_leadph12 = OUT::ph_phoIsoCorr->at(1);
-                OUT::phoIsoCorr_sublph12 = OUT::ph_phoIsoCorr->at(0);
-                OUT::isEB_leadph12 = OUT::ph_IsEB->at(1);
-                OUT::isEB_sublph12 = OUT::ph_IsEB->at(0);
-                OUT::isEE_leadph12 = OUT::ph_IsEE->at(1);
-                OUT::isEE_sublph12 = OUT::ph_IsEE->at(0);
-                OUT::truthMatchPh_leadph12 = OUT::ph_truthMatch_ph->at(1);
-                OUT::truthMatchPh_sublph12 = OUT::ph_truthMatch_ph->at(0);
-                OUT::truthMatchPhMomPID_leadph12 = OUT::ph_truthMatchMotherPID_ph->at(1);
-                OUT::truthMatchPhMomPID_sublph12 = OUT::ph_truthMatchMotherPID_ph->at(0);
-            }
+            OUT::dphi_met_ph2 = photons[1].DeltaPhi( metlv );
 
             if( sorted_leptons.size() > 0 ) {
                 OUT::dr_ph2_leadLep = photons[1].DeltaR( leptons[sorted_leptons[0].second.second]);
@@ -1487,153 +1578,74 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
                 OUT::m_leadLep_ph1_ph2 = ( photons[0] + photons[1] + leptons[sorted_leptons[0].second.second] ).M();
                 OUT::m_leadLep_ph2 = ( photons[1] + leptons[sorted_leptons[0].second.second] ).M();
 
+                OUT::mt_lepph2_met = Utils::calc_mt( leptons[0] + photons[1], metlv );
+                OUT::mt_lepphph_met =Utils::calc_mt( leptons[0] + photons[0] + photons[1], metlv );
+                OUT::pt_lepph1  = ( leptons[0] + photons[0] ).Pt();
+                OUT::m_lepph2 = ( leptons[0] + photons[1] ).M();
+                OUT::m_lepphph = ( leptons[0] + photons[0] + photons[1] ).M();
+
                 if( sorted_leptons.size() > 1 ) {
-                    OUT::dr_ph2_sublLep = photons[1].DeltaR(leptons[sorted_leptons[1].second.second]);
-                    OUT::dphi_ph2_sublLep = photons[1].DeltaPhi(leptons[sorted_leptons[1].second.second]);
+                    unsigned subllepidx = sorted_leptons[1].second.second;
+                    OUT::dr_ph2_sublLep = photons[1].DeltaR(leptons[subllepidx]);
+                    OUT::dphi_ph2_sublLep = photons[1].DeltaPhi(leptons[subllepidx]);
+                    OUT::m_sublLep_ph2 = ( leptons[subllepidx] + photons[1] ).M();
+                    OUT::pt_lepph2  = ( leptons[0] + photons[1] ).Pt();
+                    OUT::pt_lepphph = ( leptons[0] + photons[0] + photons[1] ).Pt();
+                }
+            }
+            if( trigelectrons.size() > 0 ) {
+                OUT::dr_ph2_trigEle = photons[1].DeltaR( trigelectrons[0] );
+                OUT::m_trigelph2 = ( photons[1] + trigelectrons[0] ).M();
+                OUT::m_trigelphph = ( photons[0] + photons[1] + trigelectrons[0] ).M();
+            }
+            if( trigmuons.size() > 0 ) {
+                OUT::dr_ph2_trigMu = photons[1].DeltaR( trigmuons[0] );
+            }
+        }
+    }
+
+    if( leptons.size() > 0 ) {
+        OUT::mt_lep_met = Utils::calc_mt( leptons[0], metlv );
+        OUT::dphi_met_lep1 = leptons[0].DeltaPhi( metlv );
+
+        if( leptons.size() > 1 ) {
+
+            OUT::m_leplep = ( leptons[0] + leptons[1] ).M();
+            OUT::pt_leplep = ( leptons[0] + leptons[1] ).Pt();
+            if (leptons_uncorr.size() > 1) {
+                OUT::m_leplep_uncorr = ( leptons_uncorr[0] + leptons_uncorr[1] ).M();
+            }
+
+            OUT::dphi_met_lep2 = leptons[1].DeltaPhi( metlv );
+
+            if( photons.size() > 0 ) { 
+                OUT::m_leplepph  = (leptons[0] + leptons[1] + photons[0] ).M();
+                OUT::pt_leplepph  = (leptons[0] + leptons[1] + photons[0] ).Pt();
+                if( photons.size() > 1 ) { 
+                    OUT::m_leplepphph  = (leptons[0] + leptons[1] + photons[0] + photons[1] ).M();
+                    OUT::m_leplepph1  = (leptons[0] + leptons[1] + photons[0] ).M();
+                    OUT::m_leplepph2  = (leptons[0] + leptons[1] + photons[1] ).M();
                 }
             }
         }
     }
-    if( photons.size() > 1 ) { 
-        OUT::leadPhot_pt = sorted_photons[0].first;
-        OUT::sublPhot_pt = sorted_photons[1].first;
-
-        int leadidx = sorted_photons[0].second;
-        int sublidx = sorted_photons[1].second;
-
-        OUT::dphi_met_ph1 = photons[leadidx].DeltaPhi( metlv );
-        OUT::dphi_met_ph2 = photons[sublidx].DeltaPhi( metlv );
-
+    if( trigelectrons.size() > 0 ) {
+        OUT::mt_trigel_met = Utils::calc_mt( trigelectrons[0], metlv );
     }
-    else if ( photons.size() == 1 ) {
-        OUT::leadPhot_pt = sorted_photons[0].first;
-        OUT::sublPhot_pt = 0;
-        OUT::dphi_met_ph1 = photons[sorted_photons[0].second].DeltaPhi( metlv );
-        OUT::dphi_met_ph2 = -99; 
+    if( trigmuons.size() > 0 ) {
+        OUT::mt_trigmu_met = Utils::calc_mt( trigmuons[0], metlv );
     }
-
-    if( leptons.size() == 2 ) {
-        OUT::pt_secondLepton = sorted_leptons[1].first;
-    }
-    if( leptons.size() == 3 ) {
-        OUT::pt_thirdLepton = sorted_leptons[2].first;
-    }
-
     if( muons.size() > 1 ) {
         OUT::m_mumu = ( muons[0] + muons[1] ).M();
     }
     if( electrons.size() > 1 ) {
         OUT::m_elel = ( electrons[0] + electrons[1] ).M();
     }
-    if( leptons.size() > 1 ) {
-        OUT::m_leplep = ( leptons[0] + leptons[1] ).M();
-        OUT::pt_leplep = ( leptons[0] + leptons[1] ).Pt();
-        if (leptons_uncorr.size() > 1) {
-            OUT::m_leplep_uncorr = ( leptons_uncorr[0] + leptons_uncorr[1] ).M();
-        }
-
-        int leadidx = sorted_leptons[0].second.second;
-        int sublidx = sorted_leptons[1].second.second;
-
-        OUT::dphi_met_lep1 = leptons[leadidx].DeltaPhi( metlv );
-        OUT::dphi_met_lep2 = leptons[sublidx].DeltaPhi( metlv );
-
-        if( photons.size() > 0 ) { 
-            OUT::m_leplepph  = (leptons[0] + leptons[1] + photons[0] ).M();
-            OUT::pt_leplepph  = (leptons[0] + leptons[1] + photons[0] ).Pt();
-            if( photons.size() > 1 ) { 
-                OUT::m_leplepphph  = (leptons[0] + leptons[1] + photons[0] + photons[1] ).M();
-                OUT::m_leplepph1  = (leptons[0] + leptons[1] + photons[sorted_photons[0].second] ).M();
-                OUT::m_leplepph2  = (leptons[0] + leptons[1] + photons[sorted_photons[1].second] ).M();
-            }
-        }
-    }
-
-    if( leptons.size() == 1 ) {
-       
-        OUT::mt_lep_met = Utils::calc_mt( leptons[0], metlv );
-        OUT::dphi_met_lep1 = leptons[sorted_leptons[0].second.second].DeltaPhi( metlv );
-
-        if( photons.size() > 1 ) { 
-
-            int leadidx = sorted_photons[0].second;
-            int sublidx = sorted_photons[1].second;
-
-            OUT::leadPhot_lepDR = photons[leadidx].DeltaR(leptons[0]);
-            OUT::sublPhot_lepDR = photons[sublidx].DeltaR(leptons[0]);
-            OUT::phPhot_lepDR = (photons[leadidx]+photons[sublidx]).DeltaR(photons[sublidx]);
-            
-            OUT::leadPhot_lepDPhi = photons[leadidx].DeltaPhi(leptons[0]);
-            OUT::sublPhot_lepDPhi = photons[sublidx].DeltaPhi(leptons[0]);
-            OUT::phPhot_lepDPhi = (photons[leadidx]+photons[sublidx]).DeltaPhi(photons[sublidx]);
-            
-            OUT::mt_lepph1_met = Utils::calc_mt( leptons[0] + photons[leadidx], metlv );
-            OUT::mt_lepph2_met = Utils::calc_mt( leptons[0] + photons[sublidx], metlv );
-
-            OUT::mt_lepphph_met =Utils::calc_mt( leptons[0] + photons[leadidx] + photons[sublidx], metlv );
-
-            OUT::m_lepphlead = ( leptons[0] + photons[leadidx] ).M();
-            OUT::m_lepphsubl = ( leptons[0] + photons[sublidx] ).M();
-            OUT::m_lepph1 = ( leptons[0] + photons[0] ).M();
-            OUT::m_lepph2 = ( leptons[0] + photons[1] ).M();
-            OUT::m_lepphph = ( leptons[0] + photons[leadidx] + photons[sublidx] ).M();
-
-            OUT::pt_lepph1 = ( leptons[0] + photons[leadidx] ).Pt();
-            OUT::pt_lepph2 = ( leptons[0] + photons[sublidx] ).Pt();
-            OUT::pt_lepphph = ( leptons[0] + photons[leadidx] + photons[sublidx] ).Pt();
-
-            float zmass = 91.2;
-            float leaddiff = fabs( OUT::m_lepphlead - zmass);
-            float subldiff = fabs( OUT::m_lepphsubl - zmass);
-            if( leaddiff < subldiff ) {
-                OUT::m_minZdifflepph = leaddiff;
-            }
-            else {
-                OUT::m_minZdifflepph = subldiff;
-            }
-        }
-        else if( photons.size() == 1 ) {
-
-            int leadidx = sorted_photons[0].second;
-            OUT::leadPhot_lepDR = photons[leadidx].DeltaR(leptons[0]);
-
-            OUT::mt_lepph1_met = Utils::calc_mt( leptons[0] + photons[leadidx], metlv );
-
-            OUT::m_lepph1 = ( leptons[0] + photons[leadidx] ).M();
-            OUT::m_lepphlead = ( leptons[0] + photons[0] ).M();
-            OUT::pt_lepph1 = ( leptons[0] + photons[leadidx] ).Pt();
-
-        }
-            
-            
-    }
-    if( leptons.size() > 1 ) {
-        if( photons.size() > 1 ) { 
-            int leadidx = sorted_photons[0].second;
-            int sublidx = sorted_photons[1].second;
-            OUT::m_lep2ph1 = ( leptons[1] + photons[leadidx] ).M();
-            OUT::m_lep2ph2 = ( leptons[1] + photons[sublidx] ).M();
-        }
-        else if( photons.size() == 1) {
-            int leadidx = sorted_photons[0].second;
-            OUT::m_lep2ph1 = ( leptons[1] + photons[leadidx] ).M();
-        }
-    }
-
-
-    if( leptons.size() > 2 ) {
-        std::vector< std::pair<float, float> > lep_pair_masses;
-        for( unsigned i = 0; i < leptons.size() ; i++ ) {
-            for( unsigned j = i+1; j < leptons.size() ; j++ ) {
-                lep_pair_masses.push_back( std::make_pair( fabs(91.1876 - (leptons[i]+leptons[j]).M() ),(leptons[i]+leptons[j]).M())  );
-            }
-       }
-        //sort from smallest to greatest
-        std::sort( lep_pair_masses.begin(), lep_pair_masses.end() );
-
-        OUT::m_leplepZ = lep_pair_masses[0].second;
+    if( leptons.size() == 2 ) {
+        OUT::pt_secondLepton = sorted_leptons[1].first;
     }
     if( leptons.size() == 3 ) {
+        OUT::pt_thirdLepton = sorted_leptons[2].first;
         OUT::m_3lep = ( leptons[0] + leptons[1] + leptons[2] ).M();
     }
 
@@ -1641,29 +1653,6 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
         OUT::m_4lep = ( leptons[0] + leptons[1] + leptons[2] + leptons[3] ).M();
     }
 
-    std::vector<TLorentzVector> objects;
-    objects.insert(objects.begin(), leptons.begin(), leptons.end() );
-    objects.insert(objects.begin(), photons.begin(), photons.end() );
-
-    if( objects.size() > 2 ) {
-        std::vector<float> masses;
-        for( unsigned i = 0; i < objects.size(); ++i ) {
-            for( unsigned j = i+1; j < objects.size(); ++j ) {
-                masses.push_back( (objects[i] + objects[j]).M() );
-            }
-        }
-        masses.push_back( (objects[0]+objects[1]+objects[2]).M() );
-
-        std::vector<std::pair<float, int > > sorted_masses;
-        for( unsigned i = 0; i < masses.size() ; ++i ) {
-            sorted_masses.push_back( std::make_pair( std::fabs( 91.1876 - masses[i] ), i ) );
-        }
-        //sort with the smallest first
-        std::sort(sorted_masses.begin(), sorted_masses.end());
-        int nearestZidx = sorted_masses[0].second;
-        OUT::m_nearestToZ = masses[nearestZidx];
-
-    }
     #endif //el_n
     #endif //mu_n
     #endif //ph_n
@@ -1800,6 +1789,7 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     if( !config.PassInt( "cut_nPhPassSIEIEAndEVeto", nPhPassSIEIEAndEVeto) )   keep_event = false;
     if( !config.PassInt( "cut_nPhPassMedium", OUT::ph_medium_n) )   keep_event = false;
     if( !config.PassInt( "cut_nPhPassMediumNoEleVeto", OUT::ph_mediumNoEleVeto_n) )   keep_event = false;
+    if( !config.PassInt( "cut_nPhPassMediumFailEleVeto", OUT::ph_mediumFailEleVeto_n) )   keep_event = false;
     if( OUT::ph_n > 1 ) {
         if( OUT::ph_pt->at(0) > OUT::ph_pt->at(1) ) {
             if( !config.PassBool( "cut_hasPixSeed_leadph12", OUT::ph_hasPixSeed->at(0) ) ) keep_event = false;
@@ -1839,7 +1829,7 @@ bool RunModule::FilterBlind( ModuleConfig & config ) const {
 
     bool pass_blind = true;
     if( !config.PassInt( "cut_nPhPassMedium", OUT::ph_medium_n ) ) pass_blind=false;
-    if( !config.PassInt( "cut_ph_pt_lead", OUT::leadPhot_pt) ) pass_blind=false;
+    if( !config.PassInt( "cut_ph_pt_lead", OUT::pt_leadph12) ) pass_blind=false;
 
     // electron channel mass
     if( OUT::el_passtrig_n > 0 ) {

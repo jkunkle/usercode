@@ -27,23 +27,23 @@ options = parser.parse_args()
 
 # FOR EB_EB+EB_EE+EE_EB, > 40
 acceptances = { 'electron' : {
-                              ('15', '25')  : ufloat( 0.1634, 0.0105 ) , 
-                              ('25', '40')  : ufloat( 0.1611, 0.0124 ) ,
-                              ('40', '70')  : ufloat( 0.2076, 0.0367) ,
-                              ('70', 'max') : ufloat( 0.2580, 0.0459 ) ,
+                              ('15', '25')  : ufloat( 0.1161, 0.0077 ) , 
+                              ('25', '40')  : ufloat( 0.1203, 0.0100 ) ,
+                              ('40', '70')  : ufloat( 0.1572, 0.0272) ,
+                              ('70', 'max') : ufloat( 0.2097, 0.0372 ) ,
                              },
                 'muon'    : { 
-                              ('15', '25')  : ufloat( 0.3093, 0.0125 ) , 
-                              ('25', '40')  : ufloat( 0.2837, 0.0084 ) ,
-                              ('40', '70')  : ufloat( 0.3085, 0.0087 ) ,
-                              ('70', 'max') : ufloat( 0.3240, 0.0093 ) ,
+                              ('15', '25')  : ufloat( 0.2431, 0.0134 ) , 
+                              ('25', '40')  : ufloat( 0.2404, 0.0099 ) ,
+                              ('40', '70')  : ufloat( 0.2659, 0.0105 ) ,
+                              ('70', 'max') : ufloat( 0.2604, 0.0122 ) ,
                              },
 }
 
 def main() :
 
-    file_electron = '%s/pt_leadph12_egg.pickle' %options.baseDir
-    file_muon     = '%s/pt_leadph12_mgg.pickle' %options.baseDir
+    file_electron = '%s/pt_leadph12_elfullhighmt.pickle' %options.baseDir
+    file_muon     = '%s/pt_leadph12_muhighmt.pickle' %options.baseDir
 
     results = {}
 
@@ -78,24 +78,24 @@ def main() :
 
             acceptance = acceptances[ch][(ptmin,ptmax)]
 
-            data = res['detail']['Data']['bins'][str(idx+4)]['val']
+            data = res['detail']['Data']['bins'][str(idx+1)]['val']
 
             bkg = ufloat( 0.0, 0.0 )
             sig = ufloat( 0.0, 0.0 )
 
-            bkg = bkg + res['detail']['Zgg']['bins'][str(idx+4)]['val']
-            bkg = bkg + res['detail']['JetFake']['bins'][str(idx+4)]['val']
-            bkg = bkg + res['detail']['OtherDiPhoton']['bins'][str(idx+4)]['val']
+            bkg = bkg + res['detail']['Zgg']['bins'][str(idx+1)]['val']
+            bkg = bkg + res['detail']['JetFake']['bins'][str(idx+1)]['val']
+            bkg = bkg + res['detail']['OtherDiPhoton']['bins'][str(idx+1)]['val']
 
             if ch=='electron' :
-                bkg = bkg + res['detail']['EleFake']['bins'][str(idx+4)]['val']
+                bkg = bkg + res['detail']['EleFake']['bins'][str(idx+1)]['val']
 
-            sig = sig + res['detail']['Wgg']['bins'][str(idx+4)]['val']
+            sig = sig + res['detail']['Wgg']['bins'][str(idx+1)]['val']
             sig = ufloat( sig.n, math.sqrt( sig.n ) )
 
             #bkg = ufloat( bkg.n, 0.0 )
 
-            #data = ufloat( data.n , 0.0 )
+            data = ufloat( data.n , 0.0 )
 
             data_minus_bkg = data - bkg
 

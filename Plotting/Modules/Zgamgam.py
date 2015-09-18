@@ -18,6 +18,7 @@ def config_samples(samples) :
     samples.AddSample('ZggFSR2'                           , path='job_summer12_ZggFSR2'             ,  isActive=False, useXSFile=True, XSName='Zg' )
     samples.AddSample('Zg2PhFilt'                           , path='job_summer12_Zg2PhFilt'             ,  isActive=False, useXSFile=True, XSName='Zg' )
     samples.AddSample('Zgg'                          , path='job_summer12_Zgg'                  ,  isActive=False, useXSFile=True )
+    samples.AddSample('ZggNLO'                       , path='llaa_nlo_part1_ggNtupleWithSF'                  ,  isActive=False, useXSFile=True )
 
     samples.AddSample('ttjets_1l'                    , path='job_summer12_ttjets_1lPhOlap'            ,  isActive=False, useXSFile=True )
     samples.AddSample('ttjets_2l'                    , path='job_summer12_ttjets_2lPhOlap'            ,  isActive=False, useXSFile=True )
@@ -102,7 +103,7 @@ def config_samples(samples) :
                           )
     samples.AddSampleGroup( 'Zgammagamma', legend_name='Z#gamma#gamma', 
                            input_samples = [
-                                            'Zgg',
+                                            'ZggNLO',
                            ],
                            plotColor=ROOT.kOrange+2,
                            isActive=True,
@@ -117,12 +118,18 @@ def config_samples(samples) :
                                            'tbar_tW'                 ,
                                            'ttW'                     ,
                                            'ttZ'                     ,
-                                           'ttg'                     ,
                                            'ttjets_1l'               ,
                                            'ttjets_2l'               ,
                            ],
                            plotColor=ROOT.kGreen-3,
-                           isActive=False,
+                           isActive=True,
+                          )
+
+    samples.AddSampleGroup( 'ttgamma', legend_name='tt #gamma', 
+                           input_samples = [
+                                           'ttg'               ,
+                           ],
+                           plotColor=ROOT.kGreen+4,
                           )
 
     samples.AddSampleGroup( 'WZ', legend_name='WZ', 
@@ -132,6 +139,12 @@ def config_samples(samples) :
                            plotColor=ROOT.kRed-10,
                           )
 
+    samples.AddSampleGroup( 'VH', legend_name='WH/ZH, m_{H} = 125 GeV', 
+                           input_samples = [
+                                           'WH_ZH_125'                     ,
+                           ],
+                           plotColor=ROOT.kRed+2,
+                          )
     samples.AddSampleGroup( 'MultiBoson', legend_name='Other Multiboson', 
                            input_samples = [
                                            'WWg'                     ,
@@ -153,6 +166,7 @@ def config_samples(samples) :
                                            'ZZ_4tau'                 ,
                            ],
                            plotColor=ROOT.kBlue-10,
+                           isActive=True,
                           )
 
 

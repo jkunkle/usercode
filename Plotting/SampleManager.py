@@ -22,18 +22,8 @@ import subprocess
 import multiprocessing
 import collections
 
-
 ROOT.gROOT.SetBatch(False)
-testarea = str(os.getenv("TestArea"))
-atlasstylesearch=["/afs/cern.ch/user/j/jkunkle/public/AtlasStyle.C",
-                  testarea+"/atlasstyle-00-03-04/AtlasStyle.C",
-                  '/home/jkunkle/Programs/python/AtlasStyle.C']
-for p in atlasstylesearch:
-    if os.path.exists(p):
-        ROOT.gROOT.LoadMacro(p)
-        break
 
-#ROOT.SetAtlasStyle()
 ROOT.gStyle.SetPalette(1)
 
 class Printer() :
@@ -161,7 +151,6 @@ class Sample :
         if readHists :
             for file in files :
                 self.ofiles.append( ROOT.TFile.Open( file ) )
-                print self.ofiles[-1]
 
     def AddGroupSamples( self, samples ) :
         """ Add subsamples to this sample """
@@ -327,20 +316,34 @@ class DrawConfig :
             atlaslabel.SetText(0.35, 0.85, 'CMS Internal')
             labels.append(atlaslabel)
 
-        elif labelStyle=='fancy' :
+        elif labelStyle.count('fancy') :
+            statText = 'Internal'
+            if labelStyle.count('prelim') :
+                statText = 'Preliminary'
+
             statlabel  = ROOT.TLatex()
             rootslabel = ROOT.TLatex()
+            cmslabel = ROOT.TLatex()
+
+            rootslabel.SetTextFont(42)
+            cmslabel.SetTextFont( 61 )
+            statlabel.SetTextFont(52)
 
             statlabel  .SetNDC()
             rootslabel .SetNDC()
+            cmslabel   .SetNDC()
 
             statlabel  .SetTextSize(0.045)
             rootslabel .SetTextSize(0.045)
+            cmslabel  .SetTextSize(0.055)
 
-            statlabel.SetText( 0.15, 0.93, '#font[132]{CMS Internal}' )
-            rootslabel.SetText(0.65, 0.93, '#font[132]{#sqrt{s} = 8 TeV, L = 19.4 fb^{-1} }' )
+            cmslabel.SetText( 0.18, 0.87, 'CMS' )
+            statlabel.SetText( 0.18, 0.82, statText )
+            #rootslabel.SetText(0.65, 0.93, '#font[132]{#sqrt{s} = 8 TeV, L = 19.4 fb^{-1} }' )
+            rootslabel.SetText(0.73, 0.93, '19.4 fb^{-1} (8 TeV)' )
 
             labels.append(statlabel)
+            labels.append(cmslabel)
             labels.append(rootslabel)
 
         extra_label = self.label_config.get( 'extra_label', None )
@@ -798,6 +801,7 @@ class SampleManager :
         self.legendWiden           = 1.0
         self.legendTranslateX      = 0.0
         self.legendTranslateY      = 0.0
+        self.entryWidth            = 0.06
         # Save any plot decorations such as labels here
         # This guarantees that the objects stay in memory
         self.curr_decorations      = []
@@ -920,6 +924,7 @@ class SampleManager :
         config['legendWiden']      = kwargs.pop('legendWiden'      , 1.0)
         config['legendTranslateX'] = kwargs.pop('legendTranslateX' , 0.0)
         config['legendTranslateY'] = kwargs.pop('legendTranslateY' , 0.0)
+        config['entryWidth']       = kwargs.pop('entryWidth' , 0.06)
 
         for key, val in kwargs.iteritems() :
             config[key] = val
@@ -1061,6 +1066,7 @@ class SampleManager :
         self.legendWiden=1.0
         self.legendTranslateX=0.0
         self.legendTranslateY=0.0
+        self.entryWidth = 0.052
 
         self.transient_data= {}
         self.stored_command=''
@@ -1772,7 +1778,6 @@ class SampleManager :
                 print 'Creating directory %s' %outputDir
                 os.makedirs(outputDir)
 
-            print filename
             filenamesplit = filename.split('.')
             if len( filenamesplit ) > 1 :
                 filenamestrip = '.'.join( filenamesplit[:-1] )
@@ -2294,7 +2299,7 @@ class SampleManager :
                 if samp.hist is not None :
                     samp.hist.Rebin(rebin)
 
-        draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel} , label_config=label_config, legend_config=legend_config)
+        draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel, 'ymin' : ymin, 'ymax' : ymax} , label_config=label_config, legend_config=legend_config)
         self.MakeStack(draw_config )
 
 
@@ -2764,8 +2769,10 @@ class SampleManager :
             slist = self.get_samples( name=sample )
             if not slist :
                 print 'Could not retrieve sample, %s' %sample
+                return False
             if len(slist) > 1 :
                 print 'Located multiple samples with name %s' %sample
+                return False
             sample = slist[0]
 
         sampname = sample.name
@@ -2835,7 +2842,7 @@ class SampleManager :
 
             self.group_sample( sample, isModel=isModel )
 
-            return
+            return True
 
         else :
             if sample.chain is not None :
@@ -2850,6 +2857,8 @@ class SampleManager :
 
             if sample.hist is not None :
                 self.format_hist( sample )
+
+            return True
 
         # Group draw parallelization
         # wait for draws to finish
@@ -4825,14 +4834,16 @@ class SampleManager :
         legendCompress   = legend_config.get('legendCompress', self.legendCompress )
 
         legendLoc        = legend_config.get('legendLoc', self.legendLoc )
+
+        entryWidth       = legend_config.get('entryWidth', self.entryWidth )
         
 
         if legendLoc == 'TopLeft' :
-            legend_limits = { 'x1' : 0.2+legendTranslateX, 'y1' : 0.88-legendCompress*0.052*nentries+legendTranslateY, 'x2' : 0.5*legendWiden+legendTranslateX, 'y2' : 0.88+legendTranslateY }
+            legend_limits = { 'x1' : 0.2+legendTranslateX, 'y1' : 0.88-legendCompress*entryWidth*nentries+legendTranslateY, 'x2' : 0.5*legendWiden+legendTranslateX, 'y2' : 0.88+legendTranslateY }
         elif legendLoc == 'Double' :
-            legend_limits = { 'x1' : 0.15+legendTranslateX, 'y1' : 0.90-legendCompress*0.052*nentries+legendTranslateY, 'x2' : 0.65*legendWiden+legendTranslateX, 'y2' : 0.85+legendTranslateY }
+            legend_limits = { 'x1' : 0.15+legendTranslateX, 'y1' : 0.90-legendCompress*entryWidth*nentries+legendTranslateY, 'x2' : 0.65*legendWiden+legendTranslateX, 'y2' : 0.85+legendTranslateY }
         else :
-            legend_limits = { 'x1' : 0.9-0.25*legendWiden+legendTranslateX, 'y1' : 0.90-legendCompress*0.052*nentries+legendTranslateY, 'x2' : 0.90+legendTranslateX, 'y2' : 0.90+legendTranslateY }
+            legend_limits = { 'x1' : 0.9-0.25*legendWiden+legendTranslateX, 'y1' : 0.90-legendCompress*entryWidth*nentries+legendTranslateY, 'x2' : 0.90+legendTranslateX, 'y2' : 0.90+legendTranslateY }
 
         # modify for different canvas size
         if draw_config.doRatio():

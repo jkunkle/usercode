@@ -24,8 +24,8 @@ base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 # end of the output jobs
 # ----------------------------
 
-suffix='PhOlap'
-#suffix='2PhFilt'
+#suffix='PhOlap'
+suffix='2PhFilt'
 
 jobs = [
         #(base, 'job_summer12_DYJetsToLL'),
@@ -33,7 +33,7 @@ jobs = [
         #(base, 'job_summer12_ttjets_1l'),
         #(base, 'job_summer12_ttjets_2l'),
 
-        (base, 'job_summer12_Wg'),
+        #(base, 'job_summer12_Wg'),
 
         #(base, 'job_summer12_Zg'),
         #(base, 'job_summer12_ZgWithSF'),
@@ -76,31 +76,31 @@ jobs = [
         #(base, 'job_summer12_ttZ'),
         #(base, 'job_jfaulkne_WZA'),
 
-        #(base, 'job_summer12_WH_ZH_125WithSF'),
-        #(base, 'job_summer12_t_sWithSF'),
-        #(base, 'job_summer12_t_tWithSF'),
-        #(base, 'job_summer12_t_tWWithSF'),
-        #(base, 'job_summer12_tbar_sWithSF'),
-        #(base, 'job_summer12_tbar_tWithSF'),
-        #(base, 'job_summer12_tbar_tWWithSF'),
-        #(base, 'job_summer12_WWWWithSF'),
-        #(base, 'job_summer12_WWZWithSF'),
-        #(base, 'job_summer12_WWgWithSF'),
-        #(base, 'job_summer12_WZZWithSF'),
-        #(base, 'job_summer12_ZZZWithSF'),
-        #(base, 'job_summer12_ZZ_2e2muWithSF'),
-        #(base, 'job_summer12_ZZ_2e2tauWithSF'),
-        #(base, 'job_summer12_ZZ_2l2nuWithSF'),
-        #(base, 'job_summer12_ZZ_2l2qWithSF'),
-        #(base, 'job_summer12_ZZ_2mu2tauWithSF'),
-        #(base, 'job_summer12_ZZ_2q2nuWithSF'),
-        #(base, 'job_summer12_ZZ_4eWithSF'),
-        #(base, 'job_summer12_ZZ_4muWithSF'),
-        #(base, 'job_summer12_ZZ_4tauWithSF'),
-        #(base, 'job_summer12_ttgWithSF'),
-        #(base, 'job_summer12_ttWWithSF'),
-        #(base, 'job_summer12_ttZWithSF'),
-        #(base, 'job_jfaulkne_WZAWithSF'),
+        (base, 'job_summer12_WH_ZH_125WithSF'),
+        (base, 'job_summer12_t_sWithSF'),
+        (base, 'job_summer12_t_tWithSF'),
+        (base, 'job_summer12_t_tWWithSF'),
+        (base, 'job_summer12_tbar_sWithSF'),
+        (base, 'job_summer12_tbar_tWithSF'),
+        (base, 'job_summer12_tbar_tWWithSF'),
+        (base, 'job_summer12_WWWWithSF'),
+        (base, 'job_summer12_WWZWithSF'),
+        (base, 'job_summer12_WWgWithSF'),
+        (base, 'job_summer12_WZZWithSF'),
+        (base, 'job_summer12_ZZZWithSF'),
+        (base, 'job_summer12_ZZ_2e2muWithSF'),
+        (base, 'job_summer12_ZZ_2e2tauWithSF'),
+        (base, 'job_summer12_ZZ_2l2nuWithSF'),
+        (base, 'job_summer12_ZZ_2l2qWithSF'),
+        (base, 'job_summer12_ZZ_2mu2tauWithSF'),
+        (base, 'job_summer12_ZZ_2q2nuWithSF'),
+        (base, 'job_summer12_ZZ_4eWithSF'),
+        (base, 'job_summer12_ZZ_4muWithSF'),
+        (base, 'job_summer12_ZZ_4tauWithSF'),
+        (base, 'job_summer12_ttgWithSF'),
+        (base, 'job_summer12_ttWWithSF'),
+        (base, 'job_summer12_ttZWithSF'),
+        (base, 'job_jfaulkne_WZAWithSF'),
 
         #(base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_WAA_ISR'),
@@ -116,20 +116,18 @@ jobs = [
 #module_mc   = 'ConfLepGammaFilter.py'
 #module_data = 'ConfLepGammaFilter_Data.py'
 #output_name = 'LepGamma_2013_11_04'
-#sub_base = ['LepGammaGammaFinalElUnblindAll_2015_04_12', 'LepGammaGammaFinalMuUnblindAll_2015_04_12', 'LepGammaGammaNoPhIDInvPixSeedLead_2015_04_12', 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_04_12', 'LepLepGammaNoPhID_2015_04_11', 'LepGammaGamma_NoPhID_2015_04_11', 'LepGammaGammaNomUnblindAllNoEleVeto_2015_04_12', 'LepGammaNoPhID_2015_04_11']
-#sub_base = ['LepGammaGammaNoEleVetoUnblindLowPt_2015_01_14']
-#sub_base = ['LepGammaGammaFinalElZCR_2015_07_02', 'LepGammaGammaFinalElNoZCutInvPixLead_2015_07_02', 'LepGammaGammaFinalElNoZCutInvPixSubl_2015_07_02']
-sub_base = ['LepGammaGammaNoPhID_2015_07_30', 'LepLepGammaNoPhID_2015_07_30', 'LepGammaNoPhID_2015_07_30']
+#sub_base = ['LepLepGammaGammaFinalMuMuUnblindAll_2015_08_01','LepLepGammaGammaFinalElElUnblindAll_2015_08_01']
+sub_base = ['LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_09_09']
 
 #sub_base = ['LepGammaGammaNoPhID_2014_11_20',]
 
 check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s/%(sub_base)s/%(job)s --filteredDS %(base)s/%(sub_base)s/%(job)s%(suffix)s --treeNameOrig ggNtuplizer/EventTree --histNameFilt ggNtuplizer/filter --fileKeyOrig tree.root --fileKeyFilt tree.root'
 
 if options.batch :
-    command_base = 'python scripts/filter.py  --filesDir %(base)s/%(sub_base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(sub_base)s/%(job)s%(suffix)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --batch --nFilesPerJob 1'
+    command_base = 'python scripts/filter.py  --filesDir %(base)s/%(sub_base)s/%(job)s --fileKey tree.root --outputDir %(base)s/%(sub_base)s/%(job)s%(suffix)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --batch --nFilesPerJob 1'
 
 else :
-    command_base = 'python scripts/filter.py  --filesDir %(base)s/%(sub_base)s/%(job)s --fileKey tree.root --outputDir /afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/%(sub_base)s/%(job)s%(suffix)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc %(nproc)d '
+    command_base = 'python scripts/filter.py  --filesDir %(base)s/%(sub_base)s/%(job)s --fileKey tree.root --outputDir %(base)s/%(sub_base)s/%(job)s%(suffix)s --outputFile tree.root --treeName ggNtuplizer/EventTree --module scripts/%(module)s --nFilesPerJob 1 --nproc %(nproc)d '
 
 if options.resubmit :
     command_base += ' --resubmit'

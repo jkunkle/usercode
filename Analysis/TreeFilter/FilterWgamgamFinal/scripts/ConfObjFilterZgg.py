@@ -66,8 +66,8 @@ def config_analysis( alg_list, args ) :
     #print '************************************NO ELE ID**********************'
     print 'ELECTRON PT CUT = 10'
     #alg_list.append( get_electron_filter( None, ptcut=10 ) )
-    alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=10, doPhOlapRm=False) )
-    #alg_list.append( get_electron_filter( 'loose', ptcut=10, doPhOlapRm=False ) )
+    #alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=10, doPhOlapRm=False) )
+    alg_list.append( get_electron_filter( 'loose', ptcut=10, doPhOlapRm=False ) )
     #alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=5 ) )
     print 'SAVING MVA ELECTRONS'
 
@@ -83,8 +83,7 @@ def config_analysis( alg_list, args ) :
     print 'PHOTON PT CUT = 15'
     #alg_list.append( get_photon_filter( id=None, eVeto='hasPixSeed', ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False, doMuOlapRm=False, doPhOlapRm=False) )
     alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=True) )
-    #alg_list.append( get_photon_filter( id='medium', eVeto=None, eVetoVal='False', ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False) )
-    #alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.4) )
+    #alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.1) )
     print 'SAVING NOID WITH EVETO  PHOTONS, WITH OLAP REMOVAL'
 
     #----------------------------------------
@@ -188,7 +187,7 @@ def get_electron_filter ( id, ptcut=10, doPhOlapRm=False ) :
 
     return filt
 
-def get_photon_filter( id=None, eVeto=None, eVetoVal='False', ptcut=10, sort_by_id='false', doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.4 ) :
+def get_photon_filter( id=None, eVeto=None, ptcut=10, sort_by_id='false', doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.4 ) :
 
     if sort_by_id == True :
         sort_by_id = 'true'
@@ -221,7 +220,7 @@ def get_photon_filter( id=None, eVeto=None, eVetoVal='False', ptcut=10, sort_by_
     if id is not None :
         setattr( filt, 'cut_ph_%s' %id, ' == True' )
     if eVeto is not None :
-        setattr( filt, 'cut_ph_%s' %eVeto, ' == %s ' %eVetoVal )
+        setattr( filt, 'cut_ph_%s' %eVeto, ' == False ' )
 
     filt.sort_by_id = sort_by_id
 

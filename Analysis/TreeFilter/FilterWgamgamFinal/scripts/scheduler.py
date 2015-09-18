@@ -11,12 +11,7 @@ options = p.parse_args()
 if not options.run and not options.check :
     options.run = True
 
-#base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2014_12_05'
-#base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2015_04_05'
 base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2015_07_28'
-#base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputNoTrig_2015_04_05'
-#base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutputDiMuon_2014_11_27'
-#base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2014_10_30'
 jobs_data = [
         #(base, 'job_electron_2012a_Jan22rereco'),
         #(base, 'job_electron_2012b_Jan22rereco'),
@@ -77,11 +72,14 @@ jobs_mc = [
         (base, 'job_summer12_ttjets_1l'),
         (base, 'job_summer12_ttjets_2l'),
 
-        (base, 'job_summer12_Zgg'),
-        (base, 'job_summer12_WAA_ISR'),
-        (base, 'job_summer12_Wgg_FSR'),
+        (base, 'llaa_nlo_part1_ggNtuple' ),
+        #(base, 'job_summer12_Zgg'),
+        #(base, 'job_summer12_WAA_ISR'),
+        #(base, 'job_summer12_Wgg_FSR'),
         (base, 'job_NLO_WAA_ISR'),
         (base, 'job_NLO_WAA_FSR'),
+        (base, 'job_NLO_WAA_ISR_PtG500MeV'),
+        (base, 'job_NLO_WAA_FSR_PtG500MeV'),
         (base, 'job_summer12_ttg'),
         (base, 'job_summer12_WH_ZH_125'),
         (base, 'job_summer12_WWW'),
@@ -141,28 +139,49 @@ top_configs = [
                 #  'module'      : 'ConfObjFilter.py',
                 #  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 1\', \'cut_SingleLepTrig\' : \' == True \' }',
                 #  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 1\', \'cut_SingleLepTrig\' : \' == True \', \'isData\' : \' == True\' }',
-                #  'output_name' : 'LepGammaGammaNoPhID_2015_07_30',
+                #  'output_name' : 'LepGammaGammaNoPhID_2015_09_09',
                 #  'tag'         : 'lgg',
                 #},
                 #{ 
                 #  'module'      : 'ConfObjFilter.py',
-                #  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\', \'cut_SingleLepTrig\' : \' == True \' }',
-                #  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\', \'cut_SingleLepTrig\' : \' == True \', \'isData\' : \' == True\' }',
-                #  'output_name' : 'LepGammaNoPhID_2015_07_30',
+                #  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\', \'cut_SingleLepTrig\' : \' == True \', \'cut_nNotOverlap\' : \' > 0 \' }',
+                #  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPh\' : \'> 0\', \'cut_SingleLepTrig\' : \' == True \', \'cut_nNotOverlap\' : \' > 0 \', \'isData\' : \' == True\' }',
+                #  'output_name' : 'LepGammaNoPhID_2015_09_09',
+                #  'tag'         : 'lglocal',
+                #},
+                #{ 
+                #  'module'      : 'ConfObjFilter.py',
+                #  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPhPassMedium\' : \'> 0\', \'cut_SingleLepTrig\' : \' == True \', \'cut_nNotOverlap\' : \' > 0 \' }',
+                #  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nPhPassMedium\' : \'> 0\', \'cut_SingleLepTrig\' : \' == True \', \'cut_nNotOverlap\' : \' > 0 \', \'isData\' : \' == True\' }',
+                #  'output_name' : 'LepGammaMediumPhIDWithEleOlapPassPixSeedVeto_2015_09_03',
+                #  'tag'         : 'lg',
+                #},
+                #{ 
+                #  'module'      : 'ConfObjFilter.py',
+                #  'args_mc'     : '{ \'cut_nPhPassMediumNoEleVeto\' : \'> 1\', \'cut_SingleLepTrig\' : \' == True \' }',
+                #  'args_data'   : '{ \'cut_nPhPassMediumNoEleVeto\' : \'> 1\', \'cut_SingleLepTrig\' : \' == True \', \'isData\' : \' == True\' }',
+                #  'output_name' : 'GammaGammaMediumPhID_2015_09_14',
+                #  'tag'         : 'lg',
+                #},
+                #{ 
+                #  'module'      : 'ConfObjFilterTemp.py',
+                #  'args_mc'     : '{ \'cut_nPhPassMedium\' : \'> 1\', \'cut_SingleLepTrig\' : \' == True \', \'cut_nNotOverlap\' : \' > 0 \' }',
+                #  'args_data'   : '{ \'cut_nPhPassMediumNoEleVeto\' : \'> 1\', \'cut_SingleLepTrig\' : \' == True \', \'cut_nNotOverlap\' : \' > 0 \', \'isData\' : \' == True\' }',
+                #  'output_name' : 'GammaGammaMediumPhIDWithEleOlap_2015_09_08',
                 #  'tag'         : 'lg',
                 #},
                 #{ 
                 # 'module'      : 'ConfObjFilter.py',
                 #  'args_mc'     : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 1\', \'cut_nPh\' : \'> 0\', \'cut_SingleLepTrig\' : \' == True \' }',
                 #  'args_data'   : '{ \'cut_nLepTrigMatch\' : \' > 0 \', \'cut_nLep\' : \'> 1\', \'cut_nPh\' : \'> 0\', \'cut_SingleLepTrig\' : \' == True \', \'isData\' : \' == True\' }',
-                #  'output_name' : 'LepLepGammaNoPhID_2015_07_30',
+                #  'output_name' : 'LepLepGammaNoPhID_2015_09_09',
                 #  'tag'         : 'llg',
                 #},
                 { 
-                  'module'      : 'ConfObjFilter.py',
+                  'module'      : 'ConfObjFilterZgg.py',
                   'args_mc'     : '{ \'cut_nLep10\' : \'> 1\',\'cut_nLep20\' : \'> 0\', \'cut_nPh\' : \'> 1\', \'cut_DiLepTrig\' : \' == True \' }',
                   'args_data'   : '{ \'cut_nLep10\' : \'> 1\',\'cut_nLep20\' : \'> 0\', \'cut_nPh\' : \'> 1\', \'cut_DiLepTrig\' : \' == True \', \'isData\' : \' == True\' }',
-                  'output_name' : 'LepLepGammaGammaNoPhID_2015_07_30',
+                  'output_name' : 'LepLepGammaGammaNoPhID_2015_09_18',
                   'tag'         : 'llgg',
                 },
                 #{ 

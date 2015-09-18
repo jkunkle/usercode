@@ -5,7 +5,9 @@ Interactive script to plot data-MC histograms out of a set of trees.
 # Parse command-line options
 from argparse import ArgumentParser
 p = ArgumentParser()
-p.add_argument('--baseDir',      default=None,           dest='baseDir',         help='Path to base directory containing all ntuples')
+p.add_argument('--baseDir',      default=None,           dest='baseDir',         help='Path to base directory')
+p.add_argument('--dirNom',       default=None,           dest='dirNom',         help='directory containing all ntuples with inverted selection')
+p.add_argument('--dirInv',       default=None,           dest='dirInv',         help='directory containing all ntuples with nominal selection')
 p.add_argument('--fileName',     default='ntuple.root',  dest='fileName',        help='( Default ntuple.root ) Name of files')
 p.add_argument('--treeName',     default='events'     ,  dest='treeName',        help='( Default events ) Name tree in root file')
 p.add_argument('--samplesConf',  default=None,           dest='samplesConf',     help=('Use alternate sample configuration. '
@@ -23,16 +25,24 @@ p.add_argument('--quiet',     default=False,action='store_true',   dest='quiet',
 p.add_argument('--ptmin',     default=0, type=int,   dest='ptmin',         help='Only use the pt bin starting at ptmin')
 p.add_argument('--etabinmin',     default=-1, type=int,   dest='etabinmin',         help='Only use the eta bin starting at etabinmin')
 
-p.add_argument('--bw_cms_fine',     default=False, action='store_true',  dest='bw_cms_fine', help='Fit Signal Breit wigner convoluted with crysal ball and background CMS shape, fine eta bins')
-p.add_argument('--bw_cms_coarse',     default=False, action='store_true',  dest='bw_cms_coarse', help='Fit Signal Breit wigner convoluted with crysal ball and background CMS shape, coarse eta bins')
+p.add_argument('--bw_cms_fine'       ,     default=False, action='store_true',  dest='bw_cms_fine', help='Fit Signal Breit wigner convoluted with crysal ball and background CMS shape, fine eta bins')
+p.add_argument('--bw_cms_coarse'     ,     default=False, action='store_true',  dest='bw_cms_coarse', help='Fit Signal Breit wigner convoluted with crysal ball and background CMS shape, coarse eta bins')
 
-p.add_argument('--bw_exp_fine',     default=False, action='store_true',  dest='bw_exp_fine', help='Fit Signal Breit wigner convoluted with crysal ball and background exp shape, fine eta bins')
-p.add_argument('--bw_exp_coarse',     default=False, action='store_true',  dest='bw_exp_coarse', help='Fit Signal Breit wigner convoluted with crysal ball and background exp shape, coarse eta bins')
+p.add_argument('--bw_exp_fine'       ,     default=False, action='store_true',  dest='bw_exp_fine', help='Fit Signal Breit wigner convoluted with crysal ball and background exp shape, fine eta bins')
+p.add_argument('--bw_exp_coarse'     ,     default=False, action='store_true',  dest='bw_exp_coarse', help='Fit Signal Breit wigner convoluted with crysal ball and background exp shape, coarse eta bins')
 
-p.add_argument('--ndkeys_cms_fine',     default=False, action='store_true',  dest='ndkeys_cms_fine', help='Fit Signal MC Gaussian smeared and background CMS shape, fine eta bins')
-p.add_argument('--ndkeys_cms_coarse',     default=False, action='store_true',  dest='ndkeys_cms_coarse', help='Fit Signal MC Gaussian smeared and background CMS shape, coarse eta bins')
-p.add_argument('--ndkeys_exp_fine',     default=False, action='store_true',  dest='ndkeys_exp_fine', help='Fit Signal MC Gaussian smeared and background Exponential shape, fine eta bins')
-p.add_argument('--ndkeys_exp_coarse',     default=False, action='store_true',  dest='ndkeys_exp_coarse', help='Fit Signal MC Gaussian smeared and background Exponential shape, coarse eta bins')
+p.add_argument('--ndkeys_cms_fine'   ,     default=False, action='store_true',  dest='ndkeys_cms_fine', help='Fit Signal MC Gaussian smeared and background CMS shape, fine eta bins')
+p.add_argument('--ndkeys_cms_coarse' ,     default=False, action='store_true',  dest='ndkeys_cms_coarse', help='Fit Signal MC Gaussian smeared and background CMS shape, coarse eta bins')
+p.add_argument('--ndkeys_exp_fine'   ,     default=False, action='store_true',  dest='ndkeys_exp_fine', help='Fit Signal MC Gaussian smeared and background Exponential shape, fine eta bins')
+p.add_argument('--ndkeys_exp_coarse' ,     default=False, action='store_true',  dest='ndkeys_exp_coarse', help='Fit Signal MC Gaussian smeared and background Exponential shape, coarse eta bins')
+p.add_argument('--mc_cms_fine'       ,     default=False, action='store_true',  dest='mc_cms_fine', help='Fit Signal MC and background CMS shape, fine eta bins')
+p.add_argument('--mc_cms_coarse'     ,     default=False, action='store_true',  dest='mc_cms_coarse', help='Fit Signal MC and background CMS shape, coarse eta bins')
+p.add_argument('--mc_exp_fine'       ,     default=False, action='store_true',  dest='mc_exp_fine', help='Fit Signal MC and background Exponential shape, fine eta bins')
+p.add_argument('--mc_exp_coarse'     ,     default=False, action='store_true',  dest='mc_exp_coarse', help='Fit Signal MC and background Exponential shape, coarse eta bins')
+p.add_argument('--mc_mc_fine'       ,     default=False, action='store_true',  dest='mc_mc_fine', help='Fit Signal MC and Background MC shape, fine eta bins')
+p.add_argument('--mc_mc_coarse'       ,     default=False, action='store_true',  dest='mc_mc_coarse', help='Fit Signal MC and Background MC shape, coarse eta bins')
+p.add_argument('--ndkeys_ndkeys_fine'       ,     default=False, action='store_true'  ,  dest='ndkeys_ndkeys_fine', help='Fit Signal MC and Background MC shape, fine eta bins')
+p.add_argument('--ndkeys_ndkeys_coarse'       ,     default=False, action='store_true',  dest='ndkeys_ndkeys_coarse', help='Fit Signal MC and Background MC shape, coarse eta bins')
 p.add_argument('--useCsev',     default=False, action='store_true',  dest='useCsev', help='Use conversion save electron veto instead of pixel seed veto')
 p.add_argument('--useTAndP',     default=False, action='store_true',  dest='useTAndP', help='Use tag and probe ntuples')
 p.add_argument('--mc',     default=False, action='store_true',  dest='mc', help='Use counting method on the MC')
@@ -60,6 +70,7 @@ from SampleManager import SampleManager
 from SampleManager import Sample
 from data_pair import data_pair
 from RooFitBase import fit_model_to_data, draw_fitted_results, SetHistContentBins
+import FitDefs
 
 
 if options.outputDir is not None :
@@ -90,14 +101,14 @@ def get_ratio_draw_commands( isConv=None, useCsev=False, useTAndP=False ) :
     if isConv==False :
 
         return { 
-                 'nom'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==0 && !ph_isConv[0]',
-                 'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==1 && !ph_isConv[0]',
+                 'nom'  :'passTrig_ele27WP80 && el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==0 && !ph_isConv[0]',
+                 'inv'  :'passTrig_ele27WP80 && el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==1 && !ph_isConv[0]',
                }
     elif isConv==True :
 
         return { 
-                 'nom'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==0 && ph_isConv[0]',
-                 'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==1 && ph_isConv[0]',
+                 'nom'  :'passTrig_ele27WP80 && el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==0 && ph_isConv[0]',
+                 'inv'  :'passTrig_ele27WP80 && el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==1 && ph_isConv[0]',
                }
     elif useCsev :
 
@@ -114,21 +125,20 @@ def get_ratio_draw_commands( isConv=None, useCsev=False, useTAndP=False ) :
     else :
         if useTAndP:
             return { 
-                     'nom'  :'probe_isPhoton && probe_hasPixSeed == 0 ',
-                     'inv'  :'probe_isPhoton && probe_hasPixSeed == 1 ',
+                     'nom'  :'probe_hasPixSeed == 0 ',
+                     'inv'  :'probe_hasPixSeed == 1 ',
                    }
         else :
 
             return { 
-                     'nom'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==0 ',
-                     'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_hasPixSeed[0]==1 ',
+                     'nom'  :'el_passtrig_n==1 && el_n==1 && ph_medium_n==1  && ph_hasPixSeed[0]==0 && dr_ph1_trigEle > 0.4',
+                     'inv'  :'el_passtrig_n==1 && el_n==1 && ph_mediumFailEleVeto_n==1  && ph_hasPixSeed[0]==1  && dr_ph1_trigEle > 0.4 ',
                      #'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] ',
                    }
 
 
-def get_fit_defaults( histname, useGaussSig=False, useLandauSig=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False ) :
+def get_fit_defaults( histname, useGaussSig=False, useLandauSig=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useMCBkg=False, useTAndP=False ) :
 
-    defaults = {}
 
     bkg='cmsshape'
 
@@ -146,424 +156,36 @@ def get_fit_defaults( histname, useGaussSig=False, useLandauSig=False, usePolyBk
         bkg = 'cheby'
     if useBernsteinBkg:
         bkg = 'bernstein'
+    if useBernsteinBkg:
+        bkg = 'mc'
 
-    defaults['bw_cmsshape'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 7, 'cms_alpha' : 67.3, 'cms_beta' : 0.11, 'cms_gamma' : 0.05, 'cms_peak' : 91.2, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 40, 'fit_max' : 160 }
-    defaults['Gauss_cmsshape'] = { 'mean' : 0, 'sigma' : 2.495, 'cms_alpha' : 67.3, 'cms_beta' : 0.11, 'cms_gamma' : 0.05, 'cms_peak' : 91.2, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3  }
-    defaults['Landau_cmsshape'] = { 'mean' : 90, 'sigma' : 10, 'cms_alpha' : 67.3, 'cms_beta' : 0.11, 'cms_gamma' : 0.05, 'cms_peak' : 91.2, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 40, 'fit_max' : 180 }
+    if useTAndP :
+        bkg += '_tandp'
 
-    #defaults['bw_poly'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 7, 'poly_linear' : -0.008, 'poly_quadratic' : -0.00002, 'poly_cubic' : 0.0000002,  'poly_quartic' : 0.001, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 70, 'fit_max' : 160 }
-    defaults['bw_poly'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 7, 'poly_linear' : 10, 'poly_quadratic' : -0.05, 'poly_cubic' : -0.00001,  'poly_quartic' : 0.0000001, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 70, 'fit_max' : 160 }
-    defaults['Gauss_poly'] = { 'mean' : 0, 'sigma' : 2.495, 'poly_linear' : 1, 'poly_quadratic' : 4, 'poly_cubic' : 3, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 70, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3  }
-
-    defaults['bw_exp'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 7, 'exp_width' : 0.05, 'exp_start' : 80, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 160 }
-    defaults['Gauss_exp'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : 0.05, 'exp_start' : 80, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-
-    defaults['bw_cheby'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 7, 'a0' : -0.05, 'a1' : -0.05, 'a2' : 0.5, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 160 }
-    defaults['Gauss_cheby'] = { 'mean' : 0, 'sigma' : 2.495, 'a0' : 0.01, 'a1' : -0.1, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
-
-    defaults['bw_bernstein'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 7, 'b0' : 1, 'b1' : 1, 'b2' : 2, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 160 }
-    defaults['Gauss_bernstein'] = { 'mean' : 0, 'sigma' : 2.495, 'b0' : 1, 'b1' : 1, 'b2' : 1, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
-
-    alts = {'bw_cmsshape' : {}, 'Gauss_cmsshape' : {}, 'bw_poly' : {}, 'Gauss_poly' : {}, 'bw_exp' : {}, 'Gauss_exp' : {}, 'bw_cheby' : {} , 'Gauss_cheby' : { }, 'bw_bernstein' : {}, 'Gauss_bernstein' : {}, 'Landau_cmsshape' : {} }
-
-    alts['bw_cmsshape']['fit_inv_eta_1.57-2.50_pt_25-40']     = { 'Bias' : -1.0, 'Width' : 3.0 , 'Cut' : -8, 'Power' : 30, 'cms_alpha' : 100, 
-                                                                 'cms_beta' : 0.08, 'cms_gamma' : 0.3, 'cms_peak' : 90, 'nsig' : 30000, 'nbkg' : 2000, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-
-    alts['bw_cmsshape']['fit_inv_eta_2.40-2.50_pt_25-40']     = { 'Bias' : 0.38, 'Width' : 3.4 , 'Cut' : -3.7, 'Power' : 30, 'cms_alpha' : 100, 
-                                                                 'cms_beta' : 0.1, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 30000, 'nbkg' : 2000, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-
-    alts['bw_cmsshape']['fit_nom_eta_0.00-0.10_pt_40-70']     = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -1.6, 'Power' : 30, 'cms_alpha' : 110, 
-                                                                  'cms_beta' : 0.027, 'cms_gamma' : 0.029, 'cms_peak' : 91, 'nsig' : 6500, 'nbkg' : 1000, 
-                                                                   'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_inv_eta_0.00-0.10_pt_40-70']     = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -1.6, 'Power' : 30, 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.19, 'cms_gamma' : 0.03, 'cms_peak' : 88, 'nsig' : 5000, 'nbkg' : 100, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_nom_eta_0.10-0.50_pt_40-70']     = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -1.6, 'Power' : 30, 'cms_alpha' : 110, 
-                                                                 'cms_beta' : 0.027, 'cms_gamma' : 0.034, 'cms_peak' : 88, 'nsig' : 17000, 'nbkg' : 3700, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_inv_eta_0.10-0.50_pt_40-70']     = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -1.1, 'Power' : 30, 'cms_alpha' : 114, 
-                                                                 'cms_beta' : 0.034, 'cms_gamma' : 0.043, 'cms_peak' : 88, 'nsig' : 18000, 'nbkg' : 700, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_nom_eta_0.50-1.00_pt_40-70']     = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -1.3, 'Power' : 30, 'cms_alpha' : 99, 
-                                                                 'cms_beta' : 0.03, 'cms_gamma' : 0.03, 'cms_peak' : 87, 'nsig' : 18000, 'nbkg' : 4400, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_inv_eta_0.50-1.00_pt_40-70']     = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -1.1, 'Power' : 30, 'cms_alpha' : 113, 
-                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.03, 'cms_peak' : 88, 'nsig' : 23000, 'nbkg' : 500, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_inv_eta_1.00-1.44_pt_40-70']     = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -1.6, 'Power' : 30, 'cms_alpha' : 110, 
-                                                                 'cms_beta' : 0.03, 'cms_gamma' : 0.04, 'cms_peak' : 89, 'nsig' : 30000, 'nbkg' : 1400, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_nom_eta_1.57-2.10_pt_40-70']     = { 'Bias' : 1.4, 'Width' : 2.5 , 'Cut' : -1.6, 'Power' : 30, 'cms_alpha' : 98, 
-                                                                 'cms_beta' : 0.027, 'cms_gamma' : 0.022, 'cms_peak' : 88, 'nsig' : 13000, 'nbkg' : 2800, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_inv_eta_1.57-2.10_pt_40-70']     = { 'Bias' : 1.4, 'Width' : 3.0 , 'Cut' : -3, 'Power' : 10, 'cms_alpha' : 99, 
-                                                                 'cms_beta' : 0.048, 'cms_gamma' : 0.031, 'cms_peak' : 88, 'nsig' : 7700, 'nbkg' : 400, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_inv_eta_2.10-2.20_pt_40-70']     = { 'Bias' : 1.4, 'Width' : 3.0 , 'Cut' : -3, 'Power' : 10, 'cms_alpha' : 99, 
-                                                                 'cms_beta' : 0.048, 'cms_gamma' : 0.031, 'cms_peak' : 88, 'nsig' : 7700, 'nbkg' : 400, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_nom_eta_2.10-2.20_pt_40-70']     = { 'Bias' : 1.5, 'Width' : 2.9 , 'Cut' : -3.6, 'Power' : 10, 'cms_alpha' : 150, 
-                                                                 'cms_beta' : 0.022, 'cms_gamma' : 0.05, 'cms_peak' : 88, 'nsig' : 2600, 'nbkg' : 400, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_inv_eta_2.20-2.30_pt_40-70']     = { 'Bias' : 1.8, 'Width' : 2.7 , 'Cut' : -3.3, 'Power' : 30, 'cms_alpha' : 200, 
-                                                                 'cms_beta' : 0.022, 'cms_gamma' : 0.09, 'cms_peak' : 88, 'nsig' : 10000, 'nbkg' : 500, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_inv_eta_2.30-2.40_pt_40-70']     = { 'Bias' : 2.0, 'Width' : 2.8 , 'Cut' : -1.06, 'Power' : 30, 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.037, 'cms_gamma' : 0.015, 'cms_peak' : 88, 'nsig' : 11000, 'nbkg' : 500, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_nom_eta_2.30-2.40_pt_40-70']     = { 'Bias' : 2.0, 'Width' : 2.8 , 'Cut' : -1.06, 'Power' : 30, 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.037, 'cms_gamma' : 0.015, 'cms_peak' : 88, 'nsig' : 11000, 'nbkg' : 500, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    alts['bw_cmsshape']['fit_inv_eta_2.40-2.50_pt_40-70']     = { 'Bias' : 2, 'Width' : 2.8 , 'Cut' : -1.2, 'Power' : 30, 'cms_alpha' : 143, 
-                                                                 'cms_beta' : 0.0234, 'cms_gamma' : 0.044, 'cms_peak' : 88, 'nsig' : 12000, 'nbkg' : 670, 
-                                                                 'fit_min': 40, 'fit_max' : 180 }
-    #alts['bw_cmsshape']['fit_nom_eta_2.40-2.50_pt_40-70']    = { 'Bias' : 2.0, 'Width' : 2.8 , 'Cut' : -1.06, 'Power' : 30, 'cms_alpha' : 100, 
-    #                                                             'cms_beta' : 0.024, 'cms_gamma' : 0.014, 'cms_peak' : 88, 'nsig' : 10000, 'nbkg' : 620, 
-    #                                                             'fit_min': 40, 'fit_max' : 180 }
-
-    alts['bw_cmsshape']['fit_nom_eta_0.00-0.10_pt_70-max']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.26, 'Power' : 30, 'cms_alpha' : 172, 
-                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 60, 'nbkg' : 130, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.00-0.10_pt_70-max']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.054, 'cms_peak' : 91, 'nsig' :50 , 'nbkg' : 10, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.10-0.50_pt_70-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :200 , 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_nom_eta_0.10-0.50_pt_70-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :200 , 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.00-1.44_pt_70-max']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 172, 
-                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.054, 'cms_peak' : 91, 'nsig' :150 , 'nbkg' : 70, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.50-1.00_pt_70-max']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 172, 
-                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.054, 'cms_peak' : 91, 'nsig' :150 , 'nbkg' : 70, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.00-0.10_pt_70-max']    = { 'Bias' : -0.7, 'Width' : 2 , 'Cut' : -0.2, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.06, 'cms_peak' : 90, 'nsig' : 40, 'nbkg' : 40, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.10-0.50_pt_70-max']    = { 'Bias' : -0.05, 'Width' : 2 , 'Cut' : -0.2, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 40, 'nbkg' : 40, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_1.00-1.44_pt_70-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_1.57-2.10_pt_70-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_nom_eta_2.10-2.40_pt_70-max']    = { 'Bias' : 1.76, 'Width' : 1.7 , 'Cut' : -0.57, 'Power' : 8, 'cms_alpha' : 200, 
-                                                                 'cms_beta' : 0.006, 'cms_gamma' : 0.0002, 'cms_peak' : 88.7, 'nsig' : 80, 'nbkg' : 400, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_2.10-2.40_pt_70-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-
-    alts['bw_cmsshape']['fit_nom_eta_0.00-0.10_pt_70-100']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.26, 'Power' : 30, 'cms_alpha' : 172, 
-                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 60, 'nbkg' : 130, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_nom_eta_0.10-0.50_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :200 , 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.00-1.44_pt_70-100']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 172, 
-                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.054, 'cms_peak' : 91, 'nsig' :150 , 'nbkg' : 70, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.50-1.00_pt_70-100']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 172, 
-                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.054, 'cms_peak' : 91, 'nsig' :150 , 'nbkg' : 70, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_nom_eta_0.50-1.00_pt_70-100']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 172, 
-                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.054, 'cms_peak' : 91, 'nsig' :150 , 'nbkg' : 70, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.00-0.10_pt_70-100']    = { 'Bias' : -0.03, 'Width' : 2.5 , 'Cut' : -0.3, 'Power' : 30, 'cms_alpha' : 150, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.02, 'cms_peak' : 87, 'nsig' : 40, 'nbkg' : 40, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.10-0.50_pt_70-100']    = { 'Bias' : -0.05, 'Width' : 2 , 'Cut' : -0.2, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 40, 'nbkg' : 40, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_1.00-1.44_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_1.57-2.10_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_nom_eta_2.10-2.40_pt_70-100']    = { 'Bias' : 1.76, 'Width' : 1.7 , 'Cut' : -0.57, 'Power' : 8, 'cms_alpha' : 200, 
-                                                                 'cms_beta' : 0.006, 'cms_gamma' : 0.0002, 'cms_peak' : 88.7, 'nsig' : 80, 'nbkg' : 400, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_2.10-2.40_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-
-    alts['bw_cmsshape']['fit_inv_eta_2.40-2.50_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-
-    alts['bw_cmsshape']['fit_nom_eta_2.40-2.50_pt_70-100']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-
-    alts['bw_cmsshape']['fit_nom_eta_1.57-2.50_pt_70-100']    = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -1.2, 'Power' : 30, 'cms_alpha' : 200, 
-                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-
-    alts['bw_cmsshape']['fit_nom_eta_0.00-0.10_pt_100-max']    = { 'Bias' : -0.6, 'Width' : 2.5 , 'Cut' : -0.28, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.008, 'cms_gamma' : 0.01, 'cms_peak' : 88, 'nsig' :50 , 'nbkg' : 10, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.00-0.10_pt_100-max']    = { 'Bias' : 2, 'Width' : 2.5 , 'Cut' : -0.8, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.013, 'cms_gamma' : 0.013, 'cms_peak' : 92, 'nsig' :50 , 'nbkg' : 10, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.10-0.50_pt_100-max']    = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -3.0, 'Power' : 12, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 94, 'nsig' :200 , 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_nom_eta_0.10-0.50_pt_100-max']    = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -3.0, 'Power' : 12, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 94, 'nsig' :200 , 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_nom_eta_0.50-1.00_pt_100-max']    = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -3.0, 'Power' : 12, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 94, 'nsig' :200 , 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.50-1.00_pt_100-max']    = { 'Bias' : -0.6, 'Width' : 2.5 , 'Cut' : -0.3, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 94, 'nsig' :200 , 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.00-1.44_pt_100-max']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 172, 
-                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.054, 'cms_peak' : 91, 'nsig' :150 , 'nbkg' : 70, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.50-1.00_pt_100-max']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.001, 'cms_gamma' : 0.01, 'cms_peak' : 88, 'nsig' :150 , 'nbkg' : 70, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_1.00-1.44_pt_100-max']    = { 'Bias' : -0.8, 'Width' : 0.5 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.001, 'cms_gamma' : 0.01, 'cms_peak' : 88, 'nsig' :150 , 'nbkg' : 70, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.00-0.10_pt_100-max']    = { 'Bias' : -0.7, 'Width' : 2 , 'Cut' : -0.2, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.06, 'cms_peak' : 90, 'nsig' : 40, 'nbkg' : 40, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_0.10-0.50_pt_100-max']    = { 'Bias' : -0.05, 'Width' : 2 , 'Cut' : -0.2, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 40, 'nbkg' : 40, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_1.00-1.44_pt_100-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_1.57-2.10_pt_100-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -0.24, 'Power' : 30, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.04, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_nom_eta_2.10-2.40_pt_100-max']    = { 'Bias' : 2, 'Width' : 2.5 , 'Cut' : -3.0, 'Power' : 8, 'cms_alpha' : 100, 
-                                                                 'cms_beta' : 0.03, 'cms_gamma' : 0.001, 'cms_peak' : 88.7, 'nsig' : 80, 'nbkg' : 400, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_nom_eta_2.40-2.50_pt_100-max']    = { 'Bias' : 2, 'Width' : 2.5 , 'Cut' : -4.0, 'Power' : 5, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.032, 'cms_peak' : 90.0, 'nsig' : 80, 'nbkg' : 400, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-    alts['bw_cmsshape']['fit_inv_eta_2.10-2.40_pt_100-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -1.4, 'Power' : 10, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-
-    alts['bw_cmsshape']['fit_nom_eta_2.10-2.40_pt_100-max']    = { 'Bias' : 1.5, 'Width' : 3 , 'Cut' : -1.4, 'Power' : 10, 'cms_alpha' : 180, 
-                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-
-    alts['bw_cmsshape']['fit_inv_eta_1.57-2.50_pt_100-max']    = { 'Bias' : 1.0, 'Width' : 2.5 , 'Cut' : -1.2, 'Power' : 30, 'cms_alpha' : 200, 
-                                                                 'cms_beta' : 0.01, 'cms_gamma' : 0.01, 'cms_peak' : 91, 'nsig' :300 , 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 160 }
-
-
-    alts['Gauss_cmsshape']['fit_nom_eta_0.00-0.10_pt_15-25']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 60, 
-                                                                 'cms_beta' : 0.03, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 1500, 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_0.00-0.10_pt_15-25']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 60, 
-                                                                 'cms_beta' : 0.03, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 1500, 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_nom_eta_1.00-1.44_pt_15-25']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 46, 
-                                                                 'cms_beta' : 0.09, 'cms_gamma' : 0.04, 'cms_peak' : 90, 'nsig' : 1500, 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_0.50-1.00_pt_15-25']  = { 'mean' : 1.4, 'sigma' : 0.5 , 'cms_alpha' : 50, 
-                                                                 'cms_beta' : 0.08, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 1500, 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_1.00-1.44_pt_15-25']  = { 'mean' : 1.4, 'sigma' : 0.5 , 'cms_alpha' : 50, 
-                                                                 'cms_beta' : 0.08, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 1500, 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_2.10-2.20_pt_15-25']  = { 'mean' : 0.8, 'sigma' : 1.6 , 'cms_alpha' : 50, 
-                                                                 'cms_beta' : 0.09, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 1500, 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_nom_eta_2.10-2.20_pt_15-25']  = { 'mean' : 1.6, 'sigma' : 0.5 , 'cms_alpha' : 50, 
-                                                                 'cms_beta' : 0.1, 'cms_gamma' : 0.02, 'cms_peak' : 90, 'nsig' : 1500, 'nbkg' : 200, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-
-    alts['Gauss_cmsshape']['fit_nom_eta_0.00-1.44_pt_25-40']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 70, 
-                                                                 'cms_beta' : 0.05, 'cms_gamma' : 0.04, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 700, 
-                                                                 'fit_min': 60, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_nom_eta_1.57-2.50_pt_25-40']  = { 'mean' : 1.2, 'sigma' : 1.7 , 'cms_alpha' : 70, 
-                                                                 'cms_beta' : 0.05, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 700, 
-                                                                 'fit_min': 60, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_0.50-1.00_pt_25-40']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.04, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 700, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_1.00-1.44_pt_25-40']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 150, 
-                                                                 'cms_beta' : 0.03, 'cms_gamma' : 0.12, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 700, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_1.57-2.10_pt_25-40']  = { 'mean' : 1.5, 'sigma' : 0.8 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.05, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 50000, 'nbkg' : 1000, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-
-    alts['Gauss_cmsshape']['fit_inv_eta_0.00-1.44_pt_40-70']  = { 'mean' : 0.33, 'sigma' : 0.4 , 'cms_alpha' : 100, 
-                                                                 'cms_beta' : 0.03, 'cms_gamma' : 0.04, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
-                                                                 'fit_min': 60, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_0.00-0.10_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 120, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_0.10-0.50_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 100, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_0.50-1.00_pt_40-70']  = { 'mean' : 1.1, 'sigma' : 0.8 , 'cms_alpha' : 112, 
-                                                                 'cms_beta' : 0.023, 'cms_gamma' : 0.03, 'cms_peak' : 88, 'nsig' : 23000, 'nbkg' : 470, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_1.00-1.44_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 100, 
-                                                                 'cms_beta' : 0.03, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 1000, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_1.57-2.10_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 120, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.03, 'cms_peak' : 88, 'nsig' : 5000, 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_2.10-2.20_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_nom_eta_2.10-2.20_pt_40-70']  = { 'mean' : 1.2, 'sigma' : 1.3 , 'cms_alpha' : 150, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 13000, 'nbkg' : 3000, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_2.20-2.30_pt_40-70']  = { 'mean' : 1.8, 'sigma' : 1.0 , 'cms_alpha' : 100, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.090, 'cms_peak' : 88, 'nsig' : 10000, 'nbkg' : 500, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_nom_eta_2.20-2.30_pt_40-70']  = { 'mean' : 1.2, 'sigma' : 1.3 , 'cms_alpha' : 150, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 13000, 'nbkg' : 3000, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_2.20-2.40_pt_40-70']  = { 'mean' : 1.8, 'sigma' : 1.0 , 'cms_alpha' : 100, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.090, 'cms_peak' : 88, 'nsig' : 10000, 'nbkg' : 500, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_nom_eta_2.20-2.40_pt_40-70']  = { 'mean' : 1.2, 'sigma' : 1.3 , 'cms_alpha' : 150, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 13000, 'nbkg' : 3000, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_2.30-2.40_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_nom_eta_2.30-2.40_pt_40-70']  = { 'mean' : 1.2, 'sigma' : 1.3 , 'cms_alpha' : 150, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 13000, 'nbkg' : 3000, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_nom_eta_2.40-2.50_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_cmsshape']['fit_inv_eta_2.40-2.50_pt_40-70']  = { 'mean' : 2, 'sigma' : 1.9 , 'cms_alpha' : 90, 
-                                                                 'cms_beta' : 0.03, 'cms_gamma' : 0.02, 'cms_peak' : 88, 'nsig' : 12000, 'nbkg' : 670, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-
-
-    alts['Gauss_cmsshape']['fit_inv_eta_0.00-0.10_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.5, 'nSigma' : 0.5 }
-    alts['Gauss_cmsshape']['fit_nom_eta_0.10-0.50_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.5, 'nSigma' : 1 }
-    alts['Gauss_cmsshape']['fit_inv_eta_0.10-0.50_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.5, 'nSigma' : 0.5 }
-    alts['Gauss_cmsshape']['fit_inv_eta_0.00-1.44_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.5, 'nSigma' : 0.5 }
-    alts['Gauss_cmsshape']['fit_nom_eta_0.50-1.00_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.5, 'nSigma' : 1 }
-    alts['Gauss_cmsshape']['fit_inv_eta_0.50-1.00_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.5, 'nSigma' : 0.5 }
-    alts['Gauss_cmsshape']['fit_nom_eta_1.00-1.44_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.2, 'nSigma' : 0.5 }
-    alts['Gauss_cmsshape']['fit_inv_eta_1.00-1.44_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.5, 'nSigma' : 1 }
-    alts['Gauss_cmsshape']['fit_nom_eta_1.57-2.10_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.5, 'nSigma' : 0.5 }
-    alts['Gauss_cmsshape']['fit_inv_eta_1.57-2.10_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.5, 'nSigma' : 1 }
-    alts['Gauss_cmsshape']['fit_nom_eta_2.10-2.40_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.3, 'nSigma' : 1 }
-    alts['Gauss_cmsshape']['fit_inv_eta_2.10-2.40_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.5, 'nSigma' : 1 }
-    alts['Gauss_cmsshape']['fit_nom_eta_2.40-2.50_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.4, 'nSigma' : 0.6 }
-    alts['Gauss_cmsshape']['fit_inv_eta_2.40-2.50_pt_70-max'] = { 'mean' : 1, 'sigma' : 0.5 , 'cms_alpha' : 80, 
-                                                                 'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 100, 'nbkg' : 80, 
-                                                                 'fit_min': 40, 'fit_max' : 180, 'rho' : 0.5, 'nSigma' : 1 }
-
-    alts['Gauss_exp']['fit_inv_eta_0.10-0.50_pt_40-70'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : 0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_0.00-0.10_pt_25-40'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.08, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_1.00-1.44_pt_25-40'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.08, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 75, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_1.57-2.10_pt_25-40'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.08, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 75, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_2.10-2.20_pt_25-40'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.08, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_2.20-2.30_pt_25-40'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.08, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_2.30-2.40_pt_25-40'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.08, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_2.40-2.50_pt_25-40'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.08, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_nom_eta_0.00-0.10_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.01, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 70, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_0.00-0.10_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.01, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 80, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_0.10-0.50_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.05, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 85, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_nom_eta_1.00-1.44_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.05, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_1.00-1.44_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.05, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_nom_eta_1.57-2.10_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.0, 'exp_width' : -0.05, 'nsig' : 10000, 'nbkg' : 30000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_1.57-2.10_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.001, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_nom_eta_2.10-2.20_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.001, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_2.10-2.20_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.001, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_nom_eta_2.20-2.30_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.001, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_2.20-2.30_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.001, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_nom_eta_2.30-2.40_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.001, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_2.30-2.40_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.001, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_nom_eta_2.40-2.50_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.001, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-    alts['Gauss_exp']['fit_inv_eta_2.40-2.50_pt_15-25'] = { 'mean' : 0, 'sigma' : 2.495, 'exp_width' : -0.001, 'nsig' : 30000, 'nbkg' : 18000, 'fit_min': 60, 'fit_max' : 200, 'rho' : 1, 'nSigma' : 3 }
-
-    alts['bw_exp']['fit_inv_eta_0.00-0.10_pt_15-25'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' : 140 }
-    alts['bw_exp']['fit_nom_eta_1.00-1.44_pt_15-25'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 70, 'fit_max' :160 }
-    alts['bw_exp']['fit_inv_eta_1.00-1.44_pt_15-25'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' :200 }
-    alts['bw_exp']['fit_nom_eta_1.57-2.10_pt_15-25'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 70, 'fit_max' :160 }
-    alts['bw_exp']['fit_inv_eta_1.57-2.10_pt_15-25'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.1, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' :160 }
-
-    alts['bw_exp']['fit_nom_eta_0.00-0.10_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 70, 'fit_max' :180 }
-    alts['bw_exp']['fit_inv_eta_0.00-0.10_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' :140 }
-    alts['bw_exp']['fit_nom_eta_0.10-0.50_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 70, 'fit_max' :180 }
-    alts['bw_exp']['fit_inv_eta_0.10-0.50_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' :140 }
-    alts['bw_exp']['fit_nom_eta_0.50-1.00_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 70, 'fit_max' :180 }
-    alts['bw_exp']['fit_inv_eta_0.50-1.00_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' :140 }
-    alts['bw_exp']['fit_nom_eta_1.00-1.44_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 70, 'fit_max' :180 }
-    alts['bw_exp']['fit_inv_eta_1.00-1.44_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' :140 }
-    alts['bw_exp']['fit_nom_eta_1.57-2.10_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' :180 }
-    alts['bw_exp']['fit_inv_eta_1.57-2.10_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 70, 'fit_max' :180 }
-    alts['bw_exp']['fit_nom_eta_2.10-2.20_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' :180 }
-    alts['bw_exp']['fit_inv_eta_2.10-2.20_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 60, 'fit_max' :180 }
-    alts['bw_exp']['fit_nom_eta_2.20-2.30_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' :180 }
-    alts['bw_exp']['fit_inv_eta_2.20-2.30_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 60, 'fit_max' :180 }
-    alts['bw_exp']['fit_nom_eta_2.30-2.40_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' :180 }
-    alts['bw_exp']['fit_inv_eta_2.30-2.40_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 60, 'fit_max' :180 }
-    alts['bw_exp']['fit_nom_eta_2.40-2.50_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 80, 'fit_max' :180 }
-    alts['bw_exp']['fit_inv_eta_2.40-2.50_pt_25-40'] = { 'Bias' : 0.874, 'Width' : 1.968 , 'Cut' : -1.13, 'Power' : 30, 'exp_width' : -0.05, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 60, 'fit_max' :180 }
-
-    alts['bw_exp']['fit_nom_eta_2.10-2.40_pt_70-max'] = { 'Bias' : -0.3, 'Width' : 0.5 , 'Cut' : -0.1, 'Power' : 30, 'exp_width' : 0.015, 'nsig' : 5000, 'nbkg' : 1800, 'fit_min': 60, 'fit_max' :180 }
-    if histname in alts[sig+'_'+bkg] :
-        return alts[sig+'_'+bkg][histname]
+    defname = '%s_%s' %( sig, bkg)
+    print defname
+    if histname in FitDefs.alts[defname] :
+        return FitDefs.alts[defname][histname]
     else :
-        return defaults[sig+'_'+bkg]
+        return FitDefs.defaults[defname]
 
 def main() :
 
-    global sampMan
+    global sampManNom
+    global sampManInv
 
     if not options.baseDir.count('/eos/') and not os.path.isdir( options.baseDir ) :
         print 'baseDir not found!'
         return
 
-    sampMan = SampleManager(options.baseDir, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
+    sampManNom = SampleManager('%s/%s'%( options.baseDir, options.dirNom ), options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
+    sampManInv = SampleManager('%s/%s'%( options.baseDir, options.dirInv ), options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
 
 
     if options.samplesConf is not None :
 
-        sampMan.ReadSamples( options.samplesConf )
+        sampManInv.ReadSamples( options.samplesConf )
+        sampManNom.ReadSamples( options.samplesConf )
 
         print 'Samples ready.\n'  
 
@@ -609,12 +231,23 @@ def main() :
     # Use MC template with NDKeys smearing with cms shape bkg
     # For nominal fits
     #--------------------------
-    #extra_bkg_sample = 'Zgamma'
+    #extra_bkg_sample = 'Zg'
     extra_bkg_sample = None
     if options.ndkeys_cms_fine :
-        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=True, doNDKeys=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, extra_bkg_sample=extra_bkg_sample, useCsev=options.useCsev, useTAndP=options.useTAndP)
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=True, useMCTemplateBackground=False, doNDKeys=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, extra_bkg_sample=extra_bkg_sample, useCsev=options.useCsev, useTAndP=options.useTAndP)
     if options.ndkeys_cms_coarse :
         DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=True, doNDKeys=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
+
+    #--------------------------
+    # Use MC signal and backgrond template with NDKeys smearing
+    # For nominal fits
+    #--------------------------
+    extra_bkg_sample = 'FakeBackgroundSamples'
+    #extra_bkg_sample = None
+    if options.ndkeys_ndkeys_fine :
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=True, useMCTemplateBackground=True, doNDKeys=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, extra_bkg_sample=extra_bkg_sample, useCsev=options.useCsev, useTAndP=options.useTAndP)
+    if options.ndkeys_ndkeys_coarse:
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=True, useMCTemplateBackground=True, doNDKeys=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
 
     #--------------------------
     # Use MC template with exponential bkg
@@ -633,6 +266,32 @@ def main() :
         DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
     if options.bw_exp_coarse :
         DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=False, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
+
+    #--------------------------
+    # Use MC template with NDKeys smearing with cms shape bkg
+    # For nominal fits
+    #--------------------------
+    #extra_bkg_sample = 'Zgamma'
+    extra_bkg_sample = None
+    if options.mc_cms_fine :
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=True, doNDKeys=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, extra_bkg_sample=extra_bkg_sample, useCsev=options.useCsev, useTAndP=options.useTAndP)
+    if options.mc_cms_coarse :
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=True, doNDKeys=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
+
+    #--------------------------
+    # Use MC template with exponential bkg
+    # For syst variations
+    #--------------------------
+    if options.mc_exp_fine :
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=True, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
+    if options.mc_exp_coarse :
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=True, doNDKeys=False, usePolyBkg=False, useExpBkg=True, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
+
+    if options.mc_mc_fine :
+        extra_bkg_sample = 'FakeBackgroundSamples'
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=True, useMCTemplateBackground=True, doNDKeys=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP, extra_bkg_sample=extra_bkg_sample)
+    if options.mc_mc_coarse :
+        DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=True, useMCTemplate=True, useMCTemplateBackground=True, doNDKeys=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCsev=options.useCsev, useTAndP=options.useTAndP)
 
     ##--------------------------
     ## Use Landau Sig with cmsshap bkg
@@ -794,7 +453,7 @@ def CompTrigNoTrig( outputDir=None ) :
     raw_input('continue')
 
 
-def DoElectronFakeFit( outputDir=None, useHist=None) :
+def InvDoElectronFakeFit( outputDir=None, useHist=None) :
 
     subdir = 'ElectronFakeFits'
     if outputDir is not None :
@@ -820,7 +479,7 @@ def DoElectronFakeFit( outputDir=None, useHist=None) :
 
     print ffresults
 
-def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=False, useTAndP=False, useHist=None, useCoarseEta=False, useMCTemplate=False, useLandauSig=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, doNDKeys=False, extra_bkg_sample=None) :
+def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=False, useTAndP=False, useHist=None, useCoarseEta=False, useMCTemplate=False, useMCTemplateBackground=False, useLandauSig=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, doNDKeys=False, extra_bkg_sample=None) :
 
     subdir = 'ElectronFakeFitsRatio'
     if useCsev :
@@ -831,6 +490,8 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
         subdir += sample
     if useMCTemplate :
         subdir += 'MCTemplate'
+    if useMCTemplateBackground :
+        subdir += 'Bkg'
     if useLandauSig:
         subdir += 'LandauSig'
     if doNDKeys :
@@ -853,34 +514,49 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
         subdir += 'CoarseEta'
 
     useCmsShapeBkg=True
-    if usePolyBkg or useExpBkg or useChebyBkg or useBernsteinBkg :
+    if usePolyBkg or useExpBkg or useChebyBkg or useBernsteinBkg or useMCTemplateBackground   :
         useCmsShapeBkg = False
 
     if outputDir is not None :
         outputDir = outputDir + '/' + subdir
 
-    #pt_bins = [ 15, 20,25,30, 35, 40,45, 50, 60, 70]
-    #pt_bins_80 = [ 70, 100, 1000000 ]
+    #pt_bins = [(15,25), (25,40), (40,70), (15, 40), (15, 70), (15, 1000000) ]
+    #pt_bins = [(15,20),(20,25),(25,30),(30,35),(35,40),(40,45),(45,50),(50,60),(60,70),(70,1000000) ]
+    pt_bins = [(15,25),(25,30), (30,35), (35,40),(40,45),(45,50), (50,55) ,(55,60), (60,70),(70,1000000) ]
+    #pt_bins = [(40,50), (50,60), (60,70),(70,1000000) ]
+    #pt_bins = [(70,1000000) ]
+    #pt_bins_80 = [ (70, 1000000) ]
 
-    pt_bins = [(15,25), (25,40), (40,70), (15, 40), (15, 70), (15, 1000000) ]
-    pt_bins_80 = [ (70, 100), (100, 1000000) ]
+    subl_pt_bins = { (15, 40) : [ (15, 25), (25, 30), (30, 35), (35, 40) ], 
+                     (25, 40) : [(25, 30), (30, 35), (35, 40) ],
+                     (40, 70) : [(40,45), (45,50), (50,55), (55,60), (60,70) ],
+                     (15, 70) : [ (15, 25), (25, 30), (30, 35), (35, 40), (40,45), (45,50), (50,55), (55,60), (60,70)],
+                     (15, 1000000) : [ (15, 25), (25, 30), (30, 35), (35, 40), (40,45), (45,50), (50,55), (55,60), (60,70), (70, 1000000)],
+                   }
+    #subl_pt_bins = { (15, 40) : [(15,20),(20,25),(25,30),(30,35),(35,40) ], 
+    #                (15, 70) : pt_bins[:-1] ,
+    #                 (15, 1000000) : pt_bins,
+    #               }
 
-    #eta_bins = [-2.5, -2.1, -1.57, -1.44, -0.1, 0.1, 1.44, 1.57, 2.1, 2.5]
+    coarse_eta_bins = { ('0.00', '1.44') : [ ('0.00', '0.10'), ('0.10', '0.50'), ('0.50', '1.00'), ('1.00', '1.44') ], 
+                        ('1.57', '2.50') : [ ('1.57', '2.10'), ('2.10', '2.20'), ('2.20', '2.40'), ('2.40', '2.50')],
+                      }
+
     eta_bins = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5) ]
-    eta_bins_80 = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.4), (2.4, 2.5) ]
-    #eta_bins = [2.1, 2.5]
+    #eta_bins = [(0.0, 1.44), (1.57, 2.5) ]
+    #eta_bins_80 = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.4), (2.4, 2.5) ]
     mass_binning = (100, 0, 200)
 
     if useCoarseEta :
         eta_bins = [(0.0, 1.44), (1.57, 2.5)]
-        eta_bins_80 = [(0.0, 1.44), (1.57, 2.5)]
+        #eta_bins_80 = [(0.0, 1.44), (1.57, 2.5)]
 
     pt_eta_bins = {}
     for pts in pt_bins :
         pt_eta_bins[pts] = eta_bins
         
-    for pts in pt_bins_80 :
-        pt_eta_bins[pts] = eta_bins_80
+    #for pts in pt_bins_80 :
+    #    pt_eta_bins[pts] = eta_bins_80
         
 
     draw_cmds = get_ratio_draw_commands(isConv=isConv, useCsev=useCsev, useTAndP=useTAndP )
@@ -895,22 +571,131 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
             hists_extra = get_3d_mass_ratio_histograms( selection_nom, selection_inv, extra_bkg_sample, mass_binning, useHist=useHist, useAbsEta=True, useTAndP=useTAndP )
         
         if doNDKeys :
-            results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSelection=selection_nom, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, namePrefix='_nom' )
-            results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSelection=selection_inv, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, namePrefix='_inv' )
+            if useMCTemplateBackground :
+                bkg_str = '1.0/EffectiveLumi * '
+                results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSampleBkg=extra_bkg_sample, ndKeysSelection=selection_nom, ndKeysSelectionBkg=bkg_str, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, selType='nom' )
+                results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSampleBkg=extra_bkg_sample, ndKeysSelection=selection_inv, ndKeysSelectionBkg=bkg_str, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, selType='inv' )
+            else :
+                results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSelection=selection_nom, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, selType='nom' )
+                results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSelection=selection_inv, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, selType='inv' )
         else :
             template_hist = get_3d_mass_ratio_histograms( selection_nom, selection_inv, 'DYJetsToLLPhOlap', mass_binning, useHist=None, useAbsEta=True, useTAndP=useTAndP )
+            template_hist_bkg_nom = None
+            template_hist_bkg_inv = None
+            if useMCTemplateBackground :
+                template_hist_bkg = get_3d_mass_ratio_histograms( selection_nom, selection_inv, 'FakeBackgroundSamples', mass_binning, useHist=None, useAbsEta=True, useTAndP=useTAndP )
+                template_hist_bkg_nom = template_hist_bkg['nom']
+                template_hist_bkg_inv = template_hist_bkg['inv']
 
-            results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, mcTemplate=template_hist['nom'], usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, outputDir =outputDir, namePrefix='_nom' )
-            results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, mcTemplate=template_hist['inv'], usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, outputDir =outputDir, namePrefix='_inv' )
+            results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, mcTemplate=template_hist['nom'], mcTemplateBkg=template_hist_bkg_nom, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, useTAndP=useTAndP, outputDir =outputDir, selType='nom' )
+            results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, mcTemplate=template_hist['inv'], mcTemplateBkg=template_hist_bkg_inv, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, useTAndP=useTAndP, outputDir =outputDir, selType='inv' )
     else :
-        results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, useLandauSig=useLandauSig, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, outputDir =outputDir, namePrefix='_nom' )
-        results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, useLandauSig=useLandauSig, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, outputDir =outputDir, namePrefix='_inv' )
+        results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, useLandauSig=useLandauSig, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, useTAndP=useTAndP, outputDir =outputDir, selType='nom' )
+        results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, useLandauSig=useLandauSig, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, useTAndP=useTAndP, outputDir =outputDir, selType='inv' )
 
-    write_output( results_nom, results_inv, outputDir )
+    write_output( results_nom, results_inv, subl_pt_bins, coarse_eta_bins, useTAndP=useTAndP, outputDir=outputDir )
 
-def write_output( results_nom, results_inv, outputDir=None ) :
+def write_output( results_nom, results_inv, subl_pt_bins={}, coarse_eta_bins={}, useTAndP=False, outputDir=None ) :
 
-    sel_strs = []
+    #---------------------------------------
+    # Combine into the coarser subleding bins
+    #---------------------------------------
+    sum_base = {'nsig' : 0, 'nsig_peak' : 0, 'extra_bkg' : 0 }
+    summed_results_nom = { }
+    summed_results_inv = { }
+    for bin, sub_bins in subl_pt_bins.iteritems() :
+
+        for ptmin, ptmax in sub_bins :
+
+            for res_bin, res_nom in results_nom.iteritems() :
+
+                res_inv = results_inv[res_bin]
+
+                res_ptmin = res_bin[0]
+                res_ptmax = res_bin[1]
+
+                if str(res_ptmin) == str(ptmin) and str(res_ptmax) == str(ptmax)  :
+
+                    print 'Add results for subl bin %s-%s from lead bin %s-%s ' %( bin[0], bin[1], res_ptmin, res_ptmax)
+
+                    res_etamin = res_bin[2]
+                    res_etamax = res_bin[3]
+
+                    summed_bin = ( str(bin[0]), str(bin[1]), res_etamin, res_etamax )
+                    print 'summed_bin = ', summed_bin
+
+                    if summed_bin not in summed_results_nom :
+                        summed_results_nom[summed_bin] = dict( sum_base )
+                        summed_results_inv[summed_bin] = dict( sum_base )
+
+
+                    summed_results_nom[summed_bin]['nsig'] = summed_results_nom[summed_bin]['nsig'] + res_nom['nsig']
+                    summed_results_inv[summed_bin]['nsig'] = summed_results_inv[summed_bin]['nsig'] + res_inv['nsig']
+
+                    summed_results_nom[summed_bin]['nsig_peak'] = summed_results_nom[summed_bin]['nsig_peak'] + res_nom['nsig_peak']
+                    summed_results_inv[summed_bin]['nsig_peak'] = summed_results_inv[summed_bin]['nsig_peak'] + res_inv['nsig_peak']
+
+                    if 'extra_bkg' in res_nom :
+                        summed_results_nom[summed_bin]['extra_bkg'] = summed_results_nom[summed_bin]['extra_bkg'] + res_nom['extra_bkg']
+                        summed_results_inv[summed_bin]['extra_bkg'] = summed_results_inv[summed_bin]['extra_bkg'] + res_inv['extra_bkg']
+
+    print 'sumemd results' 
+    print summed_results_nom
+    results_nom.update( summed_results_nom )
+    results_inv.update( summed_results_inv )
+            
+    #---------------------------------------
+    # Combine into the coarser eta bins
+    #---------------------------------------
+    print results_nom.keys()
+
+    summed_results_nom = { }
+    summed_results_inv = { }
+    for bin, sub_bins in coarse_eta_bins.iteritems() :
+
+        for etamin, etamax in sub_bins :
+
+            for res_bin, res_nom in results_nom.iteritems() :
+
+                res_inv = results_inv[res_bin]
+
+                res_etamin = res_bin[2]
+                res_etamax = res_bin[3]
+
+                if str(res_etamin) == str(etamin) and str(res_etamax) == str(etamax)  :
+
+                    print 'Add results for pt %s-%s, subl bin %s-%s from lead bin %s-%s ' %( res_bin[0], res_bin[1], bin[0], bin[1], res_etamin, res_etamax)
+
+                    res_ptmin = res_bin[0]
+                    res_ptmax = res_bin[1]
+
+                    summed_bin = ( str(res_ptmin), str(res_ptmax), bin[0], bin[1] )
+
+                    if summed_bin not in summed_results_nom :
+                        summed_results_nom[summed_bin] = dict( sum_base )
+                        summed_results_inv[summed_bin] = dict( sum_base )
+
+
+                    summed_results_nom[summed_bin]['nsig'] = summed_results_nom[summed_bin]['nsig'] + res_nom['nsig']
+                    summed_results_inv[summed_bin]['nsig'] = summed_results_inv[summed_bin]['nsig'] + res_inv['nsig']
+
+                    summed_results_nom[summed_bin]['nsig_peak'] = summed_results_nom[summed_bin]['nsig_peak'] + res_nom['nsig_peak']
+                    summed_results_inv[summed_bin]['nsig_peak'] = summed_results_inv[summed_bin]['nsig_peak'] + res_inv['nsig_peak']
+
+                    if 'extra_bkg' in res_nom :
+                        summed_results_nom[summed_bin]['extra_bkg'] = summed_results_nom[summed_bin]['extra_bkg'] + res_nom['extra_bkg']
+                        summed_results_inv[summed_bin]['extra_bkg'] = summed_results_inv[summed_bin]['extra_bkg'] + res_inv['extra_bkg']
+
+    print 'summed results nom'
+    print summed_results_nom.keys()
+
+    results_nom.update( summed_results_nom )
+    results_inv.update( summed_results_inv )
+    
+    print 'results_nom'
+    print results_nom.keys()
+
+
     results_all = {}
     results_all['fake_ratio'] = {}
     results_all['fake_ratio_peak'] = {}
@@ -929,10 +714,11 @@ def write_output( results_nom, results_inv, outputDir=None ) :
         etamin = bin[2]
         etamax = bin[3]
 
-        print ' pt %s - %s, eta %s - %s nom = %s, inv = %s, ratio = %s ' %( ptmin, ptmax, etamin, etamax, res_nom['nsig'], res_inv['nsig'], res_nom['nsig']/res_inv['nsig'] )
+        ff = res_nom['nsig']/res_inv['nsig']
 
-        sel_strs.append(' ( ph_pt[0] > %s && ph_pt[0] < %s && fabs(ph_eta) > %s && fabs(ph_eta) < %s ) * %f ' %( ptmin, ptmax, etamin, etamax, (res_nom['nsig']/res_inv['nsig']).n ) )
-        results_all['fake_ratio'][bin] = (res_nom['nsig']/res_inv['nsig'])
+        print ' pt %s - %s, eta %s - %s nom = %s, inv = %s, ratio = %s ' %( ptmin, ptmax, etamin, etamax, res_nom['nsig'], res_inv['nsig'], ff )
+
+        results_all['fake_ratio'][bin] = ff
 
         results_all['fake_ratio_peak'][bin] = (res_nom['nsig']*res_nom['nsig_peak']/(res_inv['nsig']*res_inv['nsig_peak']))
 
@@ -940,13 +726,12 @@ def write_output( results_nom, results_inv, outputDir=None ) :
             results_all['fake_ratio_subtract'][bin] = (res_nom['nsig']-res_nom['extra_bkg'])/(res_inv['nsig']-res_inv['extra_bkg'])
 
 
-    print ' + '.join( sel_strs )
-
-
     if outputDir is not None :
-        file_res = open( '%s/results.pickle' %outputDir , 'w' )
+        fname = '%s/results.pickle' %outputDir
+        file_res = open( fname , 'w' )
         pickle.dump( results_all, file_res )
         file_res.close()
+        print 'Wrote file ', fname
 
     
         root_file = ROOT.TFile.Open( '%s/results.root' %outputDir, 'RECREATE' )
@@ -1016,18 +801,20 @@ def DoElectronFakeSimpleClosure( outputDir=None) :
     #ffhist_trig.Draw()
     #raw_input('continue')
 
-    target_samp = sampMan.get_samples(name='DYJetsToLL')
+    target_samp_nom = sampManNom.get_samples(name='DYJetsToLL')
+    target_samp_inv = sampManInv.get_samples(name='DYJetsToLL')
 
-    #hist_nom = clone_sample_and_draw( target_samp[0], 'm_lepph1', selection_0fake, mass_binning )
+    #hist_nom = clone_sample_and_draw( target_samp[0], 'm_trigelph1', selection_0fake, mass_binning )
 
+    
     selection_inv = ' el_passtrig_n>0 && el_n==1 && ph_n==1 && ph_elMinDR[0]>0.2 && ph_passMedium[0] && ph_hasPixSeed[0]==1 '
     selection_nom = ' el_passtrig_n>0 && el_n==1 && ph_n==1 && ph_elMinDR[0]>0.2 && ph_passMedium[0] && ph_hasPixSeed[0]==0 '
 
     #selection_inv_weight = ' + '.join( ['( ph_pt[0] > %s && ph_pt[0] < %s ) * ( %f ) '%( min, max, ff.n) for (min, max), ff in ffresults_trig['pt'].iteritems()] )
     #selection_inv = '( %f ) * ( %s )' %( ffresults_trig['norm_pt'].values()[0].n, selection_inv )
 
-    hist_inv = clone_sample_and_draw( target_samp[0], 'm_lepph1', selection_inv, mass_binning )
-    hist_nom = clone_sample_and_draw( target_samp[0], 'm_lepph1', selection_nom, mass_binning )
+    hist_inv = clone_sample_and_draw( target_samp_inv[0], 'm_trigelph1', selection_inv, mass_binning )
+    hist_nom = clone_sample_and_draw( target_samp_nom[0], 'm_trigelph1', selection_nom, mass_binning )
 
     hist_nom.SetLineColor(ROOT.kBlack )
     hist_nom.SetMarkerColor(ROOT.kBlack )
@@ -1074,18 +861,19 @@ def DoElectronFakeRatioClosure( outputDir=None) :
     #bins_coarse = [80, 1000000 ] 
     mass_binning = (100, 0, 200)
 
-    target_samp = sampMan.get_samples(name='ZjetsZgamma')
+    target_samp_nom = sampManNom.get_samples(name='ZjetsZgamma')
+    target_samp_inv = sampManInv.get_samples(name='ZjetsZgamma')
 
-    selection_inv = ' el_passtrig_n>0 && el_n==1 && ph_n==1 && ph_passMedium[0] && ph_hasPixSeed[0]==1 && m_lepph1 > 86 && m_lepph1 < 106'
-    selection_nom = ' el_passtrig_n>0 && el_n==1 && ph_n==1 && ph_passMedium[0] && ph_hasPixSeed[0]==0 && m_lepph1 > 86 && m_lepph1 < 106'
+    selection_inv = ' el_passtrig_n>0 && el_n==1 && ph_n==1 && ph_passMedium[0] && ph_hasPixSeed[0]==1 && m_trigelph1 > 86 && m_trigelph1 < 106'
+    selection_nom = ' el_passtrig_n>0 && el_n==1 && ph_n==1 && ph_passMedium[0] && ph_hasPixSeed[0]==0 && m_trigelph1 > 86 && m_trigelph1 < 106'
     
-    hist_inv_pt = clone_sample_and_draw( target_samp[0], 'ph_pt[0]', selection_inv, pt_bins )
-    hist_nom_pt = clone_sample_and_draw( target_samp[0], 'ph_pt[0]', selection_nom, pt_bins )
+    hist_inv_pt = clone_sample_and_draw( target_samp_inv[0], 'ph_pt[0]', selection_inv, pt_bins )
+    hist_nom_pt = clone_sample_and_draw( target_samp_nom[0], 'ph_pt[0]', selection_nom, pt_bins )
 
     hist_nom_pt.Divide(hist_inv_pt)
 
-    hist_inv_eta = clone_sample_and_draw( target_samp[0], 'ph_eta[0]', selection_inv, eta_bins )
-    hist_nom_eta = clone_sample_and_draw( target_samp[0], 'ph_eta[0]', selection_nom, eta_bins )
+    hist_inv_eta = clone_sample_and_draw( target_samp_inv[0], 'ph_eta[0]', selection_inv, eta_bins )
+    hist_nom_eta = clone_sample_and_draw( target_samp_nom[0], 'ph_eta[0]', selection_nom, eta_bins )
 
     hist_nom_eta.Divide(hist_inv_eta)
 
@@ -1095,8 +883,6 @@ def DoElectronFakeRatioClosure( outputDir=None) :
         max = pt_bins[idx+1]
 
         fake_factors[(min, max)] = hist_nom_pt.GetBinContent( idx+1 )
-
-    print fake_factors
 
     selection_weight_lead = ' + '.join( ['( ph_pt[0] > %s && ph_pt[0] < %s ) * ( %f ) '%( min, max,ff) for (min, max), ff in fake_factors.iteritems()] )
     selection_weight_subl = ' + '.join( ['( ph_pt[1] > %s && ph_pt[1] < %s ) * ( %f ) '%( min, max,ff) for (min, max), ff in fake_factors.iteritems()] )
@@ -1196,13 +982,14 @@ def get_3d_mass_ratio_histograms( selection_nom, selection_inv, sample,  mass_bi
 
             return results
 
-    target_samp = sampMan.get_samples(name=sample)
+    target_samp_inv = sampManInv.get_samples(name=sample)
+    target_samp_nom = sampManNom.get_samples(name=sample)
 
     if useAbsEta :
         if useTAndP :
             var_lead = 'm_tagprobe:probe_pt:fabs(probe_eta)'
         else :
-            var_lead = 'm_lepph1:ph_pt[0]:fabs(ph_eta[0])' #z:y:x
+            var_lead = 'm_trigelph1:ph_pt[0]:fabs(ph_eta[0])' #z:y:x
         eta_nbin = 250
         eta_min = 0
         eta_max = 2.5
@@ -1210,14 +997,14 @@ def get_3d_mass_ratio_histograms( selection_nom, selection_inv, sample,  mass_bi
         if useTAndP :
             var_lead = 'm_tagprobe:probe_pt:probe_eta'
         else :
-            var_lead = 'm_lepph1:ph_pt[0]:ph_eta[0]' #z:y:x
+            var_lead = 'm_trigelph1:ph_pt[0]:ph_eta[0]' #z:y:x
         eta_nbin = 500
         eta_min = -2.5
         eta_max = 2.5
 
     # pt hists
-    hist_nom = clone_sample_and_draw( target_samp[0], var_lead, selection_nom, (eta_nbin, eta_min, eta_max, 40, 0, 200, mass_binning[0], mass_binning[1], mass_binning[2]) )
-    hist_inv = clone_sample_and_draw( target_samp[0], var_lead, selection_inv, (eta_nbin, eta_min, eta_max, 40, 0, 200, mass_binning[0], mass_binning[1], mass_binning[2]) )
+    hist_nom = clone_sample_and_draw( target_samp_nom[0], var_lead, selection_nom, (eta_nbin, eta_min, eta_max, 40, 0, 200, mass_binning[0], mass_binning[1], mass_binning[2]), sampMan=sampManNom )
+    hist_inv = clone_sample_and_draw( target_samp_inv[0], var_lead, selection_inv, (eta_nbin, eta_min, eta_max, 40, 0, 200, mass_binning[0], mass_binning[1], mass_binning[2]), sampMan=sampManInv  )
 
     results['nom'] = hist_nom
     results['inv'] = hist_inv
@@ -1432,10 +1219,20 @@ def get_fake_factors_fit( hists, pt_bins, eta_bins) :
         fit_hist_nominal( hist_ee_pt )
 
 
-def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, useLandauSig=False, ndKeysSample=None, ndKeysSelection=None, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCmsShapeBkg=False, extraBkgHist=None, useTAndP=False, outputDir=None, namePrefix='' ) :
+def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, mcTemplateBkg=None, useLandauSig=False, ndKeysSample=None, ndKeysSampleBkg=None, ndKeysSelection=None, ndKeysSelectionBkg=None, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCmsShapeBkg=False, extraBkgHist=None, useTAndP=False, outputDir=None, selType='' ) :
+
+    sampMan = None
+    if   selType == 'nom' :
+        sampMan = sampManNom
+    elif selType == 'inv' :
+        sampMan = sampManInv
+    else :
+        print 'Expect to get nom or inv'
+
 
     results_pt_eta = {}
     last_pt = max( [x[1] for x in pt_eta_bins.keys() ] )
+    nextlast_pt = max( [x[0] for x in pt_eta_bins.keys() ] )
     for (ptmin, ptmax), eta_bins in pt_eta_bins.iteritems()  :
 
         if options.ptmin > 0 and options.ptmin != ptmin :
@@ -1459,13 +1256,13 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, useLandauSig=False, ndK
             print 'BIN : ptmin = %d, ptmax = %d, etamin = %d, etamax = %d ' %(pt_bin_min, pt_bin_max, eta_bin_min, eta_bin_max )
 
             if ptmax == last_pt :
-                fitname = 'fit%s_eta_%.2f-%.2f_pt_%d-max' %(namePrefix, etamin, etamax, ptmin)
+                fitname = 'fit_%s_eta_%.2f-%.2f_pt_%d-max' %(selType, etamin, etamax, ptmin)
             else :
-                fitname = 'fit%s_eta_%.2f-%.2f_pt_%d-%d' %(namePrefix, etamin, etamax, ptmin, ptmax)
+                fitname = 'fit_%s_eta_%.2f-%.2f_pt_%d-%d' %(selType, etamin, etamax, ptmin, ptmax)
 
             hist_proj = hist.ProjectionZ(fitname, eta_bin_min, eta_bin_max, pt_bin_min, pt_bin_max )
 
-            if ptmax == last_pt:
+            if ptmax == last_pt and ptmin == nextlast_pt:
                 hist_proj.Rebin(2)
 
             output_name = None
@@ -1474,20 +1271,48 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, useLandauSig=False, ndK
 
             if mcTemplate is not None :
                 template_proj = mcTemplate.ProjectionZ(fitname+'_fit', eta_bin_min, eta_bin_max, pt_bin_min, pt_bin_max )
-                results = fit_hist_mc_template( hist_proj, template_proj, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, label=hist_proj.GetName(), outputName=output_name )
+                if mcTemplateBkg is not None :
+                    template_proj_bkg = mcTemplateBkg.ProjectionZ(fitname+'_fitbkg', eta_bin_min, eta_bin_max, pt_bin_min, pt_bin_max )
+                    results = fit_hist_mc_template( hist_proj, template_proj, mcTemplateBkg=template_proj_bkg, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useTAndP=useTAndP, label=hist_proj.GetName(), outputName=output_name, sampMan=sampMan )
+                else :
+                    results = fit_hist_mc_template( hist_proj, template_proj, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useTAndP=useTAndP, label=hist_proj.GetName(), outputName=output_name, sampMan=sampMan )
 
             elif ndKeysSample is not None :
 
                 if useTAndP :
                     pt_eta_selection = ndKeysSelection + ' && fabs(probe_eta) > %f && fabs(probe_eta) < %f && probe_pt > %d && probe_pt < %d ' %( etamin, etamax, ptmin, ptmax )
+                    pt_eta_selection_bkg = '%s ( %s ) ' %( ndKeysSelectionBkg, pt_eta_selection )
                 else :
                     pt_eta_selection = ndKeysSelection + ' && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d ' %( etamin, etamax, ptmin, ptmax )
+                    pt_eta_selection_bkg = '%s ( %s ) ' %( ndKeysSelectionBkg, pt_eta_selection )
 
                 orig_tree = sampMan.get_samples( name=ndKeysSample )[0].chain
                 orig_tree.SetBranchStatus('*', 1)
                 tmpfile = ROOT.TFile.Open( '/tmp/jkunkle/tmp.root', 'RECREATE' )
-                new_tree = orig_tree.CopyTree( pt_eta_selection )
 
+                new_tree = orig_tree.CopyTree( pt_eta_selection)
+                nentries = new_tree.GetEntries()
+                if nentries > 10000 :
+                    filter_factor = int(math.floor(nentries/10000.))
+                    print 'Tree has too many entries will copy with fewer'
+                    print filter_factor
+                    new_tree = orig_tree.CopyTree( pt_eta_selection + ' && Entry$%' + '%d == 0 ' %filter_factor )
+
+                if ndKeysSampleBkg is not None :
+                    orig_tree_bkg = sampMan.get_samples( name=ndKeysSampleBkg )[0].chain
+                    orig_tree_bkg.SetBranchStatus('*', 1)
+                    tmpfile_bkg = ROOT.TFile.Open( '/tmp/jkunkle/tmpbkg.root', 'RECREATE' )
+
+                    new_tree_bkg = orig_tree_bkg.CopyTree( pt_eta_selection)
+                    nentries = new_tree_bkg.GetEntries()
+                    if nentries > 10000 :
+                        filter_factor = int(math.floor(nentries/10000.))
+                        print 'Background Tree has too many entries will copy with fewer'
+                        print filter_factor
+                        new_tree_bkg = orig_tree_bkg.CopyTree( pt_eta_selection + ' && Entry$%' + '%d == 0 ' %filter_factor )
+
+                    print 'Tree has %d entries ' %new_tree.GetEntries()
+                    print 'Background Tree has %d entries ' %new_tree_bkg.GetEntries()
 
                 if useTAndP :
                     m_tagprobe       = ROOT.RooRealVar( 'm_tagprobe', 'm_tagprobe', 40, 200 )
@@ -1499,10 +1324,15 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, useLandauSig=False, ndK
 
                     data_set = ROOT.RooDataSet( 'dataset_%.2f_%.2f_%d_%d' %(etamin, etamax, ptmin, ptmax ), '', new_tree,ROOT.RooArgSet( m_tagprobe ))
 
-                    results = fit_hist_ndkeys( hist_proj, signal_dataset=data_set, varname='m_tagprobe', bkg_dataset=None, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, label=hist_proj.GetName(), outputName=output_name )
+                    data_set_bkg = None
+                    if ndKeysSampleBkg is not None :
+                        data_set_bkg = ROOT.RooDataSet( 'dataset_%.2f_%.2f_%d_%d' %(etamin, etamax, ptmin, ptmax ), ndKeysSampleBkg, new_tree_bkg,ROOT.RooArgSet( m_tagprobe ))
+
+                    results = fit_hist_ndkeys( hist_proj, signal_dataset=data_set, varname='m_tagprobe', bkg_dataset=data_set_bkg, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, useTAndP=useTAndP, label=hist_proj.GetName(), outputName=output_name, sampMan=sampMan )
+                    data_set.IsA().Destructor( data_set )
                 else :
 
-                    m_lepph1         = ROOT.RooRealVar( 'm_lepph1', 'm_lepph1', 40, 200 )
+                    m_trigelph1      = ROOT.RooRealVar( 'm_trigelph1', 'm_trigelph1', 40, 200 )
                     ph_passMedium    = ROOT.RooRealVar( 'ph_passMedium[0]', 'ph_passMedium[0]', 0, 1 )
                     el_passtrig_n    = ROOT.RooRealVar( 'el_passtrig_n', 'el_passtrig_n', 0, 10 )
                     el_n             = ROOT.RooRealVar( 'el_n', 'el_n', 0, 10 )
@@ -1512,15 +1342,19 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, useLandauSig=False, ndK
                     ph_pt            = ROOT.RooRealVar( 'ph_pt[0]', 'ph_pt[0]', 0, 1000. )
                     ph_truthMatch_ph = ROOT.RooRealVar( 'ph_truthMatch_ph[0]', 'ph_truthMatch_ph[0]', 0, 1. )
 
-                    data_set = ROOT.RooDataSet( 'dataset_%.2f_%.2f_%d_%d' %(etamin, etamax, ptmin, ptmax ), '', new_tree,ROOT.RooArgSet( m_lepph1))
+                    data_set = ROOT.RooDataSet( 'dataset_%.2f_%.2f_%d_%d' %(etamin, etamax, ptmin, ptmax ), '', new_tree,ROOT.RooArgSet( m_trigelph1))
+                    ROOT.SetOwnership( data_set, False )
 
-                    results = fit_hist_ndkeys( hist_proj, signal_dataset=data_set, varname='m_lepph1', bkg_dataset=None, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, label=hist_proj.GetName(), outputName=output_name )
+
+                    results = fit_hist_ndkeys( hist_proj, signal_dataset=data_set, varname='m_trigelph1', bkg_dataset=None, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, useTAndP=useTAndP, label=hist_proj.GetName(), outputName=output_name, sampMan=sampMan )
+                    data_set.IsA().Destructor( data_set )
+
                 tmpfile.Close()
             else :
-                results = fit_hist_nominal( hist_proj, useLandauSig=useLandauSig, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, label=hist_proj.GetName(), outputName=output_name )
+                results = fit_hist_nominal( hist_proj, useLandauSig=useLandauSig, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useTAndP=useTAndP, label=hist_proj.GetName(), outputName=output_name, sampMan=sampMan )
 
             if extraBkgHist is not None :
-                histname = 'bkg%s_eta_%.2f-%.2f_pt_%d-%d' %(namePrefix, etamin, etamax, ptmin, ptmax) 
+                histname = 'bkg_%s_eta_%.2f-%.2f_pt_%d-%d' %(selType, etamin, etamax, ptmin, ptmax) 
                 bkg_hist_proj = extraBkgHist.ProjectionZ(histname, eta_bin_min, eta_bin_max, pt_bin_min, pt_bin_max )
                 results['extra_bkg'] = bkg_hist_proj.Integral()
 
@@ -1567,7 +1401,7 @@ def get_fake_factors_3d_fit( hists, pt_bins, eta_bins, outputDir=None) :
             fit_hist_nominal( hist_ee, hist_ee.GetName(), output_name_ee )
             fit_hist_nominal( hist_eg, hist_eg.GetName(), output_name_eg )
 
-def fit_hist_nominal( data_hist, useLandauSig=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, label=None, outputName=None ) :
+def fit_hist_nominal( data_hist, useLandauSig=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useTAndP=False, label=None, outputName=None, sampMan=None ) :
 
     sampMan.fit_objs = {}
 
@@ -1578,7 +1412,7 @@ def fit_hist_nominal( data_hist, useLandauSig=False, usePolyBkg=False, useExpBkg
     xmin = 40
     xmax = 200
 
-    m_lepph1 = ROOT.RooRealVar( 'm_lepph1', 'm_lepph1', xmin, xmax )
+    m_lepph1 = ROOT.RooRealVar( 'm_trigelph1', 'm_trigelph1', xmin, xmax )
 
     signal = []
     if useLandauSig :
@@ -1598,14 +1432,14 @@ def fit_hist_nominal( data_hist, useLandauSig=False, usePolyBkg=False, useExpBkg
     else :
         background.append('cmsshape')
 
-    fit_defs = get_fit_defaults( data_hist.GetName(), useGaussSig=None, useLandauSig=useLandauSig, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg )
+    fit_defs = get_fit_defaults( data_hist.GetName(), useGaussSig=None, useLandauSig=useLandauSig, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useTAndP=useTAndP )
     chi2 = fit_model_to_data(m_lepph1, data_hist, fit_defs, sampMan, signal=signal, background=background, bkg_labels=['Bkg'])
 
     draw_fitted_results( sampMan.fit_objs['model'], sampMan.fit_objs['target_data'], sampMan.fit_objs['sig_model'], 'Bkg', m_lepph1, chi2, label, outputName=outputName )
 
-    return store_results( m_lepph1, 'Bkg' )
+    return store_results( m_lepph1, 'Bkg', sampMan )
 
-def fit_hist_mc_template( data_hist, template_hist, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, label=None, outputName=None ) :
+def fit_hist_mc_template( data_hist, template_hist, mcTemplateBkg=None, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useTAndP=False, label=None, selType='', outputName=None, sampMan=None ) :
 
     sampMan.fit_objs = {}
 
@@ -1613,21 +1447,43 @@ def fit_hist_mc_template( data_hist, template_hist, usePolyBkg=False, useExpBkg=
         label = data_hist.GetName()
 
     xmin = 40
-    xmax = 200
+    xmax = 180
+
+    signals = [template_hist]
+
+    backgrounds= []
+
+    if mcTemplateBkg :
+        backgrounds.append( mcTemplateBkg )
+    elif usePolyBkg :
+        backgrounds.append( 'poly' )
+    elif useExpBkg :
+        backgrounds.append( 'exp' )
+    elif useChebyBkg :
+        backgrounds.append( 'cheby' )
+    elif useBernsteinBkg :
+        backgrounds.append( 'bernstein' )
+    else :
+        backgrounds.append( 'cmsshape' )
+
+    bkg_labels = ['Bkg']
+
 
     # independent var
-    m_lepph1 = ROOT.RooRealVar( 'm_lepph1', 'm_lepph1', xmin,xmax)
+    m_lepph1 = ROOT.RooRealVar( 'm_trigelph1', 'm_trigelph1', xmin,xmax)
 
-    fit_defs = get_fit_defaults( data_hist.GetName(), useGaussSig=(template_dataset is not None), useLandauSig=False, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg )
-    chi2 = fit_model_to_data(m_lepph1, data_hist, fit_defs, sampMan, MCSig=template_hist, doNDKeys=False, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg)
 
-    draw_fitted_results( sampMan.fit_objs['model'], sampMan.fit_objs['target_data'], sampMan.fit_objs['sig_model'], sampMan.fit_objs['bkg_model'], m_lepph1, chi2, label, outputName=outputName )
+    fit_defs = get_fit_defaults( data_hist.GetName(), useGaussSig=(template_hist is not None), useLandauSig=False, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useTAndP=useTAndP )
+    chi2 = fit_model_to_data(m_lepph1, data_hist, fit_defs, sampMan, signal=signals, background=backgrounds, bkg_labels=bkg_labels)
 
-    return store_results( m_lepph1 )
+    draw_fitted_results( sampMan.fit_objs['model'], sampMan.fit_objs['target_data'], sampMan.fit_objs['sig_model'], bkg_labels, m_lepph1, chi2, label, outputName=outputName )
 
-def fit_hist_ndkeys( data_hist, signal_dataset=None, bkg_dataset=None, varname='m_lepph1', usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCmsShapeBkg=False, label=None, outputName=None ) :
+    return store_results( m_lepph1, backgrounds=bkg_labels, sampMan=sampMan )
+
+def fit_hist_ndkeys( data_hist, signal_dataset=None, bkg_dataset=None, varname='m_lepph1', usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useCmsShapeBkg=False, useTAndP=False, label=None, outputName=None, sampMan=None ) :
 
     sampMan.fit_objs = {}
+    bkg_labels = []
 
     if label is None :
         label = data_hist.GetName()
@@ -1639,25 +1495,34 @@ def fit_hist_ndkeys( data_hist, signal_dataset=None, bkg_dataset=None, varname='
     m_lepph1 = ROOT.RooRealVar( varname, varname, xmin,xmax)
 
     signals = [signal_dataset]
+    print 'bkg_dataset = ', bkg_dataset
     if bkg_dataset is not None :
         backgrounds = [bkg_dataset]
+        bkg_labels.append( bkg_dataset.GetTitle() )
     else :
         backgrounds= []
 
     if usePolyBkg :
         backgrounds.append( 'poly' )
+        bkg_labels.append('Bkg')
     if useExpBkg :
         backgrounds.append( 'exp' )
+        bkg_labels.append('Bkg')
     if useChebyBkg :
         backgrounds.append( 'cheby' )
+        bkg_labels.append('Bkg')
     if useBernsteinBkg :
         backgrounds.append( 'bernstein' )
+        bkg_labels.append('Bkg')
     if useCmsShapeBkg:
         backgrounds.append( 'cmsshape' )
+        bkg_labels.append('Bkg')
 
-    bkg_labels = ['Bkg']
+    print backgrounds
 
-    fit_defs = get_fit_defaults( data_hist.GetName(), useGaussSig=(signal_dataset is not None), useLandauSig=False, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg )
+    use_mc_bkg = (bkg_dataset is not None)
+
+    fit_defs = get_fit_defaults( data_hist.GetName(), useGaussSig=(signal_dataset is not None), useLandauSig=False, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useMCBkg=use_mc_bkg, useTAndP=useTAndP )
     #chi2 = fit_model_to_data( m_lepph1, data_hist, fit_defs, sampMan, MCSig=template_dataset, doNDKeys=True, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg)
     chi2 = fit_model_to_data( m_lepph1, data_hist, fit_defs, sampMan, signal=signals, background=backgrounds, bkg_labels=bkg_labels)
 
@@ -1665,9 +1530,9 @@ def fit_hist_ndkeys( data_hist, signal_dataset=None, bkg_dataset=None, varname='
 
     draw_fitted_results( sampMan.fit_objs['model'], sampMan.fit_objs['target_data'], sampMan.fit_objs['sig_model'], bkg_labels, m_lepph1, chi2, label, outputName=outputName )
 
-    return store_results( m_lepph1, backgrounds=bkg_labels )
+    return store_results( m_lepph1, backgrounds=bkg_labels, sampMan=sampMan )
 
-def store_results( var, backgrounds=['bkg_model'] ) :
+def store_results( var, backgrounds=['bkg_model'], sampMan=None ) :
 
     if not isinstance( backgrounds, list) :
         backgrounds = [backgrounds]
@@ -1714,8 +1579,11 @@ def store_results( var, backgrounds=['bkg_model'] ) :
     return results
 
 
-def clone_sample_and_draw( samp, var, sel, binning ) :
-    global sampMan
+def clone_sample_and_draw( samp, var, sel, binning, sampMan=None ) :
+
+    if sampMan is None :
+        sampMan = sampManInv
+
     newSamp = sampMan.clone_sample( oldname=samp.name, newname=samp.name+str(uuid.uuid4()), temporary=True ) 
     sampMan.create_hist( newSamp, var, sel, binning )
     return newSamp.hist

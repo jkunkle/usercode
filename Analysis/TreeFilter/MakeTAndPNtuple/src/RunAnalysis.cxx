@@ -73,6 +73,7 @@ void RunModule::initialize( TChain * chain, TTree * _outtree, TFile *outfile,
     outtree->Branch("probe_nConvTrk"   , &OUT::probe_nConvTrk   , "probe_nConvTrk/O");
     outtree->Branch("probe_passtrig"   , &OUT::probe_passtrig   , "probe_passtrig/O");
     outtree->Branch("probe_hasPixSeed" , &OUT::probe_hasPixSeed , "probe_hasPixSeed/O");
+    outtree->Branch("probe_hasMatchedEle" , &OUT::probe_hasMatchedEle, "probe_hasMatchedEle/O");
     outtree->Branch("probe_eleVeto"    , &OUT::probe_eleVeto    , "probe_eleVeto/O");
     outtree->Branch("m_tagprobe"       , &OUT::m_tagprobe       , "m_tagprobe/F");
     outtree->Branch("dr_tagprobe"      , &OUT::dr_tagprobe      , "dr_tagprobe/F");
@@ -157,6 +158,7 @@ void RunModule::MakeNtuple( ModuleConfig & config ) const {
     std::vector< TLorentzVector> objects_sceta;
     std::vector<bool> obj_isElec;
     std::vector<int> obj_index;
+    std::vector<bool> obj_hasMatchedEle;
     std::vector<bool> obj_hasPixSeed;
     std::vector<bool> obj_eleVeto;
     for( int eidx = 0; eidx < IN::el_n; ++eidx ) {
@@ -172,6 +174,7 @@ void RunModule::MakeNtuple( ModuleConfig & config ) const {
         obj_hasPixSeed.push_back(false);
         obj_eleVeto.push_back(false);
         obj_index.push_back( eidx );
+        obj_hasMatchedEle.push_back( false );
     }
 
     for( int pidx = 0; pidx < IN::ph_n; ++pidx ) {
@@ -187,6 +190,20 @@ void RunModule::MakeNtuple( ModuleConfig & config ) const {
         obj_eleVeto.push_back( IN::ph_eleVeto->at(pidx) );
         //phlv.SetPtEtaPhiE( phlv.Pt(), IN::ph_sceta->at(pidx), phlv.Phi(), phlv.E() );
         //objects_sceta.push_back( phlv );
+        bool has_match = false;
+        for( int eidx = 0; eidx < IN::el_n; ++eidx ) {
+            TLorentzVector ellv;
+            ellv.SetPtEtaPhiE( IN::el_pt->at(eidx),
+                               IN::el_eta->at(eidx),
+                               IN::el_phi->at(eidx),
+                               IN::el_e->at(eidx)    );
+
+            if( phlv.DeltaR( ellv ) < 0.2 ) {
+                has_match = true;
+                break;
+            }
+        }
+        obj_hasMatchedEle.push_back( has_match );
     }
 
     for( unsigned i = 0; i < objects.size(); ++i) {
@@ -230,9 +247,13 @@ void RunModule::MakeNtuple( ModuleConfig & config ) const {
                 //}
                 OUT::probe_passtrig   = false;
                 OUT::probe_hasPixSeed = obj_hasPixSeed[j];
+                OUT::probe_hasMatchedEle = obj_hasMatchedEle[j];
                 OUT::probe_eleVeto    = obj_eleVeto[j];
 
                 OUT::m_tagprobe = (objects[i] + objects[j]).M();
+                if(OUT::m_tagprobe < 10 ) {
+                    continue;
+                }
                 //OUT::m_tagprobe_sceta = ( objects_sceta[i] + objects_sceta[j] ).M();
                 
                 outtree->Fill();
@@ -279,11 +300,12 @@ void RunModule::MakeGGNtuple( ModuleConfig & config ) const {
 
     }
 
-    if( objects.size() == 2 ) {
+    if( objects.size() > 1 ) {
         for( unsigned i = 0; i < objects.size(); ++i) {
             bool pass_tag_cuts = true;
             if( !config.PassFloat( "cut_tag_pt", objects[i].Pt() ) ) pass_tag_cuts = false;
             if( !config.PassBool( "cut_tag_triggerMatch", obj_hasTriggerMatch[i] ) ) pass_tag_cuts = false;
+            if( !config.PassBool( "cut_tag_hasPixSeed", obj_hasPixSeed[i] ) ) pass_tag_cuts = false;
 
             if( !pass_tag_cuts ) {
                 continue;
@@ -303,7 +325,7 @@ void RunModule::MakeGGNtuple( ModuleConfig & config ) const {
                 OUT::probe_eta = objects[j].Eta();
                 OUT::probe_phi = objects[j].Phi();
                 //OUT::probe_eta_sc = objects_sceta[j].Eta();
-                OUT::probe_isPhoton = (obj_hasPixSeed[j]==0);
+                OUT::probe_hasPixSeed = obj_hasPixSeed[j];
                 //if( OUT::probe_isPhoton ) {
                 //    OUT::probe_nConvTrk = IN::ph_conv_nTrk->at(obj_index[j]);
                 //}
@@ -313,9 +335,6 @@ void RunModule::MakeGGNtuple( ModuleConfig & config ) const {
             }
 
             OUT::PUWeight = IN::PUWeight;
-            OUT::run      = IN::run;
-            OUT::event    = IN::event;
-
             outtree->Fill();
         
         }

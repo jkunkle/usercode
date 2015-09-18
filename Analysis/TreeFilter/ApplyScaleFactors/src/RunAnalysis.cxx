@@ -272,7 +272,7 @@ void RunModule::AddElectronSF( ModuleConfig & /*config*/ ) const {
         if( OUT::el_triggerMatch->at(idx) && OUT::el_passMvaTrig->at(idx) ) {
 
             float pt = OUT::el_pt->at(idx);
-            float eta = fabs( OUT::el_eta->at(idx) );
+            float eta = fabs( OUT::el_sceta->at(idx) );
             // histogram ends at 200, if pT is above
             // 200, get the value just below
             if( pt < 200 ) {
@@ -287,10 +287,8 @@ void RunModule::AddElectronSF( ModuleConfig & /*config*/ ) const {
                 OUT::el_trigSFUP = OUT::el_trigSF + err;
                 OUT::el_trigSFDN = OUT::el_trigSF - err;
             }
-
         }
     }
-
 #endif
 
 }

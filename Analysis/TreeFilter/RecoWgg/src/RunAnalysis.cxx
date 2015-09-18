@@ -986,6 +986,9 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         float r9           = IN::eleR9->at(idx);
         int   charge       = IN::eleCharge->at(idx);
 
+        float pfiso30      = IN::elePFChIso03->at(idx);
+        float pfiso40      = IN::elePFChIso04->at(idx);
+
         float rho = IN::rho2012;
 
         // trigger matching
@@ -2007,7 +2010,7 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
         float pfChIsoRhoCorr = 0.0;
         float pfNeuIsoRhoCorr = 0.0;
         float pfPhoIsoRhoCorr = 0.0;
-        calc_corr_iso( pfChIso, pfPhoIso, pfNeuIso, rho, eta, pfChIsoRhoCorr, pfPhoIsoRhoCorr, pfNeuIsoRhoCorr);
+        calc_corr_iso( pfChIso, pfPhoIso, pfNeuIso, rho, sceta, pfChIsoRhoCorr, pfPhoIsoRhoCorr, pfNeuIsoRhoCorr);
 
         float pfChIsoPtRhoCorr  = pfChIsoRhoCorr;
         float pfNeuIsoPtRhoCorr = pfNeuIsoRhoCorr-0.04*pt;

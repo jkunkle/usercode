@@ -118,8 +118,6 @@ namespace OUT {
     std::vector<float>  *trueW_phi      ;
     std::vector<float>  *trueW_e        ;
 
-    std::vector<Bool_t> *ph_hasMatchedEle;
-
     Float_t trueleadlep_pt;
     Float_t truesubllep_pt;
     Float_t true_m_leplep;
@@ -142,10 +140,12 @@ namespace OUT {
     Int_t   mu_passtrig25_n;
     Int_t   el_pt25_n;
     Int_t   el_passtrig_n;
+    Int_t   el_passtrigL_n;
     Int_t   el_passtrig28_n;
     Int_t   ph_mediumNoSIEIE_n;
     Int_t   ph_medium_n;
     Int_t   ph_mediumNoEleVeto_n;
+    Int_t   ph_mediumFailEleVeto_n;
     Int_t   ph_mediumNoSIEIENoEleVeto_n;
     Int_t   ph_mediumNoChIsoNoEleVeto_n;
     Int_t   ph_mediumNoNeuIsoNoEleVeto_n;
@@ -166,15 +166,8 @@ namespace OUT {
     std::vector<Bool_t>  *ph_trigMatch_el;
     std::vector<float>  *ph_elMinDR;
 
-    Float_t leadPhot_pt;
-    Float_t sublPhot_pt;
-    Float_t leadPhot_lepDR;
-    Float_t sublPhot_lepDR;
-    Float_t ph_phDR;
-    Float_t phPhot_lepDR;
-    Float_t leadPhot_lepDPhi;
-    Float_t sublPhot_lepDPhi;
-    Float_t ph_phDPhi;
+    Float_t leadPhot_sublPhotDR;
+    Float_t leadPhot_sublPhotDPhi;
     Float_t phPhot_lepDPhi;
     Float_t dphi_met_lep1;
     Float_t dphi_met_lep2;
@@ -184,12 +177,16 @@ namespace OUT {
     Float_t mt_lepph1_met;
     Float_t mt_lepph2_met;
     Float_t mt_lepphph_met;
+    Float_t mt_trigel_met;
+    Float_t mt_trigmu_met;
     Float_t m_leplep;
     Float_t m_mumu;
     Float_t m_elel;
     Float_t m_leplep_uncorr;
     Float_t m_lepph1;
     Float_t m_lepph2;
+    Float_t m_trigelph1;
+    Float_t m_trigelph2;
     Float_t m_lep2ph1;
     Float_t m_lep2ph2;
     Float_t m_lepphlead;
@@ -201,8 +198,8 @@ namespace OUT {
     Float_t m_leplepph1;
     Float_t m_leplepph2;
     Float_t m_lepphph;
+    Float_t m_trigelphph;
     Float_t m_phph;
-    Float_t m_leplepZ;
     Float_t m_3lep;
     Float_t m_4lep;
     Float_t pt_phph;
@@ -218,12 +215,27 @@ namespace OUT {
     Float_t            leadPhot_sublLepDR;
     Float_t            sublPhot_leadLepDR;
     Float_t            sublPhot_sublLepDR;
+    Float_t            leadPhot_trigElDR;
+    Float_t            sublPhot_trigElDR;
+    Float_t            leadPhot_trigMuDR;
+    Float_t            sublPhot_trigMuDR;
+    Float_t            m_leadPhot_leadLep;
+    Float_t            m_leadPhot_trigEl;
+    Float_t            m_sublPhot_leadLep;
+    Float_t            m_sublPhot_trigEl;
+    Float_t            m_leadPhot_sublPhot_trigEl;
+    Float_t            dphi_met_leadPhot;
+    Float_t            dphi_met_sublPhot;
     // variables that explicity use
     // the default photon order 
     Float_t            dr_ph1_leadLep;
     Float_t            dr_ph1_sublLep;
     Float_t            dr_ph2_leadLep;
     Float_t            dr_ph2_sublLep;
+    Float_t            dr_ph1_trigEle;
+    Float_t            dr_ph2_trigEle;
+    Float_t            dr_ph1_trigMu;
+    Float_t            dr_ph2_trigMu;
     Float_t            dphi_ph1_leadLep;
     Float_t            dphi_ph1_sublLep;
     Float_t            dphi_ph2_leadLep;
@@ -235,6 +247,8 @@ namespace OUT {
     Float_t            m_leadLep_ph1_ph2; 
     Float_t            m_leadLep_ph1; 
     Float_t            m_leadLep_ph2; 
+    Float_t            m_sublLep_ph1; 
+    Float_t            m_sublLep_ph2; 
     Float_t            pt_leadph12;
     Float_t            pt_sublph12;
     Float_t            eta_leadph12;
@@ -259,9 +273,6 @@ namespace OUT {
     Bool_t             truthMatchPhMomPID_leadph12;
     Bool_t             truthMatchPhMomPID_sublph12;
 
-
-    Float_t m_nearestToZ;
-    Float_t m_minZdifflepph;
 
     //Examples
 };

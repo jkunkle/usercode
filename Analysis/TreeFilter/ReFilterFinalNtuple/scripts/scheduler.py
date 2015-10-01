@@ -13,7 +13,7 @@ options = p.parse_args()
 if not options.run and not options.check :
     options.run = True
 
-base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output'
+base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output'
 
 
 jobs_data = [
@@ -37,20 +37,20 @@ jobs_data = [
 jobs_mc = [
         #(base, 'job_NLO_WAA_FSR'),
         #(base, 'job_NLO_WAA_ISR'),
-        (base, 'job_NLO_WAA_FSR_PtG500MeV'),
-        (base, 'job_NLO_WAA_ISR_PtG500MeV'),
+        #(base, 'job_NLO_WAA_FSR_PtG500MeV'),
+        #(base, 'job_NLO_WAA_ISR_PtG500MeV'),
         #(base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_WAA_ISR'),
         #(base, 'job_summer12_Zgg'),
-        #(base, 'job_summer12_DYJetsToLL'),
+        #(base, 'job_summer12_DYJetsToLL_s10'),
         #(base, 'job_summer12_Wg'),
-        #(base, 'job_summer12_Zg'),
-        #(base, 'job_summer12_Wjets'),
+        #(base, 'job_summer12_Zg_s10'),
+        (base, 'job_summer12_Wjets'),
         #(base, 'job_summer12_WH_ZH_125'),
         #(base, 'job_summer12_WW_2l2nu'),
         #(base, 'job_summer12_WZ_2l2q'),
         #(base, 'job_summer12_WZ_3lnu'),
-        #(base, 'llaa_nlo_part1_ggNtuple' ),
+        #(base, 'llaa_nlo_ggNtuple' ),
 
         #(base, 'job_summer12_ttjets_1lPhOlap'),
         #(base, 'job_summer12_ttjets_2lPhOlap'),
@@ -59,7 +59,7 @@ jobs_mc = [
 
         #(base, 'job_summer12_DYJetsToLLPhOlap'),
         #(base, 'job_summer12_WgPhOlap'),
-        #(base, 'job_summer12_WjetsPhOlap'),
+        (base, 'job_summer12_WjetsPhOlap'),
         #(base, 'job_summer12_ggZZ_2l2l'),
         #(base, 'job_summer12_ggZZ_4l'),
         #(base, 'job_summer12_ZZZ'),
@@ -122,176 +122,115 @@ top_configs = [
     {   
      'module'      : 'ConfFilter.py', 
      'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'mtcut' : ' > 40 ', 'mtvar' : 'mt_trigmu_met' },
-     'input_name'  : 'LepGammaGammaNoPhID_2015_09_09',
-     'output_name' : 'LepGammaGammaFinalMuUnblindAll_2015_09_16',
+     'input_name'  : 'LepGammaGammaNoPhID_2015_10_01',
+     'output_name' : 'LepGammaGammaFinalMuUnblindAll_2015_10_01',
      'tag'         : 'muFinal'
     },
-    {   
-     'module'      : 'ConfFilter.py', 
-     'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > 40 ', 'mtvar' : 'mt_trigel_met' },
-     'input_name'  : 'LepGammaGammaNoPhID_2015_09_09',
-     'output_name' : 'LepGammaGammaFinalUnblindAll_2015_09_16',
-     'tag'         : 'elFinal'
-    },
     #{   
     # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > 40 ' , 'invpixlead' : True },
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithEleOlap_2015_09_03',
-    # 'output_name' : 'LepGammaGammaFinalWithEleOlapElUnblindAllInvPixLead_2015_09_04',
-    # 'tag'         : 'elFinal'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > 40 ' , 'invpixsubl' : True },
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithEleOlap_2015_09_03',
-    # 'output_name' : 'LepGammaGammaFinalWithEleOlapElUnblindAllInvPixSubl_2015_09_04',
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > 40 ', 'mtvar' : 'mt_trigel_met' },
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepGammaGammaFinalElUnblindAll_2015_10_01',
     # 'tag'         : 'elFinal'
     #},
     #{
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_looseID_bothEleVeto', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_09_09',
-    # 'output_name' : 'LepGammaGammaNoPhIDVetoPixSeedBoth_2015_09_09',
-    # 'tag'         : 'vetoBoth'
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepGammaGammaNoPhIDVetoPixSeedBoth_2015_10_01',
+    # 'tag'         : 'vetoBothloose'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_looseID_invEleVetoLead', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_09_09',
-    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedLead_2015_09_09',
-    # 'tag'         : 'invLead'
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedLead_2015_10_01',
+    # 'tag'         : 'invLeadloose'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_looseID_invEleVetoSubl', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_09_09',
-    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_09_09',
-    # 'tag'         : 'invSubl'
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_10_01',
+    # 'tag'         : 'invSublloose'
+    #},
+
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'mtvar' : 'mt_trigmu_met' },
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepGammaGammaFinalMuUnblindAllNoMtCut_2015_10_01',
+    # 'tag'         : 'muFinalloose'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'nozmass' : True },
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_09_09',
-    # 'output_name' : 'LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_09_09',
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_10_01',
     # 'tag'         : 'elFinalLoose'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'nozmass' : True , 'invpixsubl' : True },
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_09_09',
-    # 'output_name' : 'LepGammaGammaFinalElNoZCutNoMtCutInvPixSubl_2015_09_09',
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepGammaGammaFinalElNoZCutNoMtCutInvPixSubl_2015_10_01',
     # 'tag'         : 'elFinalInvPixSubl'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'nozmass' : True , 'invpixlead' : True },
-    # 'input_name'  : 'LepGammaGammaNoPhID_2015_09_09',
-    # 'output_name' : 'LepGammaGammaFinalElNoZCutNoMtCutInvPixLead_2015_09_09',
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepGammaGammaFinalElNoZCutNoMtCutInvPixLead_2015_10_01',
     # 'tag'         : 'elFinalInvPixLead'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'nozmass' : True, 'mtcut' : ' < 40 ', 'invpixsubl' : True },
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithEleOlap_2015_09_03',
-    # 'output_name' : 'LepGammaGammaWithEleOlapFinalElLowMtInvPixSubl_2015_09_04',
-    # 'tag'         : 'elFinalInvPixSubl'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'nozmass' : True, 'mtcut' : ' < 40 ', 'invpixlead' : True },
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithEleOlap_2015_09_03',
-    # 'output_name' : 'LepGammaGammaWithEleOlapFinalElLowMtInvPixLead_2015_09_04',
-    # 'tag'         : 'elFinalInvPixLead'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'zmasscr' : True, 'mtcut' : ' > 40 ', 'invpixsubl' : True },
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithEleOlap_2015_09_03',
-    # 'output_name' : 'LepGammaGammaWithEleOlapFinalElHighMtZPeakInvPixSubl_2015_09_07',
-    # 'tag'         : 'elFinalInvPixSubl'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'zmasscr' : True, 'mtcut' : ' > 40 ', 'invpixlead' : True },
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithEleOlap_2015_09_03',
-    # 'output_name' : 'LepGammaGammaWithEleOlapFinalElHighMtZPeakInvPixLead_2015_09_07',
-    # 'tag'         : 'elFinalInvPixLead'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'mtcut' : ' < 40 '},
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithEleOlap_2015_09_03',
-    # 'output_name' : 'LepGammaGammaWithEleOlapFinalMuUnblindAllLowMt_2015_09_03',
-    # 'tag'         : 'muFinal'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' < 40 '},
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithEleOlap_2015_09_03',
-    # 'output_name' : 'LepGammaGammaWithEleOlapFinalElUnblindAllLowMt_2015_09_03',
-    # 'tag'         : 'elFinal'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'nozmass' : True, 'mtcut' : ' < 40 ' },
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithEleOlap_2015_09_03',
-    # 'output_name' : 'LepGammaGammaWithEleOlapFinalElUnblindAllLowMt_2015_09_04',
-    # 'tag'         : 'elFinal'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'zmasscr' : True, 'mtcut' : ' > 40 ' },
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithEleOlap_2015_09_03',
-    # 'output_name' : 'LepGammaGammaWithEleOlapFinalElUnblindAllHighMtZPeak_2015_09_04',
-    # 'tag'         : 'elFinal'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_mumu' },
-    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_30',
-    # 'output_name' : 'LepLepGammaGammaFinalMuMuUnblindAll_2015_08_01',
-    # 'tag'         : 'muFinal'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_lep_gamma', 'invpix' : True },
-    # 'input_name'  : 'LepGammaNoPhID_2015_09_09',
-    # 'output_name' : 'LepGammaMediumPhIDFailPixSeed_2015_09_14',
-    # 'tag'         : 'elFinal'
+    # 'input_name'  : 'LepGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepGammaMediumPhIDFailPixSeed_2015_10_01',
+    # 'tag'         : 'mediumfailpix'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_lep_gamma', 'invpix' : False },
-    # 'input_name'  : 'LepGammaNoPhID_2015_09_09',
-    # 'output_name' : 'LepGammaMediumPhIDPassPixSeed_2015_09_14',
-    # 'tag'         : 'elFinal'
+    # 'input_name'  : 'LepGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepGammaMediumPhIDPassPixSeed_2015_10_01',
+    # 'tag'         : 'mediumpaspix'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mumu' },
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepLepGammaGammaFinalMuMuUnblindAll_2015_10_01',
+    # 'tag'         : 'mumuFinal'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_elel' },
-    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_30',
-    # 'output_name' : 'LepLepGammaGammaFinalElElUnblindAll_2015_08_01',
-    # 'tag'         : 'elFinal'
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepLepGammaGammaFinalElElUnblindAll_2015_10_01',
+    # 'tag'         : 'elelFinal'
     #},
+
     #{
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_looseID_bothEleVeto', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
-    # 'output_name' : 'LepLepGammaGammaNoPhIDVetoPixSeedBoth_2015_07_16',
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_09_18',
+    # 'output_name' : 'LepLepGammaGammaNoPhIDVetoPixSeedBoth_2015_09_18',
     # 'tag'         : 'vetoBoth'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_looseID_invEleVetoLead', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
-    # 'output_name' : 'LepLepGammaGammaNoPhIDInvPixSeedLead_2015_07_16',
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_09_18',
+    # 'output_name' : 'LepLepGammaGammaNoPhIDInvPixSeedLead_2015_09_18',
     # 'tag'         : 'invLead'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_looseID_invEleVetoSubl', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_07_16',
-    # 'output_name' : 'LeplepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16',
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_09_18',
+    # 'output_name' : 'LeplepGammaGammaNoPhIDInvPixSeedSubl_2015_09_18',
     # 'tag'         : 'invSubl'
     #},
     #{   

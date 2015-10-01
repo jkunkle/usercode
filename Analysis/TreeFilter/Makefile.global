@@ -19,13 +19,14 @@ else
 	LOCATION=$(UMDLOC)
 endif 
 
+WORK_AREA = ${WorkArea}
+
 #INC_DIR = ${PWD}
 INC_DIR = $(WORK_AREA)/TreeFilter/$(PACKAGE)
 EXE_DIR = $(INC_DIR)
 OBJ_DIR = $(INC_DIR)/obj/
 SRC_DIR = $(INC_DIR)/src/
-
-WORK_AREA = ${WorkArea}
+COMMON_DIR = $(WORK_AREA)/TreeFilter/Common
 
 ROOTCONFIG   = root-config
 
@@ -33,6 +34,7 @@ ROOTCXXFLAGS = $(shell $(ROOTCONFIG) --cflags)
 ROOTLIBS     = $(shell $(ROOTCONFIG) --libs) -lTreePlayer -lTMVA -lRooFit
 
 COREINC = -I$(WORK_AREA)/TreeFilter/Core/
+COMMONINC = -I$(WORK_AREA)/TreeFilter/Common/include
 COREOBJ = $(WORK_AREA)/TreeFilter/Core/obj/AnalysisBase.o $(WORK_AREA)/TreeFilter/Core/obj/Util.o
 
 # we need to link against an additional library if using root>5.24
@@ -54,7 +56,7 @@ endif
 
 
 DEBUG        = false
-INCLUDE      = $(ROOTCXXFLAGS) $(BOOSTFLAGS) $(COREINC)
+INCLUDE      = $(ROOTCXXFLAGS) $(BOOSTFLAGS) $(COREINC) $(COMMONINC)
 
 # do something like 
 #  make DEBUG=true

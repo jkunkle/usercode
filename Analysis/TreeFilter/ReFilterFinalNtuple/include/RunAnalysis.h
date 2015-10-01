@@ -48,6 +48,7 @@ class RunModule : public virtual RunModuleBase {
         void FilterJet        ( ModuleConfig & config ) const;
         bool FilterEvent      ( ModuleConfig & config ) const;
         bool FilterBlind      ( ModuleConfig & config ) const;
+        void CalcEventVars    ( ModuleConfig & config ) const;
         void CalcDiJetVars    ( ModuleConfig & config ) const;
 
         bool _isData;
@@ -66,7 +67,6 @@ class RunModule : public virtual RunModuleBase {
 // Declare any output variables that you'll fill here
 namespace OUT {
 
-#ifdef MODULE_CalcDiJetVars
     float zeppenfeld_w;
     bool zeppenfeld_w_pos_desc;
     float zeppenfeld_z;
@@ -81,7 +81,6 @@ namespace OUT {
     float dr_ph_j2;
     float dr_lep_j1;
     float dr_lep_j2;
-#endif
 
 };
 

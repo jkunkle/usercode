@@ -41,9 +41,9 @@ const ModuleConfig AnaConfig::getEntry( unsigned int i ) const {
 void AnaConfig::Run( RunModuleBase & runmod, const CmdOptions & options ) {
 
     if( options.files.size() == 0 ) {
-            runmod.initialize( 0, 0, 0, options, getEntries() );
-            runmod.execute( getEntries() );
-            runmod.finalize();
+        runmod.initialize( 0, 0, 0, options, getEntries() );
+        runmod.execute( getEntries() );
+        runmod.finalize();
     }
 
     int total_njobs = 0;
@@ -58,6 +58,7 @@ void AnaConfig::Run( RunModuleBase & runmod, const CmdOptions & options ) {
 
         BOOST_FOREACH( const std::string &fname, options.files[fidx].files ) {
           chain->Add( fname.c_str() );
+          std::cout << "Add input file " << fname << std::endl;
         }
 
         // Loop over job ranges
@@ -861,15 +862,28 @@ AnaConfig ParseConfig( const std::string & fname, CmdOptions & options ) {
             // __Modules__ line indicates the beginning of modules
             // when this line is encountered, don't parse the line, just
             // indicate that the following lines should be modules
-            if( line.find("__Modules__") != std::string::npos ) {
+
+            std::string valid_line = line;
+
+            // remove comments
+            std::string::size_type comment_pos = line.find("#");
+            if( comment_pos != std::string::npos ) {
+                valid_line = line.substr( 0, comment_pos );
+            }
+
+            if( valid_line.empty() ) {
+                continue;
+            }
+
+            if( valid_line.find("__Modules__") != std::string::npos ) {
                 read_modules = true;
             }
             else if( read_modules ) { // when the "Modules" line is found this is set to true
-                ReadModuleLine( line, ana_config );
+                ReadModuleLine( valid_line, ana_config );
             }
             else {
                 // by default read header lines
-                ReadHeaderLine( line, options );
+                ReadHeaderLine( valid_line, options );
             }
 
         }

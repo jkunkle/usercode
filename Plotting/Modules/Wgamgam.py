@@ -11,9 +11,9 @@ def config_samples(samples) :
     samples.AddSample('muon_2012b_Jan22rereco'       , path='job_muon_2012b_Jan22rereco'        ,  isActive=False, scale=1.0 )
     samples.AddSample('muon_2012c_Jan22rereco'       , path='job_muon_2012c_Jan22rereco'        ,  isActive=False, scale=1.0 )
     samples.AddSample('muon_2012d_Jan22rereco'       , path='job_muon_2012d_Jan22rereco'        ,  isActive=False, scale=1.0 )
-    samples.AddSample('DYJetsToLL'                   , path='job_summer12_DYJetsToLL'         ,  isActive=False, useXSFile=True )
+    samples.AddSample('DYJetsToLL'                   , path='job_summer12_DYJetsToLL_s10'         ,  isActive=False, useXSFile=True )
 
-    samples.AddSample('DYJetsToLLPhOlap'             , path='job_summer12_DYJetsToLLPhOlapWithSF'     ,  isActive=False, useXSFile=True, XSName='DYJetsToLL')
+    samples.AddSample('DYJetsToLLPhOlap'             , path='job_summer12_DYJetsToLL_s10PhOlap'     ,  isActive=False, useXSFile=True, XSName='DYJetsToLL')
     samples.AddSample('diphoton_box_10to25'          , path='job_summer12_diphoton_box_10to25'  ,  isActive=False, useXSFile=True )
     samples.AddSample('diphoton_box_250toInf'        , path='job_summer12_diphoton_box_250toInf',  isActive=False, useXSFile=True )
     samples.AddSample('diphoton_box_25to250'         , path='job_summer12_diphoton_box_25to250' ,  isActive=False, useXSFile=True )
@@ -30,8 +30,8 @@ def config_samples(samples) :
     samples.AddSample('t_tW'                         , path='job_summer12_t_tW'                 ,  isActive=False, useXSFile=True )
     samples.AddSample('WAA_ISR'                      , path='job_summer12_WAA_ISR'              ,  isActive=False, useXSFile=True )
     samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  isActive=False, useXSFile=True )
-    samples.AddSample('NLO_WAA_ISR'                  , path='job_NLO_WAA_ISR'              ,  isActive=False, useXSFile=True )
-    samples.AddSample('NLO_WAA_FSR'                  , path='job_NLO_WAA_FSR'              ,  isActive=False, useXSFile=True )
+    samples.AddSample('NLO_WAA_ISR'                  , path='job_NLO_WAA_ISR_PtG500MeV'              ,  isActive=False, useXSFile=True )
+    samples.AddSample('NLO_WAA_FSR'                  , path='job_NLO_WAA_FSR_PtG500MeV'              ,  isActive=False, useXSFile=True )
     #samples.AddSample('WAA_ISR'                      , path='job_summer12_WAA_ISR'              ,  isActive=False, useXSFile=False, scale=1.0 )
     #samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  isActive=False, useXSFile=False, scale=1.0 )
     samples.AddSample('Wg'                           , path='job_summer12_Wg'                  ,  isActive=False, useXSFile=True )
@@ -48,7 +48,7 @@ def config_samples(samples) :
     samples.AddSample('WZZ'                          , path='job_summer12_WZZ'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('Zgg'                          , path='llaa_nlo_part1_ggNtuple'           ,  isActive=False, useXSFile=True, XSName='ZggNLO' )
     #samples.AddSample('Zg'                           , path='job_summer12_ZgOnePhot'                   ,  isActive=False, useXSFile=True )
-    samples.AddSample('Zg'                           , path='job_summer12_ZgWithSF'             ,  isActive=False, useXSFile=True, XSName='Zg' )
+    samples.AddSample('Zg'                           , path='job_summer12_Zg_s10'             ,  isActive=False, useXSFile=True, XSName='Zg' )
     samples.AddSample('ZZ_2e2mu'                     , path='job_summer12_ZZ_2e2mu'             ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2e2tau'                    , path='job_summer12_ZZ_2e2tau'            ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2l2nu'                     , path='job_summer12_ZZ_2l2nu'             ,  isActive=False, useXSFile=True )
@@ -88,10 +88,10 @@ def config_samples(samples) :
 
     samples.AddSampleGroup( 'Data', legend_name='Data', 
                             input_samples = [
-                                             #'electron_2012a_Jan22rereco',
-                                             #'electron_2012b_Jan22rereco',
-                                             #'electron_2012c_Jan2012rereco',
-                                             #'electron_2012d_Jan22rereco',
+                                             'electron_2012a_Jan22rereco',
+                                             'electron_2012b_Jan22rereco',
+                                             'electron_2012c_Jan2012rereco',
+                                             'electron_2012d_Jan22rereco',
                                              'muon_2012a_Jan22rereco',
                                              'muon_2012b_Jan22rereco',
                                              'muon_2012c_Jan22rereco',
@@ -127,11 +127,11 @@ def config_samples(samples) :
     samples.AddSampleGroup( 'Wgg', legend_name='W#gamma#gamma', 
                             input_samples = [
                                              'NLO_WAA_ISR',
-                                             'NLO_WAA_FSR',
+                                             #'NLO_WAA_FSR',
                                             ],
                            plotColor=ROOT.kRed,
                            isSignal=False,
-                           isActive=False
+                           isActive=True
                           )
 
 
@@ -172,7 +172,7 @@ def config_samples(samples) :
 
     samples.AddSampleGroup( 'Wjets', legend_name='W+jets', 
                             input_samples = [
-                                             '_Wjets',
+                                             'WjetsPhOlap',
                                             ],
                            plotColor=ROOT.kRed-7,
                            isActive=True,

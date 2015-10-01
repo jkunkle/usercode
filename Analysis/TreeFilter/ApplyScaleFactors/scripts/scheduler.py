@@ -17,6 +17,7 @@ base_orig_dy = 'root://eoscms//eos/cms/store/group/phys_smp/ggNtuples/mc'
 base_orig = 'root://eoscms//eos/cms/store/group/phys_egamma/cmkuo/'
 base_chris = 'root://eoscms//eos/cms/store/user/cranelli/WGamGam/NLO_ggNtuples/'
 base_me = 'root://eoscms//eos/cms/store/user/jkunkle/Samples/ggNtuples'
+base_yurii = 'root://eoscms//eos/cms/store/user/ymaravin/MC/LLAA'
 
 class JobConf( ) :
 
@@ -39,16 +40,16 @@ jobs_data = [
 jobs_mc = [
         #JobConf(base, base_chris, 'job_NLO_WAA_FSR'),
         #JobConf(base, base_chris, 'job_NLO_WAA_ISR'),
-        #JobConf(base, base_chris, 'job_NLO_WAA_ISR_PtG500MeV'),
-        #JobConf(base, base_chris, 'job_NLO_WAA_FSR_PtG500MeV'),
+        JobConf(base, base_chris, 'job_NLO_WAA_ISR_PtG500MeV'),
+        JobConf(base, base_chris, 'job_NLO_WAA_FSR_PtG500MeV'),
         ##JobConf(base, base_me, 'job_summer12_Zgg'),
-        #JobConf(base, base_me, 'llaa_nlo_part1_ggNtuple'),
+        JobConf(base, base_yurii, 'llaa_nlo_ggNtuple'),
 
         ##JobConf(base,  base_orig_dy, 'job_summer12_DYJetsToLL'),
-        JobConf(base,  base_orig_dy, 'job_summer12_DYJetsToLL', 'PhOlap'),
+        #JobConf(base,  base_orig_dy, 'job_summer12_DYJetsToLL', 'PhOlap'),
         ##JobConf(base, base_orig, 'job_summer12_Wg'),
         ##JobConf(base, base_orig, 'job_summer12_Wg', 'PhOlap'),
-        JobConf(base, base_orig, 'job_summer12_Zg'),
+        #JobConf(base, base_orig, 'job_summer12_Zg'),
         ##JobConf(base, base_orig, 'job_summer12_Zg'),
         ##JobConf(base, base_orig, 'job_summer12_Wjets'),
         ##JobConf(base, base_orig, 'job_summer12_ttjets_1l'),
@@ -128,108 +129,31 @@ top_configs = [
     #{   
     # 'module'      : 'Conf.py', 
     # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepGammaGammaFinalMuNoLepVetoUnblindAll_2015_09_14',
+    # 'input_name'  : 'LepGammaGammaFinalMuUnblindAll_2015_09_25',
     # 'output_tag'  : 'WithSF',
     # 'tag'         : 'muFinalSF'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
+    # 'input_name'  : 'LepGammaGammaFinalElUnblindAll_2015_09_25',
+    # 'output_tag'  : 'WithSF',
+    # 'tag'         : 'elFinalSF'
     #},
     {   
      'module'      : 'Conf.py', 
      'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-     'input_name'  : 'LepLepGammaNoPhID_2015_09_09',
+     'input_name'  : 'LepGammaGammaFinalMuUnblindAllNoMtCut_2015_09_25',
      'output_tag'  : 'WithSF',
      'tag'         : 'muFinalSF'
     },
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : '',
-    # 'output_tag'  : 'WithSF',
-    # 'tag'         : 'elFinalSF'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_09_09',
-    # 'output_tag'  : 'WithSF',
-    #'tag'         : 'elFinalSF'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepGammaGammaWithEleOlapFinalElUnblindAllNoZMassLowMt_2015_09_03',
-    # 'output_tag'  : 'WithSF',
-    #'tag'         : 'elFinalSF'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepGammaGammaFinalElZCR_2015_08_01',
-    # 'output_tag'  : 'WithSF',
-    #'tag'         : 'elFinalSF'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepLepGammaGammaFinalMuMuUnblindAll_2015_08_01',
-    # 'output_tag'  : 'WithSF',
-    # 'tag'         : 'muFinalSF'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepLepGammaGammaFinalElElUnblindAll_2015_08_01',
-    # 'output_tag'  : 'WithSF',
-    #'tag'         : 'elFinalSF'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_egamma_scale_up' },
-    # 'input_name'  : 'LepGammaGammaFinalElLowPtLoose_2015_06_29',
-    # 'output_name' : 'TEST',
-    # 'tag'         : 'elFinalEGUP'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_egamma_scale_dn' },
-    # 'input_name'  : 'LepGammaGammaFinalElLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalElEGammaEScaleDN_2015_06_29',
-    # 'tag'         : 'elFinalEGDN'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_egamma_scale_up' },
-    # 'input_name'  : 'LepGammaGammaFinalMuLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalMuEGammaEScaleUP_2015_06_29',
-    # 'tag'         : 'muFinalEGUP'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_egamma_scale_dn' },
-    # 'input_name'  : 'LepGammaGammaFinalMuLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalMuEGammaEScaleDN_2015_06_29',
-    # 'tag'         : 'muFinalEGDN'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_muon_scale_up' },
-    # 'input_name'  : 'LepGammaGammaFinalMuLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalMuMuonEScaleUP_2015_06_29',
-    # 'tag'         : 'muFinalMUUP'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_muon_scale_dn' },
-    # 'input_name'  : 'LepGammaGammaFinalMuLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalMuMuonEScaleDN_2015_06_29',
-    # 'tag'         : 'muFinalMUDN'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_met_uncert' },
-    # 'input_name'  : 'LepGammaGammaFinalMuLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
-    # 'tag'         : 'muFinalMET'
-    #},
+    {   
+     'module'      : 'Conf.py', 
+     'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
+     'input_name'  : 'LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_09_25',
+     'output_tag'  : 'WithSF',
+     'tag'         : 'elFinalSF'
+    },
     #{   
     # 'module'      : 'Conf.py', 
     # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_met_uncert' },

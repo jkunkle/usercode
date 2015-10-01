@@ -22,7 +22,7 @@ def config_samples(samples) :
     samples.AddSample('WWZ'                          , path='job_summer12_WWZ'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('WZ_3lnu'                      , path='job_summer12_WZ_3lnu'              ,  isActive=False, useXSFile=True )
     samples.AddSample('WZZ'                          , path='job_summer12_WZZ'                  ,  isActive=False, useXSFile=True )
-    samples.AddSample('Zg'                           , path='job_summer12_Zg'                   ,  isActive=False, useXSFile=True )
+    samples.AddSample('Zg'                           , path='job_summer12_Zg_s10'                   ,  isActive=False, useXSFile=True )
 
     samples.AddSample('job_jetmon_2012b_Jan22rereco_pfJet40', path='job_jetmon_2012b_Jan22rereco_pfJet40', isActive=False )
     samples.AddSample('job_jetmon_2012c_Jan22rereco_pfJet40', path='job_jetmon_2012c_Jan22rereco_pfJet40', isActive=False )

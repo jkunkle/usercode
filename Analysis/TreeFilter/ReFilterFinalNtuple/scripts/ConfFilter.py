@@ -86,6 +86,8 @@ def make_final_mu( alg_list, args ) :
         filter_ele.cut_el_pt = ' > 10 '
         alg_list.append(filter_ele)
 
+    alg_list.append( Filter('CalcEventVars') )
+
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' > 1 '
     # remove the explicit cut on the number of electrons/muons
@@ -101,6 +103,7 @@ def make_final_mu( alg_list, args ) :
     filter_event.cut_leadPhot_trigMuDR = ' > 0.4 '
     filter_event.cut_sublPhot_trigMuDR = ' > 0.4 '
 
+    filter_event.cut_MuTrig = ' == True '
     filter_event.cut_isEEEE = ' == False '
 
     # remove diphoton mass cut
@@ -163,6 +166,8 @@ def make_final_el( alg_list, args ) :
         filter_ele.cut_el_pt = ' > 10 '
         alg_list.append(filter_ele)
 
+    alg_list.append( Filter('CalcEventVars') )
+
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' >  1 '
     # remove the explicit cut on the number of electrons/muons
@@ -188,6 +193,7 @@ def make_final_el( alg_list, args ) :
     filter_event.cut_leadPhot_trigElDR = ' > 0.4 '
     filter_event.cut_sublPhot_trigElDR = ' > 0.4 '
 
+    filter_event.cut_ElTrig = ' == True '
     filter_event.cut_isEEEE = ' == False '
 
     setattr( filter_event, 'cut_%s' %mtvar, mtcut )
@@ -237,6 +243,8 @@ def make_nominal_unblind( alg_list, args ) :
     filter_muon.cut_mu_pt = ' > 10 '
     alg_list.append(filter_muon)
 
+    alg_list.append( Filter('CalcEventVars') )
+
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' > 1 '
 
@@ -266,6 +274,8 @@ def make_nominal_unblind_noEleVeto( alg_list, args ) :
     filter_muon.cut_mu_pt = ' > 10 '
     alg_list.append(filter_muon)
 
+    alg_list.append( Filter('CalcEventVars') )
+
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' > 1 '
 
@@ -291,6 +301,8 @@ def make_nominal_unbzrej( alg_list, args ) :
     filter_muon = Filter( 'FilterMuon' )
     filter_muon.cut_mu_pt = ' > 10 '
     alg_list.append(filter_muon)
+
+    alg_list.append( Filter('CalcEventVars') )
 
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' > 1 '
@@ -318,6 +330,8 @@ def make_looseID_noEleVeto( alg_list, args ) :
     filter_muon.cut_mu_pt = ' > 10 '
     alg_list.append(filter_muon)
 
+    alg_list.append( Filter('CalcEventVars') )
+
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' > 1 '
 
@@ -330,6 +344,8 @@ def make_looseID_bothEleVeto( alg_list, args ) :
     filter_muon = Filter( 'FilterMuon' )
     filter_muon.cut_mu_pt = ' > 10 '
     alg_list.append(filter_muon)
+
+    alg_list.append( Filter('CalcEventVars') )
 
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' > 1 '
@@ -346,6 +362,8 @@ def make_looseID_invEleVetoSubl( alg_list, args ) :
     filter_muon.cut_mu_pt = ' > 10 '
     alg_list.append(filter_muon)
 
+    alg_list.append( Filter('CalcEventVars') )
+
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' > 1 '
     filter_event.cut_hasPixSeed_leadph12 = ' == False '
@@ -359,6 +377,8 @@ def make_looseID_invEleVetoLead( alg_list, args ) :
     filter_muon = Filter( 'FilterMuon' )
     filter_muon.cut_mu_pt = ' > 10 '
     alg_list.append(filter_muon)
+
+    alg_list.append( Filter('CalcEventVars') )
 
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' > 1 '
@@ -378,6 +398,7 @@ def make_final_mumu( alg_list, args ) :
     filter_photon = Filter( 'FilterPhoton' )
     filter_photon.cut_ph_medium = ' == True '
     filter_photon.cut_ph_pt = ' > 15 '
+    filter_photon.cut_ph_csev = ' == False '
     alg_list.append(filter_photon)
 
     filter_muon = Filter( 'FilterMuon' )
@@ -388,16 +409,21 @@ def make_final_mumu( alg_list, args ) :
     filter_ele.cut_el_pt = ' > 10 '
     alg_list.append(filter_ele)
 
+    alg_list.append( Filter('CalcEventVars') )
+
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' == 2 '
     filter_event.cut_nMu = ' == 2 '
     #filter_event.cut_nEl = ' == 0 '
 
-    filter_event.cut_dr_lep_ph1 = ' > 0.4 '
-    filter_event.cut_dr_lep_ph2 = ' > 0.4 '
-    filter_event.cut_dr_subllep_ph1 = ' > 0.4 '
-    filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
-    filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
+    #filter_event.cut_dr_lep_ph1 = ' > 0.4 '
+    #filter_event.cut_dr_lep_ph2 = ' > 0.4 '
+    #filter_event.cut_dr_subllep_ph1 = ' > 0.4 '
+    #filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
+    #filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
+
+    filter_event.cut_DiMuTrig = ' == True '
+    filter_event.cut_isEEEE = ' == False '
 
     filter_event.cut_m_mumu = ' > 40 '
 
@@ -423,6 +449,8 @@ def make_final_elel( alg_list, args ) :
     filter_photon = Filter( 'FilterPhoton' )
     filter_photon.cut_ph_medium = ' == True '
     filter_photon.cut_ph_pt = ' > 15 '
+    filter_photon.cut_ph_csev= ' == False '
+    #filter_photon.cut_hasPixSeed = ' == False '
 
     alg_list.append(filter_photon)
 
@@ -434,16 +462,21 @@ def make_final_elel( alg_list, args ) :
     filter_ele.cut_el_pt = ' > 10 '
     alg_list.append(filter_ele)
 
+    alg_list.append( Filter('CalcEventVars') )
+
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' == 2 '
     filter_event.cut_nEl = ' == 2 '
     #filter_event.cut_nMu = ' == 0 '
 
-    filter_event.cut_dr_lep_ph1 = ' > 0.4 '
-    filter_event.cut_dr_lep_ph2 = ' > 0.4 '
-    filter_event.cut_dr_subllep_ph1 = ' > 0.4 '
-    filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
-    filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
+    #filter_event.cut_dr_lep_ph1 = ' > 0.4 '
+    #filter_event.cut_dr_lep_ph2 = ' > 0.4 '
+    #filter_event.cut_dr_subllep_ph1 = ' > 0.4 '
+    #filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
+    #filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
+
+    filter_event.cut_DiElTrig = ' == True '
+    filter_event.cut_isEEEE = ' == False '
 
     filter_event.cut_m_elel = ' > 40 '
 
@@ -474,6 +507,8 @@ def make_lep_gamma( alg_list, args ) :
 
     alg_list.append( filter_photon )
 
+    alg_list.append( Filter('CalcEventVars') )
+
     filter_event = Filter('FilterEvent')
     filter_event.cut_nElTrig = ' > 0 '
     filter_event.cut_nPh = ' > 0 '
@@ -489,6 +524,8 @@ def make_wgjj( alg_list, args ) :
     filter_jet = Filter( 'FilterJet' )
     filter_jet.cut_jet_pt = ' > 30 '
     alg_list.append(filter_jet)
+
+    alg_list.append( Filter('CalcEventVars') )
 
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' == 1 '
@@ -512,6 +549,8 @@ def make_zgjj( alg_list, args ) :
     filter_jet = Filter( 'FilterJet' )
     filter_jet.cut_jet_pt = ' > 30 '
     alg_list.append(filter_jet)
+
+    alg_list.append( Filter('CalcEventVars') )
 
     filter_event = Filter('FilterEvent')
     filter_event.cut_nPh = ' == 1 '

@@ -105,27 +105,28 @@ def main() :
         all_syst[var]['FakeTemplateNom']={}
         for vals in iso_vals :
 
-            match_vals = vals
             syst_postfix = '%d-%d-%d' %(vals)
+            iso_str = 'iso%d-%d-%d' %( vals[0], vals[1], vals[2] )
             if var == 'chIsoCorr' :
-                match_vals = ( 1000000, vals[1], vals[2] )
                 syst_postfix = 'No Cut-%d-%d' %( vals[1], vals[2] )
+                iso_str = 'isoNone-%d-%d' %(vals[1], vals[2] )
             elif var == 'neuIsoCorr' :
-                match_vals = ( vals[0], 1000000, vals[2] )
                 syst_postfix = '%d-No Cut-%d' %( vals[0], vals[2] )
+                iso_str = 'iso%d-None-%d' %(vals[0], vals[2] )
             elif var == 'phoIsoCorr' :
-                match_vals = ( vals[0], vals[1], 1000000 )
                 syst_postfix = '%d-%d-No Cut' %( vals[0], vals[1] )
+                iso_str = 'iso%d-%d-None' %(vals[0], vals[1] )
 
             all_syst[var]['FakeTemplate'+syst_postfix] = {}
             all_syst[var]['RealTemplate'+syst_postfix] = {}
 
 
-            file_key_jet_temp_real_asym = 'ph_%s__(?P<reg>EB|EE)__iso%d-%d-%d__pt_(?P<pt1>\d+)-(?P<pt2>\d+|max)__CompDataRealPhotonMCTruthMatchPhoton__varBins.pickle' %(var, match_vals[0], match_vals[1], match_vals[2] )
+            file_key_jet_temp_real_asym = 'ph_%s__(?P<reg>EB|EE)__%s__pt_(?P<pt1>\d+)-(?P<pt2>\d+|max)__CompDataRealPhotonMCTruthMatchPhoton__varBins.pickle' %(var, iso_str )
             files_jet_temp_real_asym = find_files_in_dir( sub_dir_jet, file_key_jet_temp_real_asym )
+            print files_jet_temp_real_asym
             data_temp_real_asym['RealTemplate'+syst_postfix] = get_data_from_files_with_leg_key( sub_dir_jet, files_jet_temp_real_asym, ratio_key_temp_real)
 
-            file_key_jet_temp_real_asym_inc = 'ph_%s__(?P<reg>EB|EE)__iso%d-%d-%d__pt_15-max__CompDataRealPhotonMCTruthMatchPhoton__varBins.pickle' %(var, match_vals[0], match_vals[1], match_vals[2] )
+            file_key_jet_temp_real_asym_inc = 'ph_%s__(?P<reg>EB|EE)__%s__pt_15-max__CompDataRealPhotonMCTruthMatchPhoton__varBins.pickle' %(var, iso_str )
             files_jet_temp_real_asym_inc = find_files_in_dir( sub_dir_jet, file_key_jet_temp_real_asym_inc )
             data_temp_real_asym_inc['RealTemplate'+syst_postfix] = get_data_from_files_with_leg_key( sub_dir_jet, files_jet_temp_real_asym_inc, ratio_key_temp_real )
 

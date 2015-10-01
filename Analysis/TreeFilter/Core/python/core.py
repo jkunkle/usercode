@@ -11,6 +11,7 @@ import subprocess
 import multiprocessing
 import logging
 import time
+import datetime
 import filecmp
 import uuid
 from argparse import ArgumentParser
@@ -131,6 +132,9 @@ def config_and_run( options, package_name ) :
     assert options.outputDir is not None, 'Must provide an output directory via --outputDir'
     assert options.noInputFiles or options.treeName is not None, 'Must provide a tree name via --treeName'
     assert options.module is not None, 'Must provide a module via --module'
+    
+    if options.batch and options.noCompileWithCheck :
+        assert False, "Running noCompileWithCheck with batch mode can result in an executable not being created for a batch job!"
 
     if options.loglevel.upper() not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] :
         print 'Loglevel must be one of DEBUG, INFO, WARNING, ERROR, CRITICAL.  Default to INFO'
@@ -193,6 +197,8 @@ def config_and_run( options, package_name ) :
         print 'Will remove %d branches from output file : ' %( len(branches) - len(branches_to_keep))
         print '\n'.join( list( set( [ br['name'] for br in branches ] ) - set( branches_to_keep ) ) )
 
+    user_include_file_name = '%s/TreeFilter/%s/include/RunAnalysis.h' %( workarea, package_name )
+    out_branches = get_out_branches( user_include_file_name )
     # -------------------------------
     # gather module arguments
     # put outputDir into the arguments
@@ -259,9 +265,9 @@ def config_and_run( options, package_name ) :
         # Write all output branches in the 
         # header file so that the code will compile
         # only the keep branches will be saved, however
-        write_header_files(new_brdef_file_name, new_linkdef_file_name, branches,[ br['name'] for br in branches ], alg_list )
+        write_header_files(new_brdef_file_name, new_linkdef_file_name, branches,out_branches, [ br['name'] for br in branches ], alg_list )
 
-        write_source_file(new_source_file_name, new_header_file_name, branches, branches_to_keep, write_expert_code=options.writeExpertCode )
+        write_source_file(new_source_file_name, new_header_file_name, branches, out_branches, branches_to_keep, write_expert_code=options.writeExpertCode )
 
         if not (filecmp.cmp(  old_brdef_file_name, new_brdef_file_name ) and
                 filecmp.cmp(  old_header_file_name, new_header_file_name ) and
@@ -273,7 +279,7 @@ def config_and_run( options, package_name ) :
             print 'Will use new code and will compile'
             print '--------------------------------------'
 
-            comp_success = compile_code( alg_list, branches, branches_to_keep, workarea, package_name, options.exeName, options.writeExpertCode)
+            comp_success = compile_code( alg_list, branches, out_branches, branches_to_keep, workarea, package_name, options.exeName, options.writeExpertCode)
 
             if not comp_success :
                 return
@@ -281,7 +287,7 @@ def config_and_run( options, package_name ) :
 
     elif not options.noCompile :
 
-        comp_success = compile_code( alg_list, branches, branches_to_keep, workarea, package_name, options.exeName, options.writeExpertCode)
+        comp_success = compile_code( alg_list, branches, out_branches, branches_to_keep, workarea, package_name, options.exeName, options.writeExpertCode)
         if not comp_success :
             return
 
@@ -369,6 +375,9 @@ def config_and_run( options, package_name ) :
             os.system( 'bsub -q 1nh -o %s/out_%s.txt -e %s/err_%s.txt %s ' %(options.outputDir, jobid, options.outputDir, jobid, wrap) )
 
     else :
+        if options.resubmit :
+            print 'Must implement resubmit for single jobs'
+            return
 
         output_file = '%s/%s' %(options.outputDir, options.outputFile )
         conf_file  = '%s/%s' %(options.outputDir, options.confFileName )
@@ -447,7 +456,7 @@ def collect_input_files_eos( filesDir, filekey='.root', write_file_list=False, r
 
 
 #-----------------------------------------------------------
-def compile_code( alg_list, branches, branches_to_keep, workarea, package_name, exeName, writeExpertCode) :
+def compile_code( alg_list, branches, out_branches, branches_to_keep, workarea, package_name, exeName, writeExpertCode) :
 
     lockfile = '.compile.lock'
     lockname = '%s/TreeFilter/%s/%s' %( workarea, package_name, lockfile )
@@ -469,9 +478,9 @@ def compile_code( alg_list, branches, branches_to_keep, workarea, package_name, 
     # Write all output branches in the 
     # header file so that the code will compile
     # only the keep branches will be saved, however
-    write_header_files(brdef_file_name, linkdef_file_name, branches,[ br['name'] for br in branches ], alg_list )
+    write_header_files(brdef_file_name, linkdef_file_name, branches,out_branches, [ br['name'] for br in branches ], alg_list )
 
-    write_source_file(source_file_name, header_file_name, branches, branches_to_keep, write_expert_code=writeExpertCode )
+    write_source_file(source_file_name, header_file_name, branches, out_branches, branches_to_keep, write_expert_code=writeExpertCode )
 
     # compile
     logging.info('********************************')
@@ -747,6 +756,73 @@ def get_keep_branches( module, branches, enable_keep_filter, enable_remove_filte
             
     return branches_to_keep
 
+def get_out_branches( include_name ) :
+    """ Read include file to get the output branch names -- No Vectors for now!"""
+
+    ofile = open( include_name , 'r' )
+    in_out_namespace = False
+
+    out_branches = []
+
+    remove_strings = ['extern', 'unsigned', 'int', 'bool', 'float', 'string', 'std::string', 'Int_t', 'Bool_t', 'Float_t', 'Double_t', '}', '', '*', ';' ]
+    for line in ofile :
+
+        linestr = line
+        # ignore precompiler includes
+        if line.count('#') :
+            continue
+
+        # ignore comments
+        if line.count('//') :
+            linestr = line[line.find('//')+2:]
+            continue
+
+        # find OUT namespace 
+        if linestr.count('namespace') and linestr.count('OUT') :
+            in_out_namespace = True
+            continue
+
+        if in_out_namespace :
+
+            if linestr.count('}') :
+                break
+
+            full_line = linestr.lstrip(' ')
+
+            split_line = linestr.split()
+            for rmstr in remove_strings :
+                if rmstr in split_line :
+                    split_line.remove( rmstr )
+
+            to_rm = []
+            for entry in split_line :
+                if entry.count('vector') :
+                    to_rm.append(entry)
+
+            for rm in to_rm :
+                split_line.remove( rm )
+
+
+
+            if len( split_line ) > 1 :
+                print 'Cannot handle line ', line
+                print split_line
+                print 'Please check the format of the line and fix the code to read it properly'
+                raw_input('cont')
+            if len( split_line) :
+                out_branches.append( {'full_entry' : full_line, 'branch' : split_line[0] })
+            
+    # clean extra characters from names
+    cleaned_branches = []
+    for brdic in out_branches :
+        cleaned = brdic['branch'].replace(';', '').replace('*','')
+        if cleaned == '' :
+            continue
+        cleaned_branches.append( {'full_entry' : brdic['full_entry'], 'branch' : cleaned } )
+
+
+    return cleaned_branches 
+
 def make_exe_command( exe_path, conf_file, output_loc ) :
 
     command = [exe_path,
@@ -906,7 +982,7 @@ def write_config( alg_list, filename, treeName, outputDir, outputFile, files_lis
         os.makedirs( base_dir)
 
     cfile = open( filename, 'w')
-
+    cfile.write( '# %s\n' %datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S') )
     # first write header information
     jobid = start_idx
     file_line = ''
@@ -960,7 +1036,7 @@ def write_config( alg_list, filename, treeName, outputDir, outputFile, files_lis
 
     cfile.close()
 
-def write_header_files( brdefname, linkdefname, branches, keep_branches=[], alg_list=[] ) :
+def write_header_files( brdefname, linkdefname, branches, out_branches=[], keep_branches=[], alg_list=[] ) :
 
     branch_header = open(brdefname, 'w')
     branch_header.write('#ifndef BRANCHDEFS_H\n')
@@ -1014,6 +1090,7 @@ def write_header_files( brdefname, linkdefname, branches, keep_branches=[], alg_
 
         branch_header.write(file_entry)
 
+
     branch_header.write('};\n');
 
     branch_header.write('namespace OUT {\n');
@@ -1032,6 +1109,10 @@ def write_header_files( brdefname, linkdefname, branches, keep_branches=[], alg_
         else :
             file_entry = ' extern %s\t\t\t\t%s%s;\n' %(conf['type'], name, conf['arrayStr'])
 
+        branch_header.write(file_entry)
+
+    for brdic in out_branches :
+        file_entry = ' extern %s ' %brdic['full_entry'] 
         branch_header.write(file_entry)
 
     branch_header.write('};\n');
@@ -1069,7 +1150,7 @@ def write_header_files( brdefname, linkdefname, branches, keep_branches=[], alg_
     link_header.close()
     
 
-def write_source_file(source_file_name, header_file_name, branches, keep_branches=[], debugCode=False, write_expert_code=False) :
+def write_source_file(source_file_name, header_file_name, branches, out_branches=[], keep_branches=[], debugCode=False, write_expert_code=False) :
 
     branch_header = open(header_file_name, 'w')
     branch_header.write('#ifndef BRANCHINIT_H\n')
@@ -1080,7 +1161,8 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
     branch_header.write('void InitOUTTree( TTree * tree );\n')
     branch_header.write('void CopyInputVarsToOutput(std::string prefix = std::string() );\n')
     branch_header.write('void CopyPrefixBranchesInToOut( const std::string & prefix );\n' )
-    branch_header.write('void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index, bool quiet=false );\n')
+    branch_header.write('void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index, bool quiet=false, std::string veto = std::string() );\n')
+    branch_header.write('void CopyMapVarsToOut( const std::map<std::string, float> & results);\n')
     branch_header.write('void ClearOutputPrefix ( const std::string & prefix );\n')
     if write_expert_code:
         branch_header.write('void CheckVectorSize ( const std::string & prefix, unsigned expected );\n')
@@ -1092,7 +1174,7 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
         branch_header.write('void Copy%sInToOut( std::string prefix = std::string() ); \n' %name)
 
         if br['type'].count('vector') :
-            branch_header.write('void Copy%sInToOutIndex( unsigned index, std::string prefix = std::string(), bool quiet=false ); \n' %name)
+            branch_header.write('void Copy%sInToOutIndex( unsigned index, std::string prefix = std::string(), bool quiet=false, std::string veto = std::string() ); \n' %name)
             branch_header.write('void ClearOutput%s( std::string prefix ); \n' %name)
             if write_expert_code:
                 branch_header.write('void Check%sVectorSize( std::string prefix, unsigned expected  ); \n' %name)
@@ -1216,7 +1298,7 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
 
     branch_setting.write('}; \n\n' )
     
-    branch_setting.write('void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index, bool quiet ) { \n\n')
+    branch_setting.write('void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index, bool quiet, std::string veto ) { \n\n')
 
     branch_setting.write('// Just call each copy function with the prefix \n\n')
 
@@ -1226,9 +1308,47 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
             continue
 
         if conf['type'].count('vector') :
-            branch_setting.write( '    Copy%sInToOutIndex( index, prefix, quiet );\n' %name)
+            branch_setting.write( '    Copy%sInToOutIndex( index, prefix, quiet, veto );\n' %name)
 
     branch_setting.write('}; \n\n' )
+
+    branch_setting.write('void CopyMapVarsToOut( const std::map<std::string, float> & results ) {\n')
+
+    valid_branches = []
+    for conf in branches :
+        if conf['type'].count('vector') :
+            continue
+        if conf['arrayStr'] :
+            continue
+
+        name = conf['name']
+        if name not in keep_branches :
+            continue
+
+
+        valid_branches.append( name )
+
+    for brdic in out_branches :
+
+        if not brdic['full_entry'].count('vector') :
+            valid_branches.append( brdic['branch'] )
+
+    branch_setting.write( '    std::vector<std::string> filled_branches;\n' )
+    branch_setting.write( '    std::map<std::string, float>::const_iterator mitr; \n' %br )
+    for br in valid_branches :
+        branch_setting.write( '    mitr = results.find( "%s" ); \n' %br )
+        branch_setting.write( '    if( mitr != results.end() ) { \n' )
+        branch_setting.write( '        OUT::%s = mitr->second;\n' %br )
+        branch_setting.write( '        filled_branches.push_back( "%s" );\n' %(br) )
+        branch_setting.write( '    }\n' )
+    branch_setting.write( '    if( filled_branches.size() < results.size() ) { \n' )
+    branch_setting.write( '        for( std::map<std::string, float>::const_iterator mitr = results.begin(); mitr != results.end(); ++mitr ) { \n' )
+    branch_setting.write( '            if( std::find( filled_branches.begin(), filled_branches.end(), mitr->first ) == filled_branches.end()  ) { \n' )
+    branch_setting.write( '                std::cout << "Could not fill branch " << mitr->first << std::endl; \n '  )
+    branch_setting.write( '            }\n' )
+    branch_setting.write( '        }\n' )
+    branch_setting.write( '    }\n' )
+    branch_setting.write( '}\n' )
 
     branch_setting.write('void ClearOutputPrefix ( const std::string & prefix ) {\n')
     for conf in branches :
@@ -1296,11 +1416,14 @@ def write_source_file(source_file_name, header_file_name, branches, keep_branche
         branch_setting.write('}; \n\n ')
 
         if conf['type'].count('vector') :
-            branch_setting.write('void Copy%sInToOutIndex( unsigned index, std::string  prefix, bool quiet ) { \n\n' %name)
+            branch_setting.write('void Copy%sInToOutIndex( unsigned index, std::string  prefix, bool quiet, std::string veto ) { \n\n' %name)
             branch_setting.write('    std::string my_name = "%s";\n' %name)
             branch_setting.write('    std::size_t pos = my_name.find( prefix ); \n')
+            branch_setting.write('    std::size_t pos_veto = std::string::npos; \n')
+            branch_setting.write('    if( !veto.empty() ) pos_veto = my_name.find( veto ); \n')
             branch_setting.write('    // if the filter is given only continue if its matched at the beginning \n' )
             branch_setting.write('    if( prefix != "" &&  pos != 0 ) return; \n' )
+            branch_setting.write('    if( pos_veto == 0 ) return; \n' )
             branch_setting.write('    if( index >= IN::%s->size() ) {\n ' %name)
             branch_setting.write('        if( !quiet ) {\n ' )
             branch_setting.write('        std::cout << "Vector size exceeded for branch IN::%s" << std::endl;\n ' %name)

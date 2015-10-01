@@ -14,6 +14,7 @@
 #include "include/BranchInit.h"
 
 #include "Core/Util.h"
+#include "CalcWggEventVars.h"
 
 #include "TFile.h"
 
@@ -120,6 +121,9 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     if( config.GetName() == "CalcDiJetVars" ) {
         CalcDiJetVars( config );
     }
+    if( config.GetName() == "CalcEventVars" ) {
+        CalcEventVars( config );
+    }
 
     return keep_evt;
 
@@ -144,8 +148,9 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
         if( !config.PassBool( "cut_ph_medium", IN::ph_passMedium->at(idx) ) ) continue;
         if( !config.PassFloat( "cut_ph_pt", IN::ph_pt->at(idx) ) ) continue;
         if( !config.PassBool( "cut_hasPixSeed", IN::ph_hasPixSeed->at(idx) ) ) continue;
+        if( !config.PassBool( "cut_ph_csev", IN::ph_eleVeto->at(idx) ) ) continue;
 
-        CopyPrefixIndexBranchesInToOut( "ph_", idx );
+        CopyPrefixIndexBranchesInToOut( "ph_", idx, false, "ph_ptSorted_" );
         OUT::ph_n++;
 
     }
@@ -201,6 +206,93 @@ void RunModule::FilterJet( ModuleConfig & config ) const {
 // type of variable, you just have to handle it
 // in the ApplyModule function
 
+
+void RunModule::CalcEventVars( ModuleConfig & config ) const {
+
+    std::vector<TLorentzVector> photons;
+    std::vector<TLorentzVector> muons;
+    std::vector<TLorentzVector> electrons;
+    std::vector<TLorentzVector> trigelectrons;
+    std::vector<TLorentzVector> trigmuons;
+    std::vector<std::pair<float, int> > sorted_photons;
+
+    for( int idx = 0; idx < OUT::mu_n; idx++ ) {
+
+        TLorentzVector lv;
+        lv.SetPtEtaPhiM(  OUT::mu_pt->at(idx),
+                          OUT::mu_eta->at(idx),
+                          OUT::mu_phi->at(idx),
+                          0.1057
+                        );
+        muons.push_back( lv );
+        if( lv.Pt() > 25 && fabs(lv.Eta()) < 2.1 && OUT::mu_triggerMatch->at(idx) ) {
+            trigmuons.push_back(lv);
+        }
+    }
+
+    for( int idx = 0; idx < OUT::el_n; idx++ ) {
+
+        TLorentzVector lv;
+        lv.SetPtEtaPhiE(  OUT::el_pt->at(idx),
+                          OUT::el_eta->at(idx),
+                          OUT::el_phi->at(idx),
+                          OUT::el_e->at(idx)
+                        );
+        electrons.push_back( lv );
+        if( lv.Pt() > 30 && OUT::el_triggerMatch->at(idx) && OUT::el_passMvaTrig->at(idx) ) {
+            trigelectrons.push_back( lv );
+        }
+    } 
+
+    for( int idx = 0; idx < OUT::ph_n; idx++ ) {
+
+        TLorentzVector lv;
+        lv.SetPtEtaPhiE(  OUT::ph_pt->at(idx),
+                          OUT::ph_eta->at(idx),
+                          OUT::ph_phi->at(idx),
+                          OUT::ph_e->at(idx)
+                        );
+        photons.push_back( lv );
+        sorted_photons.push_back( std::make_pair( lv.Pt(), idx ) );
+    } 
+
+    TLorentzVector metlv;
+    metlv.SetPtEtaPhiM( OUT::pfType01MET, 0.0, OUT::pfType01METPhi, 0.0 );
+
+        
+    std::map<std::string, float> results;
+
+    Wgg::CalcEventVars( photons, electrons, muons, trigelectrons, trigmuons, metlv, results );
+
+    CopyMapVarsToOut( results );
+
+    // sort the list of photon momenta in descending order
+    std::sort(sorted_photons.rbegin(), sorted_photons.rend());
+
+    if( sorted_photons.size() > 1 ) {
+        int leadidx = sorted_photons[0].second;
+        int sublidx = sorted_photons[1].second;
+        OUT::hasPixSeed_leadph12 = OUT::ph_hasPixSeed->at(leadidx);
+        OUT::hasPixSeed_sublph12 = OUT::ph_hasPixSeed->at(sublidx);
+        OUT::sieie_leadph12 = OUT::ph_sigmaIEIE->at(leadidx);
+        OUT::sieie_sublph12 = OUT::ph_sigmaIEIE->at(sublidx);
+        OUT::chIsoCorr_leadph12 = OUT::ph_chIsoCorr->at(leadidx);
+        OUT::chIsoCorr_sublph12 = OUT::ph_chIsoCorr->at(sublidx);
+        OUT::neuIsoCorr_leadph12 = OUT::ph_neuIsoCorr->at(leadidx);
+        OUT::neuIsoCorr_sublph12 = OUT::ph_neuIsoCorr->at(sublidx);
+        OUT::phoIsoCorr_leadph12 = OUT::ph_phoIsoCorr->at(leadidx);
+        OUT::phoIsoCorr_sublph12 = OUT::ph_phoIsoCorr->at(sublidx);
+        OUT::isEB_leadph12 = OUT::ph_IsEB->at(leadidx);
+        OUT::isEB_sublph12 = OUT::ph_IsEB->at(sublidx);
+        OUT::isEE_leadph12 = OUT::ph_IsEE->at(leadidx);
+        OUT::isEE_sublph12 = OUT::ph_IsEE->at(sublidx);
+        OUT::truthMatchPh_leadph12 = OUT::ph_truthMatch_ph->at(leadidx);
+        OUT::truthMatchPh_sublph12 = OUT::ph_truthMatch_ph->at(sublidx);
+        OUT::truthMatchPhMomPID_leadph12 = OUT::ph_truthMatchMotherPID_ph->at(leadidx);
+        OUT::truthMatchPhMomPID_sublph12 = OUT::ph_truthMatchMotherPID_ph->at(sublidx);
+    }
+}
+
 bool RunModule::FilterEvent( ModuleConfig & config ) const {
 
     bool keep_event = true;
@@ -235,11 +327,19 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     if( !config.PassFloat( "cut_mt_lep_met", OUT::mt_lep_met) )  keep_event=false;
     if( !config.PassFloat( "cut_met", OUT::pfType01MET) )  keep_event=false;
     if( !config.PassFloat( "cut_m_leplep", OUT::m_leplep) )  keep_event=false;
+    if( !config.PassFloat( "cut_m_mumu", OUT::m_mumu) )  keep_event=false;
+    if( !config.PassFloat( "cut_m_elel", OUT::m_elel) )  keep_event=false;
     if( !config.PassFloat( "cut_mt_trigel_met", OUT::mt_trigel_met) )  keep_event=false;
     if( !config.PassFloat( "cut_mt_trigmu_met", OUT::mt_trigmu_met) )  keep_event=false;
 
     bool isEEEE = OUT::isEE_leadph12 && OUT::isEE_sublph12;
     if( !config.PassBool( "cut_isEEEE", isEEEE ) ) keep_event = false;
+
+    if( !config.PassBool( "cut_MuTrig", (OUT::passTrig_mu24eta2p1 || OUT::passTrig_mu24 ) ) ) keep_event = false;
+    if( !config.PassBool( "cut_ElTrig", (OUT::passTrig_ele27WP80) ) ) keep_event = false;
+    if( !config.PassBool( "cut_DiMuTrig", (OUT::passTrig_mu17_mu8 || OUT::passTrig_mu17_Tkmu8 ) ) ) keep_event = false;
+    if( !config.PassBool( "cut_DiElTrig", (OUT::passTrig_ele17_ele8_9 ) ) ) keep_event = false;
+
 
     
     // uncertainty variations
@@ -313,7 +413,7 @@ bool RunModule::FilterBlind( ModuleConfig & config ) const {
     bool keep_event = true;
 
     bool pass_blind = true;
-    if( !config.PassInt( "cut_nPhPassMedium", OUT::ph_medium_n ) ) pass_blind=false;
+    if( !config.PassInt( "cut_nPhPassMedium", OUT::ph_mediumPassPSV_n ) ) pass_blind=false;
     if( !config.PassInt( "cut_ph_pt_lead", OUT::pt_leadph12) ) pass_blind=false;
 
     // electron channel mass

@@ -94,11 +94,16 @@ def main() :
         el_cuts[key+'invsubl']  = el_cuts[key] + ' && ph_mediumNoEleVeto_n==2 && hasPixSeed_leadph12 == 0 && hasPixSeed_sublph12 == 1 '
         el_cuts[key+'vetoboth'] = el_cuts[key] + ' && ph_medium_n==2 ' 
 
+    el_cuts['elZgg'] = 'el_n>1'
+    el_cuts['elZggvetoboth'] = 'el_n>1'
+
     global mu_cuts
     mu_cuts = {}
     mu_cuts['mu']  = 'mu_passtrig25_n>0 && el_n==0 && mu_n==1 && mt_trigmu_met > 40 '
     mu_cuts['muhighmt']  = 'mu_passtrig25_n>0 && el_n==0 && mu_n==1 && mt_trigmu_met > 40 '
     mu_cuts['mulowmt']  = 'mu_passtrig25_n>0 && el_n==0 && mu_n==1 && mt_trigmu_met < 40 '
+
+    mu_cuts['muZgg'] = 'mu_n>1'
 
     global samplesWelgg
     global samplesWelggCR
@@ -106,21 +111,17 @@ def main() :
     global samplesWggInvLead
     global samplesWggInvSubl
 
-    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaWithEleOlapFinalElUnblindAll_2015_09_03'
-    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaWithEleOlapFinalMuUnblindAll_2015_09_03'
-    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalWithEleOlapElUnblindAllInvPixLead_2015_09_04'
-    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalWithEleOlapElUnblindAllInvPixSubl_2015_09_04'
+    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_09_25'
+    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_09_25'
+    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_09_09'
+    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalUnblindAllNoMtCut_2015_09_14'
+    baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixLead_2015_09_25'
+    baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixSubl_2015_09_25'
 
-    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_09_02'
-    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_09_02'
-    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutInvPixLead_2015_09_02'
-    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutInvPixSubl_2015_09_02'
-
-    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_09_09'
-    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_09_14'
-    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalUnblindAllNoMtCut_2015_09_14'
-    baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixLead_2015_09_09'
-    baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixSubl_2015_09_09'
+    #baseDirWmugg      = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalMuMuUnblindAll_2015_09_18'
+    #baseDirWelgg      = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_09_18'
+    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_09_18'
+    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_09_18'
 
     #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaWithEleOlapFinalElUnblindAllNoZMassLowMt_2015_09_03'
     #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaWithEleOlapFinalMuUnblindAllLowMt_2015_09_03'
@@ -133,10 +134,6 @@ def main() :
     #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllLowMt_2015_08_01'
     #baseDirWelggCR = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllLowMt_2015_08_01'
     #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_08_01'
-    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaFinalMuMuUnblindAll_2015_08_01'
-    #baseDirWelggCR = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_08_01'
-    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutInvPixLead_2015_08_01'
-    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutInvPixSubl_2015_08_01'
 
     #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvCSEVLead_2014_12_23'
     #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvCSEVSubl_2014_12_23'
@@ -231,18 +228,18 @@ def main() :
         base_dir_ele = options.baseDir
         base_dir_jet = outputDirBase
        
-        ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muZgg', outputDir=outputDirBase )
-        ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elZgg', outputDir=outputDirBase )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muZgg', outputDir=outputDirBase )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elZgg', outputDir=outputDirBase )
         ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elZgginvpixlead', outputDir=outputDirBase )
         ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elZgginvpixsubl', outputDir=outputDirBase )
         ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muZgginvpixlead', outputDir=outputDirBase )
         ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muZgginvpixsubl', outputDir=outputDirBase )
 
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='mu', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muhighmt', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmt', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmtinvpixlead', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmtinvpixsubl', outputDir=outputDirBase )
+        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='mu', outputDir=outputDirBase )
+        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muhighmt', outputDir=outputDirBase )
+        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmt', outputDir=outputDirBase )
+        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmtinvpixlead', outputDir=outputDirBase )
+        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmtinvpixsubl', outputDir=outputDirBase )
 
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfulllowmt', outputDir=outputDirBase )
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfulllowmtinvpixlead', outputDir=outputDirBase )
@@ -262,21 +259,22 @@ def main() :
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixsubl', outputDir=outputDirBase )
 
         #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfulllowmt', outputDir=outputDirBase )
-        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfullhighmt', outputDir=outputDirBase )
+        MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfullhighmt', outputDir=outputDirBase )
         #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcrhighmt', outputDir=outputDirBase, namePostfix='__zcr' )
         #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDirBase, namePostfix='__zcr' )
         #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='ellooselowmt', outputDir=outputDirBase, namePostfix='__loose' )
 
 
-        plot_binning = [15, 25,40,70,100]
+        plot_binning = [25,40,70,100]
 
         #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='mulowmt', channelel='elfulllowmt', minpt=pt_bins[0] )
-        #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muhighmt', channelel='elfullhighmt', minpt=pt_bins[0] )
-        MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muhighmt', channelel='elzcrhighmt', minpt=pt_bins[0] )
+        MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muhighmt', channelel='elfullhighmt', minpt=pt_bins[0] )
+        #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muhighmt', channelel='elzcrhighmt', minpt=pt_bins[0] )
         #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muhighmt', channelel='elzcr', minpt=pt_bins[0] )
         #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muhighmt', channelel='ellooselowmt', minpt=pt_bins[0] )
 
-        #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muZgg', channelel='elZgg', minpt=pt_bins[0] )
+        plot_binning_zgg = [15, 25,40,100]
+        #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning_zgg, channelmu='muZgg', channelel='elZgg', minpt=pt_bins[0] )
 
  
     print '^_^ FINSISHED ^_^'

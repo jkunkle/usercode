@@ -1,0 +1,1 @@
+*/10 * * * * sudo -u hcaldpg /nfshome0/hcaldpg/database/Processing/scripts/write_date.sh >> /nfshome0/hcaldpg/database/Processing/log.txt ; sudo -u hcaldpg python /nfshome0/hcaldpg/database/Processing/scripts/find_and_load_files.py --runFullChain >> /nfshome0/hcaldpg/database/Processing/log.txt 2>&1

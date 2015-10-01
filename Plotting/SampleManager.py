@@ -392,8 +392,11 @@ class DrawConfig :
         basename = var
 
         # first remove brackets
-        while basename.count('[') :
-            pos_begin = basename.find( '[' )
+        pos_begin = 100
+        while pos_begin >= 0 :
+            pos_begin = basename.rfind( '[' )
+            if pos_begin < 0 :
+                break
             pos_end = basename.find( ']', pos_begin )
             basename = basename[:pos_begin] + basename[pos_end+1:]
         if basename.count('+') :
@@ -596,8 +599,15 @@ class DrawConfig :
         #    if modified_selection.count(br['name']) and not modified_selection.count( 'IN::'+br['name']):
         #        modified_selection = modified_selection.replace( br['name'], 'IN::'+br['name'])
         # a bit hacked
-        for i in range(0, 10) :
-            modified_selection = modified_selection.replace('[%s]'%i, '->at(%s)'%i )
+        start_bracket = 100
+        while start_bracket > 0 :
+            start_bracket = modified_selection.rfind('[')
+            if start_bracket < 0 :
+                break
+            end_bracket = modified_selection.find( ']', start_bracket )
+            
+            # put an at->( in place of the first bracket
+            modified_selection = modified_selection[:start_bracket] + '->at(' + modified_selection[start_bracket+1:end_bracket] + ')' + modified_selection[end_bracket+1:]
 
         return modified_selection
 

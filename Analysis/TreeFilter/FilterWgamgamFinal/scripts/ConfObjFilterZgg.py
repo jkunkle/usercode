@@ -9,7 +9,7 @@ def get_remove_filter() :
 
     return ['el_mva_trig', 'el_mva_nontrig', 'el_d0pv', 'el_z0pv', 'el_sigmaIEIE',
            'mu_isGlobal', 'mu_isPF', 'mu_chi2', 'mu_nHits', 'mu_nMuStations', 'mu_nPixHits',
-           'mu_nTrkLayers', 'mu_d0', 'mu_z0', 'mu_pfIso_ch', 'mu_pfIso_nh', 'mu_pfIso_pho', 
+           'mu_nTrkLayers', 'mu_z0', 'mu_pfIso_ch', 'mu_pfIso_nh', 'mu_pfIso_pho', 
             'mu_pfIso_pu', 'mu_trkIso', 
             'ph_sigmaIEIP', 'ph_r9', 'ph_E1x3', 'ph_E2x2', 'ph_E5x5', 'ph_E2x5Max', 'ph_SCetaWidth',
             'ph_SCphiWidth', 'ph_ESEffSigmaRR', 'ph_hcalIsoDR03', 'ph_trkIsoHollowDR03',
@@ -82,7 +82,7 @@ def config_analysis( alg_list, args ) :
     #----------------------------------------
     print 'PHOTON PT CUT = 15'
     #alg_list.append( get_photon_filter( id=None, eVeto='hasPixSeed', ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False, doMuOlapRm=False, doPhOlapRm=False) )
-    alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=True) )
+    alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=False) )
     #alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.1) )
     print 'SAVING NOID WITH EVETO  PHOTONS, WITH OLAP REMOVAL'
 

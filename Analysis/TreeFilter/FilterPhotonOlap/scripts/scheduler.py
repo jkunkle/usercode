@@ -24,16 +24,16 @@ base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 # end of the output jobs
 # ----------------------------
 
-#suffix='PhOlap'
-suffix='2PhFilt'
+suffix='PhOlap'
+#suffix='2PhFilt'
 
 jobs = [
-        #(base, 'job_summer12_DYJetsToLL'),
+        #(base, 'job_summer12_DYJetsToLL_s10'),
         #(base, 'job_summer12_Wjets'),
         #(base, 'job_summer12_ttjets_1l'),
         #(base, 'job_summer12_ttjets_2l'),
 
-        #(base, 'job_summer12_Wg'),
+        (base, 'job_summer12_Wg'),
 
         #(base, 'job_summer12_Zg'),
         #(base, 'job_summer12_ZgWithSF'),
@@ -76,31 +76,31 @@ jobs = [
         #(base, 'job_summer12_ttZ'),
         #(base, 'job_jfaulkne_WZA'),
 
-        (base, 'job_summer12_WH_ZH_125WithSF'),
-        (base, 'job_summer12_t_sWithSF'),
-        (base, 'job_summer12_t_tWithSF'),
-        (base, 'job_summer12_t_tWWithSF'),
-        (base, 'job_summer12_tbar_sWithSF'),
-        (base, 'job_summer12_tbar_tWithSF'),
-        (base, 'job_summer12_tbar_tWWithSF'),
-        (base, 'job_summer12_WWWWithSF'),
-        (base, 'job_summer12_WWZWithSF'),
-        (base, 'job_summer12_WWgWithSF'),
-        (base, 'job_summer12_WZZWithSF'),
-        (base, 'job_summer12_ZZZWithSF'),
-        (base, 'job_summer12_ZZ_2e2muWithSF'),
-        (base, 'job_summer12_ZZ_2e2tauWithSF'),
-        (base, 'job_summer12_ZZ_2l2nuWithSF'),
-        (base, 'job_summer12_ZZ_2l2qWithSF'),
-        (base, 'job_summer12_ZZ_2mu2tauWithSF'),
-        (base, 'job_summer12_ZZ_2q2nuWithSF'),
-        (base, 'job_summer12_ZZ_4eWithSF'),
-        (base, 'job_summer12_ZZ_4muWithSF'),
-        (base, 'job_summer12_ZZ_4tauWithSF'),
-        (base, 'job_summer12_ttgWithSF'),
-        (base, 'job_summer12_ttWWithSF'),
-        (base, 'job_summer12_ttZWithSF'),
-        (base, 'job_jfaulkne_WZAWithSF'),
+        #(base, 'job_summer12_WH_ZH_125WithSF'),
+        #(base, 'job_summer12_t_sWithSF'),
+        #(base, 'job_summer12_t_tWithSF'),
+        #(base, 'job_summer12_t_tWWithSF'),
+        #(base, 'job_summer12_tbar_sWithSF'),
+        #(base, 'job_summer12_tbar_tWithSF'),
+        #(base, 'job_summer12_tbar_tWWithSF'),
+        #(base, 'job_summer12_WWWWithSF'),
+        #(base, 'job_summer12_WWZWithSF'),
+        #(base, 'job_summer12_WWgWithSF'),
+        #(base, 'job_summer12_WZZWithSF'),
+        #(base, 'job_summer12_ZZZWithSF'),
+        #(base, 'job_summer12_ZZ_2e2muWithSF'),
+        #(base, 'job_summer12_ZZ_2e2tauWithSF'),
+        #(base, 'job_summer12_ZZ_2l2nuWithSF'),
+        #(base, 'job_summer12_ZZ_2l2qWithSF'),
+        #(base, 'job_summer12_ZZ_2mu2tauWithSF'),
+        #(base, 'job_summer12_ZZ_2q2nuWithSF'),
+        #(base, 'job_summer12_ZZ_4eWithSF'),
+        #(base, 'job_summer12_ZZ_4muWithSF'),
+        #(base, 'job_summer12_ZZ_4tauWithSF'),
+        #(base, 'job_summer12_ttgWithSF'),
+        #(base, 'job_summer12_ttWWithSF'),
+        #(base, 'job_summer12_ttZWithSF'),
+        #(base, 'job_jfaulkne_WZAWithSF'),
 
         #(base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_WAA_ISR'),
@@ -117,9 +117,9 @@ jobs = [
 #module_data = 'ConfLepGammaFilter_Data.py'
 #output_name = 'LepGamma_2013_11_04'
 #sub_base = ['LepLepGammaGammaFinalMuMuUnblindAll_2015_08_01','LepLepGammaGammaFinalElElUnblindAll_2015_08_01']
-sub_base = ['LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_09_09']
-
-#sub_base = ['LepGammaGammaNoPhID_2014_11_20',]
+#sub_base = ['LepGammaGammaFinalMuUnblindAll_2015_09_29', 'LepGammaGammaFinalElUnblindAll_2015_09_29','LepGammaGammaFinalMuUnblindAllNoMtCut_2015_09_29', 'LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_09_29' ]
+sub_base = ['LepGammaGammaFinalMuUnblindAll_2015_10_01', 'LepGammaGammaFinalElUnblindAll_2015_10_01']
+#sub_base = ['LepGammaGammaNoPhID_2015_10_01', 'LepLepGammaNoPhID_2015_10_01', 'LepGammaNoPhID_2015_10_01',  ]
 
 check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s/%(sub_base)s/%(job)s --filteredDS %(base)s/%(sub_base)s/%(job)s%(suffix)s --treeNameOrig ggNtuplizer/EventTree --histNameFilt ggNtuplizer/filter --fileKeyOrig tree.root --fileKeyFilt tree.root'
 

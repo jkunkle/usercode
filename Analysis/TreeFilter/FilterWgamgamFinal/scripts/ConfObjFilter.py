@@ -9,7 +9,7 @@ def get_remove_filter() :
 
     return ['el_mva_trig', 'el_mva_nontrig', 'el_d0pv', 'el_z0pv', 'el_sigmaIEIE',
            'mu_isGlobal', 'mu_isPF', 'mu_chi2', 'mu_nHits', 'mu_nMuStations', 'mu_nPixHits',
-           'mu_nTrkLayers', 'mu_d0', 'mu_z0', 'mu_pfIso_ch', 'mu_pfIso_nh', 'mu_pfIso_pho', 
+           'mu_nTrkLayers', 'mu_pfIso_ch', 'mu_pfIso_nh', 'mu_pfIso_pho', 
             'mu_pfIso_pu', 'mu_trkIso', 
             'ph_sigmaIEIP', 'ph_r9', 'ph_E1x3', 'ph_E2x2', 'ph_E5x5', 'ph_E2x5Max', 'ph_SCetaWidth',
             'ph_SCphiWidth', 'ph_ESEffSigmaRR', 'ph_hcalIsoDR03', 'ph_trkIsoHollowDR03',
@@ -51,14 +51,14 @@ def config_analysis( alg_list, args ) :
     # Nominal muon filter
     #----------------------------------------
     print 'MUON PT CUT = 10'
-    alg_list.append( get_muon_filter( id='Tight',  ptcut=10, etacut=2.4 ) )
-    #alg_list.append( get_muon_filter( id='Tight',  ptcut=5, etacut=2.4 ) )
+    #alg_list.append( get_muon_filter( id='Tight',  ptcut=10, etacut=2.4 ) )
+    alg_list.append( get_muon_filter( id='Tight',  ptcut=5, etacut=2.4 ) )
 
     #----------------------------------------
     # Loose muon filter
     #----------------------------------------
     #print '****************LOOSE MUON ID*************************'
-    #alg_list.append( get_muon_filter( id='TightNoIsoNoD0',  ptcut=10 ) )
+    #alg_list.append( get_muon_filter( id='TightNoIsoNoD0',  ptcut=10, etacut=2.4  ) )
 
     #----------------------------------------
     # Nominal electron filter
@@ -69,7 +69,8 @@ def config_analysis( alg_list, args ) :
     alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=10, doPhOlapRm=False) )
     #alg_list.append( get_electron_filter( 'loose', ptcut=10, doPhOlapRm=False ) )
     #alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=5 ) )
-    print 'SAVING MVA ELECTRONS'
+    #print 'SAVING MVA ELECTRONS'
+    print 'SAVING LOOSE ELECTRONS'
 
     #----------------------------------------
     # Other electron filters
@@ -82,7 +83,7 @@ def config_analysis( alg_list, args ) :
     #----------------------------------------
     print 'PHOTON PT CUT = 15'
     #alg_list.append( get_photon_filter( id=None, eVeto='hasPixSeed', ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False, doMuOlapRm=False, doPhOlapRm=False) )
-    alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=True) )
+    alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=True ) )
     #alg_list.append( get_photon_filter( id='medium', eVeto=None, eVetoVal='False', ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False) )
     #alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.4) )
     print 'SAVING NOID WITH EVETO  PHOTONS, WITH OLAP REMOVAL'

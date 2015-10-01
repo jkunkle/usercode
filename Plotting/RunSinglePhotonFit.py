@@ -88,6 +88,24 @@ def get_default_draw_commands(ch='mu' ) :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met > 80',}
     elif ch=='muwlowmt' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met < 40',}
+    elif ch=='muwlowmttightmu' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met < 40 && fabs(mu_d0[0]) < 0.015 && (mu_corrIso[0]/mu_pt[0]) < 0.12 && mu_pt[0] < 40',}
+    elif ch=='muwlowmttightmuhighpt' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met < 40 && fabs(mu_d0[0]) < 0.015 && (mu_corrIso[0]/mu_pt[0]) < 0.12 && mu_pt[0] > 80',}
+    elif ch=='muwlowmtinvd0inviso' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met < 40 && fabs(mu_d0[0]) > 0.015 && (mu_corrIso[0]/mu_pt[0]) > 0.12 && (mu_corrIso[0]/mu_pt[0]) < 0.5 && mu_pt[0] < 40',}
+    elif ch=='muwlowmtinvd0passiso' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met < 40 && fabs(mu_d0[0]) > 0.015 && (mu_corrIso[0]/mu_pt[0]) < 0.12  && mu_pt[0] < 40',}
+    elif ch=='muwlowmtpassd0inviso' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met < 40 && fabs(mu_d0[0]) < 0.015 && (mu_corrIso[0]/mu_pt[0]) > 0.12 && (mu_corrIso[0]/mu_pt[0]) < 0.5 && mu_pt[0] < 40',}
+    elif ch=='muwlowmtnolepveto' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && ph_HoverE12[0] < 0.05 && mt_trigmu_met < 40',}
+    elif ch=='muwlowmet' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && pfType01MET < 30',}
+    elif ch=='muwlowmettightmu' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && pfType01MET < 30 && fabs(mu_d0[0]) < 0.015 && (mu_corrIso[0]/mu_pt[0]) < 0.12',}
+    elif ch=='muwhighmet' :
+        gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 &&  ph_HoverE12[0] < 0.05 && el_n==0 && pfType01MET > 30',}
     elif ch=='muw_tp_medium' :
         gg_cmds = {'gg' : ' mu_passtrig25_n>0 && mu_n==1 && leadPhot_leadLepDR>0.4 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_lep_met > 60',}
     elif ch=='muw_tp_eveto' :
@@ -222,6 +240,7 @@ def main() :
     global sampManFit
 
     base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_09_09/'
+    #base_dir_lg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhIDLooseMuonID_2015_09_22/'
     base_dir_llg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_09_09/'
     fit_dir  = options.fitPath
     print fit_dir

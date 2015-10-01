@@ -177,6 +177,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::ph_truthMinDR_ph          = 0;
     OUT::ph_truthMatchPt_ph        = 0;
     OUT::ph_truthMatchMotherPID_ph = 0;
+    OUT::ph_truthMatchParentage_ph = 0;
     OUT::ph_truthMatch_el          = 0;
     OUT::ph_truthMinDR_el          = 0;
     OUT::ph_truthMatchPt_el        = 0;
@@ -368,6 +369,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("ph_truthMinDR_ph"          , &OUT::ph_truthMinDR_ph          );
     outtree->Branch("ph_truthMatchPt_ph"        , &OUT::ph_truthMatchPt_ph        );
     outtree->Branch("ph_truthMatchMotherPID_ph" , &OUT::ph_truthMatchMotherPID_ph );
+    outtree->Branch("ph_truthMatchParentage_ph" , &OUT::ph_truthMatchParentage_ph );
     outtree->Branch("ph_hasSLConv"              , &OUT::ph_hasSLConv              );
     outtree->Branch("ph_pass_mva_presel"        , &OUT::ph_pass_mva_presel        );
     outtree->Branch("ph_mvascore"               , &OUT::ph_mvascore               );
@@ -970,8 +972,9 @@ void RunModule::BuildElectron( ModuleConfig & config ) {
         float sceta        = IN::eleSCEta->at(idx);
         float phi          = IN::elePhi->at(idx);
         float en           = IN::eleEn->at(idx);
-        float eoverp         = (IN::eleEoverP->at(idx));
-        float epdiff       = fabs( (1./en) - eoverp/en );
+        float scen         = IN::eleSCEn->at(idx);
+        float eoverp       = (IN::eleEoverP->at(idx));
+        float epdiff       = fabs( (1./scen) - (eoverp/scen) );
         float mva_trig     = IN::eleIDMVATrig->at(idx);
         float mva_nontrig  = IN::eleIDMVANonTrig->at(idx);
         float ecalIso30    = IN::eleIsoEcalDR03->at(idx);
@@ -1913,6 +1916,7 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
     OUT::ph_truthMinDR_ph          -> clear();
     OUT::ph_truthMatchPt_ph        -> clear();
     OUT::ph_truthMatchMotherPID_ph -> clear();
+    OUT::ph_truthMatchParentage_ph -> clear();
     OUT::ph_hasSLConv              -> clear();
     OUT::ph_pass_mva_presel        -> clear();
     OUT::ph_mvascore               -> clear();
@@ -2434,11 +2438,13 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
         float minTruthDR = 100.0;
         TLorentzVector matchLV;
         int matchMotherPID=0;
-        bool match = HasTruthMatch( phlv, matchPID, 0.2, minTruthDR, matchLV, matchMotherPID );
+        int matchParentage=-1;
+        bool match = HasTruthMatch( phlv, matchPID, 0.2, minTruthDR, matchLV, matchMotherPID, matchParentage );
         OUT::ph_truthMatch_ph->push_back( match  );
         OUT::ph_truthMinDR_ph->push_back( minTruthDR );
         OUT::ph_truthMatchPt_ph->push_back( matchLV.Pt() );
         OUT::ph_truthMatchMotherPID_ph->push_back( matchMotherPID );
+        OUT::ph_truthMatchParentage_ph->push_back( matchParentage );
 
         std::vector<int> matchPIDEl;
         matchPIDEl.push_back(11);
@@ -2584,11 +2590,12 @@ bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<i
 bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR, float &minDR, TLorentzVector &matchLV ) const {
     
     int motherPID = 0;
-    return HasTruthMatch( objlv, matchPID, maxDR, minDR, matchLV, motherPID );
+    int parentage = -1;
+    return HasTruthMatch( objlv, matchPID, maxDR, minDR, matchLV, motherPID, parentage );
 
 }
 
-bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR, float & minDR, TLorentzVector & matchLV, int &matchMotherPID ) const {
+bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR, float & minDR, TLorentzVector & matchLV, int &matchMotherPID, int &matchParentage  ) const {
    
     minDR = 100.0;
     matchLV.SetPxPyPzE(0.0, 0.0, 0.0, 0.0);
@@ -2612,6 +2619,7 @@ bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<i
         if( dr < maxDR) {
             match = true;
             matchMotherPID = IN::mcMomPID->at(mcidx);
+            matchParentage = IN::mcParentage->at(mcidx);
         }
         // store the minimum delta R
         if( dr < minDR ) {

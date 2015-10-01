@@ -42,19 +42,13 @@ def parseArgs() :
     
     p.add_argument('--nom', default=False, action='store_true', dest='nom', help='run nom' )
     p.add_argument('--loose', default=False, action='store_true', dest='loose', help='run loose' )
-    #p.add_argument('--asym533', default=False, action='store_true', dest='asym533', help='run asym533' )
-    #p.add_argument('--asym855', default=False, action='store_true', dest='asym855', help='run asym855' )
-    #p.add_argument('--asym1077', default=False, action='store_true', dest='asym1077', help='run asym1077' )
-    #p.add_argument('--asym1299', default=False, action='store_true', dest='asym1299', help='run asym1299' )
-    #p.add_argument('--asym151111', default=False, action='store_true', dest='asym151111', help='run asym151111' )
-    #p.add_argument('--asym201616', default=False, action='store_true', dest='asym201616', help='run asym201616' )
     p.add_argument('--asymcorr533', default=False, action='store_true', dest='asymcorr533', help='run asymcorr533' )
     p.add_argument('--asymcorr855', default=False, action='store_true', dest='asymcorr855', help='run asymcorr855' )
     p.add_argument('--asymcorr1077', default=False, action='store_true', dest='asymcorr1077', help='run asymcorr1077' )
     p.add_argument('--asymcorr1299', default=False, action='store_true', dest='asymcorr1299', help='run asymcorr1299' )
     p.add_argument('--asymcorr151111', default=False, action='store_true', dest='asymcorr151111', help='run asymcorr151111' )
     p.add_argument('--asymcorr201616', default=False, action='store_true', dest='asymcorr201616', help='run asymcorr201616' )
-    p.add_argument('--channel', default='mu',  dest='channel', help='run this channel' )
+    p.add_argument('--channels', default=None,  dest='channels', help='comma separated list of channels to run' )
     
     return p.parse_args()
 
@@ -65,15 +59,19 @@ from SampleManager import SampleManager
 from SampleManager import Sample
 from SampleManager import DrawConfig
 
-
-
-
 common_ptbins = [15, 25, 40, 70, 1000000 ]
 options=None
 _sieie_cuts  = { 'EB' : (0.011,0.029), 'EE' : (0.033, 0.087) }
 _chIso_cuts  = { 'EB' : (1.5, 19.5)  , 'EE' : (1.2,20.4) }
 _neuIso_cuts = { 'EB' : (1.0,20)     , 'EE' : (1.5,20.5) }
 _phoIso_cuts = { 'EB' : (0.7,20.3)   , 'EE' : (1.0,20) }
+
+_var_cuts = {}
+_var_cuts['sigmaIEIE'] = _sieie_cuts
+_var_cuts['chIsoCorr'] = _chIso_cuts
+_var_cuts['neuIsoCorr'] = _neuIso_cuts
+_var_cuts['phoIsoCorr'] = _phoIso_cuts
+
 _mgg_cut = 0
 
 def get_default_binning(var='sigmaIEIE') :
@@ -87,33 +85,83 @@ def get_default_binning(var='sigmaIEIE') :
     elif var == 'phoIsoCorr' :
         return { 'EB' : (53, -2.1, 35), 'EE' : (42, -2, 40) }
 
-
-
-def get_real_template_draw_commands( ch='mu' ) :
-
+def get_template_draw_strs( var, ch, eleVeto, iso_vals ) :
 
     # in the muon channel remove the pixel seed veto
-    if ch == 'mu' or ch=='muhighmt' or ch =='mulowmt' :
-        return 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 '
-        #return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.3 && fabs( m_leplepph-91.2 ) < 5  && leadPhot_sublLepDR > 0.3 && ( leadPhot_sublLepDR < 1.0 || leadPhot_leadLepDR < 1.0 )'
-        #return 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && leadPhot_leadLepDR < 1.5 &&  ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 '
+    varstr = ''
+    phstr = ''
+    if iso_vals is None :
+        if ch == 'mu' or ch=='muhighmt' or ch =='mulowmt' :
+            if var == 'sigmaIEIE' :
+                varstr = 'ph_mediumNoSIEIENoEleVeto_n'
+                phstr = 'ptSorted_ph_mediumNoSIEIENoEleVeto_idx'
+            elif var == 'chIsoCorr' :
+                varstr = 'ph_mediumNoChIsoNoEleVeto_n'
+                phstr = 'ptSorted_ph_mediumNoChIsoNoEleVeto_idx'
+            elif var == 'neuIsoCorr' :
+                varstr = 'ph_mediumNoNeuIsoNoEleVeto_n'
+                phstr = 'ptSorted_ph_mediumNoNeuIsoNoEleVeto_idx'
+            elif var == 'phoIsoCorr' :
+                varstr = 'ph_mediumNoPhoIsoNoEleVeto_n'
+                phstr = 'ptSorted_ph_mediumNoPhoIsoNoEleVeto_idx'
+            else :
+                return None, None
+        else :
+            if var == 'sigmaIEIE' :
+                varstr = 'ph_mediumNoSIEIEPass%s_n'%eleVeto
+                phstr = 'ptSorted_ph_mediumNoSIEIEPass%s_idx'%eleVeto
+            elif var == 'chIsoCorr' :
+                varstr = 'ph_mediumNoChIsoPass%s_n'%eleVeto
+                phstr = 'ptSorted_ph_mediumNoChIsoPass%s_idx'%eleVeto
+            elif var == 'neuIsoCorr' :
+                varstr = 'ph_mediumNoNeuIsoPass%s_n'%eleVeto
+                phstr = 'ptSorted_ph_mediumNoNeuIsoPass%s_idx'%eleVeto
+            elif var == 'phoIsoCorr' :
+                varstr = 'ph_mediumNoPhoIsoPass%s_n'%eleVeto
+                phstr = 'ptSorted_ph_mediumNoPhoIsoPass%s_idx'%eleVeto
+            else :
+                return None, None
+    elif isinstance( iso_vals, tuple ) :
+        # put a channel selection based on eleVeto when available
+        if var == 'sigmaIEIE' :
+            varstr = 'ph_noSIEIEiso%d%d%d_n' %(iso_vals)
+            phstr = 'ptSorted_ph_noSIEIEiso%d%d%d_idx' %(iso_vals)
+        elif var == 'chIsoCorr' :
+            varstr = 'ph_passSIEIEisoNone%d%d_n' %(iso_vals[1], iso_vals[2])
+            phstr = 'ptSorted_ph_passSIEIEisoNone%d%d_idx' %(iso_vals[1], iso_vals[2])
+        elif var == 'neuIsoCorr' :
+            varstr = 'ph_passSIEIEiso%dNone%d_n' %(iso_vals[0], iso_vals[2])
+            phstr = 'ptSorted_ph_passSIEIEiso%dNone%d_idx' %(iso_vals[0], iso_vals[2])
+        elif var == 'phoIsoCorr' :
+            varstr = 'ph_passSIEIEiso%d%dNone_n' %(iso_vals[0], iso_vals[1])
+            phstr = 'ptSorted_ph_passSIEIEiso%d%dNone_idx' %(iso_vals[0], iso_vals[1])
+        else :
+            return None, None
     else :
-        return 'mu_passtrig25_n>0 && mu_n==1 && ph_n==1 && ph_HoverE12[0] < 0.05 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25 && ph_hasPixSeed[0]==0 '
+        return None, None
 
-def get_fake_template_draw_commands( ch='mu' ) :
+    return varstr, phstr
 
-    # in the muon channel remove the pixel seed veto
-    if ch == 'mu' or ch=='muhighmt' or ch =='mulowmt' :
-        return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 '
-    else :
-        return 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_hasPixSeed[0]==0'
+def get_real_template_draw_commands( var, ch='mu', eleVeto='PSV', iso_vals=None ) :
+
+    varstr, phstr = get_template_draw_strs( var, ch, eleVeto, iso_vals )
+
+    return 'mu_passtrig25_n>0 && mu_n==1 && %s == 1 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[%s[0]] && abs(ph_truthMatchMotherPID_ph[%s[0]]) < 25 ' %( varstr, phstr, phstr )
+
+
+def get_fake_template_draw_commands(var,  ch='mu', eleVeto='PSV', iso_vals=None ) :
+
+    varstr, phstr = get_template_draw_strs( var, ch, eleVeto, iso_vals )
+
+    return 'mu_passtrig25_n>0 && mu_n==2 && %s == 1 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 ' %(varstr)
+
 def get_corr_fake_template_draw_commands( ch='mu', fitvar='sigmaIEIE', r1='EB', r2='EB', leadPass=True, cuts='nom' ) :
 
     base_str = ''
     # in the muon channel remove the pixel seed veto
     if ch == 'mu' or ch=='muhighmt' or ch =='mulowmt' :
         #base_str = '( (mu_passtrig25_n>0 && mu_n==1) || (el_passtrig_n>0 && el_n==1) ) && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f ' %_mgg_cut
-        base_str = 'mu_passtrig25_n>0  && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f '%_mgg_cut
+        base_str = 'mu_passtrig25_n>0  && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f '%_mgg_cut
     elif ch=='muZgg' :
         base_str = ' mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut
     elif ch=='elZgg' :
@@ -128,52 +176,52 @@ def get_corr_fake_template_draw_commands( ch='mu', fitvar='sigmaIEIE', r1='EB', 
         else :
             var_cut = ' && sieie_leadph12 > %f && sieie_leadph12 < %f ' %(_sieie_cuts[r1])
         if cuts == 'nom' :
-            base_str += ' && ph_iso1299_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 9 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_noSIEIEiso1299_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 9 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'tight' :
-            base_str += ' && ph_iso1077_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 7 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_noSIEIEiso1077_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 7 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'loose' :
-            base_str += ' && ph_iso151111_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 11 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 11 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_noSIEIEiso151111_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 11 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 11 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'veryloose' :
-            base_str += ' && ph_iso201616_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 20 && chIsoCorr_sublph12 < 20 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 16 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 16 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_noSIEIEiso201616_n == 2 && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 20 && chIsoCorr_sublph12 < 20 && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < 16 && phoIsoCorr_sublph12 > %f && phoIsoCorr_sublph12 < 16 %s '%( _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
     elif fitvar == 'chIsoCorr' :
         if leadPass :
             var_cut = ' && chIsoCorr_leadph12 < %f ' %_chIso_cuts[r1][0]
         else :
             var_cut = ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %(_chIso_cuts[r1])
         if cuts == 'nom' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 5 && phoIsoCorr_sublph12 < 5 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEisoNone55_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 5 && phoIsoCorr_sublph12 < 5 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'tight' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 3 && phoIsoCorr_sublph12 < 3 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEisoNone33_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 3 && phoIsoCorr_sublph12 < 3 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'loose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 < 7 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEisoNone77_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 < 7 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'veryloose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 < 9 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEisoNone99_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 < 9 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
     elif fitvar == 'phoIsoCorr' :
         if leadPass :
             var_cut = ' && phoIsoCorr_leadph12 < %f ' %_phoIso_cuts[r1][0]
         else :
             var_cut = ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %(_phoIso_cuts[r1])
         if cuts == 'nom' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEiso107None_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
         if cuts == 'tight' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 8 && chIsoCorr_sublph12 < 8   %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEiso85None_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 8 && chIsoCorr_sublph12 < 8   %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
         if cuts == 'loose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEiso129None_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
         if cuts == 'veryloose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEiso1511None_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && ph_passNeuIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[1] && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15 %s ' %( _sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], var_cut )
     elif fitvar == 'neuIsoCorr' :
         if leadPass :
             var_cut = ' && neuIsoCorr_leadph12 < %f ' %_neuIso_cuts[r1][0]
         else :
             var_cut = ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %(_neuIso_cuts[r1])
         if cuts == 'nom' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 < 7   %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEiso10None7_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 10 && chIsoCorr_sublph12 < 10 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 7 && phoIsoCorr_sublph12 < 7   %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'tight' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 8 && chIsoCorr_sublph12 < 8 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 5 && phoIsoCorr_sublph12 < 5     %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEiso8None5_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 8 && chIsoCorr_sublph12 < 8 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 5 && phoIsoCorr_sublph12 < 5     %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'loose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 < 9   %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEiso12None9_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 12 && chIsoCorr_sublph12 < 12 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 9 && phoIsoCorr_sublph12 < 9   %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
         if cuts == 'veryloose' :
-            base_str += ' && ph_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 11 && phoIsoCorr_sublph12 < 11 %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
+            base_str += ' && ph_failSIEIEiso15None11_n==2 && sieie_leadph12 > %f && sieie_sublph12 > %f && chIsoCorr_leadph12 > %f && chIsoCorr_sublph12 > %f && chIsoCorr_leadph12 < 15 && chIsoCorr_sublph12 < 15 && phoIsoCorr_leadph12 > %f && phoIsoCorr_sublph12 > %f && phoIsoCorr_leadph12 < 11 && phoIsoCorr_sublph12 < 11 %s ' %(_sieie_cuts[r1][0], _sieie_cuts[r2][0], _chIso_cuts[r1][0], _chIso_cuts[r2][0], _phoIso_cuts[r1][0], _phoIso_cuts[r2][0], var_cut )
 
     return base_str
 
@@ -221,7 +269,7 @@ def get_default_draw_commands( ch='mu' ) :
 
     # add Zgg selections
     draw_commands['muZgg'] = '(passTrig_mu17_mu8 || passTrig_mu17_Tkmu8) && mu_n==2 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_mumu > 40  '%_mgg_cut
-    draw_commands['elZgg'] = '(passTrig_ele17_ele8_9 || passTrig_ele17_ele8_22) &&  el_n==2 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4  && m_elel > 40 '%_mgg_cut
+    draw_commands['elZgg'] = 'passTrig_ele17_ele8_9  &&  el_n==2 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4  && m_elel > 40 '%_mgg_cut
 
     return draw_commands.get( ch, None )
 
@@ -325,10 +373,15 @@ def main() :
     global sampManDataInvL
     global sampManDataInvS
 
-    base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoPixSeedBoth_2015_09_09'
-    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_09_09'
-    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_09_09'
-    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_09_09'
+    base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoPixSeedBoth_2015_10_01'
+    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_10_01'
+    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_10_01'
+    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_10_01'
+
+    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_09_18'
+    #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_09_18'
+    #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedLead_2015_09_18'
+    #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedSubl_2015_09_18'
 
     #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithEleOlapVetoPixSeedBoth_2015_09_03'
     #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithEleOlap_2015_09_03'
@@ -341,12 +394,8 @@ def main() :
     #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDNoEleVetoInvPixSeedSubl_2015_08_31'
     #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_08_01'
     #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_08_01'
-    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_30'
-    #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_07_30'
-    #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedLead_2015_07_16'
-    #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhIDInvPixSeedSubl_2015_07_16'
-    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_09_09'
-    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_09_09'
+    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_10_01'
+    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_10_01'
 
     sampManLLG      = SampleManager(base_dir_llg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManLG       = SampleManager(base_dir_lg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
@@ -374,31 +423,32 @@ def main() :
     if options.syst_file is not None :
         load_syst_file( options.syst_file )
 
-    if options.nom :
-        RunNomFitting( outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr)
-        return
-    if options.loose :
-        RunLooseFitting( outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
-        return
+    # Depricated -- use classes
+    #if options.nom :
+    #    RunNomFitting( outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr)
+    #    return
+    #if options.loose :
+    #    RunLooseFitting( outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
+    #    return
 
-    if options.asymcorr533 :
-        RunCorrectedAsymFitting(vals=( 5,3,3 ), outputDir = options.outputDir , ch=options.channel, ffcorr=options.ffcorr )
-        return
-    if options.asymcorr855 :
-        RunCorrectedAsymFitting(vals=( 8,5,5 ), outputDir = options.outputDir , ch=options.channel, ffcorr=options.ffcorr )
-        return
-    if options.asymcorr1077 :
-        RunCorrectedAsymFitting( vals=( 10,7,7 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
-        return
-    if options.asymcorr1299 :
-        RunCorrectedAsymFitting( vals=( 12,9,9 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr)
-        return
-    if options.asymcorr151111 :
-        RunCorrectedAsymFitting( vals=( 15,11,11 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
-        return
-    if options.asymcorr201616 :
-        RunCorrectedAsymFitting( vals=( 20,16,16 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
-        return
+    #if options.asymcorr533 :
+    #    RunCorrectedAsymFitting(vals=( 5,3,3 ), outputDir = options.outputDir , ch=options.channel, ffcorr=options.ffcorr )
+    #    return
+    #if options.asymcorr855 :
+    #    RunCorrectedAsymFitting(vals=( 8,5,5 ), outputDir = options.outputDir , ch=options.channel, ffcorr=options.ffcorr )
+    #    return
+    #if options.asymcorr1077 :
+    #    RunCorrectedAsymFitting( vals=( 10,7,7 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
+    #    return
+    #if options.asymcorr1299 :
+    #    RunCorrectedAsymFitting( vals=( 12,9,9 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr)
+    #    return
+    #if options.asymcorr151111 :
+    #    RunCorrectedAsymFitting( vals=( 15,11,11 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
+    #    return
+    #if options.asymcorr201616 :
+    #    RunCorrectedAsymFitting( vals=( 20,16,16 ), outputDir = options.outputDir, ch=options.channel, ffcorr=options.ffcorr )
+    #    return
 
     all_samp_man = []
     all_samp_man.append( sampManLG)
@@ -411,15 +461,15 @@ def main() :
     for s in all_samp_man  :
         s.deactivate_all_samples()
 
-    #fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
-    fftypes = ['nom']
-    #jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
-    jetfitvars = ['sigmaIEIE']
+    fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
+    jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
 
-    channels = ['muhighmt']
+    #channels = ['muhighmt']
     #channels = ['mulowmt']
-    #channels=['mu']
-    ##channels = ['muZgg', 'elZgg']
+    channels=['mu']
+    #channels = ['muZgg', 'elZgg']
+    #channels = ['muZgg']
+    #channels = ['elZgg']
     #channels = ['ellooselowmt']
     #channels = ['ellooselowmtinvpixlead']
     #channels = ['ellooselowmtinvpixsubl']
@@ -442,8 +492,14 @@ def main() :
 
     calculators = []
 
-    #corr_vals = [(5,3,3) , (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
-    corr_vals = [(5,3,3)]
+    if options.channels is not None :
+        channels = options.channels.split(',')
+
+    corr_vals = [(5,3,3) , (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
+
+    eleVeto = 'PSV'
+    if 'muZgg' in channels or 'elZgg' in channels :
+        eleVeto = 'CSEV'
 
     pt_bins = [ 15, 25, 40, 70, 1000000 ] 
     subl_ptrange = ( 15, None )
@@ -451,24 +507,18 @@ def main() :
     for ch in channels :
         for var in jetfitvars :
             for ffcorr in fftypes :
-                #calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
-                calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, ptbins=pt_bins, subl_ptrange=subl_ptrange, outputDir=options.outputDir+'/JetFakeResultsSyst') )
+                #calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, eleVeto=eleVeto, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
+                calculators.append( RunNominalCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, ptbins=pt_bins, subl_ptrange=subl_ptrange, eleVeto=eleVeto, outputDir=options.outputDir+'/JetFakeResultsSyst') )
 
     for cv in corr_vals :
         for ch in channels :
             for var in jetfitvars :
                 for ffcorr in fftypes :
-                    #calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
-                    calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, ptbins=pt_bins, subl_ptrange=subl_ptrange, outputDir=options.outputDir+'/JetFakeResultsSyst') )
+                    #calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, eleVeto=eleVeto, outputDir=options.outputDir+str(ptbins[0])+'/JetFakeResultsSyst', ptbins=ptbins) )
+                    calculators.append( RunCorrectedAsymCalculation(fitvar=var, channel=ch, ffcorr=ffcorr, vals=cv, ptbins=pt_bins, subl_ptrange=subl_ptrange, eleVeto=eleVeto, outputDir=options.outputDir+'/JetFakeResultsSyst') )
 
     for calc in calculators :
         draw_configs = calc.ConfigHists()
-        #for s in all_samp_man :
-        #    for dc in draw_configs :
-        #        if dc is not None and s.id == dc.samp_man_id :
-        #            s.create_hist_new( dc )
-        #
-        #calc.execute()
 
     for s in all_samp_man  :
         s.run_commands()
@@ -482,48 +532,37 @@ def load_syst_file( file ) :
 
     global syst_uncertainties
 
-    ofile = open( file ) 
-    syst_uncertainties = pickle.load(ofile)
+    if os.path.isfile( file ) :
+        ofile = open( file ) 
+        syst_uncertainties = pickle.load(ofile)
 
-    ofile.close()
+        ofile.close()
+    else :
+        print 'WARNING -- Systematics file, %s, was not found!' %file
 
-def RunNomFitting( outputDir = None, ch='mu', ffcorr='None') :
-
-    outputDirNom = None
-    if outputDir is not None :
-        if options.fitvar == 'sigmaIEIE' :
-            outputDirNom = outputDir + '/SigmaIEIEFits/JetFakeTemplateFitPlotsNomIso'
-        elif options.fitvar == 'chIsoCorr' :
-            outputDirNom = outputDir + '/ChHadIsoFits/JetFakeTemplateFitPlotsNomIso'
-        elif options.fitvar == 'neuIsoCorr' :
-            outputDirNom = outputDir + '/NeuHadIsoFits/JetFakeTemplateFitPlotsNomIso'
-        elif options.fitvar == 'phoIsoCorr' :
-            outputDirNom = outputDir + '/PhoIsoFits/JetFakeTemplateFitPlotsNomIso'
-
-    if options.fitvar == 'sigmaIEIE' :
-        iso_cuts_lead = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-        iso_cuts_subl = 'ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
-        #iso_cuts_lead = 'ph_chIsoCorr[0] < 8 && ph_neuIsoCorr[0] < 5 && ph_phoIsoCorr[0] < 5  '
-        #iso_cuts_subl = 'ph_chIsoCorr[1] < 8 && ph_neuIsoCorr[1] < 5 && ph_phoIsoCorr[1] < 5  '
-    elif options.fitvar == 'chIsoCorr' :
-        iso_cuts_lead = 'ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-        iso_cuts_subl = 'ph_passSIEIEMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
-    elif options.fitvar == 'neuIsoCorr' :
-        iso_cuts_lead = 'ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-        iso_cuts_subl = 'ph_passSIEIEMedium[1] && ph_passChIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
-    elif options.fitvar == 'phoIsoCorr' :
-        iso_cuts_lead = 'ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] '
-        iso_cuts_subl = 'ph_passSIEIEMedium[1] && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] '
-    
-    do_nominal_fit( iso_cuts_lead, iso_cuts_subl, ptbins=common_ptbins, fitvar=options.fitvar, ch=ch, ffcorr=ffcorr, outputDir = outputDirNom, systematics='Nom')
-
-    # use last leading pt bin
-    #subl_pt_lead_bins = [ common_ptbins[-2],  common_ptbins[-1] ]
-    #do_nominal_fit( iso_cuts_lead, iso_cuts_subl, ptbins=[40, 1000000], subl_ptrange=(40, 1000000), fitvar=var, ch=ch, outputDir = outputDirNom, systematics='Nom')
-    #do_nominal_fit( iso_cuts_lead, iso_cuts_subl, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[1], None), ch=ch, outputDir = outputDirNom, systematics='Nom')
-
-    #do_nominal_fit( iso_cuts_lead, iso_cuts_subl, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[0], common_ptbins[2]), ch=ch, outputDir = outputDirNom, systematics='Nom')
-    #do_nominal_fit( iso_cuts_lead, iso_cuts_subl, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[2], None), ch=ch, outputDir = outputDirNom, systematics='Nom')
+#Depricated -- use classes
+#def RunNomFitting( outputDir = None, ch='mu', ffcorr='None') :
+#
+#    outputDirNom = None
+#    if outputDir is not None :
+#        if options.fitvar == 'sigmaIEIE' :
+#            outputDirNom = outputDir + '/SigmaIEIEFits/JetFakeTemplateFitPlotsNomIso'
+#        elif options.fitvar == 'chIsoCorr' :
+#            outputDirNom = outputDir + '/ChHadIsoFits/JetFakeTemplateFitPlotsNomIso'
+#        elif options.fitvar == 'neuIsoCorr' :
+#            outputDirNom = outputDir + '/NeuHadIsoFits/JetFakeTemplateFitPlotsNomIso'
+#        elif options.fitvar == 'phoIsoCorr' :
+#            outputDirNom = outputDir + '/PhoIsoFits/JetFakeTemplateFitPlotsNomIso'
+#
+#    do_nominal_fit( ptbins=common_ptbins, fitvar=options.fitvar, ch=ch, ffcorr=ffcorr, outputDir = outputDirNom, systematics='Nom')
+#
+#    # use last leading pt bin
+#    #subl_pt_lead_bins = [ common_ptbins[-2],  common_ptbins[-1] ]
+#    #do_nominal_fit( iso_cuts_lead, iso_cuts_subl, ptbins=[40, 1000000], subl_ptrange=(40, 1000000), fitvar=var, ch=ch, outputDir = outputDirNom, systematics='Nom')
+#    #do_nominal_fit( iso_cuts_lead, iso_cuts_subl, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[1], None), ch=ch, outputDir = outputDirNom, systematics='Nom')
+#
+#    #do_nominal_fit( iso_cuts_lead, iso_cuts_subl, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[0], common_ptbins[2]), ch=ch, outputDir = outputDirNom, systematics='Nom')
+#    #do_nominal_fit( iso_cuts_lead, iso_cuts_subl, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[2], None), ch=ch, outputDir = outputDirNom, systematics='Nom')
 
 def RunClosureFitting( outputDir = None, ch='mu' ) :
 
@@ -535,16 +574,17 @@ def RunClosureFitting( outputDir = None, ch='mu' ) :
     iso_cuts_subl = 'ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1] '
     do_closure_fit( iso_cuts_lead, iso_cuts_subl, ptbins=common_ptbins, ch=ch, corr_factor=-0.05, outputDir = outputDirNom )
 
-def RunLooseFitting( outputDir = None, ch='mu' ) :
-
-    outputDirNom = None
-    if outputDir is not None :
-        outputDirNom = outputDir + '/JetFakeTemplateFitPlotsLooseIso'
-
-    iso_cuts_lead = ' ph_chIsoCorr[0] < 5 && ph_neuIsoCorr[0] < 3 && ph_phoIsoCorr[0] < 3'
-    iso_cuts_subl = ' ph_chIsoCorr[1] < 5 && ph_neuIsoCorr[1] < 3 && ph_phoIsoCorr[1] < 3'
-
-    do_nominal_fit( iso_cuts_lead, iso_cuts_subl, ptbins=common_ptbins, ch=ch, outputDir = outputDirNom )
+# depricated, use classes
+#def RunLooseFitting( outputDir = None, ch='mu' ) :
+#
+#    outputDirNom = None
+#    if outputDir is not None :
+#        outputDirNom = outputDir + '/JetFakeTemplateFitPlotsLooseIso'
+#
+#    iso_cuts_lead = ' ph_chIsoCorr[0] < 5 && ph_neuIsoCorr[0] < 3 && ph_phoIsoCorr[0] < 3'
+#    iso_cuts_subl = ' ph_chIsoCorr[1] < 5 && ph_neuIsoCorr[1] < 3 && ph_phoIsoCorr[1] < 3'
+#
+#    do_nominal_fit( so_cuts_lead, iso_cuts_subl, ptbins=common_ptbins, ch=ch, outputDir = outputDirNom )
 
 def RunAsymFittingLoose(vals, outputDir = None, ch='mu') :
 
@@ -557,253 +597,241 @@ def RunAsymFittingLoose(vals, outputDir = None, ch='mu') :
 
     do_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=common_ptbins, ch=ch, outputDir=outputDirNom )
 
-def RunCorrectedAsymFitting(vals, outputDir = None, ch='mu', ffcorr='None') :
+# depricated, use classes
+#def RunCorrectedAsymFitting(vals, outputDir = None, ch='mu', ffcorr='None') :
+#
+#
+#    # make the output dir based on the iso vals
+#    outputDirNom = None
+#    if outputDir is not None :
+#        if options.fitvar == 'sigmaIEIE' :
+#            outputDirNom = outputDir + '/SigmaIEIEFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
+#        elif options.fitvar == 'chIsoCorr' :
+#            outputDirNom = outputDir + '/ChHadIsoFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
+#        elif options.fitvar == 'neuIsoCorr' :
+#            outputDirNom = outputDir + '/NeuHadIsoFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
+#        elif options.fitvar == 'phoIsoCorr' :
+#            outputDirNom = outputDir + '/PhoIsoFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
+#
+#    if options.fitvar == 'sigmaIEIE' :
+#        #---------------------------------------------------
+#        # for using SIEIE templates
+#        # iso cuts for isolated photons
+#        fitvar = 'sigmaIEIE'
+#        # loosened iso cuts
+#        loose_iso_cuts = vals
+#        systematics=('-'.join([str(v) for v in vals]))
+#        #---------------------------------------------------
+#
+#    elif options.fitvar == 'chIsoCorr' :
+#        #---------------------------------------------------
+#        # for using ChHadIso templates
+#        # iso cuts for isolated photons
+#        fitvar = 'chIsoCorr'
+#        loose_iso_cuts = (None, vals[1], vals[2] )
+#        systematics = 'No Cut-%d-%d' %( vals[1], vals[2] )
+#        #---------------------------------------------------
+#
+#    elif options.fitvar == 'neuIsoCorr' :
+#        #---------------------------------------------------
+#        # for using NeuHadIso templates
+#        # iso cuts for isolated photons
+#        fitvar = 'neuIsoCorr'
+#        # loosened iso cuts
+#        loose_iso_cuts = (vals[0], None, vals[2] )
+#        systematics = '%d-No Cut-%d' %( vals[0], vals[2] )
+#        #---------------------------------------------------
+#
+#    elif options.fitvar == 'phoIsoCorr' :
+#        #---------------------------------------------------
+#        # for using NeuHadIso templates
+#        # iso cuts for isolated photons
+#        fitvar = 'phoIsoCorr'
+#        # loosened iso cuts
+#        loose_iso_cuts = (vals[0], vals[1], None )
+#        systematics = '%d-%d-No Cut' %( vals[0], vals[1] )
+#        #---------------------------------------------------
+#
+#    do_corrected_asymiso_fit(  loose_iso_cuts, ptbins=common_ptbins, fitvar=fitvar, ch=ch, ffcorr=ffcorr, outputDir=outputDirNom, systematics=systematics )
+#
+#    # ----------------------------
+#    # subleading binning
+#    # Uncomment to use sublead binning
+#    # in specific lead pt bins
+#    # ----------------------------
+#    #subl_pt_lead_bins = [ common_ptbins[-2],  common_ptbins[-1] ]
+#    #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, loose_iso_cuts, ptbins=[40,1000000], subl_ptrange=(40, None), fitvar=fitvar, ch=ch, outputDir = outputDirNom, systematics='Nom')
+#    #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[0], common_ptbins[1]), ch=ch, outputDir = outputDirNom, systematics='Nom')
+#    #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[1], None), ch=ch, outputDir = outputDirNom, systematics='Nom')
+#
+#    #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[0], common_ptbins[2]), ch=ch, outputDir = outputDirNom, systematics='Nom')
+#    #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[2], None), ch=ch, outputDir = outputDirNom, systematics='Nom')
+#    # ----------------------------
 
-
-    # make the output dir based on the iso vals
-    outputDirNom = None
-    if outputDir is not None :
-        if options.fitvar == 'sigmaIEIE' :
-            outputDirNom = outputDir + '/SigmaIEIEFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
-        elif options.fitvar == 'chIsoCorr' :
-            outputDirNom = outputDir + '/ChHadIsoFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
-        elif options.fitvar == 'neuIsoCorr' :
-            outputDirNom = outputDir + '/NeuHadIsoFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
-        elif options.fitvar == 'phoIsoCorr' :
-            outputDirNom = outputDir + '/PhoIsoFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(vals[0], vals[1], vals[2] )
-
-    if options.fitvar == 'sigmaIEIE' :
-        #---------------------------------------------------
-        # for using SIEIE templates
-        # iso cuts for isolated photons
-        fitvar = 'sigmaIEIE'
-        iso_cuts_iso = ' ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-        iso_cuts_iso_fake = iso_cuts_iso 
-        #iso_cuts_iso_fake = ' ph_chIsoCorr[0] > 1.5 && ph_chIsoCorr[0] < 8 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]'
-        # loosened iso cuts
-        iso_cuts_noiso = ' ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(vals[0], vals[1], vals[2] )
-        #iso_cuts_noiso = ' ph_chIsoCorr[0] > 1.5 && ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(vals[0], vals[1], vals[2] )
-        loose_iso_cuts = vals
-        systematics=('-'.join([str(v) for v in vals]))
-        #---------------------------------------------------
-
-    elif options.fitvar == 'chIsoCorr' :
-        #---------------------------------------------------
-        # for using ChHadIso templates
-        # iso cuts for isolated photons
-        fitvar = 'chIsoCorr'
-        iso_cuts_iso = ' ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-        iso_cuts_iso_fake = iso_cuts_iso 
-        #iso_cuts_iso_fake = ' !ph_passSIEIEMedium[0] &&  ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-        # loosened iso cuts
-        iso_cuts_noiso = 'ph_passSIEIEMedium[0] &&  ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %( vals[1], vals[2] )
-        loose_iso_cuts = (None, vals[1], vals[2] )
-        systematics = 'No Cut-%d-%d' %( vals[1], vals[2] )
-        #---------------------------------------------------
-
-    elif options.fitvar == 'neuIsoCorr' :
-        #---------------------------------------------------
-        # for using NeuHadIso templates
-        # iso cuts for isolated photons
-        fitvar = 'neuIsoCorr'
-        iso_cuts_iso = ' ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-        iso_cuts_iso_fake = iso_cuts_iso 
-        # loosened iso cuts
-        iso_cuts_noiso = 'ph_passSIEIEMedium[0] &&  ph_chIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %( vals[0], vals[2] )
-        loose_iso_cuts = (vals[0], None, vals[2] )
-        systematics = '%d-No Cut-%d' %( vals[0], vals[2] )
-        #---------------------------------------------------
-
-    elif options.fitvar == 'phoIsoCorr' :
-        #---------------------------------------------------
-        # for using NeuHadIso templates
-        # iso cuts for isolated photons
-        fitvar = 'phoIsoCorr'
-        iso_cuts_iso = ' ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] '
-        iso_cuts_iso_fake = iso_cuts_iso 
-        #iso_cuts_iso_fake = ' !ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] '
-        # loosened iso cuts
-        iso_cuts_noiso = 'ph_passSIEIEMedium[0] &&  ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d' %( vals[0], vals[1] )
-        loose_iso_cuts = (vals[0], vals[1], None )
-        systematics = '%d-%d-No Cut' %( vals[0], vals[1] )
-        #---------------------------------------------------
-
-    do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_iso_fake, iso_cuts_noiso, loose_iso_cuts, ptbins=common_ptbins, fitvar=fitvar, ch=ch, ffcorr=ffcorr, outputDir=outputDirNom, systematics=systematics )
-
-    # ----------------------------
-    # subleading binning
-    # Uncomment to use sublead binning
-    # in specific lead pt bins
-    # ----------------------------
-    #subl_pt_lead_bins = [ common_ptbins[-2],  common_ptbins[-1] ]
-    #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, loose_iso_cuts, ptbins=[40,1000000], subl_ptrange=(40, None), fitvar=fitvar, ch=ch, outputDir = outputDirNom, systematics='Nom')
-    #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[0], common_ptbins[1]), ch=ch, outputDir = outputDirNom, systematics='Nom')
-    #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[1], None), ch=ch, outputDir = outputDirNom, systematics='Nom')
-
-    #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[0], common_ptbins[2]), ch=ch, outputDir = outputDirNom, systematics='Nom')
-    #do_corrected_asymiso_fit( iso_cuts_iso, iso_cuts_noiso, ptbins=subl_pt_lead_bins, subl_ptrange=(common_ptbins[2], None), ch=ch, outputDir = outputDirNom, systematics='Nom')
-    # ----------------------------
-
-def do_nominal_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptrange=(None,None), fitvar='sigmaIEIE', ch='mu', ffcorr='None', outputDir=None, systematics=None ) :
-
-    binning = get_default_binning(fitvar)
-    samples = get_default_samples(ch)
-
-    # generate templates for both EB and EE
-    real_template_str = get_real_template_draw_commands(ch ) + ' && %s' %iso_cuts_lead
-    if fitvar == 'sigmaIEIE' :
-        #print '*******************************DRAWING WITH CHHadISO WINDOW*******************************'
-        fake_template_str = get_fake_template_draw_commands(ch ) + ' && %s' %iso_cuts_lead
-        #fake_template_str = get_fake_window_template_draw_commands(ch )
-    else :
-        fake_template_str = get_fake_template_draw_commands(ch ) + ' && %s' %iso_cuts_lead
-
-    templates_reg = {}
-    templates_reg['EB'] = {}
-    templates_reg['EE'] = {}
-    templates_reg['EB']['real'] = get_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB', fitvar=fitvar, sampMan=sampManLG)
-    templates_reg['EE']['real'] = get_single_photon_template(real_template_str, binning['EE'], samples['real'], 'EE', fitvar=fitvar, sampMan=sampManLG)
-    templates_reg['EB']['fake'] = get_single_photon_template(fake_template_str, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, sampMan=sampManLLG)
-    templates_reg['EE']['fake'] = get_single_photon_template(fake_template_str, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, sampMan=sampManLLG)
-
-    templates_corr = None
-    if ffcorr != 'None' :
-        corr_template_str_leadFail_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=False, cuts=ffcorr )
-        corr_template_str_leadPass_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=True , cuts=ffcorr )
-        corr_template_str_leadFail_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=False, cuts=ffcorr )
-        corr_template_str_leadPass_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=True , cuts=ffcorr )
-        corr_template_str_leadFail_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=False, cuts=ffcorr )
-        corr_template_str_leadPass_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=True , cuts=ffcorr )
-
-        templates_corr = {'leadPass' : {}, 'leadFail' : {}}
-
-        templates_corr['leadFail'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr['leadPass'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr['leadFail'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr['leadPass'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr['leadFail'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr['leadPass'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
-
-    regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB')]
-    for reg in regions :
-
-        # convert from regions to lead/subl
-        templates = {}
-        templates['lead'] = {}
-        templates['subl'] = {}
-        templates['lead']['real'] = templates_reg[reg[0]]['real']
-        templates['subl']['real'] = templates_reg[reg[1]]['real']
-        templates['lead']['fake'] = templates_reg[reg[0]]['fake']
-        templates['subl']['fake'] = templates_reg[reg[1]]['fake']
-
-        count_var = None
-        if fitvar == 'sigmaIEIE' :
-            # if the channel inverts one of the pixel seeds then don't require the veto
-            # if its the muon channel don't require the veto
-            if ch.count('invpix') or ch == 'mu' or ch=='mulowmt' or ch=='muhighmt' :
-                count_var = 'ph_mediumNoSIEIENoEleVeto_n'
-            else :
-                count_var = 'ph_mediumNoSIEIE_n'
-        if fitvar == 'chIsoCorr' :
-            count_var = 'ph_mediumNoChIso_n'
-        if fitvar == 'neuIsoCorr' :
-            count_var = 'ph_mediumNoNeuIso_n'
-        if fitvar == 'phoIsoCorr' :
-            count_var = 'ph_mediumNoPhoIso_n'
-
-
-        #print '*******************FIX COUNT VAR*********************'
-        #count_var = 'ph_iso533_n'
-
-        # add regions onto the selection
-
-        if fitvar == 'sigmaIEIE' :
-            gg_selection = get_default_draw_commands(ch) + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
-        elif fitvar == 'chIsoCorr' :
-            gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-        elif fitvar == 'neuIsoCorr' :
-            gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-        elif fitvar == 'phoIsoCorr' :
-            gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-
-        #gg_selection = get_default_draw_commands(ch) + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
-
-        #gg_selection = get_default_draw_commands(ch) + ' && ph_iso151111_n > 1 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1])
-        #gg_selection = get_default_draw_commands(ch) + ' && ph_iso533_n > 1 && is%s_leadph12 && is%s_sublph12 && chIsoCorr_leadph12 < 3 && neuIsoCorr_leadph12 < 2 && phoIsoCorr_leadph12 < 2 && chIsoCorr_sublph12 < 3 && neuIsoCorr_sublph12 < 2 && phoIsoCorr_sublph12 < 2  ' %( reg[0], reg[1])
-        #gg_selection = get_default_draw_commands(ch) + ' && ph_iso533_n > 1 && chIsoCorr_leadph12 < 3 && neuIsoCorr_leadph12 < 2 && phoIsoCorr_leadph12 < 2 && chIsoCorr_sublph12 < 3 && neuIsoCorr_sublph12 < 2 && phoIsoCorr_sublph12 < 2 && ( ( ph_pt[0] > ph_pt[1] && is%s_leadph12 && is%s_sublph12 ) || ( ph_pt[0] <= ph_pt[1] && is%s_sublph12 && is%s_leadph12) ) ' %( reg[0], reg[1], reg[0], reg[1])
-        #if iso_cuts_lead is not None :
-        #    gg_selection = gg_selection + ' && %s ' %( iso_cuts_lead )
-        #if iso_cuts_subl is not None :
-        #    gg_selection = gg_selection + ' && %s ' %( iso_cuts_subl )
-
-        # add subl pt cuts onto the selection
-        if subl_ptrange[0] is not None :
-            if subl_ptrange[1] is None :
-                gg_selection = gg_selection + ' && pt_sublph12 > %d' %subl_ptrange[0]
-            else :
-                gg_selection = gg_selection + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(subl_ptrange[0], subl_ptrange[1] )
-
-        # parse out the x and y binning
-        ybinn = binning[reg[1]]
-        xbinn = binning[reg[0]]
-
-        # variable given to TTree.Draw
-        if fitvar == 'sigmaIEIE' :
-            var = 'pt_leadph12:sieie_sublph12:sieie_leadph12' #z:y:x
-        elif fitvar == 'chIsoCorr' :
-            var = 'pt_leadph12:chIsoCorr_sublph12:chIsoCorr_leadph12' #z:y:x
-        elif fitvar == 'neuIsoCorr' :
-            var = 'pt_leadph12:neuIsoCorr_sublph12:neuIsoCorr_leadph12' #z:y:x
-        elif fitvar == 'phoIsoCorr' :
-            var = 'pt_leadph12:phoIsoCorr_sublph12:phoIsoCorr_leadph12' #z:y:x
-
-        print 'USE var ', var
-        # get sample
-        if ch.count('invpixlead' ) :
-            print 'USE sampManDataInvL'
-            target_samp = sampManDataInvL.get_samples(name=samples['target'])
-
-            # draw and get back the hist
-            print '---------------------------------'
-            print ' Draw Data                       '
-            print gg_selection
-            print '---------------------------------'
-            gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=sampManDataInvL )
-        elif ch.count('invpixsubl' ) :
-            print 'USE sampManDataInvS'
-            target_samp = sampManDataInvS.get_samples(name=samples['target'])
-
-            # draw and get back the hist
-            print '---------------------------------'
-            print ' Draw Data                       '
-            print gg_selection
-            print '---------------------------------'
-            gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=sampManDataInvS )
-
-        # in the muon channel don't make the electron veto cut
-        elif ch.count( 'mu' ) :
-            print 'USE sampManDataNOEV'
-            target_samp = sampManDataNOEV.get_samples(name=samples['target'])
-
-            # draw and get back the hist
-            print '---------------------------------'
-            print ' Draw Data                       '
-            print gg_selection
-            print '---------------------------------'
-            gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=sampManDataNOEV )
-        else :
-            print 'USE sampManData'
-            target_samp = sampManData.get_samples(name=samples['target'])
-
-            # draw and get back the hist
-            print '---------------------------------'
-            print ' Draw Data                       '
-            print gg_selection
-            print '---------------------------------'
-            gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=sampManData )
-
-
-        run_nominal_calculation( gg_hist, templates, templates_corr, reg, ptbins, ch, fitvar, ffcorr, systematics, subl_ptrange, outputDir )
+# depricated, use classes
+#def do_nominal_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptrange=(None,None), fitvar='sigmaIEIE', ch='mu', ffcorr='None', outputDir=None, systematics=None ) :
+#
+#    binning = get_default_binning(fitvar)
+#    samples = get_default_samples(ch)
+#
+#    # generate templates for both EB and EE
+#    real_template_str = get_real_template_draw_commands(fitvar, ch ) 
+#    if iso_cuts_lead :
+#        real_template_str += ' && ' + iso_cuts_lead
+#
+#    fake_template_str = get_fake_template_draw_commands(fitvar, ch ) 
+#    if iso_cuts_lead :
+#        fake_template_str += ' && ' + iso_cuts_lead
+#
+#    #if fitvar == 'sigmaIEIE' :
+#    #    #print '*******************************DRAWING WITH CHHadISO WINDOW*******************************'
+#    #    #fake_template_str = get_fake_window_template_draw_commands(ch )
+#    #else :
+#    #    fake_template_str = get_fake_template_draw_commands(fitvar,ch ) + ' && %s' %iso_cuts_lead
+#
+#    templates_reg = {}
+#    templates_reg['EB'] = {}
+#    templates_reg['EE'] = {}
+#    templates_reg['EB']['real'] = get_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB', fitvar=fitvar, sampMan=sampManLG)
+#    templates_reg['EE']['real'] = get_single_photon_template(real_template_str, binning['EE'], samples['real'], 'EE', fitvar=fitvar, sampMan=sampManLG)
+#    templates_reg['EB']['fake'] = get_single_photon_template(fake_template_str, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, sampMan=sampManLLG)
+#    templates_reg['EE']['fake'] = get_single_photon_template(fake_template_str, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, sampMan=sampManLLG)
+#
+#    templates_corr = None
+#    if ffcorr != 'None' :
+#        corr_template_str_leadFail_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=False, cuts=ffcorr )
+#        corr_template_str_leadPass_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=True , cuts=ffcorr )
+#        corr_template_str_leadFail_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=False, cuts=ffcorr )
+#        corr_template_str_leadPass_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=True , cuts=ffcorr )
+#        corr_template_str_leadFail_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=False, cuts=ffcorr )
+#        corr_template_str_leadPass_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=True , cuts=ffcorr )
+#
+#        templates_corr = {'leadPass' : {}, 'leadFail' : {}}
+#
+#        templates_corr['leadFail'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#        templates_corr['leadPass'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#        templates_corr['leadFail'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#        templates_corr['leadPass'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#        templates_corr['leadFail'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#        templates_corr['leadPass'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#
+#    regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB')]
+#    for reg in regions :
+#
+#        # convert from regions to lead/subl
+#        templates = {}
+#        templates['lead'] = {}
+#        templates['subl'] = {}
+#        templates['lead']['real'] = templates_reg[reg[0]]['real']
+#        templates['subl']['real'] = templates_reg[reg[1]]['real']
+#        templates['lead']['fake'] = templates_reg[reg[0]]['fake']
+#        templates['subl']['fake'] = templates_reg[reg[1]]['fake']
+#
+#        count_var, phstr = get_template_draw_strs( fitvar, ch, eleVeto )
+#        count_var = None
+#        if fitvar == 'sigmaIEIE' :
+#            # if the channel inverts one of the pixel seeds then don't require the veto
+#            # if its the muon channel don't require the veto
+#            if ch.count('invpix') or ch == 'mu' or ch=='mulowmt' or ch=='muhighmt' :
+#                count_var = 'ph_mediumNoSIEIENoEleVeto_n'
+#            else :
+#                count_var = 'ph_mediumNoSIEIE_n'
+#        if fitvar == 'chIsoCorr' :
+#            count_var = 'ph_mediumNoChIso_n'
+#        if fitvar == 'neuIsoCorr' :
+#            count_var = 'ph_mediumNoNeuIso_n'
+#        if fitvar == 'phoIsoCorr' :
+#            count_var = 'ph_mediumNoPhoIso_n'
+#
+#
+#        #print '*******************FIX COUNT VAR*********************'
+#        #count_var = 'ph_iso533_n'
+#
+#        # add regions onto the selection
+#
+#        if fitvar == 'sigmaIEIE' :
+#            gg_selection = get_default_draw_commands(ch) + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
+#        elif fitvar == 'chIsoCorr' :
+#            gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+#        elif fitvar == 'neuIsoCorr' :
+#            gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+#        elif fitvar == 'phoIsoCorr' :
+#            gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+#
+#        #gg_selection = get_default_draw_commands(ch) + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
+#
+#        #gg_selection = get_default_draw_commands(ch) + ' && ph_iso151111_n > 1 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1])
+#        #gg_selection = get_default_draw_commands(ch) + ' && ph_iso533_n > 1 && is%s_leadph12 && is%s_sublph12 && chIsoCorr_leadph12 < 3 && neuIsoCorr_leadph12 < 2 && phoIsoCorr_leadph12 < 2 && chIsoCorr_sublph12 < 3 && neuIsoCorr_sublph12 < 2 && phoIsoCorr_sublph12 < 2  ' %( reg[0], reg[1])
+#        #gg_selection = get_default_draw_commands(ch) + ' && ph_iso533_n > 1 && chIsoCorr_leadph12 < 3 && neuIsoCorr_leadph12 < 2 && phoIsoCorr_leadph12 < 2 && chIsoCorr_sublph12 < 3 && neuIsoCorr_sublph12 < 2 && phoIsoCorr_sublph12 < 2 && ( ( ph_pt[0] > ph_pt[1] && is%s_leadph12 && is%s_sublph12 ) || ( ph_pt[0] <= ph_pt[1] && is%s_sublph12 && is%s_leadph12) ) ' %( reg[0], reg[1], reg[0], reg[1])
+#
+#        # add subl pt cuts onto the selection
+#        if subl_ptrange[0] is not None :
+#            if subl_ptrange[1] is None :
+#                gg_selection = gg_selection + ' && pt_sublph12 > %d' %subl_ptrange[0]
+#            else :
+#                gg_selection = gg_selection + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(subl_ptrange[0], subl_ptrange[1] )
+#
+#        # parse out the x and y binning
+#        ybinn = binning[reg[1]]
+#        xbinn = binning[reg[0]]
+#
+#        # variable given to TTree.Draw
+#        if fitvar == 'sigmaIEIE' :
+#            var = 'pt_leadph12:sieie_sublph12:sieie_leadph12' #z:y:x
+#        elif fitvar == 'chIsoCorr' :
+#            var = 'pt_leadph12:chIsoCorr_sublph12:chIsoCorr_leadph12' #z:y:x
+#        elif fitvar == 'neuIsoCorr' :
+#            var = 'pt_leadph12:neuIsoCorr_sublph12:neuIsoCorr_leadph12' #z:y:x
+#        elif fitvar == 'phoIsoCorr' :
+#            var = 'pt_leadph12:phoIsoCorr_sublph12:phoIsoCorr_leadph12' #z:y:x
+#
+#        print 'USE var ', var
+#        # get sample
+#        if ch.count('invpixlead' ) :
+#            print 'USE sampManDataInvL'
+#            target_samp = sampManDataInvL.get_samples(name=samples['target'])
+#
+#            # draw and get back the hist
+#            print '---------------------------------'
+#            print ' Draw Data                       '
+#            print gg_selection
+#            print '---------------------------------'
+#            gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=sampManDataInvL )
+#        elif ch.count('invpixsubl' ) :
+#            print 'USE sampManDataInvS'
+#            target_samp = sampManDataInvS.get_samples(name=samples['target'])
+#
+#            # draw and get back the hist
+#            print '---------------------------------'
+#            print ' Draw Data                       '
+#            print gg_selection
+#            print '---------------------------------'
+#            gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=sampManDataInvS )
+#
+#        # in the muon channel don't make the electron veto cut
+#        elif ch.count( 'mu' ) :
+#            print 'USE sampManDataNOEV'
+#            target_samp = sampManDataNOEV.get_samples(name=samples['target'])
+#
+#            # draw and get back the hist
+#            print '---------------------------------'
+#            print ' Draw Data                       '
+#            print gg_selection
+#            print '---------------------------------'
+#            gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=sampManDataNOEV )
+#        else :
+#            print 'USE sampManData'
+#            target_samp = sampManData.get_samples(name=samples['target'])
+#
+#            # draw and get back the hist
+#            print '---------------------------------'
+#            print ' Draw Data                       '
+#            print gg_selection
+#            print '---------------------------------'
+#            gg_hist = clone_sample_and_draw( target_samp[0], var, gg_selection, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500),useSampMan=sampManData )
+#
+#
+#        run_nominal_calculation( gg_hist, templates, templates_corr, reg, ptbins, ch, fitvar, ffcorr, systematics, subl_ptrange, outputDir )
 
 def run_nominal_calculation( gg_hist, templates, templates_corr, reg, ptbins, ch, fitvar, ffcorr, systematics=None, subl_ptrange=(None,None), outputDir=None ) :
 
@@ -936,268 +964,260 @@ def run_nominal_calculation( gg_hist, templates, templates_corr, reg, ptbins, ch
         save_results( results_pt_syst_temp, outputDir, namePostfix_systTemp)
 
 
-def do_corrected_asymiso_fit( iso_cuts_iso=None, iso_cuts_iso_fake=None, iso_cuts_noiso=None, loose_iso_cuts = None, ptbins=[], subl_ptrange=(None,None), fitvar='sigmaIEIE', ch='mu', ffcorr='None', outputDir=None, systematics=None ) :
-
-    if loose_iso_cuts == None :
-        print 'Must provide a set of loose iso cuts'
-        return
-
-    binning = get_default_binning(fitvar)
-    samples = get_default_samples(ch)
-
-    real_template_str_iso = get_real_template_draw_commands(ch)
-    fake_template_str_iso = get_fake_template_draw_commands(ch)
-    if iso_cuts_iso is not None :
-        real_template_str_iso = real_template_str_iso + ' && ' + iso_cuts_iso
-        fake_template_str_iso = fake_template_str_iso + ' && ' + iso_cuts_iso_fake
-
-    real_template_str_noiso = get_real_template_draw_commands(ch )
-    fake_template_str_noiso = get_fake_template_draw_commands(ch )
-    if iso_cuts_noiso is not None :
-        real_template_str_noiso = real_template_str_noiso + ' && ' + iso_cuts_noiso
-        fake_template_str_noiso = fake_template_str_noiso + ' && ' + iso_cuts_noiso
-
-    templates_iso_reg = {}
-    templates_iso_reg['EB'] = {}
-    templates_iso_reg['EE'] = {}
-    templates_iso_reg['EB']['real'] = get_single_photon_template(real_template_str_iso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, sampMan=sampManLG )
-    templates_iso_reg['EE']['real'] = get_single_photon_template(real_template_str_iso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, sampMan=sampManLG )
-    templates_iso_reg['EB']['fake'] = get_single_photon_template(fake_template_str_iso, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, sampMan=sampManLLG )
-    templates_iso_reg['EE']['fake'] = get_single_photon_template(fake_template_str_iso, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, sampMan=sampManLLG )
-
-    
-    templates_noiso_reg = {}
-    templates_noiso_reg['EB'] = {}
-    templates_noiso_reg['EE'] = {}
-    templates_noiso_reg['EB']['real'] = get_single_photon_template(real_template_str_noiso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, sampMan=sampManLG  )
-    templates_noiso_reg['EE']['real'] = get_single_photon_template(real_template_str_noiso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, sampMan=sampManLG  )
-    templates_noiso_reg['EB']['fake'] = get_single_photon_template(fake_template_str_noiso, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, sampMan=sampManLLG )
-    templates_noiso_reg['EE']['fake'] = get_single_photon_template(fake_template_str_noiso, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, sampMan=sampManLLG )
-
-    templates_corr = None
-    if ffcorr != 'None' :
-        corr_template_str_leadFail_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=False, cuts=ffcorr )
-        corr_template_str_leadPass_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=True,  cuts=ffcorr )
-        corr_template_str_leadFail_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=False, cuts=ffcorr )
-        corr_template_str_leadPass_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=True, cuts=ffcorr )
-        corr_template_str_leadFail_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=False, cuts=ffcorr )
-        corr_template_str_leadPass_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=True, cuts=ffcorr )
-
-        templates_corr = {'leadPass' : {}, 'leadFail' : {}}
-        templates_corr['leadFail'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr['leadPass'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr['leadFail'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr['leadPass'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr['leadFail'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
-        templates_corr['leadPass'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
-
-    regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB') ]
-
-    for reg in regions :
-
-        templates_leadiso = {}
-        templates_leadiso['lead'] = {}
-        templates_leadiso['subl'] = {}
-        templates_leadiso['lead']['real'] = templates_iso_reg[reg[0]]['real']
-        templates_leadiso['subl']['real'] = templates_noiso_reg[reg[1]]['real']
-        templates_leadiso['lead']['fake'] = templates_iso_reg[reg[0]]['fake']
-        templates_leadiso['subl']['fake'] = templates_noiso_reg[reg[1]]['fake']
-
-        templates_subliso = {}
-        templates_subliso['lead'] = {}
-        templates_subliso['subl'] = {}
-        templates_subliso['lead']['real'] = templates_noiso_reg[reg[0]]['real']
-        templates_subliso['subl']['real'] = templates_iso_reg[reg[1]]['real']
-        templates_subliso['lead']['fake'] = templates_noiso_reg[reg[0]]['fake']
-        templates_subliso['subl']['fake'] = templates_iso_reg[reg[1]]['fake']
-
-        templates_nom = {}
-        templates_nom['lead'] = {}
-        templates_nom['subl'] = {}
-        templates_nom['subl']['real'] = templates_subliso['subl']['real']
-        templates_nom['subl']['fake'] = templates_subliso['subl']['fake']
-        templates_nom['lead']['real'] = templates_leadiso['lead']['real']
-        templates_nom['lead']['fake'] = templates_leadiso['lead']['fake']
-
-        
-        # add regions onto the selection
-        gg_selection_leadiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-        gg_selection_subliso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-        gg_selection_bothiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-
-        # add subl pt cuts onto the selection
-        if subl_ptrange[0] is not None :
-            if subl_ptrange[1] is None :
-                gg_selection_leadiso = gg_selection_leadiso + ' && pt_sublph12 > %d' %subl_ptrange[0]
-                gg_selection_subliso = gg_selection_subliso + ' && pt_sublph12 > %d' %subl_ptrange[0]
-                gg_selection_bothiso = gg_selection_bothiso + ' && pt_sublph12 > %d' %subl_ptrange[0]
-            else :
-                gg_selection_leadiso = gg_selection_leadiso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(subl_ptrange[0], subl_ptrange[1] )
-                gg_selection_subliso = gg_selection_subliso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(subl_ptrange[0], subl_ptrange[1] )
-                gg_selection_bothiso = gg_selection_bothiso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(subl_ptrange[0], subl_ptrange[1] )
-
-        if fitvar == 'sigmaIEIE' :
-            # add object cuts to the selection
-
-            nom_iso_cuts_lead = 'chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _chIso_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
-            nom_iso_cuts_subl = 'chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _chIso_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
-
-            gg_selection_leadiso = gg_selection_leadiso + ' && ph_iso%d%d%d_n > 1 && %s ' %(loose_iso_cuts[0], loose_iso_cuts[1], loose_iso_cuts[2], nom_iso_cuts_lead )
-            gg_selection_subliso = gg_selection_subliso + ' && ph_iso%d%d%d_n > 1 && %s ' %(loose_iso_cuts[0], loose_iso_cuts[1], loose_iso_cuts[2], nom_iso_cuts_subl )
-
-            gg_selection_leadiso = gg_selection_leadiso + ' && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %d ' %( loose_iso_cuts )
-            gg_selection_subliso = gg_selection_subliso + ' && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %d ' %( loose_iso_cuts )
-
-            gg_selection_bothiso = gg_selection_bothiso + ' && ph_mediumNoSIEIENoEleVeto_n > 1 '
-
-        elif fitvar == 'chIsoCorr' :
-
-            nom_iso_cuts_lead = 'sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
-            nom_iso_cuts_subl = 'sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
-
-
-            gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
-            gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
-
-        
-            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], loose_iso_cuts[1], loose_iso_cuts[2] )
-            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],loose_iso_cuts[1], loose_iso_cuts[2] )
-
-            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
-
-        elif fitvar == 'neuIsoCorr' :
-
-            nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
-            nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
-
-
-            gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
-            gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
-
-        
-            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], loose_iso_cuts[0], loose_iso_cuts[2] )
-            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],loose_iso_cuts[0], loose_iso_cuts[2] )
-
-            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
-
-        elif fitvar == 'phoIsoCorr' :
-
-            nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
-            nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
-
-
-            gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
-            gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
-
-        
-            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], loose_iso_cuts[0], loose_iso_cuts[1] )
-            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],loose_iso_cuts[0], loose_iso_cuts[1] )
-
-            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
-
-        # parse out the x and y binning
-        ybinn = binning[reg[1]]
-        xbinn = binning[reg[0]]
-
-        # variable given to TTree.Draw
-        #var = 'ph_pt[0]:ph_sigmaIEIE[1]:ph_sigmaIEIE[0]' #z:y:x
-        if fitvar == 'sigmaIEIE' :
-            var = 'pt_leadph12:sieie_sublph12:sieie_leadph12' #z:y:x
-        elif fitvar == 'chIsoCorr' :
-            var = 'pt_leadph12:chIsoCorr_sublph12:chIsoCorr_leadph12' #z:y:x
-        elif fitvar == 'neuIsoCorr' :
-            var = 'pt_leadph12:neuIsoCorr_sublph12:neuIsoCorr_leadph12' #z:y:x
-        elif fitvar == 'phoIsoCorr' :
-            var = 'pt_leadph12:phoIsoCorr_sublph12:phoIsoCorr_leadph12' #z:y:x
-
-        # get sample
-
-        # for certain channels, use a different SampleManager
-        if ch.count('invpixlead' ) :
-            print 'USE sampManDataInvL'
-            target_samp = sampManDataInvL.get_samples(name=samples['target'])
-
-            # draw and get back the hist
-            print '---------------------------------'
-            print ' Draw LeadIso                    '
-            print gg_selection_leadiso
-            print '---------------------------------'
-            gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvL )
-            print '---------------------------------'
-            print ' Draw SublIso                    '
-            print gg_selection_subliso
-            print '---------------------------------'
-            gg_hist_subliso = clone_sample_and_draw( target_samp[0], var, gg_selection_subliso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvL )
-            print '---------------------------------'
-            print ' Draw BothIso                    '
-            print gg_selection_bothiso
-            print '---------------------------------'
-            gg_hist_bothiso = clone_sample_and_draw( target_samp[0], var, gg_selection_bothiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvL )
-
-        elif ch.count('invpixsubl' ) :
-            print 'USE sampManDataInvS'
-            target_samp = sampManDataInvS.get_samples(name=samples['target'])
-
-            # draw and get back the hist
-            print '---------------------------------'
-            print ' Draw LeadIso                    '
-            print gg_selection_leadiso
-            print '---------------------------------'
-            gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvS )
-            print '---------------------------------'
-            print ' Draw SublIso                    '
-            print gg_selection_subliso
-            print '---------------------------------'
-            gg_hist_subliso = clone_sample_and_draw( target_samp[0], var, gg_selection_subliso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvS )
-            print '---------------------------------'
-            print ' Draw BothIso                    '
-            print gg_selection_bothiso
-            print '---------------------------------'
-            gg_hist_bothiso = clone_sample_and_draw( target_samp[0], var, gg_selection_bothiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvS )
-
-        elif ch.count('mu' ) :
-            print 'USE sampManDataNOEV'
-
-            target_samp = sampManDataNOEV.get_samples(name=samples['target'])
-
-            # draw and get back the hist
-            print '---------------------------------'
-            print ' Draw LeadIso                    '
-            print gg_selection_leadiso
-            print '---------------------------------'
-            gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataNOEV )
-            print '---------------------------------'
-            print ' Draw SublIso                    '
-            print gg_selection_subliso
-            print '---------------------------------'
-            gg_hist_subliso = clone_sample_and_draw( target_samp[0], var, gg_selection_subliso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataNOEV )
-            print '---------------------------------'
-            print ' Draw BothIso                    '
-            print gg_selection_bothiso
-            print '---------------------------------'
-            gg_hist_bothiso = clone_sample_and_draw( target_samp[0], var, gg_selection_bothiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataNOEV )
-        else :
-            print 'USE sampManData'
-
-            target_samp = sampManData.get_samples(name=samples['target'])
-
-            # draw and get back the hist
-            print '---------------------------------'
-            print ' Draw LeadIso                    '
-            print gg_selection_leadiso
-            print '---------------------------------'
-            gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManData )
-            print '---------------------------------'
-            print ' Draw SublIso                    '
-            print gg_selection_subliso
-            print '---------------------------------'
-            gg_hist_subliso = clone_sample_and_draw( target_samp[0], var, gg_selection_subliso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManData )
-            print '---------------------------------'
-            print ' Draw BothIso                    '
-            print gg_selection_bothiso
-            print '---------------------------------'
-            gg_hist_bothiso = clone_sample_and_draw( target_samp[0], var, gg_selection_bothiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManData )
-        run_corr_calculation( templates_leadiso, templates_subliso, templates_nom, templates_corr, gg_hist_leadiso, gg_hist_subliso, gg_hist_bothiso, reg, ptbins, ch, fitvar, ffcorr, systematics=systematics,subl_ptrange=subl_ptrange,outputDir=outputDir )
+# depricated , use classes
+#def do_corrected_asymiso_fit( loose_iso_cuts = None, ptbins=[], subl_ptrange=(None,None), fitvar='sigmaIEIE', ch='mu', ffcorr='None', outputDir=None, systematics=None ) :
+#
+#    if loose_iso_cuts == None :
+#        print 'Must provide a set of loose iso cuts'
+#        return
+#
+#    binning = get_default_binning(fitvar)
+#    samples = get_default_samples(ch)
+#
+#    real_template_str_iso = get_real_template_draw_commands(fitvar, ch)
+#    fake_template_str_iso = get_fake_template_draw_commands(fitvar, ch)
+#
+#    templates_iso_reg = {}
+#    templates_iso_reg['EB'] = {}
+#    templates_iso_reg['EE'] = {}
+#    templates_iso_reg['EB']['real'] = get_single_photon_template(real_template_str_iso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, sampMan=sampManLG )
+#    templates_iso_reg['EE']['real'] = get_single_photon_template(real_template_str_iso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, sampMan=sampManLG )
+#    templates_iso_reg['EB']['fake'] = get_single_photon_template(fake_template_str_iso, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, sampMan=sampManLLG )
+#    templates_iso_reg['EE']['fake'] = get_single_photon_template(fake_template_str_iso, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, sampMan=sampManLLG )
+#
+#    
+#    templates_noiso_reg = {}
+#    templates_noiso_reg['EB'] = {}
+#    templates_noiso_reg['EE'] = {}
+#    templates_noiso_reg['EB']['real'] = get_single_photon_template(real_template_str_noiso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, sampMan=sampManLG  )
+#    templates_noiso_reg['EE']['real'] = get_single_photon_template(real_template_str_noiso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, sampMan=sampManLG  )
+#    templates_noiso_reg['EB']['fake'] = get_single_photon_template(fake_template_str_noiso, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, sampMan=sampManLLG )
+#    templates_noiso_reg['EE']['fake'] = get_single_photon_template(fake_template_str_noiso, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, sampMan=sampManLLG )
+#
+#    templates_corr = None
+#    if ffcorr != 'None' :
+#        corr_template_str_leadFail_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=False, cuts=ffcorr )
+#        corr_template_str_leadPass_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=True,  cuts=ffcorr )
+#        corr_template_str_leadFail_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=False, cuts=ffcorr )
+#        corr_template_str_leadPass_EB_EE = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EE', leadPass=True, cuts=ffcorr )
+#        corr_template_str_leadFail_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=False, cuts=ffcorr )
+#        corr_template_str_leadPass_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=True, cuts=ffcorr )
+#
+#        templates_corr = {'leadPass' : {}, 'leadFail' : {}}
+#        templates_corr['leadFail'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#        templates_corr['leadPass'][('EB','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#        templates_corr['leadFail'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#        templates_corr['leadPass'][('EB','EE')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#        templates_corr['leadFail'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#        templates_corr['leadPass'][('EE','EB')] = get_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, sampMan=sampManDataNOEV  )
+#
+#    regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB') ]
+#
+#    for reg in regions :
+#
+#        templates_leadiso = {}
+#        templates_leadiso['lead'] = {}
+#        templates_leadiso['subl'] = {}
+#        templates_leadiso['lead']['real'] = templates_iso_reg[reg[0]]['real']
+#        templates_leadiso['subl']['real'] = templates_noiso_reg[reg[1]]['real']
+#        templates_leadiso['lead']['fake'] = templates_iso_reg[reg[0]]['fake']
+#        templates_leadiso['subl']['fake'] = templates_noiso_reg[reg[1]]['fake']
+#
+#        templates_subliso = {}
+#        templates_subliso['lead'] = {}
+#        templates_subliso['subl'] = {}
+#        templates_subliso['lead']['real'] = templates_noiso_reg[reg[0]]['real']
+#        templates_subliso['subl']['real'] = templates_iso_reg[reg[1]]['real']
+#        templates_subliso['lead']['fake'] = templates_noiso_reg[reg[0]]['fake']
+#        templates_subliso['subl']['fake'] = templates_iso_reg[reg[1]]['fake']
+#
+#        templates_nom = {}
+#        templates_nom['lead'] = {}
+#        templates_nom['subl'] = {}
+#        templates_nom['subl']['real'] = templates_subliso['subl']['real']
+#        templates_nom['subl']['fake'] = templates_subliso['subl']['fake']
+#        templates_nom['lead']['real'] = templates_leadiso['lead']['real']
+#        templates_nom['lead']['fake'] = templates_leadiso['lead']['fake']
+#
+#        
+#        # add regions onto the selection
+#        gg_selection_leadiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+#        gg_selection_subliso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+#        gg_selection_bothiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+#
+#        # add subl pt cuts onto the selection
+#        if subl_ptrange[0] is not None :
+#            if subl_ptrange[1] is None :
+#                gg_selection_leadiso = gg_selection_leadiso + ' && pt_sublph12 > %d' %subl_ptrange[0]
+#                gg_selection_subliso = gg_selection_subliso + ' && pt_sublph12 > %d' %subl_ptrange[0]
+#                gg_selection_bothiso = gg_selection_bothiso + ' && pt_sublph12 > %d' %subl_ptrange[0]
+#            else :
+#                gg_selection_leadiso = gg_selection_leadiso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(subl_ptrange[0], subl_ptrange[1] )
+#                gg_selection_subliso = gg_selection_subliso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(subl_ptrange[0], subl_ptrange[1] )
+#                gg_selection_bothiso = gg_selection_bothiso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(subl_ptrange[0], subl_ptrange[1] )
+#
+#        if fitvar == 'sigmaIEIE' :
+#            # add object cuts to the selection
+#
+#            nom_iso_cuts_lead = 'chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _chIso_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+#            nom_iso_cuts_subl = 'chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _chIso_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+#
+#            gg_selection_leadiso = gg_selection_leadiso + ' && ph_iso%d%d%d_n > 1 && %s ' %(loose_iso_cuts[0], loose_iso_cuts[1], loose_iso_cuts[2], nom_iso_cuts_lead )
+#            gg_selection_subliso = gg_selection_subliso + ' && ph_iso%d%d%d_n > 1 && %s ' %(loose_iso_cuts[0], loose_iso_cuts[1], loose_iso_cuts[2], nom_iso_cuts_subl )
+#
+#            gg_selection_leadiso = gg_selection_leadiso + ' && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %d ' %( loose_iso_cuts )
+#            gg_selection_subliso = gg_selection_subliso + ' && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %d ' %( loose_iso_cuts )
+#
+#            gg_selection_bothiso = gg_selection_bothiso + ' && ph_mediumNoSIEIENoEleVeto_n > 1 '
+#
+#        elif fitvar == 'chIsoCorr' :
+#
+#            nom_iso_cuts_lead = 'sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+#            nom_iso_cuts_subl = 'sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+#
+#
+#            gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
+#            gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
+#
+#        
+#            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], loose_iso_cuts[1], loose_iso_cuts[2] )
+#            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],loose_iso_cuts[1], loose_iso_cuts[2] )
+#
+#            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
+#
+#        elif fitvar == 'neuIsoCorr' :
+#
+#            nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+#            nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+#
+#
+#            gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
+#            gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
+#
+#        
+#            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], loose_iso_cuts[0], loose_iso_cuts[2] )
+#            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],loose_iso_cuts[0], loose_iso_cuts[2] )
+#
+#            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
+#
+#        elif fitvar == 'phoIsoCorr' :
+#
+#            nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+#            nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+#
+#
+#            gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
+#            gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
+#
+#        
+#            gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], loose_iso_cuts[0], loose_iso_cuts[1] )
+#            gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],loose_iso_cuts[0], loose_iso_cuts[1] )
+#
+#            gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
+#
+#        # parse out the x and y binning
+#        ybinn = binning[reg[1]]
+#        xbinn = binning[reg[0]]
+#
+#        # variable given to TTree.Draw
+#        #var = 'ph_pt[0]:ph_sigmaIEIE[1]:ph_sigmaIEIE[0]' #z:y:x
+#        if fitvar == 'sigmaIEIE' :
+#            var = 'pt_leadph12:sieie_sublph12:sieie_leadph12' #z:y:x
+#        elif fitvar == 'chIsoCorr' :
+#            var = 'pt_leadph12:chIsoCorr_sublph12:chIsoCorr_leadph12' #z:y:x
+#        elif fitvar == 'neuIsoCorr' :
+#            var = 'pt_leadph12:neuIsoCorr_sublph12:neuIsoCorr_leadph12' #z:y:x
+#        elif fitvar == 'phoIsoCorr' :
+#            var = 'pt_leadph12:phoIsoCorr_sublph12:phoIsoCorr_leadph12' #z:y:x
+#
+#        # get sample
+#
+#        # for certain channels, use a different SampleManager
+#        if ch.count('invpixlead' ) :
+#            print 'USE sampManDataInvL'
+#            target_samp = sampManDataInvL.get_samples(name=samples['target'])
+#
+#            # draw and get back the hist
+#            print '---------------------------------'
+#            print ' Draw LeadIso                    '
+#            print gg_selection_leadiso
+#            print '---------------------------------'
+#            gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvL )
+#            print '---------------------------------'
+#            print ' Draw SublIso                    '
+#            print gg_selection_subliso
+#            print '---------------------------------'
+#            gg_hist_subliso = clone_sample_and_draw( target_samp[0], var, gg_selection_subliso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvL )
+#            print '---------------------------------'
+#            print ' Draw BothIso                    '
+#            print gg_selection_bothiso
+#            print '---------------------------------'
+#            gg_hist_bothiso = clone_sample_and_draw( target_samp[0], var, gg_selection_bothiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvL )
+#
+#        elif ch.count('invpixsubl' ) :
+#            print 'USE sampManDataInvS'
+#            target_samp = sampManDataInvS.get_samples(name=samples['target'])
+#
+#            # draw and get back the hist
+#            print '---------------------------------'
+#            print ' Draw LeadIso                    '
+#            print gg_selection_leadiso
+#            print '---------------------------------'
+#            gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvS )
+#            print '---------------------------------'
+#            print ' Draw SublIso                    '
+#            print gg_selection_subliso
+#            print '---------------------------------'
+#            gg_hist_subliso = clone_sample_and_draw( target_samp[0], var, gg_selection_subliso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvS )
+#            print '---------------------------------'
+#            print ' Draw BothIso                    '
+#            print gg_selection_bothiso
+#            print '---------------------------------'
+#            gg_hist_bothiso = clone_sample_and_draw( target_samp[0], var, gg_selection_bothiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataInvS )
+#
+#        elif ch.count('mu' ) :
+#            print 'USE sampManDataNOEV'
+#
+#            target_samp = sampManDataNOEV.get_samples(name=samples['target'])
+#
+#            # draw and get back the hist
+#            print '---------------------------------'
+#            print ' Draw LeadIso                    '
+#            print gg_selection_leadiso
+#            print '---------------------------------'
+#            gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataNOEV )
+#            print '---------------------------------'
+#            print ' Draw SublIso                    '
+#            print gg_selection_subliso
+#            print '---------------------------------'
+#            gg_hist_subliso = clone_sample_and_draw( target_samp[0], var, gg_selection_subliso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataNOEV )
+#            print '---------------------------------'
+#            print ' Draw BothIso                    '
+#            print gg_selection_bothiso
+#            print '---------------------------------'
+#            gg_hist_bothiso = clone_sample_and_draw( target_samp[0], var, gg_selection_bothiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManDataNOEV )
+#        else :
+#            print 'USE sampManData'
+#
+#            target_samp = sampManData.get_samples(name=samples['target'])
+#
+#            # draw and get back the hist
+#            print '---------------------------------'
+#            print ' Draw LeadIso                    '
+#            print gg_selection_leadiso
+#            print '---------------------------------'
+#            gg_hist_leadiso = clone_sample_and_draw( target_samp[0], var, gg_selection_leadiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManData )
+#            print '---------------------------------'
+#            print ' Draw SublIso                    '
+#            print gg_selection_subliso
+#            print '---------------------------------'
+#            gg_hist_subliso = clone_sample_and_draw( target_samp[0], var, gg_selection_subliso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManData )
+#            print '---------------------------------'
+#            print ' Draw BothIso                    '
+#            print gg_selection_bothiso
+#            print '---------------------------------'
+#            gg_hist_bothiso = clone_sample_and_draw( target_samp[0], var, gg_selection_bothiso, ( xbinn[0], xbinn[1], xbinn[2], ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=sampManData )
+#        run_corr_calculation( templates_leadiso, templates_subliso, templates_nom, templates_corr, gg_hist_leadiso, gg_hist_subliso, gg_hist_bothiso, reg, ptbins, ch, fitvar, ffcorr, systematics=systematics,subl_ptrange=subl_ptrange,outputDir=outputDir )
 
 def run_corr_calculation( templates_leadiso, templates_subliso, templates_nom, templates_corr, gg_hist_leadiso, gg_hist_subliso, gg_hist_bothiso, reg, ptbins, ch, fitvar, ffcorr, systematics=None, subl_ptrange=(None,None), outputDir=None ) :
 
@@ -1369,8 +1389,9 @@ def do_closure_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptra
     samples = get_default_samples(ch)
 
     # generate templates for both EB and EE
-    real_template_str = get_real_template_draw_commands(ch) + ' && %s' %iso_cuts_lead
-    fake_template_str = get_fake_template_draw_commands(ch) + ' && %s' %iso_cuts_lead
+    fitvar = 'sigmaIEIE'
+    real_template_str = get_real_template_draw_commands(fitvar, ch) + ' && %s' %iso_cuts_lead
+    fake_template_str = get_fake_template_draw_commands(fitvar, ch) + ' && %s' %iso_cuts_lead
 
     templates_reg = {}
     templates_reg['EB'] = {}
@@ -3441,7 +3462,7 @@ def save_results( results, outputDir, namePostfix='' ) :
     if not os.path.isdir( os.path.dirname( fname ) ) :
         os.makedirs( os.path.dirname( fname ) )
     file = open( fname, 'w' )
-    pickle.dump( results, file )
+    pickle.dump( results, file, pickle.HIGHEST_PROTOCOL )
     file.close()
 
 
@@ -3548,48 +3569,19 @@ def draw_template(can, hists, sampMan, normalize=False, first_hist_is_data=False
 
 class RunNominalCalculation() :
 
-    iso_cuts_real = { 
-        'sigmaIEIE' : {
-            'lead' :'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
-        },
-        'chIsoCorr' : {
-            'lead' :'ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
-        },
-        'neuIsoCorr' : {
-            'lead' : 'ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ', 
-        },
-       'phoIsoCorr' : {
-           'lead' : 'ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] ',
-       }
-    }
-    iso_cuts_fake = iso_cuts_real
-    #iso_cuts_fake = { 
-    #    'sigmaIEIE' : {
-    #        'lead' :'ph_chIsoCorr[0] > 1.5 && ph_chIsoCorr[0] < 8 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
-    #    },
-    #    'chIsoCorr' : {
-    #        'lead' :'!ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ',
-    #    },
-    #    'neuIsoCorr' : {
-    #        'lead' : '!ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] ', 
-    #    },
-    #   'phoIsoCorr' : {
-    #       'lead' : '!ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] ',
-    #   }
-    #}
-
     def __init__( self, **kwargs ) :
 
         self.configs = {}
         self.status = True
 
-        self.fitvar  = kwargs.get( 'fitvar', None )
-        self.channel = kwargs.get( 'channel', None )
-        self.ffcorr  = kwargs.get('ffcorr', 'None' )
+        self.fitvar       = kwargs.get( 'fitvar', None )
+        self.channel      = kwargs.get( 'channel', None )
+        self.ffcorr       = kwargs.get('ffcorr', 'None' )
         self.subl_ptrange = kwargs.get( 'subl_ptrange', (None,None) )
-        self.ptbins  = kwargs.get( 'ptbins', [15,25,40,70,1000000] )
-        self.systematics = kwargs.get( 'systematics', 'Nom' )
-        self.outputDir = kwargs.get( 'outputDir', None )
+        self.ptbins       = kwargs.get( 'ptbins', [15,25,40,70,1000000] )
+        self.systematics  = kwargs.get( 'systematics', 'Nom' )
+        self.outputDir    = kwargs.get( 'outputDir', None )
+        self.eleVeto      = kwargs.get( 'eleVeto', 'PSV' )
 
         
         if self.fitvar is None :
@@ -3630,8 +3622,8 @@ class RunNominalCalculation() :
         samples = get_default_samples(ch)
 
         # generate templates for both EB and EE
-        real_template_str = get_real_template_draw_commands(ch ) + ' && %s' %self.iso_cuts_real[fitvar]['lead']
-        fake_template_str = get_fake_template_draw_commands(ch ) + ' && %s' %self.iso_cuts_fake[fitvar]['lead']
+        real_template_str = get_real_template_draw_commands(fitvar, ch, self.eleVeto ) 
+        fake_template_str = get_fake_template_draw_commands(fitvar, ch, self.eleVeto ) 
 
 
         self.configs.update(config_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB', fitvar=fitvar, basename=self.template_name_base+'__real__EB', sampMan=sampManLG))
@@ -3654,66 +3646,68 @@ class RunNominalCalculation() :
         self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EE-EB', sampMan=sampManDataNOEV  ) )
         self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EE-EB', sampMan=sampManDataNOEV  ) )
 
-
-        count_var = None
-        if fitvar == 'sigmaIEIE' :
-            # if the channel inverts one of the pixel seeds then don't require the veto
-            # if its the muon channel don't require the veto
-            if ch.count('invpix') or ch == 'mu' or ch == 'mulowmt' or ch == 'muhighmt' :
-                count_var = 'ph_mediumNoSIEIENoEleVeto_n'
-            else :
-                count_var = 'ph_mediumNoSIEIE_n'
-        if fitvar == 'chIsoCorr' :
-            count_var = 'ph_mediumNoChIso_n'
-        if fitvar == 'neuIsoCorr' :
-            count_var = 'ph_mediumNoNeuIso_n'
-        if fitvar == 'phoIsoCorr' :
-            count_var = 'ph_mediumNoPhoIso_n'
-
+        count_var, phstr = get_template_draw_strs( fitvar, ch, self.eleVeto, None )
 
         # add regions onto the selection
 
         regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB')]
         for reg in regions :
-            if fitvar == 'sigmaIEIE' :
-                gg_selection = get_default_draw_commands(ch) + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
-                gg_selection_leadPass = gg_selection + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
-                gg_selection_leadFail = gg_selection + ' && sieie_leadph12 > %f && sieie_leadph12 < %f' %( _sieie_cuts[reg[0]] )
-            elif fitvar == 'chIsoCorr' :
-                gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-                gg_selection_leadPass = gg_selection + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
-                gg_selection_leadFail = gg_selection + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
-            elif fitvar == 'neuIsoCorr' :
-                gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-                gg_selection_leadPass = gg_selection + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
-                gg_selection_leadFail = gg_selection + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
-            elif fitvar == 'phoIsoCorr' :
-                gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-                gg_selection_leadPass = gg_selection + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
-                gg_selection_leadFail = gg_selection + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
+            # depreicated since update to new variables
+            #if fitvar == 'sigmaIEIE' :
+            #    gg_selection = get_default_draw_commands(ch) + ' && %s >1 &&  is%s_leadph12 && is%s_sublph12 ' %( count_var, reg[0], reg[1] )
+            #    gg_selection_leadPass = gg_selection + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
+            #    gg_selection_leadFail = gg_selection + ' && sieie_leadph12 > %f && sieie_leadph12 < %f' %( _sieie_cuts[reg[0]] )
+            #elif fitvar == 'chIsoCorr' :
+            #    gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            #    gg_selection_leadPass = gg_selection + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
+            #    gg_selection_leadFail = gg_selection + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
+            #elif fitvar == 'neuIsoCorr' :
+            #    gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passPhoIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passPhoIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            #    gg_selection_leadPass = gg_selection + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
+            #    gg_selection_leadFail = gg_selection + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
+            #elif fitvar == 'phoIsoCorr' :
+            #    gg_selection = get_default_draw_commands(ch) + ' && ph_n>1 && ph_passSIEIEMedium[0]==1 && ph_passChIsoCorrMedium[0]==1 && ph_passNeuIsoCorrMedium[0]==1 && ph_HoverE12[0] < 0.05 && ph_passSIEIEMedium[1]==1 && ph_passChIsoCorrMedium[1]==1 && ph_passNeuIsoCorrMedium[1]==1 && ph_HoverE12[1] < 0.05 && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            #    gg_selection_leadPass = gg_selection + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
+            #    gg_selection_leadFail = gg_selection + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
+
+            gg_selection = get_default_draw_commands(ch) + ' && %s >1 &&  ph_Is%s[%s[0]] && ph_Is%s[%s[1]] ' %( count_var, reg[0], phstr, reg[1], phstr )
+            gg_selection_leadPass = gg_selection + ' && ph_%s[%s[0]] < %f ' %( fitvar, phstr, _var_cuts[fitvar][reg[0]][0] )
+            gg_selection_leadFail = gg_selection + ' && ph_%s[%s[0]] > %f && ph_%s[%s[0]] < %f' %(fitvar, phstr,  _var_cuts[fitvar][reg[0]][0], fitvar, phstr, _var_cuts[fitvar][reg[0]][1] )
+            # depreicated since update to new variables
+            ## add subl pt cuts onto the selection
+            #if self.subl_ptrange[0] is not None :
+            #    if self.subl_ptrange[1] is None :
+            #        gg_selection_leadPass = gg_selection_leadPass + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+            #        gg_selection_leadFail = gg_selection_leadFail + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+            #    else :
+            #        gg_selection_leadPass = gg_selection_leadPass + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], self.subl_ptrange[1] )
+            #        gg_selection_leadFail = gg_selection_leadFail + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], self.subl_ptrange[1] )
 
             # add subl pt cuts onto the selection
             if self.subl_ptrange[0] is not None :
                 if self.subl_ptrange[1] is None :
-                    gg_selection_leadPass = gg_selection_leadPass + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
-                    gg_selection_leadFail = gg_selection_leadFail + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+                    gg_selection_leadPass = gg_selection_leadPass + ' && ph_pt[%s[1]] > %d' %( phstr, self.subl_ptrange[0])
+                    gg_selection_leadFail = gg_selection_leadFail + ' && ph_pt[%s[1]] > %d' %( phstr, self.subl_ptrange[0])
                 else :
-                    gg_selection_leadPass = gg_selection_leadPass + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], self.subl_ptrange[1] )
-                    gg_selection_leadFail = gg_selection_leadFail + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], self.subl_ptrange[1] )
+                    gg_selection_leadPass = gg_selection_leadPass + ' && ph_pt[%s[1]] > %d && ph_pt[%s[1]] < %d' %(phstr, self.subl_ptrange[0], phstr, self.subl_ptrange[1] )
+                    gg_selection_leadFail = gg_selection_leadFail + ' && ph_pt[%s[1]] > %d && ph_pt[%s[1]] < %d' %(phstr, self.subl_ptrange[0], phstr, self.subl_ptrange[1] )
 
             # parse out the x and y binning
             ybinn = binning[reg[1]]
             xbinn = binning[reg[0]]
 
-            # variable given to TTree.Draw
-            if fitvar == 'sigmaIEIE' :
-                var = 'pt_leadph12:sieie_sublph12' #z:y:x
-            elif fitvar == 'chIsoCorr' :
-                var = 'pt_leadph12:chIsoCorr_sublph12' #z:y:x
-            elif fitvar == 'neuIsoCorr' :
-                var = 'pt_leadph12:neuIsoCorr_sublph12' #z:y:x
-            elif fitvar == 'phoIsoCorr' :
-                var = 'pt_leadph12:phoIsoCorr_sublph12' #z:y:x
+            # depreicated since update to new variables
+            ## variable given to TTree.Draw
+            #if fitvar == 'sigmaIEIE' :
+            #    var = 'pt_leadph12:sieie_sublph12' #z:y:x
+            #elif fitvar == 'chIsoCorr' :
+            #    var = 'pt_leadph12:chIsoCorr_sublph12' #z:y:x
+            #elif fitvar == 'neuIsoCorr' :
+            #    var = 'pt_leadph12:neuIsoCorr_sublph12' #z:y:x
+            #elif fitvar == 'phoIsoCorr' :
+            #    var = 'pt_leadph12:phoIsoCorr_sublph12' #z:y:x
+
+            var = 'ph_pt[%s[0]]:ph_%s[%s[1]]' %( phstr, fitvar, phstr ) #z:y:x
 
             print 'USE var ', var
 
@@ -3785,10 +3779,8 @@ class RunCorrectedAsymCalculation() :
         self.channel           = kwargs.get( 'channel'           , None )
         self.ffcorr            = kwargs.get( 'ffcorr'            , None )
         self.ptbins            = kwargs.get( 'ptbins'            , [15,25,40,70,1000000] )
-        self.iso_cuts_iso      = kwargs.get( 'iso_cuts_iso'      , None )
-        self.iso_cuts_iso_fake = kwargs.get( 'iso_cuts_iso_fake' , None )
-        self.iso_cuts_noiso    = kwargs.get( 'iso_cuts_noiso'    , None )
         self.subl_ptrange      = kwargs.get( 'subl_ptrange'      , (None,None) )
+        self.eleVeto           = kwargs.get( 'eleVeto'           , 'PSV' )
         self.outputDir         = kwargs.get('outputDir'          , None )
         
         if self.fitvar is None :
@@ -3817,12 +3809,7 @@ class RunCorrectedAsymCalculation() :
                 self.outputDir = self.outputDir + '/PhoIsoFits/JetFakeTemplateFitPlotsCorr%d-%d-%dAsymIso'%(self.vals )
 
         if self.fitvar == 'sigmaIEIE' :
-            self.iso_cuts_iso = ' ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-            self.iso_cuts_iso_fake = self.iso_cuts_iso 
-            #self.iso_cuts_iso_fake = ' ph_chIsoCorr[0] > 1.5 && ph_chIsoCorr[0] < 8 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]'
             # loosened iso cuts
-            self.iso_cuts_noiso = ' ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(self.vals[0], self.vals[1], self.vals[2] )
-            #self.iso_cuts_noiso = ' ph_chIsoCorr[0] > 1.5 && ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %(self.vals[0], self.vals[1], self.vals[2] )
             self.loose_iso_cuts = self.vals
             self.systematics=('-'.join([str(v) for v in self.vals]))
             #---------------------------------------------------
@@ -3831,11 +3818,7 @@ class RunCorrectedAsymCalculation() :
             #---------------------------------------------------
             # for using ChHadIso templates
             # iso cuts for isolated photons
-            self.iso_cuts_iso = ' ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-            self.iso_cuts_iso_fake = self.iso_cuts_iso 
-            #self.iso_cuts_iso_fake = ' !ph_passSIEIEMedium[0] &&  ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
             # loosened iso cuts
-            self.iso_cuts_noiso = 'ph_passSIEIEMedium[0] &&  ph_neuIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %( self.vals[1], self.vals[2] )
             self.loose_iso_cuts = (None, self.vals[1], self.vals[2] )
             self.systematics = 'No Cut-%d-%d' %( self.vals[1], self.vals[2] )
             #---------------------------------------------------
@@ -3844,10 +3827,7 @@ class RunCorrectedAsymCalculation() :
             #---------------------------------------------------
             # for using NeuHadIso templates
             # iso cuts for isolated photons
-            self.iso_cuts_iso = ' ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] '
-            self.iso_cuts_iso_fake = self.iso_cuts_iso 
             # loosened iso cuts
-            self.iso_cuts_noiso = 'ph_passSIEIEMedium[0] &&  ph_chIsoCorr[0] < %d && ph_phoIsoCorr[0] < %d' %( self.vals[0], self.vals[2] )
             self.loose_iso_cuts = (self.vals[0], None, self.vals[2] )
             self.systematics = '%d-No Cut-%d' %( self.vals[0], self.vals[2] )
             #---------------------------------------------------
@@ -3856,11 +3836,7 @@ class RunCorrectedAsymCalculation() :
             #---------------------------------------------------
             # for using NeuHadIso templates
             # iso cuts for isolated photons
-            self.iso_cuts_iso = ' ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] '
-            self.iso_cuts_iso_fake = self.iso_cuts_iso 
-            #self.iso_cuts_iso_fake = ' !ph_passSIEIEMedium[0] && ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] '
             # loosened iso cuts
-            self.iso_cuts_noiso = 'ph_passSIEIEMedium[0] &&  ph_chIsoCorr[0] < %d && ph_neuIsoCorr[0] < %d' %( self.vals[0], self.vals[1] )
             self.loose_iso_cuts = (self.vals[0], self.vals[1], None )
             self.systematics = '%d-%d-No Cut' %( self.vals[0], self.vals[1] )
             #---------------------------------------------------
@@ -3887,17 +3863,11 @@ class RunCorrectedAsymCalculation() :
         binning = get_default_binning(fitvar)
         samples = get_default_samples(ch)
 
-        real_template_str_iso = get_real_template_draw_commands(ch)
-        fake_template_str_iso = get_fake_template_draw_commands(ch)
-        if self.iso_cuts_iso is not None :
-            real_template_str_iso = real_template_str_iso + ' && ' + self.iso_cuts_iso
-            fake_template_str_iso = fake_template_str_iso + ' && ' + self.iso_cuts_iso_fake
+        real_template_str_iso = get_real_template_draw_commands(fitvar, ch, self.eleVeto)
+        fake_template_str_iso = get_fake_template_draw_commands(fitvar, ch, self.eleVeto)
 
-        real_template_str_noiso = get_real_template_draw_commands(ch )
-        fake_template_str_noiso = get_fake_template_draw_commands(ch )
-        if self.iso_cuts_noiso is not None :
-            real_template_str_noiso = real_template_str_noiso + ' && ' + self.iso_cuts_noiso
-            fake_template_str_noiso = fake_template_str_noiso + ' && ' + self.iso_cuts_noiso
+        real_template_str_noiso = get_real_template_draw_commands(fitvar, ch, self.eleVeto, iso_vals = self.loose_iso_cuts )
+        fake_template_str_noiso = get_fake_template_draw_commands(fitvar, ch, self.eleVeto, iso_vals = self.loose_iso_cuts )
 
         self.configs.update(config_single_photon_template(real_template_str_iso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, basename=self.template_name_iso_base+'__real__EB', sampMan=sampManLG ) )
         self.configs.update(config_single_photon_template(real_template_str_iso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, basename=self.template_name_iso_base+'__real__EE', sampMan=sampManLG ) )
@@ -3928,125 +3898,175 @@ class RunCorrectedAsymCalculation() :
 
         for reg in regions :
             
+            # depricated since change to new variables
+            ## add regions onto the selection
+            #gg_selection_leadiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            #gg_selection_subliso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            #gg_selection_bothiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+
+            ## add subl pt cuts onto the selection
+            #if self.subl_ptrange[0] is not None :
+            #    if self.subl_ptrange[1] is None :
+            #        gg_selection_leadiso = gg_selection_leadiso + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+            #        gg_selection_subliso = gg_selection_subliso + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+            #        gg_selection_bothiso = gg_selection_bothiso + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+            #    else :
+            #        gg_selection_leadiso = gg_selection_leadiso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], sefl.subl_ptrange[1] )
+            #        gg_selection_subliso = gg_selection_subliso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], sefl.subl_ptrange[1] )
+            #        gg_selection_bothiso = gg_selection_bothiso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], sefl.subl_ptrange[1] )
+
+            #if fitvar == 'sigmaIEIE' :
+            #    # add object cuts to the selection
+
+            #    nom_iso_cuts_lead = 'chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _chIso_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+            #    nom_iso_cuts_subl = 'chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _chIso_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+
+            #    gg_selection_leadiso = gg_selection_leadiso + ' && ph_iso%d%d%d_n > 1 && %s ' %(self.loose_iso_cuts[0], self.loose_iso_cuts[1], self.loose_iso_cuts[2], nom_iso_cuts_lead )
+            #    gg_selection_subliso = gg_selection_subliso + ' && ph_iso%d%d%d_n > 1 && %s ' %(self.loose_iso_cuts[0], self.loose_iso_cuts[1], self.loose_iso_cuts[2], nom_iso_cuts_subl )
+
+            #    gg_selection_leadiso = gg_selection_leadiso + ' && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %d ' %( self.loose_iso_cuts )
+            #    gg_selection_subliso = gg_selection_subliso + ' && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %d ' %( self.loose_iso_cuts )
+
+            #    gg_selection_bothiso = gg_selection_bothiso + ' && ph_mediumNoSIEIENoEleVeto_n > 1 '
+
+            #    gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
+            #    gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && sieie_leadph12 > %f && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]] )
+            #    gg_selection_subliso_leadPass = gg_selection_subliso + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
+            #    gg_selection_subliso_leadFail = gg_selection_subliso + ' && sieie_leadph12 > %f && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]] )
+            #    gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
+            #    gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && sieie_leadph12 > %f && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]] )
+
+            #elif fitvar == 'chIsoCorr' :
+
+            #    nom_iso_cuts_lead = 'sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+            #    nom_iso_cuts_subl = 'sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+
+
+            #    gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
+            #    gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
+
+            #
+            #    gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], self.loose_iso_cuts[1], self.loose_iso_cuts[2] )
+            #    gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],self.loose_iso_cuts[1], self.loose_iso_cuts[2] )
+
+            #    gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
+
+            #    gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
+            #    gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
+            #    gg_selection_subliso_leadPass = gg_selection_subliso + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
+            #    gg_selection_subliso_leadFail = gg_selection_subliso + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
+            #    gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
+            #    gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
+
+            #elif fitvar == 'neuIsoCorr' :
+
+            #    nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+            #    nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+
+
+            #    gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
+            #    gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
+
+            #
+            #    gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], self.loose_iso_cuts[0], self.loose_iso_cuts[2] )
+            #    gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],self.loose_iso_cuts[0], self.loose_iso_cuts[2] )
+
+            #    gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
+
+            #    gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
+            #    gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
+            #    gg_selection_subliso_leadPass = gg_selection_subliso + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
+            #    gg_selection_subliso_leadFail = gg_selection_subliso + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
+            #    gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
+            #    gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
+
+            #elif fitvar == 'phoIsoCorr' :
+
+            #    nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
+            #    nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+
+
+            #    gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
+            #    gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
+
+            #
+            #    gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], self.loose_iso_cuts[0], self.loose_iso_cuts[1] )
+            #    gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],self.loose_iso_cuts[0], self.loose_iso_cuts[1] )
+
+            #    gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
+
+            #    gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
+            #    gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
+            #    gg_selection_subliso_leadPass = gg_selection_subliso + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
+            #    gg_selection_subliso_leadFail = gg_selection_subliso + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
+            #    gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
+            #    gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
+
             # add regions onto the selection
-            gg_selection_leadiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-            gg_selection_subliso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
-            gg_selection_bothiso = get_default_draw_commands(ch) + ' && is%s_leadph12 && is%s_sublph12 ' %( reg[0], reg[1] )
+            varstr, phstr = get_template_draw_strs( fitvar, ch, self.eleVeto, self.loose_iso_cuts)
+            varstr_bothiso, phstr_bothiso = get_template_draw_strs( fitvar, ch, self.eleVeto, None)
+
+            gg_selection_leadiso = get_default_draw_commands(ch) + ' && %s > 1 && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] ' %( varstr, reg[0], phstr, reg[1], phstr )
+            gg_selection_subliso = get_default_draw_commands(ch) + ' && %s > 1 && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] ' %( varstr, reg[0], phstr, reg[1], phstr )
+
+            gg_selection_bothiso = get_default_draw_commands(ch) + ' && %s > 1 && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] ' %( varstr_bothiso, reg[0], phstr_bothiso, reg[1], phstr_bothiso )
 
             # add subl pt cuts onto the selection
             if self.subl_ptrange[0] is not None :
                 if self.subl_ptrange[1] is None :
-                    gg_selection_leadiso = gg_selection_leadiso + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
-                    gg_selection_subliso = gg_selection_subliso + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
-                    gg_selection_bothiso = gg_selection_bothiso + ' && pt_sublph12 > %d' %self.subl_ptrange[0]
+                    gg_selection_leadiso = gg_selection_leadiso + ' && ph_pt[%s[1]] > %d' %( phstr, self.subl_ptrange[0])
+                    gg_selection_subliso = gg_selection_subliso + ' && ph_pt[%s[1]] > %d' %( phstr, self.subl_ptrange[0])
+                    gg_selection_bothiso = gg_selection_bothiso + ' && ph_pt[%s[1]] > %d' %( phstr, self.subl_ptrange[0])
                 else :
-                    gg_selection_leadiso = gg_selection_leadiso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], sefl.subl_ptrange[1] )
-                    gg_selection_subliso = gg_selection_subliso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], sefl.subl_ptrange[1] )
-                    gg_selection_bothiso = gg_selection_bothiso + ' && pt_sublph12 > %d && pt_sublph12 < %d' %(self.subl_ptrange[0], sefl.subl_ptrange[1] )
+                    gg_selection_leadiso = gg_selection_leadiso + ' && ph_pt[%s[1]] > %d && ph_pt[%s[1]] < %d' %(phstr, self.subl_ptrange[0], phstr, sefl.subl_ptrange[1] )
+                    gg_selection_subliso = gg_selection_subliso + ' && ph_pt[%s[1]] > %d && ph_pt[%s[1]] < %d' %(phstr, self.subl_ptrange[0], phstr, sefl.subl_ptrange[1] )
+                    gg_selection_bothiso = gg_selection_bothiso + ' && ph_pt[%s[1]] > %d && ph_pt[%s[1]] < %d' %(phstr, self.subl_ptrange[0], phstr, sefl.subl_ptrange[1] )
 
-            if fitvar == 'sigmaIEIE' :
-                # add object cuts to the selection
+            nom_iso_cuts_lead = ''
+            nom_iso_cuts_subl = ''
+            for key, cuts in _var_cuts.iteritems() :
+                if key == fitvar :
+                    continue
 
-                nom_iso_cuts_lead = 'chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _chIso_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
-                nom_iso_cuts_subl = 'chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _chIso_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
+                nom_iso_cuts_lead = ' && ph_%s[%s[0]] < %f ' %( key, phstr, cuts[reg[0]][0] )
+                nom_iso_cuts_subl = ' && ph_%s[%s[1]] < %f ' %( key, phstr, cuts[reg[1]][0] )
 
-                gg_selection_leadiso = gg_selection_leadiso + ' && ph_iso%d%d%d_n > 1 && %s ' %(self.loose_iso_cuts[0], self.loose_iso_cuts[1], self.loose_iso_cuts[2], nom_iso_cuts_lead )
-                gg_selection_subliso = gg_selection_subliso + ' && ph_iso%d%d%d_n > 1 && %s ' %(self.loose_iso_cuts[0], self.loose_iso_cuts[1], self.loose_iso_cuts[2], nom_iso_cuts_subl )
+            gg_selection_leadiso = gg_selection_leadiso + nom_iso_cuts_lead 
+            gg_selection_subliso = gg_selection_subliso + nom_iso_cuts_subl 
 
-                gg_selection_leadiso = gg_selection_leadiso + ' && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %d ' %( self.loose_iso_cuts )
-                gg_selection_subliso = gg_selection_subliso + ' && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %d ' %( self.loose_iso_cuts )
+            gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && ph_%s[%s[0]] < %f ' %( fitvar, phstr, _var_cuts[fitvar][reg[0]][0] )
+            gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && ph_%s[%s[0]] > %f && ph_%s[%s[0]] < %f ' %( fitvar, phstr, _var_cuts[fitvar][reg[0]][0], fitvar, phstr, _var_cuts[fitvar][reg[0]][1] )
+            gg_selection_subliso_leadPass = gg_selection_subliso + ' && ph_%s[%s[0]] < %f ' %( fitvar, phstr, _var_cuts[fitvar][reg[0]][0] )
+            gg_selection_subliso_leadFail = gg_selection_subliso + ' && ph_%s[%s[0]] > %f && ph_%s[%s[0]] < %f ' %( fitvar, phstr, _var_cuts[fitvar][reg[0]][0], fitvar, phstr, _var_cuts[fitvar][reg[0]][1]  )
 
-                gg_selection_bothiso = gg_selection_bothiso + ' && ph_mediumNoSIEIENoEleVeto_n > 1 '
-
-                gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
-                gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && sieie_leadph12 > %f && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]] )
-                gg_selection_subliso_leadPass = gg_selection_subliso + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
-                gg_selection_subliso_leadFail = gg_selection_subliso + ' && sieie_leadph12 > %f && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]] )
-                gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]][0] )
-                gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && sieie_leadph12 > %f && sieie_leadph12 < %f ' %( _sieie_cuts[reg[0]] )
-
-            elif fitvar == 'chIsoCorr' :
-
-                nom_iso_cuts_lead = 'sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
-                nom_iso_cuts_subl = 'sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
-
-
-                gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
-                gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
-
-            
-                gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], self.loose_iso_cuts[1], self.loose_iso_cuts[2] )
-                gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],self.loose_iso_cuts[1], self.loose_iso_cuts[2] )
-
-                gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && neuIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && neuIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _neuIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _neuIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
-
-                gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
-                gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
-                gg_selection_subliso_leadPass = gg_selection_subliso + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
-                gg_selection_subliso_leadFail = gg_selection_subliso + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
-                gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]][0] )
-                gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && chIsoCorr_leadph12 > %f && chIsoCorr_leadph12 < %f ' %( _chIso_cuts[reg[0]] )
-
-            elif fitvar == 'neuIsoCorr' :
-
-                nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
-                nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
-
-
-                gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
-                gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
-
-            
-                gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], self.loose_iso_cuts[0], self.loose_iso_cuts[2] )
-                gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && phoIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],self.loose_iso_cuts[0], self.loose_iso_cuts[2] )
-
-                gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && phoIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && phoIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
-
-                gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
-                gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
-                gg_selection_subliso_leadPass = gg_selection_subliso + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
-                gg_selection_subliso_leadFail = gg_selection_subliso + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
-                gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]][0] )
-                gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && neuIsoCorr_leadph12 > %f && neuIsoCorr_leadph12 < %f ' %( _neuIso_cuts[reg[0]] )
-
-            elif fitvar == 'phoIsoCorr' :
-
-                nom_iso_cuts_lead = 'sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f '%( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0])
-                nom_iso_cuts_subl = 'sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f '%( _sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0])
-
-
-                gg_selection_leadiso = gg_selection_leadiso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_lead )
-                gg_selection_subliso = gg_selection_subliso + ' && ph_n > 1 && %s ' %( nom_iso_cuts_subl )
-
-            
-                gg_selection_leadiso = gg_selection_leadiso + ' && sieie_sublph12 < %f && chIsoCorr_sublph12 < %d && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[1]][0], self.loose_iso_cuts[0], self.loose_iso_cuts[1] )
-                gg_selection_subliso = gg_selection_subliso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %d && neuIsoCorr_leadph12 < %f ' %( _sieie_cuts[reg[0]][0],self.loose_iso_cuts[0], self.loose_iso_cuts[1] )
-
-                gg_selection_bothiso = gg_selection_bothiso + ' && sieie_leadph12 < %f && chIsoCorr_leadph12 < %f && neuIsoCorr_leadph12 < %f && sieie_sublph12 < %f && chIsoCorr_sublph12 < %f && neuIsoCorr_sublph12 < %f ' %( _sieie_cuts[reg[0]][0], _chIso_cuts[reg[0]][0], _phoIso_cuts[reg[0]][0],_sieie_cuts[reg[1]][0], _chIso_cuts[reg[1]][0], _phoIso_cuts[reg[1]][0] )
-
-                gg_selection_leadiso_leadPass = gg_selection_leadiso + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
-                gg_selection_leadiso_leadFail = gg_selection_leadiso + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
-                gg_selection_subliso_leadPass = gg_selection_subliso + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
-                gg_selection_subliso_leadFail = gg_selection_subliso + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
-                gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]][0] )
-                gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && phoIsoCorr_leadph12 > %f && phoIsoCorr_leadph12 < %f ' %( _phoIso_cuts[reg[0]] )
+            gg_selection_bothiso_leadPass = gg_selection_bothiso + ' && ph_%s[%s[0]] < %f ' %( fitvar, phstr, _var_cuts[fitvar][reg[0]][0] )
+            gg_selection_bothiso_leadFail = gg_selection_bothiso + ' && ph_%s[%s[0]] > %f && ph_%s[%s[0]] < %f ' %( fitvar, phstr, _var_cuts[fitvar][reg[0]][0], fitvar, phstr, _var_cuts[fitvar][reg[0]][1] )
 
 
             # parse out the x and y binning
             ybinn = binning[reg[1]]
             xbinn = binning[reg[0]]
 
+            # depricated since variable change
+            ## variable given to TTree.Draw
+            ##var = 'ph_pt[0]:ph_sigmaIEIE[1]:ph_sigmaIEIE[0]' #z:y:x
+            #if fitvar == 'sigmaIEIE' :
+            #    var = 'pt_leadph12:sieie_sublph12' #y:x
+            #    var_bothiso = 'pt_leadph12:sieie_sublph12' #y:x
+            #elif fitvar == 'chIsoCorr' :
+            #    var = 'pt_leadph12:chIsoCorr_sublph12' #y:x
+            #    var_bothiso = 'pt_leadph12:chIsoCorr_sublph12' #y:x
+            #elif fitvar == 'neuIsoCorr' :
+            #    var = 'pt_leadph12:neuIsoCorr_sublph12' #y:x
+            #    var_bothiso = 'pt_leadph12:neuIsoCorr_sublph12' #y:x
+            #elif fitvar == 'phoIsoCorr' :
+            #    var = 'pt_leadph12:phoIsoCorr_sublph12' #y:x
+            #    var_bothiso = 'pt_leadph12:phoIsoCorr_sublph12' #y:x
+
             # variable given to TTree.Draw
             #var = 'ph_pt[0]:ph_sigmaIEIE[1]:ph_sigmaIEIE[0]' #z:y:x
-            if fitvar == 'sigmaIEIE' :
-                var = 'pt_leadph12:sieie_sublph12' #y:x
-            elif fitvar == 'chIsoCorr' :
-                var = 'pt_leadph12:chIsoCorr_sublph12' #y:x
-            elif fitvar == 'neuIsoCorr' :
-                var = 'pt_leadph12:neuIsoCorr_sublph12' #y:x
-            elif fitvar == 'phoIsoCorr' :
-                var = 'pt_leadph12:phoIsoCorr_sublph12' #y:x
-
+            var = 'ph_pt[%s[0]]:ph_%s[%s[1]]' %( phstr, fitvar, phstr )
+            var_bothiso = 'ph_pt[%s[0]]:ph_%s[%s[1]]' %( phstr_bothiso, fitvar, phstr_bothiso )
             # get sample
 
             self.targetSampMan = sampManData
@@ -4093,8 +4113,8 @@ class RunCorrectedAsymCalculation() :
             print ' Draw BothIso                    '
             print gg_selection_bothiso_leadFail
             print '---------------------------------'
-            self.configs[self.data_name_base+'__leadPass__bothiso__%s-%s' %(reg)] = config_and_queue_hist( target_samp[0], var, gg_selection_bothiso_leadPass, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=self.targetSampMan)
-            self.configs[self.data_name_base+'__leadFail__bothiso__%s-%s' %(reg)] = config_and_queue_hist( target_samp[0], var, gg_selection_bothiso_leadFail, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=self.targetSampMan)
+            self.configs[self.data_name_base+'__leadPass__bothiso__%s-%s' %(reg)] = config_and_queue_hist( target_samp[0], var_bothiso, gg_selection_bothiso_leadPass, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=self.targetSampMan)
+            self.configs[self.data_name_base+'__leadFail__bothiso__%s-%s' %(reg)] = config_and_queue_hist( target_samp[0], var_bothiso, gg_selection_bothiso_leadFail, ( ybinn[0], ybinn[1], ybinn[2], 100, 0, 500 ),useSampMan=self.targetSampMan)
 
         print self.configs
 

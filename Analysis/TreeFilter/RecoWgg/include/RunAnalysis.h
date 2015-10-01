@@ -92,7 +92,7 @@ class RunModule : public virtual RunModuleBase {
         bool HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR ) const;
         bool HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR, float &minDR ) const;
         bool HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR, float &minDR, TLorentzVector &matchLV ) const;
-        bool HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR, float &minDR, TLorentzVector &matchLV, int &matchMotherPID ) const;
+        bool HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR, float &minDR, TLorentzVector &matchLV, int &matchMotherPID, int &matchParentage ) const;
         void calc_corr_iso( float chIso, float phoIso, float neuIso, float rho, float eta, float &chisoCorr, float &phoIsoCorr, float &neuIsoCorr ) const;
         float get_ph_el_mindr( const TLorentzVector &jetlv ) const;
         float get_jet_el_mindr( const TLorentzVector &jetlv ) const;
@@ -312,6 +312,7 @@ namespace OUT {
     std::vector<float>  *ph_truthMatchPt_el;
     std::vector<float>  *ph_truthMatchPt_ph;
     std::vector<int>    *ph_truthMatchMotherPID_ph;
+    std::vector<int>    *ph_truthMatchParentage_ph;
     std::vector<Bool_t> *ph_hasSLConv;
     std::vector<Bool_t> *ph_pass_mva_presel;
     std::vector<float>  *ph_mvascore;

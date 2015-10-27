@@ -129,28 +129,42 @@ top_configs = [
     #{   
     # 'module'      : 'Conf.py', 
     # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepGammaGammaFinalMuUnblindAll_2015_09_25',
+    # 'input_name'  : 'LepGammaGammaFinalMuUnblindAllWithOlap_2015_10_01',
     # 'output_tag'  : 'WithSF',
     # 'tag'         : 'muFinalSF'
     #},
     #{   
     # 'module'      : 'Conf.py', 
     # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepGammaGammaFinalElUnblindAll_2015_09_25',
+    # 'input_name'  : 'LepGammaGammaFinalElUnblindAllWithOlap_2015_10_01',
     # 'output_tag'  : 'WithSF',
     # 'tag'         : 'elFinalSF'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
+    # 'input_name'  : 'LepLepGammaGammaFinalMuMuUnblindAll_2015_10_01',
+    # 'output_tag'  : 'WithSF',
+    # 'tag'         : 'mumuFinalSF'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
+    # 'input_name'  : 'LepLepGammaGammaFinalElElUnblindAll_2015_10_01',
+    # 'output_tag'  : 'WithSF',
+    # 'tag'         : 'elelFinalSF'
     #},
     {   
      'module'      : 'Conf.py', 
      'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-     'input_name'  : 'LepGammaGammaFinalMuUnblindAllNoMtCut_2015_09_25',
+     'input_name'  : 'LepGammaGammaFinalMuWithOlapUnblindAllNoMtCut_2015_10_01',
      'output_tag'  : 'WithSF',
      'tag'         : 'muFinalSF'
     },
     {   
      'module'      : 'Conf.py', 
      'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-     'input_name'  : 'LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_09_25',
+     'input_name'  : 'LepGammaGammaFinalElUnblindAllWithOlapNoZCutNoMtCut_2015_10_01',
      'output_tag'  : 'WithSF',
      'tag'         : 'elFinalSF'
     },

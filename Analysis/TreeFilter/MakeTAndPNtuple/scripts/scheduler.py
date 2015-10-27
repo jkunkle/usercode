@@ -13,7 +13,7 @@ if not options.run and not options.check :
 
 #base = r'/eos/cms/store/user/jkunkle/Wgamgam/LepGammaMediumPhID_2015_08_17'
 #base = r'/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2014_12_05'
-base = r'/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/GammaGammaMediumPhID_2015_09_14/'
+base = r'/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/GammaGammaMediumPhID_2015_09_28/'
 
 jobs_data = [
     #(base, 'job_electron_2012a_Jan22rereco'),

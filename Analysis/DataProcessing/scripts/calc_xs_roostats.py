@@ -30,8 +30,8 @@ def main() :
     #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_09_24'
     #signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
     #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
-    signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_09_10'
-    bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_09_10'
+    signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_10_08'
+    bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_10_08'
     #run_full_fit( signal_base, bkg_base, lands=False, combine=True)
 
     single_accept_results = ['electron_EB-EB', 'electron_EE-EB', 'electron_EB-EE', 'muon_EB-EB', 'muon_EE-EB', 'muon_EB-EE']
@@ -39,7 +39,9 @@ def main() :
 
     signif_single = {}
 
-    print run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_09_10/FinalPlots/')
+    #print run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_10_08/FinalPlotsManualWithPhoWithCorrNoDiffUnc/')
+    #print run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_10_08/FinalPlotsManualWithPhoWithCorrNoDiffUnc/', ptbins=['40','70','max'])
+    print run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_10_13/FinalPlots/', ptbins=['25','40','70','max'])
     #for res in single_accept_results :
     #    for ptbin in single_accept_ptbins :
     #        signif_single[(res, ptbin[0], ptbin[1])] = run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_06_05/FinalPlots/', res, ptbin)
@@ -151,7 +153,7 @@ def run_comb_fit( result_base, accept_results=None, ptbins=['15','25', '40', '70
             # ---------------------------------
             ch_bin.AddSample( 'signal' , results[ch], ['detail', 'Wgg', 'bins', str(bidx+1), 'val'], isSig=True, err={'Lumi' : 1.1 }  )
             ch_bin.AddSample( 'Zgg'    , results[ch], ['detail', 'Zgg', 'bins', str(bidx+1), 'val'], err={'Lumi' : 1.1, 'Syst_Zgg' : ( results[ch], ['detail', 'Zgg', 'bins', str(bidx+1), 'val']  ) } )
-            ch_bin.AddSample( 'OtherDiPhoton'    , results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+1), 'val'], err={'Lumi' : 1.1, 'Syst_OtherDiPhoton' : ( results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+1), 'val']  ) } )
+            #ch_bin.AddSample( 'OtherDiPhoton'    , results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+1), 'val'], err={'Lumi' : 1.1, 'Syst_OtherDiPhoton' : ( results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+1), 'val']  ) } )
             ch_bin.AddSample( 'jetfake', results[ch], ['detail', 'JetFake', 'bins', str(bidx+1), 'val'], 
                                  err={
                                       'Syst_jetfake__%s__sum_%s-%s'%(ch, min, max) : ( results[ch], ['detail', 'JetFake', 'bins', str(bidx+1), 'val'] ) , 

@@ -76,7 +76,6 @@ def main() :
         files_jet_temp_fake_nom_inc  = find_files_in_dir( sub_dir_jet, fake_nom_file_keys_inc[var] )
         files_jet_temp_real_inc      = find_files_in_dir( sub_dir_jet, file_key_jet_temp_real_inc      )
         files_jet_temp_fake_asym_inc = find_files_in_dir( sub_dir_jet, file_key_jet_temp_fake_asym_inc )
-        print files_jet_temp_real_inc
 
         ratio_key_temp_fake_nom = '5 < Iso < 10'
         ratio_key_temp_fake_asym = '(\d+|No Cut),(\d+|No Cut),(\d+|No Cut)\s*\(ch,neu,pho\)'
@@ -123,7 +122,6 @@ def main() :
 
             file_key_jet_temp_real_asym = 'ph_%s__(?P<reg>EB|EE)__%s__pt_(?P<pt1>\d+)-(?P<pt2>\d+|max)__CompDataRealPhotonMCTruthMatchPhoton__varBins.pickle' %(var, iso_str )
             files_jet_temp_real_asym = find_files_in_dir( sub_dir_jet, file_key_jet_temp_real_asym )
-            print files_jet_temp_real_asym
             data_temp_real_asym['RealTemplate'+syst_postfix] = get_data_from_files_with_leg_key( sub_dir_jet, files_jet_temp_real_asym, ratio_key_temp_real)
 
             file_key_jet_temp_real_asym_inc = 'ph_%s__(?P<reg>EB|EE)__%s__pt_15-max__CompDataRealPhotonMCTruthMatchPhoton__varBins.pickle' %(var, iso_str )

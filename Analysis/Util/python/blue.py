@@ -63,6 +63,17 @@ class Calculator( ) :
             errsq = self.alpha_array.transpose().dot( self.err_matrix.dot( self.alpha_array ).getA1() )
             return math.sqrt(errsq)
 
+    def SetAlphas( self, alphas ) :
+
+        self.alpha_array = alphas
+
+    def GetAlphas( self ) :
+    
+        if self.alpha_array is None :
+           self.__calculate_alphas()
+
+        return self.alpha_array
+
     def __calculate_alphas(self) :
 
         self.calc_err = False

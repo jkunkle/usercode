@@ -89,7 +89,7 @@ def make_final_mu( alg_list, args ) :
     alg_list.append( Filter('CalcEventVars') )
 
     filter_event = Filter('FilterEvent')
-    filter_event.cut_nPh = ' > 1 '
+    filter_event.cut_nPh = ' == 2 '
     # remove the explicit cut on the number of electrons/muons
     filter_event.cut_nMu = ' == 1 '
     filter_event.cut_nEl = ' == 0 '
@@ -169,9 +169,10 @@ def make_final_el( alg_list, args ) :
     alg_list.append( Filter('CalcEventVars') )
 
     filter_event = Filter('FilterEvent')
-    filter_event.cut_nPh = ' >  1 '
+    filter_event.cut_nPh = ' == 2 '
     # remove the explicit cut on the number of electrons/muons
     filter_event.cut_nMu = ' == 0 '
+    filter_event.cut_nEl = ' == 1 '
 
     if not notrig :
         filter_event.cut_nElTrig = ' > 0 '
@@ -511,6 +512,29 @@ def make_lep_gamma( alg_list, args ) :
 
     filter_event = Filter('FilterEvent')
     filter_event.cut_nElTrig = ' > 0 '
+    filter_event.cut_nPh = ' > 0 '
+
+    alg_list.append( filter_event )
+
+def make_leplep_gamma( alg_list, args ) :
+
+    filter_photon = Filter( 'FilterPhoton' )
+    filter_photon.cut_ph_medium = ' == True '
+    filter_photon.cut_ph_pt = ' > 15 '
+
+    eleOlap = args.get( 'eleOlap', False )
+    print 'eleOlap = ', eleOlap
+
+    if eleOlap :
+        filter_photon.cut_el_ph_dr = ' > 0.4 '
+
+
+    alg_list.append( filter_photon )
+
+    alg_list.append( Filter('CalcEventVars') )
+
+    filter_event = Filter('FilterEvent')
+    filter_event.cut_nLep = ' > 1 '
     filter_event.cut_nPh = ' > 0 '
 
     alg_list.append( filter_event )

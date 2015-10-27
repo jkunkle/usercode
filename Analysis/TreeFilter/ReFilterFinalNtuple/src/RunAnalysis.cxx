@@ -150,6 +150,31 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
         if( !config.PassBool( "cut_hasPixSeed", IN::ph_hasPixSeed->at(idx) ) ) continue;
         if( !config.PassBool( "cut_ph_csev", IN::ph_eleVeto->at(idx) ) ) continue;
 
+        if( config.HasCut( "cut_el_ph_dr" ) ) { 
+            float min_el_dr = 100.0;
+
+            TLorentzVector phlv;
+            phlv.SetPtEtaPhiE( IN::ph_pt->at(idx), 
+                               IN::ph_eta->at(idx), 
+                               IN::ph_phi->at(idx), 
+                               IN::ph_e->at(idx) );
+
+            for( int eidx = 0; eidx < OUT::el_n; eidx++ ) {
+                TLorentzVector ellv;
+                ellv.SetPtEtaPhiE( OUT::el_pt->at(eidx), 
+                                   OUT::el_eta->at(eidx), 
+                                   OUT::el_phi->at(eidx), 
+                                   OUT::el_e->at(eidx) );
+
+                float dr = phlv.DeltaR( ellv );
+                if( dr < min_el_dr ) {
+                    min_el_dr = dr;
+                }
+            }
+            if( !config.PassFloat( "cut_el_ph_dr", min_el_dr ) ) continue;
+        }
+
+
         CopyPrefixIndexBranchesInToOut( "ph_", idx, false, "ph_ptSorted_" );
         OUT::ph_n++;
 

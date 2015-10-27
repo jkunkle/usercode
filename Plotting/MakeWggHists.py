@@ -102,13 +102,13 @@ def main() :
     global samplesLGG
     global samplesPhOlap
 
-    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_10_01'
+    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_10_01'
     #baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindAllNoEleVeto_2015_07_16'
-    baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_10_01'
-    baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_10_01'
-    baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_10_01'
-    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_10_01'
-    baseDirLGG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_10_01'
+    baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_10_01'
+    baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_10_01'
+    baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_10_01'
+    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_10_01'
+    baseDirLGG = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_10_01'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
@@ -2040,10 +2040,10 @@ def MakeJetFakeSystPlots(save=True ) :
 
                     if save :
                         name = 'ph_%s__%s%s__CompDataRealPhotonMCTruthMatchPhoton%s'%(var, reg,pt_name, bin_type)
-                        #samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                        #samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
-                        samplesLLG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                        samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
+                        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                        samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
+                        #samplesLLG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                        #samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
                     else :
                         raw_input('continue')
 
@@ -2191,10 +2191,10 @@ def MakeJetFakeSystPlots(save=True ) :
                         #                            ['Data', 'Zgamma', 'Zgamma'], binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':xlabels[var], 'ylabel':'Normalized Events', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'Z#gamma, truth matched photons'] }, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{#splitline{%s}{%s}}{%s}' %(reglabels[reg], iso_lab, pt_lab), 'extra_label_loc':(0.2, 0.75) } )
         
                         if save :
-                            #samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                            #samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
-                            samplesLLG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                            samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
+                            samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                            samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
+                            #samplesLLG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                            #samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
                         else :
                             raw_input('continue')
         
@@ -2393,71 +2393,131 @@ def MakeJetFakeSystPlots(save=True ) :
     sample ='Muon'
 
     regions = [('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB')]
-    binning = {'EB' : (15, 0, 0.03), 'EE' : (20, 0, 0.1) }
-    binning_coarse = {'EB' : [0, 0.011, 0.03], 'EE' : [0, 0.033, 0.1] }
-    looseiso_vals = [(5,3,3), (8,5,5), (10,7,7), (12,9,9), (15, 11,11), (20,16,16)]
 
     for r1, r2 in regions :
 
-        binn_lead_coarse = binning_coarse[r1]
-        binn_subl_coarse = binning_coarse[r2]
-
-        binn_lead = binning[r1]
-        binn_subl = binning[r2]
-
-        for iso_vals in looseiso_vals :
-
-            ph_cuts = 'ph_noSIEIEiso%s%s%s_n==2' %( str(iso_vals[0]), str(iso_vals[1]), str(iso_vals[2]) )
-            phvar = 'ptSorted_ph_noSIEIEiso%s%s%s_idx' %( str(iso_vals[0]), str(iso_vals[1]), str(iso_vals[2]) )
-
-            loose_subl = ' ph_sigmaIEIE[%s[1]] > 0.013010 && ph_sigmaIEIE[%s[1]] < 0.299000 '%(phvar, phvar)
-            loose_lead = ' ph_sigmaIEIE[%s[0]] > 0.013010 && ph_sigmaIEIE[%s[0]] < 0.299000 '%(phvar, phvar)
+        for var, iso_vals in asym_isos.iteritems() :
 
 
-            tightiso_subl = 'ph_passChIsoCorrMedium[%s[1]] && ph_passNeuIsoCorrMedium[%s[1]] && ph_passPhoIsoCorrMedium[%s[1]]'%(phvar, phvar, phvar)
-            tightiso_lead = 'ph_passChIsoCorrMedium[%s[0]] && ph_passNeuIsoCorrMedium[%s[0]] && ph_passPhoIsoCorrMedium[%s[0]]'%(phvar, phvar, phvar)
+            binn_lead_coarse = binning[var][r1+'__varBins']
+            binn_subl_coarse = binning[var][r2+'__varBins']
 
-            sieie_loose_subl = {'EB' : ' ph_sigmaIEIE[%s[1]] > 0.011 && ph_sigmaIEIE[%s[1]] < 0.3 ' %(phvar,phvar), 'EE'  : ' ph_sigmaIEIE[%s[1]] > 0.033 && ph_sigmaIEIE[%s[1]] < 0.1 '%(phvar,phvar) }
-            sieie_loose_lead = {'EB' : ' ph_sigmaIEIE[%s[0]] > 0.011 && ph_sigmaIEIE[%s[0]] < 0.3 '%(phvar,phvar), 'EE'  : ' ph_sigmaIEIE[%s[0]] > 0.033 && ph_sigmaIEIE[%s[0]] < 0.1 '%(phvar,phvar) }
+            binn_lead = binning[var][r1]
+            binn_subl = binning[var][r2]
 
-            thisiso_lead = 'ph_chIsoCorr[%s[0]] < %d && ph_neuIsoCorr[%s[0]] < %d && ph_phoIsoCorr[%s[0]] < %d'%(phvar, iso_vals[0],phvar,iso_vals[1],phvar,iso_vals[2])
-            thisiso_subl = 'ph_chIsoCorr[%s[1]] < %d && ph_neuIsoCorr[%s[1]] < %d && ph_phoIsoCorr[%s[1]] < %d'%(phvar, iso_vals[0],phvar,iso_vals[1],phvar,iso_vals[2])
+            for iso_val in iso_vals :
 
-            samplesLGG.CompareSelections('ph_sigmaIEIE[%s[0]]'%phvar, ['PUWeight * (  %s && %s && %s && %s  && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]])' %( phph_base, ph_cuts, sieie_loose_subl[r2], tightiso_lead, tightiso_subl, r1, phvar, r2, phvar), 'PUWeight * (  %s && %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]])' %(phph_base, ph_cuts, loose_subl, tightiso_lead, thisiso_subl, r1, phvar,r2, phvar) ], [sample, sample], binn_lead_coarse, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed ], 'doratio':1, 'ylabel':'Normalized Events / 0.0001', 'xlabel':'#sigma i#etai#eta', 'ymin':0, 'ymax':0.5, 'rmin':0, 'rmax':4}, legend_config={'legend_entries':['Tight iso lead, tight iso subl', 'tightiso lead, loose(%d,%d,%d) iso subl' %(iso_vals[0], iso_vals[1], iso_vals[2])], 'legendWiden' : 1.5, 'legendCompress' : 1.4} )
+                if var == 'sigmaIEIE' :
 
-            if save :
-                name = 'ph_sigmaIEIE_lead__mgg__%s-%s__baselineCuts__comp_sieie_lead_tight_subl_tight_to_%s-%s-%s_varBins' %( r1,r2, iso_vals[0], iso_vals[1], iso_vals[2])
-                samplesLGG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                samplesLGG.DumpStack(options.outputDir+'/'+subdir, name )
-            else :
-                raw_input('continue')
+                    ph_cuts = 'ph_noSIEIEiso%s%s%s_n==2' %( str(iso_val[0]), str(iso_val[1]), str(iso_val[2]) )
+                    phvar = 'ptSorted_ph_noSIEIEiso%s%s%s_idx' %( str(iso_val[0]), str(iso_val[1]), str(iso_val[2]) )
 
-            samplesLGG.CompareSelections('ph_sigmaIEIE[%s[1]]'%phvar, ['PUWeight * (  %s && %s && %s && %s  && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts,sieie_loose_lead[r1], tightiso_subl, tightiso_lead, r1, phvar, r2, phvar), 'PUWeight * (  %s && %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %(phph_base, ph_cuts, loose_lead, tightiso_subl, thisiso_lead, r1, phvar, r2, phvar) ], [sample, sample], binn_subl_coarse, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed ], 'doratio':1, 'ylabel':'Normalized Events / 0.0001', 'xlabel':'#sigma i#etai#eta', 'ymin':0, 'ymax':0.5, 'rmin':0, 'rmax':4}, legend_config={'legendWiden' : 1.5, 'legendCompress' : 1.4, 'legend_entries':['Tight iso lead, tight iso subl', 'tightiso subl, loose(%d,%d,%d) iso lead' %(iso_vals[0], iso_vals[1], iso_vals[2])]} )
+                    tightiso_subl = 'ph_passChIsoCorrMedium[%s[1]] && ph_passNeuIsoCorrMedium[%s[1]] && ph_passPhoIsoCorrMedium[%s[1]]'%(phvar, phvar, phvar)
+                    tightiso_lead = 'ph_passChIsoCorrMedium[%s[0]] && ph_passNeuIsoCorrMedium[%s[0]] && ph_passPhoIsoCorrMedium[%s[0]]'%(phvar, phvar, phvar)
 
-            if save :
-                name = 'ph_sigmaIEIE_subl__mgg__%s-%s__baselineCuts__comp_sieie_subl_tight_lead_tight_to_%s-%s-%s_varBins' %( r1,r2, iso_vals[0], iso_vals[1], iso_vals[2])
-                samplesLGG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                samplesLGG.DumpStack(options.outputDir+'/'+subdir, name )
-            else :
-                raw_input('continue')
+                    sieie_loose_subl = {'EB' : ' ph_sigmaIEIE[%s[1]] > 0.011 && ph_sigmaIEIE[%s[1]] < 0.3 ' %(phvar,phvar), 'EE'  : ' ph_sigmaIEIE[%s[1]] > 0.033 && ph_sigmaIEIE[%s[1]] < 0.1 '%(phvar,phvar) }
+                    sieie_loose_lead = {'EB' : ' ph_sigmaIEIE[%s[0]] > 0.011 && ph_sigmaIEIE[%s[0]] < 0.3 '%(phvar,phvar), 'EE'  : ' ph_sigmaIEIE[%s[0]] > 0.033 && ph_sigmaIEIE[%s[0]] < 0.1 '%(phvar,phvar) }
 
-            samplesLGG.CompareSelections('ph_sigmaIEIE[%s[0]]'%phvar, ['PUWeight * (  %s && %s && %s && %s  && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts,sieie_loose_subl[r2], tightiso_lead, tightiso_subl, r1, phvar, r2, phvar), 'PUWeight * (  %s && %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %(phph_base, ph_cuts, loose_subl, tightiso_lead, thisiso_subl, r1, phvar, r2, phvar) ], [sample, sample], binn_lead, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed ], 'doratio':1, 'ylabel':'Normalized Events / 0.0001', 'xlabel':'#sigma i#etai#eta', 'ymin':0, 'ymax':0.5, 'rmin':0, 'rmax':4}, legend_config={'legend_entries':['Tight iso lead, tight iso subl', 'tightiso lead, loose(%d,%d,%d) iso subl' %(iso_vals[0], iso_vals[1], iso_vals[2])], 'legendWiden' : 1.5, 'legendCompress' : 1.4} )
+                    thisiso_lead = 'ph_chIsoCorr[%s[0]] < %s && ph_neuIsoCorr[%s[0]] < %s && ph_phoIsoCorr[%s[0]] < %s'%(phvar, iso_val[0],phvar,iso_val[1],phvar,iso_val[2])
+                    thisiso_subl = 'ph_chIsoCorr[%s[1]] < %s && ph_neuIsoCorr[%s[1]] < %s && ph_phoIsoCorr[%s[1]] < %s'%(phvar, iso_val[0],phvar,iso_val[1],phvar,iso_val[2])
 
-            if save :
-                name = 'ph_sigmaIEIE_lead__mgg__%s-%s__baselineCuts__comp_sieie_lead_tight_subl_tight_to_%s-%s-%s' %( r1,r2, iso_vals[0], iso_vals[1], iso_vals[2])
-                samplesLGG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                samplesLGG.DumpStack(options.outputDir+'/'+subdir, name )
-            else :
-                raw_input('continue')
+                    selection_lead_iso_subl_tight = 'PUWeight * (  %s && %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, sieie_loose_subl[r2], tightiso_lead, tightiso_subl, r1, phvar, r2, phvar)
+                    selection_lead_iso_subl_loose = 'PUWeight * (  %s && %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, sieie_loose_subl[r2], tightiso_lead, thisiso_subl, r1, phvar,r2, phvar)
+                    selection_subl_iso_lead_tight = 'PUWeight * (  %s && %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, sieie_loose_lead[r1], tightiso_subl, tightiso_lead, r1, phvar, r2, phvar)
+                    selection_subl_iso_lead_loose = 'PUWeight * (  %s && %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, sieie_loose_lead[r1], tightiso_subl, thisiso_lead, r1, phvar, r2, phvar)
 
-            samplesLGG.CompareSelections('ph_sigmaIEIE[%s[1]]'%phvar, ['PUWeight * (  %s && %s && %s && %s  && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, sieie_loose_lead[r1], tightiso_subl, tightiso_lead, r1, phvar, r2, phvar), 'PUWeight * (  %s && %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %(phph_base, ph_cuts, loose_lead, tightiso_subl, thisiso_lead, r1, phvar, r2, phvar) ], [sample, sample], binn_subl, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed ], 'doratio':1, 'ylabel':'Normalized Events / 0.0001', 'xlabel':'#sigma i#etai#eta', 'ymin':0, 'ymax':0.5, 'rmin':0, 'rmax':4}, legend_config={'legendWiden' : 1.5, 'legendCompress' : 1.4, 'legend_entries':['Tight iso lead, tight iso subl', 'tightiso subl, loose(%d,%d,%d) iso lead' %(iso_vals[0], iso_vals[1], iso_vals[2])]} )
+                elif var == 'chIsoCorr'  :
 
-            if save :
-                name = 'ph_sigmaIEIE_subl__mgg__%s-%s__baselineCuts__comp_sieie_subl_tight_lead_tight_to_%s-%s-%s' %( r1,r2, iso_vals[0], iso_vals[1], iso_vals[2])
-                samplesLGG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                samplesLGG.DumpStack(options.outputDir+'/'+subdir, name )
-            else :
-                raw_input('continue')
+                    ph_cuts = 'ph_failSIEIEisoNone%s%s_n==2' %( str(iso_val[1]), str(iso_val[2]) )
+                    phvar = 'ptSorted_ph_failSIEIEisoNone%s%s_idx' %( str(iso_val[1]), str(iso_val[2]) )
+
+                    tightiso_subl = 'ph_passNeuIsoCorrMedium[%s[1]] && ph_passPhoIsoCorrMedium[%s[1]]'%(phvar, phvar)
+                    tightiso_lead = 'ph_passNeuIsoCorrMedium[%s[0]] && ph_passPhoIsoCorrMedium[%s[0]]'%(phvar, phvar)
+
+                    thisiso_lead = ' ph_neuIsoCorr[%s[0]] < %s && ph_phoIsoCorr[%s[0]] < %s'%(phvar,iso_val[1],phvar,iso_val[2])
+                    thisiso_subl = ' ph_neuIsoCorr[%s[1]] < %s && ph_phoIsoCorr[%s[1]] < %s'%(phvar,iso_val[1],phvar,iso_val[2])
+
+                    selection_lead_iso_subl_tight = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_lead, tightiso_subl, r1, phvar, r2, phvar)
+                    selection_lead_iso_subl_loose = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_lead, thisiso_subl, r1, phvar,r2, phvar)
+                    selection_subl_iso_lead_tight = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_subl, tightiso_lead, r1, phvar, r2, phvar)
+                    selection_subl_iso_lead_loose = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_subl, thisiso_lead, r1, phvar, r2, phvar)
+
+                elif var == 'phoIsoCorr'  :
+
+                    ph_cuts = 'ph_failSIEIEiso%s%sNone_n==2' %( str(iso_val[0]), str(iso_val[1]) )
+                    phvar = 'ptSorted_ph_failSIEIEiso%s%sNone_idx' %( str(iso_val[0]), str(iso_val[1]) )
+
+                    tightiso_subl = 'ph_passChIsoCorrMedium[%s[1]] && ph_passNeuIsoCorrMedium[%s[1]] '%(phvar, phvar)
+                    tightiso_lead = 'ph_passChIsoCorrMedium[%s[0]] && ph_passNeuIsoCorrMedium[%s[0]] '%(phvar, phvar)
+
+                    thisiso_lead = ' ph_chIsoCorr[%s[0]] < %s && ph_neuIsoCorr[%s[0]] < %s'%(phvar,iso_val[0],phvar,iso_val[1])
+                    thisiso_subl = ' ph_chIsoCorr[%s[1]] < %s && ph_neuIsoCorr[%s[1]] < %s'%(phvar,iso_val[0],phvar,iso_val[1])
+
+                    selection_lead_iso_subl_tight = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_lead, tightiso_subl, r1, phvar, r2, phvar)
+                    selection_lead_iso_subl_loose = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_lead, thisiso_subl, r1, phvar,r2, phvar)
+                    selection_subl_iso_lead_tight = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_subl, tightiso_lead, r1, phvar, r2, phvar)
+                    selection_subl_iso_lead_loose = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_subl, thisiso_lead, r1, phvar, r2, phvar)
+
+                elif var == 'neuIsoCorr'  :
+
+                    ph_cuts = 'ph_failSIEIEiso%sNone%s_n==2' %( str(iso_val[0]), str(iso_val[2]) )
+                    phvar = 'ptSorted_ph_failSIEIEiso%sNone%s_idx' %( str(iso_val[0]), str(iso_val[2]) )
+
+                    tightiso_subl = 'ph_passChIsoCorrMedium[%s[1]] && ph_passPhoIsoCorrMedium[%s[1]]'%(phvar, phvar)
+                    tightiso_lead = 'ph_passChIsoCorrMedium[%s[0]] && ph_passPhoIsoCorrMedium[%s[0]]'%(phvar, phvar)
+
+                    thisiso_lead = ' ph_chIsoCorr[%s[0]] < %s && ph_phoIsoCorr[%s[0]] < %s'%(phvar,iso_val[0],phvar,iso_val[2])
+                    thisiso_subl = ' ph_chIsoCorr[%s[1]] < %s && ph_phoIsoCorr[%s[1]] < %s'%(phvar,iso_val[0],phvar,iso_val[2])
+
+                    selection_lead_iso_subl_tight = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_lead, tightiso_subl, r1, phvar, r2, phvar)
+                    selection_lead_iso_subl_loose = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_lead, thisiso_subl, r1, phvar,r2, phvar)
+                    selection_subl_iso_lead_tight = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_subl, tightiso_lead, r1, phvar, r2, phvar)
+                    selection_subl_iso_lead_loose = 'PUWeight * (  %s && %s && %s && %s && ph_Is%s[%s[0]] && ph_Is%s[%s[1]] )' %( phph_base, ph_cuts, tightiso_subl, thisiso_lead, r1, phvar, r2, phvar)
+
+                if r1 == 'EB' :
+                    ymax_lead = 0.8
+                if r1 == 'EE' :
+                    ymax_lead = 0.5
+                if r2 == 'EB' : 
+                    ymax_subl = 0.8
+                if r2 == 'EE' : 
+                    ymax_subl = 0.5
+
+                samplesLGG.CompareSelections('ph_%s[%s[0]]'%(var,phvar), [selection_lead_iso_subl_tight, selection_lead_iso_subl_loose], [sample, sample], binn_lead_coarse, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed ], 'doratio':1, 'ylabel':'Normalized Events / 0.0001', 'xlabel':'#sigma i#etai#eta', 'ymin':0, 'ymax':0.8, 'rmin':0.5, 'rmax':1.5}, legend_config={'legend_entries':['Tight iso lead, tight iso subl', 'tightiso lead, loose(%s,%s,%s) iso subl' %(iso_val[0], iso_val[1], iso_val[2])], 'legendWiden' : 1.5, 'legendCompress' : 1.4} )
+
+                if save :
+                    name = 'ph_%s_lead__mgg__%s-%s__baselineCuts__comp_sieie_lead_tight_subl_tight_to_%s-%s-%s_varBins' %( var,r1,r2, iso_val[0], iso_val[1], iso_val[2])
+                    samplesLGG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                    samplesLGG.DumpStack(options.outputDir+'/'+subdir, name )
+                else :
+                    raw_input('continue')
+
+                samplesLGG.CompareSelections('ph_%s[%s[1]]'%(var,phvar), [selection_subl_iso_lead_tight, selection_subl_iso_lead_loose], [sample, sample], binn_subl_coarse, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed ], 'doratio':1, 'ylabel':'Normalized Events / 0.0001', 'xlabel':'#sigma i#etai#eta', 'ymin':0, 'ymax':0.8, 'rmin':0.5, 'rmax':1.5}, legend_config={'legendWiden' : 1.5, 'legendCompress' : 1.4, 'legend_entries':['Tight iso lead, tight iso subl', 'tightiso subl, loose(%s,%s,%s) iso lead' %(iso_val[0], iso_val[1], iso_val[2])]} )
+
+                if save :
+                    name = 'ph_%s_subl__mgg__%s-%s__baselineCuts__comp_sieie_subl_tight_lead_tight_to_%s-%s-%s_varBins' %( var,r1,r2, iso_val[0], iso_val[1], iso_val[2])
+                    samplesLGG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                    samplesLGG.DumpStack(options.outputDir+'/'+subdir, name )
+                else :
+                    raw_input('continue')
+
+                samplesLGG.CompareSelections('ph_%s[%s[0]]'%(var,phvar), [selection_lead_iso_subl_tight,selection_lead_iso_subl_loose], [sample, sample], binn_lead, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed ], 'doratio':1, 'ylabel':'Normalized Events / 0.0001', 'xlabel':'#sigma i#etai#eta', 'ymin':0, 'ymax':ymax_lead, 'rmin':0, 'rmax':4}, legend_config={'legend_entries':['Tight iso lead, tight iso subl', 'tightiso lead, loose(%s,%s,%s) iso subl' %(iso_val[0], iso_val[1], iso_val[2])], 'legendWiden' : 1.5, 'legendCompress' : 1.4} )
+
+                if save :
+                    name = 'ph_%s_lead__mgg__%s-%s__baselineCuts__comp_sieie_lead_tight_subl_tight_to_%s-%s-%s' %( var,r1,r2, iso_val[0], iso_val[1], iso_val[2])
+                    samplesLGG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                    samplesLGG.DumpStack(options.outputDir+'/'+subdir, name )
+                else :
+                    raw_input('continue')
+
+                samplesLGG.CompareSelections('ph_%s[%s[1]]'%(var,phvar), [selection_subl_iso_lead_tight, selection_subl_iso_lead_loose], [sample, sample], binn_subl, hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed ], 'doratio':1, 'ylabel':'Normalized Events / 0.0001', 'xlabel':'#sigma i#etai#eta', 'ymin':0, 'ymax':ymax_subl, 'rmin':0, 'rmax':4}, legend_config={'legendWiden' : 1.5, 'legendCompress' : 1.4, 'legend_entries':['Tight iso lead, tight iso subl', 'tightiso subl, loose(%s,%s,%s) iso lead' %(iso_val[0], iso_val[1], iso_val[2])]} )
+
+                if save :
+                    name = 'ph_%s_subl__mgg__%s-%s__baselineCuts__comp_sieie_subl_tight_lead_tight_to_%s-%s-%s' %( var,r1,r2, iso_val[0], iso_val[1], iso_val[2])
+                    samplesLGG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                    samplesLGG.DumpStack(options.outputDir+'/'+subdir, name )
+                else :
+                    raw_input('continue')
 
 def MakeJetFakeFactorPlots(save=False, detail=100) :
 

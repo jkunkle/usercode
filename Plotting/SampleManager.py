@@ -971,7 +971,7 @@ class SampleManager :
 
         common_results = list( reduce( lambda x,y : set(x) & set(y), each_results ) ) 
         if not common_results :
-            print 'WARNING : Found zero samples matching criteria!  Available samples are : '
+            print 'WARNING : Found zero samples matching criteria!  Sample matching criteria were : '
             #assert( '' )
             print kwargs
             #for s in self.get_samples() :
@@ -1032,6 +1032,7 @@ class SampleManager :
         elif len(sel_samps) > 1 :
             print 'Located multiple samples with name %s' %name
         else :
+            print 'Activate sample %s' %sel_samps[0].name
             sel_samps[0].isActive=True
 
     #--------------------------------
@@ -1042,6 +1043,7 @@ class SampleManager :
         elif len(sel_samps) > 1 :
             print 'Located multiple samples with name %s' %samp_name
         else :
+            print 'Deactivate sample %s' %sel_samps[0].name
             sel_samps[0].isActive=False
 
     #--------------------------------
@@ -1122,6 +1124,19 @@ class SampleManager :
     def add_temp_sample(self, samp) :
         samp.temporary = True
         self.samples.append(samp)
+
+    #--------------------------------
+    def get_stack_order( self ) :
+
+        out_order = []
+
+        samps = self.get_samples( name=self.stack_order )
+
+        for samp in samps :
+            if not samp.isData and not samp.isSignal and samp.isActive :
+                out_order.append( samp.name )
+
+        return out_order
 
     #--------------------------------
     def read_xsfile( self, file, lumi ) :
@@ -1844,7 +1859,7 @@ class SampleManager :
         detail_entries = {}
     
         # get samples with the MC stack, data, and signal samples
-        samp_list = self.get_samples(name=self.stack_order) + self.get_samples(isData=True) + self.get_samples(isSignal=True)
+        samp_list = self.get_samples(name=self.get_stack_order()) + self.get_samples(isData=True) + self.get_samples(isSignal=True)
     
         # get the integrals
         for samp in samp_list :
@@ -1858,7 +1873,7 @@ class SampleManager :
                 stack_entries[samp.name] = ufloat(integral, err )
         
         #collect the list to be printed 
-        order = list(self.stack_order)
+        order = list(self.get_stack_order())
         if 'Data' in stack_entries :
             order.insert(0, 'Data')
         
@@ -2081,8 +2096,7 @@ class SampleManager :
             self.samples.append(thisSample)
 
             # keep the order that this sample was added
-            if not isData and not isSignal and isActive :
-                self.stack_order.append(name)
+            self.stack_order.append(name)
 
         if not input_files and required :
             print '***********************************************' 
@@ -2167,8 +2181,7 @@ class SampleManager :
             return
 
         # keep the order that this sample was added
-        if not isData and not isSignal and isActive :
-            self.stack_order.append(name)
+        self.stack_order.append(name)
 
         thisscale = 1.0
         # multply by scale provided to this function (MCweight is applied to input samples)
@@ -2562,7 +2575,7 @@ class SampleManager :
         # Get info for summed sample
         bkg_name = '__AllStack__'
         # get all stacked histograms and add them
-        stack_samples = self.get_samples(name=self.stack_order, isActive=True)
+        stack_samples = self.get_samples( name=self.get_stack_order() )
 
         if stack_samples :
             sum_hist = stack_samples[0].hist.Clone(bkg_name)
@@ -2594,7 +2607,7 @@ class SampleManager :
 
         # reverse so that the stack is in the correct order
         orderd_samples = []
-        for sampname in self.stack_order :
+        for sampname in self.get_stack_order():
             samplist = self.get_samples(name=sampname, isActive=True )
             if samplist :
                 orderd_samples.append(samplist[0])
@@ -2612,7 +2625,7 @@ class SampleManager :
         # In placing the legend move the bottom down 0.05 for each entry
         # calculate the step usa
         drawn_samples = []
-        for sname in self.stack_order :
+        for sname in self.get_stack_order():
             drawn_samples+=self.get_samples( name=sname, failed_draw=False, isActive=True )
         step = len(drawn_samples)
 
@@ -3160,7 +3173,7 @@ class SampleManager :
     def variable_rebinning(self, threshold=None, binning=None, samples=[], useStoredBinning=False) :
 
         if not samples:
-            samples = self.get_samples(name=self.stack_order)
+            samples = self.get_samples(name=self.get_stack_order())
 
         # variable r
         if binning is not None :
@@ -4061,6 +4074,11 @@ class SampleManager :
                 print 'Size of labels does not match size of vars input!'
             labels = varexps
 
+        hist_config = {}
+        hist_config['normalize']= normalize
+        hist_config['doratio']= doratio
+        hist_config['colors']= colors
+
         samples = []
         for sn in sample_names :
             samples.append( self.get_samples( name=sn )[0] )
@@ -4631,7 +4649,7 @@ class SampleManager :
 
         signal_samples = [ s.name for s in self.get_signal_samples() if s.isActive ]
 
-        table_text_1 = self.LatexCutflowTable(table_entries, labels , self.stack_order+signal_samples)
+        table_text_1 = self.LatexCutflowTable(table_entries, labels , self.get_stack_order()+signal_samples)
         #table_text_2 = self.LatexCutflowTable(second_table, labels , ['MC', 'Data', 'Data/MC'])
 
         #self.MakeLatexDocument(tables=[table_text_1, table_text_2])

@@ -66,7 +66,7 @@ def main() :
 
     global el_cuts
     #el_base = 'el_passtrig_n==1 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_trigEle>%f && dr_ph2_trigEle>%f && m_ph1_ph2>%.1f && pt_leadph12 > %d && pt_sublph12 > %d %s ' %(lead_dr_cut, subl_dr_cut, _mgg_cut, ptmin, ptmin, ph_cuts)
-    el_base = 'el_passtrig_n>0 && dr_ph1_ph2>0.4 && m_ph1_ph2>%.1f && pt_leadph12 > %d && pt_sublph12 > %d %s ' %(_mgg_cut, ptmin, ptmin, ph_cuts)
+    el_base = 'el_passtrig_n>0 && el_n==1 && mu_n==0 && dr_ph1_ph2>0.4 && m_ph1_ph2>%.1f && pt_leadph12 > %d && pt_sublph12 > %d %s ' %(_mgg_cut, ptmin, ptmin, ph_cuts)
     #el_base = 'pt_leadph12 > %d && pt_sublph12 > %d %s ' %(ptmin, ptmin, ph_cuts)
 
     el_cuts = {'elfull' : 
@@ -92,7 +92,7 @@ def main() :
     for key in el_keys :
         el_cuts[key+'invlead']  = el_cuts[key] + ' && ph_mediumNoEleVeto_n==2 && hasPixSeed_leadph12 == 1 && hasPixSeed_sublph12 == 0 '
         el_cuts[key+'invsubl']  = el_cuts[key] + ' && ph_mediumNoEleVeto_n==2 && hasPixSeed_leadph12 == 0 && hasPixSeed_sublph12 == 1 '
-        el_cuts[key+'vetoboth'] = el_cuts[key] + ' && ph_medium_n==2 ' 
+        el_cuts[key+'vetoboth'] = el_cuts[key] + ' && ph_mediumPassPSV_n==2 ' 
 
     el_cuts['elZgg'] = 'el_n>1'
     el_cuts['elZggvetoboth'] = 'el_n>1'
@@ -111,17 +111,23 @@ def main() :
     global samplesWggInvLead
     global samplesWggInvSubl
 
-    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_09_25'
-    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_09_25'
-    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_09_09'
-    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalUnblindAllNoMtCut_2015_09_14'
-    baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixLead_2015_09_25'
-    baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixSubl_2015_09_25'
+    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_10_01'
+    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_10_01'
 
-    #baseDirWmugg      = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalMuMuUnblindAll_2015_09_18'
-    #baseDirWelgg      = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_09_18'
-    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_09_18'
-    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_09_18'
+    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_10_01'
+    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllNoMtCut_2015_10_01'
+    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixLead_2015_10_01'
+    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixSubl_2015_10_01'
+
+    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllWithOlapNoZCutNoMtCut_2015_10_01'
+    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuWithOlapUnblindAllNoMtCut_2015_10_01'
+    baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElWithOlapNoZCutNoMtCutInvPixLead_2015_10_01'
+    baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElWithOlapNoZCutNoMtCutInvPixSubl_2015_10_01'
+
+    #baseDirWmugg      = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaFinalMuMuUnblindAll_2015_10_01'
+    #baseDirWelgg      = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_10_01'
+    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_10_01'
+    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_10_01'
 
     #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaWithEleOlapFinalElUnblindAllNoZMassLowMt_2015_09_03'
     #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaWithEleOlapFinalMuUnblindAllLowMt_2015_09_03'
@@ -163,8 +169,8 @@ def main() :
     bins = options.ptbins.split(',')
 
     # get paths to different fit results
-    #suffix = ''
-    suffix = 'TAndP'
+    suffix = ''
+    #suffix = 'TAndP'
 
     path_nom           = 'ElectronFakeFitsRatio%s' %suffix 
     path_nom_coarse    = 'ElectronFakeFitsRatio%sCoarseEta' %suffix 
@@ -174,7 +180,8 @@ def main() :
     path_mctemp_coarse = 'ElectronFakeFitsRatio%sMCTemplate' %suffix
     path_mctempmctempnd        = 'ElectronFakeFitsRatio%sMCTemplateBkgNDKeys' %suffix
     path_mctempmctempnd_coarse = 'ElectronFakeFitsRatio%sMCTemplateBkgNDKeys' %suffix
-    path_manual = 'ElectronFakeManual'
+    #path_manual = 'ElectronFakeManual'
+    path_manual = 'ElectronFakeManualWithOlap2'
     path_manualL = 'ElectronFakeManualLoose'
 
     # use orderedDict to keep things in pT order
@@ -186,8 +193,8 @@ def main() :
     # define the map between pt bins and
     # the fit results we want to use
 
-    # go up to the third-to-last bin
-    for bidx in range( 0, len( bins ) - 3 ) :
+    # go up to the second-to-last bin
+    for bidx in range( 0, len( bins ) - 2 ) :
         #file_bin_map            [(bins[bidx], bins[bidx+1])] = path_mctempmctempnd
         #file_bin_map_syst       [(bins[bidx], bins[bidx+1])] = path_mctempmctempnd
         #file_bin_map            [(bins[bidx], bins[bidx+1])] = path_mctemp
@@ -210,14 +217,14 @@ def main() :
     #file_bin_map_syst[(bins[-2], 'max')  ] = path_mctempmctempnd
     #file_bin_map[(bins[-2], 'max')] = path_mctemp
     #file_bin_map_syst[(bins[-2], 'max')  ] = path_mctemp
-    file_bin_map[(bins[-3], bins[-2])] = path_manual
-    file_bin_map_syst[(bins[-3], bins[-2])  ] = path_manual
-    file_bin_map[(bins[-2], 'max')] = path_manual
+    #file_bin_map[(bins[-3], bins[-2])] = path_manual
     file_bin_map_syst[(bins[-2], 'max')  ] = path_manual
+    file_bin_map[(bins[-2], 'max')] = path_manual
+    #file_bin_map_syst[(bins[-2], 'max')  ] = path_manual
     #file_bin_map[(bins[-2], 'max')] = path_manualL
     #file_bin_map_syst[(bins[-2], 'max')  ] = path_manualL
-    #file_bin_map[(bins[-3],bins[-2] )] = path_mctempnd
-    #file_bin_map_syst[(bins[-3],bins[-2] )  ] = path_mctempnd
+    #file_bin_map[(bins[-2],'max' )] = path_mctempnd
+    #file_bin_map_syst[(bins[-2],'max' )  ] = path_mctempnd
 
     print file_bin_map
 
@@ -227,6 +234,7 @@ def main() :
         outputDirBase='%s/BackgroundEstimates/' %(options.baseDir )
         base_dir_ele = options.baseDir
         base_dir_jet = outputDirBase
+        resultDir = '%s/%s' %( outputDirBase, options.plotDir )
        
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muZgg', outputDir=outputDirBase )
         #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elZgg', outputDir=outputDirBase )
@@ -234,47 +242,46 @@ def main() :
         ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elZgginvpixsubl', outputDir=outputDirBase )
         ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muZgginvpixlead', outputDir=outputDirBase )
         ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muZgginvpixsubl', outputDir=outputDirBase )
+        ##MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='mu', outputDir=outputDirBase )
 
-        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='mu', outputDir=outputDirBase )
-        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muhighmt', outputDir=outputDirBase )
-        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmt', outputDir=outputDirBase )
-        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmtinvpixlead', outputDir=outputDirBase )
-        MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmtinvpixsubl', outputDir=outputDirBase )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muhighmt'              , outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmt'          , outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmtinvpixlead', outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmtinvpixsubl', outputDir=resultDir )
 
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfulllowmt', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfulllowmtinvpixlead', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfulllowmtinvpixsubl', outputDir=outputDirBase )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfulllowmt'           , outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfulllowmtinvpixlead' , outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfulllowmtinvpixsubl' , outputDir=resultDir )
 
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='mulowmt', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='ellooselowmt', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='ellooselowmtinvpixlead', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='ellooselowmtinvpixsubl', outputDir=outputDirBase )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='mulowmt'               , outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='ellooselowmt'          , outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='ellooselowmtinvpixlead', outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='ellooselowmtinvpixsubl', outputDir=resultDir )
 
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrhighmt', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrhighmtinvpixlead', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrhighmtinvpixsubl', outputDir=outputDirBase )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrhighmt'           , outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrhighmtinvpixlead' , outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrhighmtinvpixsubl' , outputDir=resultDir )
 
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcr', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixlead', outputDir=outputDirBase )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixsubl', outputDir=outputDirBase )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcr'                 , outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixlead'       , outputDir=resultDir )
+        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixsubl'       , outputDir=resultDir )
 
-        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfulllowmt', outputDir=outputDirBase )
-        MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfullhighmt', outputDir=outputDirBase )
-        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcrhighmt', outputDir=outputDirBase, namePostfix='__zcr' )
-        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr', outputDir=outputDirBase, namePostfix='__zcr' )
-        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='ellooselowmt', outputDir=outputDirBase, namePostfix='__loose' )
-
+        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfulllowmt' , outputDir=resultDir )
+        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfullhighmt', outputDir=resultDir )
+        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcrhighmt' , outputDir=resultDir )
+        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr'       , outputDir=resultDir )
+        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='ellooselowmt', outputDir=resultDir )
 
         plot_binning = [25,40,70,100]
 
-        #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='mulowmt', channelel='elfulllowmt', minpt=pt_bins[0] )
-        MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muhighmt', channelel='elfullhighmt', minpt=pt_bins[0] )
-        #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muhighmt', channelel='elzcrhighmt', minpt=pt_bins[0] )
-        #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muhighmt', channelel='elzcr', minpt=pt_bins[0] )
-        #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning, channelmu='muhighmt', channelel='ellooselowmt', minpt=pt_bins[0] )
+        MakeBkgEstimatePlots( resultDir, plot_binning, channelmu='muhighmt', channelel='elfullhighmt', minpt=pt_bins[0] )
+        #MakeBkgEstimatePlots( resultDir, plot_binning, channelmu='mulowmt' , channelel='elfulllowmt' , minpt=pt_bins[0] )
+        #MakeBkgEstimatePlots( resultDir, plot_binning, channelmu='muhighmt', channelel='elzcrhighmt' , minpt=pt_bins[0] )
+        #MakeBkgEstimatePlots( resultDir, plot_binning, channelmu='muhighmt', channelel='elzcr'       , minpt=pt_bins[0] )
+        #MakeBkgEstimatePlots( resultDir, plot_binning, channelmu='muhighmt', channelel='ellooselowmt', minpt=pt_bins[0] )
 
-        plot_binning_zgg = [15, 25,40,100]
-        #MakeBkgEstimatePlots( outputDirBase, options.plotDir, plot_binning_zgg, channelmu='muZgg', channelel='elZgg', minpt=pt_bins[0] )
+        #plot_binning_zgg = [15, 25,40,100]
+        #MakeBkgEstimatePlots( resultDir, plot_binning_zgg, channelmu='muZgg', channelel='elZgg', minpt=pt_bins[0] )
 
  
     print '^_^ FINSISHED ^_^'
@@ -312,8 +319,10 @@ def MakeJetBkgEstimateNew( base_dir_jet, pt_bins, channel, outputDir=None ) :
     print '--------------------------------------'
 
     #uncertainties = {'systTemp' : True, 'systBkg' : True, 'statTemp' : False, 'statData' : False}
-    uncertainties = {'systTemp' : False, 'systBkg' : False, 'statTemp' : False, 'statData' : False}
+    uncertainties = {'systTemp' : False, 'systBkg' : True, 'statTempTight' : True, 'statTempLoose' : True, 'statData' : False, 'fakefake' : False, 'crossCorr' : True}
+    #uncertainties = {'systTemp' : False, 'systBkg' : False, 'statTempTight' : False, 'statTempLoose' : False, 'statData' : False}
     vars = ['SigmaIEIEFits', 'PhoIsoFits', 'ChHadIsoFits']
+    #vars = ['SigmaIEIEFits', 'ChHadIsoFits']
 
     regions = [('EB', 'EB'), ('EB' , 'EE'), ('EE', 'EB')]
 
@@ -362,7 +371,15 @@ def MakeJetBkgEstimateNew( base_dir_jet, pt_bins, channel, outputDir=None ) :
             results = get_jet_fake_results_new( base_dir_jet, file_key, uncertainties, found_result_dirs, ff_var_systs )
 
             result_dic['stat+syst']['sum'][result_bin] = {}
-            result_dic['stat+syst']['sum'][result_bin]['result'] = results
+            result_dic['stat+syst']['sum'][result_bin]['result'] = results['comb']
+
+            for unc, val in results.iteritems() :
+                if unc == 'comb' :
+                    continue
+                result_dic.setdefault( 'individual', {} )
+                result_dic['individual'].setdefault( unc , {} )
+                result_dic['individual'][unc].setdefault( 'sum' , {} )
+                result_dic['individual'][unc]['sum'][result_bin] = {'result' : val } 
 
     if outputDir is not None :
         if not os.path.isdir( outputDir ) :
@@ -405,6 +422,26 @@ def get_jet_fake_results_new( base_dir, file_key, uncertainties, result_dirs, ff
 
                 std_devs[match_value['uncertainty']][var] = bkg_sum
 
+        # do ff var systs
+        std_devs['fakefake'][var] = ufloat( central_values[var].n, ff_var_systs[var] )
+
+        print result_dirs[var]
+
+        # do cross correlation systs
+        resdirres = re.match( 'JetFakeTemplateFitPlotsCorr(\d+)-(\d+)-(\d+)AsymIso', result_dirs[var] )
+        if resdirres is None :
+            print 'WARNING, could not parse iso values from directory'
+        else :
+
+            iso1 = int(resdirres.group(1) )
+            iso2 = int(resdirres.group(2) )
+            iso3 = int(resdirres.group(3) )
+            std_devs['crossCorr'][var] = ufloat( central_values[var].n, _asym_iso_syst[(iso1,iso2,iso3)] )
+
+    results = {}
+
+
+    print std_devs
 
     comb_std_devs = {}
     for key, uncert in std_devs.iteritems() :
@@ -412,17 +449,27 @@ def get_jet_fake_results_new( base_dir, file_key, uncertainties, result_dirs, ff
             comb_std_devs.setdefault( var, 0.0 ) 
             comb_std_devs[var] = comb_std_devs[var] + val.s*val.s
 
+            results.setdefault( var, {} )
+            results[var][key] = val
+
     # get a stable variable ordering
     variable_order = list( result_dirs.keys() )
 
     # now do blue
-    calc = blue.Calculator() 
+    calc_comb = blue.Calculator() 
+
 
     meas_values = [central_values[v].n for v in variable_order]
 
     print 'Measured values :  ' + ', '.join( ['%s : %f +- %f' %( v, central_values[v].n, math.sqrt( comb_std_devs[v])) for v in variable_order ] )
 
-    calc.SetMeasurementValues( meas_values )
+    calc_comb.SetMeasurementValues( meas_values )
+
+    # make BLUE calculators for each separate uncertainty
+    calc_indiv = {}
+    for unc in std_devs.keys() :
+        calc_indiv[unc] = blue.Calculator()
+        calc_indiv[unc].SetMeasurementValues( meas_values )
 
     n_var = len( variable_order )
     for unc, is_corr in uncertainties.iteritems() :
@@ -440,13 +487,29 @@ def get_jet_fake_results_new( base_dir, file_key, uncertainties, result_dirs, ff
 
             matrix.append( list_i )
 
-        calc.AddErrorMatrix( matrix )
+        calc_comb.AddErrorMatrix( matrix )
+        if unc in calc_indiv :
+            calc_indiv[unc].AddErrorMatrix( matrix)
 
         print 'Error matrix : '
         print matrix
 
-    central_value = calc.CalculateCombinedValue()
-    combined_unc = calc.CalculateCombinedUncertainty()
+    central_value = calc_comb.CalculateCombinedValue()
+    combined_unc  = calc_comb.CalculateCombinedUncertainty()
+
+    # get the weights from the combined BLUE calculation
+    # and give them to the individual calculators
+    combined_alphas = calc_comb.GetAlphas()
+    for icalc in calc_indiv.values() :
+        icalc.SetAlphas( combined_alphas )
+    
+    # get the individual uncertainties and save them to a file
+    for unc, icalc in calc_indiv.iteritems() :
+
+        value = icalc.CalculateCombinedValue()
+        uncert= icalc.CalculateCombinedUncertainty()
+
+        results[unc] = ufloat( value, uncert )
 
     max_diffs = []
     for v1, m1 in central_values.iteritems() :
@@ -460,14 +523,19 @@ def get_jet_fake_results_new( base_dir, file_key, uncertainties, result_dirs, ff
     diff_unc = 0.5 * max_diff
     final_unc = math.sqrt( diff_unc*diff_unc + combined_unc*combined_unc)
 
+    results['diff'] = ufloat( central_value, diff_unc )
+
     #print 'Result = %f +- %f' %( central_value, 0.5*max_diff )
     print 'Diff unc = %f, Combined unc = %f' %( diff_unc, combined_unc )
     print 'Result = %f +- %f' %( central_value, final_unc ) 
-    print calc.alpha_array
-    print calc.err_matrix
+    print calc_comb.alpha_array
+    print calc_comb.err_matrix
 
-    return ufloat(central_value, final_unc )
-    #return ufloat(central_value, combined_unc )
+    print '***********************FIX********************'
+    #results['comb'] = ufloat(central_value, final_unc )
+    results['comb'] = ufloat(central_value, combined_unc )
+
+    return results
 
                 
 def get_ff_var_uncertainties( result_dir,  file_key_ffvar) :
@@ -744,7 +812,7 @@ def MakeJetBkgEstimate( base_dir_jet, pt_bins, channel, outputDir=None ) :
     #    pickle.dump( pred_elph2zcr, file_elph2zcr)
     #    file_elph2zcr.close()
 
-def MakeBkgEstimatePlots( baseDir, plotDir, plot_binning, channelmu='mu', channelel='elfull', minpt=15 ) :
+def MakeBkgEstimatePlots( result_dir, plot_binning, channelmu='mu', channelel='elfull', minpt=15 ) :
 
     # first make the nominal estimates
 
@@ -779,21 +847,21 @@ def MakeBkgEstimatePlots( baseDir, plotDir, plot_binning, channelmu='mu', channe
         # Data mgg
         #----------------------------
         hist_data_mgg = samplesWmugg.get_samples(name='Muon')[0].hist.Clone('pt_leadph12_%s%s'%(hist_tag, reg_tag))
-        save_hist( '%s/%s/Data/hist.root' %(baseDir, plotDir), hist_data_mgg )
+        save_hist( '%s/Data/hist.root' %(result_dir), hist_data_mgg )
 
         hist_data_mgg_pergev = hist_data_mgg.Clone( hist_data_mgg.GetName() + '_perGeV' )
         make_pergev_hist( hist_data_mgg, hist_data_mgg_pergev)
-        save_hist( '%s/%s/Data/hist.root' %(baseDir, plotDir), hist_data_mgg_pergev )
+        save_hist( '%s/Data/hist.root' %(result_dir), hist_data_mgg_pergev )
 
         #----------------------------
         # Data lgg
         #----------------------------
         hist_data_lgg = samplesWmugg.get_samples(name='Muon')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-        save_hist( '%s/%s/Muon/Data/hist.root' %(baseDir, plotDir), hist_data_lgg )
+        save_hist( '%s/Muon/Data/hist.root' %(result_dir), hist_data_lgg )
 
         hist_data_lgg_pergev = hist_data_lgg.Clone( hist_data_lgg.GetName() + '_perGeV' )
         make_pergev_hist( hist_data_lgg, hist_data_lgg_pergev)
-        save_hist( '%s/%s/Muon/Data/hist.root' %(baseDir, plotDir), hist_data_lgg_pergev )
+        save_hist( '%s/Muon/Data/hist.root' %(result_dir), hist_data_lgg_pergev )
 
         # Draw with weight
         #----------------------------
@@ -802,21 +870,21 @@ def MakeBkgEstimatePlots( baseDir, plotDir, plot_binning, channelmu='mu', channe
         success = samplesWmugg.create_hist( 'Wgg', 'pt_leadph12', weight_str_signal + ' PUWeight  * ( %s &&  pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(mu_base, minpt, minpt, reg_str), plot_binning )
         if success : 
             hist_sig_mgg  = samplesWmugg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_%s%s'%(hist_tag,reg_tag))
-            save_hist( '%s/%s/Wgg/hist.root' %(baseDir, plotDir), hist_sig_mgg )
+            save_hist( '%s/Wgg/hist.root' %(result_dir), hist_sig_mgg )
 
             hist_sig_mgg_pergev = hist_sig_mgg.Clone( hist_sig_mgg.GetName() + '_perGeV' )
             make_pergev_hist( hist_sig_mgg, hist_sig_mgg_pergev)
-            save_hist( '%s/%s/Wgg/hist.root' %(baseDir, plotDir), hist_sig_mgg_pergev )
+            save_hist( '%s/Wgg/hist.root' %(result_dir), hist_sig_mgg_pergev )
 
             #----------------------------
             # Wgg lgg
             #----------------------------
             hist_sig_lgg  = samplesWmugg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-            save_hist( '%s/%s/Muon/Wgg/hist.root' %(baseDir, plotDir), hist_sig_lgg )
+            save_hist( '%s/Muon/Wgg/hist.root' %(result_dir), hist_sig_lgg )
 
             hist_sig_lgg_pergev = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV' )
             make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev)
-            save_hist( '%s/%s/Muon/Wgg/hist.root' %(baseDir, plotDir), hist_sig_lgg_pergev )
+            save_hist( '%s/Muon/Wgg/hist.root' %(result_dir), hist_sig_lgg_pergev )
 
         #----------------------------
         # Zgg mgg
@@ -826,22 +894,26 @@ def MakeBkgEstimatePlots( baseDir, plotDir, plot_binning, channelmu='mu', channe
 
         if success : 
             hist_ZggFSR_mgg  = samplesWmugg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_%s%s'%(hist_tag, reg_tag))
-            add_syst_to_hist( hist_ZggFSR_mgg, 0.15 )
-            save_hist( '%s/%s/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_mgg )
+            hist_ZggFSR_mgg_nosyst=hist_ZggFSR_mgg.Clone( 'nosyst' )
+            save_hist( '%s/ZggNoSyst/hist.root' %(result_dir), hist_ZggFSR_mgg_nosyst )
+            add_syst_to_hist( hist_ZggFSR_mgg, 0.1 )
+            save_hist( '%s/Zgg/hist.root' %(result_dir), hist_ZggFSR_mgg )
 
             hist_ZggFSR_mgg_pergev = hist_ZggFSR_mgg.Clone( hist_ZggFSR_mgg.GetName() + '_perGeV' )
             make_pergev_hist( hist_ZggFSR_mgg, hist_ZggFSR_mgg_pergev)
-            save_hist( '%s/%s/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_mgg_pergev )
+            save_hist( '%s/Zgg/hist.root' %(result_dir), hist_ZggFSR_mgg_pergev )
             #----------------------------
             # Zgg lgg
             #----------------------------
             hist_ZggFSR_lgg  = samplesWmugg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-            add_syst_to_hist( hist_ZggFSR_lgg, 0.15 )
-            save_hist( '%s/%s/Muon/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_lgg )
+            hist_ZggFSR_lgg_nosyst = hist_ZggFSR_lgg.Clone( 'nosyst' )
+            save_hist( '%s/Muon/ZggNoSyst/hist.root' %(result_dir), hist_ZggFSR_lgg_nosyst )
+            add_syst_to_hist( hist_ZggFSR_lgg, 0.1 )
+            save_hist( '%s/Muon/Zgg/hist.root' %(result_dir), hist_ZggFSR_lgg )
 
             hist_ZggFSR_lgg_pergev = hist_ZggFSR_lgg.Clone( hist_ZggFSR_lgg.GetName() + '_perGeV' )
             make_pergev_hist( hist_ZggFSR_lgg, hist_ZggFSR_lgg_pergev)
-            save_hist( '%s/%s/Muon/Zgg/hist.root' %(baseDir, plotDir), hist_ZggFSR_lgg_pergev )
+            save_hist( '%s/Muon/Zgg/hist.root' %(result_dir), hist_ZggFSR_lgg_pergev )
 
         #----------------------------
         # Other Di Photon mgg
@@ -849,20 +921,20 @@ def MakeBkgEstimatePlots( baseDir, plotDir, plot_binning, channelmu='mu', channe
         success = samplesWmugg.create_hist( 'OtherDiPhoton', 'pt_leadph12', weight_str + ' PUWeight  * ( %s  && pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(mu_base, minpt, minpt, reg_str), plot_binning )
         if success :
             hist_dip_mgg  = samplesWmugg.get_samples(name='OtherDiPhoton')[0].hist.Clone('pt_leadph12_%s%s'%(hist_tag,reg_tag))
-            save_hist( '%s/%s/OtherDiPhoton/hist.root' %(baseDir, plotDir), hist_dip_mgg )
+            save_hist( '%s/OtherDiPhoton/hist.root' %(result_dir), hist_dip_mgg )
 
             hist_dip_mgg_pergev = hist_dip_mgg.Clone( hist_dip_mgg.GetName() + '_perGeV' )
             make_pergev_hist( hist_dip_mgg, hist_dip_mgg_pergev)
-            save_hist( '%s/%s/OtherDiPhoton/hist.root' %(baseDir, plotDir), hist_dip_mgg_pergev )
+            save_hist( '%s/OtherDiPhoton/hist.root' %(result_dir), hist_dip_mgg_pergev )
             #----------------------------
             # Other Di Photon lgg
             #----------------------------
             hist_dip_lgg  = samplesWmugg.get_samples(name='OtherDiPhoton')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-            save_hist( '%s/%s/Muon/OtherDiPhoton/hist.root' %(baseDir, plotDir), hist_dip_lgg )
+            save_hist( '%s/Muon/OtherDiPhoton/hist.root' %(result_dir), hist_dip_lgg )
 
             hist_dip_lgg_pergev = hist_dip_lgg.Clone( hist_dip_lgg.GetName() + '_perGeV' )
             make_pergev_hist( hist_dip_lgg, hist_dip_lgg_pergev)
-            save_hist( '%s/%s/Muon/OtherDiPhoton/hist.root' %(baseDir, plotDir), hist_dip_lgg_pergev )
+            save_hist( '%s/Muon/OtherDiPhoton/hist.root' %(result_dir), hist_dip_lgg_pergev )
             #hist_Zgg_mgg     = samplesWmugg.get_samples(name='Zgg')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
             #hist_Zgg_mgg.Add(hist_ZggFSR_mgg)
             #add_syst_to_hist( hist_Zgg_mgg, 0.15 )
@@ -870,62 +942,32 @@ def MakeBkgEstimatePlots( baseDir, plotDir, plot_binning, channelmu='mu', channe
 
         draw_str_el = 'PUWeight * ( %s && pt_leadph12 > %d && pt_sublph12 > %d &&  %s )' %(el_cuts[channelel+'vetoboth'], minpt, minpt, reg_str)
 
-        #draw_str_nom = 'PUWeight * ( %s && pt_leadph12 > %d && pt_sublph12 > %d &&  %s ) ' %(el_cuts[channelel], minpt, minpt, reg_str)
-        #draw_str_loose = 'PUWeight * ( %s && pt_leadph12 > %d && pt_sublph12 > %d  &&  %s ) ' %(minpt, minpt, reg_str)
-        #draw_str_zcr =  'PUWeight  *  (  &&  pt_leadph12 > %d && pt_sublph12 > %d && %s ) ' %(_mgg_cut, minpt, minpt, reg_str)
-        #draw_str_zcrph1 =  'PUWeight  *  (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > %.1f && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph1-91.2)<10) &&  pt_leadph12 > %d && pt_subph12 > %d &&  %s ) ' %(_mgg_cut, minpt, minpt, reg_str)
-        #draw_str_zcrph2 =  'PUWeight * (el_passtrig_n>0 && el_n==1 && ph_n==2 && m_ph1_ph2 > %.1f && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && (fabs(m_leadLep_ph2-91.2)<10) &&  pt_leadph12 > %d && pt_subph12 > %d &&  %s ) ' %(_mgg_cut, minpt, minpt, reg_str)
-
         hist_tag_el = '%s%s' %( channelel, reg_tag )
 
-        #hist_tag_nom    = 'egg%s' %reg_tag
-        #hist_tag_zcr    = 'egg_zcr%s' %reg_tag
-        #hist_tag_loose    = 'egg_loose%s' %reg_tag
-        #hist_tag_zcrph1 = 'egg_zcrph1%s' %reg_tag
-        #hist_tag_zcrph2 = 'egg_zcrph2%s' %reg_tag
+        save_electron_hists( draw_str_el    , weight_str, event_weight, plot_binning, result_dir, hist_tag_el    )
 
-        save_electron_hists( draw_str_el    , weight_str, event_weight, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_el    )
-        #save_electron_hists( draw_str_nom    , weight_str, event_weight, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_nom    )
-        #save_electron_hists( draw_str_nom    , weight_str, event_weight, plot_binning, '%s/%s/Electron' %(baseDir, plotDir), 'lgg'    )
-        #save_electron_hists( draw_str_zcr   , weight_str, event_weight, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcr    )
-        #save_electron_hists( draw_str_loose, weight_str, event_weight, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_loose    )
-        #save_electron_hists( draw_str_zcrph1, weight_str, event_weight, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph1 )
-        #save_electron_hists( draw_str_zcrph2, weight_str, event_weight, plot_binning, '%s/%s' %(baseDir, plotDir), hist_tag_zcrph2 )
+    make_hist_from_pickle( samplesWmugg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelmu), '%s/JetFake/hist.root' %(result_dir), tag=hist_tag, regions=regions )
+    make_hist_from_pickle( samplesWelgg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelel), '%s/JetFake/hist.root' %(result_dir), tag=channelel, regions=regions )
+    make_hist_from_pickle( samplesWelgg, '%s/electron_fake_results__%s.pickle'%(result_dir,channelel), '%s/EleFake/hist.root' %(result_dir), tag=channelel, regions=regions  )
 
-    make_hist_from_pickle( samplesWmugg, baseDir + '/jet_fake_results__%s.pickle'%channelmu            , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag=hist_tag, regions=regions )
-    make_hist_from_pickle( samplesWmugg, baseDir + '/jet_fake_results__%s.pickle'%channelmu            , '%s/%s/Muon/JetFake/hist.root' %(baseDir, plotDir), tag='lgg', regions=regions )
-    #make_hist_from_pickle( samplesWmugg, baseDir + '/jet_fake_results__mu.pickle'            , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='mgg', regions=regions, sum_syst={4 : 0.14, 5 : 0.14, 6 : 0.14 , 7 : 0.14} )
-    make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__%s.pickle'%channelel, '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag=channelel, regions=regions )
-    make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__%s.pickle'%channelel, '%s/%s/Electron/JetFake/hist.root' %(baseDir, plotDir), tag=channelel, regions=regions )
+    # not using summed hists
+    #make_hist_from_pickle( samplesWmugg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelmu), '%s/Muon/JetFake/hist.root' %(result_dir), tag='lgg', regions=regions )
+    #make_hist_from_pickle( samplesWelgg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelel), '%s/Electron/JetFake/hist.root' %(result_dir), tag=channelel, regions=regions )
+    #make_hist_from_pickle( samplesWelgg, '%s/electron_fake_results__%s.pickle'%(result_dir,channelel), '%s/Electron/EleFake/hist.root' %(result_dir), tag=channelel, regions=regions  )
+
     #make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results.pickle'            , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg', regions=regions, sum_syst={4 : 0.39, 5 : 0.255, 6 : 0.41, 7 : 0.41}  )
-    make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__%s.pickle'%channelel            , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag=channelel, regions=regions  )
-    make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__%s.pickle'%channelel            , '%s/%s/Electron/EleFake/hist.root' %(baseDir, plotDir), tag=channelel, regions=regions  )
 
-    #make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results.pickle'            , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg', regions=regions  )
-    #make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results.pickle'            , '%s/%s/Electron/EleFake/hist.root' %(baseDir, plotDir), tag='lgg', regions=regions  )
-
-    ##make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__ph1zcr.pickle'       , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg_zcrph1', regions=regions)
-    ##make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__egg_ZCRPh1.pickle'        , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg_zcrph1', regions=regions )
-
-    #make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__zcr.pickle'       , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg_zcr', regions=regions)
-    #make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__egg_ZCR.pickle'        , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg_zcr', regions=regions )
-
-    #make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__loose.pickle'       , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg_loose', regions=regions)
-    #make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__elloose.pickle'        , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg_loose', regions=regions )
-
-    ##make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results__ph2zcr.pickle'       , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg_zcrph2', regions=regions)
-    ##make_hist_from_pickle( samplesWelgg, baseDir + '/jet_fake_results__egg_ZCRPh2.pickle'        , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag='egg_zcrph2', regions=regions )
-
-    # combine the electron and muon
-    # directories into the Summed directory
-    summed_dir = '%s/%sSummed' %(baseDir, plotDir) 
-    if not os.path.isdir( summed_dir ) :
-        os.makedirs( summed_dir )
-    for dir in os.listdir( '%s/%s/Electron' %(baseDir, plotDir)  ) :
-        if not os.path.isdir( '%s/%s' %( summed_dir, dir ) ) :
-            os.makedirs( '%s/%s' %( summed_dir, dir ) )
-        os.system( 'hadd -f %s/%s/hist.root %s/%s/Electron/%s/hist.root %s/%s/Muon/%s/hist.root' %( summed_dir, dir, baseDir,plotDir,dir, baseDir,plotDir, dir)  )
-        os.system( 'cp %s/%s/Electron/EleFake/hist.root %s/EleFake/hist.root ' %( baseDir, plotDir, summed_dir ) )
+    # Dont make summed hists for now
+    ## combine the electron and muon
+    ## directories into the Summed directory
+    #summed_dir = '%s/%sSummed' %(baseDir, plotDir) 
+    #if not os.path.isdir( summed_dir ) :
+    #    os.makedirs( summed_dir )
+    #for dir in os.listdir( '%s/%s/Electron' %(baseDir, plotDir)  ) :
+    #    if not os.path.isdir( '%s/%s' %( summed_dir, dir ) ) :
+    #        os.makedirs( '%s/%s' %( summed_dir, dir ) )
+    #    os.system( 'hadd -f %s/%s/hist.root %s/%s/Electron/%s/hist.root %s/%s/Muon/%s/hist.root' %( summed_dir, dir, baseDir,plotDir,dir, baseDir,plotDir, dir)  )
+    #    os.system( 'cp %s/%s/Electron/EleFake/hist.root %s/EleFake/hist.root ' %( baseDir, plotDir, summed_dir ) )
 
 def save_electron_hists( draw_str, weight_str, event_weight, plot_binning, plot_dir, hist_tag ) :
 
@@ -963,9 +1005,10 @@ def save_electron_hists( draw_str, weight_str, event_weight, plot_binning, plot_
 
     if success :
         hist_Zgg_egg  = samplesWelgg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
+        hist_Zgg_egg_nosyst= hist_Zgg_egg.Clone( 'nosyst') 
 
-        add_syst_to_hist( hist_Zgg_egg, 0.15 )
-
+        save_hist( '%s/ZggNoSyst/hist.root' %(plot_dir), hist_Zgg_egg_nosyst )
+        add_syst_to_hist( hist_Zgg_egg, 0.10 )
         save_hist( '%s/Zgg/hist.root' %(plot_dir), hist_Zgg_egg )
 
         hist_Zgg_egg_pergev = hist_Zgg_egg.Clone( hist_Zgg_egg.GetName() + '_perGeV' )
@@ -991,7 +1034,7 @@ def add_syst_to_hist( hist, syst, err_bin=[] ) :
         err_bin = [err_bin]
 
     bins = range( 1, hist.GetNbinsX() +1 )
-    if err_bin is not None :
+    if err_bin :
         bins = err_bin
 
     for bin in bins :
@@ -1156,7 +1199,7 @@ def get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key ) :
 
 
 
-def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins, outputDir=None, el_selection='elfull', namePostfix='', coarse=False) :
+def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins, outputDir=None, el_selection='elfull', coarse=False) :
 
     print '-----------------------------------'
     print 'START NEW ELECTRON FAKE ESTMATE FOR %s' %el_selection
@@ -1214,8 +1257,8 @@ def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map
     ofile_subl.close()
 
     # get fake factors and binning from file
-    ff_man_coarse = FakeFactorManager( '%s/ElectronFakeManual/results.pickle' %base_dir_ele, ['fake_ratio'] )
-    #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatioTAndPMCTemplateNDKeys/results.pickle' %base_dir_ele, ['fake_ratio'] )
+    ff_man_coarse = FakeFactorManager( '%s/ElectronFakeManualWithOlap2/results.pickle' %base_dir_ele, ['fake_ratio'] )
+    #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatioMCTemplateNDKeys/results.pickle' %base_dir_ele, ['fake_ratio'] )
     #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatioTAndP/results.pickle' %base_dir_ele, ['fake_ratio'] )
     #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatio/results.pickle' %base_dir_ele, ['fake_ratio'] )
 

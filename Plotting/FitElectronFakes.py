@@ -96,7 +96,7 @@ def get_default_draw_commands( ) :
              'RR' :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_eta[0])<2.5 && fabs(ph_eta[1]) < 2.5',
            }
 
-def get_ratio_draw_commands( isConv=None, useCsev=False, useTAndP=False ) :
+def get_ratio_draw_commands( isConv=None, useCsev=False, useTAndP=False, mc=False ) :
 
     if isConv==False :
 
@@ -130,11 +130,15 @@ def get_ratio_draw_commands( isConv=None, useCsev=False, useTAndP=False ) :
                    }
         else :
 
-            return { 
-                     'nom'  :'el_passtrig_n==1 && el_n==1 && ph_medium_n==1  && ph_hasPixSeed[0]==0 && dr_ph1_trigEle > 0.4',
-                     'inv'  :'el_passtrig_n==1 && el_n==1 && ph_mediumFailEleVeto_n==1  && ph_hasPixSeed[0]==1  && dr_ph1_trigEle > 0.4 ',
+            nom = 'el_passtrig_n==1 && el_n==1 && ph_mediumPassPSV_n==1  && ph_hasPixSeed[ptSorted_ph_mediumPassPSV_idx[0]]==0 && dr_ph1_trigEle > 0.4'
+            inv = 'el_passtrig_n==1 && el_n==1 && ph_mediumFailPSV_n==1  && ph_hasPixSeed[ptSorted_ph_mediumFailPSV_idx[0]]==1 && dr_ph1_trigEle > 0.4 '
                      #'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] ',
-                   }
+
+            if mc : 
+
+                return { 'nom' : nom + ' && ph_truthMatch_el[ptSorted_ph_mediumPassPSV_idx[0]] ', 'inv' : inv +  ' && ph_truthMatch_el[ptSorted_ph_mediumFailPSV_idx[0]]' }
+            else :
+                return { 'nom'  : nom, 'inv'  : inv,}
 
 
 def get_fit_defaults( histname, useGaussSig=False, useLandauSig=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, useMCBkg=False, useTAndP=False ) :
@@ -231,7 +235,7 @@ def main() :
     # Use MC template with NDKeys smearing with cms shape bkg
     # For nominal fits
     #--------------------------
-    #extra_bkg_sample = 'Zg'
+    #extra_bkg_sample = 'Zgamma'
     extra_bkg_sample = None
     if options.ndkeys_cms_fine :
         DoElectronFakeFitRatio( outputDir=options.outputDir,useHist=useHist, useCoarseEta=False, useMCTemplate=True, useMCTemplateBackground=False, doNDKeys=True, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, extra_bkg_sample=extra_bkg_sample, useCsev=options.useCsev, useTAndP=options.useTAndP)
@@ -513,6 +517,8 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
     if useCoarseEta :
         subdir += 'CoarseEta'
 
+    dy_sample ='DYJetsToLLPhOlap'
+
     useCmsShapeBkg=True
     if usePolyBkg or useExpBkg or useChebyBkg or useBernsteinBkg or useMCTemplateBackground   :
         useCmsShapeBkg = False
@@ -522,16 +528,16 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
 
     #pt_bins = [(15,25), (25,40), (40,70), (15, 40), (15, 70), (15, 1000000) ]
     #pt_bins = [(15,20),(20,25),(25,30),(30,35),(35,40),(40,45),(45,50),(50,60),(60,70),(70,1000000) ]
-    pt_bins = [(15,25),(25,30), (30,35), (35,40),(40,45),(45,50), (50,55) ,(55,60), (60,70),(70,1000000) ]
+    pt_bins = [(15,25),(25,30), (30,35), (35,40),(40,45),(45,50), (50,60), (60,70),(70,1000000) ]
     #pt_bins = [(40,50), (50,60), (60,70),(70,1000000) ]
     #pt_bins = [(70,1000000) ]
     #pt_bins_80 = [ (70, 1000000) ]
 
     subl_pt_bins = { (15, 40) : [ (15, 25), (25, 30), (30, 35), (35, 40) ], 
                      (25, 40) : [(25, 30), (30, 35), (35, 40) ],
-                     (40, 70) : [(40,45), (45,50), (50,55), (55,60), (60,70) ],
-                     (15, 70) : [ (15, 25), (25, 30), (30, 35), (35, 40), (40,45), (45,50), (50,55), (55,60), (60,70)],
-                     (15, 1000000) : [ (15, 25), (25, 30), (30, 35), (35, 40), (40,45), (45,50), (50,55), (55,60), (60,70), (70, 1000000)],
+                     (40, 70) : [(40,45), (45,50), (50,60), (60,70) ],
+                     (15, 70) : [ (15, 25), (25, 30), (30, 35), (35, 40), (40,45), (45,50), (50,60), (60,70)],
+                     (15, 1000000) : [ (15, 25), (25, 30), (30, 35), (35, 40), (40,45), (45,50), (50,60), (60,70), (70, 1000000)],
                    }
     #subl_pt_bins = { (15, 40) : [(15,20),(20,25),(25,30),(30,35),(35,40) ], 
     #                (15, 70) : pt_bins[:-1] ,
@@ -545,7 +551,7 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
     eta_bins = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5) ]
     #eta_bins = [(0.0, 1.44), (1.57, 2.5) ]
     #eta_bins_80 = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.4), (2.4, 2.5) ]
-    mass_binning = (100, 0, 200)
+    mass_binning = (50, 0, 200)
 
     if useCoarseEta :
         eta_bins = [(0.0, 1.44), (1.57, 2.5)]
@@ -571,15 +577,18 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
             hists_extra = get_3d_mass_ratio_histograms( selection_nom, selection_inv, extra_bkg_sample, mass_binning, useHist=useHist, useAbsEta=True, useTAndP=useTAndP )
         
         if doNDKeys :
+            draw_cmds_mc = get_ratio_draw_commands(isConv=isConv, useCsev=useCsev, useTAndP=useTAndP, mc=False )
+            selection_mc_nom = draw_cmds_mc['nom'] 
+            selection_mc_inv = draw_cmds_mc['inv'] 
             if useMCTemplateBackground :
                 bkg_str = '1.0/EffectiveLumi * '
-                results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSampleBkg=extra_bkg_sample, ndKeysSelection=selection_nom, ndKeysSelectionBkg=bkg_str, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, selType='nom' )
-                results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSampleBkg=extra_bkg_sample, ndKeysSelection=selection_inv, ndKeysSelectionBkg=bkg_str, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, selType='inv' )
+                results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample=dy_sample, ndKeysSampleBkg=extra_bkg_sample, ndKeysSelection=selection_mc_nom, ndKeysSelectionBkg=bkg_str, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, selType='nom' )
+                results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample=dy_sample, ndKeysSampleBkg=extra_bkg_sample, ndKeysSelection=selection_mc_inv, ndKeysSelectionBkg=bkg_str, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, selType='inv' )
             else :
-                results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSelection=selection_nom, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, selType='nom' )
-                results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample='DYJetsToLLPhOlap', ndKeysSelection=selection_inv, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, selType='inv' )
+                results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample=dy_sample, ndKeysSelection=selection_mc_nom, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, selType='nom' )
+                results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample=dy_sample, ndKeysSelection=selection_mc_inv, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, selType='inv' )
         else :
-            template_hist = get_3d_mass_ratio_histograms( selection_nom, selection_inv, 'DYJetsToLLPhOlap', mass_binning, useHist=None, useAbsEta=True, useTAndP=useTAndP )
+            template_hist = get_3d_mass_ratio_histograms( selection_nom, selection_inv, dy_sample, mass_binning, useHist=None, useAbsEta=True, useTAndP=useTAndP )
             template_hist_bkg_nom = None
             template_hist_bkg_inv = None
             if useMCTemplateBackground :
@@ -1252,7 +1261,7 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, mcTemplateBkg=None, use
             eta_bin_min = hist.GetXaxis().FindBin( etamin )
             eta_bin_max = hist.GetXaxis().FindBin( etamax ) - 1
 
-            print 'ptmin = %d, ptmax = %d, etamin = %f, etamax = %f ' %(ptmin, ptmax, etamin, etamax )
+            print 'type = %s, ptmin = %d, ptmax = %d, etamin = %f, etamax = %f ' %(selType, ptmin, ptmax, etamin, etamax )
             print 'BIN : ptmin = %d, ptmax = %d, etamin = %d, etamax = %d ' %(pt_bin_min, pt_bin_max, eta_bin_min, eta_bin_max )
 
             if ptmax == last_pt :
@@ -1262,8 +1271,9 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, mcTemplateBkg=None, use
 
             hist_proj = hist.ProjectionZ(fitname, eta_bin_min, eta_bin_max, pt_bin_min, pt_bin_max )
 
-            if ptmax == last_pt and ptmin == nextlast_pt:
-                hist_proj.Rebin(2)
+            # don't rebin for high pt
+            #if ptmax == last_pt and ptmin == nextlast_pt:
+            #    hist_proj.Rebin(2)
 
             output_name = None
             if outputDir is not None :
@@ -1292,6 +1302,10 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, mcTemplateBkg=None, use
 
                 new_tree = orig_tree.CopyTree( pt_eta_selection)
                 nentries = new_tree.GetEntries()
+                if nentries < 5 :
+                    print 'WARNING : MC Sample has too few entries'
+                    continue
+
                 if nentries > 10000 :
                     filter_factor = int(math.floor(nentries/10000.))
                     print 'Tree has too many entries will copy with fewer'

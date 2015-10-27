@@ -51,13 +51,9 @@ def get_muon_sf(options) :
 
     muon_sf = Filter( 'AddMuonSF' )
 
-    if options.get('DiMuTrig', False ) :
 
-        muon_sf.add_var( 'FilePathTrig', '%s/MuHLTEfficiencies_Run_2012ABCD_53X_DR03-2.root' %base_path )
-        muon_sf.add_var( 'TriggerType', 'DiMuon' )
-    else :
-        muon_sf.add_var( 'FilePathTrig', '%s/SingleMuonTriggerEfficiencies_eta2p1_Run2012ABCD_v5trees.root' %base_path )
-        muon_sf.add_var( 'TriggerType', 'SingleMuon' )
+    muon_sf.add_var( 'FilePathTrig', '%s/SingleMuonTriggerEfficiencies_eta2p1_Run2012ABCD_v5trees.root' %base_path )
+    muon_sf.add_var( 'FilePathDiTrig', '%s/triggerSummary_mumu_rereco198fb.root' %base_path )
 
     muon_sf.add_var( 'FilePathIso', '%s/MuonEfficiencies_ISO_Run_2012ReReco_53X.root' %base_path )
     muon_sf.add_var( 'FilePathId', '%s/MuonEfficiencies_Run2012ReReco_53X.root' %base_path )
@@ -70,7 +66,9 @@ def get_electron_sf(options) :
 
     electron_sf = Filter( 'AddElectronSF' )
 
-    electron_sf.add_var( 'FilePathTrig', '%s/electrons_scale_factors.root' %base_path )
+    electron_sf.add_var( 'FilePathID', '%s/electrons_scale_factors.root' %base_path )
+    electron_sf.add_var( 'FilePathDiTrig', '%s/triggerSummary_ee_rereco198fb.root' %base_path )
+    electron_sf.add_var( 'FilePathCutID', '%s/CutBasedIdScaleFactors.root' %base_path )
 
     return electron_sf
 

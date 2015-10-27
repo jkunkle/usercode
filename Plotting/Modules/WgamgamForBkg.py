@@ -13,7 +13,7 @@ def config_samples(samples) :
     samples.AddSample('muon_2012d_Jan22rereco'       , path='job_muon_2012d_Jan22rereco'        ,  isActive=False, required=False, scale=1.0 )
     samples.AddSample('DYJetsToLL'                   , path='job_summer12_DYJetsToLL_s10'         ,  isActive=False, useXSFile=True )
 
-    samples.AddSample('DYJetsToLLPhOlap'             , path='job_summer12_DYJetsToLL_s10PhOlap'     ,  isActive=False, required=True, useXSFile=True, XSName='DYJetsToLL')
+    samples.AddSample('DYJetsToLLPhOlap'             , path='job_summer12_DYJetsToLL_s10PhOlap'     ,  isActive=False, required=False, useXSFile=True, XSName='DYJetsToLL')
     samples.AddSample('tbar_s'                       , path='job_summer12_tbar_s'               ,  isActive=False, required=False, useXSFile=True )
     samples.AddSample('tbar_t'                       , path='job_summer12_tbar_t'               ,  isActive=False, required=False, useXSFile=True )
     samples.AddSample('tbar_tW'                      , path='job_summer12_tbar_tW'              ,  isActive=False, required=False, useXSFile=True )

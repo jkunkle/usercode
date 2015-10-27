@@ -83,10 +83,11 @@ def config_analysis( alg_list, args ) :
     #----------------------------------------
     print 'PHOTON PT CUT = 15'
     #alg_list.append( get_photon_filter( id=None, eVeto='hasPixSeed', ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False, doMuOlapRm=False, doPhOlapRm=False) )
-    alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=True ) )
+    alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True ) )
+    #alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False ) )
     #alg_list.append( get_photon_filter( id='medium', eVeto=None, eVetoVal='False', ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False) )
     #alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.4) )
-    print 'SAVING NOID WITH EVETO  PHOTONS, WITH OLAP REMOVAL'
+    print 'MEDIUM PHOTON ID'
 
     #----------------------------------------
     # Other photon filters
@@ -190,6 +191,27 @@ def get_electron_filter ( id, ptcut=10, doPhOlapRm=False ) :
     return filt
 
 def get_photon_filter( id=None, eVeto=None, eVetoVal='False', ptcut=10, sort_by_id='false', doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.4 ) :
+
+    if id is None :
+        print 'NO PHOTON ID'
+    else :
+        print 'FILTER %s PHOTONS' %id
+    if eVeto is None :
+        print 'NO PHOTON EVETO'
+    else :
+        if eVetoVal == 'False' :
+            print 'REMOVE PHOTONS FAILING ELECTRON VETO, %s' %eVeto
+        else :
+            print 'REMOVE PHOTONS PASSING ELECTRON VETO, %s' %eVeto
+
+    if doElOlapRm : 
+        print 'FILER PHOTONS FROM ALL ELECTRONS, dR > %.2f' %olapDR
+    if doTrigElOlapRm : 
+        print 'FILER PHOTONS FROM LEADING TRIGGERED ELECTRON, dR > %.2f' %olapDR
+    if doMuOlapRm : 
+        print 'FILER PHOTONS FROM ALL MUONS, dR > %.2f' %olapDR
+    if doPhOlapRm : 
+        print 'FILER PHOTONS FROM OVERLAPPING PHOTONS OF HIGHER PT, dR > %.2f' %olapDR
 
     if sort_by_id == True :
         sort_by_id = 'true'

@@ -45,22 +45,23 @@ el_cuts = {
            'muwlowmtnolepveto' : 'mu_passtrig25_n>0 && ph_mediumNoEleVeto_n==1 && ph_HoverE12[0] < 0.05 && mt_trigmu_met < 40 ',
            'muwlowmttightmu'   : 'mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoEleVeto_n==1 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met < 40 && fabs(mu_d0[0]) < 0.015 && (mu_corrIso[0]/mu_pt[0]) < 0.12 && mu_pt[0] < 40 ',
            'muwlowmttightmuhighpt'   : 'mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoEleVeto_n==1 && ph_HoverE12[0] < 0.05 && el_n==0 && mt_trigmu_met < 40 && fabs(mu_d0[0]) < 0.015 && (mu_corrIso[0]/mu_pt[0]) < 0.12 && mu_pt[0] > 80 ',
-           'singleelwzcr'      : 'el_passtrig_n>0   && mu_n==0 && ph_mediumFailEleVeto_n==1 && ph_hasPixSeed[0]==1 && m_trigelph1 > 76 && m_trigelph1 < 106 ' ,
-           'singleelwzcrloose' : 'el_passtrig_n>0   && mu_n==0 && ph_mediumFailEleVeto_n==1 && ph_hasPixSeed[0]==1 && m_trigelph1 > 50 && m_trigelph1 < 106 ',
-           'singleelw'         : 'el_passtrig_n>0   && mu_n==0 && ph_mediumFailEleVeto_n==1 && ph_hasPixSeed[0]==1 && mt_trigel_met > 60  ',
-           'singleelwsr'       : 'el_passtrig_n>0   && mu_n==0 && ph_mediumFailEleVeto_n==1 && ph_hasPixSeed[0]==1 && mt_trigel_met > 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
-           'singleelwsrtight'  : 'el_passtrig_n>0   && mu_n==0 && ph_mediumFailEleVeto_n==1 && ph_hasPixSeed[0]==1 && mt_trigel_met > 80 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
-           'singleelwsrlowmt'  : 'el_passtrig_n>0   && mu_n==0 && ph_mediumFailEleVeto_n==1 && ph_hasPixSeed[0]==1 && mt_trigel_met < 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
-           'elw'               : 'el_passtrig_n>0   && mu_n==0 && ph_medium_n==1 && mu_n==0 && mt_trigel_met > 60  ',
-           'elwsr'             : 'el_passtrig_n>0   && mu_n==0 && ph_medium_n==1 && mt_trigel_met > 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
-           'elwsrtight'        : 'el_passtrig_n>0   && mu_n==0 && ph_medium_n==1 && mt_trigel_met > 80 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
-           'elwsrlowmt'        : 'el_passtrig_n>0   && mu_n==0 && ph_medium_n==1 && mt_trigel_met < 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
-           'elwzcr'            : 'el_passtrig_n>0   && mu_n==0 && ph_medium_n==1 && ph_hasPixSeed[0]==0 && m_trigelph1 > 76 && m_trigelph1 < 106 ',
-           'elwzcrloose'       : 'el_passtrig_n>0   && mu_n==0 && ph_medium_n==1 && ph_hasPixSeed[0]==0 && m_trigelph1 > 50 && m_trigelph1 < 106 ',
-           'el'                : 'el_passtrig_n>0   && el_n==2 && ph_medium_n==1 && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f && m_leplep>60 && m_leplepph > 105' %( lead_dr_cut, lead_dr_cut ) ,
-           'mu'                : 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoEleVeto_n==1 && leadPhot_leadLepDR>%.1f  && leadPhot_sublLepDR>%.1f && el_n==0 && m_leplep>60 && m_leplepph > 105' %( lead_dr_cut, lead_dr_cut ) ,
-           'elrealcr'          : 'el_passtrig_n>0   && el_n==2 && ph_medium_n==1 && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f && m_leplep>60 && m_leplepph >81 && m_leplepph < 101' %( lead_dr_cut, lead_dr_cut ) ,
-           'murealcr'          : 'mu_passtrig25_n>0 && mu_n==2 && ph_medium_n==1 && leadPhot_leadLepDR>%.1f  && leadPhot_sublLepDR>%.1f && el_n==0 && m_leplep>60 && m_leplepph >81 && m_leplepph < 101' %( lead_dr_cut, lead_dr_cut ) ,
+           'singleelwzcr'      : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumFailPSV_n==1 && ph_hasPixSeed[0]==1 && m_trigelph1 > 76 && m_trigelph1 < 106 ' ,
+           'singleelwzcrloose' : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumFailPSV_n==1 && ph_hasPixSeed[0]==1 && m_trigelph1 > 50 && m_trigelph1 < 106 ',
+           'singleelw'         : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumFailPSV_n==1 && ph_hasPixSeed[0]==1 && mt_trigel_met > 60  ',
+           'singleelwsr'       : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumFailPSV_n==1 && ph_hasPixSeed[0]==1 && mt_trigel_met > 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
+           'singleelwsrtight'  : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumFailEleVeto_n==1 && ph_hasPixSeed[0]==1 && mt_trigel_met > 80 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
+           'singleelwsrlowmt'  : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumFailEleVeto_n==1 && ph_hasPixSeed[0]==1 && mt_trigel_met < 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
+           'elw'               : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumPassPSV_n==1 && mu_n==0 && mt_trigel_met > 60  ',
+           'elwsr'             : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumPassPSV_n==1 && mt_trigel_met > 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
+           'elwsrtight'        : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumPassPSV_n==1 && mt_trigel_met > 80 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
+           'elwsrlowmt'        : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumPassPSV_n==1 && mt_trigel_met < 40 && !( m_trigelph1 > 76 && m_trigelph1 < 106 ) ',
+           'elwzcr'            : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumPassPSV_n==1 && ph_hasPixSeed[0]==0 && m_trigelph1 > 76 && m_trigelph1 < 106 ',
+           'elwzcrloose'       : 'el_passtrig_n>0 && el_n==1  && mu_n==0 && ph_mediumPassPSV_n==1 && ph_hasPixSeed[0]==0 && m_trigelph1 > 50 && m_trigelph1 < 106 ',
+
+           'elz'                : 'el_passtrig_n>0 && el_n==2 && ph_mediumNoEleVeto_n==1 && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f && m_leplep>60 && m_leplepph > 105' %( lead_dr_cut, lead_dr_cut ) ,
+           'muz'                : 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoEleVeto_n==1 && leadPhot_leadLepDR>%.1f  && leadPhot_sublLepDR>%.1f && m_leplep>60 && m_leplepph > 105' %( lead_dr_cut, lead_dr_cut ) ,
+           'elrealcr'          : 'el_passtrig_n>0   && el_n==2 && ph_mediumPassPSV_n==1 && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f && m_leplep>60 && m_leplepph >81 && m_leplepph < 101' %( lead_dr_cut, lead_dr_cut ) ,
+           'murealcr'          : 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumPassPSV_n==1 && leadPhot_leadLepDR>%.1f  && leadPhot_sublLepDR>%.1f && el_n==0 && m_leplep>60 && m_leplepph >81 && m_leplepph < 101' %( lead_dr_cut, lead_dr_cut ) ,
 }
 
 def main() :
@@ -69,15 +70,15 @@ def main() :
     global samplesLLG
     global samplesLG
 
-    baseDirLLG  = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_09_09'
-    #baseDirLG   = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_07_30'
-    baseDirLG   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhIDLooseMuonID_2015_09_22'
+    baseDirLLG  = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_10_01'
+    baseDirLG   = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_10_01'
+    #baseDirLG   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhIDLooseMuonID_2015_09_22'
     #baseDirLG   = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaJJNoPhID_2015_05_05'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
 
-    sampleConfLLG = 'Modules/Wgamgam.py'
+    sampleConfLLG = 'Modules/WgamgamForBkg.py'
 
     samplesLLG  = SampleManager(baseDirLLG,  treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
     samplesLG   = SampleManager(baseDirLG ,  treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
@@ -87,44 +88,59 @@ def main() :
 
     if options.wcr :
 
-        suffix = 'TAndP'
-        path_manual        = 'ElectronFakeManual' 
-        path_manualL        = 'ElectronFakeManualLoose' 
-        path_nom           = 'ElectronFakeFitsRatio%s' %suffix 
-        path_mctempnd        = 'ElectronFakeFitsRatio%sMCTemplateNDKeys' %suffix
-        path_mctemp        = 'ElectronFakeFitsRatio%sMCTemplate' %suffix
+        #suffix = 'TAndP'
+        suffix = ''
+        path_manual   = 'ElectronFakeManual' 
+        path_manualL  = 'ElectronFakeManualLoose' 
+        path_nom      = 'ElectronFakeFitsRatio%s' %suffix 
+        path_mctempnd = 'ElectronFakeFitsRatio%sMCTemplateNDKeys' %suffix
+        #path_mctempnd = 'ElectronFakeFitsRatioTruthMatchMCTemplateNDKeys'
+        path_mctemp   = 'ElectronFakeFitsRatio%sMCTemplate' %suffix
+        path_subtract = 'ElectronFakeFitsRatioMCTemplateNDKeysSubtractZgamma'
 
         file_bin_map = {}
         file_bin_map_syst = {}
 
+        # -----------------
+        # Set the path here so it is picked up for jet background
+        # -----------------
+        path_used = path_mctempnd
+        #path_used = path_manual
+        #path_used = path_subtract
+        #path_used = path_nom
+
         # go up to the second-to-last bin
         for bidx in range( 0, len( _ptbins ) - 2 ) :
-            #file_bin_map.setdefault(path_mctempnd, []).append((_ptbins[bidx], _ptbins[bidx+1]))
-            #file_bin_map_syst.setdefault(path_mctempnd, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+            #file_bin_map.setdefault(path_subtract, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+            #file_bin_map_syst.setdefault(path_subtract, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+            file_bin_map.setdefault(path_mctempnd, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+            file_bin_map_syst.setdefault(path_mctempnd, []).append((_ptbins[bidx], _ptbins[bidx+1]))
             #file_bin_map.setdefault(path_nom, []).append((_ptbins[bidx], _ptbins[bidx+1]))
             #file_bin_map_syst.setdefault(path_nom, []).append((_ptbins[bidx], _ptbins[bidx+1]))
             #file_bin_map.setdefault(path_mctemp, []).append((_ptbins[bidx], _ptbins[bidx+1]))
             #file_bin_map_syst.setdefault(path_mctemp, []).append((_ptbins[bidx], _ptbins[bidx+1]))
-            file_bin_map.setdefault(path_manual, []).append((_ptbins[bidx], _ptbins[bidx+1]))
-            file_bin_map_syst.setdefault(path_manual, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+            #file_bin_map.setdefault(path_manual, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+            #file_bin_map_syst.setdefault(path_manual, []).append((_ptbins[bidx], _ptbins[bidx+1]))
 
         # do the last bin
         #file_bin_map[path_nom].append((_ptbins[-2], 'max') )
         #file_bin_map_syst[path_nom].append((_ptbins[-2], 'max') )
         #file_bin_map[path_mctemp].append((_ptbins[-2], 'max') )
         #file_bin_map_syst[path_mctemp].append((_ptbins[-2], 'max') )
-        file_bin_map[path_manual].append((_ptbins[-2], 'max'))
-        file_bin_map_syst[path_manual].append((_ptbins[-2], 'max'))
-        #file_bin_map[path_mctempnd].append ((_ptbins[-2], 'max'))
-        #file_bin_map_syst[path_mctempnd].append((_ptbins[-2], 'max'))
+        #file_bin_map[path_manual].append((_ptbins[-2], 'max'))
+        #file_bin_map_syst[path_manual].append((_ptbins[-2], 'max'))
+        file_bin_map[path_mctempnd].append ((_ptbins[-2], 'max'))
+        file_bin_map_syst[path_mctempnd].append((_ptbins[-2], 'max'))
+        #file_bin_map[path_subtract].append ((_ptbins[-2], 'max'))
+        #file_bin_map_syst[path_subtract].append((_ptbins[-2], 'max'))
 
-        #eta_bins = {'EB' : [(0.00, 0.10), (0.10, 0.50), (0.50, 1.00), (1.00, 1.44)],
-        #            'EE' : [(1.57, 2.10), (2.10, 2.20), (2.20, 2.40), (2.40, 2.50)]}
+        eta_bins = {'EB' : [(0.00, 0.10), (0.10, 0.50), (0.50, 1.00), (1.00, 1.44)],
+                    'EE' : [(1.57, 2.10), (2.10, 2.20), (2.20, 2.40), (2.40, 2.50)]}
 
-        eta_bins = {'EB' : [(0.00, 1.44)], 'EE' : [(1.57, 2.50)]}
-        eta_bins_plot = {'EB' : [], 'EE' : []}
+        eta_bins_plot = eta_bins
 
-        print file_bin_map
+        #eta_bins = {'EB' : [(0.00, 1.44)], 'EE' : [(1.57, 2.50)]}
+        #eta_bins_plot = {'EB' : [], 'EE' : []}
 
         for typedir in os.listdir( '%s/SinglePhotonResults'%options.baseDir ) :
             if typedir != 'SigmaIEIEFits' :
@@ -136,31 +152,22 @@ def main() :
             channels = []
             channelsel = []
 
-            #channelsel = ['elw', 'elwsr', 'elwsrlowmt' ]
-            #channelsel = ['elwsrtight']
+            #channelsel = ['elw', 'elwsr', 'elwsrtight', 'elwzcr' ]
+            channelsel = ['elwzcr' ]
             for elch in channelsel :
                 channels.append( elch )
                 channels.append( elch+'invpixlead' )
 
             #channelsmu = ['muwlowmtnolepveto']
-            channelsmu = ['muwlowmttightmuhighpt']
+            channelsmu = []
             channels += channelsmu
             
 
             MakeSingleJetBkgEstimate( base_dir_jet_single, channels=channels,eta_bins=eta_bins, outputDir=outputDirSingle )
 
-            #MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['elwzcr', 'elwzcrinvpixlead'],eta_bins=eta_bins, outputDir=outputDirSingle )
-            #MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['elwzcrloose', 'elwzcrlooseinvpixlead'],eta_bins=eta_bins, outputDir=outputDirSingle )
-
-            #MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst, eta_bins=eta_bins, el_selection='elwzcr', outputDir=outputDirSingle )
-            #MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst, eta_bins=eta_bins, el_selection='elwzcrloose', outputDir=outputDirSingle )
-            #MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst,eta_bins=eta_bins, el_selection='elw', outputDir=outputDirSingle )
-            #MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst,eta_bins=eta_bins, el_selection='elwsr', outputDir=outputDirSingle )
-            #MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst,eta_bins=eta_bins, el_selection='elwsrlowmt', outputDir=outputDirSingle )
-            #MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst,eta_bins=eta_bins, el_selection='elwzcr', outputDir=outputDirSingle )
-
             for ch in channelsel :
-                MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst,eta_bins=eta_bins, el_selection=ch, outputDir=outputDirSingle )
+                MakeSingleEleBkgEstimate( base_dir_ele_single, base_dir_jet_single, file_bin_map, file_bin_map_syst,eta_bins=eta_bins, elffdir=path_used, el_selection=ch, outputDir=outputDirSingle )
+
             #MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['muw'],outputDir=outputDirSingle )
 
 
@@ -177,15 +184,17 @@ def main() :
             base_dir_jet_single = '%s/SinglePhotonResults/%s' %(options.baseDir, typedir )
             outputDirSingle='%s/SinglePhotonZCRBackgroundEstimates/%s' %(options.baseDir, typedir)
 
-            #MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['mu', 'el', 'murealcr', 'elrealcr'], outputDir=outputDirSingle )
-            #MakeSingleBkgEstimatePlots( outputDirSingle, options.plotDir, channels=['mu', 'el', 'murealcr', 'elrealcr'], makeEleFake=False )
-            MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['mu'], outputDir=outputDirSingle )
-            MakeSingleBkgEstimatePlots( outputDirSingle, options.plotDir, channels=['mu'], makeEleFake=False )
+            eta_bins = {'EB' : [(0.00, 1.44)], 'EE' : [(1.57, 2.50)]}
+            eta_bins_plot = {'EB' : [], 'EE' : []}
+            MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['muz', 'elz'], eta_bins=eta_bins, outputDir=outputDirSingle )
+            MakeSingleBkgEstimatePlots( outputDirSingle, options.plotDir, channels=['muz', 'elz'], eta_bins=eta_bins_plot, makeEleFake=False )
+            #MakeSingleJetBkgEstimate( base_dir_jet_single, channels=['mu'], outputDir=outputDirSingle )
+            #MakeSingleBkgEstimatePlots( outputDirSingle, options.plotDir, channels=['mu'], makeEleFake=False )
 
     print '^_^ FINSISHED ^_^'
     print 'It is safe to kill the program if it is hanging'
 
-def MakeSingleEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, eta_bins, outputDir=None, el_selection='elw') :
+def MakeSingleEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, eta_bins, elffdir, el_selection='elw', outputDir=None) :
 
     el_acc = ['elw', 'elwzcr', 'elwzcrloose', 'elwsr', 'elwsrlowmt']
     if el_selection not in el_acc :
@@ -223,13 +232,13 @@ def MakeSingleEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_
 
     pt_bins_jetfile = [str(x) for x in _ptbins[:-1]]
     pt_bins_jetfile.append( 'max')
-    pred_lead = get_jet_single_fake_results( jet_files_lead, jet_files_lead_syst, regions, pt_bins_jetfile,  jet_dir_key_map, base_dir_jet, eta_bins=eta_bins ) 
+    pred_lead = get_jet_single_fake_results( jet_files_lead, jet_files_lead_syst, regions, pt_bins_jetfile,  jet_dir_key_map, base_dir_jet, eta_bins=eta_bins) 
 
     # get fake factors and binning from file
-    #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatioTAndPMCTemplateNDKeys/results.pickle' %base_dir_ele, ['fake_ratio'] )
+    ff_man_coarse = FakeFactorManager( '%s/%s/results.pickle' %(base_dir_ele, elffdir), ['fake_ratio'] )
     #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatio/results.pickle' %base_dir_ele, ['fake_ratio'] )
     #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatioTAndPMCTemplate/results.pickle' %base_dir_ele, ['fake_ratio'] )
-    ff_man_coarse = FakeFactorManager( '%s/ElectronFakeManual/results.pickle' %base_dir_ele, ['fake_ratio'] )
+    #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeManualWithOlap2/results.pickle' %base_dir_ele, ['fake_ratio'] )
 
     scaled_f = {}
     for r1 in regions :
@@ -337,7 +346,7 @@ def MakeSingleJetBkgEstimate( base_dir_jet, channels=[], eta_bins={}, outputDir=
         update_jet_files_dict( jet_files, jet_files_eta )
         update_jet_files_dict( jet_files_syst, jet_files_eta_syst )
 
-        jet_pred     = get_jet_single_fake_results( jet_files    , jet_files_syst    , regions, pt_bins_jetfile,  jet_dir_key_map, base_dir_jet, eta_bins=eta_bins ) 
+        jet_pred     = get_jet_single_fake_results( jet_files    , jet_files_syst    , regions, pt_bins_jetfile,  jet_dir_key_map, base_dir_jet, eta_bins=eta_bins) 
 
         print 'Predicted Jet fakes for channel %s' %channel
 
@@ -346,7 +355,13 @@ def MakeSingleJetBkgEstimate( base_dir_jet, channels=[], eta_bins={}, outputDir=
             for idx, ptmin in enumerate(pt_bins_jetfile[:-1] ) :
                 ptmax = pt_bins_jetfile[idx+1]
 
-                if eta_bins :
+                single_eta_bin = False
+                if not eta_bins :
+                    single_eta_bin = True
+                if len( eta_bins[r1] ) == 1 :
+                    single_eta_bin = True
+
+                if not single_eta_bin :
                     for etamin, etamax in eta_bins[r1] :
 
                         bin = ('%.2f-%.2f'%(etamin,etamax), ptmin, ptmax)
@@ -526,7 +541,13 @@ def get_jet_single_fake_results( jet_files, jet_files_syst, regions, pt_bins, je
         for idx, ptmin in enumerate(pt_bins[:-1]) :
             ptmax = pt_bins[idx+1]
 
-            if eta_bins :
+            single_eta_bin = False
+            if not eta_bins :
+                single_eta_bin = True
+            if len( eta_bins[r1] ) == 1 :
+                single_eta_bin = True
+
+            if not single_eta_bin :
                 for etamin, etamax in eta_bins[r1] :
                     reg_bin = ('%.2f-%.2f' %(etamin,etamax), ptmin, ptmax)
 

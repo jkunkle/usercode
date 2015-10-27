@@ -53,6 +53,18 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::el_trigSF = -1;
     OUT::el_trigSFUP = -1;
     OUT::el_trigSFDN = -1;
+
+    OUT::el_diTrigSF = -1;
+    OUT::el_diTrigSFUP = -1;
+    OUT::el_diTrigSFDN = -1;
+
+    OUT::el_mvaIDSF = -1;
+    OUT::el_mvaIDSFUP = -1;
+    OUT::el_mvaIDSFDN = -1;
+
+    OUT::el_looseIDSF = -1;
+    OUT::el_looseIDSFUP = -1;
+    OUT::el_looseIDSFDN = -1;
 #endif
 
 #ifdef MODULE_AddPhotonSF
@@ -60,15 +72,23 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::ph_idSFUP = -1;
     OUT::ph_idSFDN = -1;
 
-    OUT::ph_evetoSF = -1;
-    OUT::ph_evetoSFUP = -1;
-    OUT::ph_evetoSFDN = -1;
+    OUT::ph_psvSF = -1;
+    OUT::ph_psvSFUP = -1;
+    OUT::ph_psvSFDN = -1;
+
+    OUT::ph_csevSF = -1;
+    OUT::ph_csevSFUP = -1;
+    OUT::ph_csevSFDN = -1;
 #endif
 
 #ifdef MODULE_AddMuonSF
     OUT::mu_trigSF = -1;
     OUT::mu_trigSFUP = -1;
     OUT::mu_trigSFDN = -1;
+
+    OUT::mu_diTrigSF = -1;
+    OUT::mu_diTrigSFUP = -1;
+    OUT::mu_diTrigSFDN = -1;
 
     OUT::mu_isoSF = -1;
     OUT::mu_isoSFUP = -1;
@@ -96,21 +116,36 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch( "el_trigSF"    ,  &OUT::el_trigSF    , "el_trigSF/F"    );
     outtree->Branch( "el_trigSFUP"  ,  &OUT::el_trigSFUP  , "el_trigSFUP/F"  );
     outtree->Branch( "el_trigSFDN"  ,  &OUT::el_trigSFDN  , "el_trigSFDN/F"  );
+    outtree->Branch( "el_mvaIDSF"      ,  &OUT::el_mvaIDSF      , "el_mvaIDSF/F"      );
+    outtree->Branch( "el_mvaIDSFUP"    ,  &OUT::el_mvaIDSFUP    , "el_mvaIDSFUP/F"    );
+    outtree->Branch( "el_mvaIDSFDN"    ,  &OUT::el_mvaIDSFDN    , "el_mvaIDSFDN/F"    );
+    outtree->Branch( "el_looseIDSF"      ,  &OUT::el_looseIDSF      , "el_looseIDSF/F"      );
+    outtree->Branch( "el_looseIDSFUP"    ,  &OUT::el_looseIDSFUP    , "el_looseIDSFUP/F"    );
+    outtree->Branch( "el_looseIDSFDN"    ,  &OUT::el_looseIDSFDN    , "el_looseIDSFDN/F"    );
+    outtree->Branch( "el_diTrigSF"  ,  &OUT::el_diTrigSF  , "el_diTrigSF/F"  );
+    outtree->Branch( "el_diTrigSFUP",  &OUT::el_diTrigSFUP, "el_diTrigSFUP/F");
+    outtree->Branch( "el_diTrigSFDN",  &OUT::el_diTrigSFDN, "el_diTrigSFDN/F");
 #endif
    
 #ifdef MODULE_AddPhotonSF
     outtree->Branch( "ph_idSF"      ,  &OUT::ph_idSF      , "ph_idSF/F"      );
     outtree->Branch( "ph_idSFUP"    ,  &OUT::ph_idSFUP    , "ph_idSFUP/F"    );
     outtree->Branch( "ph_idSFDN"    ,  &OUT::ph_idSFDN    , "ph_idSFDN/F"    );
-    outtree->Branch( "ph_evetoSF"   ,  &OUT::ph_evetoSF   , "ph_evetoSF/F"   );
-    outtree->Branch( "ph_evetoSFUP" ,  &OUT::ph_evetoSFUP , "ph_evetoSFUP/F" );
-    outtree->Branch( "ph_evetoSFDN" ,  &OUT::ph_evetoSFDN , "ph_evetoSFDN/F" );
+    outtree->Branch( "ph_psvSF"     ,  &OUT::ph_psvSF     , "ph_psvSF/F"     );
+    outtree->Branch( "ph_psvSFUP"   ,  &OUT::ph_psvSFUP   , "ph_psvSFUP/F"   );
+    outtree->Branch( "ph_psvSFDN"   ,  &OUT::ph_psvSFDN   , "ph_psvSFDN/F"   );
+    outtree->Branch( "ph_csevSF"    ,  &OUT::ph_csevSF    , "ph_csevSF/F"    );
+    outtree->Branch( "ph_csevSFUP"  ,  &OUT::ph_csevSFUP  , "ph_csevSFUP/F"  );
+    outtree->Branch( "ph_csevSFDN"  ,  &OUT::ph_csevSFDN  , "ph_csevSFDN/F"  );
 #endif
 
 #ifdef MODULE_AddMuonSF
     outtree->Branch( "mu_trigSF"    ,  &OUT::mu_trigSF    , "mu_trigSF/F"    );
     outtree->Branch( "mu_trigSFUP"  ,  &OUT::mu_trigSFUP  , "mu_trigSFUP/F"  );
     outtree->Branch( "mu_trigSFDN"  ,  &OUT::mu_trigSFDN  , "mu_trigSFDN/F"  );
+    outtree->Branch( "mu_diTrigSF"  ,  &OUT::mu_diTrigSF  , "mu_diTrigSF/F"  );
+    outtree->Branch( "mu_diTrigSFUP",  &OUT::mu_diTrigSFUP, "mu_diTrigSFUP/F");
+    outtree->Branch( "mu_diTrigSFDN",  &OUT::mu_diTrigSFDN, "mu_diTrigSFDN/F");
     outtree->Branch( "mu_isoSF"     ,  &OUT::mu_isoSF     , "mu_isoSF/F"     );
     outtree->Branch( "mu_isoSFUP"   ,  &OUT::mu_isoSFUP   , "mu_isoSFUP/F"   );
     outtree->Branch( "mu_isoSFDN"   ,  &OUT::mu_isoSFDN   , "mu_isoSFDN/F"   );
@@ -165,17 +200,28 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 _sfgraph_mu_trig_trans  = dynamic_cast<TGraphAsymmErrors*>(_sffile_mu_trig->Get( "IsoMu24_eta2p1_DATA_over_MC_TightID_IsodB_PT_ABSETA_Transition_0p9to1p2_pt25-500_2012ABCD" ) );
                 _sfgraph_mu_trig_endcap = dynamic_cast<TGraphAsymmErrors*>(_sffile_mu_trig->Get( "IsoMu24_eta2p1_DATA_over_MC_TightID_IsodB_PT_ABSETA_Endcaps_1p2to2p1_pt25-500_2012ABCD" ) );
             }
+            itr = mod_conf.GetInitData().find( "FilePathDiTrig" );
+            if( itr != mod_conf.GetInitData().end() ) {
+                _sffile_mu_ditrig = TFile::Open( (itr->second).c_str(), "READ" );
+                _sfhist_mu_ditrig = dynamic_cast<TH2D*>(_sffile_mu_ditrig->Get( "scalefactor eta2d with syst" ));
+            }
         }
         if( mod_conf.GetName() == "AddElectronSF" ) { 
             std::map<std::string, std::string>::const_iterator itr;
-            itr = mod_conf.GetInitData().find( "FilePathId" );
+            itr = mod_conf.GetInitData().find( "FilePathID" );
             if( itr != mod_conf.GetInitData().end() ) {
                 _sffile_el_id = TFile::Open( (itr->second).c_str(), "READ" );
+                _sfhist_el_id = dynamic_cast<TH2F*>(_sffile_el_id->Get( "electronsDATAMCratio_FO_ID_ISO" ));
             }
-            itr = mod_conf.GetInitData().find( "FilePathTrig" );
+            itr = mod_conf.GetInitData().find( "FilePathDiTrig" );
             if( itr != mod_conf.GetInitData().end() ) {
-                _sffile_el_trig = TFile::Open( (itr->second).c_str(), "READ" );
-                _sfhist_el_trig = dynamic_cast<TH2F*>(_sffile_el_trig->Get( "electronsDATAMCratio_FO_ID_ISO" ));
+                _sffile_el_ditrig = TFile::Open( (itr->second).c_str(), "READ" );
+                _sfhist_el_ditrig = dynamic_cast<TH2D*>(_sffile_el_ditrig->Get( "scalefactor eta2d with syst" ));
+            }
+            itr = mod_conf.GetInitData().find( "FilePathCutID" );
+            if( itr != mod_conf.GetInitData().end() ) {
+                _sffile_el_cutid = TFile::Open( (itr->second).c_str(), "READ" );
+                _sfhist_el_looseid = dynamic_cast<TH2D*>(_sffile_el_cutid->Get( "sfLOOSE" ));
             }
         }
         if( mod_conf.GetName() == "AddPhotonSF" ) { 
@@ -183,17 +229,18 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
             itr = mod_conf.GetInitData().find( "FilePathId" );
             if( itr != mod_conf.GetInitData().end() ) {
                 _sffile_ph_id = TFile::Open( (itr->second).c_str(), "READ" );
-                _sfhist_ph_id = dynamic_cast<TH2F*>(_sffile_ph_id->Get( "PhotonIDSF_MediumWP_Jan22rereco_Full2012_S10_MC_V01" ) );
+                _sfhist_ph_id   = dynamic_cast<TH2F*>(_sffile_ph_id->Get( "PhotonIDSF_MediumWP_Jan22rereco_Full2012_S10_MC_V01" ) );
+                _sfhist_ph_csev = dynamic_cast<TH2F*>(_sffile_ph_id->Get( "PhotonCSEVSF_MediumWP_Jan22rereco_Full2012_S10_MC_V01" ) );
             }
             itr = mod_conf.GetInitData().find( "FilePathEveto" );
             if( itr != mod_conf.GetInitData().end() ) {
-                _sffile_ph_eveto = TFile::Open( (itr->second).c_str(), "READ" );
-                _sfhist_ph_eveto = dynamic_cast<TH2F*>(_sffile_ph_eveto->Get( "hist_sf_eveto_nom" ) );
+                _sffile_ph_psv = TFile::Open( (itr->second).c_str(), "READ" );
+                _sfhist_ph_psv = dynamic_cast<TH2F*>(_sffile_ph_psv->Get( "hist_sf_eveto_nom" ) );
             }
             itr = mod_conf.GetInitData().find( "FilePathEvetoHighPt" );
             if( itr != mod_conf.GetInitData().end() ) {
-                _sffile_ph_eveto_highpt = TFile::Open( (itr->second).c_str(), "READ" );
-                _sfhist_ph_eveto_highpt = dynamic_cast<TH2F*>(_sffile_ph_eveto_highpt->Get( "hist_sf_eveto_highpt" ) );
+                _sffile_ph_psv_highpt = TFile::Open( (itr->second).c_str(), "READ" );
+                _sfhist_ph_psv_highpt = dynamic_cast<TH2F*>(_sffile_ph_psv_highpt->Get( "hist_sf_eveto_highpt" ) );
             }
         }
 	
@@ -259,13 +306,29 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
 void RunModule::AddElectronSF( ModuleConfig & /*config*/ ) const {
 
 #ifdef MODULE_AddElectronSF
+    OUT::el_mvaIDSF   = 1.0;
+    OUT::el_mvaIDSFUP = 1.0;
+    OUT::el_mvaIDSFDN = 1.0;
+
+    OUT::el_looseIDSF   = 1.0;
+    OUT::el_looseIDSFUP = 1.0;
+    OUT::el_looseIDSFDN = 1.0;
+
     OUT::el_trigSF   = 1.0;
     OUT::el_trigSFUP = 1.0;
     OUT::el_trigSFDN = 1.0;
 
+    OUT::el_diTrigSF   = 1.0;
+    OUT::el_diTrigSFUP = 1.0;
+    OUT::el_diTrigSFDN = 1.0;
+
     if( OUT::isData ) {
         return;
     }
+
+    
+    std::vector<float> loose_idsf;
+    std::vector<float> loose_iderr;
 
     for( int idx = 0; idx < OUT::el_n; ++idx ) {
 
@@ -276,22 +339,243 @@ void RunModule::AddElectronSF( ModuleConfig & /*config*/ ) const {
             // histogram ends at 200, if pT is above
             // 200, get the value just below
             if( pt < 200 ) {
-                OUT::el_trigSF = _sfhist_el_trig->GetBinContent( _sfhist_el_trig->FindBin( eta, pt ) );
-                float err = _sfhist_el_trig->GetBinError( _sfhist_el_trig->FindBin( eta, pt ) );
-                OUT::el_trigSFUP = OUT::el_trigSF + err;
-                OUT::el_trigSFDN = OUT::el_trigSF - err;
+                OUT::el_mvaIDSF = _sfhist_el_id->GetBinContent( _sfhist_el_id->FindBin( eta, pt ) );
+                float err    = _sfhist_el_id->GetBinError  ( _sfhist_el_id->FindBin( eta, pt ) );
+                OUT::el_mvaIDSFUP = OUT::el_mvaIDSF + err;
+                OUT::el_mvaIDSFDN = OUT::el_mvaIDSF - err;
             }
             else {
-                OUT::el_trigSF = _sfhist_el_trig->GetBinContent( _sfhist_el_trig->FindBin( eta, 199. ) );
-                float err = _sfhist_el_trig->GetBinError( _sfhist_el_trig->FindBin( eta, 199. ) );
-                OUT::el_trigSFUP = OUT::el_trigSF + err;
-                OUT::el_trigSFDN = OUT::el_trigSF - err;
+                OUT::el_mvaIDSF = _sfhist_el_id->GetBinContent( _sfhist_el_id->FindBin( eta, 199. ) );
+                float err    = _sfhist_el_id->GetBinError  ( _sfhist_el_id->FindBin( eta, 199. ) );
+                OUT::el_mvaIDSFUP = OUT::el_mvaIDSF + err;
+                OUT::el_mvaIDSFDN = OUT::el_mvaIDSF - err;
             }
         }
+        if( OUT::el_triggerMatch->at(idx) ) {
+
+            //https://twiki.cern.ch/twiki/bin/viewauth/CMS/KoPFAElectronTagAndProbe
+            if( OUT::el_pt->at(idx) >= 30 && OUT::el_pt->at(idx) <= 40 ) {
+                if( fabs(OUT::el_sceta->at(idx)) <= 0.8 ) {
+                    OUT::el_trigSF = 0.987;
+                    OUT::el_trigSFUP = OUT::el_trigSF + 0.012; 
+                    OUT::el_trigSFDN = OUT::el_trigSF - 0.017;
+                }
+                else if( fabs(OUT::el_sceta->at(idx)) > 0.8 && fabs( OUT::el_sceta->at(idx) ) <= 1.478 ) {
+                    OUT::el_trigSF = 0.964;
+                    OUT::el_trigSFUP = OUT::el_trigSF + 0.002; 
+                    OUT::el_trigSFDN = OUT::el_trigSF - 0.001;
+                }
+                else if( fabs(OUT::el_sceta->at(idx)) > 1.478 && fabs( OUT::el_sceta->at(idx) ) <= 2.5 ) {
+                    OUT::el_trigSF = 1.004;
+                    OUT::el_trigSFUP = OUT::el_trigSF + 0.006;
+                    OUT::el_trigSFDN = OUT::el_trigSF - 0.006;
+                }
+            }
+            else if( OUT::el_pt->at(idx) > 40 && OUT::el_pt->at(idx) <= 50 ) {
+                if( fabs(OUT::el_sceta->at(idx)) <= 0.8 ) {
+                    OUT::el_trigSF = 0.997;
+                    OUT::el_trigSFUP = OUT::el_trigSF + 0.001; 
+                    OUT::el_trigSFDN = OUT::el_trigSF - 0.001;
+                }
+                else if( fabs(OUT::el_sceta->at(idx)) > 0.8 && fabs( OUT::el_sceta->at(idx) ) <= 1.478 ) {
+                    OUT::el_trigSF = 0.980;
+                    OUT::el_trigSFUP = OUT::el_trigSF + 0.001; 
+                    OUT::el_trigSFDN = OUT::el_trigSF - 0.001;
+                }
+                else if( fabs(OUT::el_sceta->at(idx)) > 1.478 && fabs( OUT::el_sceta->at(idx) ) <= 2.5 ) {
+                    OUT::el_trigSF = 1.033;
+                    OUT::el_trigSFUP = OUT::el_trigSF + 0.007;
+                    OUT::el_trigSFDN = OUT::el_trigSF - 0.007;
+                }
+            }
+            else if( OUT::el_pt->at(idx) > 50 ) {
+                if( fabs(OUT::el_sceta->at(idx)) <= 0.8 ) {
+                    OUT::el_trigSF = 0.998;
+                    OUT::el_trigSFUP = OUT::el_trigSF + 0.002; 
+                    OUT::el_trigSFDN = OUT::el_trigSF - 0.002;
+                }
+                else if( fabs(OUT::el_sceta->at(idx)) > 0.8 && fabs( OUT::el_sceta->at(idx) ) <= 1.478 ) {
+                    OUT::el_trigSF = 0.988;
+                    OUT::el_trigSFUP = OUT::el_trigSF + 0.002; 
+                    OUT::el_trigSFDN = OUT::el_trigSF - 0.002;
+                }
+                else if( fabs(OUT::el_sceta->at(idx)) > 1.478 && fabs( OUT::el_sceta->at(idx) ) <= 2.5 ) {
+                    OUT::el_trigSF = 0.976;
+                    OUT::el_trigSFUP = OUT::el_trigSF + 0.015;
+                    OUT::el_trigSFDN = OUT::el_trigSF - 0.012;
+                }
+            }
+        }
+        // Do loose scale factors
+        //
+
+        if( OUT::el_passLoose->at(idx) ) {
+            // if the pT is above 200, get the last bin
+            float pt_for_hist = OUT::el_pt->at(idx);
+            if( pt_for_hist > 200 ) pt_for_hist = 199.;
+
+            loose_idsf .push_back( _sfhist_el_looseid->GetBinContent( _sfhist_el_looseid->FindBin( fabs(OUT::el_sceta->at(idx) ), pt_for_hist ) ) );
+            loose_iderr.push_back( get_ele_cutid_syst( pt_for_hist, fabs( OUT::el_sceta->at(idx) ) ) );
+        }
+    }
+
+    if( loose_idsf.size() == 1 ) {
+        OUT::el_looseIDSF = loose_idsf[0];
+        OUT::el_looseIDSFUP = loose_idsf[0] + loose_iderr[0];
+        OUT::el_looseIDSFDN = loose_idsf[0] - loose_iderr[0];
+    }
+    else if( loose_idsf.size() > 1 ) {
+
+        OUT::el_looseIDSF = loose_idsf[0]*loose_idsf[1];
+        OUT::el_looseIDSFUP = ( loose_idsf[0] + loose_iderr[0] ) *( loose_idsf[1] + loose_iderr[1] );
+        OUT::el_looseIDSFDN = ( loose_idsf[0] - loose_iderr[0] ) *( loose_idsf[1] - loose_iderr[1] );
+    }
+
+
+    if( OUT::el_n==2 ) {
+
+        // https://twiki.cern.ch/twiki/bin/viewauth/CMS/DileptonTriggerResults
+        float lead_eta = OUT::el_eta->at(0);
+        float subl_eta = OUT::el_eta->at(1);
+
+        if( OUT::el_pt->at( 1 ) > OUT::el_pt->at(0) ) {
+            lead_eta = OUT::el_eta->at(1);
+            subl_eta = OUT::el_eta->at(0);
+        }
+
+        // Fix for electrons beyond 2.4
+        if( fabs( lead_eta ) > 2.4 ) lead_eta = 2.39;
+        if( fabs( subl_eta ) > 2.4 ) subl_eta = 2.39;
+
+        OUT::el_diTrigSF = _sfhist_el_ditrig->GetBinContent( _sfhist_el_ditrig->FindBin( fabs(lead_eta), fabs(subl_eta) ) );
+        float err        = _sfhist_el_ditrig->GetBinError  ( _sfhist_el_ditrig->FindBin( fabs(lead_eta), fabs(subl_eta) ) );
+        OUT::el_diTrigSFUP = OUT::el_diTrigSF + err;
+        OUT::el_diTrigSFDN = OUT::el_diTrigSF - err;
+
     }
 #endif
-
 }
+
+float RunModule::get_ele_cutid_syst( float pt, float eta ) const {
+
+    // Uncertainty table, from https://twiki.cern.ch/twiki/bin/view/Main/EGammaScaleFactors2012
+    // pT                     10 - 15  15 - 20  20 - 30  30 - 40  40 - 50  50 - 200
+    // 0.0 < abs(η) < 0.8      11.00    6.90     1.40     0.28     0.14     0.41
+    // 0.8 < abs(η) < 1.442    11.00    6.90     1.40     0.28     0.14     0.41
+    // 1.442 < abs(η) < 1.556  11.00    8.30     5.70     2.40     0.28     0.43
+    // 1.556 < abs(η) < 2.00   12.00    4.00     2.20     0.59     0.30     0.53
+    // 2.0 < abs(η) < 2.5      12.00    4.00     2.20     0.59     0.30     0.53
+    //
+    
+    if( pt > 10 && pt <= 15 ) {
+        if( fabs( eta ) <= 0.8 ) {
+            return 0.11;
+        }
+        else if( fabs( eta ) > 0.8 && fabs( eta ) <= 1.442 ) {
+            return 0.11;
+        }
+        else if( fabs( eta ) > 1.442 && fabs( eta ) <= 1.556 ) {
+            return 0.11;
+        }
+        else if( fabs( eta ) > 1.556 && fabs( eta ) <= 2.0 ) {
+            return 0.12;
+        }
+        else if( fabs( eta ) > 2.0 && fabs( eta ) <= 2.5 ) {
+            return 0.12;
+        }
+    }
+    else if( pt >15 && pt <= 20 ) {
+        if( fabs( eta ) <= 0.8 ) {
+            return 0.069;
+        }
+        else if( fabs( eta ) > 0.8 && fabs( eta ) <= 1.442 ) {
+            return 0.069;
+        }
+        else if( fabs( eta ) > 1.442 && fabs( eta ) <= 1.556 ) {
+            return 0.083;
+        }
+        else if( fabs( eta ) > 1.556 && fabs( eta ) <= 2.0 ) {
+            return 0.04;
+        }
+        else if( fabs( eta ) > 2.0 && fabs( eta ) <= 2.5 ) {
+            return 0.04;
+        }
+    }
+    else if( pt > 20 && pt <= 30 ) {
+        if( fabs( eta ) <= 0.8 ) {
+            return 0.014;
+        }
+        else if( fabs( eta ) > 0.8 && fabs( eta ) <= 1.442 ) {
+            return 0.014;
+        }
+        else if( fabs( eta ) > 1.442 && fabs( eta ) <= 1.556 ) {
+            return 0.057;
+        }
+        else if( fabs( eta ) > 1.556 && fabs( eta ) <= 2.0 ) {
+            return 0.022;
+        }
+        else if( fabs( eta ) > 2.0 && fabs( eta ) <= 2.5 ) {
+            return 0.022;
+        }
+    }
+    else if( pt > 30 && pt <= 40 ) {
+        if( fabs( eta ) <= 0.8 ) {
+            return 0.0028;
+        }
+        else if( fabs( eta ) > 0.8 && fabs( eta ) <= 1.442 ) {
+            return 0.0028;
+        }
+        else if( fabs( eta ) > 1.442 && fabs( eta ) <= 1.556 ) {
+            return 0.024;
+        }
+        else if( fabs( eta ) > 1.556 && fabs( eta ) <= 2.0 ) {
+            return 0.0059;
+        }
+        else if( fabs( eta ) > 2.0 && fabs( eta ) <= 2.5 ) {
+            return 0.0059;
+        }
+    }
+    else if( pt > 40 && pt <= 50 ) {
+        if( fabs( eta ) <= 0.8 ) {
+            return 0.0014;
+        }
+        else if( fabs( eta ) > 0.8 && fabs( eta ) <= 1.442 ) {
+            return 0.0014;
+        }
+        else if( fabs( eta ) > 1.442 && fabs( eta ) <= 1.556 ) {
+            return 0.0028;
+        }
+        else if( fabs( eta ) > 1.556 && fabs( eta ) <= 2.0 ) {
+            return 0.003;
+        }
+        else if( fabs( eta ) > 2.0 && fabs( eta ) <= 2.5 ) {
+            return 0.003;
+        }
+    }
+    else if( pt > 50 ) {
+        if( fabs( eta ) <= 0.8 ) {
+            return 0.0041;
+        }
+        else if( fabs( eta ) > 0.8 && fabs( eta ) <= 1.442 ) {
+            return 0.0041;
+        }
+        else if( fabs( eta ) > 1.442 && fabs( eta ) <= 1.556 ) {
+            return 0.0043;
+        }
+        else if( fabs( eta ) > 1.556 && fabs( eta ) <= 2.0 ) {
+            return 0.0053;
+        }
+        else if( fabs( eta ) > 2.0 && fabs( eta ) <= 2.5 ) {
+            return 0.0053;
+        }
+    }
+
+    std::cout << "WARNING NO SF for pt = " << pt << ", eta = " << eta << std::endl;
+
+    return -1;
+}
+
+
 
 void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
 
@@ -301,20 +585,26 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
     OUT::ph_idSFUP = 1.0;
     OUT::ph_idSFDN = 1.0;
     
-    OUT::ph_evetoSF = 1.0;
-    OUT::ph_evetoSFUP = 1.0;
-    OUT::ph_evetoSFDN = 1.0;
+    OUT::ph_psvSF = 1.0;
+    OUT::ph_psvSFUP = 1.0;
+    OUT::ph_psvSFDN = 1.0;
+
+    OUT::ph_csevSF = 1.0;
+    OUT::ph_csevSFUP = 1.0;
+    OUT::ph_csevSFDN = 1.0;
 
     if( OUT::isData ) {
         return;
     }
     // to check if photon pt is above histogram
-    float max_pt_highpt = _sfhist_ph_eveto_highpt->GetYaxis()->GetBinUpEdge( _sfhist_ph_eveto_highpt->GetNbinsY() );
+    float max_pt_highpt = _sfhist_ph_psv_highpt->GetYaxis()->GetBinUpEdge( _sfhist_ph_psv_highpt->GetNbinsY() );
     
     std::vector<float> sfs_id;
     std::vector<float> errs_id;
-    std::vector<float> sfs_eveto;
-    std::vector<float> errs_eveto;
+    std::vector<float> sfs_csev;
+    std::vector<float> errs_csev;
+    std::vector<float> sfs_psv;
+    std::vector<float> errs_psv;
     for( int idx = 0; idx < OUT::ph_n; idx++ ) {
 
         float pt = OUT::ph_pt->at(idx);
@@ -324,12 +614,18 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
         // 1000, get the value just below
         if( pt < 1000 ) {
 
-            sfs_id.push_back(_sfhist_ph_id->GetBinContent( _sfhist_ph_id->FindBin( pt, feta ) ) );
-            errs_id.push_back(_sfhist_ph_id->GetBinError( _sfhist_ph_id->FindBin( pt, feta ) ) );
+            sfs_id .push_back(_sfhist_ph_id->GetBinContent( _sfhist_ph_id->FindBin( pt, feta ) ) );
+            errs_id.push_back(_sfhist_ph_id->GetBinError  ( _sfhist_ph_id->FindBin( pt, feta ) ) );
+
+            sfs_csev .push_back(_sfhist_ph_csev->GetBinContent( _sfhist_ph_csev->FindBin( pt, feta ) ) );
+            errs_csev.push_back(_sfhist_ph_csev->GetBinError  ( _sfhist_ph_csev->FindBin( pt, feta ) ) );
         }
         else {
-            sfs_id.push_back(_sfhist_ph_id->GetBinContent( _sfhist_ph_id->FindBin( 999., feta ) ) );
-            errs_id.push_back(_sfhist_ph_id->GetBinError( _sfhist_ph_id->FindBin( 999., feta ) ) );
+            sfs_id .push_back(_sfhist_ph_id->GetBinContent( _sfhist_ph_id->FindBin( 999., feta ) ) );
+            errs_id.push_back(_sfhist_ph_id->GetBinError  ( _sfhist_ph_id->FindBin( 999., feta ) ) );
+
+            sfs_csev .push_back(_sfhist_ph_csev->GetBinContent( _sfhist_ph_csev->FindBin( 999., feta ) ) );
+            errs_csev.push_back(_sfhist_ph_csev->GetBinError  ( _sfhist_ph_csev->FindBin( 999., feta ) ) );
         }
 
 
@@ -340,11 +636,11 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
                 feta = 2.39;
             }
 
-            if( _sfhist_ph_eveto->GetBinContent( _sfhist_ph_eveto->FindBin(feta, pt) ) == 0 ) {
+            if( _sfhist_ph_psv->GetBinContent( _sfhist_ph_psv->FindBin(feta, pt) ) == 0 ) {
                 if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
             }
-            sfs_eveto.push_back( _sfhist_ph_eveto->GetBinContent( _sfhist_ph_eveto->FindBin(feta, pt) ) );
-            errs_eveto.push_back( _sfhist_ph_eveto->GetBinError( _sfhist_ph_eveto->FindBin(feta, pt) ) );
+            sfs_psv.push_back( _sfhist_ph_psv->GetBinContent( _sfhist_ph_psv->FindBin(feta, pt) ) );
+            errs_psv.push_back( _sfhist_ph_psv->GetBinError( _sfhist_ph_psv->FindBin(feta, pt) ) );
         }
         else {
             
@@ -353,22 +649,22 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
                 if( feta > 2.4 && feta < 2.5 ) {
                     feta = 2.39;
                 }
-                if( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, max_pt_highpt-1) ) == 0 ) {
+                if( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, max_pt_highpt-1) ) == 0 ) {
                     if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
                 }
-                sfs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, max_pt_highpt-1 )) );
-                errs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinError( _sfhist_ph_eveto_highpt->FindBin(feta, max_pt_highpt-1 ) ));
+                sfs_psv.push_back( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, max_pt_highpt-1 )) );
+                errs_psv.push_back( _sfhist_ph_psv_highpt->GetBinError( _sfhist_ph_psv_highpt->FindBin(feta, max_pt_highpt-1 ) ));
             }
             else {
                 // FIX for hist only going to 2.4
                 if( feta > 2.4 && feta < 2.5 ) {
                     feta = 2.39;
                 }
-                if( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, pt) ) == 0 ) {
+                if( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, pt) ) == 0 ) {
                     if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
                 }
-                sfs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinContent( _sfhist_ph_eveto_highpt->FindBin(feta, pt )) );
-                errs_eveto.push_back( _sfhist_ph_eveto_highpt->GetBinError( _sfhist_ph_eveto_highpt->FindBin(feta, pt ) ));
+                sfs_psv.push_back( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, pt )) );
+                errs_psv.push_back( _sfhist_ph_psv_highpt->GetBinError( _sfhist_ph_psv_highpt->FindBin(feta, pt ) ));
             }
         }
     }
@@ -378,18 +674,28 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
         OUT::ph_idSFUP = sfs_id[0]+errs_id[0];
         OUT::ph_idSFDN = sfs_id[0]-errs_id[0];
         
-        OUT::ph_evetoSF = sfs_eveto[0];
-        OUT::ph_evetoSFUP = sfs_eveto[0]+errs_eveto[0];
-        OUT::ph_evetoSFDN = sfs_eveto[0]-errs_eveto[0];
+        OUT::ph_psvSF   = sfs_psv[0];
+        OUT::ph_psvSFUP = sfs_psv[0]+errs_psv[0];
+        OUT::ph_psvSFDN = sfs_psv[0]-errs_psv[0];
+
+        // Also do CSEV
+        OUT::ph_csevSF   = sfs_csev[0];
+        OUT::ph_csevSFUP = sfs_csev[0]+errs_csev[0];
+        OUT::ph_csevSFDN = sfs_csev[0]-errs_csev[0];
+
     }
     else if( sfs_id.size() > 1 ) {
         OUT::ph_idSF = sfs_id[0]*sfs_id[1];
         OUT::ph_idSFUP = ( sfs_id[0] + errs_id[0] )*( sfs_id[1] + errs_id[1] );
         OUT::ph_idSFDN = ( sfs_id[0] - errs_id[0] )*( sfs_id[1] - errs_id[1] );
 
-        OUT::ph_evetoSF = sfs_eveto[0]*sfs_eveto[1];
-        OUT::ph_evetoSFUP = (sfs_eveto[0]+errs_eveto[0])*(sfs_eveto[1]+errs_eveto[1]);
-        OUT::ph_evetoSFDN = (sfs_eveto[0]-errs_eveto[0])*(sfs_eveto[1]-errs_eveto[1]);
+        OUT::ph_psvSF = sfs_psv[0]*sfs_psv[1];
+        OUT::ph_psvSFUP = (sfs_psv[0]+errs_psv[0])*(sfs_psv[1]+errs_psv[1]);
+        OUT::ph_psvSFDN = (sfs_psv[0]-errs_psv[0])*(sfs_psv[1]-errs_psv[1]);
+
+        OUT::ph_csevSF = sfs_csev[0]*sfs_csev[1];
+        OUT::ph_csevSFUP = (sfs_csev[0]+errs_csev[0])*(sfs_csev[1]+errs_csev[1]);
+        OUT::ph_csevSFDN = (sfs_csev[0]-errs_csev[0])*(sfs_csev[1]-errs_csev[1]);
     }
 
 #endif
@@ -480,21 +786,33 @@ void RunModule::AddMuonSF( ModuleConfig & /*config*/ ) const {
 
 #ifdef MODULE_AddMuonSF
 
-    OUT::mu_trigSF = 1.0;
-    OUT::mu_idSF   = 1.0;
-    OUT::mu_isoSF  = 1.0;
-
-    OUT::mu_trigSFUP = 1.0;
+    OUT::mu_idSF     = 1.0;
     OUT::mu_idSFUP   = 1.0;
-    OUT::mu_isoSFUP  = 1.0;
-
-    OUT::mu_trigSFDN = 1.0;
     OUT::mu_idSFDN   = 1.0;
+
+    OUT::mu_isoSF    = 1.0;
+    OUT::mu_isoSFUP  = 1.0;
     OUT::mu_isoSFDN  = 1.0;
+
+    OUT::mu_trigSF   = 1.0;
+    OUT::mu_trigSFUP = 1.0;
+    OUT::mu_trigSFDN = 1.0;
+
+    OUT::mu_diTrigSF   = 1.0;
+    OUT::mu_diTrigSFUP = 1.0;
+    OUT::mu_diTrigSFDN = 1.0;
 
     if( OUT::isData ) {
         return;
     }
+
+    std::vector<float> idsfs;
+    std::vector<float> iderrsup;
+    std::vector<float> iderrsdn;
+
+    std::vector<float> isosfs;
+    std::vector<float> isoerrsup;
+    std::vector<float> isoerrsdn;
 
     for( int idx = 0; idx < OUT::mu_n; ++idx ) {
         float feta = fabs(OUT::mu_eta->at(idx));
@@ -580,16 +898,57 @@ void RunModule::AddMuonSF( ModuleConfig & /*config*/ ) const {
             }
         }
 
-        OUT::mu_idSF = entry_id.val;
-        OUT::mu_idSFUP = entry_id.val + entry_id.err_up;
-        OUT::mu_idSFDN = entry_id.val - entry_id.err_dn;
+        idsfs   .push_back( entry_id.val    );
+        iderrsup.push_back( entry_id.err_up );
+        iderrsdn.push_back( entry_id.err_dn );
 
-        OUT::mu_isoSF = entry_iso.val;
-        OUT::mu_isoSFUP = entry_iso.val + entry_iso.err_up;
-        OUT::mu_isoSFDN = entry_iso.val - entry_iso.err_dn;
+        isosfs.push_back( entry_iso.val );
+        isoerrsup.push_back( entry_iso.err_up );
+        isoerrsdn.push_back( entry_iso.err_dn );
 
 
     }
+
+    if( OUT::mu_n == 1 ) {
+
+        OUT::mu_idSF   = idsfs[0];
+        OUT::mu_idSFUP = idsfs[0] + iderrsup[0];
+        OUT::mu_idSFDN = idsfs[0] - iderrsdn[0];
+
+        OUT::mu_isoSF   = isosfs[0];
+        OUT::mu_isoSFUP = isosfs[0] + isoerrsup[0];
+        OUT::mu_isoSFDN = isosfs[0] - isoerrsdn[0];
+    }
+    else if( OUT::mu_n > 1 ) {
+
+        OUT::mu_idSF = idsfs[0]*idsfs[1];
+        OUT::mu_idSFUP = ( idsfs[0] + iderrsup[0] ) *  ( idsfs[1] + iderrsup[1] );
+        OUT::mu_idSFDN = ( idsfs[0] - iderrsdn[0] ) *  ( idsfs[1] - iderrsdn[1] );
+
+        OUT::mu_isoSF = isosfs[0]*isosfs[1];
+        OUT::mu_isoSFUP = ( isosfs[0] + isoerrsup[0] ) *  ( isosfs[1] + isoerrsup[1] );
+        OUT::mu_isoSFDN = ( isosfs[0] - isoerrsdn[0] ) *  ( isosfs[1] - isoerrsdn[1] );
+
+    }
+
+    if( OUT::mu_n == 2 ) {
+
+        float lead_eta = OUT::mu_eta->at( 0 );
+        float subl_eta = OUT::mu_eta->at( 1 );
+
+        if( OUT::mu_pt->at(1) > OUT::mu_pt->at(0) ) {
+            lead_eta = OUT::mu_eta->at(1);
+            subl_eta = OUT::mu_eta->at(0);
+        }
+
+        OUT::mu_diTrigSF = _sfhist_mu_ditrig->GetBinContent( _sfhist_mu_ditrig->FindBin( fabs(lead_eta), fabs(subl_eta) ) );
+        float err        = _sfhist_mu_ditrig->GetBinError  ( _sfhist_mu_ditrig->FindBin( fabs(lead_eta), fabs(subl_eta) ) );
+        OUT::mu_diTrigSFUP = OUT::mu_diTrigSF + err;
+        OUT::mu_diTrigSFDN = OUT::mu_diTrigSF - err;
+    }
+
+
+
 #endif
 }
 

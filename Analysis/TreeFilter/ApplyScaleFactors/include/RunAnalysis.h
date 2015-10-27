@@ -65,12 +65,14 @@ class RunModule : public virtual RunModuleBase {
 
         ValWithErr GetValsFromGraph( const TGraphAsymmErrors *, float pt, bool debug=true ) const;
         float calc_pu_weight( float puval, float mod=1.0 ) const;
+        float get_ele_cutid_syst( float pt, float eta) const;
 
     private :
 
         TFile *_sffile_mu_iso;
         TFile *_sffile_mu_id;
         TFile *_sffile_mu_trig;
+        TFile *_sffile_mu_ditrig;
         TFile *_sffile_pileup_data;
         TFile *_sffile_pileup_mc;
 
@@ -88,20 +90,27 @@ class RunModule : public virtual RunModuleBase {
         TGraphAsymmErrors *_sfgraph_mu_trig_trans;
         TGraphAsymmErrors *_sfgraph_mu_trig_endcap;
 
+        TH2D *_sfhist_mu_ditrig;
+
         TFile *_sffile_el_id;
+        TFile *_sffile_el_cutid;
         TFile *_sffile_el_trig;
+        TFile *_sffile_el_ditrig;
 
 
-        TH2F *_sfhist_el_trig;
+        TH2F *_sfhist_el_id;
+        TH2D *_sfhist_el_looseid;
+        TH2D *_sfhist_el_ditrig;
 
 
         TFile *_sffile_ph_id;
-        TFile *_sffile_ph_eveto;
-        TFile *_sffile_ph_eveto_highpt;
+        TFile *_sffile_ph_psv;
+        TFile *_sffile_ph_psv_highpt;
 
         TH2F *_sfhist_ph_id;
-        TH2F *_sfhist_ph_eveto;
-        TH2F *_sfhist_ph_eveto_highpt;
+        TH2F *_sfhist_ph_csev;
+        TH2F *_sfhist_ph_psv;
+        TH2F *_sfhist_ph_psv_highpt;
 
         TH1D *_sfhist_pileup_data;
         TH1F *_sfhist_pileup_mc;
@@ -118,6 +127,15 @@ namespace OUT {
     float el_trigSF;
     float el_trigSFUP;
     float el_trigSFDN;
+    float el_diTrigSF;
+    float el_diTrigSFUP;
+    float el_diTrigSFDN;
+    float el_mvaIDSF;
+    float el_mvaIDSFUP;
+    float el_mvaIDSFDN;
+    float el_looseIDSF;
+    float el_looseIDSFUP;
+    float el_looseIDSFDN;
 #endif
 
 #ifdef MODULE_AddPhotonSF
@@ -125,15 +143,23 @@ namespace OUT {
     float ph_idSFUP;
     float ph_idSFDN;
 
-    float ph_evetoSF;
-    float ph_evetoSFUP;
-    float ph_evetoSFDN;
+    float ph_psvSF;
+    float ph_psvSFUP;
+    float ph_psvSFDN;
+
+    float ph_csevSF;
+    float ph_csevSFUP;
+    float ph_csevSFDN;
 #endif
 
 #ifdef MODULE_AddMuonSF
     float mu_trigSF;
     float mu_trigSFUP;
     float mu_trigSFDN;
+
+    float mu_diTrigSF;
+    float mu_diTrigSFUP;
+    float mu_diTrigSFDN;
 
     float mu_isoSF;
     float mu_isoSFUP;

@@ -13,12 +13,16 @@ p.add_argument('--baseDir',     default=None,  type=str ,        dest='baseDir',
 
 options = p.parse_args()
 
+import ROOT
+
 lead_dr_cut = 0.4
 
 draw_str = {
-    'inv' : 'el_passtrig_n>0 && ph_mediumFailEleVeto_n==1 && ph_hasPixSeed[0]==1 && m_trigelph1 > 76 && m_trigelph1 < 106 ',
-    'nom' : 'el_passtrig_n>0 && ph_medium_n==1 && ph_hasPixSeed[0]==0  && m_trigelph1 > 76 && m_trigelph1 < 106 ',
+    'inv' : 'el_passtrig_n>0 && el_n==1 && ph_mediumFailPSV_n==1 && ph_hasPixSeed[ptSorted_ph_mediumFailPSV_idx[0]]==1 && m_trigelph1 > 76 && m_trigelph1 < 106 ',
+    'nom' : 'el_passtrig_n>0 && el_n==1 && ph_mediumPassPSV_n==1 && ph_hasPixSeed[ptSorted_ph_mediumPassPSV_idx[0]]==0  && m_trigelph1 > 76 && m_trigelph1 < 106 ',
 }
+
+photon_var = { 'inv' : 'ptSorted_ph_mediumFailPSV_idx[0]', 'nom' : 'ptSorted_ph_mediumPassPSV_idx[0]' }
 
 _regions = ['EB', 'EE']
 
@@ -27,8 +31,10 @@ def main() :
     global samplesLGPass
     global samplesLGFail
 
-    baseDirLGPass   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaMediumPhIDPassPixSeed_2015_09_14'
-    baseDirLGFail   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaMediumPhIDFailPixSeed_2015_09_14'
+    baseDirLGPass   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaMediumPhIDWithOlapPassPixSeed_2015_10_01'
+    baseDirLGFail   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaMediumPhIDWithOlapFailPixSeed_2015_10_01'
+    #baseDirLGPass   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaMediumPhIDPassPixSeed_2015_10_01'
+    #baseDirLGFail   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaMediumPhIDFailPixSeed_2015_10_01'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
@@ -41,15 +47,15 @@ def main() :
     samplesLGPass  .ReadSamples( sampleConf )
     samplesLGFail  .ReadSamples( sampleConf )
 
-    #eta_bins = {'EB' : [(0.00, 0.10), (0.10, 0.50), (0.50, 1.00), (1.00, 1.44)],
-    #            'EE' : [(1.57, 2.10), (2.10, 2.20), (2.20, 2.40), (2.40, 2.50)]}
+    eta_bins = {'EB' : [(0.00, 0.10), (0.10, 0.50), (0.50, 1.00), (1.00, 1.44)],
+                'EE' : [(1.57, 2.10), (2.10, 2.20), (2.20, 2.40), (2.40, 2.50)]}
 
-    eta_bins = {'EB' : [(0.00, 1.44)],
-                'EE' : [(1.57, 2.50)]}
+    #eta_bins = {'EB' : [(0.00, 1.44)],
+    #            'EE' : [(1.57, 2.50)]}
 
     #pt_bins = [(15, 25), (25, 40), (40, 70), (70,1000000) ]
-    pt_bins = [15, 25, 40, 70,1000000]
-
+    #pt_bins = [15, 25, 40, 70,1000000]
+    pt_bins = [15,25,30,35,40,45,50,55,60,70,1000000]
     base_dir_jet_single = '%s/SinglePhotonResults/SigmaIEIEFits' %(options.baseDir)
 
     jet_fake_nom = MakeSingleJetBkgEstimate( base_dir_jet_single, channel='elwzcr',pt_bins=pt_bins, eta_bins={})
@@ -59,9 +65,9 @@ def main() :
 
     print jet_fake_nom
 
-    output_dir = '%s/ElectronFakeManualLoose' %options.baseDir
+    output_dir = '%s/ElectronFakeManual' %options.baseDir
 
-    MakeEleBkgEstimate( output_dir, jet_fake_nom, jet_fake_inv, pt_bins, mc_bkgs=['Wgamma', 'Zgamma'] )
+    MakeEleBkgEstimate( output_dir, jet_fake_nom, jet_fake_inv, pt_bins, eta_bins, mc_bkgs=['Wgamma', 'Zgamma'] )
 
     print '^_^ FINISHED! ^_^'
 
@@ -76,17 +82,14 @@ def MakeEleBkgEstimate( output_dir, jet_fake_nom, jet_fake_inv, pt_bins, eta_bin
     samplesLGPass.activate_sample( 'Electron' )
     samplesLGFail.activate_sample( 'Electron' )
 
-    var = 'ph_pt[0]'
-    data_inv = get_hist_data( var, pt_bins, jet_fake_inv, mc_bkgs, _regions, 'inv' )
-    data_nom = get_hist_data( var, pt_bins, jet_fake_nom, mc_bkgs, _regions, 'nom' )
+    data_inv = get_hist_data( jet_fake_inv, mc_bkgs, pt_bins, eta_bins, 'inv' )
+    data_nom = get_hist_data( jet_fake_nom, mc_bkgs, pt_bins, eta_bins, 'nom' )
 
     print data_inv
     print data_nom
 
     result_dic = {}
     result_dic['fake_ratio'] = {}
-
-    eta_bins = { 'EB' : ('0.00', '1.44'), 'EE' : ('1.57' , '2.50') }
 
     subl_pt_bins = { (15, 40) : [(15,25),(25,40) ], 
                     (15, 70) :  [(15,25),(25,40),(40,70) ],
@@ -100,37 +103,45 @@ def MakeEleBkgEstimate( output_dir, jet_fake_nom, jet_fake_inv, pt_bins, eta_bin
         dataval_inv = data_inv['data'][resbin]
         bkgval_inv  = data_inv['background'][resbin]
 
-        output_bin = ( str( resbin[1]), str(resbin[2]), eta_bins[resbin[0]][0], eta_bins[resbin[0]][1] )
+        output_bin = ( str( resbin[0]), str(resbin[1]), str( resbin[2]), str(resbin[3]) )
+
 
         #result_dic['fake_ratio'][output_bin] = ( dataval_nom - bkgval_nom ) / ( dataval_inv - bkgval_inv )
         result_dic['fake_ratio'][output_bin] = ( dataval_nom - bkgval_nom ) / ( dataval_inv - bkgval_inv )
 
-    for eta in eta_bins.keys() :
-        for subl_range, pt_bins in subl_pt_bins.iteritems() :
+    for subl_range, pt_bins in subl_pt_bins.iteritems() :
 
-            subldata_nom = 0.0
-            sublbkg_nom  = 0.0
-            subldata_inv = 0.0
-            sublbkg_inv  = 0.0
+        subldata_nom = {}
+        sublbkg_nom  = {}
+        subldata_inv = {}
+        sublbkg_inv  = {}
 
-            for resbin, dataval_nom in data_nom['data'].iteritems() :
+        for resbin, dataval_nom in data_nom['data'].iteritems() :
 
-                if resbin[0] == eta :
-                    if ( resbin[1], resbin[2]) in pt_bins :
+            if ( resbin[0], resbin[1]) in pt_bins :
 
-                        bkgval_nom = data_nom['background'][resbin]
+                subl_bin = ( str(subl_range[0]), str(subl_range[1]), resbin[2], resbin[3] )
 
-                        dataval_inv = data_inv['data'][resbin]
-                        bkgval_inv  = data_inv['background'][resbin]
+                subldata_nom .setdefault( subl_bin, 0.0 )
+                sublbkg_nom  .setdefault( subl_bin, 0.0 )
+                subldata_inv .setdefault( subl_bin, 0.0 )
+                sublbkg_inv  .setdefault( subl_bin, 0.0 )
 
-                        subldata_nom += dataval_nom
-                        subldata_inv += dataval_inv
 
-                        sublbkg_nom += bkgval_nom
-                        sublbkg_inv += bkgval_inv
+                bkgval_nom = data_nom['background'][resbin]
 
-            output_bin = ( str( subl_range[0]), str(subl_range[1]), eta_bins[eta][0], eta_bins[eta][1] )
-            result_dic['fake_ratio'][output_bin] = ( subldata_nom - sublbkg_nom ) / ( subldata_inv - sublbkg_inv )
+                dataval_inv = data_inv['data'][resbin]
+                bkgval_inv  = data_inv['background'][resbin]
+
+                subldata_nom[subl_bin] =  subldata_nom[subl_bin] + dataval_nom
+                subldata_inv[subl_bin] =  subldata_inv[subl_bin] + dataval_inv
+                                                                 
+                sublbkg_nom [subl_bin] =  sublbkg_nom [subl_bin] + bkgval_nom
+                sublbkg_inv [subl_bin] =  sublbkg_inv [subl_bin] + bkgval_inv
+
+        for subl_bin in subldata_nom.keys() :
+
+            result_dic['fake_ratio'][subl_bin] = ( subldata_nom[subl_bin] - sublbkg_nom[subl_bin] ) / ( subldata_inv[subl_bin] - sublbkg_inv[subl_bin] )
 
 
     if not os.path.isdir( output_dir ) :
@@ -145,8 +156,7 @@ def MakeEleBkgEstimate( output_dir, jet_fake_nom, jet_fake_inv, pt_bins, eta_bin
     ofile.close()
 
 
-def get_hist_data( var, pt_bins, jet_fake,mc_bkgs, regions, tag ) :
-
+def get_hist_data( jet_fake,mc_bkgs, pt_bins, eta_bins, tag ) :
 
     results = {}
     results['data'] = {}
@@ -156,62 +166,71 @@ def get_hist_data( var, pt_bins, jet_fake,mc_bkgs, regions, tag ) :
         print 'incorrect tag'
         return results
 
-    for reg in regions :
+    selection= ' PUWeight * ( %s ) ' %(draw_str[tag])
 
-        selection= ' PUWeight * ( %s && ph_Is%s[0]  ) ' %(draw_str[tag], reg)
+    if tag == 'nom' :
+        samplesLG = samplesLGPass
+    elif tag == 'inv' :
+        samplesLG = samplesLGFail
+
+    phvar = photon_var[tag]
+    var = 'ph_pt[%s]:fabs(ph_eta[%s])'%(phvar,phvar) #y:x
+
+    binning = ( 250, 0.0, 2.5, 40, 0, 200 )
+
+    data_samp = 'Electron'
+
+    samplesLG.create_hist( data_samp, var, selection, binning )
+    for bkg in mc_bkgs :
+        samplesLG.create_hist( bkg, var, selection, binning )
 
 
-        if tag == 'nom' :
-            samplesLG = samplesLGPass
-        elif tag == 'inv' :
-            samplesLG = samplesLGFail
+    hist_data = samplesLG.get_samples(name='Electron')[0].hist.Clone('Data_%s' %tag)
+    hist_bkg_mc = None
+    for bkg in mc_bkgs :
+        if hist_bkg_mc is None :
+            hist_bkg_mc = samplesLG.get_samples( name=bkg )[0].hist.Clone( 'Background_%s' %tag)
+        else :
+            hist_bkg_mc.Add( samplesLG.get_samples( name=bkg )[0].hist )
 
-        samplesLG.Draw( var, selection, pt_bins)
 
-        hist_data = samplesLG.get_samples(name='Electron')[0].hist.Clone('Data_%s' %tag)
+    for eta_reg, sub_bins in eta_bins.iteritems() :
 
-        hist_bkg_mc = None
-        for bkg in mc_bkgs :
-            if hist_bkg_mc is None :
-                hist_bkg_mc = samplesLG.get_samples( name=bkg )[0].hist.Clone( 'Background_%s' %tag)
-            else :
-                hist_bkg_mc.Add( samplesLG.get_samples( name=bkg )[0].hist )
-
+        for etamin, etamax in sub_bins :
         
-        for idx, ptmin in enumerate( pt_bins[:-1] ) :
-            ptmax = pt_bins[idx+1]
+            for idx, ptmin in enumerate( pt_bins[:-1] ) :
+                ptmax = pt_bins[idx+1]
 
-            ptminstr = str(ptmin)
-            ptmaxstr = str(ptmax)
-            if ptmax == pt_bins[-1] :
-                ptmaxstr = 'max'
+                ptminstr = str(ptmin)
+                ptmaxstr = str(ptmax)
+                if ptmax == pt_bins[-1] :
+                    ptmaxstr = 'max'
 
-            hist_bin = hist_data.FindBin( ptmin )
+                ybinmin = hist_data.GetYaxis().FindBin( ptmin )
+                ybinmax = hist_data.GetYaxis().FindBin( ptmax ) - 1
+                xbinmin = hist_data.GetXaxis().FindBin( etamin )
+                xbinmax = hist_data.GetXaxis().FindBin( etamax ) - 1 
 
-            print 'Ptmin = %d, hist_bin = %d' %( ptmin, hist_bin )
+                print 'ptmin = %d, ptmax = %d, etamin=%f, etamax = %f, ymin = %d, ymax = %d, xmin = %f, xmax = %f, yminlow = %d, yminup = %d, xminlow = %f, xminup = %f' %( ptmin, ptmax, etamin, etamax, ybinmin, ybinmax, xbinmin, xbinmax, hist_data.GetYaxis().GetBinLowEdge( ybinmin), hist_data.GetYaxis().GetBinUpEdge( ybinmax), hist_data.GetXaxis().GetBinLowEdge( xbinmin), hist_data.GetXaxis().GetBinUpEdge( xbinmax) )
 
-            data_val   = hist_data.GetBinContent(hist_bin)
-            data_err   = hist_data.GetBinError(hist_bin)
-            mc_bkg_val = hist_bkg_mc.GetBinContent(hist_bin)
-            mc_bkg_err = hist_bkg_mc.GetBinError(hist_bin)
+                data_err = ROOT.Double()
+                mc_bkg_err = ROOT.Double()
 
-            data = ufloat( data_val, data_err )
-            mc_bkg = ufloat( mc_bkg_val, mc_bkg_err )
+                data_val   = hist_data.IntegralAndError(xbinmin, xbinmax, ybinmin, ybinmax, data_err)
+                mc_bkg_val = hist_bkg_mc.IntegralAndError(xbinmin, xbinmax, ybinmin, ybinmax, mc_bkg_err)
 
+                data = ufloat( data_val, data_err )
+                mc_bkg = ufloat( mc_bkg_val, mc_bkg_err )
 
-            jet_bin = ( reg, ptminstr, ptmaxstr )
-            jet_bkg = jet_fake['stat+syst']['f'][jet_bin]
+                jet_bin = ( eta_reg, ptminstr, ptmaxstr )
+                jet_bkg = jet_fake['stat+syst']['f'][jet_bin]
 
-            res_bin = ( reg, ptmin, ptmax )
+                res_bin = ( ptmin, ptmax, '%.2f' %etamin, '%.2f' %etamax )
 
-            results['data'][res_bin] = data
-            results['background'][res_bin] = mc_bkg+jet_bkg
+                results['data'][res_bin] = data
+                results['background'][res_bin] = mc_bkg+jet_bkg
 
     return results
-
-
-
-
 
 
 def MakeSingleJetBkgEstimate( base_dir_jet, channel='', pt_bins=[],eta_bins={}, outputDir=None ) :
@@ -335,7 +354,10 @@ def get_jet_fake_results_from_file( results, reg_bin, base_dir_jet, sorted_jet_d
 
         sub_dir_jet = jet_dir_key_map[dir_key]
 
-        ofile = open(base_dir_jet + '/' + sub_dir_jet +'/' + fentries[reg_bin])
+
+        fname = base_dir_jet + '/' + sub_dir_jet +'/' + fentries[reg_bin]
+
+        ofile = open(fname)
         predictions = pickle.load(ofile)
         ofile.close()
 

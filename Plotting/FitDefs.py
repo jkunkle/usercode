@@ -359,6 +359,9 @@ alts['Gauss_cmsshape']['fit_nom_eta_2.10-2.20_pt_25-30']  = { 'mean' : 1.6, 'sig
                                                              'cms_beta' : 0.1, 'cms_gamma' : 0.02, 'cms_peak' : 90, 'nsig' : 1500, 'nbkg' : 200, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 
+alts['Gauss_cmsshape']['fit_nom_eta_0.00-0.10_pt_30-35']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 95, 
+                                                             'cms_beta' : 0.034, 'cms_gamma' : 0.05, 'cms_peak' : 89, 'nsig' : 20000, 'nbkg' : 700, 
+                                                             'fit_min': 60, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_nom_eta_0.00-1.44_pt_25-40']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 70, 
                                                              'cms_beta' : 0.05, 'cms_gamma' : 0.04, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 700, 
                                                              'fit_min': 60, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
@@ -389,8 +392,20 @@ alts['Gauss_cmsshape']['fit_nom_eta_1.57-2.50_pt_40-45']  = { 'mean' : 1.2, 'sig
 alts['Gauss_cmsshape']['fit_nom_eta_1.57-2.50_pt_45-50']  = { 'mean' : 1.2, 'sigma' : 1.7 , 'cms_alpha' : 70, 
                                                              'cms_beta' : 0.05, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 700, 
                                                              'fit_min': 60, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_inv_eta_0.50-1.00_pt_25-40']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 80, 
-                                                             'cms_beta' : 0.04, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 700, 
+alts['Gauss_cmsshape']['fit_nom_eta_1.57-2.50_pt_45-50']  = { 'mean' : 1.2, 'sigma' : 1.7 , 'cms_alpha' : 70, 
+                                                             'cms_beta' : 0.05, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 700, 
+                                                             'fit_min': 60, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_0.10-0.50_pt_25-30']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 81, 
+                                                             'cms_beta' : 0.04, 'cms_gamma' : 0.066, 'cms_peak' : 88, 'nsig' : 20000, 'nbkg' : 700, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_0.10-0.50_pt_30-35']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 81, 
+                                                             'cms_beta' : 0.04, 'cms_gamma' : 0.066, 'cms_peak' : 88, 'nsig' : 20000, 'nbkg' : 700, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_1.00-1.44_pt_30-35']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 81, 
+                                                             'cms_beta' : 0.04, 'cms_gamma' : 0.066, 'cms_peak' : 88, 'nsig' : 20000, 'nbkg' : 700, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_0.50-1.00_pt_25-30']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 81, 
+                                                             'cms_beta' : 0.04, 'cms_gamma' : 0.066, 'cms_peak' : 88, 'nsig' : 20000, 'nbkg' : 700, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_inv_eta_0.50-1.00_pt_30-35']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 80, 
                                                              'cms_beta' : 0.04, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 700, 
@@ -419,6 +434,9 @@ alts['Gauss_cmsshape']['fit_inv_eta_1.00-1.44_pt_40-45']  = { 'mean' : 1.5, 'sig
 alts['Gauss_cmsshape']['fit_inv_eta_1.00-1.44_pt_45-50']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 150, 
                                                              'cms_beta' : 0.03, 'cms_gamma' : 0.12, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 700, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_1.00-1.44_pt_45-50']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 113, 
+                                                             'cms_beta' : 0.03, 'cms_gamma' : 0.05, 'cms_peak' : 89, 'nsig' : 20000, 'nbkg' : 700, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_inv_eta_1.57-2.10_pt_25-40']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 80, 
                                                              'cms_beta' : 0.06, 'cms_gamma' : 0.06, 'cms_peak' : 90, 'nsig' : 50000, 'nbkg' : 1000, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
@@ -434,6 +452,15 @@ alts['Gauss_cmsshape']['fit_inv_eta_1.57-2.10_pt_40-45']  = { 'mean' : 1.5, 'sig
 alts['Gauss_cmsshape']['fit_inv_eta_1.57-2.10_pt_45-50']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 80, 
                                                              'cms_beta' : 0.06, 'cms_gamma' : 0.06, 'cms_peak' : 90, 'nsig' : 50000, 'nbkg' : 1000, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_2.20-2.40_pt_25-30']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 60, 
+                                                             'cms_beta' : 0.065, 'cms_gamma' : 0.028, 'cms_peak' : 88, 'nsig' : 50000, 'nbkg' : 1000, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_2.40-2.50_pt_25-30']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 60, 
+                                                             'cms_beta' : 0.065, 'cms_gamma' : 0.028, 'cms_peak' : 88, 'nsig' : 50000, 'nbkg' : 1000, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_2.40-2.50_pt_30-35']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 60, 
+                                                             'cms_beta' : 0.065, 'cms_gamma' : 0.028, 'cms_peak' : 88, 'nsig' : 50000, 'nbkg' : 1000, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 
 alts['Gauss_cmsshape']['fit_inv_eta_0.00-1.44_pt_40-70']  = { 'mean' : 0.33, 'sigma' : 0.4 , 'cms_alpha' : 100, 
                                                              'cms_beta' : 0.03, 'cms_gamma' : 0.04, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
@@ -447,11 +474,14 @@ alts['Gauss_cmsshape']['fit_inv_eta_0.00-1.44_pt_60-70']  = { 'mean' : 0.33, 'si
 alts['Gauss_cmsshape']['fit_inv_eta_0.00-0.10_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 120, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_inv_eta_0.00-0.10_pt_50-60']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 120, 
-                                                             'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
+alts['Gauss_cmsshape']['fit_inv_eta_0.00-0.10_pt_50-60']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 190, 
+                                                             'cms_beta' : 0.014, 'cms_gamma' : 0.036, 'cms_peak' : 88, 'nsig' : 5000, 'nbkg' : 150, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_inv_eta_0.00-0.10_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 120, 
-                                                             'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
+alts['Gauss_cmsshape']['fit_inv_eta_0.00-0.10_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 200, 
+                                                             'cms_beta' : 0.016, 'cms_gamma' : 0.05, 'cms_peak' : 88, 'nsig' : 5000, 'nbkg' : 150, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_0.00-0.10_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 200, 
+                                                             'cms_beta' : 0.019, 'cms_gamma' : 0.066, 'cms_peak' : 89, 'nsig' : 5000, 'nbkg' : 150, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_inv_eta_0.10-0.50_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 100, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
@@ -459,23 +489,26 @@ alts['Gauss_cmsshape']['fit_inv_eta_0.10-0.50_pt_40-70']  = { 'mean' : 1, 'sigma
 alts['Gauss_cmsshape']['fit_inv_eta_0.10-0.50_pt_50-60']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 100, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_inv_eta_0.10-0.50_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 100, 
-                                                             'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
-                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_inv_eta_0.50-1.00_pt_40-70']  = { 'mean' : 1.1, 'sigma' : 0.8 , 'cms_alpha' : 112, 
+alts['Gauss_cmsshape']['fit_inv_eta_0.10-0.50_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 200, 
                                                              'cms_beta' : 0.023, 'cms_gamma' : 0.03, 'cms_peak' : 88, 'nsig' : 23000, 'nbkg' : 470, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_inv_eta_0.50-1.00_pt_50-60']  = { 'mean' : 1.1, 'sigma' : 0.8 , 'cms_alpha' : 112, 
-                                                             'cms_beta' : 0.023, 'cms_gamma' : 0.03, 'cms_peak' : 88, 'nsig' : 23000, 'nbkg' : 470, 
+alts['Gauss_cmsshape']['fit_inv_eta_0.50-1.00_pt_50-60']  = { 'mean' : 1.1, 'sigma' : 0.8 , 'cms_alpha' : 190, 
+                                                             'cms_beta' : 0.014, 'cms_gamma' : 0.036, 'cms_peak' : 88, 'nsig' : 23000, 'nbkg' : 470, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_inv_eta_0.50-1.00_pt_60-70']  = { 'mean' : 1.1, 'sigma' : 0.8 , 'cms_alpha' : 112, 
+alts['Gauss_cmsshape']['fit_nom_eta_0.50-1.00_pt_50-60']  = { 'mean' : 1.1, 'sigma' : 0.8 , 'cms_alpha' : 200, 
+                                                             'cms_beta' : 0.016, 'cms_gamma' : 0.055, 'cms_peak' : 88, 'nsig' : 23000, 'nbkg' : 470, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_inv_eta_0.50-1.00_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 200, 
                                                              'cms_beta' : 0.023, 'cms_gamma' : 0.03, 'cms_peak' : 88, 'nsig' : 23000, 'nbkg' : 470, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_inv_eta_1.00-1.44_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 100, 
                                                              'cms_beta' : 0.03, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 1000, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_inv_eta_1.00-1.44_pt_50-60']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 100, 
-                                                             'cms_beta' : 0.03, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 1000, 
+alts['Gauss_cmsshape']['fit_inv_eta_1.00-1.44_pt_50-60']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 190, 
+                                                             'cms_beta' : 0.014, 'cms_gamma' : 0.036, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 1000, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_1.00-1.44_pt_50-60']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 190, 
+                                                             'cms_beta' : 0.019, 'cms_gamma' : 0.066, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 1000, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_inv_eta_1.00-1.44_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 100, 
                                                              'cms_beta' : 0.03, 'cms_gamma' : 0.03, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 1000, 
@@ -486,14 +519,20 @@ alts['Gauss_cmsshape']['fit_inv_eta_1.57-2.10_pt_40-70']  = { 'mean' : 1, 'sigma
 alts['Gauss_cmsshape']['fit_inv_eta_1.57-2.10_pt_50-60']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 120, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.03, 'cms_peak' : 88, 'nsig' : 5000, 'nbkg' : 150, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_inv_eta_1.57-2.10_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 120, 
-                                                             'cms_beta' : 0.02, 'cms_gamma' : 0.03, 'cms_peak' : 88, 'nsig' : 5000, 'nbkg' : 150, 
+alts['Gauss_cmsshape']['fit_inv_eta_1.57-2.10_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 190, 
+                                                             'cms_beta' : 0.016, 'cms_gamma' : 0.049, 'cms_peak' : 88, 'nsig' : 5000, 'nbkg' : 150, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_1.57-2.10_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 190, 
+                                                             'cms_beta' : 0.018, 'cms_gamma' : 0.053, 'cms_peak' : 88, 'nsig' : 5000, 'nbkg' : 150, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_nom_eta_2.10-2.20_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 190, 
+                                                             'cms_beta' : 0.018, 'cms_gamma' : 0.053, 'cms_peak' : 88, 'nsig' : 5000, 'nbkg' : 150, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_inv_eta_2.10-2.20_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 80, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_inv_eta_2.10-2.20_pt_50-60']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 80, 
-                                                             'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
+alts['Gauss_cmsshape']['fit_inv_eta_2.10-2.20_pt_50-60']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 200, 
+                                                             'cms_beta' : 0.02, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_inv_eta_2.10-2.20_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 80, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
@@ -504,8 +543,8 @@ alts['Gauss_cmsshape']['fit_nom_eta_2.10-2.20_pt_40-70']  = { 'mean' : 1.2, 'sig
 alts['Gauss_cmsshape']['fit_nom_eta_2.10-2.20_pt_50-60']  = { 'mean' : 1.2, 'sigma' : 1.3 , 'cms_alpha' : 150, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 13000, 'nbkg' : 3000, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_nom_eta_2.10-2.20_pt_60-70']  = { 'mean' : 1.2, 'sigma' : 1.3 , 'cms_alpha' : 150, 
-                                                             'cms_beta' : 0.02, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 13000, 'nbkg' : 3000, 
+alts['Gauss_cmsshape']['fit_nom_eta_2.10-2.20_pt_60-70']  = { 'mean' : 1.2, 'sigma' : 1.3 , 'cms_alpha' : 300, 
+                                                             'cms_beta' : 0.016, 'cms_gamma' : 0.047, 'cms_peak' : 88, 'nsig' : 13000, 'nbkg' : 3000, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_inv_eta_2.20-2.30_pt_40-70']  = { 'mean' : 1.8, 'sigma' : 1.0 , 'cms_alpha' : 100, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.090, 'cms_peak' : 88, 'nsig' : 10000, 'nbkg' : 500, 
@@ -531,8 +570,8 @@ alts['Gauss_cmsshape']['fit_inv_eta_2.20-2.40_pt_40-70']  = { 'mean' : 1.8, 'sig
 alts['Gauss_cmsshape']['fit_inv_eta_2.20-2.40_pt_50-60']  = { 'mean' : 1.8, 'sigma' : 1.0 , 'cms_alpha' : 100, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.090, 'cms_peak' : 88, 'nsig' : 10000, 'nbkg' : 500, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_inv_eta_2.20-2.40_pt_60-70']  = { 'mean' : 1.8, 'sigma' : 1.0 , 'cms_alpha' : 100, 
-                                                             'cms_beta' : 0.02, 'cms_gamma' : 0.090, 'cms_peak' : 88, 'nsig' : 10000, 'nbkg' : 500, 
+alts['Gauss_cmsshape']['fit_inv_eta_2.20-2.40_pt_60-70']  = { 'mean' : 1.8, 'sigma' : 1.0 , 'cms_alpha' : 200, 
+                                                             'cms_beta' : 0.016, 'cms_gamma' : 0.05, 'cms_peak' : 88, 'nsig' : 10000, 'nbkg' : 500, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_nom_eta_2.20-2.40_pt_40-70']  = { 'mean' : 1.2, 'sigma' : 1.3 , 'cms_alpha' : 150, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 13000, 'nbkg' : 3000, 
@@ -561,14 +600,20 @@ alts['Gauss_cmsshape']['fit_nom_eta_2.30-2.40_pt_50-60']  = { 'mean' : 1.2, 'sig
 alts['Gauss_cmsshape']['fit_nom_eta_2.30-2.40_pt_60-70']  = { 'mean' : 1.2, 'sigma' : 1.3 , 'cms_alpha' : 150, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.05, 'cms_peak' : 90, 'nsig' : 13000, 'nbkg' : 3000, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_inv_eta_2.40-2.50_pt_25-30']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 60, 
+                                                             'cms_beta' : 0.066, 'cms_gamma' : 0.023, 'cms_peak' : 94, 'nsig' : 5000, 'nbkg' : 150, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_inv_eta_2.40-2.50_pt_45-50']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 200, 
+                                                             'cms_beta' : 0.025, 'cms_gamma' : 0.12, 'cms_peak' : 91, 'nsig' : 5000, 'nbkg' : 150, 
+                                                             'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_nom_eta_2.40-2.50_pt_40-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 80, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_nom_eta_2.40-2.50_pt_50-60']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 80, 
                                                              'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
-alts['Gauss_cmsshape']['fit_nom_eta_2.40-2.50_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 80, 
-                                                             'cms_beta' : 0.02, 'cms_gamma' : 0.003, 'cms_peak' : 90, 'nsig' : 5000, 'nbkg' : 150, 
+alts['Gauss_cmsshape']['fit_nom_eta_2.40-2.50_pt_60-70']  = { 'mean' : 1, 'sigma' : 0.8 , 'cms_alpha' : 200, 
+                                                             'cms_beta' : 0.018, 'cms_gamma' : 0.053, 'cms_peak' : 88, 'nsig' : 5000, 'nbkg' : 150, 
                                                              'fit_min': 40, 'fit_max' : 180, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_inv_eta_2.40-2.50_pt_40-70']  = { 'mean' : 2, 'sigma' : 1.9 , 'cms_alpha' : 90, 
                                                              'cms_beta' : 0.03, 'cms_gamma' : 0.02, 'cms_peak' : 88, 'nsig' : 12000, 'nbkg' : 670, 

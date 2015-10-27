@@ -46,7 +46,7 @@ def config_samples(samples) :
     samples.AddSample('WZ_2l2q'                      , path='job_summer12_WZ_2l2q'              ,  isActive=False, useXSFile=True )
     samples.AddSample('WZ_3lnu'                      , path='job_summer12_WZ_3lnu'              ,  isActive=False, useXSFile=True )
     samples.AddSample('WZZ'                          , path='job_summer12_WZZ'                  ,  isActive=False, useXSFile=True )
-    samples.AddSample('Zgg'                          , path='llaa_nlo_part1_ggNtuple'           ,  isActive=False, useXSFile=True, XSName='ZggNLO' )
+    samples.AddSample('Zgg'                          , path='llaa_nlo_ggNtuple'           ,  isActive=False, useXSFile=True, XSName='ZggNLO' )
     #samples.AddSample('Zg'                           , path='job_summer12_ZgOnePhot'                   ,  isActive=False, useXSFile=True )
     samples.AddSample('Zg'                           , path='job_summer12_Zg_s10'             ,  isActive=False, useXSFile=True, XSName='Zg' )
     samples.AddSample('ZZ_2e2mu'                     , path='job_summer12_ZZ_2e2mu'             ,  isActive=False, useXSFile=True )
@@ -127,7 +127,7 @@ def config_samples(samples) :
     samples.AddSampleGroup( 'Wgg', legend_name='W#gamma#gamma', 
                             input_samples = [
                                              'NLO_WAA_ISR',
-                                             #'NLO_WAA_FSR',
+                                             'NLO_WAA_FSR',
                                             ],
                            plotColor=ROOT.kRed,
                            isSignal=False,

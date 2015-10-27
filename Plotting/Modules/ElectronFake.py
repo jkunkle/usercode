@@ -3,9 +3,10 @@ def config_samples(samples) :
     import ROOT
 
     #samples.AddSample('DYJetsToLL'   , path='job_summer12_DYJetsToLL', plotColor=ROOT.kBlue )
-    samples.AddSample('Zg'           , path='job_summer12_Zg'    ,  plotColor=ROOT.kRed )
+    samples.AddSample('Zg'           , path='job_summer12_Zg_s10'    ,  plotColor=ROOT.kRed )
     samples.AddSample('Wg'           , path='job_summer12_Wg'    ,  plotColor=ROOT.kRed )
-    samples.AddSample('DYJetsToLLPhOlap' , path='job_summer12_DYJetsToLLPhOlap'    ,  plotColor=ROOT.kRed, isActive=False )
+    samples.AddSample('DYJetsToLL' , path='job_summer12_DYJetsToLL_s10'    ,  plotColor=ROOT.kRed, isActive=False )
+    samples.AddSample('DYJetsToLLPhOlap' , path='job_summer12_DYJetsToLL_s10PhOlap'    ,  plotColor=ROOT.kRed, isActive=False )
     samples.AddSample('ttjets_1l'                    , path='job_summer12_ttjets_1l'            ,  isActive=False, useXSFile=True )
     samples.AddSample('ttjets_2l'                    , path='job_summer12_ttjets_2l'            ,  isActive=False, useXSFile=True )
     samples.AddSample('Wjets'                        , path='job_summer12_Wjets'               ,  isActive=False, useXSFile=True, XSName='Wjets' )

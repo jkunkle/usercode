@@ -27,6 +27,7 @@ def config_samples(samples) :
     samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  isActive=False, required=False, useXSFile=True )
     samples.AddSample('NLO_WAA_ISR'                  , path='job_NLO_WAA_ISR_PtG500MeVWithSF'             ,  isActive=False, required=False, useXSFile=True )
     samples.AddSample('NLO_WAA_FSR'                  , path='job_NLO_WAA_FSR_PtG500MeVWithSF'             ,  isActive=False, required=False, useXSFile=True )
+    samples.AddSample('WAAQGCLT'                      , path='job_LNuAA_LT_ReweightWithSF'             ,  isActive=False, required=False, useXSFile=True )
     #samples.AddSample('WAA_ISR'                      , path='job_summer12_WAA_ISR'              ,  isActive=False, useXSFile=False, scale=1.0 )
     #samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  isActive=False, useXSFile=False, scale=1.0 )
     samples.AddSample('Wg'                           , path='job_summer12_Wg'                   ,  isActive=False, useXSFile=True )

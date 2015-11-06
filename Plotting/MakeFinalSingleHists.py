@@ -17,6 +17,7 @@ p.add_argument('--doRatio',     default=False,action='store_true',   dest='doRat
 
 p.add_argument('--wcr',  default=False,action='store_true',   dest='wcr',         help='make W CR plots')
 p.add_argument('--zcr',  default=False,action='store_true',   dest='zcr',         help='make W CR plots')
+p.add_argument('--evalid',  default=False,action='store_true',   dest='evalid',         help='make ele fake validation plots')
 options = p.parse_args()
 
 import sys
@@ -52,6 +53,8 @@ def main() :
         MakeWCRPlots(options.outputDir, suffix=options.suffix)
     if options.zcr :
         MakeZCRPlots(options.outputDir, suffix=options.suffix)
+    if options.evalid: 
+        MakeEleValidationPlots(  options.outputDir, suffix=options.suffix) 
 
     print '^.^ FINSHED ^.^'
     os._exit
@@ -108,6 +111,31 @@ def MakeZCRPlots( outputDir, suffix='', ylabel='Events / bin', logy=0 ) :
     else :
         samplesWg.DumpStack(doRatio=options.doRatio, details=True )
         raw_input('continue')
+
+def MakeEleValidationPlots(  outputDir, suffix='', ylabel='Events / bin', logy=0 ) :
+
+    save = ( outputDir is not None )
+
+    samplesWg.DrawHist( 'pt_leadph12_elwzcr_EB', xlabel='p_{T}^{#gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : 'Barrel Photons', 'extra_label_loc' : (0.61, 0.48) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=False )
+
+    if save :
+        name = 'pt_leadph12_elwzcr_EB%s' %suffix
+        samplesWg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
+        samplesWg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
+    else :
+        samplesWg.DumpStack(doRatio=options.doRatio, details=True )
+        raw_input('continue')
+
+    samplesWg.DrawHist( 'pt_leadph12_elwzcr_EE', xlabel='p_{T}^{#gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : 'Endcap Photons', 'extra_label_loc' : (0.61, 0.48) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=False )
+
+    if save :
+        name = 'pt_leadph12_elwzcr_EE%s' %suffix
+        samplesWg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
+        samplesWg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
+    else :
+        samplesWg.DumpStack(doRatio=options.doRatio, details=True )
+        raw_input('continue')
+
 
 
 main()

@@ -104,43 +104,43 @@ def main() :
         # -----------------
         # Set the path here so it is picked up for jet background
         # -----------------
-        path_used = path_mctempnd
+        #path_used = path_mctempnd
         #path_used = path_manual
         #path_used = path_subtract
-        #path_used = path_nom
+        path_used = path_nom
 
         # go up to the second-to-last bin
         for bidx in range( 0, len( _ptbins ) - 2 ) :
             #file_bin_map.setdefault(path_subtract, []).append((_ptbins[bidx], _ptbins[bidx+1]))
             #file_bin_map_syst.setdefault(path_subtract, []).append((_ptbins[bidx], _ptbins[bidx+1]))
-            file_bin_map.setdefault(path_mctempnd, []).append((_ptbins[bidx], _ptbins[bidx+1]))
-            file_bin_map_syst.setdefault(path_mctempnd, []).append((_ptbins[bidx], _ptbins[bidx+1]))
-            #file_bin_map.setdefault(path_nom, []).append((_ptbins[bidx], _ptbins[bidx+1]))
-            #file_bin_map_syst.setdefault(path_nom, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+            #file_bin_map.setdefault(path_mctempnd, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+            #file_bin_map_syst.setdefault(path_mctempnd, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+            file_bin_map.setdefault(path_nom, []).append((_ptbins[bidx], _ptbins[bidx+1]))
+            file_bin_map_syst.setdefault(path_nom, []).append((_ptbins[bidx], _ptbins[bidx+1]))
             #file_bin_map.setdefault(path_mctemp, []).append((_ptbins[bidx], _ptbins[bidx+1]))
             #file_bin_map_syst.setdefault(path_mctemp, []).append((_ptbins[bidx], _ptbins[bidx+1]))
             #file_bin_map.setdefault(path_manual, []).append((_ptbins[bidx], _ptbins[bidx+1]))
             #file_bin_map_syst.setdefault(path_manual, []).append((_ptbins[bidx], _ptbins[bidx+1]))
 
         # do the last bin
-        #file_bin_map[path_nom].append((_ptbins[-2], 'max') )
-        #file_bin_map_syst[path_nom].append((_ptbins[-2], 'max') )
+        file_bin_map[path_nom].append((_ptbins[-2], 'max') )
+        file_bin_map_syst[path_nom].append((_ptbins[-2], 'max') )
         #file_bin_map[path_mctemp].append((_ptbins[-2], 'max') )
         #file_bin_map_syst[path_mctemp].append((_ptbins[-2], 'max') )
         #file_bin_map[path_manual].append((_ptbins[-2], 'max'))
         #file_bin_map_syst[path_manual].append((_ptbins[-2], 'max'))
-        file_bin_map[path_mctempnd].append ((_ptbins[-2], 'max'))
-        file_bin_map_syst[path_mctempnd].append((_ptbins[-2], 'max'))
+        #file_bin_map[path_mctempnd].append ((_ptbins[-2], 'max'))
+        #file_bin_map_syst[path_mctempnd].append((_ptbins[-2], 'max'))
         #file_bin_map[path_subtract].append ((_ptbins[-2], 'max'))
         #file_bin_map_syst[path_subtract].append((_ptbins[-2], 'max'))
 
-        eta_bins = {'EB' : [(0.00, 0.10), (0.10, 0.50), (0.50, 1.00), (1.00, 1.44)],
-                    'EE' : [(1.57, 2.10), (2.10, 2.20), (2.20, 2.40), (2.40, 2.50)]}
+        #eta_bins = {'EB' : [(0.00, 0.10), (0.10, 0.50), (0.50, 1.00), (1.00, 1.44)],
+        #            'EE' : [(1.57, 2.10), (2.10, 2.20), (2.20, 2.40), (2.40, 2.50)]}
 
-        eta_bins_plot = eta_bins
+        #eta_bins_plot = eta_bins
 
-        #eta_bins = {'EB' : [(0.00, 1.44)], 'EE' : [(1.57, 2.50)]}
-        #eta_bins_plot = {'EB' : [], 'EE' : []}
+        eta_bins = {'EB' : [(0.00, 1.44)], 'EE' : [(1.57, 2.50)]}
+        eta_bins_plot = {'EB' : [], 'EE' : []}
 
         for typedir in os.listdir( '%s/SinglePhotonResults'%options.baseDir ) :
             if typedir != 'SigmaIEIEFits' :
@@ -153,13 +153,13 @@ def main() :
             channelsel = []
 
             #channelsel = ['elw', 'elwsr', 'elwsrtight', 'elwzcr' ]
-            channelsel = ['elwzcr' ]
+            #channelsel = ['elwzcr' ]
             for elch in channelsel :
                 channels.append( elch )
                 channels.append( elch+'invpixlead' )
 
             #channelsmu = ['muwlowmtnolepveto']
-            channelsmu = []
+            channelsmu = ['muw', 'muwtight']
             channels += channelsmu
             
 
@@ -240,6 +240,21 @@ def MakeSingleEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_
     #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatioTAndPMCTemplate/results.pickle' %base_dir_ele, ['fake_ratio'] )
     #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeManualWithOlap2/results.pickle' %base_dir_ele, ['fake_ratio'] )
 
+    # determine number of eta bins used
+    # if only one eta bin is requested
+    # per region, some different behavior occurrs
+
+    eta_lens = []
+    for reg in regions :
+        eta_lens.append( len(eta_bins[reg] ) )
+
+    eta_lens = list(set(eta_lens))
+
+    single_eta_bin = False
+    if len(eta_lens) == 1 and eta_lens[0]==1 :
+        single_eta_bin = True
+
+
     scaled_f = {}
     for r1 in regions :
 
@@ -253,7 +268,8 @@ def MakeSingleEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_
 
             scaled_f[ (r1,ptmin,ptmax) ] = pred_lead['stat+syst']['f'][( r1,ptmin,ptmax)]*ff_lead
 
-            if eta_bins :
+            
+            if not single_eta_bin :
                 for etamin, etamax in eta_bins[r1] :
                     ff_lead = ff_man_coarse.get_pt_eta_ff( ptmin, ptmax, etamin, etamax)
                     etabin = '%.2f-%.2f' %( etamin, etamax) 
@@ -268,7 +284,8 @@ def MakeSingleEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_
     
             print 'Pred f = %s, scaled f = %s' %( pred_lead['stat+syst']['f'][(r1,ptmin,ptmax)], scaled_f[(r1,ptmin,ptmax)] )
 
-            if eta_bins :
+            if not single_eta_bin :
+            #if eta_bins :
                 for etamin, etamax in eta_bins[r1] :
                     etabin = '%.2f-%.2f' %( etamin, etamax) 
                     print '%s, pt %s-%s' %( etabin, ptmin, ptmax)
@@ -278,10 +295,17 @@ def MakeSingleEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_
     results_subtracted = {}
     results_subtracted['stat+syst'] = {}
     results_subtracted['stat+syst']['result'] = {}
-    for (r1, ptmin, ptmax), val in results_nom['stat+syst']['result'].iteritems() :
-        print 'Reg = %s, pt %s-%s, N Pix CR* ff = %s, N Jet Pix CR * ff = %s, pred = %s' %( r1, ptmin, ptmax, val, scaled_f[(r1, ptmin, ptmax)], val- scaled_f[(r1, ptmin, ptmax)] )
-        results_subtracted['stat+syst']['result'][(r1, ptmin, ptmax)] = val-scaled_f[ (r1,ptmin,ptmax) ] 
-    if eta_bins :
+
+
+    for reg_bin, val in results_nom['stat+syst']['result'].iteritems() :
+        r1 = reg_bin[0]
+        ptmin = reg_bin[1]
+        ptmax = reg_bin[2]
+        if reg_bin not in scaled_f :
+            continue
+        print 'Reg = %s, pt %s-%s, N Pix CR* ff = %s, N Jet Pix CR * ff = %s, pred = %s' %( r1, ptmin, ptmax, val, scaled_f[reg_bin], val- scaled_f[reg_bin] )
+        results_subtracted['stat+syst']['result'][reg_bin] = val-scaled_f[ reg_bin ] 
+    if not single_eta_bin :
         for r1 in regions :
             for etamin, etamax in eta_bins[r1] :
                 etabin = '%.2f-%.2f' %( etamin, etamax) 
@@ -698,6 +722,20 @@ def MakeSingleBkgEstimatePlots( baseDir, plotDir, channels=[], eta_bins={}, make
                     hist_name = 'pt_leadph12_%s_%.2f-%.2f'%(ch,etamin, etamax)
 
                     draw_singleph_hists( var, selection, _ptbins, data_sample, baseDir, plotDir, hist_name )
+        #if eta_bins :
+        #    all_eta_bins = []
+        #    for reg_bins in eta_bins.values() :
+        #         for rbin in reg_bins :
+        #             all_eta_bins.append( rbin )
+        #        
+        #    #selection = ' PUWeight * ( %s && ph_Is%s[0] && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f  ) ' %(el_cuts[ch], reg, etamin, etamax)
+        #    selection = ' PUWeight * ( %s ) ' %(el_cuts[ch])
+        #    hist_name = 'pt_leadph12_%s'%(ch)
+
+        #    var2d = 'ph_pt[0]:fabs(ph_eta[0])' # y:x
+        #    bins_2d = ( 250, 0, 2.5, 40, 0, 200)
+
+        #    draw_singleph_hists_proj( var2d, selection, bins_2d, data_sample, baseDir, plotDir, hist_name, all_eta_bins )
 
 
         make_hist_from_pickle( samplesLG, baseDir + '/jet_fake_results__%s.pickle'%ch            , '%s/%s/JetFake/hist.root' %(baseDir, plotDir), tag=ch, regions=regions, eta_bins=eta_bins )
@@ -717,6 +755,46 @@ def draw_singleph_hists( var, selection, bins, data_sample, baseDir, plotDir, hi
 
     hist_zg_mg  = samplesLG.get_samples(name='Zgamma')[0].hist.Clone(hist_name)
     save_hist( '%s/%s/Zg/hist.root' %(baseDir, plotDir), hist_zg_mg )
+
+    #hist_zjets_mg  = samplesLG.get_samples(name='DYJetsToLLPhOlap')[0].hist.Clone(hist_name)
+    #save_hist( '%s/%s/ZJets/hist.root' %(baseDir, plotDir), hist_zjets_mg )
+
+def draw_singleph_hists_proj( var, selection, bins, data_sample, baseDir, plotDir, hist_name, eta_bins ) :
+
+    #samplesLG.Draw( var, selection, bins)
+
+    #hist_data_inc = samplesLG.get_samples( name=data_sample )[0].hist
+    #hist_wg_inc   = samplesLG.get_samples( name='Wgamma'    )[0].hist
+    #hist_zg_inc   = samplesLG.get_samples( name='Zgamma'    )[0].hist
+
+    data_samp = samplesLG.get_samples( name=data_sample )[0]
+    wg_samp   = samplesLG.get_samples( name='Wgamma')[0]
+    zg_samp   = samplesLG.get_samples( name='Zgamma')[0]
+
+    samplesLG.create_hist(data_samp, var, selection, bins )
+    samplesLG.create_hist(wg_samp, var, selection, bins )
+    samplesLG.create_hist(zg_samp, var, selection, bins )
+
+    hist_data_inc = data_samp.hist.Clone( '%s_inc' %data_sample )
+    hist_wg_inc   = wg_samp.hist.Clone( 'Wgamma_inc' )
+    hist_zg_inc   = zg_samp.hist.Clone( 'Zgamma_inc' )
+
+    for etamin, etamax in eta_bins :
+
+        full_hist_name = '%s_%.2f-%.2f' %( hist_name, etamin, etamax )
+
+        etabinmin = hist_data_inc.GetXaxis().FindBin( etamin )
+        etabinmax = hist_data_inc.GetXaxis().FindBin( etamax ) - 1
+
+        hist_data_mg = hist_data_inc.ProjectionY( full_hist_name, etabinmin, etabinmax );
+        hist_wg_mg   = hist_wg_inc  .ProjectionY( full_hist_name, etabinmin, etabinmax );
+        hist_zg_mg   = hist_zg_inc  .ProjectionY( full_hist_name, etabinmin, etabinmax );
+
+        save_hist( '%s/%s/Data/hist.root' %(baseDir, plotDir), hist_data_mg )
+
+        save_hist( '%s/%s/Wg/hist.root' %(baseDir, plotDir), hist_wg_mg )
+
+        save_hist( '%s/%s/Zg/hist.root' %(baseDir, plotDir), hist_zg_mg )
 
     #hist_zjets_mg  = samplesLG.get_samples(name='DYJetsToLLPhOlap')[0].hist.Clone(hist_name)
     #save_hist( '%s/%s/ZJets/hist.root' %(baseDir, plotDir), hist_zjets_mg )

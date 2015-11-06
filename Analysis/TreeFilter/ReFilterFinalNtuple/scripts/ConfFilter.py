@@ -70,10 +70,13 @@ def make_final_mu( alg_list, args ) :
     mtcut = args.get('mtcut', ' > 40')
     print 'mtcut = ', mtcut
 
+    phpt = args.get('phpt', ' > 25 ' )
+    print 'phpt = ', phpt
+
     filter_photon = Filter( 'FilterPhoton' )
     filter_photon.cut_ph_medium = ' == True '
     if not looseobj :
-        filter_photon.cut_ph_pt = ' > 15 '
+        filter_photon.cut_ph_pt = phpt
 
     alg_list.append(filter_photon)
 
@@ -150,10 +153,13 @@ def make_final_el( alg_list, args ) :
     mtcut = args.get('mtcut', ' > 40')
     print 'mtcut = ', mtcut
 
+    phpt = args.get('phpt', ' > 25 ' )
+    print 'phpt = ', phpt
+
     filter_photon = Filter( 'FilterPhoton' )
     filter_photon.cut_ph_medium = ' == True '
     if not looseobj :
-        filter_photon.cut_ph_pt = ' > 15 '
+        filter_photon.cut_ph_pt = phpt
 
     alg_list.append(filter_photon)
 

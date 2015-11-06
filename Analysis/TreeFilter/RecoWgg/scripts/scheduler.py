@@ -24,41 +24,35 @@ base_nlo = '/eos/cms/store/user/cranelli/WGamGam/NLO_ggNtuples'
 base_yurii = '/eos/cms/store/user/ymaravin/MC/LLAA/'
 
 jobs = [
-        #(base_data, 'job_muon_2012a_Jan22rereco', 50),
-        #(base_data, 'job_muon_2012b_Jan22rereco', 100),
-        #(base_data, 'job_muon_2012c_Jan22rereco', 200),
-        #(base_data, 'job_muon_2012d_Jan22rereco', 200),
-        #(base_data, 'job_electron_2012a_Jan22rereco', 100),
-        #(base_data, 'job_electron_2012b_Jan22rereco', 200),
-        #(base_data, 'job_electron_2012c_Jan2012rereco', 400),
-        #(base_data, 'job_electron_2012d_Jan22rereco', 500),
+        (base_data, 'job_muon_2012a_Jan22rereco', 50),
+        (base_data, 'job_muon_2012b_Jan22rereco', 100),
+        (base_data, 'job_muon_2012c_Jan22rereco', 200),
+        (base_data, 'job_muon_2012d_Jan22rereco', 200),
+        (base_data, 'job_electron_2012a_Jan22rereco', 100),
+        (base_data, 'job_electron_2012b_Jan22rereco', 200),
+        (base_data, 'job_electron_2012c_Jan2012rereco', 400),
+        (base_data, 'job_electron_2012d_Jan22rereco', 500),
 
-        #(base_data, 'job_2muon_2012a_Jan22rereco', 50),
-        #(base_data, 'job_2muon_2012b_Jan22rereco', 100),
-        #(base_data, 'job_2muon_2012c_Jan22rereco', 100),
-        #(base_data, 'job_2muon_2012d_Jan22rereco', 100),
-        #(base_data, 'job_2electron_2012a_Jan22rereco', 50 ),
-        #(base_data, 'job_2electron_2012b_Jan22rereco', 100 ),
-        #(base_data, 'job_2electron_2012c_Jan22rereco', 100 ),
-        #(base_data, 'job_2electron_2012d_Jan22rereco', 100 ),
+        (base_data, 'job_2muon_2012a_Jan22rereco', 50),
+        (base_data, 'job_2muon_2012b_Jan22rereco', 100),
+        (base_data, 'job_2muon_2012c_Jan22rereco', 100),
+        (base_data, 'job_2muon_2012d_Jan22rereco', 100),
+
+        (base_data, 'job_2electron_2012a_Jan22rereco', 50 ),
+        (base_data, 'job_2electron_2012b_Jan22rereco', 100 ),
+        (base_data, 'job_2electron_2012c_Jan22rereco', 100 ),
+        (base_data, 'job_2electron_2012d_Jan22rereco', 100 ),
 
         (base_mc, 'job_summer12_DYJetsToLL_s10', 300 ),
-        ##(base_mc2, 'job_summer12_DYJetsToLL', 300 ),
-        #(base_mc, 'job_summer12_Wg', 50),
-        #(base_mc, 'job_summer12_Zg_s10', 50),
-        #(base_mc, 'job_summer12_ttjets_1l', 200),
-        #(base_mc, 'job_summer12_ttjets_2l', 100),
-        #(base_mc, 'job_summer12_Wjets', 400),
+        (base_mc, 'job_summer12_Wg', 50),
+        (base_mc, 'job_summer12_Zg_s10', 50),
+        (base_mc, 'job_summer12_ttjets_1l', 200),
+        (base_mc, 'job_summer12_ttjets_2l', 100),
+        (base_mc, 'job_summer12_Wjets', 400),
+        (base_mc, 'job_summer12_Zg_s10', 200),
 
-        #(base_mc, 'job_summer12_Zg', 200),
-        #(base_me, 'job_summer12_Zgg', 5 ),
-        #(base_mc, 'job_summer12_Wgg_FSR', 20),
-        #(base_mc, 'job_summer12_WAA_ISR', 20),
-        #(base_nlo, 'job_NLO_WAA_ISR', 20),
-        #(base_nlo, 'job_NLO_WAA_FSR', 20),
         #(base_nlo, 'job_NLO_WAA_ISR_PtG500MeV', 20),
         #(base_nlo, 'job_NLO_WAA_FSR_PtG500MeV', 20),
-        #(base_yurii, 'llaa_nlo_ggNtuple', 10 ),
         #(base_yurii, 'llaa_nlo_ggNtuple', 10 ),
         #(base_mc, 'job_summer12_ttg', 20),
         #(base_mc, 'job_summer12_WH_ZH_125', 10),
@@ -94,6 +88,10 @@ jobs = [
         #(base_mc, 'job_summer12_ttZ', 20),
         #(base_mc, 'job_jfaulkne_WZA', 20),
 
+        #(base_mc2, 'job_summer12_DYJetsToLL', 300 ),
+        #(base_me, 'job_summer12_Zgg', 5 ),
+        #(base_nlo, 'job_NLO_WAA_ISR', 20),
+        #(base_nlo, 'job_NLO_WAA_FSR', 20),
         #(base_mc, 'job_summer12_DiPhotonBorn_Pt-10To25', 10),
         #(base_me, 'job_summer12_WgPt50-130', 40),
         #(base_me, 'job_summer12_WgPt130', 40),
@@ -136,7 +134,7 @@ module = 'ConfWgamgamReco.py'
 #output = 'RecoOutput_2014_12_05'
 #output = 'RecoOutputDiMuon_2014_11_27'
 #output = 'LepGammaNoEleVetoNewVar_2014_05_02'
-output = 'RecoOutput_2015_07_28'
+output = 'RecoOutput_2015_11_04'
 
 nFilesPerJob = 1
 nProc = 6

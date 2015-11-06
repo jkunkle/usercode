@@ -11,6 +11,7 @@ def config_samples(samples) :
     #samples.AddSample('MCBkg'   , path='MCBkg'   ,legend_name='MC background',   isActive=True, isSignal=True, plotColor=ROOT.kGray+2 )
 
     samples.AddSampleGroup('AllBkg' , legend_name = 'All Bkg' ,input_samples = ['Zgg', 'OtherDiPhoton', 'EleFake', 'JetFake'],   isActive=False, plotColor=ROOT.kBlue-7, displayErrBand=False)
+    samples.AddSampleGroup('AllBkgPlusSig' , legend_name = 'AllBkgPlusSig' ,input_samples = ['Zgg', 'OtherDiPhoton', 'JetFake'],   isActive=False, plotColor=ROOT.kBlue-7, displayErrBand=False)
 
 
 def print_examples() :

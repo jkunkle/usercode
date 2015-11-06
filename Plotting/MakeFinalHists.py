@@ -60,22 +60,23 @@ def main() :
     if options.outputDir is not None :
         ROOT.gROOT.SetBatch(True)
 
-    #dumpStack=True
-    #samplesWgg.activate_sample( 'AllBkg')
-    #samplesWgg.activate_sample( 'ZggNoSyst')
+    dumpStack=True
+    samplesWgg.activate_sample( 'AllBkg')
+    samplesWgg.activate_sample( 'ZggNoSyst')
+    samplesWgg.activate_sample( 'AllBkgPlusSig')
 
-    #if options.zgg : 
-    #    MakeZggPlots( options.outputDir, suffix='', ylabel='Events/bin', label_style='fancyprelim', dumpStack=dumpStack )
-    #if options.electron :
-    #    MakeElectronPlots(options.outputDir, suffix='', ylabel='Events / bin',label_style='fancy', dumpStack=dumpStack  )
-    #    MakeElectronPlots(options.outputDir, suffix='', name_suffix='_prelim', ylabel='Events / bin',label_style='fancyprelim', dumpStack=dumpStack  )
-    #    #MakeElectronPlots(options.outputDir, suffix='_perGeV', name_suffix='_perGeV', ylabel = 'Events / 5 GeV', logy=1  )
-    #if options.muon :
-    #    MakeMuonPlots(options.outputDir, suffix='', ylabel='Events / bin', label_style='fancy', dumpStack=dumpStack  )
-    #    MakeMuonPlots(options.outputDir, suffix='', name_suffix='_prelim', ylabel='Events / bin', label_style='fancyprelim', dumpStack=dumpStack  )
-    #    #MakeMuonPlots(options.outputDir, suffix='_perGeV', ylabel = 'Events / 5 GeV',logy=1  )
-    #if options.combined :
-    #    MakeCombinedPlots( options.outputDir, dumpStack=dumpStack )
+    if options.zgg : 
+        MakeZggPlots( options.outputDir, suffix='', ylabel='Events/bin', label_style='fancyprelim', dumpStack=dumpStack )
+    if options.electron :
+        MakeElectronPlots(options.outputDir, suffix='', ylabel='Events / bin',label_style='fancy', dumpStack=dumpStack  )
+        MakeElectronPlots(options.outputDir, suffix='', name_suffix='_prelim', ylabel='Events / bin',label_style='fancyprelim', dumpStack=dumpStack  )
+        #MakeElectronPlots(options.outputDir, suffix='_perGeV', name_suffix='_perGeV', ylabel = 'Events / 5 GeV', logy=1  )
+    if options.muon :
+        MakeMuonPlots(options.outputDir, suffix='', ylabel='Events / bin', label_style='fancy', dumpStack=dumpStack  )
+        MakeMuonPlots(options.outputDir, suffix='', name_suffix='_prelim', ylabel='Events / bin', label_style='fancyprelim', dumpStack=dumpStack  )
+        #MakeMuonPlots(options.outputDir, suffix='_perGeV', ylabel = 'Events / 5 GeV',logy=1  )
+    if options.combined :
+        MakeCombinedPlots( options.outputDir, dumpStack=dumpStack )
 
     dumpStack=False
     samplesWgg.deactivate_sample( 'AllBkg')
@@ -103,9 +104,9 @@ def MakeMuonPlots( outputDir, suffix='', name_suffix='', ylabel='Events / bin',l
     xlabel = 'p_{T}^{lead #gamma} [GeV]'
 
     #ymax = 200
-    ymax = 80
+    ymax = 60
 
-    samplesWgg.DrawHist( 'pt_leadph12_muhighmt%s' %suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Muon Channel', 'extra_label_loc' : (0.61, 0.58) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07}, doratio=options.doRatio, logy=logy, ymin=0, ymax=ymax )
+    samplesWgg.DrawHist( 'pt_leadph12_muhighmt%s' %suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Muon Channel', 'extra_label_loc' : (0.66, 0.62) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07, 'legendTranslateX' : 0.045}, doratio=options.doRatio, logy=logy, ymin=0, ymax=ymax )
 
     if save :
         name = 'pt_leadph12_muhighmt%s' %name_suffix
@@ -148,7 +149,7 @@ def MakeMuonPlots( outputDir, suffix='', name_suffix='', ylabel='Events / bin',l
         samplesWgg.DumpStack(doRatio=options.doRatio, details=True )
         raw_input('continue')
 
-    samplesWgg.DrawHist( 'pt_leadph12_mulowmt%s' %suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Muon Channel', 'extra_label_loc' : (0.61, 0.58) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07}, doratio=options.doRatio, logy=logy, ymin=0, ymax=200 )
+    samplesWgg.DrawHist( 'pt_leadph12_mulowmt%s' %suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Muon Channel', 'extra_label_loc' : (0.66, 0.62) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07, 'legendTranslateX' : 0.045}, doratio=options.doRatio, logy=logy, ymin=0, ymax=ymax-20 )
 
     if save :
         name = 'pt_leadph12_mulowmt%s' %name_suffix
@@ -200,9 +201,9 @@ def MakeElectronPlots( outputDir, suffix='', name_suffix='', ylabel='Events / bi
     xlabel = 'p_{T}^{lead #gamma} [GeV]'
 
     #ymax = 150
-    ymax = 60
+    ymax = 50
 
-    samplesWgg.DrawHist( 'pt_leadph12_elfullhighmt%s'%suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.61, 0.51) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07}, doratio=options.doRatio, logy=logy, ymin=0, ymax=ymax )
+    samplesWgg.DrawHist( 'pt_leadph12_elfullhighmt%s'%suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.66, 0.55) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07, 'legendTranslateX' : 0.045, }, doratio=options.doRatio, logy=logy, ymin=0, ymax=ymax )
 
     if save :
         name = 'pt_leadph12_elfullhighmt%s'%name_suffix
@@ -247,7 +248,7 @@ def MakeElectronPlots( outputDir, suffix='', name_suffix='', ylabel='Events / bi
         samplesWgg.DumpStack(doRatio=options.doRatio, details=True )
         raw_input('continue')
 
-    samplesWgg.DrawHist( 'pt_leadph12_elfulllowmt%s'%suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.61, 0.51) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07}, doratio=options.doRatio, logy=logy, ymin=0, ymax=150 )
+    samplesWgg.DrawHist( 'pt_leadph12_elfulllowmt%s'%suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.66, 0.55) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07, 'legendTranslateX' : 0.045}, doratio=options.doRatio, logy=logy, ymin=0, ymax=ymax-10 )
 
     if save :
         name = 'pt_leadph12_elfulllowmt%s'%name_suffix
@@ -292,7 +293,7 @@ def MakeElectronPlots( outputDir, suffix='', name_suffix='', ylabel='Events / bi
         samplesWgg.DumpStack(doRatio=options.doRatio, details=True )
         raw_input('continue')
 
-    samplesWgg.DrawHist( 'pt_leadph12_ellooselowmt%s'%suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.61, 0.51) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07}, doratio=options.doRatio, logy=logy, ymin=0, ymax=300 )
+    samplesWgg.DrawHist( 'pt_leadph12_ellooselowmt%s'%suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.66, 0.55) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07, 'legendTranslateX' : 0.045}, doratio=options.doRatio, logy=logy, ymin=0, ymax=ymax )
 
     if save :
         name = 'pt_leadph12_ellooselowmt%s'%name_suffix
@@ -337,7 +338,7 @@ def MakeElectronPlots( outputDir, suffix='', name_suffix='', ylabel='Events / bi
         samplesWgg.DumpStack(doRatio=options.doRatio, details=True )
         raw_input('continue')
 
-    samplesWgg.DrawHist( 'pt_leadph12_elzcrhighmt%s'%suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.61, 0.51) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07}, doratio=options.doRatio, logy=logy, ymin=0, ymax=100 )
+    samplesWgg.DrawHist( 'pt_leadph12_elzcrhighmt%s'%suffix, xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.66, 0.55) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07, 'legendTranslateX' : 0.045}, doratio=options.doRatio, logy=logy, ymin=0, ymax=ymax )
 
     if save :
         name = 'pt_leadph12_elzcrhighmt%s'%name_suffix

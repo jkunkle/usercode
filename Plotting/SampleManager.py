@@ -2773,7 +2773,7 @@ class SampleManager :
             thishist = sample.ofiles[0].Get(histpath)
             if thishist == None :
                 print 'Could not get hist!'
-                sample.isActive = False
+                sample.isActive=False
             else :
                 for ofile in sample.ofiles[1:] :
                     thishist.Add( ofile.Get(histpath) )
@@ -3539,6 +3539,7 @@ class SampleManager :
             for samp in sighists : 
                 if samp.isActive :
                     samp.hist.SetLineWidth(3)
+                    samp.hist.SetLineStyle(7)
                     samp.hist.Draw('HIST same')
 
         if errhists :
@@ -3837,6 +3838,8 @@ class SampleManager :
         for samp in sigsamps : 
             if samp.isActive :
                 samp.hist.SetLineWidth(2)
+                # LINE STYLE
+                samp.hist.SetLineStyle(7)
                 samp.hist.Draw('HIST same')
 
         if doratio :

@@ -1958,16 +1958,18 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
 
         // sigmaIEIE corr
         float r9Corr = r9;
-        if( !IN::isData ) {
-            if( fabs(sceta) < 1.479 ) {
-                r9Corr = 0.000740 + 1.00139*r9;
-                // correct sieie in MC
-                sigmaIEIE =  0.0009133 + 0.891832*sigmaIEIE;
-            }
-            else {
-                r9Corr = -0.000399 + 1.00016*r9;
-            }
-        }
+        // Dont do the corrections
+        //if( !IN::isData ) {
+        //    if( fabs(sceta) < 1.479 ) {
+        //        r9Corr = 0.000740 + 1.00139*r9;
+        //        // correct sieie in MC
+        //        sigmaIEIE =  0.0009133 + 0.891832*sigmaIEIE;
+        //    }
+        //    else {
+        //        r9Corr = -0.000399 + 1.00016*r9;
+        //    }
+        //}
+        
         // photon mometum correction
         #ifdef EXISTS_isData
         #ifdef EXISTS_run

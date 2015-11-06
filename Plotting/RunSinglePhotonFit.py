@@ -290,11 +290,11 @@ def RunNomFitting( outputDir = None, ch='mu', fitvar=None, pid='Medium') :
             outputDirNom = outputDir + '/SinglePhotonResults/PhoIsoFits/JetSinglePhotonFakeNomIso'
 
     ptbins = [float(x) for x in options.ptbins.split(',') ]
-    eta_bins = {'EB' : [(0.00, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44)],
-                'EE' : [(1.57, 2.10), (2.10, 2.20), (2.20, 2.40), (2.40, 2.50 ) ] }
+    #eta_bins = {'EB' : [(0.00, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44)],
+    #            'EE' : [(1.57, 2.10), (2.10, 2.20), (2.20, 2.40), (2.40, 2.50 ) ] }
 
-    #eta_bins = {'EB' : [(0.00, 1.44)],
-    #            'EE' : [(1.57, 2.50 ) ] }
+    eta_bins = {'EB' : [(0.00, 1.44)],
+                'EE' : [(1.57, 2.50 ) ] }
 
 
     if (  ch.count('mu') or ch.count('invpixlead') ) and ch.count('eff_passpsv') == 0 :

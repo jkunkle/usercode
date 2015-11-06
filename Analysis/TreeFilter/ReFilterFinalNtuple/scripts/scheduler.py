@@ -17,14 +17,14 @@ base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output'
 
 
 jobs_data = [
-        (base, 'job_muon_2012a_Jan22rereco'),
-        (base, 'job_muon_2012b_Jan22rereco'),
-        (base, 'job_muon_2012c_Jan22rereco'),
-        (base, 'job_muon_2012d_Jan22rereco'),
-        (base, 'job_electron_2012a_Jan22rereco'),
-        (base, 'job_electron_2012b_Jan22rereco'),
-        (base, 'job_electron_2012c_Jan2012rereco'),
-        (base, 'job_electron_2012d_Jan22rereco'),
+        #(base, 'job_muon_2012a_Jan22rereco'),
+        #(base, 'job_muon_2012b_Jan22rereco'),
+        #(base, 'job_muon_2012c_Jan22rereco'),
+        #(base, 'job_muon_2012d_Jan22rereco'),
+        #(base, 'job_electron_2012a_Jan22rereco'),
+        #(base, 'job_electron_2012b_Jan22rereco'),
+        #(base, 'job_electron_2012c_Jan2012rereco'),
+        #(base, 'job_electron_2012d_Jan22rereco'),
         #(base, 'job_2muon_2012a_Jan22rereco'),
         #(base, 'job_2muon_2012b_Jan22rereco'),
         #(base, 'job_2muon_2012c_Jan22rereco'),
@@ -38,13 +38,13 @@ jobs_mc = [
         #(base, 'job_NLO_WAA_FSR'),
         #(base, 'job_NLO_WAA_ISR'),
         #(base, 'job_NLO_WAA_FSR_PtG500MeV'),
-        #(base, 'job_NLO_WAA_ISR_PtG500MeV'),
+        (base, 'job_NLO_WAA_ISR_PtG500MeV'),
         #(base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_WAA_ISR'),
         #(base, 'job_summer12_Zgg'),
-        (base, 'job_summer12_DYJetsToLL_s10PhOlap'),
+        #(base, 'job_summer12_DYJetsToLL_s10PhOlap'),
         #(base, 'job_summer12_Wg'),
-        (base, 'job_summer12_Zg_s10'),
+        #(base, 'job_summer12_Zg_s10'),
         #(base, 'job_summer12_Wjets'),
         #(base, 'job_summer12_WH_ZH_125'),
         #(base, 'job_summer12_WW_2l2nu'),
@@ -121,16 +121,16 @@ check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --o
 top_configs = [
     #{   
     # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'mtcut' : ' > 40 ', 'mtvar' : 'mt_trigmu_met' },
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithOverlp_2015_10_01',
-    # 'output_name' : 'LepGammaGammaFinalMuUnblindAll_2015_10_01',
+    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'mtcut' : ' > 40 ', 'mtvar' : 'mt_trigmu_met', 'phpt' : ' > 25 ' },
+    # 'input_name'  : 'LepGammaGammaNoPhIDWithOverlap_2015_10_01',
+    # 'output_name' : 'LepGammaGammaFinalMuUnblindAll_2015_10_27',
     # 'tag'         : 'muFinal'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > 40 ', 'mtvar' : 'mt_trigel_met' },
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > 40 ', 'mtvar' : 'mt_trigel_met', 'phpt' : ' > 25 ' },
     # 'input_name'  : 'LepGammaGammaNoPhIDWithOverlap_2015_10_01',
-    # 'output_name' : 'LepGammaGammaFinalElUnblindAll_2015_10_01',
+    # 'output_name' : 'LepGammaGammaFinalElUnblindAll_2015_10_27',
     # 'tag'         : 'elFinal'
     #},
     #{   
@@ -168,20 +168,20 @@ top_configs = [
     # 'output_name' : 'LepGammaGammaNoPhIDWithOverlapInvPixSeedSubl_2015_10_01',
     # 'tag'         : 'invSublloose'
     #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'mtvar' : 'mt_trigmu_met' },
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithOverlap_2015_10_01',
-    # 'output_name' : 'LepGammaGammaFinalMuWithOlapUnblindAllNoMtCut_2015_10_01',
-    # 'tag'         : 'muFinalloose'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'nozmass' : True },
-    # 'input_name'  : 'LepGammaGammaNoPhIDWithOverlap_2015_10_01',
-    # 'output_name' : 'LepGammaGammaFinalElUnblindAllWithOlapNoZCutNoMtCut_2015_10_01',
-    # 'tag'         : 'elFinalLoose'
-    #},
+    {   
+     'module'      : 'ConfFilter.py', 
+     'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'mtvar' : 'mt_trigmu_met' },
+     'input_name'  : 'LepGammaGammaNoPhIDWithOverlap_2015_10_01',
+     'output_name' : 'LepGammaGammaFinalMuWithOlapUnblindAllNoMtCut_2015_10_01',
+     'tag'         : 'muFinalloose'
+    },
+    {   
+     'module'      : 'ConfFilter.py', 
+     'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'nozmass' : True },
+     'input_name'  : 'LepGammaGammaNoPhIDWithOverlap_2015_10_01',
+     'output_name' : 'LepGammaGammaFinalElUnblindAllWithOlapNoZCutNoMtCut_2015_10_01',
+     'tag'         : 'elFinalLoose'
+    },
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'nozmass' : True , 'invpixsubl' : True },
@@ -280,13 +280,13 @@ top_configs = [
     # 'output_name' : 'LepLepGammaGammaFinalMuInvPixLead_2015_07_16',
     # 'tag'         : 'elFinalInvPixLead'
     #},
-    {   
-     'module'      : 'ConfFilter.py', 
-     'args'        : {'function' : 'make_leplep_gamma', 'eleOlap' : False },
-     'input_name'  : 'LepLepGammaNoPhID_2015_10_01',
-     'output_name' : 'LepLepGammaMediumPhID_2015_10_01',
-     'tag'         : 'leplepmedium'
-    },
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_leplep_gamma', 'eleOlap' : False },
+    # 'input_name'  : 'LepLepGammaNoPhID_2015_10_01',
+    # 'output_name' : 'LepLepGammaMediumPhID_2015_10_01',
+    # 'tag'         : 'leplepmedium'
+    #},
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'mt_var' : 'mt_lep_metUncertMuonUP'},

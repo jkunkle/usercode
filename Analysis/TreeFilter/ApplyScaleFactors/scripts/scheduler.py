@@ -12,7 +12,7 @@ options = p.parse_args()
 if not options.run and not options.check :
     options.run = True
 
-base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output'
+base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output'
 base_orig_dy = 'root://eoscms//eos/cms/store/group/phys_smp/ggNtuples/mc'
 base_orig = 'root://eoscms//eos/cms/store/group/phys_egamma/cmkuo/'
 base_chris = 'root://eoscms//eos/cms/store/user/cranelli/WGamGam/NLO_ggNtuples/'
@@ -40,10 +40,11 @@ jobs_data = [
 jobs_mc = [
         #JobConf(base, base_chris, 'job_NLO_WAA_FSR'),
         #JobConf(base, base_chris, 'job_NLO_WAA_ISR'),
-        JobConf(base, base_chris, 'job_NLO_WAA_ISR_PtG500MeV'),
-        JobConf(base, base_chris, 'job_NLO_WAA_FSR_PtG500MeV'),
+        #JobConf(base, base_chris, 'job_NLO_WAA_ISR_PtG500MeV'),
+        #JobConf(base, base_chris, 'job_NLO_WAA_ISR_PtG500MeV'),
+        JobConf(base, base_chris, 'job_LNuAA_LT_Reweight'),
         ##JobConf(base, base_me, 'job_summer12_Zgg'),
-        JobConf(base, base_yurii, 'llaa_nlo_ggNtuple'),
+        #JobConf(base, base_yurii, 'llaa_nlo_ggNtuple'),
 
         ##JobConf(base,  base_orig_dy, 'job_summer12_DYJetsToLL'),
         #JobConf(base,  base_orig_dy, 'job_summer12_DYJetsToLL', 'PhOlap'),
@@ -129,14 +130,14 @@ top_configs = [
     #{   
     # 'module'      : 'Conf.py', 
     # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepGammaGammaFinalMuUnblindAllWithOlap_2015_10_01',
+    # 'input_name'  : 'LepGammaGammaFinalElUnblindAll_2015_10_27',
     # 'output_tag'  : 'WithSF',
     # 'tag'         : 'muFinalSF'
     #},
     #{   
     # 'module'      : 'Conf.py', 
     # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepGammaGammaFinalElUnblindAllWithOlap_2015_10_01',
+    # 'input_name'  : 'LepGammaGammaFinalMuUnblindAll_2015_10_27',
     # 'output_tag'  : 'WithSF',
     # 'tag'         : 'elFinalSF'
     #},

@@ -380,15 +380,15 @@ def main() :
     #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_10_01'
     #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_10_01'
 
-    base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithOverlapVetoPixSeedBoth_2015_10_01'
-    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithOverlap_2015_10_01'
-    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithOverlapInvPixSeedLead_2015_10_01'
-    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithOverlapInvPixSeedSubl_2015_10_01'
+    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithOverlapVetoPixSeedBoth_2015_10_01'
+    #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithOverlap_2015_10_01'
+    #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithOverlapInvPixSeedLead_2015_10_01'
+    #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithOverlapInvPixSeedSubl_2015_10_01'
 
-    #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_10_01'
-    #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_10_01'
-    #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_10_01'
-    #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_10_01'
+    base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_10_01'
+    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_10_01'
+    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_10_01'
+    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_10_01'
 
     #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithEleOlapVetoPixSeedBoth_2015_09_03'
     #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithEleOlap_2015_09_03'
@@ -468,10 +468,10 @@ def main() :
     for s in all_samp_man  :
         s.deactivate_all_samples()
 
-    #fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
-    fftypes = ['None']
-    #jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
-    jetfitvars = ['chIsoCorr']
+    fftypes = ['nom', 'veryloose', 'loose', 'tight', 'None']
+    #fftypes = ['nom']
+    jetfitvars = ['sigmaIEIE', 'chIsoCorr', 'phoIsoCorr']
+    #jetfitvars = ['sigmaIEIE']
 
     #channels = ['muhighmt']
     #channels = ['mulowmt']
@@ -505,6 +505,7 @@ def main() :
         channels = options.channels.split(',')
 
     corr_vals = [(5,3,3) , (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20,16,16)]
+    #corr_vals = [(5,3,3) ]
 
     eleVeto = 'PassPSV'
     if 'muZgg' in channels or 'elZgg' in channels :
@@ -1274,7 +1275,7 @@ def run_corr_calculation( templates_leadiso, templates_subliso, templates_nom, t
 
     (results_corr_stat_data, results_corr_stat_temp_tight, results_corr_stat_temp_loose, results_corr_syst_bkg, results_corr_syst_temp)  = run_corrected_diphoton_fit(templates_leadiso_inclusive, templates_subliso_inclusive, gg_hist_leadiso_inclusive, gg_hist_subliso_inclusive, gg_hist_bothiso_inclusive, reg[0], reg[1], templates_corr = templates_corr_inc, fitvar=fitvar, lead_ptrange=(None,None), subl_ptrange=subl_ptrange, ndim=ndim,systematics=systematics)
 
-    namePostfix = '__ffcorr_%s__%s__%s-%s' %( ffcorr, ch,reg[0], reg[1] )
+    namePostfix = '__ffcorr_%s__%s__%s-%s__pt_%s-max__subpt_%s-max' %( ffcorr, ch,reg[0], reg[1], ptbins[0], ptbins[0] )
 
     save_templates( templates_nom_inclusive, outputDir, lead_ptrange=(None,None), subl_ptrange=(None,None),namePostfix=namePostfix )
 

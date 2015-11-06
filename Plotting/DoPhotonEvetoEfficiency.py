@@ -132,18 +132,18 @@ def get_background_draw_commands( ch ) :
 def get_normalization_draw_commands_in( ch ) :
 
     if   ch=='mmg_medium' :
-        return 'mu_passtrig25_n>0 && mu_n>1 && ph_n==1 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep > 81 && m_leplep < 101'
+        return 'mu_passtrig25_n>0 && mu_n>1 && ph_mediumNoEleVeto_n==1 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep > 81 && m_leplep < 101'
     elif ch=='mmg_passpsv' :
-        return 'mu_passtrig25_n>0 && mu_n>1 && ph_n==1 && ph_hasPixSeed[0]==0 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep > 81 && m_leplep < 101'
+        return 'mu_passtrig25_n>0 && mu_n>1 && ph_mediumPassPSV_n==1 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep > 81 && m_leplep < 101'
     else :
         return None
 
 def get_normalization_draw_commands_out( ch ) :
 
     if   ch=='mmg_medium' :
-        return 'mu_passtrig25_n>0 && mu_n>1 && ph_n==1 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep < 80 && m_leplep > 15 && m_leplepph > 76 && m_leplepph < 106'
+        return 'mu_passtrig25_n>0 && mu_n>1 && ph_mediumNoEleVeto_n==1 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep < 80 && m_leplep > 15 && m_leplepph > 76 && m_leplepph < 106'
     elif ch=='mmg_passpsv' :
-        return 'mu_passtrig25_n>0 && mu_n>1 && ph_n==1 && ph_hasPixSeed[0]==0 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep < 80 && m_leplep > 15 && m_leplepph > 76 && m_leplepph < 106'
+        return 'mu_passtrig25_n>0 && mu_n>1 && ph_mediumPassPSV_n==1 && dr_ph1_leadLep>0.4 && dr_ph1_sublLep>0.4 && m_leplep < 80 && m_leplep > 15 && m_leplepph > 76 && m_leplepph < 106'
     else :
         return None
 
@@ -191,6 +191,8 @@ def main() :
         #eff_medium_mc   = GetPhotonEfficienciesHighPt( data_sample='Zgamma', numerator='mmg_medium', denominator='mmg_loose' , pt_min=pt_min_high, outputDir=outputDir+'/MCLLCut' )
         eff_passpsv_mc_highpt    = GetPhotonEfficienciesHighPt( data_sample='Wgamma', numerator='mg_passpsv_highpt' , denominator='mg_medium_highpt', ptbins=pt_bins_high, useBkgEstimate=False, outputDir=outputDir+'/MCLLCut' )
 
+        print 'Results mc'
+        print eff_passpsv_mc_highpt
         # --------------------------
         # Put back to save as one
         # output
@@ -366,36 +368,44 @@ def GetPhotonEfficiencies( data_sample, numerator, denominator, pt_bins=[], bkg_
             eff_num = GetEfficiencyIntegrals( num_hists, reg,pt_bins, numerator)
             eff_den = GetEfficiencyIntegrals( den_hists, reg, pt_bins, numerator)
 
+        else :
 
-            for (ptmin, ptmax), res_num in eff_num.iteritems() :
+            hists_num = { 'data': hist_data_num, 'bkg_in' : None }
+            hists_den = { 'data': hist_data_den, 'bkg_in' : None }
+            eff_num = GetEfficiencyIntegrals( hists_num, reg,pt_bins, numerator)
+            eff_den = GetEfficiencyIntegrals( hists_den, reg,pt_bins, denominator)
 
-                res_den = eff_den[(ptmin,ptmax)]
+        for (ptmin, ptmax), res_num in eff_num.iteritems() :
 
-                ptmaxstr = str( ptmax )
-                if ptmax == pt_bins[-1] :
-                    ptmaxstr = 'max'
+            res_den = eff_den[(ptmin,ptmax)]
 
-                
-                out_bin = ( str(etamin), str(etamax), str( ptmin ), ptmaxstr )
-                res_bin = ( ptmin, ptmax )
+            ptmaxstr = str( ptmax )
+            if ptmax == pt_bins[-1] :
+                ptmaxstr = 'max'
 
-                results[out_bin] = {}
-                results[out_bin]['num'] = res_num
-                results[out_bin]['den'] = res_den
-                results[out_bin]['eff'] = res_num['result']/res_den['result']
+            
+            out_bin = ( str(etamin), str(etamax), str( ptmin ), ptmaxstr )
+            res_bin = ( ptmin, ptmax )
 
-        return results
+            results[out_bin] = {}
+            results[out_bin]['num'] = res_num
+            results[out_bin]['den'] = res_den
+            results[out_bin]['eff'] = res_num['result']/res_den['result']
 
+    return results
 
 def GetEfficiencyIntegrals( hists, eta_reg, pt_bins, draw_tag ) :
 
     mass_min = 76
     mass_max = 106
 
+    results = {}
     for idx,ptmin in enumerate( pt_bins[:-1] ) :
         ptmax = pt_bins[idx+1]
 
-        results = {}
+        ptmaxstr = str(ptmax)
+        if ptmax == pt_bins[-1] :
+            ptmaxstr = 'max'
 
         result_bin = (ptmin,ptmax)
 
@@ -419,7 +429,7 @@ def GetEfficiencyIntegrals( hists, eta_reg, pt_bins, draw_tag ) :
 
             # get background estimate from
             # data driven jet fake
-            dd_file = _photon_jet_fake_uncert_files[draw_tag][(eta_reg, str(ptmin), str(ptmax))]
+            dd_file = _photon_jet_fake_uncert_files[draw_tag][(eta_reg, str(ptmin), ptmaxstr)]
 
             dd_ofile = open( dd_file, 'r')
             dd_data = pickle.load( dd_ofile )
@@ -446,22 +456,27 @@ def GetEfficiencyIntegrals( hists, eta_reg, pt_bins, draw_tag ) :
             results[result_bin]['Data' ] = val_data
             results[result_bin]['JetFakeBkg' ] = dd_val
 
+            print 'Out val = ', val_loose_out
+            print 'In val = ', val_loose_in
 
-            loose_in_out_ratio = (val_loose_out/val_loose_in)
-            dd_extrap_bkg      = dd_val*loose_in_out_ratio
+            try :
+                loose_in_out_ratio = (val_loose_out/val_loose_in)
+                dd_extrap_bkg      = dd_val*loose_in_out_ratio
+            except ZeroDivisionError :
+                loose_in_out_ratio = ufloat( 0.0, 0.0)
+                dd_extrap_bkg      = ufloat( 0.0, 0.0)
 
             results[result_bin]['loose_in_out_ratio'] = loose_in_out_ratio
             results[result_bin]['Bkg_pred'] = dd_extrap_bkg
             results[result_bin]['result'] = val_data - dd_extrap_bkg
-
-            return results
 
         else :
 
             # just take the number from data
             val_data = ufloat( int_data, err_data )
             results[result_bin]['result'] = val_data
-            return results
+
+    return results
 
 def GetEfficiencyIntegralsHighPt( data_hist, draw_tag, eta_reg, ptbins, useBkgEstimate=False ) :
 
@@ -501,16 +516,13 @@ def GetEfficiencyIntegralsHighPt( data_hist, draw_tag, eta_reg, ptbins, useBkgEs
             results[res_bin]['JetFakeBkg' ] = dd_val
             results[res_bin]['result'] = val_data - dd_val
 
-            print results
-
-            return results
-
         else :
 
             # just take the number from data
             val_data = ufloat( int_data, err_data )
             results[res_bin]['result'] = val_data
-            return results
+
+    return results
 
 def MakeScaleFactor( numerator, denominator, tag, binning, outputDir=None ) :
     
@@ -592,6 +604,9 @@ def pair_pt_eta_bins( bin_list ) :
 def clone_sample_and_draw( sampMan, samp, var, sel, binning ) :
         newSamp = sampMan.clone_sample( oldname=samp.name, newname=samp.name+str(uuid.uuid4()), temporary=True ) 
         sampMan.create_hist( newSamp, var, sel, binning )
+        print samp.name
+        print sel
+        print newSamp.hist.Integral()
         return newSamp.hist
                                        
 if __name__ == '__main__' :

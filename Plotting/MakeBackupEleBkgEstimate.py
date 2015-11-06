@@ -47,15 +47,15 @@ def main() :
     samplesLGPass  .ReadSamples( sampleConf )
     samplesLGFail  .ReadSamples( sampleConf )
 
-    eta_bins = {'EB' : [(0.00, 0.10), (0.10, 0.50), (0.50, 1.00), (1.00, 1.44)],
-                'EE' : [(1.57, 2.10), (2.10, 2.20), (2.20, 2.40), (2.40, 2.50)]}
+    #eta_bins = {'EB' : [(0.00, 0.10), (0.10, 0.50), (0.50, 1.00), (1.00, 1.44)],
+    #            'EE' : [(1.57, 2.10), (2.10, 2.20), (2.20, 2.40), (2.40, 2.50)]}
 
-    #eta_bins = {'EB' : [(0.00, 1.44)],
-    #            'EE' : [(1.57, 2.50)]}
+    eta_bins = {'EB' : [(0.00, 1.44)],
+                'EE' : [(1.57, 2.50)]}
 
     #pt_bins = [(15, 25), (25, 40), (40, 70), (70,1000000) ]
-    #pt_bins = [15, 25, 40, 70,1000000]
-    pt_bins = [15,25,30,35,40,45,50,55,60,70,1000000]
+    pt_bins = [25, 40, 70,1000000]
+    #pt_bins = [15,25,30,35,40,45,50,55,60,70,1000000]
     base_dir_jet_single = '%s/SinglePhotonResults/SigmaIEIEFits' %(options.baseDir)
 
     jet_fake_nom = MakeSingleJetBkgEstimate( base_dir_jet_single, channel='elwzcr',pt_bins=pt_bins, eta_bins={})
@@ -94,6 +94,7 @@ def MakeEleBkgEstimate( output_dir, jet_fake_nom, jet_fake_inv, pt_bins, eta_bin
     subl_pt_bins = { (15, 40) : [(15,25),(25,40) ], 
                     (15, 70) :  [(15,25),(25,40),(40,70) ],
                      (15, 1000000) : [(15,25),(25,40),(40,70), (70, 1000000) ],
+                     (25, 1000000) : [(25,40),(40,70), (70, 1000000) ],
                    }
 
     for resbin, dataval_nom in data_nom['data'].iteritems() :

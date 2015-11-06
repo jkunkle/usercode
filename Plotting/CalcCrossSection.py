@@ -11,9 +11,9 @@ from uncertainties import ufloat
 
 parser = ArgumentParser()
 
-parser.add_argument( '--baseDir', default=None, required=True, dest='baseDir', help='path to results' )
-parser.add_argument( '--plotDir', default=None, required=True, dest='plotDir', help='name of plot dir' )
-parser.add_argument( '--finalDir', default=None, required=True, dest='finalDir', help='name of final hists dir' )
+parser.add_argument( '--zgg'     , default=False, action='store_true', required=False, dest='zgg', help='make Zgg cross section' )
+parser.add_argument( '--ratio'   , default=False, action='store_true', required=False, dest='ratio', help='make Wgg and Zgg cross sections and their ratios' )
+
 
 options = parser.parse_args()
 
@@ -47,58 +47,124 @@ acceptances = { 'electron' : {
                              },
 }
 
-comb_acceptance = { 'muon' : ufloat( 0.2662, 0.0091 ), 'electron' : ufloat( 0.1729, 0.0306) }
+acc_el = 0.1721
+acc_mu = 0.2675
+comb_acceptance =     { 'muon' : {
+                                    'stat'   : ufloat( acc_mu, acc_mu*0.0055 ), 
+                                    'Channel': ufloat( acc_mu, acc_mu*0.0040 ), 
+                                    'Photon' : ufloat( acc_mu, acc_mu*0.0244 ), 
+                                    'Theory' : ufloat( acc_mu, acc_mu*0.0162 ), 
+                                 },
+                       'electron' : {
+                                    'stat'   : ufloat( acc_el, acc_el*0.0041),
+                                    'Channel': ufloat( acc_el, acc_el*0.1689), 
+                                    'Photon' : ufloat( acc_el, acc_el*0.0244 ), 
+                                    'Theory' : ufloat( acc_el, acc_el*0.0155 ), 
+                                    }
+                     }
+
+acc_el_zgg = 0.1765
+acc_mu_zgg = 0.2555
+
+comb_acceptance_zgg =  { 'muon' : {
+                                    'stat'   : ufloat( acc_mu_zgg, acc_mu_zgg*0.0078 ), 
+                                    'Channel': ufloat( acc_mu_zgg, acc_mu_zgg*0.0122 ), 
+                                    'Photon' : ufloat( acc_mu_zgg, acc_mu_zgg*0.0296 ), 
+                                    'Theory' : ufloat( acc_mu_zgg, acc_mu_zgg*0.0230 ), 
+                                 },
+                       'electron' : {
+                                    'stat'   : ufloat( acc_el_zgg, acc_el_zgg*0.0064),
+                                    'Channel': ufloat( acc_el_zgg, acc_el_zgg*0.0332), 
+                                    'Photon' : ufloat( acc_el_zgg, acc_el_zgg*0.0289 ), 
+                                    'Theory' : ufloat( acc_el_zgg, acc_el_zgg*0.0230 ), 
+                                    }
+                     }
+
 
 def main() :
 
+    baseDirWgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_10_13/'
+    plotDirWgg  = 'PlotsUnblindMCNDWithPhoWithCorrNoDiffUncNewOneBin'
+    finalDirWgg = 'FinalPlotsPlotsUnblindMCNDWithPhoWithCorrNoDiffUncNewOneBin'
+
+    baseDirZgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_10_15/'
+    plotDirZgg  = 'PlotsUnblindZggNewOneBin'
+    finalDirZgg = 'FinalPlotsOneBin'
+
+    #baseDirZgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_10_15/'
+    #plotDirZgg  = 'PlotsUnblindZggNew'
+    #finalDirZgg = 'FinalPlots'
+
+    #baseDirZgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_11_03/'
+    #plotDirZgg  = 'PlotsUnblindZggOneBin25'
+    #finalDirZgg = 'FinalPlotsOneBin25'
+
     #pt_bins = [('25', '40'), ('40', '70'), ('70', 'max') ]
-    pt_bins = [('40', '70'), ('70', 'max') ]
+    #pt_bins = [('40', '70'), ('70', 'max') ]
+    pt_bins_wgg = [('25', 'max') ]
+    pt_bins_zgg = [('15', 'max') ]
+    #pt_bins_zgg = [('25', 'max') ]
+
+    #pt_bins_zgg = [('15', '25'), ('25', '40'), ('40', 'max')]
+
     eta_bins = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB') ]
 
-    final_results_dir = '%s/%s'%(options.baseDir, options.finalDir )
+    final_results_dir_wgg = '%s/%s'%(baseDirWgg, finalDirWgg )
+    final_results_dir_zgg = '%s/%s'%(baseDirZgg, finalDirZgg )
 
     # define the matching regex for individual regions
-    file_key_electron = 'pt_leadph12_elfullhighmt_(?P<reg1>\w{2,2})-(?P<reg2>\w{2,2}).pickle'
-    file_key_muon     = 'pt_leadph12_muhighmt_(?P<reg1>\w{2,2})-(?P<reg2>\w{2,2}).pickle'
+    file_key_electron_wgg = 'pt_leadph12_elfullhighmt_(?P<reg1>\w{2,2})-(?P<reg2>\w{2,2}).pickle'
+    file_key_muon_wgg     = 'pt_leadph12_muhighmt_(?P<reg1>\w{2,2})-(?P<reg2>\w{2,2}).pickle'
+    file_key_electron_zgg = 'pt_leadph12_elZgg_(?P<reg1>\w{2,2})-(?P<reg2>\w{2,2}).pickle'
+    file_key_muon_zgg     = 'pt_leadph12_muZgg_(?P<reg1>\w{2,2})-(?P<reg2>\w{2,2}).pickle'
 
     # get the files that match the regex
-    electron_results_files = get_matching_regex( os.listdir( final_results_dir ), file_key_electron )
-    muon_results_files     = get_matching_regex( os.listdir( final_results_dir ), file_key_muon     )
+    electron_results_files_wgg = get_matching_regex( os.listdir( final_results_dir_wgg ), file_key_electron_wgg )
+    muon_results_files_wgg     = get_matching_regex( os.listdir( final_results_dir_wgg ), file_key_muon_wgg     )
 
-    results = {'muon' : {}, 'electron' : {}}
+    electron_results_files_zgg = get_matching_regex( os.listdir( final_results_dir_zgg ), file_key_electron_zgg )
+    muon_results_files_zgg     = get_matching_regex( os.listdir( final_results_dir_zgg ), file_key_muon_zgg     )
 
-    for fname, matchdic in electron_results_files :
-        region = ( matchdic['reg1'], matchdic['reg2'] )
-        ofile = open( '%s/%s' %( final_results_dir, fname ) )
-        results['electron'][region] = pickle.load( ofile )
-        ofile.close()
+    results_wgg = {'muon' : {}, 'electron' : {}}
+    results_zgg = {'muon' : {}, 'electron' : {}}
 
-    for fname, matchdic in muon_results_files :
-        region = ( matchdic['reg1'], matchdic['reg2'] )
-        ofile = open( '%s/%s' %( final_results_dir, fname ) )
-        results['muon'][region] = pickle.load( ofile )
-        ofile.close()
+    results_wgg['electron'] = collect_match_results_from_pickle( final_results_dir_wgg, electron_results_files_wgg )
+    results_wgg['muon']     = collect_match_results_from_pickle( final_results_dir_wgg, muon_results_files_wgg     )
 
+    results_zgg['electron'] = collect_match_results_from_pickle( final_results_dir_zgg, electron_results_files_zgg )
+    results_zgg['muon']     = collect_match_results_from_pickle( final_results_dir_zgg, muon_results_files_zgg     )
 
-    file_jet_muon = '%s/BackgroundEstimates/%s/jet_fake_results__muhighmt.pickle' %(options.baseDir, options.plotDir )
-    file_jet_ele  = '%s/BackgroundEstimates/%s/jet_fake_results__elfullhighmt.pickle' %(options.baseDir, options.plotDir )
+    plotDirWgg = '%s/BackgroundEstimates/%s'%(baseDirWgg, plotDirWgg )
+    plotDirZgg = '%s/BackgroundEstimates/%s'%(baseDirZgg, plotDirZgg )
 
-    results_jet = {}
+    file_jet_muon_wgg = '%s/jet_fake_results__muhighmt.pickle'     %(plotDirWgg )
+    file_jet_ele_wgg  = '%s/jet_fake_results__elfullhighmt.pickle' %(plotDirWgg )
 
-    ofile_jet_muon = open( file_jet_muon )
-    results_jet['muon'] = pickle.load( ofile_jet_muon )
-    ofile_jet_muon.close()
-
-    ofile_jet_ele  = open( file_jet_ele  )
-    results_jet['electron'] = pickle.load( ofile_jet_ele )
-    ofile_jet_ele.close()
+    file_jet_muon_zgg = '%s/jet_fake_results__muZgg.pickle'    %(plotDirZgg )
+    file_jet_ele_zgg  = '%s/jet_fake_results__elZgg.pickle'    %(plotDirZgg )
 
 
-    #calc_combined_xs( results, results_jet, pt_bins, eta_bins )
+    results_jet_wgg = {}
+    results_jet_zgg = {}
 
-    calc_combined_xs_bins( results, results_jet, pt_bins, eta_bins, outputDir=final_results_dir )
+    results_jet_wgg['muon']     = get_dic_from_pickle( file_jet_muon_wgg )
+    results_jet_wgg['electron'] = get_dic_from_pickle( file_jet_ele_wgg )
 
-def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, outputDir=None ) :
+    results_jet_zgg['muon']     = get_dic_from_pickle( file_jet_muon_zgg )
+    results_jet_zgg['electron'] = get_dic_from_pickle( file_jet_ele_zgg )
+
+    comb_wgg = calc_combined_xs_bins( results_wgg, results_jet_wgg, pt_bins_wgg, eta_bins, zgg=False, plotDir=plotDirWgg, outputDir=final_results_dir_wgg )
+    comb_zgg = calc_combined_xs_bins( results_zgg, results_jet_zgg, pt_bins_zgg, eta_bins, zgg=True , plotDir=plotDirZgg, outputDir=final_results_dir_zgg )
+
+
+    print 'COMB_Wgg' 
+    print comb_wgg['combination']
+    print 'COMB_Zgg' 
+    print comb_zgg['combination']
+
+    print 'Ratio = %s ' %( comb_wgg['combination']['systs']['statData']/comb_zgg['combination']['systs']['statData'] )
+
+def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, zgg=False, plotDir=None, outputDir=None ) :
 
 
     bin_correlations = {'statTempTight' : False, 
@@ -109,85 +175,126 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, output
                         'statTempLoose' : False, 
                         'statData' : False }
 
-
     all_systs = ['statTempTight', 'statTempLoose', 'systTemp', 'systBkg', 'fakefake', 'crossCorr', 'statData']
 
     jet_sum_el = get_simple_jet_bin_sums( results_jet['electron'], all_systs, eta_bins, pt_bins, bin_correlations )
-    jet_sum_mu  = get_simple_jet_bin_sums( results_jet['muon']    , all_systs, eta_bins, pt_bins, bin_correlations )
+    jet_sum_mu = get_simple_jet_bin_sums( results_jet['muon']    , all_systs, eta_bins, pt_bins, bin_correlations )
+
+    summed_el = collect_jet_systs( jet_sum_el, all_systs, bin_correlations )
+    summed_mu = collect_jet_systs( jet_sum_mu, all_systs, bin_correlations )
+
+    # electron fakes
+    if not zgg :
+
+        file_el = '%s/electron_fake_results__elfullhighmt.pickle' %(plotDir )
+        ofile_el = open( file_el )
+        results_el = pickle.load( ofile_el )
+        ofile_el.close()
+
+        file_jet_subl = '%s/jet_fake_results__elfullhighmtinvpixsubl.pickle' %(plotDir )
+        file_jet_lead = '%s/jet_fake_results__elfullhighmtinvpixlead.pickle' %(plotDir )
+
+        ofile_subl = open( file_jet_subl )
+        ofile_lead = open( file_jet_lead )
+
+        results_jet_lead = pickle.load( ofile_lead )
+        results_jet_subl = pickle.load( ofile_subl )
+
+        ofile_lead.close()
+        ofile_subl.close()
+
+        jet_sum = {'lead' : {}, 'subl' : {}, 'nom' : {} }
+        sb_data = {'lead' : {}, 'subl' : {} }
+        ffs     = {'lead' : {}, 'subl' : {} }
+
+        combined_fake = {}
+        for eb in eta_bins :
+            jet_sum['lead'][eb] = collect_jet_systs( get_simple_jet_bin_sums( results_jet_lead, all_systs, [eb], pt_bins, bin_correlations ), all_systs, bin_correlations )
+            jet_sum['subl'][eb] = collect_jet_systs( get_simple_jet_bin_sums( results_jet_subl, all_systs, [eb], pt_bins, bin_correlations ), all_systs, bin_correlations )
+            jet_sum['nom' ][eb] = collect_jet_systs( get_simple_jet_bin_sums( results_jet['electron'], all_systs, [eb], pt_bins, bin_correlations ), all_systs, bin_correlations )
+
+            sb_data['lead'][eb] = ufloat(0,0)
+            sb_data['subl'][eb] = ufloat(0,0)
+            ffs['lead'][eb] = ufloat(0,0)
+            ffs['subl'][eb] = ufloat(0,0)
+            for ptmin, ptmax in pt_bins :
+                res_bin = (eb[0],eb[1],ptmin,ptmax)
+                ana_bins_lead = [x for x in results_el['details']['lead'][res_bin].keys() if isinstance(x, tuple ) ]
+                for ab in ana_bins_lead :
+                    sb_data['lead'][eb] += results_el['details']['lead'][res_bin][ab]['data']
+                    ffs    ['lead'][eb] += results_el['details']['lead'][res_bin][ab]['ff']
+                ana_bins_subl = [x for x in results_el['details']['subl'][res_bin].keys() if isinstance(x, tuple ) ]
+                for ab in ana_bins_subl :
+                    sb_data['subl'][eb] += results_el['details']['subl'][res_bin][ab]['data']
+                    ffs    ['subl'][eb] += results_el['details']['subl'][res_bin][ab]['ff']
+
+            print 'ADD 10% uncertainty to fake factors!'
+            ffs['lead'][eb] += ufloat( 0.0, ffs['lead'][eb].n*0.1 )
+            ffs['subl'][eb] += ufloat( 0.0, ffs['subl'][eb].n*0.1 )
+
+            combined_fake[eb] = {}
+            ele_pred_nom_lead = ffs['lead'][eb].n * ( sb_data['lead'][eb] - jet_sum['lead'][eb]['JetFake']['sum'] ) 
+            ele_pred_nom_subl = ffs['subl'][eb].n * ( sb_data['subl'][eb] - jet_sum['subl'][eb]['JetFake']['sum'] )
+            ele_pred_nom = ele_pred_nom_lead + ele_pred_nom_subl
+            for syst in all_systs :
+
+                # in channel combinations
+                # only data statistics are
+                # uncorrelated
+                if syst == 'statData' :
+                    ele_pred_lead = ufloat( ffs['lead'][eb].n, 0.0 ) * ( sb_data['lead'][eb] - jet_sum['lead'][eb][syst]['sum'] ) 
+                    ele_pred_subl = ufloat( ffs['subl'][eb].n, 0.0 ) * ( sb_data['subl'][eb] - jet_sum['subl'][eb][syst]['sum'] )
+                    ele_pred_tot = ele_pred_lead + ele_pred_subl
+                    combined_fake[eb][syst] = jet_sum['nom'][eb][syst]['sum'] + ele_pred_tot
+                else :
+                    ele_jet_pred = ufloat( ffs['lead'][eb].n, 0.0 ) * jet_sum['lead'][eb][syst]['sum'] + ufloat( ffs['subl'][eb].n, 0.0 ) * jet_sum['subl'][eb][syst]['sum']
+                    jet_comb = ufloat( jet_sum['nom'][eb][syst]['sum'].n - ele_jet_pred.n,  math.fabs(jet_sum['nom'][eb][syst]['sum'].s - ele_jet_pred.s ) ) 
+                    ele_data = ffs['lead'][eb] * sb_data['lead'][eb] + ffs['subl'][eb]*sb_data['subl'][eb]
+                    ele_data = ufloat( ele_data.n, 0.0 ) # no data uncert
+
+                    combined_fake[eb][syst] = jet_comb + ele_data
+
+            combined_fake[eb]['EleFakeFF'] = ufloat( jet_sum['nom'][eb]['JetFake']['sum'].n, 0.0 ) + ffs['lead'][eb]*(ufloat( sb_data['lead'][eb].n, 0.0 )  - ufloat(jet_sum['lead'][eb]['JetFake']['sum'].n, 0.0) ) + ffs['subl'][eb]*(ufloat( sb_data['subl'][eb].n, 0.0 )  - ufloat(jet_sum['subl'][eb]['JetFake']['sum'].n, 0.0) )
+
+            print combined_fake[eb]
+
+        bin_correlations_with_el = {'statTempTight' : False, 
+                                    'crossCorr' : True,
+                                    'systBkg' : True,
+                                    'fakefake' : False, 
+                                    'systTemp' : False, 
+                                    'statTempLoose' : False, 
+                                    'statData' : False,
+                                    'EleFakeFF' : False}
 
 
-    jet_tot_el = None
-    jet_tot_mu = None
+        bin_combined_fake = {}
+        for syst, isCorr in bin_correlations_with_el.iteritems() :
+            bin_combined_fake[syst] = ufloat(0,0)
 
-    jet_tot_el_data = None
-    jet_tot_mu_data = None
+            for reg in combined_fake.keys() :
 
-    jet_tot_el_binuncorr = None
-    jet_tot_mu_binuncorr = None
+                if isCorr :
+                    bin_combined_fake[syst] = ufloat( bin_combined_fake[syst].n + combined_fake[reg][syst].n, bin_combined_fake[syst].s + combined_fake[reg][syst].s )
+                else:
+                    bin_combined_fake[syst] = bin_combined_fake[syst] + combined_fake[reg][syst]
 
-    jet_tot_el_bincorr = None
-    jet_tot_mu_bincorr = None
+        summed_el['CombStat'] = bin_combined_fake['statData']
+        summed_el['CombEleFakeFF'] = bin_combined_fake['EleFakeFF']
+        
+        summed_el['CombJetCorr'] = ufloat( bin_combined_fake['statData'].n, 0.0 )
+        for syst, val in bin_combined_fake.iteritems() :
+            if syst == 'statData' or syst == 'EleFakeFF' :
+                continue
 
-    jet_tot_el_syst = None
-    jet_tot_mu_syst = None
+            summed_el['CombJetCorr'] += ufloat( 0.0, bin_combined_fake[syst].s )
 
-    for idx, syst in enumerate( all_systs ) :
+    if zgg :
+        return make_zgg_combination(results_final, jet_sum_mu, jet_sum_el, summed_mu, summed_el, pt_bins, eta_bins, outputDir=outputDir)
+    else :
+        return make_wgg_combination(results_final, jet_sum_mu, jet_sum_el, summed_mu, summed_el, pt_bins, eta_bins, outputDir=outputDir)
 
-        if idx == 0 :
-            jet_tot_mu = jet_sum_mu['sum'][syst] 
-            jet_tot_el = jet_sum_el['sum'][syst] 
-        else :
-            jet_tot_mu += ufloat( 0.0, jet_sum_mu['sum'][syst].s )
-            jet_tot_el += ufloat( 0.0, jet_sum_el['sum'][syst].s )
-
-        if bin_correlations[syst] :
-            if jet_tot_el_bincorr is None :
-                jet_tot_el_bincorr = jet_sum_el['sum'][syst]
-                jet_tot_mu_bincorr = jet_sum_mu['sum'][syst]
-            else : 
-                jet_tot_el_bincorr += ufloat( 0.0, jet_sum_el['sum'][syst].s )
-                jet_tot_mu_bincorr += ufloat( 0.0, jet_sum_mu['sum'][syst].s )
-        else :
-            if jet_tot_el_binuncorr is None :
-                jet_tot_el_binuncorr = jet_sum_el['sum'][syst]
-                jet_tot_mu_binuncorr = jet_sum_mu['sum'][syst]
-            else : 
-                jet_tot_el_binuncorr += ufloat( 0.0, jet_sum_el['sum'][syst].s )
-                jet_tot_mu_binuncorr += ufloat( 0.0, jet_sum_mu['sum'][syst].s )
-
-        if syst == 'statData' :
-            jet_tot_el_data = jet_sum_el['sum'][syst]
-            jet_tot_mu_data = jet_sum_mu['sum'][syst]
-        else :
-            if jet_tot_el_syst is None :
-                jet_tot_el_syst = jet_sum_el['sum'][syst]
-                jet_tot_mu_syst = jet_sum_mu['sum'][syst]
-            else :
-                jet_tot_el_syst += ufloat( 0.0, jet_sum_el['sum'][syst].s )
-                jet_tot_mu_syst += ufloat( 0.0, jet_sum_mu['sum'][syst].s )
-    
-
-    print 'Jet total mu = ', jet_tot_mu
-    print 'Jet total el = ', jet_tot_el
-
-    summed_mu = {}
-    summed_el = {}
-
-    summed_mu['JetFake']          = { 'sum' : jet_tot_mu }
-    summed_el['JetFake']          = { 'sum' : jet_tot_el }
-    summed_mu['JetFakeStat']      = { 'sum' : jet_tot_mu_data }
-    summed_el['JetFakeStat']      = { 'sum' : jet_tot_el_data }
-
-    summed_mu['JetFakeSyst']      = { 'sum' : jet_tot_mu_syst }
-    summed_el['JetFakeSyst']      = { 'sum' : jet_tot_el_syst }
-
-    summed_mu['JetFakeBinCorr']   = { 'sum' : jet_tot_mu_bincorr }
-    summed_el['JetFakeBinCorr']   = { 'sum' : jet_tot_el_bincorr }
-
-    summed_mu['JetFakeBinUncorr'] = { 'sum' : jet_tot_mu_binuncorr }
-    summed_el['JetFakeBinUncorr'] = { 'sum' : jet_tot_el_binuncorr }
-
-    retrieve_samples = ['Zgg', 'Data', 'EleFake']
+def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summed_el, pt_bins, eta_bins, outputDir=None ) :
 
     summed_mu['Zgg']  = get_summed_sample( results_final['muon'],  'Zgg' , pt_bins, eta_bins, isCorr=True )
     summed_mu['ZggStat']  = get_summed_sample( results_final['muon'],  'ZggNoSyst' , pt_bins, eta_bins, isCorr=False )
@@ -202,85 +309,113 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, output
     summed_el['Wgg']     = get_summed_sample( results_final['electron'],  'Wgg'    , pt_bins, eta_bins, isCorr=True )
     summed_el['Data']    = get_summed_sample( results_final['electron'],  'Data'   , pt_bins, eta_bins, isCorr=False )
     summed_el['EleFake'] = get_summed_sample( results_final['electron'],  'EleFake', pt_bins, eta_bins, isCorr=False )
+    print 'EleFake'
+    print summed_el['EleFake']
+    print 'JetFake'
+    print summed_el['JetFake']
 
     summed_mu['ZggSyst'] = make_uncert_compliment( summed_mu['Zgg'], summed_mu['ZggStat'], isCorr=True )
     summed_el['ZggSyst'] = make_uncert_compliment( summed_el['Zgg'], summed_el['ZggStat'], isCorr=True )
 
-    bkg_el = summed_el['Zgg']['sum']+summed_el['EleFake']['sum']+summed_el['JetFake']['sum']
-    bkg_mu = summed_mu['Zgg']['sum']+summed_mu['JetFake']['sum']
+    bkg_el = {}
+    bkg_mu = {}
+    bkg_mu['statData'] = summed_mu['JetFakeStat']['sum'] + ufloat( summed_mu['Zgg']['sum'].n, 0.0 )
+    bkg_mu['ZggStat'] = ufloat( summed_mu['JetFakeStat']['sum'].n, 0.0) +  summed_mu['ZggStat']['sum']
+    bkg_mu['ZggSyst'] = ufloat( summed_mu['JetFakeStat']['sum'].n, 0.0) +  summed_mu['ZggSyst']['sum']
+    bkg_mu['lumi']    = ufloat( summed_mu['JetFakeStat']['sum'].n, 0.0) +  ufloat( summed_mu['Zgg']['sum'].n, summed_mu['Zgg']['sum'].n*0.026 )
+    bkg_mu['JetFakeSyst'] = summed_mu['JetFakeSyst']['sum'] + ufloat(summed_mu['Zgg']['sum'].n, 0.0 )
+
+    bkg_el['statData'] = summed_el['CombStat'] + ufloat( summed_el['Zgg']['sum'].n, 0.0 )
+    bkg_el['JetFakeSyst'] = summed_el['CombJetCorr'] + ufloat( summed_el['Zgg']['sum'].n, 0.0 )
+    bkg_el['EleFakeSyst'] = summed_el['CombEleFakeFF'] + ufloat( summed_el['Zgg']['sum'].n, 0.0 )
+    bkg_el['ZggStat'] = ufloat(summed_el['CombStat'].n, 0.0) + summed_el['ZggStat']['sum']
+    bkg_el['ZggSyst'] = ufloat(summed_el['CombStat'].n, 0.0) + summed_el['ZggSyst']['sum']
+    bkg_el['lumi']    = ufloat( summed_el['CombStat'].n, 0.0) +  ufloat( summed_el['Zgg']['sum'].n, summed_el['Zgg']['sum'].n*0.026 )
+
+    print 'bkg_mu'
+    print bkg_mu
+    print 'bkg_el'
+    print bkg_el
 
     lumi = ufloat( 19.4, 19.4*0.026 )
 
-    exp_mu = bkg_mu + summed_mu['Wgg']['sum']
-    exp_el = bkg_el + summed_el['Wgg']['sum']
-    xs_mu_sig =  (ufloat( exp_mu.n, math.sqrt(exp_mu.n) ) - bkg_mu)/ ( comb_acceptance['muon'] * lumi )
-    xs_el_sig =  (ufloat(exp_el.n, math.sqrt(exp_el.n) ) - bkg_el )/ ( comb_acceptance['electron'] * lumi )
-    xs_mu = ( summed_mu['Data']['sum'] - bkg_mu )/ ( comb_acceptance['muon'] * lumi )
-    xs_el = ( summed_el['Data']['sum'] - bkg_el )/ ( comb_acceptance['electron'] * lumi )
+    exp_mu = bkg_mu['statData'] + summed_mu['Wgg']['sum']
+    exp_el = bkg_el['statData'] + summed_el['Wgg']['sum']
+    xs_mu_sig =  (ufloat( exp_mu.n, math.sqrt(exp_mu.n) ) - bkg_mu['statData'])/ ( comb_acceptance['muon']['stat'] * lumi )
+    xs_el_sig =  (ufloat(exp_el.n, math.sqrt(exp_el.n) ) - bkg_el['statData'] )/ ( comb_acceptance['electron']['stat'] * lumi )
+    xs_mu = {}
+    xs_el = {}
+
+    print 'data mu'
+    print summed_mu['Data']['sum']
+    print 'data el'
+    print summed_el['Data']['sum']
+
+
+
+    xs_mu['statData']    = ( summed_mu['Data']['sum'] - bkg_mu['statData'] )                            / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_mu['ZggStat']     = ( ufloat(summed_mu['Data']['sum'].n,0.0) - bkg_mu['ZggStat'])                / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_mu['ZggSyst']     = ( ufloat(summed_mu['Data']['sum'].n,0.0) - bkg_mu['ZggSyst'])                / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_mu['JetFakeSyst'] = ( ufloat(summed_mu['Data']['sum'].n,0.0) - bkg_mu['JetFakeSyst'])            / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_mu['lumi']        = ( ufloat(summed_mu['Data']['sum'].n,0.0) - bkg_mu['lumi'])                   / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*lumi)
+    xs_mu['AccStat']     = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0)) / ( comb_acceptance['muon']['stat']*ufloat(lumi.n, 0.0))
+    xs_mu['AccChannel']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0)) / ( comb_acceptance['muon']['Channel']*ufloat(lumi.n, 0.0))
+    xs_mu['AccPhoton']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0))  / ( comb_acceptance['muon']['Photon']*ufloat(lumi.n, 0.0))
+    xs_mu['AccTheory']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0))  / ( comb_acceptance['muon']['Theory']*ufloat(lumi.n, 0.0))
+    xs_mu['EleFakeSyst']  = ufloat( xs_mu['statData'].n, 0.0 )
+
+    xs_el['statData']    = ( summed_el['Data']['sum'] - bkg_el['statData'] )                            / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_el['ZggStat']     = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['ZggStat'])                / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_el['ZggSyst']     = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['ZggSyst'])                / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_el['JetFakeSyst'] = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['JetFakeSyst'])            / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_el['EleFakeSyst'] = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['EleFakeSyst'])            / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_el['lumi']        = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['lumi'])                   / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*lumi)
+    xs_el['AccStat']     = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0)) / ( comb_acceptance['electron']['stat']*ufloat(lumi.n, 0.0))
+    xs_el['AccChannel']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0)) / ( comb_acceptance['electron']['Channel']*ufloat(lumi.n, 0.0))
+    xs_el['AccPhoton']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0))  / ( comb_acceptance['electron']['Photon']*ufloat(lumi.n, 0.0))
+    xs_el['AccTheory']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0))  / ( comb_acceptance['electron']['Theory']*ufloat(lumi.n, 0.0))
+
+    print 'xs_mu'
+    print xs_mu
+    print 'xs_el'
+    print xs_el
 
     print 'Muon, N Data = %d, N Sig = %f, n Bkg = %s '      %( summed_mu['Data']['sum'].n, summed_mu['Wgg']['sum'].n, bkg_mu )
     print 'Electron , N Data = %d, N Sig = %f, n Bkg = %s ' %( summed_el['Data']['sum'].n, summed_el['Wgg']['sum'].n, bkg_el )
-    print 'S/sigma(B), mu =  %f ' %( summed_mu['Wgg']['sum'].n / bkg_mu.s )
-    print 'S/sigma(B), el =  %f ' %( summed_el['Wgg']['sum'].n / bkg_el.s )
+    #print 'S/sigma(B), mu =  %f ' %( summed_mu['Wgg']['sum'].n / bkg_mu.s )
+    #print 'S/sigma(B), el =  %f ' %( summed_el['Wgg']['sum'].n / bkg_el.s )
     print 'xs_mu_sig = %s, frac unc = %f' %( xs_mu_sig, xs_mu_sig.s/xs_mu_sig.n)
     print 'xs_el_sig = %s, frac unc = %f' %( xs_el_sig, xs_el_sig.s/xs_el_sig.n)
-    print 'xs_mu = %s' %xs_mu
-    print 'xs_el = %s' %xs_el
 
-    xs_systs_mu = {'components' : { 'Data' : summed_mu['Data']['sum'], 
-                                   'JetFakeStat' : summed_mu['JetFakeStat'], 'JetFakeSyst' : summed_mu['JetFakeSyst'],
-                                   'JetFakeBinCorr' : summed_mu['JetFakeBinCorr'], 'JetFakeBinUncorr' : summed_mu['JetFakeBinUncorr'],
-                                   'ZggStat' : summed_mu['ZggStat']['sum'],'ZggSyst' : summed_mu['ZggSyst']['sum'], 
-                                   'EleFake' : ufloat(0,0), 'Acc' : comb_acceptance['muon'], 'lumi' : lumi } }
+    comb_xs_mu = xs_mu['statData'] + ufloat( 0.0, xs_mu['ZggStat'].s ) + ufloat( 0.0, xs_mu['ZggSyst'].s ) + ufloat( 0.0, xs_mu['JetFakeSyst'].s ) + ufloat( 0.0, xs_mu['lumi'].s ) + ufloat( 0.0, xs_mu['AccStat'].s ) + ufloat( 0.0, xs_mu['AccChannel'].s ) + ufloat( 0.0, xs_mu['AccPhoton'].s ) + ufloat( 0.0, xs_mu['AccTheory'].s )
+    comb_xs_el = xs_el['statData'] + ufloat( 0.0, xs_el['ZggStat'].s ) + ufloat( 0.0, xs_el['ZggSyst'].s ) + ufloat( 0.0, xs_el['JetFakeSyst'].s ) + ufloat( 0.0, xs_el['lumi'].s ) + ufloat( 0.0, xs_el['EleFakeSyst'].s ) + ufloat( 0.0, xs_el['AccStat'].s ) + ufloat( 0.0, xs_el['AccChannel'].s ) + ufloat( 0.0, xs_el['AccPhoton'].s ) + ufloat( 0.0, xs_el['AccTheory'].s )
 
-    xs_systs_el = {'components' : { 'Data' : summed_el['Data']['sum'], 
-                                   'JetFakeStat' : summed_el['JetFakeStat'], 'JetFakeSyst' : summed_el['JetFakeSyst'],
-                                   'JetFakeBinCorr' : summed_el['JetFakeBinCorr'], 'JetFakeBinUncorr' : summed_el['JetFakeBinUncorr'],
-                                   'ZggStat' : summed_el['ZggStat']['sum'],'ZggSyst' : summed_el['ZggSyst']['sum'], 
-                                   'EleFake' : summed_el['EleFake']['sum'], 'Acc' : comb_acceptance['electron'], 'lumi' : lumi } }
+    print 'Final xs_mu = %s' %comb_xs_mu
+    print 'Final xs_el = %s' %comb_xs_el
 
-    xs_systs_mu['systs'] = {}
-    xs_systs_el['systs'] = {}
+    xs_mu['central_value'] = comb_xs_mu
+    xs_el['central_value'] = comb_xs_el
 
-    xs_systs_mu['systs']['Data'] = ( summed_mu['Data']['sum'] - ufloat( bkg_mu.n, 0.0) ) / ( ufloat(comb_acceptance['muon'].n, 0.0 ) * ufloat( lumi.n, 0.0 ) )
-    xs_systs_el['systs']['Data'] = ( summed_el['Data']['sum'] - ufloat( bkg_el.n, 0.0) ) / ( ufloat(comb_acceptance['electron'].n, 0.0 ) * ufloat( lumi.n, 0.0 ) )
-
-    xs_systs_mu['systs']['JetFakeStat'] = ( ufloat(summed_mu['Data']['sum'].n, 0.0 ) - summed_mu['JetFakeStat']['sum'] - ufloat( summed_mu['Zgg']['sum'].n, 0.0) ) / ( ufloat(comb_acceptance['muon'].n, 0.0 ) * ufloat( lumi.n, 0.0 ) )
-    xs_systs_el['systs']['JetFakeStat'] = ( ufloat(summed_el['Data']['sum'].n, 0.0 ) - summed_el['JetFakeStat']['sum'] - ufloat( summed_el['Zgg']['sum'].n, 0.0)  - ufloat( summed_el['EleFake']['sum'].n, 0.0)  ) / ( ufloat(comb_acceptance['electron'].n, 0.0 ) * ufloat( lumi.n, 0.0 ) )
-
-    xs_systs_mu['systs']['JetFakeSyst'] = ( ufloat(summed_mu['Data']['sum'].n, 0.0 ) - summed_mu['JetFakeSyst']['sum'] - ufloat( summed_mu['Zgg']['sum'].n, 0.0) ) / ( ufloat(comb_acceptance['muon'].n, 0.0 ) * ufloat( lumi.n, 0.0 ) )
-    xs_systs_el['systs']['JetFakeSyst'] = ( ufloat(summed_el['Data']['sum'].n, 0.0 ) - summed_el['JetFakeSyst']['sum'] - ufloat( summed_el['Zgg']['sum'].n, 0.0)  - ufloat( summed_el['EleFake']['sum'].n, 0.0)  ) / ( ufloat(comb_acceptance['electron'].n, 0.0 ) * ufloat( lumi.n, 0.0 ) )
-
-    xs_systs_mu['systs']['ZggStat'] = ( ufloat(summed_mu['Data']['sum'].n, 0.0 ) - summed_mu['ZggStat']['sum'] - ufloat( summed_mu['JetFake']['sum'].n, 0.0) ) / ( ufloat(comb_acceptance['muon'].n, 0.0 ) * ufloat( lumi.n, 0.0 ) )
-    xs_systs_el['systs']['ZggStat'] = ( ufloat(summed_el['Data']['sum'].n, 0.0 ) - summed_el['ZggStat']['sum'] - ufloat( summed_el['JetFake']['sum'].n, 0.0)  - ufloat( summed_el['EleFake']['sum'].n, 0.0)  ) / ( ufloat(comb_acceptance['electron'].n, 0.0 ) * ufloat( lumi.n, 0.0 ) )
-
-    xs_systs_mu['systs']['ZggSyst'] = ( ufloat(summed_mu['Data']['sum'].n, 0.0 ) - summed_mu['ZggSyst']['sum'] - ufloat( summed_mu['JetFake']['sum'].n, 0.0) ) / ( ufloat(comb_acceptance['muon'].n, 0.0 ) * ufloat( lumi.n, 0.0 ) )
-    xs_systs_el['systs']['ZggSyst'] = ( ufloat(summed_el['Data']['sum'].n, 0.0 ) - summed_el['ZggSyst']['sum'] - ufloat( summed_el['JetFake']['sum'].n, 0.0)  - ufloat( summed_el['EleFake']['sum'].n, 0.0)  ) / ( ufloat(comb_acceptance['electron'].n, 0.0 ) * ufloat( lumi.n, 0.0 ) )
-
-    xs_systs_mu['systs']['EleFake'] = ufloat( xs_mu.n, 0.0 )
-    xs_systs_el['systs']['EleFake'] = ( ufloat(summed_el['Data']['sum'].n, 0.0 ) - summed_el['EleFake']['sum'] - ufloat( summed_el['JetFake']['sum'].n, 0.0)  - ufloat( summed_el['Zgg']['sum'].n, 0.0)  ) / ( ufloat(comb_acceptance['electron'].n, 0.0 ) * ufloat( lumi.n, 0.0 ) )
-
-    xs_systs_mu['systs']['Acc'] = ( ufloat(summed_mu['Data']['sum'].n, 0.0 ) - ufloat( summed_mu['Zgg']['sum'].n, 0.0) - ufloat( summed_mu['JetFake']['sum'].n, 0.0) ) / ( comb_acceptance['muon'] * ufloat( lumi.n, 0.0 ) )
-    xs_systs_el['systs']['Acc'] = ( ufloat(summed_el['Data']['sum'].n, 0.0 ) - ufloat( summed_el['Zgg']['sum'].n, 0.0) - ufloat( summed_el['JetFake']['sum'].n, 0.0)  - ufloat( summed_el['EleFake']['sum'].n, 0.0)  ) / ( comb_acceptance['electron'] * ufloat( lumi.n, 0.0 ) )
-
-    ch_correlations  = {'Data'    : False, 
-                        'JetFakeStat' : False, 
+    ch_correlations  = {'statData'    : False, 
                         'JetFakeSyst' : True, 
                         'ZggStat'     : False, 
                         'ZggSyst'     : True, 
-                        'EleFake' : False, 
-                        'Acc'     : True 
+                        'lumi'        : True,
+                        'AccStat'     : False,
+                        'AccChannel'  : False,
+                        'AccPhoton'   : True,
+                        'AccTheory'   : True,
                        }
+    
+    extra_systs = {'EleFakeSyst' :xs_el['EleFakeSyst'] }
 
     xs_calc = blue.Calculator()
-
-
-    meas_values = [xs_mu.n, xs_el.n]
+    meas_values = [comb_xs_mu.n, comb_xs_el.n]
     xs_calc.SetMeasurementValues( meas_values )
 
     # make BLUE calculators for each separate uncertainty
     calc_indiv = {}
-    for syst in xs_systs_mu['systs'].keys() :
+    for syst in ch_correlations.keys() :
         calc_indiv[syst] = blue.Calculator()
         calc_indiv[syst].SetMeasurementValues( meas_values )
 
@@ -292,7 +427,7 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, output
         for i in range( 0, n_ch ) :
             list_i = [0]*n_ch
             for j in range( 0, n_ch ) :
-                entry  = xs_systs_mu['systs'][syst].s*xs_systs_el['systs'][syst].s
+                entry  = xs_mu[syst].s*xs_el[syst].s
 
                 if i != j and not is_corr :
                     entry = 0
@@ -312,39 +447,277 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, output
     for icalc in calc_indiv.values() :
         icalc.SetAlphas( combined_alphas )
 
+    errsq_extra = 0.0
+    for syst, val in extra_systs.iteritems() :
+        errsq_extra += ( val.s/val.n ) * ( val.s/val.n )
+    combined_error = math.sqrt( combined_error*combined_error +  errsq_extra*combined_value*combined_value )
+
     comb_results = {}
     comb_results['combined'] = ufloat( combined_value, combined_error )
     comb_results['isCorr'] = {}
+    comb_results['systs'] = {}
 
     for unc, icalc in calc_indiv.iteritems() :
+        print unc
 
         comb_results['isCorr'][unc] = ch_correlations[unc]
 
         value = icalc.CalculateCombinedValue()
         uncert= icalc.CalculateCombinedUncertainty()
 
-        comb_results[unc] = ufloat( value, uncert )
+        comb_results['systs'][unc] = ufloat( value, uncert )
+
+    for syst in extra_systs.keys() :
+        comb_results['isCorr'][syst] = False
+
+    for syst, val in extra_systs.iteritems() :
+        comb_results['systs'][syst] = ufloat( combined_value, (val.s/val.n)*combined_value )
+
 
     print 'Combined xs = %s' %( ufloat( combined_value, combined_error ) )
+    print comb_results
+
+    output_results = {}
+    output_results['channels'] = {'muon' : {}, 'electron' : {} }
+
+    output_results['channels']['muon']['JetSum'] = jet_sum_mu
+    output_results['channels']['electron']['JetSum'] = jet_sum_el
+
+    output_results['channels']['muon']['BkgSum'] = summed_mu
+    output_results['channels']['electron']['BkgSum'] = summed_el
+
+    output_results['channels']['muon']['CrossSection'] = xs_mu
+    output_results['channels']['electron']['CrossSection'] = xs_el
+
+    output_results['combination'] = comb_results
 
     if outputDir is not None :
-        output_results = {}
-        output_results['channels'] = {'muon' : {}, 'electron' : {} }
-
-        output_results['channels']['muon']['JetSum'] = jet_sum_mu
-        output_results['channels']['electron']['JetSum'] = jet_sum_el
-
-        output_results['channels']['muon']['BkgSum'] = summed_mu
-        output_results['channels']['electron']['BkgSum'] = summed_el
-
-        output_results['channels']['muon']['CrossSection'] = xs_systs_mu
-        output_results['channels']['electron']['CrossSection'] = xs_systs_el
-
-        output_results['combination'] = comb_results
-
-        outfile = open( '%s/%s' %( outputDir, 'cross_section_details.pickle' ), 'w' )
+        fname = '%s/%s' %( outputDir, 'cross_section_details.pickle' )
+        print 'write %s' %fname
+        outfile = open( fname, 'w' )
         pickle.dump( output_results, outfile )
         outfile.close()
+
+    return output_results
+
+def make_zgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summed_el, pt_bins, eta_bins, outputDir=None ) :
+
+    summed_mu['Zgg']  = get_summed_sample( results_final['muon'],  'Zgg' , pt_bins, eta_bins, isCorr=True )
+    summed_mu['Data'] = get_summed_sample( results_final['muon'],  'Data', pt_bins, eta_bins, isCorr=False )
+
+    summed_el['Zgg']     = get_summed_sample( results_final['electron'],  'Zgg'    , pt_bins, eta_bins, isCorr=True )
+    summed_el['Data']    = get_summed_sample( results_final['electron'],  'Data'   , pt_bins, eta_bins, isCorr=False )
+
+    bkg_el = {}
+    bkg_mu = {}
+    bkg_mu['statData']    = summed_mu['JetFakeStat']['sum'] 
+    bkg_mu['JetFakeSyst'] = summed_mu['JetFakeSyst']['sum'] 
+
+    bkg_el['statData']    = summed_el['JetFakeStat']['sum'] 
+    bkg_el['JetFakeSyst'] = summed_el['JetFakeSyst']['sum'] 
+
+    lumi = ufloat( 19.4, 19.4*0.026 )
+
+    exp_mu = bkg_mu['statData'] + summed_mu['Zgg']['sum']
+    exp_el = bkg_el['statData'] + summed_el['Zgg']['sum']
+
+    xs_mu_sig =  (ufloat( exp_mu.n, math.sqrt(exp_mu.n) ) - bkg_mu['statData'])/ ( comb_acceptance_zgg['muon']['stat'] * lumi )
+    xs_el_sig =  (ufloat(exp_el.n, math.sqrt(exp_el.n) ) - bkg_el['statData'] )/ ( comb_acceptance_zgg['electron']['stat'] * lumi )
+    xs_mu = {}
+    xs_el = {}
+
+    xs_mu['statData']    = ( summed_mu['Data']['sum'] - bkg_mu['statData'] )                            / ( ufloat( comb_acceptance_zgg['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_mu['JetFakeSyst'] = ( ufloat(summed_mu['Data']['sum'].n,0.0) - bkg_mu['JetFakeSyst'])            / ( ufloat( comb_acceptance_zgg['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_mu['lumi']        = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0)) / ( ufloat( comb_acceptance_zgg['muon']['stat'].n, 0.0)*lumi)
+    xs_mu['AccStat']     = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0)) / ( comb_acceptance_zgg['muon']['stat']*ufloat(lumi.n, 0.0))
+    xs_mu['AccChannel']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0)) / ( comb_acceptance_zgg['muon']['Channel']*ufloat(lumi.n, 0.0))
+    xs_mu['AccPhoton']   = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0))  / ( comb_acceptance_zgg['muon']['Photon']*ufloat(lumi.n, 0.0))
+    xs_mu['AccTheory']   = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0))  / ( comb_acceptance_zgg['muon']['Theory']*ufloat(lumi.n, 0.0))
+
+    xs_el['statData']    = ( summed_el['Data']['sum'] - bkg_el['statData'] )                     / ( ufloat( comb_acceptance_zgg['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_el['JetFakeSyst'] = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['JetFakeSyst'])     / ( ufloat( comb_acceptance_zgg['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    xs_el['lumi']        = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0)) / ( ufloat( comb_acceptance_zgg['electron']['stat'].n, 0.0)*lumi)
+    xs_el['AccStat']     = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0)) / ( comb_acceptance_zgg['electron']['stat']*ufloat(lumi.n, 0.0))
+    xs_el['AccChannel']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0)) / ( comb_acceptance_zgg['electron']['Channel']*ufloat(lumi.n, 0.0))
+    xs_el['AccPhoton']   = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0))  / ( comb_acceptance_zgg['electron']['Photon']*ufloat(lumi.n, 0.0))
+    xs_el['AccTheory']   = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0))  / ( comb_acceptance_zgg['electron']['Theory']*ufloat(lumi.n, 0.0))
+
+    print 'xs_mu'
+    print xs_mu
+    print 'xs_el'
+    print xs_el
+
+    print 'Muon, N Data = %d, N Sig = %f, n Bkg = %s '      %( summed_mu['Data']['sum'].n, summed_mu['Zgg']['sum'].n, bkg_mu )
+    print 'Electron , N Data = %d, N Sig = %f, n Bkg = %s ' %( summed_el['Data']['sum'].n, summed_el['Zgg']['sum'].n, bkg_el )
+    #print 'S/sigma(B), mu =  %f ' %( summed_mu['Wgg']['sum'].n / bkg_mu.s )
+    #print 'S/sigma(B), el =  %f ' %( summed_el['Wgg']['sum'].n / bkg_el.s )
+    print 'xs_mu_sig = %s, frac unc = %f' %( xs_mu_sig, xs_mu_sig.s/xs_mu_sig.n)
+    print 'xs_el_sig = %s, frac unc = %f' %( xs_el_sig, xs_el_sig.s/xs_el_sig.n)
+
+    comb_xs_mu = xs_mu['statData'] + ufloat( 0.0, xs_mu['JetFakeSyst'].s ) + ufloat( 0.0, xs_mu['lumi'].s ) + ufloat( 0.0, xs_mu['AccStat'].s ) + ufloat( 0.0, xs_mu['AccChannel'].s ) + ufloat( 0.0, xs_mu['AccPhoton'].s ) + ufloat( 0.0, xs_mu['AccTheory'].s )
+    comb_xs_el = xs_el['statData'] + ufloat( 0.0, xs_el['JetFakeSyst'].s ) + ufloat( 0.0, xs_el['lumi'].s ) + ufloat( 0.0, xs_el['AccStat'].s ) + ufloat( 0.0, xs_el['AccChannel'].s ) + ufloat( 0.0, xs_el['AccPhoton'].s ) + ufloat( 0.0, xs_el['AccTheory'].s )
+
+    print 'Final xs_mu = %s' %comb_xs_mu
+    print 'Final xs_el = %s' %comb_xs_el
+
+    xs_mu['central_value'] = comb_xs_mu
+    xs_el['central_value'] = comb_xs_el
+
+    ch_correlations  = {'statData'    : False, 
+                        'JetFakeSyst' : True, 
+                        'lumi'        : True,
+                        'AccStat'     : False,
+                        'AccChannel'  : False,
+                        'AccPhoton'   : True,
+                        'AccTheory'   : True,
+                       }
+    
+    extra_systs = { }
+
+    xs_calc = blue.Calculator()
+    meas_values = [comb_xs_mu.n, comb_xs_el.n]
+    xs_calc.SetMeasurementValues( meas_values )
+
+    # make BLUE calculators for each separate uncertainty
+    calc_indiv = {}
+    for syst in ch_correlations.keys() :
+        calc_indiv[syst] = blue.Calculator()
+        calc_indiv[syst].SetMeasurementValues( meas_values )
+
+
+    n_ch = 2
+    for syst, is_corr in ch_correlations.iteritems() :
+
+        matrix  = []
+        for i in range( 0, n_ch ) :
+            list_i = [0]*n_ch
+            for j in range( 0, n_ch ) :
+                entry  = xs_mu[syst].s*xs_el[syst].s
+
+                if i != j and not is_corr :
+                    entry = 0
+
+                list_i[j]  = entry
+
+            matrix.append( list_i )
+
+        xs_calc.AddErrorMatrix( matrix )
+        if syst in calc_indiv :
+            calc_indiv[syst].AddErrorMatrix( matrix)
+
+    combined_value = xs_calc.CalculateCombinedValue()
+    combined_error = xs_calc.CalculateCombinedUncertainty()
+
+    combined_alphas = xs_calc.GetAlphas()
+    for icalc in calc_indiv.values() :
+        icalc.SetAlphas( combined_alphas )
+
+    errsq_extra = 0.0
+    for syst, val in extra_systs.iteritems() :
+        errsq_extra += ( val.s/val.n ) * ( val.s/val.n )
+    combined_error = math.sqrt( combined_error*combined_error +  errsq_extra*combined_value*combined_value )
+
+    comb_results = {}
+    comb_results['combined'] = ufloat( combined_value, combined_error )
+    comb_results['isCorr'] = {}
+    comb_results['systs'] = {}
+
+    for unc, icalc in calc_indiv.iteritems() :
+        print unc
+
+        comb_results['isCorr'][unc] = ch_correlations[unc]
+
+        value = icalc.CalculateCombinedValue()
+        uncert= icalc.CalculateCombinedUncertainty()
+
+        comb_results['systs'][unc] = ufloat( value, uncert )
+
+    for syst in extra_systs.keys() :
+        comb_results['isCorr'][syst] = False
+
+    for syst, val in extra_systs.iteritems() :
+        comb_results['systs'][syst] = ufloat( combined_value, (val.s/val.n)*combined_value )
+
+
+    print 'Combined xs = %s' %( ufloat( combined_value, combined_error ) )
+    print comb_results
+
+    output_results = {}
+    output_results['channels'] = {'muon' : {}, 'electron' : {} }
+
+    output_results['channels']['muon']['JetSum'] = jet_sum_mu
+    output_results['channels']['electron']['JetSum'] = jet_sum_el
+
+    output_results['channels']['muon']['BkgSum'] = summed_mu
+    output_results['channels']['electron']['BkgSum'] = summed_el
+
+    output_results['channels']['muon']['CrossSection'] = xs_mu
+    output_results['channels']['electron']['CrossSection'] = xs_el
+
+    output_results['combination'] = comb_results
+
+    if outputDir is not None :
+        fname = '%s/%s' %( outputDir, 'cross_section_details.pickle' )
+        print 'write %s' %fname
+        outfile = open( fname, 'w' )
+        pickle.dump( output_results, outfile )
+        outfile.close()
+
+    return output_results 
+
+def collect_jet_systs( jet_sum, all_systs, bin_correlations ) :
+
+    jet_tot = None
+
+    jet_tot_data = None
+
+    jet_tot_binuncorr = None
+
+    jet_tot_bincorr = None
+
+    jet_tot_syst = None
+
+    summed = {}
+
+    for idx, syst in enumerate( all_systs ) :
+
+        summed[syst] = {'sum' : jet_sum['sum'][syst] }
+
+        if idx == 0 :
+            jet_tot = jet_sum['sum'][syst] 
+        else :
+            jet_tot += ufloat( 0.0, jet_sum['sum'][syst].s )
+
+        if bin_correlations[syst] :
+            if jet_tot_bincorr is None :
+                jet_tot_bincorr = jet_sum['sum'][syst]
+            else : 
+                jet_tot_bincorr += ufloat( 0.0, jet_sum['sum'][syst].s )
+        else :
+            if jet_tot_binuncorr is None :
+                jet_tot_binuncorr = jet_sum['sum'][syst]
+            else : 
+                jet_tot_binuncorr += ufloat( 0.0, jet_sum['sum'][syst].s )
+
+        if syst == 'statData' :
+            jet_tot_data = jet_sum['sum'][syst]
+        else :
+            if jet_tot_syst is None :
+                jet_tot_syst = jet_sum['sum'][syst]
+            else :
+                jet_tot_syst += ufloat( 0.0, jet_sum['sum'][syst].s )
+    
+
+    summed['JetFake']          = { 'sum' : jet_tot }
+    summed['JetFakeStat']      = { 'sum' : jet_tot_data }
+
+    summed['JetFakeSyst']      = { 'sum' : jet_tot_syst }
+
+    summed['JetFakeBinCorr']   = { 'sum' : jet_tot_bincorr }
+
+    summed['JetFakeBinUncorr'] = { 'sum' : jet_tot_binuncorr }
+
+    return summed
 
 #def calc_combined_xs( results_final, results_jet, pt_bins, eta_bins ) :
 #
@@ -601,7 +974,6 @@ def get_simple_jet_bin_sums( results, systs, eta_bins, pt_bins, bin_correlations
             jet_sum['bins'][reg_bin] = {}
 
             for syst in systs :
-
                 syst_val = results['individual'][syst]['sum'][reg_bin].get('result', None )
                 if syst_val is None :
                     print 'WARNING, systematic does not exist ', syst
@@ -749,6 +1121,25 @@ def calc_xs_old( results ) :
     pickle.dump(xs_data, ofile )
 
     ofile.close()
+
+def get_dic_from_pickle( filename ) :
+
+    ofile= open( filename )
+    results = pickle.load( ofile)
+    ofile.close()
+
+    return results
+
+def collect_match_results_from_pickle( baseDir, files ) :
+
+    results = {}
+    for fname, matchdic in files :
+        region = ( matchdic['reg1'], matchdic['reg2'] )
+        ofile = open( '%s/%s' %( baseDir , fname ) )
+        results[region] = pickle.load( ofile )
+        ofile.close()
+
+    return results
 
 def get_matching_regex( full_list, match ) :
     

@@ -328,6 +328,33 @@ namespace OUT {
     Bool_t             truthMatchPhMomPID_leadph12;
     Bool_t             truthMatchPhMomPID_sublph12;
 
+    std::vector<float> *dphi_met_phot;
+    std::vector<float> *m_leadLep_phot;
+    std::vector<float> *m_sublLep_phot;
+    std::vector<float> *m_trigEl_phot;
+    std::vector<float> *m_trigMu_phot;
+    std::vector<float> *dr_leadLep_phot;
+    std::vector<float> *dr_sublLep_phot;
+    std::vector<float> *dr_trigEl_phot;
+    std::vector<float> *dr_trigMu_phot;
+    std::vector<float> *dphi_leadLep_phot;
+    std::vector<float> *dphi_sublLep_phot;
+    std::vector<float> *dphi_trigEl_phot;
+    std::vector<float> *dphi_trigMu_phot;
+    std::vector<float> *mt_met_trigEl_phot;
+    std::vector<float> *mt_met_trigMu_phot;
+    std::vector<float> *m_leplep_phot;
+    std::vector<float> *m_diphot;
+    std::vector<float> *dr_diphot;
+    std::vector<float> *dphi_diphot;
+    std::vector<float> *pt_diphot;
+    std::vector<float> *m_leplep_diphot;
+    std::vector<float> *m_trigEl_diphot;
+    std::vector<float> *m_trigMu_diphot;
+    std::vector<float> *mt_met_trigEl_diphot;
+    std::vector<float> *mt_met_trigMu_diphot;
+
+
     std::vector<int> *ptSorted_ph_noSIEIEiso533_idx;
     std::vector<int> *ptSorted_ph_noSIEIEiso855_idx;
     std::vector<int> *ptSorted_ph_noSIEIEiso1077_idx;

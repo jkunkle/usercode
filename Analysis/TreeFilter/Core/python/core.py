@@ -76,6 +76,8 @@ def ParseArgs() :
 
     parser.add_argument('--batch', dest='batch', action='store_true', default=False, help='Submit jobs to the batch')
 
+    parser.add_argument('--condor', dest='condor', action='store_true', default=False, help='Submit jobs to condor (UMD)')
+
     parser.add_argument('--resubmit', dest='resubmit', action='store_true', default=False, help='Only submit jobs whose output does not exist')
     
     #-----------------------------
@@ -321,12 +323,16 @@ def config_and_run( options, package_name ) :
 
     if options.nproc > 1 and file_evt_list > 1: #multiprocessing!
 
-        commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
+        command_info_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
 
         if options.resubmit :
-            commands = filter_jobs_for_resubmit( commands_orig, options.storagePath, options.outputDir, options.outputFile, options.treeName )
+            command_info = filter_jobs_for_resubmit( command_info_orig, options.storagePath, options.outputDir, options.outputFile, options.treeName )
         else :
-            commands = commands_orig
+            command_info = command_info_orig
+
+        commands = []
+        for jobid, info in command_info :
+            commands.append( (jobid, make_exe_command( info )) ) 
 
         # Stop here if not running
         logging.info('********************************')
@@ -343,7 +349,7 @@ def config_and_run( options, package_name ) :
 
     elif options.batch :
 
-        commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
+        command_info_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
 
         # storagePath could have been passed as 'None'
         # make 'None' None
@@ -351,9 +357,13 @@ def config_and_run( options, package_name ) :
             options.storagePath = None
 
         if options.resubmit :
-            commands = filter_jobs_for_resubmit( commands_orig, options.storagePath, options.outputDir, options.outputFile, options.treeName )
+            command_info = filter_jobs_for_resubmit( command_info_orig, options.storagePath, options.outputDir, options.outputFile, options.treeName )
         else :
-            commands = commands_orig
+            command_info = command_info_orig
+
+        commands = []
+        for jobid, info in command_info :
+            commands.append( (jobid, make_exe_command( info )) ) 
 
         wrappers = []
         for jobid, cmd in commands :
@@ -373,6 +383,30 @@ def config_and_run( options, package_name ) :
         print 'Will submit %d jobs' %len(wrappers)
         for jobid, wrap in wrappers :
             os.system( 'bsub -q 1nh -o %s/out_%s.txt -e %s/err_%s.txt %s ' %(options.outputDir, jobid, options.outputDir, jobid, wrap) )
+
+    elif options.condor :
+
+        command_info_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
+
+        # storagePath could have been passed as 'None'
+        # make 'None' None
+        if options.storagePath == 'None' :
+            options.storagePath = None
+
+        if options.resubmit :
+            command_info = filter_jobs_for_resubmit( command_info_orig, options.storagePath, options.outputDir, options.outputFile, options.treeName )
+        else :
+            command_info = command_info_orig
+
+        job_desc_file = create_job_desc_file( command_info, {})
+
+        condor_command = 'condor_submit %s ' % job_desc_file 
+        logging.info('********************************')
+        logging.info( 'Executing ' + condor_command )
+        logging.info('********************************')
+        os.system(condor_command)
+
+    
 
     else :
         if options.resubmit :
@@ -862,7 +896,8 @@ def generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, option
             os.makedirs( outputDir )
         
         write_config(alg_list, conf_file, options.treeName, outputDir, options.outputFile, [file_split], options.storagePath, options.sample, options.disableOutputTree, idx )
-        commands.append( ( jobid, make_exe_command( exe_path, conf_file, outputDir+'/'+jobid ) ) )
+        #commands.append( ( jobid, make_exe_command( exe_path, conf_file, outputDir+'/'+jobid ) ) )
+        commands.append( ( jobid, (exe_path, conf_file, outputDir+'/'+jobid) ) )
 
     return commands
 
@@ -871,7 +906,7 @@ def filter_jobs_for_resubmit( orig_commands, storagePath, outputDir, outputFile,
     commands = []
         
     if storagePath is not None :
-        for jobid, cmd in orig_commands:
+        for jobid, cmd_info in orig_commands:
             file_path = '%s/%s/' %(storagePath, jobid )
             exists = False
             for top, dirs, files, sizes in eosutil.walk_eos(file_path) :
@@ -879,9 +914,9 @@ def filter_jobs_for_resubmit( orig_commands, storagePath, outputDir, outputFile,
                     exists = True
 
             if not exists :
-                commands.append( ( jobid, cmd ) )
+                commands.append( ( jobid, cmd_info ) )
     else :
-        for jobid, cmd in orig_commands :
+        for jobid, cmd_info in orig_commands :
             file_path = '%s/%s/' %(outputDir, jobid )
             exists = False
             for top, dirs, files in os.walk(file_path) :
@@ -889,7 +924,7 @@ def filter_jobs_for_resubmit( orig_commands, storagePath, outputDir, outputFile,
                     exists = True
 
             if not exists :
-                commands.append( ( jobid, cmd ) )
+                commands.append( ( jobid, cmd_info ) )
 
 
     return commands
@@ -1035,6 +1070,199 @@ def write_config( alg_list, filename, treeName, outputDir, outputFile, files_lis
         cfile.write(conf_string + '\n')
 
     cfile.close()
+
+#-----------------------------------------------------------------------------------
+def create_job_desc_file(command_info, kwargs) :
+
+    priority              = kwargs.get('priority', 0)
+
+    # the header of the job description file
+    desc_entries = [
+                    '#Use only the vanilla universe',
+                    'universe = vanilla',
+                    '# This is the executable to run.  If a script,',
+                    '#   be sure to mark it "#!<path to interp>" on the first line.',
+                    '# Filename for stdout, otherwise it is lost',
+                    'output = stdout.txt',
+                    'error = stderr.txt',
+                    '# Copy the submittor environment variables.  Usually required.',
+                    'getenv = True',
+                    '# Copy output files when done.  REQUIRED to run in a protected directory',
+                    'when_to_transfer_output = ON_EXIT_OR_EVICT',
+                    'priority=%d' %priority
+                    ]
+
+    for job_index, args in command_info :
+
+        initialdir = os.path.dirname( args[1] ) + '/' + job_index
+
+        if not os.path.isdir( initialdir ) :
+            os.mkdir( initialdir )
+ 
+        desc_entries += [
+                         'Executable = %s' %args[0],
+                         'Initialdir = %s' %initialdir,
+                         '# This is the argument line to the Executable'
+                        ]
+        # assemble the argument command
+        arg_command = ['arguments = "',
+                       '--conf_file %s' %args[1],
+                      ]
+
+        arg_command += ['"']
+
+        desc_entries +=  [ ' '.join(arg_command) ]
+
+        desc_entries += [
+                          '# Queue job',
+                          'queue'
+                        ]
+
+    #Determine the job description file name
+    desc_name = 'job_desc.txt'
+
+    desc_file_name = os.path.dirname( args[1] ) +'/'+desc_name
+
+    descf = open(desc_file_name, 'w')
+
+    descf.write('\n'.join(desc_entries))
+    descf.close()
+
+    return desc_file_name
+
+##-----------------------------------------------------------------------------------
+# The original function from submit_jobs_penn
+##-----------------------------------------------------------------------------------
+#def create_job_desc_file(command_info, kwargs) :
+#
+#    # input options
+#    job_file_list         = kwargs.get('job_file_list')
+#    formatted_file_list   = kwargs.get('formatted_file_list')
+#    output                = kwargs.get('output')
+#    xrootd_mirror         = kwargs.get('xrootd_mirror', None)
+#    script                = kwargs.get('script')
+#    module_args           = kwargs.get('module_args', '')
+#    input_command         = kwargs.get('input_command')
+#    additional_input_path = kwargs.get('additional_input_path', None)
+#    #transfer_input_files  = kwargs.get('transfer_input_files', None)
+#    transfer_output_files = kwargs.get('transfer_output_files', False)
+#    priority              = kwargs.get('priority', 0)
+#    starting_job_id       = kwargs.get('starting_job_id', 0)
+#    filelist_name         = kwargs.get('filelist_name', None)
+#    filelist_sep          = kwargs.get('filelist_sep', '\n')
+#
+#    # The user has requested to transfer the input files
+#    # If the input files are on the xrootd space, we have to create
+#    # a script that copies them manually and use that later
+#    orig_script = script
+#    files_output = output
+#    if xrootd_mirror is not None :
+#        files_output = xrootd_mirror
+#
+#    orig_script_name = os.path.basename(orig_script)
+#    
+#    newname = make_transfer_script( files_output, orig_script_name, kwargs )
+#    script = files_output+'/' + newname
+#
+#    if transfer_input_files :
+#        #Generate or get file transfer queue
+#        #Generate in 10 minute intervals
+#        curr_gmtime = time.gmtime()
+#        curr_min = (int(curr_gmtime[4])/10)*10
+#        queue_name = time.strftime('%Y_%m_%d_%H',curr_gmtime)
+#        queue_name += '_%d' %curr_min
+#        user = getpass.getuser()
+#        file_queue_dir = '/disk/userdata00/atlas_data2/%s/condor_interface_queues/%s' %(user,queue_name)
+#        if not os.path.isdir( file_queue_dir ) :
+#            os.makedirs( file_queue_dir )
+#            os.system('touch %s/queue.txt' %file_queue_dir )
+#
+#
+#
+#    # the header of the job description file
+#    desc_entries = [
+#                    '#Use only the vanilla universe',
+#                    'universe = vanilla',
+#                    '# This is the executable to run.  If a script,',
+#                    '#   be sure to mark it "#!<path to interp>" on the first line.',
+#                    'Executable = %s' %script,
+#                    '# Filename for stdout, otherwise it is lost',
+#                    'output = stdout.txt',
+#                    'error = stderr.txt',
+#                    '# Copy the submittor environment variables.  Usually required.',
+#                    'getenv = True',
+#                    '# Copy output files when done.  REQUIRED to run in a protected directory',
+#                    'when_to_transfer_output = ON_EXIT_OR_EVICT',
+#                    'priority=%d' %priority
+#                    ]
+#
+#    
+#    #if xrootd_mirror is None :
+#    #    desc_entries += [ 'should_transfer_files = YES' ]
+#
+#    for job_index, files_arg in formatted_file_list.iteritems() :
+#
+#        outid = 'Job_%04d' %(job_index+starting_job_id)
+#        initialdir = '%s/%s' %(files_output, outid)
+#
+#        job_module_args = module_args
+#
+#        desc_entries += [
+#                         'Initialdir = %s' %initialdir,
+#                         '# This is the argument line to the Executable'
+#                        ]
+#        # assemble the argument command
+#
+#        arg_command = ['arguments = "',
+#                       '--script %s' %orig_script,
+#                       '--files %s' %files_arg,
+#                       '--input-command \' %s \'' %input_command,
+#                       '--module-args \' %s \'' %job_module_args,
+#                      ]
+#
+#        # if transferring files, pass the 
+#        # queue to the job.  otherwise tell the script to 
+#        # not transfer files
+#        #if transfer_input_files :
+#        #    arg_command += ['--file-queue-dir %s' %file_queue_dir ]
+#        #else :
+#        arg_command += [ '--no-transfer-input' ]
+#
+#        # if transferring output files, pass the output
+#        if transfer_output_files :
+#            new_output = output+'/Job_%04d' %(job_index+starting_job_id)
+#            arg_command += [ '--output %s '%new_output ]
+#
+#        if additional_input_path is not None :
+#            arg_command += [ ' --additional-input %s' %(additional_input_path % outid) ]
+#
+#        if filelist_name is not None :
+#            arg_command += [ ' --filelist-name %s --filelist-sep %s ' %( filelist_name, filelist_sep )]
+#
+#        # End of arguments.  Add additional arguments above
+#        arg_command += ['"']
+#
+#        desc_entries +=  [ ' '.join(arg_command) ]
+#
+#        desc_entries += [
+#                          '# Queue job',
+#                          'queue'
+#                        ]
+#
+#    #Determine the job description file name
+#    desc_name = 'job_desc.txt'
+#
+#    desc_file_name = files_output+'/'+desc_name
+#
+#    descf = open(desc_file_name, 'w')
+#
+#    descf.write('\n'.join(desc_entries))
+#    descf.close()
+#
+#    print 'cp %s %s' %(desc_file_name, output) 
+#    os.system('cp %s %s' %(desc_file_name, output) )
+#
+#    return desc_file_name
 
 def write_header_files( brdefname, linkdefname, branches, out_branches=[], keep_branches=[], alg_list=[] ) :
 

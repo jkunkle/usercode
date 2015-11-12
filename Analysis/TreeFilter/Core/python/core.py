@@ -1391,6 +1391,7 @@ def write_source_file(source_file_name, header_file_name, branches, out_branches
     branch_header.write('void CopyPrefixBranchesInToOut( const std::string & prefix );\n' )
     branch_header.write('void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index, bool quiet=false, std::string veto = std::string() );\n')
     branch_header.write('void CopyMapVarsToOut( const std::map<std::string, float> & results);\n')
+    branch_header.write('void CopyVectorMapVarsToOut( const std::map<std::string, std::vector< float> > & results);\n')
     branch_header.write('void ClearOutputPrefix ( const std::string & prefix );\n')
     if write_expert_code:
         branch_header.write('void CheckVectorSize ( const std::string & prefix, unsigned expected );\n')
@@ -1562,7 +1563,7 @@ def write_source_file(source_file_name, header_file_name, branches, out_branches
             valid_branches.append( brdic['branch'] )
 
     branch_setting.write( '    std::vector<std::string> filled_branches;\n' )
-    branch_setting.write( '    std::map<std::string, float>::const_iterator mitr; \n' %br )
+    branch_setting.write( '    std::map<std::string, float>::const_iterator mitr; \n'  )
     for br in valid_branches :
         branch_setting.write( '    mitr = results.find( "%s" ); \n' %br )
         branch_setting.write( '    if( mitr != results.end() ) { \n' )
@@ -1571,6 +1572,44 @@ def write_source_file(source_file_name, header_file_name, branches, out_branches
         branch_setting.write( '    }\n' )
     branch_setting.write( '    if( filled_branches.size() < results.size() ) { \n' )
     branch_setting.write( '        for( std::map<std::string, float>::const_iterator mitr = results.begin(); mitr != results.end(); ++mitr ) { \n' )
+    branch_setting.write( '            if( std::find( filled_branches.begin(), filled_branches.end(), mitr->first ) == filled_branches.end()  ) { \n' )
+    branch_setting.write( '                std::cout << "Could not fill branch " << mitr->first << std::endl; \n '  )
+    branch_setting.write( '            }\n' )
+    branch_setting.write( '        }\n' )
+    branch_setting.write( '    }\n' )
+    branch_setting.write( '}\n' )
+
+    branch_setting.write('void CopyVectorMapVarsToOut( const std::map<std::string, std::vector<float> > & results ) {\n')
+
+    valid_branches = []
+    for conf in branches :
+        if not conf['type'].count('vector') :
+            continue
+
+        if not conf['type'].count('float') :
+            continue
+
+        name = conf['name']
+        if name not in keep_branches :
+            continue
+
+        valid_branches.append( name )
+
+    for brdic in out_branches :
+
+        if brdic['full_entry'].count('vector') and brdic['full_entry'].count('float') :
+            valid_branches.append( brdic['branch'] )
+
+    branch_setting.write( '    std::vector<std::string> filled_branches;\n' )
+    branch_setting.write( '    std::map<std::string, std::vector<float> >::const_iterator mitr; \n' )
+    for br in valid_branches :
+        branch_setting.write( '    mitr = results.find( "%s" ); \n' %br )
+        branch_setting.write( '    if( mitr != results.end() ) { \n' )
+        branch_setting.write( '        OUT::%s->assign(mitr->second.begin(), mitr->second.end() );\n' %br )
+        branch_setting.write( '        filled_branches.push_back( "%s" );\n' %(br) )
+        branch_setting.write( '    }\n' )
+    branch_setting.write( '    if( filled_branches.size() < results.size() ) { \n' )
+    branch_setting.write( '        for( std::map<std::string, std::vector<float> >::const_iterator mitr = results.begin(); mitr != results.end(); ++mitr ) { \n' )
     branch_setting.write( '            if( std::find( filled_branches.begin(), filled_branches.end(), mitr->first ) == filled_branches.end()  ) { \n' )
     branch_setting.write( '                std::cout << "Could not fill branch " << mitr->first << std::endl; \n '  )
     branch_setting.write( '            }\n' )

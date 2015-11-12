@@ -10,7 +10,8 @@ void CalcEventVars(const std::vector<TLorentzVector> & photons,
                                      const std::vector<TLorentzVector> & trigelectrons,
                                      const std::vector<TLorentzVector> & trigmuons,
                                      const TLorentzVector &metlv,
-                                     std::map<std::string, float> & results
+                                     std::map<std::string, float> & results,
+                                     std::map<std::string, std::vector<float> > & vector_results
         );
 }
 
@@ -20,7 +21,8 @@ void Wgg::CalcEventVars(const std::vector<TLorentzVector> & photons,
                                      const std::vector<TLorentzVector> & trigelectrons,
                                      const std::vector<TLorentzVector> & trigmuons,
                                      const TLorentzVector &metlv,
-                                     std::map<std::string, float> & results
+                                     std::map<std::string, float> & results,
+                                     std::map<std::string, std::vector<float> > & vector_results
         ) {
 
     
@@ -45,6 +47,97 @@ void Wgg::CalcEventVars(const std::vector<TLorentzVector> & photons,
     std::sort(sorted_leptons.rbegin(), sorted_leptons.rend());
 
     // fill variables for pT sorted photons
+   
+   
+    vector_results["dphi_met_phot"] = std::vector<float>();
+    vector_results["m_leadLep_phot"] = std::vector<float>();
+    vector_results["m_sublLep_phot"] = std::vector<float>();
+    vector_results["m_trigEl_phot"] = std::vector<float>();
+    vector_results["m_trigMu_phot"] = std::vector<float>();
+    vector_results["dr_leadLep_phot"] = std::vector<float>();
+    vector_results["dr_sublLep_phot"] = std::vector<float>();
+    vector_results["dr_trigEl_phot"] = std::vector<float>();
+    vector_results["dr_trigMu_phot"] = std::vector<float>();
+    vector_results["dphi_leadLep_phot"] = std::vector<float>();
+    vector_results["dphi_sublLep_phot"] = std::vector<float>();
+    vector_results["dphi_trigEl_phot"] = std::vector<float>();
+    vector_results["dphi_trigMu_phot"] = std::vector<float>();
+    vector_results["mt_met_trigEl_phot"] = std::vector<float>();
+    vector_results["mt_met_trigMu_phot"] = std::vector<float>();
+    vector_results["m_leplep_phot"] = std::vector<float>();
+
+    vector_results["m_diphot"] = std::vector<float>();
+    vector_results["dr_diphot"] = std::vector<float>();
+    vector_results["dphi_diphot"] = std::vector<float>();
+    vector_results["pt_diphot"] = std::vector<float>();
+    vector_results["m_leplep_diphot"] = std::vector<float>();
+    vector_results["m_trigEl_diphot"] = std::vector<float>();
+    vector_results["m_trigMu_diphot"] = std::vector<float>();
+    vector_results["mt_met_trigEl_diphot"] = std::vector<float>();
+    vector_results["mt_met_trigMu_diphot"] = std::vector<float>();
+
+    // fill photon event variable vectors
+    for( unsigned int phidx = 0; phidx < photons.size(); ++phidx ) {
+        vector_results["dphi_met_phot"].push_back(photons[phidx].DeltaPhi( metlv ));
+
+        if( trigelectrons.size() > 0 ) {
+            vector_results["m_trigEl_phot"].push_back( (photons[phidx] + trigelectrons[0]).M() );
+            vector_results["dr_trigEl_phot"].push_back( photons[phidx].DeltaR(trigelectrons[0] ) );
+            vector_results["dphi_trigEl_phot"].push_back( photons[phidx].DeltaPhi( trigelectrons[0] ) );
+            vector_results["mt_met_trigEl_phot"].push_back( Utils::calc_mt( trigelectrons[0] + photons[phidx], metlv  ) );
+        }
+        if( trigmuons.size() > 0 ) {
+            vector_results["m_trigMu_phot"].push_back( (photons[phidx] + trigmuons[0]).M() );
+            vector_results["dr_trigMu_phot"].push_back( photons[phidx].DeltaR(trigmuons[0] ) );
+            vector_results["dphi_trigMu_phot"].push_back( photons[phidx].DeltaPhi( trigmuons[0] ) );
+            vector_results["mt_met_trigMu_phot"].push_back( Utils::calc_mt( trigmuons[0] + photons[phidx], metlv  ) );
+        }
+        if( leptons.size() > 1 ) {
+            vector_results["m_leplep_phot"].push_back( ( photons[phidx] + leptons[0] + leptons[1] ).M() );
+        }
+
+    }
+    // fill di photon event variable vectors
+    if( photons.size() > 1 ) {
+        int max_idx = 10*(photons.size()-1);
+
+        vector_results["m_diphot"]             .resize( max_idx,0 );
+        vector_results["dr_diphot"]            .resize( max_idx,0 );
+        vector_results["dphi_diphot"]          .resize( max_idx,0 );
+        vector_results["pt_diphot"]            .resize( max_idx,0 );
+        vector_results["m_leplep_diphot"]      .resize( max_idx,0 );
+        vector_results["m_trigEl_diphot"]      .resize( max_idx,0 );
+        vector_results["m_trigMu_diphot"]      .resize( max_idx,0 );
+        vector_results["mt_met_trigEl_diphot"] .resize( max_idx,0 );
+        vector_results["mt_met_trigMu_diphot"] .resize( max_idx,0 );
+
+        for( unsigned int idx1=0; idx1 < photons.size(); ++idx1 ) {
+            for( unsigned int idx2=idx1+1; idx2 < photons.size(); ++idx2 ) {
+                int fill_idx = idx1*10+idx2;
+
+                vector_results["m_diphot"]   [fill_idx] = ( photons[idx1] + photons[idx2]).M();
+                vector_results["dr_diphot"]  [fill_idx] = photons[idx1].DeltaR(photons[idx2]);
+                vector_results["dphi_diphot"][fill_idx] = photons[idx1].DeltaPhi(photons[idx2]);
+                vector_results["pt_diphot"]  [fill_idx] = ( photons[idx1] + photons[idx2]).Pt();
+
+                if( trigelectrons.size() > 0 ) {
+                    vector_results["m_trigEl_diphot"][fill_idx] = ( photons[idx1] + photons[idx2] + trigelectrons[0] ).M();
+                    vector_results["mt_met_trigEl_diphot"][fill_idx] = Utils::calc_mt( photons[idx1] + photons[idx2] + trigelectrons[0], metlv );
+                }
+
+                if( trigmuons.size() > 0 ) {
+                    vector_results["m_trigMu_diphot"][fill_idx] = ( photons[idx1] + photons[idx2] + trigmuons[0] ).M();
+                    vector_results["mt_met_trigMu_diphot"][fill_idx] = Utils::calc_mt( photons[idx1] + photons[idx2] + trigmuons[0], metlv );
+                }
+
+                if( leptons.size() > 1 ) {
+                    vector_results["m_leplep_diphot"][fill_idx] = ( photons[idx1] + photons[idx2] + leptons[0] + leptons[1] ).M();
+                }
+            }
+        }
+    }
+                    
+
     if( sorted_photons.size() > 0 ) { 
         unsigned leadidx = sorted_photons[0].second;
         

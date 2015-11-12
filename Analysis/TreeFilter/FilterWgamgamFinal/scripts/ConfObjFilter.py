@@ -69,8 +69,6 @@ def config_analysis( alg_list, args ) :
     alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=10, doPhOlapRm=False) )
     #alg_list.append( get_electron_filter( 'loose', ptcut=10, doPhOlapRm=False ) )
     #alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=5 ) )
-    #print 'SAVING MVA ELECTRONS'
-    print 'SAVING LOOSE ELECTRONS'
 
     #----------------------------------------
     # Other electron filters
@@ -81,13 +79,11 @@ def config_analysis( alg_list, args ) :
     #----------------------------------------
     # Nominal photon filter with no photon ID
     #----------------------------------------
-    print 'PHOTON PT CUT = 15'
     #alg_list.append( get_photon_filter( id=None, eVeto='hasPixSeed', ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False, doMuOlapRm=False, doPhOlapRm=False) )
     alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True ) )
     #alg_list.append( get_photon_filter( id='medium', eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False ) )
     #alg_list.append( get_photon_filter( id='medium', eVeto=None, eVetoVal='False', ptcut=15, sort_by_id=True, doElOlapRm=False, doTrigElOlapRm=False) )
     #alg_list.append( get_photon_filter( id=None, eVeto=None, ptcut=15, sort_by_id=True, doElOlapRm=True, doTrigElOlapRm=True, doMuOlapRm=True, doPhOlapRm=True, olapDR=0.4) )
-    print 'MEDIUM PHOTON ID'
 
     #----------------------------------------
     # Other photon filters

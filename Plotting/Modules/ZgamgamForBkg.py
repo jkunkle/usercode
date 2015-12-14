@@ -25,8 +25,8 @@ def config_samples(samples) :
     samples.AddSample('ttjets_2lPhOlap'              , path='job_summer12_ttjets_2lPhOlap'      ,  isActive=False, required=False, useXSFile=True, XSName='ttjets_2l' )
     samples.AddSample('WAA_ISR'                      , path='job_summer12_WAA_ISR'              ,  isActive=False, required=False, useXSFile=True )
     samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  isActive=False, required=False, useXSFile=True )
-    samples.AddSample('NLO_WAA_ISR'                  , path='job_NLO_WAA_ISR'                   ,  isActive=False, required=False, useXSFile=True )
-    samples.AddSample('NLO_WAA_FSR'                  , path='job_NLO_WAA_FSR'                   ,  isActive=False, required=False, useXSFile=True )
+    samples.AddSample('NLO_WAA_ISR'                  , path='job_NLO_WAA_ISR_PtG500MeVWithSF'   ,  isActive=False, required=False, useXSFile=True )
+    samples.AddSample('NLO_WAA_FSR'                  , path='job_NLO_WAA_FSR_PtG500MeVWithSF'   ,  isActive=False, required=False, useXSFile=True )
     #samples.AddSample('WAA_ISR'                      , path='job_summer12_WAA_ISR'              ,  isActive=False, useXSFile=False, scale=1.0 )
     #samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  isActive=False, useXSFile=False, scale=1.0 )
     samples.AddSample('Wg'                           , path='job_summer12_Wg'                   ,  isActive=False, useXSFile=True )
@@ -158,7 +158,8 @@ def config_samples(samples) :
                                              'NLO_WAA_FSR',
                                             ],
                            plotColor=ROOT.kRed,
-                           isSignal=True,
+                           isSignal=False,
+                           isActive=True
                           )
 
     samples.AddSampleGroup( 'Zgammagamma', legend_name='Z#gamma#gamma', 
@@ -261,6 +262,8 @@ def config_samples(samples) :
                                             'ZZ_4muWithSF2PhFilt',
                                             'ZZ_4tauWithSF2PhFilt',
                                             'ZZZWithSF2PhFilt',
+                                             'NLO_WAA_ISR',
+                                             'NLO_WAA_FSR',
                            ],
                                plotColor=ROOT.kBlue,
                                isActive=True,

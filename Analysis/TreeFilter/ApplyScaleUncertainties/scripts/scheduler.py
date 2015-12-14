@@ -16,6 +16,7 @@ base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output'
 base_orig_dy = 'root://eoscms//eos/cms/store/group/phys_smp/ggNtuples/mc'
 base_orig = 'root://eoscms//eos/cms/store/group/phys_egamma/cmkuo/'
 base_chris = 'root://eoscms//eos/cms/store/user/cranelli/WGamGam/NLO_ggNtuples/'
+base_yurii = 'root://eoscms//eos/cms/store/user/ymaravin/MC/LLAA/'
 
 
 jobs_data = [
@@ -29,8 +30,9 @@ jobs_data = [
         #(base, base_orig, 'job_electron_2012d_Jan22rereco'),
 ]
 jobs_mc = [
-        (base, base_chris, 'job_NLO_WAA_FSR'),
-        #(base, base_chris, 'job_NLO_WAA_ISR'),
+        #(base, base_chris, 'job_NLO_WAA_FSR_PtG500MeV'),
+        #(base, base_chris, 'job_NLO_WAA_ISR_PtG500MeV'),
+        (base, base_yurii, 'llaa_nlo_ggNtuple' ),
         #base,  base_orig_dy, 'job_summer12_DYJetsToLL'),
         #(base, base_orig, 'job_summer12_Wg'),
         #(base, base_orig, 'job_summer12_Zg'),
@@ -110,73 +112,132 @@ treename='ggNtuplizer/EventTree'
 top_configs = [
     #{   
     # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepGammaGammaFinalMuUnblindAll_2015_07_16',
-    # 'output_tag'  : 'WithSF',
-    # 'tag'         : 'muFinalSF'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepGammaGammaFinalElUnblindAll_2015_07_16',
-    # 'output_tag'  : 'WithSF',
-    #'tag'         : 'elFinalSF'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_egamma_scale_up' },
-    # 'input_name'  : 'LepGammaGammaFinalElLowPtLoose_2015_06_29',
-    # 'output_name' : 'TEST',
-    # 'tag'         : 'elFinalEGUP'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_egamma_scale_dn' },
-    # 'input_name'  : 'LepGammaGammaFinalElLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalElEGammaEScaleDN_2015_06_29',
+    # 'args'        : {'functions' : 'vary_egamma_scale_dn' },
+    # 'input_name'  : 'LepGammaGammaElMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepGammaGammaElMediumPhotonIDSoftLepEGammaEScaleDN_2015_12_09',
     # 'tag'         : 'elFinalEGDN'
     #},
     #{   
     # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_egamma_scale_up' },
-    # 'input_name'  : 'LepGammaGammaFinalMuLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalMuEGammaEScaleUP_2015_06_29',
+    # 'args'        : {'functions' : 'vary_egamma_scale_up' },
+    # 'input_name'  : 'LepGammaGammaElMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepGammaGammaElMediumPhotonIDSoftLepEGammaEScaleUP_2015_12_09',
     # 'tag'         : 'muFinalEGUP'
     #},
     #{   
     # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_egamma_scale_dn' },
-    # 'input_name'  : 'LepGammaGammaFinalMuLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalMuEGammaEScaleDN_2015_06_29',
+    # 'args'        : {'functions' : 'vary_egamma_scale_dn' },
+    # 'input_name'  : 'LepGammaGammaMuMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepGammaGammaMuMediumPhotonIDSoftLepEGammaEScaleDN_2015_12_09',
     # 'tag'         : 'muFinalEGDN'
     #},
     #{   
     # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_muon_scale_up' },
-    # 'input_name'  : 'LepGammaGammaFinalMuLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalMuMuonEScaleUP_2015_06_29',
+    # 'args'        : {'functions' : 'vary_egamma_scale_up' },
+    # 'input_name'  : 'LepGammaGammaMuMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepGammaGammaMuMediumPhotonIDSoftLepEGammaEScaleUP_2015_12_09',
+    # 'tag'         : 'muFinalEGUP'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'vary_muon_scale_up' },
+    # 'input_name'  : 'LepGammaGammaMuMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepGammaGammaMuMediumPhotonIDSoftLepMuonScaleUP_2015_12_09',
     # 'tag'         : 'muFinalMUUP'
     #},
     #{   
     # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_muon_scale_dn' },
-    # 'input_name'  : 'LepGammaGammaFinalMuLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalMuMuonEScaleDN_2015_06_29',
+    # 'args'        : {'functions' : 'vary_muon_scale_dn' },
+    # 'input_name'  : 'LepGammaGammaMuMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepGammaGammaMuMediumPhotonIDSoftLepMuonScaleDN_2015_12_09',
     # 'tag'         : 'muFinalMUDN'
     #},
     #{   
     # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_met_uncert' },
-    # 'input_name'  : 'LepGammaGammaFinalMuLowPtLoose_2015_06_29',
-    # 'output_name' : 'LepGammaGammaFinalMuMETUncert_2015_06_29',
+    # 'args'        : {'functions' : 'vary_met_uncert' },
+    # 'input_name'  : 'LepGammaGammaElMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepGammaGammaElMediumPhotonIDSoftLepMETUncert_2015_12_09',
     # 'tag'         : 'muFinalMET'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'vary_met_uncert' },
+    # 'input_name'  : 'LepGammaGammaMuMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepGammaGammaMuMediumPhotonIDSoftLepMETUncert_2015_12_09',
+    # 'tag'         : 'elFinalMET'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : '' },
+    # 'input_name'  : 'LepGammaGammaElMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepGammaGammaElMediumPhotonIDSoftLepNOMINAL_2015_12_09',
+    # 'tag'         : 'muFinalMET'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : '' },
+    # 'input_name'  : 'LepGammaGammaMuMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepGammaGammaMuMediumPhotonIDSoftLepNOMINAL_2015_12_09',
+    # 'tag'         : 'elFinalMET'
+    #},
+    ##---------------------------------------
+    ## LepLepGammaGamma
+    ##---------------------------------------
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'vary_egamma_scale_dn' },
+    # 'input_name'  : 'LepLepGammaGammaElMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepLepGammaGammaElMediumPhotonIDSoftLepEGammaEScaleDN_2015_12_09',
+    # 'tag'         : 'elFinalEGDN'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'vary_egamma_scale_up' },
+    # 'input_name'  : 'LepLepGammaGammaElMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepLepGammaGammaElMediumPhotonIDSoftLepEGammaEScaleUP_2015_12_09',
+    # 'tag'         : 'muFinalEGUP'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'vary_egamma_scale_dn' },
+    # 'input_name'  : 'LepLepGammaGammaMuMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepLepGammaGammaMuMediumPhotonIDSoftLepEGammaEScaleDN_2015_12_09',
+    # 'tag'         : 'muFinalEGDN'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'vary_egamma_scale_up' },
+    # 'input_name'  : 'LepLepGammaGammaMuMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepLepGammaGammaMuMediumPhotonIDSoftLepEGammaEScaleUP_2015_12_09',
+    # 'tag'         : 'muFinalEGUP'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'vary_muon_scale_up' },
+    # 'input_name'  : 'LepLepGammaGammaMuMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepLepGammaGammaMuMediumPhotonIDSoftLepMuonScaleUP_2015_12_09',
+    # 'tag'         : 'muFinalMUUP'
+    #},
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'vary_muon_scale_dn' },
+    # 'input_name'  : 'LepLepGammaGammaMuMediumPhotonIDSoftLep_2015_12_09',
+    # 'output_name' : 'LepLepGammaGammaMuMediumPhotonIDSoftLepMuonScaleDN_2015_12_09',
+    # 'tag'         : 'muFinalMUDN'
     #},
     {   
      'module'      : 'Conf.py', 
-     'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf,vary_met_uncert' },
-     'input_name'  : 'LepGammaGammaFinalElLowPtLoose_2015_06_29',
-     'output_name' : 'LepGammaGammaFinalElMETUncert_2015_06_29',
-     'tag'         : 'xeluFinalMET'
+     'args'        : {'functions' : '' },
+     'input_name'  : 'LepLepGammaGammaElMediumPhotonIDSoftLep_2015_12_09',
+     'output_name' : 'LepLepGammaGammaElMediumPhotonIDSoftLepNOMINAL_2015_12_09',
+     'tag'         : 'elNom'
+    },
+    {   
+     'module'      : 'Conf.py', 
+     'args'        : {'functions' : '' },
+     'input_name'  : 'LepLepGammaGammaMuMediumPhotonIDSoftLep_2015_12_09',
+     'output_name' : 'LepLepGammaGammaMuMediumPhotonIDSoftLepNOMINAL_2015_12_09',
+     'tag'         : 'muNom'
     },
 ]
 

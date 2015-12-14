@@ -47,12 +47,12 @@ jobs = [
         #(base_mc, 'job_summer12_Wg', 50),
         #(base_mc, 'job_summer12_ttjets_1l', 200),
         #(base_mc, 'job_summer12_ttjets_2l', 100),
-        (base_mc, 'job_summer12_Wjets', 400),
+        #(base_mc, 'job_summer12_Wjets', 400),
         #(base_mc, 'job_summer12_Zg_s10', 200),
 
-        #(base_nlo, 'job_NLO_WAA_ISR_PtG500MeV', 20),
-        #(base_nlo, 'job_NLO_WAA_FSR_PtG500MeV', 20),
-        #(base_yurii, 'llaa_nlo_ggNtuple', 10 ),
+        (base_nlo, 'job_NLO_WAA_ISR_PtG500MeV', 20),
+        (base_nlo, 'job_NLO_WAA_FSR_PtG500MeV', 20),
+        (base_yurii, 'llaa_nlo_ggNtuple', 10 ),
         #(base_mc, 'job_summer12_ttg', 20),
         #(base_mc, 'job_summer12_WH_ZH_125', 10),
         #(base_mc, 'job_summer12_WWW', 10),
@@ -133,7 +133,7 @@ module = 'ConfWgamgamReco.py'
 #output = 'RecoOutput_2014_12_05'
 #output = 'RecoOutputDiMuon_2014_11_27'
 #output = 'LepGammaNoEleVetoNewVar_2014_05_02'
-output = 'RecoOutput_2015_11_04'
+output = 'RecoOutputNoTrig_2015_12_09'
 
 nFilesPerJob = 1
 nProc = 6

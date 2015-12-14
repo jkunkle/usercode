@@ -70,8 +70,8 @@ def main() :
     global samplesLLG
     global samplesLG
 
-    baseDirLLG  = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_10_01'
-    baseDirLG   = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_10_01'
+    baseDirLLG  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_11_09'
+    baseDirLG   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_11_09'
     #baseDirLG   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhIDLooseMuonID_2015_09_22'
     #baseDirLG   = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaJJNoPhID_2015_05_05'
 
@@ -143,7 +143,7 @@ def main() :
         eta_bins_plot = {'EB' : [], 'EE' : []}
 
         for typedir in os.listdir( '%s/SinglePhotonResults'%options.baseDir ) :
-            if typedir != 'SigmaIEIEFits' :
+            if typedir != 'ChHadIsoFits' :
                 continue
             base_dir_ele_single = options.baseDir
             base_dir_jet_single = '%s/SinglePhotonResults/%s' %(options.baseDir, typedir)

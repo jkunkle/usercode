@@ -286,10 +286,12 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
 
         
     std::map<std::string, float> results;
+    std::map<std::string, std::vector<float> > vector_results;
 
-    Wgg::CalcEventVars( photons, electrons, muons, trigelectrons, trigmuons, metlv, results );
+    Wgg::CalcEventVars( photons, electrons, muons, trigelectrons, trigmuons, metlv, results, vector_results );
 
     CopyMapVarsToOut( results );
+    CopyVectorMapVarsToOut( vector_results );
 
     // sort the list of photon momenta in descending order
     std::sort(sorted_photons.rbegin(), sorted_photons.rend());
@@ -356,6 +358,10 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     if( !config.PassFloat( "cut_m_elel", OUT::m_elel) )  keep_event=false;
     if( !config.PassFloat( "cut_mt_trigel_met", OUT::mt_trigel_met) )  keep_event=false;
     if( !config.PassFloat( "cut_mt_trigmu_met", OUT::mt_trigmu_met) )  keep_event=false;
+    if( !config.PassFloat( "cut_sublPhot_leadLepDR", OUT::sublPhot_leadLepDR ) ) keep_event=false;
+    if( !config.PassFloat( "cut_sublPhot_sublLepDR", OUT::sublPhot_sublLepDR ) ) keep_event=false;
+    if( !config.PassFloat( "cut_leadPhot_leadLepDR", OUT::leadPhot_leadLepDR ) ) keep_event=false;
+    if( !config.PassFloat( "cut_leadPhot_sublLepDR", OUT::leadPhot_sublLepDR ) ) keep_event=false;
 
     bool isEEEE = OUT::isEE_leadph12 && OUT::isEE_sublph12;
     if( !config.PassBool( "cut_isEEEE", isEEEE ) ) keep_event = false;

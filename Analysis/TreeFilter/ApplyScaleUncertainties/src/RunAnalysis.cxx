@@ -205,10 +205,8 @@ void RunModule::VaryMuonScale( ModuleConfig & /*config*/ ) const {
 
 void RunModule::VaryEGammaScale( ModuleConfig & /*config*/ ) const {
 
-    std::cout << "IN VARYEGAMMA" << std::endl;
 
 #ifdef MODULE_VaryEGammaScale
-    std::cout << "IN VARYEGAMMA2" << std::endl;
 
     // remove the output variables so we can 
     // write new ones
@@ -311,13 +309,9 @@ void RunModule::VaryEGammaScale( ModuleConfig & /*config*/ ) const {
         }
     }
 
-    std::cout << OUT::isEB_sublph12  << std::endl;
-
     if( OUT::isEB_sublph12 ) {
         if( _egamma_var == "UP" ) {
-            std::cout << OUT::pt_sublph12 << std::endl;
             OUT::pt_sublph12 = OUT::pt_sublph12 * ( 1 + 0.006 );
-            std::cout << OUT::pt_sublph12 << std::endl;
         }
         
         else {

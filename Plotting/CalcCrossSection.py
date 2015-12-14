@@ -83,21 +83,21 @@ comb_acceptance_zgg =  { 'muon' : {
 
 def main() :
 
-    baseDirWgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_10_13/'
-    plotDirWgg  = 'PlotsUnblindMCNDWithPhoWithCorrNoDiffUncNewOneBin'
-    finalDirWgg = 'FinalPlotsPlotsUnblindMCNDWithPhoWithCorrNoDiffUncNewOneBin'
-
-    baseDirZgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_10_15/'
-    plotDirZgg  = 'PlotsUnblindZggNewOneBin'
-    finalDirZgg = 'FinalPlotsOneBin'
+    #baseDirWgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_10_13/'
+    #plotDirWgg  = 'PlotsUnblindMCNDWithPhoWithCorrNoDiffUncNewOneBin'
+    #finalDirWgg = 'FinalPlotsPlotsUnblindMCNDWithPhoWithCorrNoDiffUncNewOneBin'
 
     #baseDirZgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_10_15/'
-    #plotDirZgg  = 'PlotsUnblindZggNew'
-    #finalDirZgg = 'FinalPlots'
+    #plotDirZgg  = 'PlotsUnblindZggNewOneBin'
+    #finalDirZgg = 'FinalPlotsOneBin'
 
-    #baseDirZgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_11_03/'
-    #plotDirZgg  = 'PlotsUnblindZggOneBin25'
-    #finalDirZgg = 'FinalPlotsOneBin25'
+    baseDirWgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsPSVTightMassOneBin_2015_12_01/'
+    plotDirWgg  = 'PlotsUnblindNewBinning'
+    finalDirWgg = 'FinalPlotsOneBin'
+
+    baseDirZgg  = '/afs/cern.ch/user/j/jkunkle/Plots/ZggPlotsOneBin_2015_12_01/'
+    plotDirZgg  = 'PlotsUnblindNewBinning6'
+    finalDirZgg = 'FinalPlotsOneBin'
 
     #pt_bins = [('25', '40'), ('40', '70'), ('70', 'max') ]
     #pt_bins = [('40', '70'), ('70', 'max') ]
@@ -173,9 +173,11 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, zgg=Fa
                         'fakefake' : False, 
                         'systTemp' : False, 
                         'statTempLoose' : False, 
-                        'statData' : False }
+                        'statTempFF' : False, 
+                        'statDataSB' : False,
+                        'statDataSR' : False }
 
-    all_systs = ['statTempTight', 'statTempLoose', 'systTemp', 'systBkg', 'fakefake', 'crossCorr', 'statData']
+    all_systs = ['statTempTight', 'statTempLoose', 'statTempFF', 'systTemp', 'systBkg', 'fakefake', 'crossCorr', 'statDataSB', 'statDataSR']
 
     jet_sum_el = get_simple_jet_bin_sums( results_jet['electron'], all_systs, eta_bins, pt_bins, bin_correlations )
     jet_sum_mu = get_simple_jet_bin_sums( results_jet['muon']    , all_systs, eta_bins, pt_bins, bin_correlations )
@@ -209,8 +211,11 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, zgg=Fa
 
         combined_fake = {}
         for eb in eta_bins :
+            # jet fake, invert lead SB
             jet_sum['lead'][eb] = collect_jet_systs( get_simple_jet_bin_sums( results_jet_lead, all_systs, [eb], pt_bins, bin_correlations ), all_systs, bin_correlations )
+            # jet fake, invert subl SB
             jet_sum['subl'][eb] = collect_jet_systs( get_simple_jet_bin_sums( results_jet_subl, all_systs, [eb], pt_bins, bin_correlations ), all_systs, bin_correlations )
+            # jet fake, ele SR
             jet_sum['nom' ][eb] = collect_jet_systs( get_simple_jet_bin_sums( results_jet['electron'], all_systs, [eb], pt_bins, bin_correlations ), all_systs, bin_correlations )
 
             sb_data['lead'][eb] = ufloat(0,0)
@@ -219,6 +224,8 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, zgg=Fa
             ffs['subl'][eb] = ufloat(0,0)
             for ptmin, ptmax in pt_bins :
                 res_bin = (eb[0],eb[1],ptmin,ptmax)
+                # for this result bin, get the 
+                # bins contained
                 ana_bins_lead = [x for x in results_el['details']['lead'][res_bin].keys() if isinstance(x, tuple ) ]
                 for ab in ana_bins_lead :
                     sb_data['lead'][eb] += results_el['details']['lead'][res_bin][ab]['data']
@@ -241,21 +248,50 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, zgg=Fa
                 # in channel combinations
                 # only data statistics are
                 # uncorrelated
-                if syst == 'statData' :
+                if syst == 'statDataSB' :
+                    # combine sideband data in quadrature
                     ele_pred_lead = ufloat( ffs['lead'][eb].n, 0.0 ) * ( sb_data['lead'][eb] - jet_sum['lead'][eb][syst]['sum'] ) 
                     ele_pred_subl = ufloat( ffs['subl'][eb].n, 0.0 ) * ( sb_data['subl'][eb] - jet_sum['subl'][eb][syst]['sum'] )
                     ele_pred_tot = ele_pred_lead + ele_pred_subl
+                    print 'ElE PRED TOT BEFORE ', ele_pred_tot
+                    ele_pred_tot = resolve_negatives( ele_pred_tot )
+                    print 'ff lead = ', ffs['lead'][eb]
+                    print 'ff subl = ', ffs['subl'][eb]
+                    print 'data lead = ', sb_data['lead'][eb]
+                    print 'data subl = ', sb_data['subl'][eb]
+                    print 'jet lead = ', jet_sum['lead'][eb][syst]['sum']
+                    print 'jet subl = ', jet_sum['subl'][eb][syst]['sum']
+                    print 'ElE PRED TOT with ele SB ', ele_pred_tot
                     combined_fake[eb][syst] = jet_sum['nom'][eb][syst]['sum'] + ele_pred_tot
+                elif syst == 'statDataSR' :
+                    # SR data only comes from the jet fake
+                    ele_pred_lead = ufloat( ffs['lead'][eb].n, 0.0 ) * ( ufloat(sb_data['lead'][eb].n, 0.0 ) - jet_sum['lead'][eb][syst]['sum'] ) 
+                    ele_pred_subl = ufloat( ffs['subl'][eb].n, 0.0 ) * ( ufloat(sb_data['subl'][eb].n, 0.0 ) - jet_sum['subl'][eb][syst]['sum'] )
+                    ele_pred_tot = ele_pred_lead + ele_pred_subl
+                    ele_pred_tot = resolve_negatives( ele_pred_tot )
+                    combined_fake[eb][syst] = jet_sum['nom'][eb][syst]['sum'] + ele_pred_tot
+                    combined_fake[eb][syst] = resolve_negatives(combined_fake[eb][syst])
                 else :
-                    ele_jet_pred = ufloat( ffs['lead'][eb].n, 0.0 ) * jet_sum['lead'][eb][syst]['sum'] + ufloat( ffs['subl'][eb].n, 0.0 ) * jet_sum['subl'][eb][syst]['sum']
-                    jet_comb = ufloat( jet_sum['nom'][eb][syst]['sum'].n - ele_jet_pred.n,  math.fabs(jet_sum['nom'][eb][syst]['sum'].s - ele_jet_pred.s ) ) 
+                    # get jet fake contribution to prediction of electron fakes including jet background systematics 
+                    ele_pred_jet = ufloat( ffs['lead'][eb].n, 0.0 ) * jet_sum['lead'][eb][syst]['sum'] + ufloat( ffs['subl'][eb].n, 0.0 ) * jet_sum['subl'][eb][syst]['sum']
+                    # combine jet fake in SR with jet fake components in ele SBs
+                    # The jet fakes are subtracted in the SBs
+                    # treat as fully correlated
+                    jet_comb = ufloat( jet_sum['nom'][eb][syst]['sum'].n - ele_pred_jet.n,  math.fabs(jet_sum['nom'][eb][syst]['sum'].s - ele_pred_jet.s ) ) 
+                    # SB data multiplied by fake factor
+                    # do not include uncertainties here
                     ele_data = ffs['lead'][eb] * sb_data['lead'][eb] + ffs['subl'][eb]*sb_data['subl'][eb]
                     ele_data = ufloat( ele_data.n, 0.0 ) # no data uncert
 
+                    # this is the jet fake plus electron fake
                     combined_fake[eb][syst] = jet_comb + ele_data
+                    combined_fake[eb][syst] = resolve_negatives(combined_fake[eb][syst])
 
+            # now add the electron fake factor uncertainty
             combined_fake[eb]['EleFakeFF'] = ufloat( jet_sum['nom'][eb]['JetFake']['sum'].n, 0.0 ) + ffs['lead'][eb]*(ufloat( sb_data['lead'][eb].n, 0.0 )  - ufloat(jet_sum['lead'][eb]['JetFake']['sum'].n, 0.0) ) + ffs['subl'][eb]*(ufloat( sb_data['subl'][eb].n, 0.0 )  - ufloat(jet_sum['subl'][eb]['JetFake']['sum'].n, 0.0) )
-
+            combined_fake[eb]['EleFakeFF'] = resolve_negatives(combined_fake[eb]['EleFakeFF'])
+            
+            print 'Combined fake'
             print combined_fake[eb]
 
         bin_correlations_with_el = {'statTempTight' : False, 
@@ -264,10 +300,13 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, zgg=Fa
                                     'fakefake' : False, 
                                     'systTemp' : False, 
                                     'statTempLoose' : False, 
-                                    'statData' : False,
+                                    'statTempFF' : False, 
+                                    'statDataSB' : False,
+                                    'statDataSR' : False,
                                     'EleFakeFF' : False}
 
 
+        # combine across bins
         bin_combined_fake = {}
         for syst, isCorr in bin_correlations_with_el.iteritems() :
             bin_combined_fake[syst] = ufloat(0,0)
@@ -279,12 +318,21 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, zgg=Fa
                 else:
                     bin_combined_fake[syst] = bin_combined_fake[syst] + combined_fake[reg][syst]
 
-        summed_el['CombStat'] = bin_combined_fake['statData']
+        
+        # now simplify the uncertainties
+        # into data uncertainties
+        # electron uncertainties,
+        # and jet uncertainties
+        summed_el['CombStatSB'] = bin_combined_fake['statDataSB']
+        summed_el['CombStatSR'] = bin_combined_fake['statDataSR']
         summed_el['CombEleFakeFF'] = bin_combined_fake['EleFakeFF']
         
-        summed_el['CombJetCorr'] = ufloat( bin_combined_fake['statData'].n, 0.0 )
+        # collect jet uncertainties that are correlated 
+        # across channels
+        # all others should be set above
+        summed_el['CombJetCorr'] = ufloat( bin_combined_fake['statDataSB'].n, 0.0 )
         for syst, val in bin_combined_fake.iteritems() :
-            if syst == 'statData' or syst == 'EleFakeFF' :
+            if syst == 'statDataSB' or syst == 'statDataSR' or syst == 'EleFakeFF' :
                 continue
 
             summed_el['CombJetCorr'] += ufloat( 0.0, bin_combined_fake[syst].s )
@@ -296,89 +344,100 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, zgg=Fa
 
 def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summed_el, pt_bins, eta_bins, outputDir=None ) :
 
-    summed_mu['Zgg']  = get_summed_sample( results_final['muon'],  'Zgg' , pt_bins, eta_bins, isCorr=True )
+    # get histogram-based predictions
+    summed_mu['Zgg']      = get_summed_sample( results_final['muon'],  'Zgg' , pt_bins, eta_bins, isCorr=True )
     summed_mu['ZggStat']  = get_summed_sample( results_final['muon'],  'ZggNoSyst' , pt_bins, eta_bins, isCorr=False )
-    summed_mu['Wgg']  = get_summed_sample( results_final['muon'],  'Wgg' , pt_bins, eta_bins, isCorr=True )
-    summed_mu['Data'] = get_summed_sample( results_final['muon'],  'Data', pt_bins, eta_bins, isCorr=False )
+    summed_mu['Wgg']      = get_summed_sample( results_final['muon'],  'Wgg' , pt_bins, eta_bins, isCorr=True )
+    summed_mu['Data']     = get_summed_sample( results_final['muon'],  'Data', pt_bins, eta_bins, isCorr=False )
 
-    print summed_mu['Zgg']
-    print summed_mu['ZggStat']
-
+    # get histogram-based predictions
     summed_el['Zgg']     = get_summed_sample( results_final['electron'],  'Zgg'    , pt_bins, eta_bins, isCorr=True )
     summed_el['ZggStat']  = get_summed_sample( results_final['electron'],  'ZggNoSyst', pt_bins, eta_bins, isCorr=False )
     summed_el['Wgg']     = get_summed_sample( results_final['electron'],  'Wgg'    , pt_bins, eta_bins, isCorr=True )
     summed_el['Data']    = get_summed_sample( results_final['electron'],  'Data'   , pt_bins, eta_bins, isCorr=False )
-    summed_el['EleFake'] = get_summed_sample( results_final['electron'],  'EleFake', pt_bins, eta_bins, isCorr=False )
-    print 'EleFake'
-    print summed_el['EleFake']
-    print 'JetFake'
-    print summed_el['JetFake']
+    #summed_el['EleFake'] = get_summed_sample( results_final['electron'],  'EleFake', pt_bins, eta_bins, isCorr=False )
 
+    # The uncertainties are provided as Stat only
+    # flip to have them as syst only
     summed_mu['ZggSyst'] = make_uncert_compliment( summed_mu['Zgg'], summed_mu['ZggStat'], isCorr=True )
     summed_el['ZggSyst'] = make_uncert_compliment( summed_el['Zgg'], summed_el['ZggStat'], isCorr=True )
 
     bkg_el = {}
     bkg_mu = {}
-    bkg_mu['statData'] = summed_mu['JetFakeStat']['sum'] + ufloat( summed_mu['Zgg']['sum'].n, 0.0 )
-    bkg_mu['ZggStat'] = ufloat( summed_mu['JetFakeStat']['sum'].n, 0.0) +  summed_mu['ZggStat']['sum']
-    bkg_mu['ZggSyst'] = ufloat( summed_mu['JetFakeStat']['sum'].n, 0.0) +  summed_mu['ZggSyst']['sum']
-    bkg_mu['lumi']    = ufloat( summed_mu['JetFakeStat']['sum'].n, 0.0) +  ufloat( summed_mu['Zgg']['sum'].n, summed_mu['Zgg']['sum'].n*0.026 )
+    # make the muon background sum
+    # considering each uncetainty separately
+    bkg_mu['statDataSB'] = summed_mu['JetFakeStatSB']['sum'] + ufloat( summed_mu['Zgg']['sum'].n, 0.0 )
+    bkg_mu['statDataSR'] = summed_mu['JetFakeStatSR']['sum'] + ufloat( summed_mu['Zgg']['sum'].n, 0.0 )
+    bkg_mu['ZggStat'] = ufloat( summed_mu['JetFakeStatSB']['sum'].n, 0.0) +  summed_mu['ZggStat']['sum']
+    bkg_mu['ZggSyst'] = ufloat( summed_mu['JetFakeStatSB']['sum'].n, 0.0) +  summed_mu['ZggSyst']['sum']
+    bkg_mu['lumi']    = ufloat( summed_mu['JetFakeStatSB']['sum'].n, 0.0) +  ufloat( summed_mu['Zgg']['sum'].n, summed_mu['Zgg']['sum'].n*0.026 )
     bkg_mu['JetFakeSyst'] = summed_mu['JetFakeSyst']['sum'] + ufloat(summed_mu['Zgg']['sum'].n, 0.0 )
 
-    bkg_el['statData'] = summed_el['CombStat'] + ufloat( summed_el['Zgg']['sum'].n, 0.0 )
+    # make the electron background sum
+    # considering each uncetainty separately
+    # summed_el already contains jet + el
+    bkg_el['statDataSB'] = summed_el['CombStatSB'] + ufloat( summed_el['Zgg']['sum'].n, 0.0 )
+    bkg_el['statDataSR'] = summed_el['CombStatSR'] + ufloat( summed_el['Zgg']['sum'].n, 0.0 )
     bkg_el['JetFakeSyst'] = summed_el['CombJetCorr'] + ufloat( summed_el['Zgg']['sum'].n, 0.0 )
     bkg_el['EleFakeSyst'] = summed_el['CombEleFakeFF'] + ufloat( summed_el['Zgg']['sum'].n, 0.0 )
-    bkg_el['ZggStat'] = ufloat(summed_el['CombStat'].n, 0.0) + summed_el['ZggStat']['sum']
-    bkg_el['ZggSyst'] = ufloat(summed_el['CombStat'].n, 0.0) + summed_el['ZggSyst']['sum']
-    bkg_el['lumi']    = ufloat( summed_el['CombStat'].n, 0.0) +  ufloat( summed_el['Zgg']['sum'].n, summed_el['Zgg']['sum'].n*0.026 )
+    bkg_el['ZggStat'] = ufloat(summed_el['CombStatSB'].n, 0.0) + summed_el['ZggStat']['sum']
+    bkg_el['ZggSyst'] = ufloat(summed_el['CombStatSB'].n, 0.0) + summed_el['ZggSyst']['sum']
+    bkg_el['lumi']    = ufloat( summed_el['CombStatSB'].n, 0.0) +  ufloat( summed_el['Zgg']['sum'].n, summed_el['Zgg']['sum'].n*0.026 )
 
-    print 'bkg_mu'
-    print bkg_mu
-    print 'bkg_el'
-    print bkg_el
 
     lumi = ufloat( 19.4, 19.4*0.026 )
 
-    exp_mu = bkg_mu['statData'] + summed_mu['Wgg']['sum']
-    exp_el = bkg_el['statData'] + summed_el['Wgg']['sum']
-    xs_mu_sig =  (ufloat( exp_mu.n, math.sqrt(exp_mu.n) ) - bkg_mu['statData'])/ ( comb_acceptance['muon']['stat'] * lumi )
-    xs_el_sig =  (ufloat(exp_el.n, math.sqrt(exp_el.n) ) - bkg_el['statData'] )/ ( comb_acceptance['electron']['stat'] * lumi )
+    exp_mu = bkg_mu['statDataSB'] + summed_mu['Wgg']['sum']
+    exp_el = bkg_el['statDataSB'] + summed_el['Wgg']['sum']
+    xs_mu_sig =  (ufloat( exp_mu.n, math.sqrt(exp_mu.n) ) - bkg_mu['statDataSB'])/ ( comb_acceptance['muon']['stat'] * lumi )
+    xs_el_sig =  (ufloat(exp_el.n, math.sqrt(exp_el.n) ) - bkg_el['statDataSB'] )/ ( comb_acceptance['electron']['stat'] * lumi )
     xs_mu = {}
     xs_el = {}
 
-    print 'data mu'
-    print summed_mu['Data']['sum']
-    print 'data el'
-    print summed_el['Data']['sum']
 
 
+    # combine the SR and SB uncertainties
+    # the SR uncertainties are correlated
+    # between the data and jetSR
+    # the SB are uncorrelated
+    # calculate data - bkg, using correlated SR uncertainties
+    numerator_mu_sr = ufloat( summed_mu['Data']['sum'].n - bkg_mu['statDataSR'].n, summed_mu['Data']['sum'].s - bkg_mu['statDataSR'].s )
+    # add in uncorrelated SB uncertainties
+    numerator_mu_comb = numerator_mu_sr + ufloat( 0.0, summed_mu['statDataSB']['sum'].s )
 
-    xs_mu['statData']    = ( summed_mu['Data']['sum'] - bkg_mu['statData'] )                            / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    
+
+    xs_mu['statData']    = ( numerator_mu_comb )                          / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
     xs_mu['ZggStat']     = ( ufloat(summed_mu['Data']['sum'].n,0.0) - bkg_mu['ZggStat'])                / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
     xs_mu['ZggSyst']     = ( ufloat(summed_mu['Data']['sum'].n,0.0) - bkg_mu['ZggSyst'])                / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
     xs_mu['JetFakeSyst'] = ( ufloat(summed_mu['Data']['sum'].n,0.0) - bkg_mu['JetFakeSyst'])            / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
     xs_mu['lumi']        = ( ufloat(summed_mu['Data']['sum'].n,0.0) - bkg_mu['lumi'])                   / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*lumi)
-    xs_mu['AccStat']     = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0)) / ( comb_acceptance['muon']['stat']*ufloat(lumi.n, 0.0))
-    xs_mu['AccChannel']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0)) / ( comb_acceptance['muon']['Channel']*ufloat(lumi.n, 0.0))
-    xs_mu['AccPhoton']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0))  / ( comb_acceptance['muon']['Photon']*ufloat(lumi.n, 0.0))
-    xs_mu['AccTheory']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0))  / ( comb_acceptance['muon']['Theory']*ufloat(lumi.n, 0.0))
+    xs_mu['AccStat']     = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statDataSB'].n,0.0)) / ( comb_acceptance['muon']['stat']*ufloat(lumi.n, 0.0))
+    xs_mu['AccChannel']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statDataSB'].n,0.0)) / ( comb_acceptance['muon']['Channel']*ufloat(lumi.n, 0.0))
+    xs_mu['AccPhoton']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statDataSB'].n,0.0))  / ( comb_acceptance['muon']['Photon']*ufloat(lumi.n, 0.0))
+    xs_mu['AccTheory']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statDataSB'].n,0.0))  / ( comb_acceptance['muon']['Theory']*ufloat(lumi.n, 0.0))
     xs_mu['EleFakeSyst']  = ufloat( xs_mu['statData'].n, 0.0 )
 
-    xs_el['statData']    = ( summed_el['Data']['sum'] - bkg_el['statData'] )                            / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    # combine the SR and SB uncertainties
+    # the SR uncertainties are correlated
+    # between the data and jetSR
+    # the SB are uncorrelated
+    # calculate data - bkg, using correlated SR uncertainties
+    numerator_el_sr = ufloat( summed_el['Data']['sum'].n - bkg_el['statDataSR'].n, summed_el['Data']['sum'].s - bkg_el['statDataSR'].s )
+    # add in uncorrelated SB uncertainties
+    numerator_el_comb = numerator_el_sr + ufloat( 0.0, summed_el['statDataSB']['sum'].s )
+
+
+    xs_el['statData']    = ( numerator_el_comb )                        / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
     xs_el['ZggStat']     = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['ZggStat'])                / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
     xs_el['ZggSyst']     = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['ZggSyst'])                / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
     xs_el['JetFakeSyst'] = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['JetFakeSyst'])            / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
     xs_el['EleFakeSyst'] = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['EleFakeSyst'])            / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
     xs_el['lumi']        = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['lumi'])                   / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*lumi)
-    xs_el['AccStat']     = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0)) / ( comb_acceptance['electron']['stat']*ufloat(lumi.n, 0.0))
-    xs_el['AccChannel']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0)) / ( comb_acceptance['electron']['Channel']*ufloat(lumi.n, 0.0))
-    xs_el['AccPhoton']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0))  / ( comb_acceptance['electron']['Photon']*ufloat(lumi.n, 0.0))
-    xs_el['AccTheory']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0))  / ( comb_acceptance['electron']['Theory']*ufloat(lumi.n, 0.0))
-
-    print 'xs_mu'
-    print xs_mu
-    print 'xs_el'
-    print xs_el
+    xs_el['AccStat']     = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statDataSB'].n,0.0)) / ( comb_acceptance['electron']['stat']*ufloat(lumi.n, 0.0))
+    xs_el['AccChannel']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statDataSB'].n,0.0)) / ( comb_acceptance['electron']['Channel']*ufloat(lumi.n, 0.0))
+    xs_el['AccPhoton']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statDataSB'].n,0.0))  / ( comb_acceptance['electron']['Photon']*ufloat(lumi.n, 0.0))
+    xs_el['AccTheory']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statDataSB'].n,0.0))  / ( comb_acceptance['electron']['Theory']*ufloat(lumi.n, 0.0))
 
     print 'Muon, N Data = %d, N Sig = %f, n Bkg = %s '      %( summed_mu['Data']['sum'].n, summed_mu['Wgg']['sum'].n, bkg_mu )
     print 'Electron , N Data = %d, N Sig = %f, n Bkg = %s ' %( summed_el['Data']['sum'].n, summed_el['Wgg']['sum'].n, bkg_el )
@@ -387,8 +446,8 @@ def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     print 'xs_mu_sig = %s, frac unc = %f' %( xs_mu_sig, xs_mu_sig.s/xs_mu_sig.n)
     print 'xs_el_sig = %s, frac unc = %f' %( xs_el_sig, xs_el_sig.s/xs_el_sig.n)
 
-    comb_xs_mu = xs_mu['statData'] + ufloat( 0.0, xs_mu['ZggStat'].s ) + ufloat( 0.0, xs_mu['ZggSyst'].s ) + ufloat( 0.0, xs_mu['JetFakeSyst'].s ) + ufloat( 0.0, xs_mu['lumi'].s ) + ufloat( 0.0, xs_mu['AccStat'].s ) + ufloat( 0.0, xs_mu['AccChannel'].s ) + ufloat( 0.0, xs_mu['AccPhoton'].s ) + ufloat( 0.0, xs_mu['AccTheory'].s )
-    comb_xs_el = xs_el['statData'] + ufloat( 0.0, xs_el['ZggStat'].s ) + ufloat( 0.0, xs_el['ZggSyst'].s ) + ufloat( 0.0, xs_el['JetFakeSyst'].s ) + ufloat( 0.0, xs_el['lumi'].s ) + ufloat( 0.0, xs_el['EleFakeSyst'].s ) + ufloat( 0.0, xs_el['AccStat'].s ) + ufloat( 0.0, xs_el['AccChannel'].s ) + ufloat( 0.0, xs_el['AccPhoton'].s ) + ufloat( 0.0, xs_el['AccTheory'].s )
+    comb_xs_mu = xs_mu['statData'] + ufloat(0.0,xs_mu['statData'].s) + ufloat( 0.0, xs_mu['ZggStat'].s ) + ufloat( 0.0, xs_mu['ZggSyst'].s ) + ufloat( 0.0, xs_mu['JetFakeSyst'].s ) + ufloat( 0.0, xs_mu['lumi'].s ) + ufloat( 0.0, xs_mu['AccStat'].s ) + ufloat( 0.0, xs_mu['AccChannel'].s ) + ufloat( 0.0, xs_mu['AccPhoton'].s ) + ufloat( 0.0, xs_mu['AccTheory'].s )
+    comb_xs_el = xs_el['statData'] + ufloat(0.0, xs_el['statData'].s) + ufloat( 0.0, xs_el['ZggStat'].s ) + ufloat( 0.0, xs_el['ZggSyst'].s ) + ufloat( 0.0, xs_el['JetFakeSyst'].s ) + ufloat( 0.0, xs_el['lumi'].s ) + ufloat( 0.0, xs_el['EleFakeSyst'].s ) + ufloat( 0.0, xs_el['AccStat'].s ) + ufloat( 0.0, xs_el['AccChannel'].s ) + ufloat( 0.0, xs_el['AccPhoton'].s ) + ufloat( 0.0, xs_el['AccTheory'].s )
 
     print 'Final xs_mu = %s' %comb_xs_mu
     print 'Final xs_el = %s' %comb_xs_el
@@ -396,7 +455,8 @@ def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     xs_mu['central_value'] = comb_xs_mu
     xs_el['central_value'] = comb_xs_el
 
-    ch_correlations  = {'statData'    : False, 
+    ch_correlations  = {
+                        'statData'  : False, 
                         'JetFakeSyst' : True, 
                         'ZggStat'     : False, 
                         'ZggSyst'     : True, 
@@ -423,11 +483,14 @@ def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     n_ch = 2
     for syst, is_corr in ch_correlations.iteritems() :
 
+
+        validx = { 0 : xs_mu[syst], 1 : xs_el[syst] }
         matrix  = []
+
         for i in range( 0, n_ch ) :
             list_i = [0]*n_ch
             for j in range( 0, n_ch ) :
-                entry  = xs_mu[syst].s*xs_el[syst].s
+                entry  = validx[i].s*validx[j].s
 
                 if i != j and not is_corr :
                     entry = 0
@@ -435,6 +498,10 @@ def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
                 list_i[j]  = entry
 
             matrix.append( list_i )
+
+        print 'syst = %s, corr? %s ' %( syst, is_corr )
+        print matrix
+
 
         xs_calc.AddErrorMatrix( matrix )
         if syst in calc_indiv :
@@ -510,42 +577,58 @@ def make_zgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
 
     bkg_el = {}
     bkg_mu = {}
-    bkg_mu['statData']    = summed_mu['JetFakeStat']['sum'] 
+    bkg_mu['statDataSR']    = summed_mu['JetFakeStatSR']['sum'] 
+    bkg_mu['statDataSB']    = summed_mu['JetFakeStatSB']['sum'] 
     bkg_mu['JetFakeSyst'] = summed_mu['JetFakeSyst']['sum'] 
 
-    bkg_el['statData']    = summed_el['JetFakeStat']['sum'] 
+    bkg_el['statDataSB']    = summed_el['JetFakeStatSB']['sum'] 
+    bkg_el['statDataSR']    = summed_el['JetFakeStatSR']['sum'] 
     bkg_el['JetFakeSyst'] = summed_el['JetFakeSyst']['sum'] 
 
     lumi = ufloat( 19.4, 19.4*0.026 )
 
-    exp_mu = bkg_mu['statData'] + summed_mu['Zgg']['sum']
-    exp_el = bkg_el['statData'] + summed_el['Zgg']['sum']
+    exp_mu = bkg_mu['statDataSB'] + summed_mu['Zgg']['sum']
+    exp_el = bkg_el['statDataSB'] + summed_el['Zgg']['sum']
 
-    xs_mu_sig =  (ufloat( exp_mu.n, math.sqrt(exp_mu.n) ) - bkg_mu['statData'])/ ( comb_acceptance_zgg['muon']['stat'] * lumi )
-    xs_el_sig =  (ufloat(exp_el.n, math.sqrt(exp_el.n) ) - bkg_el['statData'] )/ ( comb_acceptance_zgg['electron']['stat'] * lumi )
+    xs_mu_sig =  (ufloat( exp_mu.n, math.sqrt(exp_mu.n) ) - bkg_mu['statDataSB'])/ ( comb_acceptance_zgg['muon']['stat'] * lumi )
+    xs_el_sig =  (ufloat(exp_el.n, math.sqrt(exp_el.n) ) - bkg_el['statDataSB'] )/ ( comb_acceptance_zgg['electron']['stat'] * lumi )
     xs_mu = {}
     xs_el = {}
 
-    xs_mu['statData']    = ( summed_mu['Data']['sum'] - bkg_mu['statData'] )                            / ( ufloat( comb_acceptance_zgg['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    # combine the SR and SB uncertainties
+    # the SR uncertainties are correlated
+    # between the data and jetSR
+    # the SB are uncorrelated
+    # calculate data - bkg, using correlated SR uncertainties
+    numerator_mu_sr = ufloat( summed_mu['Data']['sum'].n - bkg_mu['statDataSR'].n, summed_mu['Data']['sum'].s - bkg_mu['statDataSR'].s )
+    # add in uncorrelated SB uncertainties
+    numerator_mu_comb = numerator_mu_sr + ufloat( 0.0, summed_mu['statDataSB']['sum'].s )
+    xs_mu['statData']    = ( numerator_mu_comb )                        / ( ufloat( comb_acceptance['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    #xs_mu['statData']    = ( summed_mu['Data']['sum'] - bkg_mu['statData'] )                            / ( ufloat( comb_acceptance_zgg['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
     xs_mu['JetFakeSyst'] = ( ufloat(summed_mu['Data']['sum'].n,0.0) - bkg_mu['JetFakeSyst'])            / ( ufloat( comb_acceptance_zgg['muon']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
-    xs_mu['lumi']        = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0)) / ( ufloat( comb_acceptance_zgg['muon']['stat'].n, 0.0)*lumi)
-    xs_mu['AccStat']     = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0)) / ( comb_acceptance_zgg['muon']['stat']*ufloat(lumi.n, 0.0))
-    xs_mu['AccChannel']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0)) / ( comb_acceptance_zgg['muon']['Channel']*ufloat(lumi.n, 0.0))
-    xs_mu['AccPhoton']   = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0))  / ( comb_acceptance_zgg['muon']['Photon']*ufloat(lumi.n, 0.0))
-    xs_mu['AccTheory']   = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statData'].n,0.0))  / ( comb_acceptance_zgg['muon']['Theory']*ufloat(lumi.n, 0.0))
+    xs_mu['lumi']        = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statDataSB'].n,0.0)) / ( ufloat( comb_acceptance_zgg['muon']['stat'].n, 0.0)*lumi)
+    xs_mu['AccStat']     = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statDataSB'].n,0.0)) / ( comb_acceptance_zgg['muon']['stat']*ufloat(lumi.n, 0.0))
+    xs_mu['AccChannel']  = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statDataSB'].n,0.0)) / ( comb_acceptance_zgg['muon']['Channel']*ufloat(lumi.n, 0.0))
+    xs_mu['AccPhoton']   = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statDataSB'].n,0.0))  / ( comb_acceptance_zgg['muon']['Photon']*ufloat(lumi.n, 0.0))
+    xs_mu['AccTheory']   = ( ufloat(summed_mu['Data']['sum'].n,0.0) - ufloat(bkg_mu['statDataSB'].n,0.0))  / ( comb_acceptance_zgg['muon']['Theory']*ufloat(lumi.n, 0.0))
 
-    xs_el['statData']    = ( summed_el['Data']['sum'] - bkg_el['statData'] )                     / ( ufloat( comb_acceptance_zgg['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+    # combine the SR and SB uncertainties
+    # the SR uncertainties are correlated
+    # between the data and jetSR
+    # the SB are uncorrelated
+    # calculate data - bkg, using correlated SR uncertainties
+    numerator_el_sr = ufloat( summed_el['Data']['sum'].n - bkg_el['statDataSR'].n, summed_el['Data']['sum'].s - bkg_el['statDataSR'].s )
+    # add in uncorrelated SB uncertainties
+    numerator_el_comb = numerator_el_sr + ufloat( 0.0, summed_el['statDataSB']['sum'].s )
+    xs_el['statData']    = ( numerator_el_comb )                        / ( ufloat( comb_acceptance['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
+
+    #xs_el['statData']    = ( summed_el['Data']['sum'] - bkg_el['statData'] )                     / ( ufloat( comb_acceptance_zgg['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
     xs_el['JetFakeSyst'] = ( ufloat(summed_el['Data']['sum'].n,0.0) - bkg_el['JetFakeSyst'])     / ( ufloat( comb_acceptance_zgg['electron']['stat'].n, 0.0)*ufloat(lumi.n, 0.0) )
-    xs_el['lumi']        = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0)) / ( ufloat( comb_acceptance_zgg['electron']['stat'].n, 0.0)*lumi)
-    xs_el['AccStat']     = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0)) / ( comb_acceptance_zgg['electron']['stat']*ufloat(lumi.n, 0.0))
-    xs_el['AccChannel']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0)) / ( comb_acceptance_zgg['electron']['Channel']*ufloat(lumi.n, 0.0))
-    xs_el['AccPhoton']   = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0))  / ( comb_acceptance_zgg['electron']['Photon']*ufloat(lumi.n, 0.0))
-    xs_el['AccTheory']   = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statData'].n,0.0))  / ( comb_acceptance_zgg['electron']['Theory']*ufloat(lumi.n, 0.0))
-
-    print 'xs_mu'
-    print xs_mu
-    print 'xs_el'
-    print xs_el
+    xs_el['lumi']        = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statDataSB'].n,0.0)) / ( ufloat( comb_acceptance_zgg['electron']['stat'].n, 0.0)*lumi)
+    xs_el['AccStat']     = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statDataSB'].n,0.0)) / ( comb_acceptance_zgg['electron']['stat']*ufloat(lumi.n, 0.0))
+    xs_el['AccChannel']  = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statDataSB'].n,0.0)) / ( comb_acceptance_zgg['electron']['Channel']*ufloat(lumi.n, 0.0))
+    xs_el['AccPhoton']   = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statDataSB'].n,0.0))  / ( comb_acceptance_zgg['electron']['Photon']*ufloat(lumi.n, 0.0))
+    xs_el['AccTheory']   = ( ufloat(summed_el['Data']['sum'].n,0.0) - ufloat(bkg_el['statDataSB'].n,0.0))  / ( comb_acceptance_zgg['electron']['Theory']*ufloat(lumi.n, 0.0))
 
     print 'Muon, N Data = %d, N Sig = %f, n Bkg = %s '      %( summed_mu['Data']['sum'].n, summed_mu['Zgg']['sum'].n, bkg_mu )
     print 'Electron , N Data = %d, N Sig = %f, n Bkg = %s ' %( summed_el['Data']['sum'].n, summed_el['Zgg']['sum'].n, bkg_el )
@@ -588,11 +671,12 @@ def make_zgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     n_ch = 2
     for syst, is_corr in ch_correlations.iteritems() :
 
+        validx = { 0 : xs_mu[syst].s, 1 : xs_el[syst].s }
         matrix  = []
         for i in range( 0, n_ch ) :
             list_i = [0]*n_ch
             for j in range( 0, n_ch ) :
-                entry  = xs_mu[syst].s*xs_el[syst].s
+                entry  = validx[i]*validx[j]
 
                 if i != j and not is_corr :
                     entry = 0
@@ -669,7 +753,9 @@ def collect_jet_systs( jet_sum, all_systs, bin_correlations ) :
 
     jet_tot = None
 
-    jet_tot_data = None
+    jet_tot_data_sb = None
+
+    jet_tot_data_sr = None
 
     jet_tot_binuncorr = None
 
@@ -699,8 +785,10 @@ def collect_jet_systs( jet_sum, all_systs, bin_correlations ) :
             else : 
                 jet_tot_binuncorr += ufloat( 0.0, jet_sum['sum'][syst].s )
 
-        if syst == 'statData' :
-            jet_tot_data = jet_sum['sum'][syst]
+        if syst == 'statDataSB' :
+            jet_tot_data_sb = jet_sum['sum'][syst]
+        elif syst == 'statDataSR' :
+            jet_tot_data_sr = jet_sum['sum'][syst]
         else :
             if jet_tot_syst is None :
                 jet_tot_syst = jet_sum['sum'][syst]
@@ -709,7 +797,8 @@ def collect_jet_systs( jet_sum, all_systs, bin_correlations ) :
     
 
     summed['JetFake']          = { 'sum' : jet_tot }
-    summed['JetFakeStat']      = { 'sum' : jet_tot_data }
+    summed['JetFakeStatSB']      = { 'sum' : jet_tot_data_sb }
+    summed['JetFakeStatSR']      = { 'sum' : jet_tot_data_sr }
 
     summed['JetFakeSyst']      = { 'sum' : jet_tot_syst }
 
@@ -1121,6 +1210,19 @@ def calc_xs_old( results ) :
     pickle.dump(xs_data, ofile )
 
     ofile.close()
+
+def resolve_negatives( val ) :
+
+    if val.n >= 0 :
+        return val
+    else :
+
+        if math.fabs(val.s) > math.fabs(val.n) :
+            return ufloat( 0.0, val.s )
+        else :
+            return ufloat( 0.0, math.fabs(val.n) )
+
+
 
 def get_dic_from_pickle( filename ) :
 

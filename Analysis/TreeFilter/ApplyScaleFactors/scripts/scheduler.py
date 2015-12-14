@@ -58,34 +58,34 @@ jobs_mc = [
         ##JobConf(base, base_orig, 'job_summer12_ttjets_1l', 'PhOlap'),
         ##JobConf(base, base_orig, 'job_summer12_ttjets_2l', 'PhOlap'),
 
-        #JobConf(base, base_orig, 'job_summer12_ttg'),
-        #JobConf(base, base_orig, 'job_summer12_WH_ZH_125'),
-        #JobConf(base, base_orig, 'job_summer12_WWW'),
-        #JobConf(base, base_orig, 'job_summer12_WWZ'),
-        #JobConf(base, base_orig, 'job_summer12_WW_2l2nu'),
-        #JobConf(base, base_orig, 'job_summer12_WWg'),
-        #JobConf(base, base_orig, 'job_summer12_WZZ'),
-        #JobConf(base, base_orig, 'job_summer12_ZZZ'),
-        #JobConf(base, base_orig, 'job_summer12_ZZ_2e2mu'),
-        #JobConf(base, base_orig, 'job_summer12_ZZ_2e2tau'),
-        #JobConf(base, base_orig, 'job_summer12_ZZ_2l2nu'),
-        #JobConf(base, base_orig, 'job_summer12_ZZ_2l2q'),
-        #JobConf(base, base_orig, 'job_summer12_ZZ_2mu2tau'),
-        #JobConf(base, base_orig, 'job_summer12_ZZ_2q2nu'),
-        #JobConf(base, base_orig, 'job_summer12_ZZ_4e'),
-        #JobConf(base, base_orig, 'job_summer12_ZZ_4mu'),
-        #JobConf(base, base_orig, 'job_summer12_ZZ_4tau'),
-        #JobConf(base, base_orig, 'job_summer12_ggZZ_2l2l'),
-        #JobConf(base, base_orig, 'job_summer12_ggZZ_4l'),
-        #JobConf(base, base_orig, 'job_summer12_t_s'),
-        #JobConf(base, base_orig, 'job_summer12_t_t'),
-        #JobConf(base, base_orig, 'job_summer12_t_tW'),
-        #JobConf(base, base_orig, 'job_summer12_tbar_s'),
-        #JobConf(base, base_orig, 'job_summer12_tbar_t'),
-        #JobConf(base, base_orig, 'job_summer12_tbar_tW'),
-        #JobConf(base, base_orig, 'job_summer12_ttW'),
-        #JobConf(base, base_orig, 'job_summer12_ttZ'),
-        #JobConf(base, base_orig, 'job_jfaulkne_WZA'),
+        JobConf(base, base_orig, 'job_summer12_ttg'),
+        JobConf(base, base_orig, 'job_summer12_WH_ZH_125'),
+        JobConf(base, base_orig, 'job_summer12_WWW'),
+        JobConf(base, base_orig, 'job_summer12_WWZ'),
+        JobConf(base, base_orig, 'job_summer12_WW_2l2nu'),
+        JobConf(base, base_orig, 'job_summer12_WWg'),
+        JobConf(base, base_orig, 'job_summer12_WZZ'),
+        JobConf(base, base_orig, 'job_summer12_ZZZ'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2e2mu'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2e2tau'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2l2nu'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2l2q'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2mu2tau'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_2q2nu'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_4e'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_4mu'),
+        JobConf(base, base_orig, 'job_summer12_ZZ_4tau'),
+        JobConf(base, base_orig, 'job_summer12_ggZZ_2l2l'),
+        JobConf(base, base_orig, 'job_summer12_ggZZ_4l'),
+        JobConf(base, base_orig, 'job_summer12_t_s'),
+        JobConf(base, base_orig, 'job_summer12_t_t'),
+        JobConf(base, base_orig, 'job_summer12_t_tW'),
+        JobConf(base, base_orig, 'job_summer12_tbar_s'),
+        JobConf(base, base_orig, 'job_summer12_tbar_t'),
+        JobConf(base, base_orig, 'job_summer12_tbar_tW'),
+        JobConf(base, base_orig, 'job_summer12_ttW'),
+        JobConf(base, base_orig, 'job_summer12_ttZ'),
+        JobConf(base, base_orig, 'job_jfaulkne_WZA'),
 
         #JobConf(base, base_orig, 'job_summer12_diphoton_box_10to25'),
         #JobConf(base, base_orig, 'job_summer12_diphoton_box_250toInf'),
@@ -127,13 +127,13 @@ exename='RunAnalysis'
 treename='ggNtuplizer/EventTree'
 
 top_configs = [
-    {   
-     'module'      : 'Conf.py', 
-     'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-     'input_name'  : 'LepGammaGammaFinalElPSVOldWindowUnblindAll_2015_12_11',
-     'output_tag'  : 'WithSF',
-     'tag'         : 'elFinalSF'
-    },
+    #{   
+    # 'module'      : 'Conf.py', 
+    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
+    # 'input_name'  : 'LepGammaGammaFinalElPSVOldWindowUnblindAll_2015_12_11',
+    # 'output_tag'  : 'WithSF',
+    # 'tag'         : 'elFinalSF'
+    #},
     #{   
     # 'module'      : 'Conf.py', 
     # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
@@ -141,20 +141,20 @@ top_configs = [
     # 'output_tag'  : 'WithSF',
     # 'tag'         : 'muFinalSF'
     #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepLepGammaGammaFinalMuMuUnblindAll_2015_11_25',
-    # 'output_tag'  : 'WithSF',
-    # 'tag'         : 'mumuFinalSF'
-    #},
-    #{   
-    # 'module'      : 'Conf.py', 
-    # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
-    # 'input_name'  : 'LepLepGammaGammaFinalElElUnblindAll_2015_11_25',
-    # 'output_tag'  : 'WithSF',
-    # 'tag'         : 'elelFinalSF'
-    #},
+    {   
+     'module'      : 'Conf.py', 
+     'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
+     'input_name'  : 'LepLepGammaGammaFinalMuMuUnblindAll_2015_12_12',
+     'output_tag'  : 'WithSF',
+     'tag'         : 'mumuFinalSF'
+    },
+    {   
+     'module'      : 'Conf.py', 
+     'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },
+     'input_name'  : 'LepLepGammaGammaFinalElElUnblindAll_2015_12_12',
+     'output_tag'  : 'WithSF',
+     'tag'         : 'elelFinalSF'
+    },
     #{   
     # 'module'      : 'Conf.py', 
     # 'args'        : {'functions' : 'get_muon_sf,get_electron_sf,get_photon_sf,get_pileup_sf' },

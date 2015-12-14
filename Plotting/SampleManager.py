@@ -67,7 +67,9 @@ class Sample :
         self.chain = kwargs.get('chain', None)
 
         # isActive determines if the sample will be drawn, default=True
-        self.isActive = kwargs.get('isActive', True) 
+        self.init_isActive = kwargs.get('isActive', True) 
+        self.isActive      = self.init_isActive
+        self.isActiveReq   = self.init_isActive
 
         # if isData is true the sample will be drawn as points with an error bar, default=False
         self.isData   = kwargs.get('isData', False)
@@ -182,6 +184,10 @@ class Sample :
             self.list_of_branches = branches
 
             return branches
+
+    def reset_status( self ) :
+        """ Reset sample to the initial status """
+        self.isActive = self.isActiveReq
 
 class LegendConfig :
 
@@ -304,9 +310,24 @@ class DrawConfig :
         self.stack_dump_params['filename'] = filename
         self.stack_dump_params['dirname'] = dirname
 
+    def add_label( self, config ) :
+        if 'extra_label' not in self.label_config :
+            self.label_config
+
+
     def get_labels( self ) :
 
         labels=[]
+        
+        stattext = self.label_config.get('statsLabel', None )
+        if stattext is not None :
+            statlabel  = ROOT.TLatex()
+            statlabel.SetTextFont( 42 )
+            statlabel   .SetNDC()
+            statlabel  .SetTextSize(0.045)
+            statlabel.SetText(0.16, 0.93, stattext)
+
+            labels.append(statlabel)
 
         labelStyle = self.label_config.get('labelStyle', None)
         if labelStyle is None:
@@ -314,44 +335,49 @@ class DrawConfig :
             atlaslabel.SetNDC()
             atlaslabel.SetTextSize( 0.04 )
             atlaslabel.SetText(0.35, 0.85, 'CMS Internal')
+
             labels.append(atlaslabel)
 
         elif labelStyle.count('fancy') :
-            statText = 'Internal'
+            extText = 'Internal'
             if labelStyle.count('prelim') :
-                statText = 'Preliminary'
+                extText = 'Preliminary'
 
-            statlabel  = ROOT.TLatex()
             rootslabel = ROOT.TLatex()
             cmslabel = ROOT.TLatex()
+            extlabel = ROOT.TLatex()
 
             rootslabel.SetTextFont(42)
             cmslabel.SetTextFont( 61 )
-            statlabel.SetTextFont(52)
+            extlabel.SetTextFont(52)
 
-            statlabel  .SetNDC()
+            extlabel  .SetNDC()
             rootslabel .SetNDC()
             cmslabel   .SetNDC()
 
-            statlabel  .SetTextSize(0.045)
+            extlabel  .SetTextSize(0.045)
             rootslabel .SetTextSize(0.045)
             cmslabel  .SetTextSize(0.055)
 
             cmslabel.SetText( 0.18, 0.87, 'CMS' )
-            statlabel.SetText( 0.18, 0.82, statText )
+            extlabel.SetText( 0.18, 0.82, extText )
             #rootslabel.SetText(0.65, 0.93, '#font[132]{#sqrt{s} = 8 TeV, L = 19.4 fb^{-1} }' )
             rootslabel.SetText(0.73, 0.93, '19.4 fb^{-1} (8 TeV)' )
 
-            labels.append(statlabel)
+            labels.append(extlabel)
             labels.append(cmslabel)
             labels.append(rootslabel)
 
         extra_label = self.label_config.get( 'extra_label', None )
         if extra_label is not None :
 
-            extra_label = '#font[132]{'+extra_label+'}'
-            extra_label_loc = self.label_config.get( 'extra_label_loc', None )
-            labels.append(self.place_extra_label( extra_label, extra_label_loc ))
+            if not isinstance( extra_label, list) :
+                extra_label = [extra_label]
+
+            for lab in extra_label :
+                extra_label_str = '#font[132]{'+lab+'}'
+                extra_label_loc = self.label_config.get( 'extra_label_loc', None )
+                labels.append(self.place_extra_label( lab, extra_label_loc ))
 
         return labels
 
@@ -1033,6 +1059,7 @@ class SampleManager :
             print 'Located multiple samples with name %s' %name
         else :
             print 'Activate sample %s' %sel_samps[0].name
+            sel_samps[0].isActiveReq=True
             sel_samps[0].isActive=True
 
     #--------------------------------
@@ -1044,6 +1071,7 @@ class SampleManager :
             print 'Located multiple samples with name %s' %samp_name
         else :
             print 'Deactivate sample %s' %sel_samps[0].name
+            sel_samps[0].isActiveReq=False
             sel_samps[0].isActive=False
 
     #--------------------------------
@@ -1082,6 +1110,10 @@ class SampleManager :
 
         self.transient_data= {}
         self.stored_command=''
+
+        for samp in self.samples :
+            samp.reset_status()
+
 
     #--------------------------------
     def clear_hists(self) :
@@ -2322,7 +2354,7 @@ class SampleManager :
                 if samp.hist is not None :
                     samp.hist.Rebin(rebin)
 
-        draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel, 'ymin' : ymin, 'ymax' : ymax} , label_config=label_config, legend_config=legend_config)
+        draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel, 'ymin' : ymin, 'ymax' : ymax, 'logy' : logy} , label_config=label_config, legend_config=legend_config)
         self.MakeStack(draw_config )
 
 
@@ -2387,16 +2419,43 @@ class SampleManager :
                 this_err = samp.hist.GetBinError(bin)
                 errSamp.hist.SetBinError( bin, math.sqrt( curr_err*curr_err + this_err*this_err )  )
 
+        
+        # for plotting a TGraphErrors is needed
         if errSamp is not None :
             errSamp.graph = ROOT.TGraphErrors( errSamp.hist )
 
+        # calculate a chi-2 with respect to the errors
+        if errSamp is not None :
+            chi2sum = 0
+            dataSamp = self.get_samples( name=datahists[0] )[0]
+            nbins = errSamp.hist.GetNbinsX()
+            for binnum in range( 1,  nbins +1 ) :
 
+                exp_bkg = errSamp.hist.GetBinContent( binnum )
+                exp_err = errSamp.hist.GetBinError( binnum )
+                data_val = dataSamp.hist.GetBinContent( binnum )
+                data_err = dataSamp.hist.GetBinError( binnum )
+
+                tot_err = math.sqrt( data_err*data_err + exp_err*exp_err )
+        
+                if not tot_err == 0 :
+                    chi2sum += math.pow( (exp_bkg-data_val) / tot_err, 2 )
+
+            pzero = ROOT.TMath.Prob( chi2sum, nbins )
+            print pzero
+
+            kstest = dataSamp.hist.KolmogorovTest( errSamp.hist  )
+            print kstest
+
+            label_style = label_config.get('labelStyle', '')
+            if not label_style.count( 'prelim' ) :
+                draw_config.label_config['statsLabel'] = '#chi^{2} = %.1f, p0 = %.3f, KS = %.3f ' %(chi2sum , pzero, kstest )
 
         self.DrawCanvas(self.curr_stack, draw_config, datahists=datahists, sighists=self.get_signal_samples(), errhists=['err_band']  )
 
 
     #def Draw(self, varexp, selection, histpars, doratio=False, ylabel=None, xlabel=None, rlabel=None, logy=False, ymin=None, ymax=None, ymax_scale=None, rmin=None, rmax=None, useModel=False, treeHist=None, treeSelection=None, labelStyle=None, extra_label=None, extra_label_loc=None, generate_data_from_sample=None, replace_selection_for_sample={}, legendConfig=None  ) :
-    def Draw(self, varexp, selection, histpars, hist_config={}, label_config={}, legend_config={}, treeHist=None, treeSelection=None, labelStyle=None, extra_label=None, extra_label_loc=None, generate_data_from_sample=None, replace_selection_for_sample={} , useModel=False ) :
+    def Draw(self, varexp, selection, histpars, hist_config={}, label_config={}, legend_config={}, treeHist=None, treeSelection=None, generate_data_from_sample=None, replace_selection_for_sample={} , useModel=False ) :
 
         
         if self.collect_commands :
@@ -2843,6 +2902,7 @@ class SampleManager :
         if sample.hist is not None :
             sample.hist.SetTitle( sampname )
             sample.hist.Sumw2()
+            ROOT.SetOwnership(sample.hist, False )
 
         # Draw the histogram.  Use histpars as the bin limits if given
         if sample.IsGroupedSample() :
@@ -4508,290 +4568,6 @@ class SampleManager :
         if extra_label is not None :
             self.place_extra_label( extra_label, extra_label_loc )
 
-    def MakeFidAcceptTable(self, var, cut_selection, labels, samples, histpars, useModel=False, useTreeModel=False) :
-
-        if not isinstance(cut_selection, list) :
-            cut_selection = [cut_selection]
-        if not isinstance(labels, list) :
-            labels = [labels]
-
-        if len(cut_selection) != len(labels) :
-            print 'Number of labels much match number of cuts'
-            return
-
-        mod_cut_selection = list(cut_selection)
-        mod_labels = list(labels)
-        mod_cut_selection.insert( 0, '' )
-        mod_labels.insert(0, 'Total')
-        
-        data = {}
-        created_hists = {}
-        for selection, label in zip(mod_cut_selection, mod_labels) :
-            data[label] = {}
-
-            self.clear_all()
-            for sampname in samples :
-                samp = self.get_samples(name=sampname)[0]
-
-                histname = 'hist_%s' %(samp.name)
-
-                full_selection = selection
-                print 'Drawing sample : %s' %samp.name
-
-                self.create_hist( samp, var, selection, histpars )
-
-                # get the histogram
-                created_hists[sampname] = samp.hist.Clone()
-
-            
-            mcsum = 0.0
-            mcerrsq = 0.0
-            for name in samples :
-                hist = created_hists[name]
-
-                val = hist.GetBinContent(1)
-                err = hist.GetBinError(1)
-                data[label][name] = (val, err)
-
-        print data
-
-        table_entries = []
-        # top row
-        top_row = ['Cuts']
-        for name in samples :
-            top_row.append(name)
-            top_row.append('Acceptance')
-
-        table_entries.append(top_row)
-
-        for label in labels :
-            data_row = [label]
-            for sampname in samples :
-                data_val = data[label][sampname][0]
-                data_err = data[label][sampname][1]
-                total_val = data['Total'][sampname][0]
-                total_err = data['Total'][sampname][1]
-
-                ratio_val = data_val / float(total_val)
-                ratio_err = ratio_val * math.sqrt( ( data_err/ data_val )*( data_err/ data_val ) + ( total_err / total_val )*( total_err / total_val ) )
-                data_row.append( (data_val, data_err) )
-                data_row.append( (ratio_val, ratio_err) )
-            table_entries.append(data_row)
-
-        print table_entries
-
-        table_text = self.MakeLatexFidAcceptTable(table_entries)
-    
-        #self.MakeLatexDocument(tables=[table_text])
-            
-        
-
-    def MakeCutflowTable(self, var, cut_selection, labels, histpars, useModel=False, useTreeModel=False) :
-
-        if not isinstance(cut_selection, list) :
-            cut_selection = [cut_selection]
-        if not isinstance(labels, list) :
-            labels = [labels]
-
-        if len(cut_selection) != len(labels) :
-            print 'Number of labels much match number of cuts'
-            return
-
-        table_entries = {}
-        
-        for selection, label in zip(cut_selection, labels) :
-            table_entries[label] = {}
-
-            self.clear_all()
-            for samp in self.samples :
-
-                histname = 'hist_%s' %(samp.name)
-
-                full_selection = selection
-                print 'Drawing sample : %s' %samp.name
-
-                self.create_hist( samp, var, selection, histpars )
-
-                ## get the histogram
-                #if samp.isSignal :
-                #    self.curr_signals[samp.name] = samp.hist.Clone()
-                #else :
-                #    self.curr_hists[samp.name] = samp.hist.Clone()
-
-            
-            mcsum = 0.0
-            mcerrsq = 0.0
-            for samp in self.get_samples() :
-                if samp.isActive :
-                    val = samp.hist.GetBinContent(1)
-                    err = samp.hist.GetBinError(1)
-                    table_entries[label][samp.name] = (val, err)
-                    if samp.name is not 'Data' :
-                        mcsum += val
-                        mcerrsq += err*err
-            table_entries[label]['MC'] = (mcsum, math.sqrt(mcerrsq))
-
-            #if 'Data' in  :
-            #    dataval = table_entries[label]['Data'][0]
-            #    dataerr = table_entries[label]['Data'][1]
-            #    ratioval = dataval/mcsum
-            #    ratioerr = dataval/mcsum * math.sqrt( ( dataerr/dataval )*( dataerr/dataval ) + ( mcerrsq/(mcsum*mcsum) ) )
-            #    table_entries[label]['Data/MC'] = (ratioval, ratioerr)
-
-        for name in labels :
-            print table_entries[name]
-        
-
-        #second_table = {}
-        #for cut, table in table_entries.iteritems() :
-        #    second_table.setdefault(cut, {})
-
-        #    if 'Data' in self.curr_hists :
-        #        for samp in ['Data','MC', 'Data/MC'] :
-        #            second_table[cut][samp] = table_entries[cut].pop(samp)
-
-        signal_samples = [ s.name for s in self.get_signal_samples() if s.isActive ]
-
-        table_text_1 = self.LatexCutflowTable(table_entries, labels , self.get_stack_order()+signal_samples)
-        #table_text_2 = self.LatexCutflowTable(second_table, labels , ['MC', 'Data', 'Data/MC'])
-
-        #self.MakeLatexDocument(tables=[table_text_1, table_text_2])
-        self.MakeLatexDocument(tables=[table_text_1])
-
-    def MakeLatexFidAcceptTable(self, table_entries, options={}) :
-
-        table = []
-        for row in table_entries :
-            table_row = []
-            for col_val in row :
-                print col_val
-                if isinstance(col_val, str) :
-                    table_row.append(col_val)
-                elif isinstance(col_val, tuple) :
-                    err_scale = int( math.log10(col_val[1]) )
-                    print 'err_Scale'
-                    print err_scale
-                    if err_scale < -3 :
-                        table_row.append('{val:.{valwid}e} $\pm$ {err:.{errwid}e} '.format (val=col_val[0], valwid=abs(err_scale)-1, err=col_val[1], errwid=abs(err_scale)-3 ) )
-                    elif err_scale > 0 :
-                        table_row.append('{val:0{valwid}d} $\pm$ {err:0{errwid}d} '.format (val=int(col_val[0]), valwid=abs(err_scale)+1, err=int(col_val[1]), errwid=abs(err_scale)+1 ) )
-                    else :
-                        table_row.append('{val:.{valwid}f} $\pm$ {err:.{errwid}f} '.format (val=col_val[0], valwid=abs(err_scale)+1, err=col_val[1], errwid=abs(err_scale)+1 ) )
-
-                    #if col_val[0] > 1000 :
-                    #    table_row.append(r'%.2e $\pm$ %.2f '  %( col_val[0], col_val[1]) )
-                    #elif col_val[0] < 1 :
-                    #    table_row.append(r'%.1g $\pm$ %.1g '  %( col_val[0], col_val[1]) )
-                    #else :
-                    #    table_row.append(r'%.2f $\pm$ %.2f '  %( col_val[0], col_val[1]) )
-
-            
-            table.append(table_row )
-
-        print table
-        max_widths = [0]*len(table[0])
-        for row in table :
-            for idx, col in enumerate( row ) :
-                width = len(col)
-                if width > max_widths[idx] :
-                    max_widths[idx] = width
-
-        table_text = ''
-        for row in table :
-            row_text = ''
-            for idx, col in enumerate(row) :
-                row_text += col.ljust(max_widths[idx]) + ' & '
-            row_text = row_text.rstrip('& ')
-            row_text += ' \\\\ \n'
-
-            table_text += row_text
-
-        print table_text
-                
-
-
-    def LatexCutflowTable(self, entries, roworder, colorder, options={}) :
-
-        table = []
-        header = []
-        header.append('Cut Flow')
-        header+= colorder
-        table.append(header)
-
-        for rowname in roworder :
-            entry = entries[rowname]
-            cutline = []
-            cutline.append(rowname)
-            print 'Row %s has entry' %rowname
-            print entry
-            for sampname in colorder :
-                data =  entry[sampname]
-                if data[0] > 1000 :
-                    cutline.append(r'%.2e $\pm$ %.2f'  %( data[0], data[1]) )
-                elif data[0] < 1 :
-                    cutline.append(r'%.3f $\pm$ %.3f'  %( data[0], data[1]) )
-                else :
-                    cutline.append(r'%.2f $\pm$ %.2f'  %( data[0], data[1]) )
-            table.append(cutline)
-
-        print 'TABLE'
-        print table
-
-        # loop over the inputs and collect length information
-        column_width = []
-        numcol = len(table[0]) # the length of any row (first here) is the column width
-        for colnum in range(0, numcol) :
-            widths = []
-            for row in table :
-                colentry = row[colnum]
-                widths.append(len(colentry))
-            column_width.append(max(widths))
-            #column_width[table[0][colnum]] = max(widths)
-
-        table_text = []
-        table_text.append(r'\begin{table}')
-        table_text.append(r'\scriptsize')
-
-        ncutcol = len(colorder)
-        table_text.append(r'\begin{tabular}{ | l | %s |}\hline' %( '|'.join([ ' c ' ]*ncutcol)))
-        for row in table :
-            text_entries = []
-            print row
-            for coln, ent in enumerate(row) :
-                print column_width[coln]
-            row_entry = ' %s ' %( ' & '.join([ ent.ljust(column_width[coln])  for coln, ent in enumerate(row) ] ))
-            row_entry.rstrip('&&')
-            row_entry += r' \\'
-            table_text.append(row_entry)
-
-        table_text[-1] += r' \hline'
-        table_text.append('\end{tabular}\end{table}')
-
-        print '\n'.join(table_text)
-        return table_text
-
-    def MakeLatexDocument(self, tables=[]) :
-    
-        doc_text = []
-        doc_text.append(r'\documentclass[12pt]{article}')
-        doc_text.append(r'\usepackage[top=3cm,bottom=2cm,left=1cm,right=1cm] {geometry}')
-        doc_text.append(r'\begin{document}')
-        doc_text.append(r'\begin{center}')
-        for table_text in tables :
-            doc_text += table_text
-        doc_text.append(r'\end{center}')
-        doc_text.append(r'\end{document}')
-
-        print 'DOC'
-        print '\n'.join(doc_text)
-        tmpname = '/tmp/latex_table'
-        tmpfile = open(tmpname+'.tex', 'w')
-        tmpfile.write('\n'.join(doc_text))
-        tmpfile.close()
-
-        os.system(r'cd /tmp ; latex %s' %tmpname+'.tex')
-        os.system(r'dvips %s -o %s' %(tmpname+'.dvi', tmpname+'.ps' ) )
-        os.system(r'gv %s' %tmpname+'.ps')
 
     # ------------------------------------------------------------
     #   Do variable rebinning for a stack plot

@@ -125,9 +125,21 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::ptSorted_ph_mediumNoNeuIsoNoPhoIso_idx  = 0;
     OUT::ptSorted_ph_mediumNoChIsoNoPhoIso_idx   = 0;
     OUT::ptSorted_ph_mediumNoChIsoNoNeuIso_idx   = 0;
-    OUT::ptSorted_ph_mediumNoSIEIENoPhoIso_idx   = 0;
-    OUT::ptSorted_ph_mediumNoSIEIENoNeuIso_idx   = 0;
-    OUT::ptSorted_ph_mediumNoSIEIENoChIso_idx    = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoNoEleVeto_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoNoEleVeto_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoChIsoNoEleVeto_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailCSEV_idx = 0;
     OUT::ptSorted_ph_mediumNoSIEIENoEleVeto_idx  = 0;
     OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx    = 0;
     OUT::ptSorted_ph_mediumNoSIEIEFailPSV_idx    = 0;
@@ -213,9 +225,21 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("ph_mediumNoNeuIsoNoPhoIso_n"  , &OUT::ph_mediumNoNeuIsoNoPhoIso_n  , "ph_mediumNoNeuIsoNoPhoIso_n/I"  );
     outtree->Branch("ph_mediumNoChIsoNoPhoIso_n"   , &OUT::ph_mediumNoChIsoNoPhoIso_n   , "ph_mediumNoChIsoNoPhoIso_n/I"   );
     outtree->Branch("ph_mediumNoChIsoNoNeuIso_n"   , &OUT::ph_mediumNoChIsoNoNeuIso_n   , "ph_mediumNoChIsoNoNeuIso_n/I"   );
-    outtree->Branch("ph_mediumNoSIEIENoPhoIso_n"   , &OUT::ph_mediumNoSIEIENoPhoIso_n   , "ph_mediumNoSIEIENoPhoIso_n/I"  );
-    outtree->Branch("ph_mediumNoSIEIENoNeuIso_n"   , &OUT::ph_mediumNoSIEIENoNeuIso_n   , "ph_mediumNoSIEIENoNeuIso_n/I"  );
-    outtree->Branch("ph_mediumNoSIEIENoChIso_n"    , &OUT::ph_mediumNoSIEIENoChIso_n    , "ph_mediumNoSIEIENoChIso_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoPhoIsoNoEleVeto_n"   , &OUT::ph_mediumNoSIEIENoPhoIsoNoEleVeto_n   , "ph_mediumNoSIEIENoPhoIsoNoEleVeto_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoNeuIsoNoEleVeto_n"   , &OUT::ph_mediumNoSIEIENoNeuIsoNoEleVeto_n   , "ph_mediumNoSIEIENoNeuIsoNoEleVeto_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoChIsoNoEleVeto_n"    , &OUT::ph_mediumNoSIEIENoChIsoNoEleVeto_n    , "ph_mediumNoSIEIENoChIsoNoEleVeto_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoPhoIsoPassPSV_n"   , &OUT::ph_mediumNoSIEIENoPhoIsoPassPSV_n   , "ph_mediumNoSIEIENoPhoIsoPassPSV_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoNeuIsoPassPSV_n"   , &OUT::ph_mediumNoSIEIENoNeuIsoPassPSV_n   , "ph_mediumNoSIEIENoNeuIsoPassPSV_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoChIsoPassPSV_n"    , &OUT::ph_mediumNoSIEIENoChIsoPassPSV_n    , "ph_mediumNoSIEIENoChIsoPassPSV_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoPhoIsoFailPSV_n"   , &OUT::ph_mediumNoSIEIENoPhoIsoFailPSV_n   , "ph_mediumNoSIEIENoPhoIsoFailPSV_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoNeuIsoFailPSV_n"   , &OUT::ph_mediumNoSIEIENoNeuIsoFailPSV_n   , "ph_mediumNoSIEIENoNeuIsoFailPSV_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoChIsoFailPSV_n"    , &OUT::ph_mediumNoSIEIENoChIsoFailPSV_n    , "ph_mediumNoSIEIENoChIsoFailPSV_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoPhoIsoPassCSEV_n"   , &OUT::ph_mediumNoSIEIENoPhoIsoPassCSEV_n   , "ph_mediumNoSIEIENoPhoIsoPassCSEV_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoNeuIsoPassCSEV_n"   , &OUT::ph_mediumNoSIEIENoNeuIsoPassCSEV_n   , "ph_mediumNoSIEIENoNeuIsoPassCSEV_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoChIsoPassCSEV_n"    , &OUT::ph_mediumNoSIEIENoChIsoPassCSEV_n    , "ph_mediumNoSIEIENoChIsoPassCSEV_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoPhoIsoFailCSEV_n"   , &OUT::ph_mediumNoSIEIENoPhoIsoFailCSEV_n   , "ph_mediumNoSIEIENoPhoIsoFailCSEV_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoNeuIsoFailCSEV_n"   , &OUT::ph_mediumNoSIEIENoNeuIsoFailCSEV_n   , "ph_mediumNoSIEIENoNeuIsoFailCSEV_n/I"  );
+    outtree->Branch("ph_mediumNoSIEIENoChIsoFailCSEV_n"    , &OUT::ph_mediumNoSIEIENoChIsoFailCSEV_n    , "ph_mediumNoSIEIENoChIsoFailCSEV_n/I"  );
     outtree->Branch("ph_mediumNoSIEIENoEleVeto_n"  , &OUT::ph_mediumNoSIEIENoEleVeto_n  , "ph_mediumNoSIEIENoEleVeto_n/I"  );
     outtree->Branch("ph_mediumNoSIEIEPassPSV_n"    , &OUT::ph_mediumNoSIEIEPassPSV_n    , "ph_mediumNoSIEIEPassPSV_n/I"    );
     outtree->Branch("ph_mediumNoSIEIEFailPSV_n"    , &OUT::ph_mediumNoSIEIEFailPSV_n    , "ph_mediumNoSIEIEFailPSV_n/I"    );
@@ -413,9 +437,21 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("ptSorted_ph_mediumNoNeuIsoNoPhoIso_idx"  , &OUT::ptSorted_ph_mediumNoNeuIsoNoPhoIso_idx );
     outtree->Branch("ptSorted_ph_mediumNoChIsoNoPhoIso_idx"   , &OUT::ptSorted_ph_mediumNoChIsoNoPhoIso_idx );
     outtree->Branch("ptSorted_ph_mediumNoChIsoNoNeuIso_idx"   , &OUT::ptSorted_ph_mediumNoChIsoNoNeuIso_idx );
-    outtree->Branch("ptSorted_ph_mediumNoSIEIENoPhoIso_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoPhoIso_idx);
-    outtree->Branch("ptSorted_ph_mediumNoSIEIENoNeuIso_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoNeuIso_idx);
-    outtree->Branch("ptSorted_ph_mediumNoSIEIENoChIso_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoChIso_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoPhoIsoNoEleVeto_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoNoEleVeto_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoNeuIsoNoEleVeto_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoNoEleVeto_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoChIsoNoEleVeto_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoChIsoNoEleVeto_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoPhoIsoPassPSV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassPSV_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoNeuIsoPassPSV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassPSV_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoChIsoPassPSV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassPSV_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoPhoIsoFailPSV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailPSV_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoNeuIsoFailPSV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailPSV_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoChIsoFailPSV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailPSV_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoPhoIsoPassCSEV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassCSEV_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoNeuIsoPassCSEV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassCSEV_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoChIsoPassCSEV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassCSEV_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoPhoIsoFailCSEV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailCSEV_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoNeuIsoFailCSEV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailCSEV_idx);
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoChIsoFailCSEV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailCSEV_idx);
     outtree->Branch("ptSorted_ph_mediumNoSIEIENoEleVeto_idx"  , &OUT::ptSorted_ph_mediumNoSIEIENoEleVeto_idx );
     outtree->Branch("ptSorted_ph_mediumNoSIEIEPassPSV_idx"    , &OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx );
     outtree->Branch("ptSorted_ph_mediumNoSIEIEFailPSV_idx"    , &OUT::ptSorted_ph_mediumNoSIEIEFailPSV_idx );
@@ -1410,9 +1446,21 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     OUT::ph_mediumNoNeuIsoNoPhoIso_n  = 0;
     OUT::ph_mediumNoChIsoNoPhoIso_n   = 0;
     OUT::ph_mediumNoChIsoNoNeuIso_n   = 0;
-    OUT::ph_mediumNoSIEIENoPhoIso_n   = 0;
-    OUT::ph_mediumNoSIEIENoNeuIso_n   = 0;
-    OUT::ph_mediumNoSIEIENoChIso_n    = 0;
+    OUT::ph_mediumNoSIEIENoPhoIsoNoEleVeto_n =0;
+    OUT::ph_mediumNoSIEIENoNeuIsoNoEleVeto_n =0;
+    OUT::ph_mediumNoSIEIENoChIsoNoEleVeto_n  =0;
+    OUT::ph_mediumNoSIEIENoPhoIsoPassPSV_n   =0;
+    OUT::ph_mediumNoSIEIENoNeuIsoPassPSV_n   =0;
+    OUT::ph_mediumNoSIEIENoChIsoPassPSV_n    =0;
+    OUT::ph_mediumNoSIEIENoPhoIsoFailPSV_n   =0;
+    OUT::ph_mediumNoSIEIENoNeuIsoFailPSV_n   =0;
+    OUT::ph_mediumNoSIEIENoChIsoFailPSV_n    =0;
+    OUT::ph_mediumNoSIEIENoPhoIsoPassCSEV_n  =0;
+    OUT::ph_mediumNoSIEIENoNeuIsoPassCSEV_n  =0;
+    OUT::ph_mediumNoSIEIENoChIsoPassCSEV_n   =0;
+    OUT::ph_mediumNoSIEIENoPhoIsoFailCSEV_n  =0;
+    OUT::ph_mediumNoSIEIENoNeuIsoFailCSEV_n  =0;
+    OUT::ph_mediumNoSIEIENoChIsoFailCSEV_n   =0;
     OUT::ph_mediumNoSIEIENoEleVeto_n  = 0;
     OUT::ph_mediumNoSIEIEPassPSV_n    = 0;
     OUT::ph_mediumNoSIEIEFailPSV_n    = 0;
@@ -1579,9 +1627,21 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     OUT::ptSorted_ph_mediumNoNeuIsoNoPhoIso_idx->clear();
     OUT::ptSorted_ph_mediumNoChIsoNoPhoIso_idx->clear();
     OUT::ptSorted_ph_mediumNoChIsoNoNeuIso_idx->clear();
-    OUT::ptSorted_ph_mediumNoSIEIENoPhoIso_idx->clear();
-    OUT::ptSorted_ph_mediumNoSIEIENoNeuIso_idx->clear();
-    OUT::ptSorted_ph_mediumNoSIEIENoChIso_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoNoEleVeto_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoNoEleVeto_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoChIsoNoEleVeto_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailCSEV_idx->clear();
     OUT::ptSorted_ph_mediumNoSIEIENoEleVeto_idx->clear();
     OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx->clear();
     OUT::ptSorted_ph_mediumNoSIEIEFailPSV_idx->clear();
@@ -1758,9 +1818,21 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoNoPhoIso;
     std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoNoPhoIso;
     std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoNoNeuIso;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIso;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIso;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIso;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoNoEleVeto;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoPassPSV;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoPassPSV;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoPassPSV;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoFailPSV;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoFailPSV;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoFailPSV;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoPassCSEV;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV;
+    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoFailCSEV;
     std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoEleVeto;
     std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIEPassPSV;
     std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIEFailPSV;
@@ -2086,18 +2158,66 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
             }
             if( OUT::ph_passChIsoCorrMedium->at(idx) ) { 
                 if( OUT::ph_passNeuIsoCorrMedium->at(idx) ) {
-                    OUT::ph_mediumNoSIEIENoPhoIso_n++;
-                    sorted_photons_mediumNoSIEIENoPhoIso.push_back( sort_pair );
+                    OUT::ph_mediumNoSIEIENoPhoIsoNoEleVeto_n++;
+                    sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.push_back( sort_pair );
+                    if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+                        OUT::ph_mediumNoSIEIENoPhoIsoPassPSV_n++;
+                        sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.push_back( sort_pair );
+                    }
+                    if( OUT::ph_hasPixSeed->at(idx)==1 ) {
+                        OUT::ph_mediumNoSIEIENoPhoIsoFailPSV_n++;
+                        sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.push_back( sort_pair );
+                    }
+                    if( OUT::ph_eleVeto->at(idx)==0 ) {
+                        OUT::ph_mediumNoSIEIENoPhoIsoPassCSEV_n++;
+                        sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.push_back( sort_pair );
+                    }
+                    if( OUT::ph_eleVeto->at(idx)==1 ) {
+                        OUT::ph_mediumNoSIEIENoPhoIsoFailCSEV_n++;
+                        sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.push_back( sort_pair );
+                    }
                 }
                 if( OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
-                    OUT::ph_mediumNoSIEIENoNeuIso_n++;
-                    sorted_photons_mediumNoSIEIENoNeuIso.push_back( sort_pair );
+                    OUT::ph_mediumNoSIEIENoNeuIsoNoEleVeto_n++;
+                    sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.push_back( sort_pair );
+                    if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+                        OUT::ph_mediumNoSIEIENoNeuIsoPassPSV_n++;
+                        sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.push_back( sort_pair );
+                    }
+                    if( OUT::ph_hasPixSeed->at(idx)==1 ) {
+                        OUT::ph_mediumNoSIEIENoNeuIsoFailPSV_n++;
+                        sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.push_back( sort_pair );
+                    }
+                    if( OUT::ph_eleVeto->at(idx)==0 ) {
+                        OUT::ph_mediumNoSIEIENoNeuIsoPassCSEV_n++;
+                        sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.push_back( sort_pair );
+                    }
+                    if( OUT::ph_eleVeto->at(idx)==1 ) {
+                        OUT::ph_mediumNoSIEIENoNeuIsoFailCSEV_n++;
+                        sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.push_back( sort_pair );
+                    }
                 }
             }
             if( OUT::ph_passNeuIsoCorrMedium->at(idx) ) { 
                 if( OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
-                    OUT::ph_mediumNoSIEIENoChIso_n++;
-                    sorted_photons_mediumNoSIEIENoChIso.push_back( sort_pair );
+                    OUT::ph_mediumNoSIEIENoChIsoNoEleVeto_n++;
+                    sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.push_back( sort_pair );
+                    if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+                        OUT::ph_mediumNoSIEIENoChIsoPassPSV_n++;
+                        sorted_photons_mediumNoSIEIENoChIsoPassPSV.push_back( sort_pair );
+                    }
+                    if( OUT::ph_hasPixSeed->at(idx)==1 ) {
+                        OUT::ph_mediumNoSIEIENoChIsoFailPSV_n++;
+                        sorted_photons_mediumNoSIEIENoChIsoFailPSV.push_back( sort_pair );
+                    }
+                    if( OUT::ph_eleVeto->at(idx)==0 ) {
+                        OUT::ph_mediumNoSIEIENoChIsoPassCSEV_n++;
+                        sorted_photons_mediumNoSIEIENoChIsoPassCSEV.push_back( sort_pair );
+                    }
+                    if( OUT::ph_eleVeto->at(idx)==1 ) {
+                        OUT::ph_mediumNoSIEIENoChIsoFailCSEV_n++;
+                        sorted_photons_mediumNoSIEIENoChIsoFailCSEV.push_back( sort_pair );
+                    }
                 }
             }
         }
@@ -2298,9 +2418,21 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     std::sort(sorted_photons_mediumNoNeuIsoNoPhoIso.rbegin()  , sorted_photons_mediumNoNeuIsoNoPhoIso.rend());
     std::sort(sorted_photons_mediumNoChIsoNoPhoIso.rbegin()   , sorted_photons_mediumNoChIsoNoPhoIso.rend());
     std::sort(sorted_photons_mediumNoChIsoNoNeuIso.rbegin()   , sorted_photons_mediumNoChIsoNoNeuIso.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoPhoIso.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIso.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoNeuIso.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIso.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoChIso.rbegin()    , sorted_photons_mediumNoSIEIENoChIso.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoChIsoPassPSV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoPassPSV.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoChIsoFailPSV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoFailPSV.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoChIsoPassCSEV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoPassCSEV.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.rend());
+    std::sort(sorted_photons_mediumNoSIEIENoChIsoFailCSEV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoFailCSEV.rend());
     std::sort(sorted_photons_mediumNoSIEIENoEleVeto.rbegin()  , sorted_photons_mediumNoSIEIENoEleVeto.rend());
     std::sort(sorted_photons_mediumNoSIEIEPassPSV.rbegin()    , sorted_photons_mediumNoSIEIEPassPSV.rend());
     std::sort(sorted_photons_mediumNoSIEIEFailPSV.rbegin()    , sorted_photons_mediumNoSIEIEFailPSV.rend());
@@ -2463,14 +2595,50 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoNoNeuIso.begin() ; itr != sorted_photons_mediumNoChIsoNoNeuIso.end(); ++itr ) {
         OUT::ptSorted_ph_mediumNoChIsoNoNeuIso_idx->push_back( itr->second );
     }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIso.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIso.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoPhoIso_idx->push_back( itr->second );
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoNoEleVeto_idx->push_back( itr->second );
     }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIso.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIso.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoNeuIso_idx->push_back( itr->second );
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoNoEleVeto_idx->push_back( itr->second );
     }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIso.begin() ; itr != sorted_photons_mediumNoSIEIENoChIso.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoChIso_idx->push_back( itr->second );
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoChIsoNoEleVeto_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassPSV_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassPSV_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoPassPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoPassPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassPSV_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailPSV_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailPSV_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoFailPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoFailPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailPSV_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassCSEV_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassCSEV_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoPassCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassCSEV_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailCSEV_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailCSEV_idx->push_back( itr->second );
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoFailCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailCSEV_idx->push_back( itr->second );
     }
     for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoEleVeto.end(); ++itr ) {
         OUT::ptSorted_ph_mediumNoSIEIENoEleVeto_idx->push_back( itr->second );
@@ -2807,8 +2975,8 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
             nLep10++;
         }
 
+        nLepTrigMatchSoft++;
         if( OUT::mu_triggerMatch->at(i) ) {
-            nLepTrigMatchSoft++;
             if( OUT::mu_pt->at(i) > 25 ) {
                 nLepTrigMatch++;
             }
@@ -2837,8 +3005,8 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
             nLep10++;
         }
 
+        nLepTrigMatchSoft++;
         if( OUT::el_triggerMatch->at(i) && OUT::el_passMvaTrig->at(i) ) {
-            nLepTrigMatchSoft++;
             if( OUT::el_pt->at(i) > 30 ) {
                 nLepTrigMatch++;
                 nElTrigMatch++;
@@ -2886,7 +3054,7 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
     if( !config.PassInt( "cut_nLep20", nLep20 ) ) keep_event=false;
     if( !config.PassInt( "cut_nLep10", nLep10 ) ) keep_event=false;
     if( !config.PassInt( "cut_nLepTrigMatch", nLepTrigMatch ) ) keep_event=false;
-    if( !config.PassInt( "cut_nLepTrigMatch", nLepTrigMatchSoft ) ) keep_event=false;
+    if( !config.PassInt( "cut_nLepTrigMatchSoft", nLepTrigMatchSoft ) ) keep_event=false;
     if( !config.PassInt( "cut_nElTrigMatch", nElTrigMatch ) ) keep_event=false;
     if( !config.PassInt( "cut_nPh", nPh ) )   keep_event = false;
     if( !config.PassInt( "cut_nElPh", nElPh ) )   keep_event = false;

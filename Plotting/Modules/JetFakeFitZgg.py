@@ -24,18 +24,6 @@ def config_samples(samples) :
     samples.AddSample('WZZ'                          , path='job_summer12_WZZ'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('Zg'                           , path='job_summer12_Zg'                   ,  isActive=False, useXSFile=True )
 
-    samples.AddSample('job_jetmon_2012b_Jan22rereco_pfJet40', path='job_jetmon_2012b_Jan22rereco_pfJet40', isActive=False )
-    samples.AddSample('job_jetmon_2012c_Jan22rereco_pfJet40', path='job_jetmon_2012c_Jan22rereco_pfJet40', isActive=False )
-    samples.AddSample('job_jetmon_2012d_Jan22rereco_pfJet40', path='job_jetmon_2012d_Jan22rereco_pfJet40', isActive=False )
-
-    samples.AddSampleGroup( 'jetmon', legend_name='JetMon',
-                           input_samples = [
-                                            'job_jetmon_2012b_Jan22rereco_pfJet40',
-                                            'job_jetmon_2012c_Jan22rereco_pfJet40',
-                                            'job_jetmon_2012d_Jan22rereco_pfJet40',
-                           ],
-                               plotColor=ROOT.kBlack )
-
     samples.AddSampleGroup( 'Muon', legend_name='Muon Data', 
                             input_samples = [
                                              'muon_2012a',

@@ -51,8 +51,8 @@ def config_analysis( alg_list, args ) :
     # Nominal muon filter
     #----------------------------------------
     print 'MUON PT CUT = 10'
-    #alg_list.append( get_muon_filter( id='Tight',  ptcut=10, etacut=2.4 ) )
-    alg_list.append( get_muon_filter( id='Tight',  ptcut=5, etacut=2.4 ) )
+    alg_list.append( get_muon_filter( id='Tight',  ptcut=10, etacut=2.4 ) )
+    #alg_list.append( get_muon_filter( id='Tight',  ptcut=5, etacut=2.4 ) )
 
     #----------------------------------------
     # Loose muon filter
@@ -63,10 +63,10 @@ def config_analysis( alg_list, args ) :
     #----------------------------------------
     # Nominal electron filter
     #----------------------------------------
-    #print '************************************NO ELE ID**********************'
     print 'ELECTRON PT CUT = 10'
     #alg_list.append( get_electron_filter( None, ptcut=10 ) )
     alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=10, doPhOlapRm=False) )
+    #alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=5, doPhOlapRm=False) )
     #alg_list.append( get_electron_filter( 'loose', ptcut=10, doPhOlapRm=False ) )
     #alg_list.append( get_electron_filter( 'mvaNonTrig', ptcut=5 ) )
 

@@ -26,7 +26,7 @@ def main() :
         print 'Must provide a base directory'
         return
 
-    id_vars =['sigmaIEIE', 'chIsoCorr', 'neuIsoCorr', 'phoIsoCorr' ]
+    id_vars =['chIsoCorr', 'neuIsoCorr', 'phoIsoCorr', 'sigmaIEIE' ]
     _pt_order = [('15', '25'), ('25', '40'), ('40', '70'), ('70', 'max') ]
 
     all_syst = {}
@@ -47,12 +47,6 @@ def main() :
                             'neuIsoCorr' : '#sigma i#etai#eta > 0.0(\d+)',
                             'phoIsoCorr' : '#sigma i#etai#eta > 0.0(\d+)',
                           }
-
-    fake_asym_ratio_keys = { 'sigmaIEIE' : '(\d+),(\d+),(\d+)\s*\(ch,neu,pho\)',
-                             'chIsoCorr' : 'No Cut,(\d+),(\d+)\s*\(ch,neu,pho\)',
-                             'neuIsoCorr' : '(\d+),No Cut,(\d+)\s*\(ch,neu,pho\)',
-                             'phoIsoCorr' : '(\d+),(\d+),No Cut\s*\(ch,neu,pho\)',
-                           }
 
     for var in id_vars :
         all_syst[var] = {}
@@ -78,8 +72,10 @@ def main() :
         files_jet_temp_fake_asym_inc = find_files_in_dir( sub_dir_jet, file_key_jet_temp_fake_asym_inc )
 
         ratio_key_temp_fake_nom = '5 < Iso < 10'
-        ratio_key_temp_fake_asym = '(\d+|No Cut),(\d+|No Cut),(\d+|No Cut)\s*\(ch,neu,pho\)'
-        ratio_key_temp_real = 'W#gamma, truth matched photons'
+        ratio_key_temp_fake_asym = '(?:(\d+|No Cut),(\d+|No Cut),(\d+|No Cut)\s*\(ch,neu,pho\))|(No SIEIE)'
+        print '**********************FIX*********************'
+        #ratio_key_temp_real = 'W#gamma, truth matched photons'
+        ratio_key_temp_real = 'Z#gamma, truth matched photons'
 
         data_temp_fake_nom = {}
         dat_temp_fake_asym = {}
@@ -97,6 +93,9 @@ def main() :
         # templates which have a different
         # file for each isolation value
         iso_vals = [(5,3,3), (8,5,5), (10,7,7), (12,9,9), (15,11,11), (20, 16,16)]
+        if var != 'sigmaIEIE' :
+            iso_vals.append( 'No SIEIE' )
+
         data_temp_real_asym = {}
         data_temp_real_asym_inc = {}
 
@@ -104,17 +103,28 @@ def main() :
         all_syst[var]['FakeTemplateNom']={}
         for vals in iso_vals :
 
-            syst_postfix = '%d-%d-%d' %(vals)
-            iso_str = 'iso%d-%d-%d' %( vals[0], vals[1], vals[2] )
-            if var == 'chIsoCorr' :
-                syst_postfix = 'No Cut-%d-%d' %( vals[1], vals[2] )
-                iso_str = 'isoNone-%d-%d' %(vals[1], vals[2] )
-            elif var == 'neuIsoCorr' :
-                syst_postfix = '%d-No Cut-%d' %( vals[0], vals[2] )
-                iso_str = 'iso%d-None-%d' %(vals[0], vals[2] )
-            elif var == 'phoIsoCorr' :
-                syst_postfix = '%d-%d-No Cut' %( vals[0], vals[1] )
-                iso_str = 'iso%d-%d-None' %(vals[0], vals[1] )
+            if isinstance( vals, tuple ) :
+                syst_postfix = '%d-%d-%d' %(vals)
+                iso_str = 'iso%d-%d-%d' %( vals[0], vals[1], vals[2] )
+                if var == 'chIsoCorr' :
+                    syst_postfix = 'No Cut-%d-%d' %( vals[1], vals[2] )
+                    iso_str = 'isoNone-%d-%d' %(vals[1], vals[2] )
+                elif var == 'neuIsoCorr' :
+                    syst_postfix = '%d-No Cut-%d' %( vals[0], vals[2] )
+                    iso_str = 'iso%d-None-%d' %(vals[0], vals[2] )
+                elif var == 'phoIsoCorr' :
+                    syst_postfix = '%d-%d-No Cut' %( vals[0], vals[1] )
+                    iso_str = 'iso%d-%d-None' %(vals[0], vals[1] )
+            elif isinstance( vals, str ) :
+                iso_str = 'iso5-3-3'
+                syst_postfix = '%s-%s' %( var, vals )
+                if var == 'chIsoCorr' :
+                    iso_str = 'isoNoSIEIE-3-3'
+                elif var == 'neuIsoCorr' :
+                    iso_str = 'iso5-NoSIEIE-3'
+                elif var == 'phoIsoCorr' :
+                    iso_str = 'iso5-3-NoSIEIE'
+
 
             all_syst[var]['FakeTemplate'+syst_postfix] = {}
             all_syst[var]['RealTemplate'+syst_postfix] = {}
@@ -188,37 +198,29 @@ def main() :
                 for type, type_data in pt_data_fake_asym.iteritems() :
                     res = re.match( ratio_key_temp_fake_asym, type )
                     if res is not None :
-                        temp_name = 'FakeTemplate%s-%s-%s' %(res.group(1), res.group(2), res.group(3))
+                        if 'No SIEIE' in res.groups() :
+                            temp_name = 'FakeTemplate%s-No SIEIE' %var
+                        else :
+                            temp_name = 'FakeTemplate%s-%s-%s' %(res.group(1), res.group(2), res.group(3))
                         for bins in type_data['bins'] :
                             if bins['bin'] == 2 :
-                               all_syst[var][temp_name][reg][pt] = math.fabs(1-bins['val'])
+                                all_syst[var][temp_name][reg][pt] = math.fabs(1-bins['val'])
 
-        # replace some high pt systematics
-        # with those from lower pt regions
-        # get ordered pt
-        ordered_pt = []
-        for ptkey in all_syst[var].values()[0].values()[0].keys() :
-            if ptkey[0] is not None :
-                if ptkey[1] != 'max' :
-                    ordered_pt.append( (int(ptkey[0]), int(ptkey[1]) ) )
-                else :
-                    ordered_pt.append( (int(ptkey[0]), 'max' ) )
-
-        ordered_pt.sort()
-        ordered_pt = [ (str(x[0]),str(x[1])) for x in ordered_pt ]
+        ## replace some high pt systematics
+        ## with those from lower pt regions
 
         # for the real templates systs, 
         # replace 40-80 with 25-40 (ie [-2] with [-3] )
         for type in all_syst[var].keys() :
             if type.count('RealTemplate' ) :
                 for reg, reg_data in all_syst[var][type].iteritems() :
-                    all_syst[var][type][reg][ordered_pt[-2]] = all_syst[var][type][reg][ordered_pt[-3]]
+                    all_syst[var][type][reg][_pt_order[-2]] = all_syst[var][type][reg][_pt_order[-3]]
 
         # for every syst type, replace 80-max with
         # 40-80 (ie [-1] with [-2]
         for type, type_data in all_syst[var].iteritems() :
             for reg, reg_data in type_data.iteritems() :
-                all_syst[var][type][reg][ordered_pt[-1]] = all_syst[var][type][reg][ordered_pt[-2]]
+                all_syst[var][type][reg][_pt_order[-1]] = all_syst[var][type][reg][_pt_order[-2]]
 
 
         # don't let higher pt regions have smaller syst than lower pt regions
@@ -234,7 +236,7 @@ def main() :
             print '%s , %s : '%(var, type)
             for reg, reg_data in type_data.iteritems() :
                 print '\t %s : '%reg
-                for pt in ordered_pt :
+                for pt in _pt_order:
                     if pt in reg_data :
                         print '\t\t pt %s-%s : %f'%(pt[0], pt[1], reg_data[pt])
 

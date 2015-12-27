@@ -179,7 +179,10 @@ def get_real_template_draw_commands( var, ch='mu', eleVeto='NoEleVeto', iso_vals
 
     varstr, phstr = get_template_draw_strs( var, ch, eleVeto, iso_vals )
 
+    #print '***********************************FIX DATA TEMPLATES************************************'
+
     return 'mu_passtrig25_n>0 && mu_n==1 && %s == 1 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[%s[0]] && abs(ph_truthMatchMotherPID_ph[%s[0]]) < 25 ' %( varstr, phstr, phstr )
+    #return 'mu_passtrig25_n>0 && mu_n==2 && %s == 1 && leadPhot_leadLepDR>0.4 && leadPhot_sublLepDR>0.4 && (leadPhot_leadLepDR<1 || leadPhot_sublLepDR<1) && m_leplepph > 81 && m_leplepph < 101 && m_leplep > 60 ' %( varstr)
 
 
 def get_fake_template_draw_commands(var,  ch='mu', eleVeto='NoEleVeto', iso_vals=None ) :
@@ -312,10 +315,11 @@ def get_default_draw_commands( ch='mu' ) :
 def get_default_samples(ch='mu' ) :
 
     if ch.count('mu')  :
-        return { 'real' : {'Data' : 'Zgamma'}, 'fake' : {'Data' : 'Muon', 'Background' : 'RealPhotonsZg'}, 'target' : 'Muon' }
+        return { 'real' : {'Data' : 'Wgamma'}, 'fake' : {'Data' : 'Muon', 'Background' : 'RealPhotonsZg'}, 'target' : 'Muon' }
+        #return { 'real' : {'Data' : 'Muon'}, 'fake' : {'Data' : 'Muon', 'Background' : 'RealPhotonsZg'}, 'target' : 'Muon' }
         #return { 'real' : {'Data' : 'Muon'}, 'fake' : {'Data' : 'Muon', 'Background' : 'RealPhotonsZg'}, 'target' : 'Muon' }
     elif ch.count('el') :
-        return { 'real' : {'Data' : 'Zgamma'}, 'fake' : {'Data' : 'Muon', 'Background' : 'RealPhotonsZg'}, 'target' : 'Electron' }
+        return { 'real' : {'Data' : 'Wgamma'}, 'fake' : {'Data' : 'Muon', 'Background' : 'RealPhotonsZg'}, 'target' : 'Electron' }
 
     #print '*************************************USING MC SAMPLES***************************'
     #if ch.count('mu') :
@@ -521,7 +525,7 @@ def main() :
     #fftypes = ['nom']
 
     fitvar_corrs = { 
-                     #'chIsoCorr' : ['No SIEIE'], 
+                     'chIsoCorr' : ['No SIEIE'], 
                      'sigmaIEIE' : [(5,3,3) , (8,5,5), (10,7,7)]
                    }
 
@@ -996,6 +1000,9 @@ def run_nominal_calculation( gg_hist, templates, templates_corr, reg, ptbins, ch
 
         # get templates
         templates_pt = get_projected_templates( templates, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max ) )
+        #print '**************************************FIX DATA TEMPLATES********************'
+        #templates_pt['lead']['real'] = templates_inclusive['lead']['real']
+        #templates_pt['subl']['real'] = templates_inclusive['subl']['real']
         templates_corr_pt = None
         if templates_corr is not None :
             templates_corr_pt = {}
@@ -1433,6 +1440,14 @@ def run_corr_calculation( templates_leadiso, templates_subliso, templates_nom, t
         templates_subliso_pt = get_projected_templates( templates_subliso, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max) )
         templates_nom_pt = get_projected_templates( templates_nom, lead_ptrange=lead_ptrange, subl_ptrange=(subl_min, subl_max) )
 
+        #print '*******************************FIX DATA TEMPLATES**********************'
+        #templates_leadiso_pt['lead']['real'] = templates_leadiso_inclusive['lead']['real']
+        #templates_leadiso_pt['subl']['real'] = templates_leadiso_inclusive['subl']['real']
+        #templates_subliso_pt['lead']['real'] = templates_subliso_inclusive['lead']['real']
+        #templates_subliso_pt['subl']['real'] = templates_subliso_inclusive['subl']['real']
+        #templates_nom_pt['lead']['real'] = templates_nom_inclusive['lead']['real']
+        #templates_nom_pt['subl']['real'] = templates_nom_inclusive['subl']['real']
+
         templates_corr_pt = None
         if templates_corr is not None :
             templates_corr_pt = {}
@@ -1483,103 +1498,107 @@ def run_corr_calculation( templates_leadiso, templates_subliso, templates_nom, t
         namePostfix_systTemp = '__systTemp%s' %namePostfix
         save_results( results_corr_pt_syst_temp, outputDir, namePostfix_systTemp)
 
-def do_closure_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptrange=(None,None), ch='mu', ngen=None, corr_factor=0.0, outputDir=None ) :
-
-    if ngen is None :
-        ngen = { 'RF' : 10000, 'FR' : 10000, 'FF' : 10000 }
-
-    binning = get_default_binning()
-    samples = get_default_samples(ch)
-
-    # generate templates for both EB and EE
-    fitvar = 'sigmaIEIE'
-    real_template_str = get_real_template_draw_commands(fitvar, ch) + ' && %s' %iso_cuts_lead
-    fake_template_str = get_fake_template_draw_commands(fitvar, ch) + ' && %s' %iso_cuts_lead
-
-    templates_reg = {}
-    templates_reg['EB'] = {}
-    templates_reg['EE'] = {}
-    templates_reg['EB']['real'] = get_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB', sampMan=sampManLG )
-    templates_reg['EE']['real'] = get_single_photon_template(real_template_str, binning['EE'], samples['real'], 'EE', sampMan=sampManLG )
-    templates_reg['EB']['fake'] = get_single_photon_template(fake_template_str, binning['EB'], samples['fake'], 'EB', sampMan=sampManLLG)
-    templates_reg['EE']['fake'] = get_single_photon_template(fake_template_str, binning['EE'], samples['fake'], 'EE', sampMan=sampManLLG)
-
-    regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB'), ('EE', 'EE') ]
-    for reg in regions :
-
-        # convert from regions to lead/subl
-        templates = {}
-        templates['lead'] = {}
-        templates['subl'] = {}
-        templates['lead']['real'] = templates_reg[reg[0]]['real']
-        templates['subl']['real'] = templates_reg[reg[1]]['real']
-        templates['lead']['fake'] = templates_reg[reg[0]]['fake']
-        templates['subl']['fake'] = templates_reg[reg[1]]['fake']
-
-        templates_inclusive = get_projected_templates( templates, lead_ptrange = (None,None), subl_ptrange=subl_ptrange )
-
-        results_inclusive = run_generated_diphoton_fit(templates_inclusive, reg[0], reg[1], ngen, lead_ptrange=(None,None), subl_ptrange=subl_ptrange, corr_factor=corr_factor, outputDir=outputDir, outputPrefix='__%s'%ch )
-
-        #namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
-        #save_templates( templates_inclusive, outputDir, lead_ptrange=(None,None), subl_ptrange=(None,None), namePostfix=namePostfix )
-        #save_results( results_inclusive, outputDir, namePostfix )
-
-        # -----------------------
-        # pt binned results
-        # -----------------------
-        for idx, ptmin in enumerate(ptbins[:-1] ) :
-            ptmax = ptbins[idx+1]
-
-            # put lead range together (expected by following code)
-            if ptmax == ptbins[-1] : 
-                lead_ptrange = ( ptmin, None )
-            else :
-                lead_ptrange = ( ptmin, ptmax )
-
-            # determine the proper
-            # sublead range given
-            # the input lead and
-            # sublead 
-            if subl_ptrange[0] is not None :
-                subl_min = subl_ptrange[0]
-            else :
-                subl_min = 15
-            if subl_ptrange[1] is not None :
-                if lead_ptrange[1] is None :
-                    subl_max = subl_ptrange[1]
-                elif lead_ptrange[1] < subl_ptrange[1] :
-                    subl_max = lead_ptrange[1]
-                else :
-                    subl_max = subl_ptrange[1]
-            else :
-                subl_max = lead_ptrange[1]
-
-            subl_max_name = str(subl_max)
-            if subl_max == None :
-                subl_max_name = 'max'
-
-            print 'ptleadmin = %d, ptleadmax = %d, ptsublmin = %d, ptsublmax = %s, region = %s-%s' %( ptmin, ptmax, subl_min, subl_max_name, reg[0], reg[1] )
-            # get templates
-            templates_pt = get_projected_templates( templates, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1] ) )
-
-            # get results
-            results_pt = run_generated_diphoton_fit(templates_pt, reg[0], reg[1],ngen, lead_ptrange=lead_ptrange, subl_ptrange=subl_ptrange, corr_factor=corr_factor, outputDir=outputDir, outputPrefix='__%s' %ch )
-
-            #namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
-            #if lead_ptrange[0] is not None :
-            #    if lead_ptrange[1] is None :
-            #        namePostfix += '__pt_%d-max' %lead_ptrange[0]
-            #    else :
-            #        namePostfix += '__pt_%d-%d' %(lead_ptrange[0], lead_ptrange[1] )
-
-            #if subl_ptrange[0] is not None :
-            #    if subl_ptrange[1] is None :
-            #        namePostfix += '__subpt_%d-max' %subl_ptrange[0]
-            #    else :
-            #        namePostfix += '__subpt_%d-%d' %(subl_ptrange[0], subl_ptrange[1] )
-
-            #save_templates( templates_pt, outputDir, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1]), namePostfix=namePostfix )
-            #save_results( results_pt, outputDir, namePostfix )
+# depricated
+#def do_closure_fit( iso_cuts_lead=None, iso_cuts_subl=None, ptbins=[], subl_ptrange=(None,None), ch='mu', ngen=None, corr_factor=0.0, outputDir=None ) :
+#
+#    if ngen is None :
+#        ngen = { 'RF' : 10000, 'FR' : 10000, 'FF' : 10000 }
+#
+#    binning = get_default_binning()
+#    samples = get_default_samples(ch)
+#
+#    # generate templates for both EB and EE
+#    fitvar = 'sigmaIEIE'
+#    real_template_str = get_real_template_draw_commands(fitvar, ch) + ' && %s' %iso_cuts_lead
+#    fake_template_str = get_fake_template_draw_commands(fitvar, ch) + ' && %s' %iso_cuts_lead
+#
+#    templates_reg = {}
+#    templates_reg['EB'] = {}
+#    templates_reg['EE'] = {}
+#    print '***********************************FIX DATA TEMPLATES************************************'
+#    #templates_reg['EB']['real'] = get_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB', sampMan=sampManLG )
+#    #templates_reg['EE']['real'] = get_single_photon_template(real_template_str, binning['EE'], samples['real'], 'EE', sampMan=sampManLG )
+#    templates_reg['EB']['real'] = get_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB', sampMan=sampManLLG )
+#    templates_reg['EE']['real'] = get_single_photon_template(real_template_str, binning['EE'], samples['real'], 'EE', sampMan=sampManLLG )
+#    templates_reg['EB']['fake'] = get_single_photon_template(fake_template_str, binning['EB'], samples['fake'], 'EB', sampMan=sampManLLG)
+#    templates_reg['EE']['fake'] = get_single_photon_template(fake_template_str, binning['EE'], samples['fake'], 'EE', sampMan=sampManLLG)
+#
+#    regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB'), ('EE', 'EE') ]
+#    for reg in regions :
+#
+#        # convert from regions to lead/subl
+#        templates = {}
+#        templates['lead'] = {}
+#        templates['subl'] = {}
+#        templates['lead']['real'] = templates_reg[reg[0]]['real']
+#        templates['subl']['real'] = templates_reg[reg[1]]['real']
+#        templates['lead']['fake'] = templates_reg[reg[0]]['fake']
+#        templates['subl']['fake'] = templates_reg[reg[1]]['fake']
+#
+#        templates_inclusive = get_projected_templates( templates, lead_ptrange = (None,None), subl_ptrange=subl_ptrange )
+#
+#        results_inclusive = run_generated_diphoton_fit(templates_inclusive, reg[0], reg[1], ngen, lead_ptrange=(None,None), subl_ptrange=subl_ptrange, corr_factor=corr_factor, outputDir=outputDir, outputPrefix='__%s'%ch )
+#
+#        #namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
+#        #save_templates( templates_inclusive, outputDir, lead_ptrange=(None,None), subl_ptrange=(None,None), namePostfix=namePostfix )
+#        #save_results( results_inclusive, outputDir, namePostfix )
+#
+#        # -----------------------
+#        # pt binned results
+#        # -----------------------
+#        for idx, ptmin in enumerate(ptbins[:-1] ) :
+#            ptmax = ptbins[idx+1]
+#
+#            # put lead range together (expected by following code)
+#            if ptmax == ptbins[-1] : 
+#                lead_ptrange = ( ptmin, None )
+#            else :
+#                lead_ptrange = ( ptmin, ptmax )
+#
+#            # determine the proper
+#            # sublead range given
+#            # the input lead and
+#            # sublead 
+#            if subl_ptrange[0] is not None :
+#                subl_min = subl_ptrange[0]
+#            else :
+#                subl_min = 15
+#            if subl_ptrange[1] is not None :
+#                if lead_ptrange[1] is None :
+#                    subl_max = subl_ptrange[1]
+#                elif lead_ptrange[1] < subl_ptrange[1] :
+#                    subl_max = lead_ptrange[1]
+#                else :
+#                    subl_max = subl_ptrange[1]
+#            else :
+#                subl_max = lead_ptrange[1]
+#
+#            subl_max_name = str(subl_max)
+#            if subl_max == None :
+#                subl_max_name = 'max'
+#
+#            print 'ptleadmin = %d, ptleadmax = %d, ptsublmin = %d, ptsublmax = %s, region = %s-%s' %( ptmin, ptmax, subl_min, subl_max_name, reg[0], reg[1] )
+#            # get templates
+#            templates_pt = get_projected_templates( templates, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1] ) )
+#
+#            # get results
+#            results_pt = run_generated_diphoton_fit(templates_pt, reg[0], reg[1],ngen, lead_ptrange=lead_ptrange, subl_ptrange=subl_ptrange, corr_factor=corr_factor, outputDir=outputDir, outputPrefix='__%s' %ch )
+#
+#            #namePostfix = '__%s__%s-%s' %( ch, reg[0], reg[1] )
+#            #if lead_ptrange[0] is not None :
+#            #    if lead_ptrange[1] is None :
+#            #        namePostfix += '__pt_%d-max' %lead_ptrange[0]
+#            #    else :
+#            #        namePostfix += '__pt_%d-%d' %(lead_ptrange[0], lead_ptrange[1] )
+#
+#            #if subl_ptrange[0] is not None :
+#            #    if subl_ptrange[1] is None :
+#            #        namePostfix += '__subpt_%d-max' %subl_ptrange[0]
+#            #    else :
+#            #        namePostfix += '__subpt_%d-%d' %(subl_ptrange[0], subl_ptrange[1] )
+#
+#            #save_templates( templates_pt, outputDir, lead_ptrange=lead_ptrange, subl_ptrange=(15, lead_ptrange[1]), namePostfix=namePostfix )
+#            #save_results( results_pt, outputDir, namePostfix )
 
 
 def update_asym_results( results_leadiso, results_subliso ) :
@@ -3955,16 +3974,17 @@ class RunNominalCalculation() :
 
         # generate templates for both EB and EE
         # do not pass ele veto -- templates should be the same 
-        #real_template_str = get_real_template_draw_commands(fitvar, ch, self.eleVeto ) 
-        #fake_template_str = get_fake_template_draw_commands(fitvar, ch, self.eleVeto ) 
         real_template_str = get_real_template_draw_commands(fitvar, ch ) 
         fake_template_str = get_fake_template_draw_commands(fitvar, ch ) 
 
         count_var, phstr = get_template_draw_strs( fitvar, ch, eleVeto='NoEleVeto', iso_vals=None )
 
 
+        #print '******************************************FIX DATA TEMPLATES*************************'
         self.configs.update(config_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_base+'__real__EB', sampMan=sampManLG))
         self.configs.update(config_single_photon_template(real_template_str, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_base+'__real__EE', sampMan=sampManLG))
+        #self.configs.update(config_single_photon_template(real_template_str, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_base+'__real__EB', sampMan=sampManLLG))
+        #self.configs.update(config_single_photon_template(real_template_str, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_base+'__real__EE', sampMan=sampManLLG))
         self.configs.update(config_single_photon_template(fake_template_str, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_base+'__fake__EB', sampMan=sampManLLG))
         self.configs.update(config_single_photon_template(fake_template_str, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_base+'__fake__EE', sampMan=sampManLLG))
 
@@ -4092,8 +4112,11 @@ class RunNominalCalculation() :
         for reg in regions :
             templates = {'lead' :{'real' : {}, 'fake' : {} }, 'subl' : {'real' : {}, 'fake' : {} } }
 
+            #print '************************FIX DATA TEMPLATES******************************'
             templates['lead']['real'] = load_template_histograms( self.configs,'%s__real__%s' %(self.template_name_base, reg[0]) , sampManLG )
             templates['subl']['real'] = load_template_histograms( self.configs,'%s__real__%s' %(self.template_name_base, reg[1]) , sampManLG )
+            #templates['lead']['real'] = load_template_histograms( self.configs,'%s__real__%s' %(self.template_name_base, reg[0]) , sampManLLG )
+            #templates['subl']['real'] = load_template_histograms( self.configs,'%s__real__%s' %(self.template_name_base, reg[1]) , sampManLLG )
 
             templates['lead']['fake'] = load_template_histograms( self.configs,'%s__fake__%s' %(self.template_name_base, reg[0]) , sampManLLG )
             templates['subl']['fake'] = load_template_histograms( self.configs,'%s__fake__%s' %(self.template_name_base, reg[1]) , sampManLLG )
@@ -4537,13 +4560,19 @@ class RunCorrectedAsymCalculation() :
 
         count_var, phstr = get_template_draw_strs( fitvar, ch, eleVeto='NoEleVeto', iso_vals=self.vals )
 
+        #print '************************FIX DATA TEMPLATES******************************'
         self.configs.update(config_single_photon_template(real_template_str_iso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__EB', sampMan=sampManLG ) )
         self.configs.update(config_single_photon_template(real_template_str_iso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__EE', sampMan=sampManLG ) )
+        #self.configs.update(config_single_photon_template(real_template_str_iso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__EB', sampMan=sampManLLG ) )
+        #self.configs.update(config_single_photon_template(real_template_str_iso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__EE', sampMan=sampManLLG ) )
         self.configs.update(config_single_photon_template(fake_template_str_iso, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__fake__EB', sampMan=sampManLLG ) )
         self.configs.update(config_single_photon_template(fake_template_str_iso, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__fake__EE', sampMan=sampManLLG ) )
 
+        #print '************************FIX DATA TEMPLATES******************************'
         self.configs.update(config_single_photon_template(real_template_str_noiso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__EB', sampMan=sampManLG  ) )
         self.configs.update(config_single_photon_template(real_template_str_noiso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__EE', sampMan=sampManLG  ) )
+        #self.configs.update(config_single_photon_template(real_template_str_noiso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__EB', sampMan=sampManLLG  ) )
+        #self.configs.update(config_single_photon_template(real_template_str_noiso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__EE', sampMan=sampManLLG  ) )
         self.configs.update(config_single_photon_template(fake_template_str_noiso, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__fake__EB', sampMan=sampManLLG ) )
         self.configs.update(config_single_photon_template(fake_template_str_noiso, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__fake__EE', sampMan=sampManLLG ) )
 
@@ -4719,13 +4748,19 @@ class RunCorrectedAsymCalculation() :
             templates_leadiso = {'lead' : { 'real' : {}, 'fake' : {} }, 'subl' : {'real' : {}, 'fake' : {} } }
             templates_subliso = {'lead' : { 'real' : {}, 'fake' : {} }, 'subl' : {'real' : {}, 'fake' : {} } }
 
+            #print '************************FIX DATA TEMPLATES******************************'
             templates_leadiso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_iso_base, reg[0]), sampManLG )
             templates_leadiso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_noiso_base, reg[1]), sampManLG )
+            #templates_leadiso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_iso_base, reg[0]), sampManLLG )
+            #templates_leadiso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_noiso_base, reg[1]), sampManLLG )
             templates_leadiso['lead']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_iso_base, reg[0]), sampManLLG )
             templates_leadiso['subl']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_noiso_base, reg[1]), sampManLLG )
 
+            #print '************************FIX DATA TEMPLATES******************************'
             templates_subliso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_noiso_base, reg[0]), sampManLG )
             templates_subliso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_iso_base, reg[1]), sampManLG )
+            #templates_subliso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_noiso_base, reg[0]), sampManLLG )
+            #templates_subliso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_iso_base, reg[1]), sampManLLG )
             templates_subliso['lead']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_noiso_base, reg[0]), sampManLLG )
             templates_subliso['subl']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_iso_base, reg[1]), sampManLLG )
 

@@ -189,6 +189,7 @@ namespace OUT {
     Int_t   ph_mediumNoNeuIsoNoPhoIso_n;
     Int_t   ph_mediumNoChIsoNoPhoIso_n;
     Int_t   ph_mediumNoChIsoNoNeuIso_n;
+    Int_t   ph_mediumNoSIEIENoChIso_n ;
     Int_t   ph_mediumNoSIEIENoPhoIsoNoEleVeto_n;
     Int_t   ph_mediumNoSIEIENoNeuIsoNoEleVeto_n;
     Int_t   ph_mediumNoSIEIENoChIsoNoEleVeto_n ;
@@ -412,6 +413,7 @@ namespace OUT {
     std::vector<int> *ptSorted_ph_mediumNoNeuIsoNoPhoIso_idx;
     std::vector<int> *ptSorted_ph_mediumNoChIsoNoPhoIso_idx;
     std::vector<int> *ptSorted_ph_mediumNoChIsoNoNeuIso_idx;
+    std::vector<int> *ptSorted_ph_mediumNoSIEIENoChIso_idx;
     std::vector<int> *ptSorted_ph_mediumNoSIEIENoPhoIsoNoEleVeto_idx;
     std::vector<int> *ptSorted_ph_mediumNoSIEIENoNeuIsoNoEleVeto_idx;
     std::vector<int> *ptSorted_ph_mediumNoSIEIENoChIsoNoEleVeto_idx;

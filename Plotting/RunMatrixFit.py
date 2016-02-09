@@ -28,6 +28,7 @@ def parseArgs() :
                                                                                            'as this script, if a path is given, use that path' ) )
 
     p.add_argument('--samplesConfGG',  default=None,           dest='samplesConfGG',     help='Use alternate sample configuration for diphoton events. '  )
+    p.add_argument('--samplesConfWgg',  default=None,           dest='samplesConfWgg',     help='Use alternate sample configuration for fake-fake templates. '  )
     
                                                                                            
     p.add_argument('--xsFile',     default=None,  type=str ,        dest='xsFile',         help='path to cross section file.  When calling AddSample in the configuration module, set useXSFile=True to get weights from the provided file')
@@ -195,16 +196,24 @@ def get_corr_fake_template_draw_commands( ch='mu', fitvar='sigmaIEIE', r1='EB', 
 
     base_str = ''
     # in the muon channel remove the pixel seed veto
-    if ch == 'mu' or ch=='muhighmt' or ch =='mulowmt' :
+    if ch == 'mu' or ch=='muhighmt' or ch =='mulowmt' or ch =='muZgg' or ch == 'elZgg' :
         #base_str = '( (mu_passtrig25_n>0 && mu_n==1) || (el_passtrig_n>0 && el_n==1) ) && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f ' %_mgg_cut
-        base_str = 'mu_passtrig25_n>0  && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f '%_mgg_cut
-    elif ch=='muZgg' :
-        base_str = ' mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut
-    elif ch=='elZgg' :
-        base_str = ' mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut 
+        base_str = 'mu_passtrig25_n>0  && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f  && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4'%_mgg_cut
+    #elif ch=='muZgg' :
+    #    base_str = ' mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut
+    #elif ch=='elZgg' :
+    #    base_str = ' mu_n==2 && el_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f && dr_ph1_leadLep>0.4 && dr_ph2_leadLep>0.4 && dr_ph1_sublLep>0.4 && dr_ph2_sublLep>0.4 && m_leplep > 40  '%_mgg_cut 
     else :
         #base_str = '( (mu_passtrig25_n>0 && mu_n==1) || (el_passtrig_n>0 && el_n==1) ) && ph_HoverE12[0] < 0.05 && ph_HoverE12[1] < 0.05 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f && hasPixSeed_leadph12 == 0 && hasPixSeed_sublph12 == 0 ' %_mgg_cut
+
         base_str = 'mu_passtrig25_n>0 && mu_n==1 && el_n==0 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f15 && hasPixSeed_leadph12 == 0 && hasPixSeed_sublph12 == 0 ' %_mgg_cut
+        # don't use invlead/invsubl
+        #if ch.count('invpixlead' ) :
+        #    base_str = 'mu_passtrig25_n>0 && mu_n==1 && el_n==0 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f15 && hasPixSeed_leadph12 == 1 && hasPixSeed_sublph12 == 0 ' %_mgg_cut
+        #elif ch.count('invpixsubl' ) :
+        #    base_str = 'mu_passtrig25_n>0 && mu_n==1 && el_n==0 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f15 && hasPixSeed_leadph12 == 0 && hasPixSeed_sublph12 == 1 ' %_mgg_cut
+        #else :
+        #    base_str = 'mu_passtrig25_n>0 && mu_n==1 && el_n==0 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 && dr_ph1_ph2 > 0.4 && m_ph1_ph2 > %.1f15 && hasPixSeed_leadph12 == 0 && hasPixSeed_sublph12 == 0 ' %_mgg_cut
 
     if fitvar == 'sigmaIEIE' :
         if leadPass :
@@ -272,6 +281,7 @@ def get_fake_window_template_draw_commands( ch='mu' ) :
 def get_default_draw_commands( ch='mu' ) :
 
     el_base = ' el_passtrig_n>0 && el_n==1 && mu_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f ' %( _mgg_cut )
+    el_base_inv = ' el_passtrig_n>0 && el_n==2 && mu_n==0 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f ' %( _mgg_cut )
     print '***************************FIX NARROW MASS WINDOW***************************'
     #zmass_window = 10
     zmass_window = 5
@@ -280,10 +290,20 @@ def get_default_draw_commands( ch='mu' ) :
     draw_commands = {
         'mu' : ' mu_passtrig25_n>0 && el_n==0 && mu_n==1 && dr_ph1_ph2 > 0.4 && m_ph1_ph2>%.1f '%_mgg_cut,
         'elzcr' : el_base + ' && (fabs(m_trigelphph-91.2) < %d) ' %zmass_window,
+        'elzcrinvpixlead' : el_base_inv + ' && (fabs(m_trigelphph-91.2) < %d) ' %zmass_window,
+        'elzcrinvpixsubl' : el_base_inv + ' && (fabs(m_trigelphph-91.2) < %d) ' %zmass_window,
         'elloose' : el_base,
+        'ellooseinvpixlead' : el_base_inv,
+        'ellooseinvpixsubl' : el_base_inv,
         'elfull' : el_base + ' && !(fabs(m_trigelphph-91.2) < %d) && !(fabs(m_trigelph1-91.2) < %d)  && !(fabs(m_trigelph2-91.2) < %d)' %( zmass_window, zmass_window, zmass_window),
+        'elfullinvpixlead' : el_base_inv + ' && !(fabs(m_trigelphph-91.2) < %d) && !(fabs(m_trigelph1-91.2) < %d)  && !(fabs(m_trigelph2-91.2) < %d)' %( zmass_window, zmass_window, zmass_window),
+        'elfullinvpixsubl' : el_base_inv + ' && !(fabs(m_trigelphph-91.2) < %d) && !(fabs(m_trigelph1-91.2) < %d)  && !(fabs(m_trigelph2-91.2) < %d)' %( zmass_window, zmass_window, zmass_window),
         'elph1zcr' : el_base + ' &&  (fabs(m_trigelph1-91.2) < %d) ' %zmass_window,
+        'elph1zcrinvpixlead' : el_base_inv + ' &&  (fabs(m_trigelph1-91.2) < %d) ' %zmass_window,
+        'elph1zcrinvpixsubl' : el_base_inv + ' &&  (fabs(m_trigelph1-91.2) < %d) ' %zmass_window,
         'elph2zcr' : el_base + ' &&  (fabs(m_trigelph2-91.2) < %d) ' %zmass_window,
+        'elph2zcr_invpixlead' : el_base + ' &&  (fabs(m_trigelph2-91.2) < %d) ' %zmass_window,
+        'elph2zcr_invpixsubl' : el_base + ' &&  (fabs(m_trigelph2-91.2) < %d) ' %zmass_window,
     }
     # add low/high mT selections
     draw_keys = draw_commands.keys()
@@ -296,14 +316,14 @@ def get_default_draw_commands( ch='mu' ) :
             draw_commands[key+'lowmt']  = val + ' && mt_trigmu_met < 40 '
             draw_commands[key+'highmt'] = val + ' && mt_trigmu_met > 40 '
 
-    # add inverted selections
-    # should be the same as non-inverted 
-    # cases
-    draw_keys = draw_commands.keys()
-    for key in draw_keys :
-        val = draw_commands[key]
-        draw_commands[key+'invpixlead'] = val 
-        draw_commands[key+'invpixsubl'] = val 
+    ## add inverted selections
+    ## should be the same as non-inverted 
+    ## cases
+    #draw_keys = draw_commands.keys()
+    #for key in draw_keys :
+    #    val = draw_commands[key]
+    #    draw_commands[key+'invpixlead'] = val 
+    #    draw_commands[key+'invpixsubl'] = val 
    
 
     # add Zgg selections
@@ -410,6 +430,7 @@ def main() :
     global sampManLG
     global sampManData
     global sampManDataNOEV
+    global sampManDataFF
     global sampManDataInvL
     global sampManDataInvS
 
@@ -419,9 +440,12 @@ def main() :
     #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_10_01'
 
     base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoPixSeedBoth_2015_11_11'
-    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_11_09'
-    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_11_11'
-    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_11_11'
+    base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_11_09'
+    base_dir_data_ff      = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_11_09'
+    #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_11_11'
+    #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_11_11'
+    base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDNoElOlapRmInvPSVLead_2016_02_04'
+    base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDNoElOlapRmInvPSVSubl_2016_02_04'
 
     #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDVetoCSEVSeedBoth_2015_11_11'
     #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_11_09'
@@ -434,10 +458,12 @@ def main() :
     #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDNoEleOlapRMInvCSEVSubl_2015_11_30'
 
     if options.zgg :
-        base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_11_09'
-        base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_11_09'
-        base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_11_09'
-        base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_11_09'
+        base_dir_data_ff      = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_11_09'
+        #base_dir_data_ff      = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_11_09'
+        base_dir_data         = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_11_09'
+        base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_11_09'
+        base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_11_09'
+        base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaNoPhID_2015_11_09'
 
     #base_dir_data         = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithEleOlapVetoPixSeedBoth_2015_09_03'
     #base_dir_data_noeveto = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDWithEleOlap_2015_09_03'
@@ -450,13 +476,14 @@ def main() :
     #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhIDNoEleVetoInvPixSeedSubl_2015_08_31'
     #base_dir_data_invl    = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedLead_2015_08_01'
     #base_dir_data_invs    = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhIDInvPixSeedSubl_2015_08_01'
-    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_11_09'
-    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_11_09'
+    base_dir_llg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_11_09'
+    base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_11_09'
 
     sampManLLG      = SampleManager(base_dir_llg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManLG       = SampleManager(base_dir_lg, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManData     = SampleManager(base_dir_data, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManDataNOEV = SampleManager(base_dir_data_noeveto, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
+    sampManDataFF   = SampleManager(base_dir_data_ff, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManDataInvL = SampleManager(base_dir_data_invl, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
     sampManDataInvS = SampleManager(base_dir_data_invs, options.treeName,filename=options.fileName, xsFile=options.xsFile, lumi=options.lumi, quiet=options.quiet)
 
@@ -465,7 +492,13 @@ def main() :
         sampManLLG.ReadSamples( options.samplesConf )
         sampManLG.ReadSamples( options.samplesConf )
 
+        if options.samplesConfWgg is None  :
+            options.samplesConfWgg = options.samplesConfGG
+        
+
         sampManDataNOEV.ReadSamples( options.samplesConfGG )
+        #sampManDataFF.ReadSamples( options.samplesConfGG )
+        sampManDataFF.ReadSamples( options.samplesConfWgg )
         sampManData.ReadSamples( options.samplesConfGG )
         sampManDataInvL.ReadSamples( options.samplesConfGG )
         sampManDataInvS.ReadSamples( options.samplesConfGG )
@@ -484,6 +517,7 @@ def main() :
     all_samp_man.append( sampManLLG)
     all_samp_man.append( sampManData)
     all_samp_man.append( sampManDataNOEV)
+    all_samp_man.append( sampManDataFF )
     all_samp_man.append( sampManDataInvL)
     all_samp_man.append( sampManDataInvS)
 
@@ -526,7 +560,7 @@ def main() :
 
     fitvar_corrs = { 
                      'chIsoCorr' : ['No SIEIE'], 
-                     'sigmaIEIE' : [(5,3,3) , (8,5,5), (10,7,7)]
+                     #'sigmaIEIE' : [(5,3,3) , (8,5,5), (10,7,7)]
                    }
 
     #eleVeto = 'PassCSEV'
@@ -536,7 +570,10 @@ def main() :
 
     if options.sublptbins is not None :
         split = options.sublptbins.split(',')
-        subl_ptrange = (int(split[0]), int(split[1]) )
+        if split[1] == 'None' :
+            subl_ptrange = (int(split[0]), None )
+        else :
+            subl_ptrange = (int(split[0]), int(split[1]) )
     else :
         subl_ptrange = ( common_ptbins[0], None )
 
@@ -3996,12 +4033,12 @@ class RunNominalCalculation() :
         corr_template_str_leadFail_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=False, cuts=ffcorr )
         corr_template_str_leadPass_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=True , cuts=ffcorr )
 
-        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EB', sampMan=sampManDataNOEV  ) )
-        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EB', sampMan=sampManDataNOEV  ) )
-        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EE', sampMan=sampManDataNOEV  ) )
-        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EE', sampMan=sampManDataNOEV  ) )
-        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EE-EB', sampMan=sampManDataNOEV  ) )
-        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EE-EB', sampMan=sampManDataNOEV  ) )
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EB', sampMan=sampManDataFF  ) )
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EB', sampMan=sampManDataFF  ) )
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EE', sampMan=sampManDataFF  ) )
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EE', sampMan=sampManDataFF  ) )
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EE-EB', sampMan=sampManDataFF  ) )
+        self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EE-EB', sampMan=sampManDataFF  ) )
 
         # add regions onto the selection
 
@@ -4124,8 +4161,8 @@ class RunNominalCalculation() :
             templates_corr = None
             if self.ffcorr != 'None' :
                 templates_corr = {'leadPass' : { reg : { 'Data' : None, 'Background' : None} }, 'leadFail' : { reg : { 'Data' : None, 'Background' : None} } }
-                templates_corr['leadPass'][reg]['Data'] = sampManDataNOEV.load_samples( self.configs['%s__leadPass__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
-                templates_corr['leadFail'][reg]['Data'] = sampManDataNOEV.load_samples( self.configs['%s__leadFail__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
+                templates_corr['leadPass'][reg]['Data'] = sampManDataFF.load_samples( self.configs['%s__leadPass__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
+                templates_corr['leadFail'][reg]['Data'] = sampManDataFF.load_samples( self.configs['%s__leadFail__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
 
             gg_hist = {}
             gg_hist['leadPass'] = self.targetSampMan.load_samples( self.configs['%s__leadPass__%s-%s' %(self.data_name_base, reg[0], reg[1])] )[0].hist
@@ -4549,32 +4586,58 @@ class RunCorrectedAsymCalculation() :
         # do not pass eleVeto-- templates should be the same with or without ele veto
         #real_template_str_iso = get_real_template_draw_commands(fitvar, ch, self.eleVeto)
         #fake_template_str_iso = get_fake_template_draw_commands(fitvar, ch, self.eleVeto)
-        real_template_str_iso = get_real_template_draw_commands(fitvar, ch)
-        fake_template_str_iso = get_fake_template_draw_commands(fitvar, ch)
+
+        real_template_str_iso_noeveto = get_real_template_draw_commands(fitvar, ch, 'NoEleVeto')
+        fake_template_str_iso_noeveto = get_fake_template_draw_commands(fitvar, ch, 'NoEleVeto')
+        real_template_str_iso_passpsv = get_real_template_draw_commands(fitvar, ch, 'PassPSV')
+        fake_template_str_iso_passpsv = get_fake_template_draw_commands(fitvar, ch, 'PassPSV')
+        real_template_str_iso_failpsv = get_real_template_draw_commands(fitvar, ch, 'FailPSV')
+        fake_template_str_iso_failpsv = get_fake_template_draw_commands(fitvar, ch, 'FailPSV')
 
         # do not pass eleVeto -- templates should be the same with or without ele veto
         #real_template_str_noiso = get_real_template_draw_commands(fitvar, ch, self.eleVeto, iso_vals = self.loose_iso_cuts )
         #fake_template_str_noiso = get_fake_template_draw_commands(fitvar, ch, self.eleVeto, iso_vals = self.loose_iso_cuts )
-        real_template_str_noiso = get_real_template_draw_commands(fitvar, ch, iso_vals = self.loose_iso_cuts )
-        fake_template_str_noiso = get_fake_template_draw_commands(fitvar, ch, iso_vals = self.loose_iso_cuts )
+        real_template_str_noiso_noeveto = get_real_template_draw_commands(fitvar, ch, 'NoEleVeto', iso_vals = self.loose_iso_cuts )
+        fake_template_str_noiso_noeveto = get_fake_template_draw_commands(fitvar, ch, 'NoEleVeto', iso_vals = self.loose_iso_cuts )
+        real_template_str_noiso_passPSV = get_real_template_draw_commands(fitvar, ch, 'PassPSV', iso_vals = self.loose_iso_cuts )
+        fake_template_str_noiso_passPSV = get_fake_template_draw_commands(fitvar, ch, 'PassPSV', iso_vals = self.loose_iso_cuts )
+        real_template_str_noiso_failPSV = get_real_template_draw_commands(fitvar, ch, 'FailPSV', iso_vals = self.loose_iso_cuts )
+        fake_template_str_noiso_failPSV = get_fake_template_draw_commands(fitvar, ch, 'FailPSV', iso_vals = self.loose_iso_cuts )
 
         count_var, phstr = get_template_draw_strs( fitvar, ch, eleVeto='NoEleVeto', iso_vals=self.vals )
+        #count_var, phstr = get_template_draw_strs( fitvar, ch, eleVeto=eleVeto, iso_vals=self.vals )
 
         #print '************************FIX DATA TEMPLATES******************************'
-        self.configs.update(config_single_photon_template(real_template_str_iso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__EB', sampMan=sampManLG ) )
-        self.configs.update(config_single_photon_template(real_template_str_iso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__EE', sampMan=sampManLG ) )
+        self.configs.update(config_single_photon_template(real_template_str_iso_noeveto, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__NoEleVeto__EB', sampMan=sampManLG ) )
+        self.configs.update(config_single_photon_template(real_template_str_iso_noeveto, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__NoEleVeto__EE', sampMan=sampManLG ) )
+        #self.configs.update(config_single_photon_template(real_template_str_iso_passPSV, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__PassPSV__EB', sampMan=sampManLG ) )
+        #self.configs.update(config_single_photon_template(real_template_str_iso_passPSV, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__PassPSV__EE', sampMan=sampManLG ) )
+        #self.configs.update(config_single_photon_template(real_template_str_iso_failPSV, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__FailPSV__EB', sampMan=sampManLG ) )
+        #self.configs.update(config_single_photon_template(real_template_str_iso_failPSV, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__FailPSV__EE', sampMan=sampManLG ) )
         #self.configs.update(config_single_photon_template(real_template_str_iso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__EB', sampMan=sampManLLG ) )
         #self.configs.update(config_single_photon_template(real_template_str_iso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__real__EE', sampMan=sampManLLG ) )
-        self.configs.update(config_single_photon_template(fake_template_str_iso, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__fake__EB', sampMan=sampManLLG ) )
-        self.configs.update(config_single_photon_template(fake_template_str_iso, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__fake__EE', sampMan=sampManLLG ) )
+        self.configs.update(config_single_photon_template(fake_template_str_iso_noeveto, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__fake__NoEleVeto__EB', sampMan=sampManLLG ) )
+        self.configs.update(config_single_photon_template(fake_template_str_iso_noeveto, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__fake__NoEleVeto__EE', sampMan=sampManLLG ) )
+        #self.configs.update(config_single_photon_template(fake_template_str_iso_passPSV, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__fake__PassPSV__EB', sampMan=sampManLLG ) )
+        #self.configs.update(config_single_photon_template(fake_template_str_iso_passPSV, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__fake__PassPSV__EE', sampMan=sampManLLG ) )
+        #self.configs.update(config_single_photon_template(fake_template_str_iso_failPSV, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__fake__FailPSV__EB', sampMan=sampManLLG ) )
+        #self.configs.update(config_single_photon_template(fake_template_str_iso_failPSV, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_iso_base+'__fake__FailPSV__EE', sampMan=sampManLLG ) )
 
         #print '************************FIX DATA TEMPLATES******************************'
-        self.configs.update(config_single_photon_template(real_template_str_noiso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__EB', sampMan=sampManLG  ) )
-        self.configs.update(config_single_photon_template(real_template_str_noiso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__EE', sampMan=sampManLG  ) )
+        self.configs.update(config_single_photon_template(real_template_str_noiso_noeveto, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__NoEleVeto__EB', sampMan=sampManLG  ) )
+        self.configs.update(config_single_photon_template(real_template_str_noiso_noeveto, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__NoEleVeto__EE', sampMan=sampManLG  ) )
+        #self.configs.update(config_single_photon_template(real_template_str_noiso_passPSV, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__PassPSV__EB', sampMan=sampManLG  ) )
+        #self.configs.update(config_single_photon_template(real_template_str_noiso_passPSV, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__PassPSV__EE', sampMan=sampManLG  ) )
+        #self.configs.update(config_single_photon_template(real_template_str_noiso_failPSV, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__FailPSV__EB', sampMan=sampManLG  ) )
+        #self.configs.update(config_single_photon_template(real_template_str_noiso_failPSV, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__FailPSV__EE', sampMan=sampManLG  ) )
         #self.configs.update(config_single_photon_template(real_template_str_noiso, binning['EB'], samples['real'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__EB', sampMan=sampManLLG  ) )
         #self.configs.update(config_single_photon_template(real_template_str_noiso, binning['EE'], samples['real'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__real__EE', sampMan=sampManLLG  ) )
-        self.configs.update(config_single_photon_template(fake_template_str_noiso, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__fake__EB', sampMan=sampManLLG ) )
-        self.configs.update(config_single_photon_template(fake_template_str_noiso, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__fake__EE', sampMan=sampManLLG ) )
+        self.configs.update(config_single_photon_template(fake_template_str_noiso_noeveto, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__fake__NoEleVeto__EB', sampMan=sampManLLG ) )
+        self.configs.update(config_single_photon_template(fake_template_str_noiso_noeveto, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__fake__NoEleVeto__EE', sampMan=sampManLLG ) )
+        #self.configs.update(config_single_photon_template(fake_template_str_noiso_passPSV, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__fake__PassPSV__EB', sampMan=sampManLLG ) )
+        #self.configs.update(config_single_photon_template(fake_template_str_noiso_passPSV, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__fake__PassPSV__EE', sampMan=sampManLLG ) )
+        #self.configs.update(config_single_photon_template(fake_template_str_noiso_failPSV, binning['EB'], samples['fake'], 'EB', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__fake__FailPSV__EB', sampMan=sampManLLG ) )
+        #self.configs.update(config_single_photon_template(fake_template_str_noiso_failPSV, binning['EE'], samples['fake'], 'EE', fitvar=fitvar, idxstr=phstr, basename=self.template_name_noiso_base+'__fake__FailPSV__EE', sampMan=sampManLLG ) )
 
         if ffcorr != 'None' :
             corr_template_str_leadFail_EB_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EB', 'EB', leadPass=False, cuts=ffcorr )
@@ -4584,12 +4647,12 @@ class RunCorrectedAsymCalculation() :
             corr_template_str_leadFail_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=False, cuts=ffcorr )
             corr_template_str_leadPass_EE_EB = get_corr_fake_template_draw_commands( ch, fitvar, 'EE', 'EB', leadPass=True , cuts=ffcorr )
 
-            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EB', sampMan=sampManDataNOEV  ))
-            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EB', sampMan=sampManDataNOEV  ))
-            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EE', sampMan=sampManDataNOEV  ))
-            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EE', sampMan=sampManDataNOEV  ))
-            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EE-EB', sampMan=sampManDataNOEV  ))
-            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EE-EB', sampMan=sampManDataNOEV  ))
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EB', sampMan=sampManDataFF  ))
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EB', sampMan=sampManDataFF  ))
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EB-EE', sampMan=sampManDataFF  ))
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EB_EE, binning, {'Data' :'Muon', 'Background' : None }, 'EB', 'EE', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EB-EE', sampMan=sampManDataFF  ))
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadFail_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadFail__EE-EB', sampMan=sampManDataFF  ))
+            self.configs.update(config_correlated_fake_fake_templates( corr_template_str_leadPass_EE_EB, binning, {'Data' :'Muon', 'Background' : None }, 'EE', 'EB', fitvar=fitvar, basename=self.corr_name_base+'__leadPass__EE-EB', sampMan=sampManDataFF  ))
 
         regions = [ ('EB', 'EB'), ('EB', 'EE'), ('EE', 'EB') ]
 
@@ -4748,21 +4811,38 @@ class RunCorrectedAsymCalculation() :
             templates_leadiso = {'lead' : { 'real' : {}, 'fake' : {} }, 'subl' : {'real' : {}, 'fake' : {} } }
             templates_subliso = {'lead' : { 'real' : {}, 'fake' : {} }, 'subl' : {'real' : {}, 'fake' : {} } }
 
-            #print '************************FIX DATA TEMPLATES******************************'
-            templates_leadiso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_iso_base, reg[0]), sampManLG )
-            templates_leadiso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_noiso_base, reg[1]), sampManLG )
-            #templates_leadiso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_iso_base, reg[0]), sampManLLG )
-            #templates_leadiso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_noiso_base, reg[1]), sampManLLG )
-            templates_leadiso['lead']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_iso_base, reg[0]), sampManLLG )
-            templates_leadiso['subl']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_noiso_base, reg[1]), sampManLLG )
+            leadEVeto = 'NoEleVeto'
+            sublEVeto = 'NoEleVeto'
+
+            # use only NoEleVeto templates
+            #if ch.count('el') and not ch.count('Zgg') :
+
+            #    if ch.count('invpixlead') :
+            #        leadEVeto = 'FailPSV'
+            #        sublEVeto = 'PassPSV'
+            #    elif ch.count( 'invpixsubl' ) :
+            #        sublEVeto = 'FailPSV'
+            #        leadEVeto = 'PassPSV'
+            #    else :
+            #        leadEVeto = 'PassPSV'
+            #        sublEVeto = 'PassPSV'
+
 
             #print '************************FIX DATA TEMPLATES******************************'
-            templates_subliso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_noiso_base, reg[0]), sampManLG )
-            templates_subliso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_iso_base, reg[1]), sampManLG )
-            #templates_subliso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_noiso_base, reg[0]), sampManLLG )
-            #templates_subliso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s' %(self.template_name_iso_base, reg[1]), sampManLLG )
-            templates_subliso['lead']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_noiso_base, reg[0]), sampManLLG )
-            templates_subliso['subl']['fake'] = load_template_histograms( self.configs, '%s__fake__%s' %(self.template_name_iso_base, reg[1]), sampManLLG )
+            templates_leadiso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s__%s' %(self.template_name_iso_base, leadEVeto, reg[0]), sampManLG )
+            templates_leadiso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s__%s' %(self.template_name_noiso_base, sublEVeto, reg[1]), sampManLG )
+            #templates_leadiso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s__%s' %(self.template_name_iso_base, leadEVeto,reg[0]), sampManLLG )
+            #templates_leadiso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s__%s' %(self.template_name_noiso_base, sublEVeto, reg[1]), sampManLLG )
+            templates_leadiso['lead']['fake'] = load_template_histograms( self.configs, '%s__fake__%s__%s' %(self.template_name_iso_base, leadEVeto, reg[0]), sampManLLG )
+            templates_leadiso['subl']['fake'] = load_template_histograms( self.configs, '%s__fake__%s__%s' %(self.template_name_noiso_base, sublEVeto, reg[1]), sampManLLG )
+
+            #print '************************FIX DATA TEMPLATES******************************'
+            templates_subliso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s__%s' %(self.template_name_noiso_base, leadEVeto, reg[0]), sampManLG )
+            templates_subliso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s__%s' %(self.template_name_iso_base, sublEVeto, reg[1]), sampManLG )
+            #templates_subliso['lead']['real'] = load_template_histograms( self.configs, '%s__real__%s__%s' %(self.template_name_noiso_base, leadEVeto, reg[0]), sampManLLG )
+            #templates_subliso['subl']['real'] = load_template_histograms( self.configs, '%s__real__%s__%s' %(self.template_name_iso_base, sublEVeto, reg[1]), sampManLLG )
+            templates_subliso['lead']['fake'] = load_template_histograms( self.configs, '%s__fake__%s__%s' %(self.template_name_noiso_base, leadEVeto, reg[0]), sampManLLG )
+            templates_subliso['subl']['fake'] = load_template_histograms( self.configs, '%s__fake__%s__%s' %(self.template_name_iso_base, sublEVeto, reg[1]), sampManLLG )
 
             templates_nom = {}
             templates_nom['lead'] = {}
@@ -4775,8 +4855,8 @@ class RunCorrectedAsymCalculation() :
             templates_corr = None
             if self.ffcorr != 'None' :
                 templates_corr = {'leadPass' : { reg : { 'Data' : None, 'Background' : None} }, 'leadFail' : { reg : { 'Data' : None, 'Background' : None} } }
-                templates_corr['leadPass'][reg]['Data'] = sampManDataNOEV.load_samples( self.configs['%s__leadPass__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
-                templates_corr['leadFail'][reg]['Data'] = sampManDataNOEV.load_samples( self.configs['%s__leadFail__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
+                templates_corr['leadPass'][reg]['Data'] = sampManDataFF.load_samples( self.configs['%s__leadPass__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
+                templates_corr['leadFail'][reg]['Data'] = sampManDataFF.load_samples( self.configs['%s__leadFail__%s-%s__Data' %( self.corr_name_base, reg[0], reg[1] )] )[0].hist
 
             gg_hist_leadiso = {}
             gg_hist_subliso = {}

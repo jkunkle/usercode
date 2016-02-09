@@ -361,7 +361,10 @@ alts['Gauss_cmsshape']['fit_nom_eta_2.10-2.20_pt_25-30']  = { 'mean' : 1.6, 'sig
 
 alts['Gauss_cmsshape']['fit_nom_eta_0.00-0.10_pt_30-35']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 95, 
                                                              'cms_beta' : 0.034, 'cms_gamma' : 0.05, 'cms_peak' : 89, 'nsig' : 20000, 'nbkg' : 700, 
-                                                             'fit_min': 60, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
+                                                             'fit_min': 40, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
+alts['Gauss_cmsshape']['fit_inv_eta_0.00-0.10_pt_30-35']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 150, 
+                                                             'cms_beta' : 0.02, 'cms_gamma' : 0.05, 'cms_peak' : 89, 'nsig' : 20000, 'nbkg' : 700, 
+                                                             'fit_min': 40, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }
 alts['Gauss_cmsshape']['fit_nom_eta_0.00-1.44_pt_25-40']  = { 'mean' : 1.5, 'sigma' : 0.3 , 'cms_alpha' : 70, 
                                                              'cms_beta' : 0.05, 'cms_gamma' : 0.04, 'cms_peak' : 90, 'nsig' : 20000, 'nbkg' : 700, 
                                                              'fit_min': 60, 'fit_max' : 160, 'rho' : 1, 'nSigma' : 3 }

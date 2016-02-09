@@ -13,12 +13,13 @@ options = p.parse_args()
 if not options.run and not options.check :
     options.run = True
 
-base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhIDNoEleOlapRM_2015_11_09'
+#base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhIDNoEleOlapRM_2015_11_09'
+base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhIDNoElOlapRm_2016_02_05'
 #base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_11_09'
 
 
 jobs = [
-        (base, 'job_summer12_DYJetsToLL_s10PhOlapRepeat'),
+        (base, 'job_summer12_DYJetsToLL_s10PhOlap'),
 ]
 
 if options.batch :
@@ -37,25 +38,26 @@ else :
 if options.resubmit :
     command_base += ' --resubmit '
 
-check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s/%(input)s/%(job)s --filteredDS %(base)s/%(output)s/%(job)s --treeNameOrig %(treename)s --histNameFilt ggNtuplizer/filter --fileKeyOrig tree.root --fileKeyFilt tree.root'
+check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s/%(job)s  --filteredDS %(base)s/%(job)s_filt_pt_%(ptmin)d-%(ptmax)d_eta_%(etamin).2f-%(etamax).2f --treeNameOrig %(treename)s --histNameFilt ggNtuplizer/filter --fileKeyOrig tree.root --fileKeyFilt tree.root'
 
 
 #pt_bins = [(15,25),(25,30), (30,35), (35,40),(40,45),(45,50), (50,60), (60,70),(70,1000000) ]
 pt_bins = [
-           #(15,25),
-           #(25,30), 
-           #(30,35), 
-           #(35,40),
-           #(40,45),
-           #(45,50), 
+           (15,25),
+           (25,30), 
+           (30,35), 
+           (35,40),
+           (40,45),
+           (45,50), 
            (50,60), 
            (60,70),
            (70,1000000) 
 ]
 eta_bins = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5) ]
+#eta_bins = [(1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5) ]
+#eta_bins = [(1.57, 2.1)]
 
-
-eveto = 'CSEV'
+eveto = 'PSV'
 #types = [ 'inv', 'nom',]
 types = [ 'inv']
 nph = ' == 1'
@@ -106,20 +108,16 @@ if options.run :
                 first = False
 
 if options.check :
-    for config in top_configs :
+    for config in configs :
     
-        for base, job in jobs_data :
+        for base, job in jobs :
+
+            job_name = 'conf_%s_pt_%d-%d_eta_%.2f-%.2f.txt' %(job, config['ptmin'],config['ptmax'],config['etamin'],config['etamax'])
     
-            command = check_commands_base%{ 'base': base , 'job' : job, 'output' : config['output_name'], 'input' : config['input_name'], 'treename' : treename}
+            command = check_commands_base%{ 'base': base , 'job' : job, 'ptmin' : config['ptmin'], 'ptmax' : config['ptmax'], 'etamin' : config['etamin'], 'etamax' : config['etamax'], 'treename' : treename}
             print command                                                                               
             os.system(command)                                                                          
                                                                                                         
-        for base, job in jobs_mc :                                                                      
-            command = check_commands_base%{ 'base': base , 'job' : job, 'output' : config['output_name'], 'input' : config['input_name'], 'treename' : treename}
-            print command
-            os.system(command)
-
-
 
 
 

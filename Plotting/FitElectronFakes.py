@@ -152,8 +152,8 @@ def get_ratio_draw_commands( isConv=None, useCsev=False, useTAndP=False, mc=Fals
                    }
         else :
 
-            nom = 'el_passtrig_n==1 && el_n==1 && %s==1  && ph_hasPixSeed[%s[0]]==0 && dr_ph1_trigEle > 0.4' %( phcutnom, phidxnom )
-            inv = 'el_passtrig_n==1 && el_n==1 && %s==1  && ph_hasPixSeed[%s[0]]==1 && dr_ph1_trigEle > 0.4 '%( phcutinv, phidxinv )
+            nom = 'el_passtrig_n>0 && el_n==1 && %s==1  && ph_hasPixSeed[%s[0]]==0 && dr_ph1_trigEle > 0.4' %( phcutnom, phidxnom )
+            inv = 'el_passtrig_n>0 && el_n==2 && %s==1  && ph_hasPixSeed[%s[0]]==1 && dr_ph1_trigEle > 0.4 '%( phcutinv, phidxinv )
 
             if mc : 
                 return { 'nom' : nom + ' && ph_truthMatch_el[%s[0]] ' %phidxnom, 'inv' : inv +  ' && ph_truthMatch_el[%s[0]]'%phidxinv }

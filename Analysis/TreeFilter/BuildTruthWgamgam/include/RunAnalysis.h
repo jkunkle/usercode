@@ -41,6 +41,7 @@ class RunModule : public virtual RunModuleBase {
         void BuildPhoton      ( ModuleConfig & config ) const;
         void BuildNeutrino    ( ModuleConfig & config ) const;
         void BuildWboson      ( ModuleConfig & config ) const;
+        void BuildZboson      ( ModuleConfig & config ) const;
         void BuildEvent       ( ModuleConfig & config ) const;
         bool FilterElec       ( ModuleConfig & config ) const;
         bool FilterMuon       ( ModuleConfig & config ) const;
@@ -58,6 +59,7 @@ namespace OUT {
     Int_t              phot_n;
     Int_t              nu_n;
     Int_t              w_n;
+    Int_t              z_n;
 
     std::vector<float>  *lep_pt;
     std::vector<float>  *lep_eta;
@@ -86,6 +88,11 @@ namespace OUT {
     std::vector<float>  *w_e;
     std::vector<Bool_t>  *w_isPos;
 
+    std::vector<float>  *z_pt;
+    std::vector<float>  *z_eta;
+    std::vector<float>  *z_phi;
+    std::vector<float>  *z_e;
+
     Float_t             leadPhot_pt;
     Float_t             sublPhot_pt;
 
@@ -103,6 +110,7 @@ namespace OUT {
     Float_t             phot_photDR;
 
     Float_t             mt_lepnu;
+    Float_t             mt_lepnuz;
     Float_t             mt_lepphot1nu;
     Float_t             mt_lepphot2nu;
     Float_t             mt_lepphotphotnu;

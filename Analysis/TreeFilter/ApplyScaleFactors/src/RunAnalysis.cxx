@@ -1021,14 +1021,3 @@ ValWithErr RunModule::GetValsFromGraph( const TGraphAsymmErrors *graph, float pt
     return result;
 
 }
-
-
-
-
-
-
-   
-
-
-        
-

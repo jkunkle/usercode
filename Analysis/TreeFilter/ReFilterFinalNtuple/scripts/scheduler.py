@@ -21,69 +21,70 @@ jobs_data = [
         #(base, 'job_muon_2012b_Jan22rereco'),
         #(base, 'job_muon_2012c_Jan22rereco'),
         #(base, 'job_muon_2012d_Jan22rereco'),
-        #(base, 'job_electron_2012a_Jan22rereco'),
-        #(base, 'job_electron_2012b_Jan22rereco'),
-        #(base, 'job_electron_2012c_Jan2012rereco'),
-        #(base, 'job_electron_2012d_Jan22rereco'),
-        (base, 'job_2muon_2012a_Jan22rereco'),
-        (base, 'job_2muon_2012b_Jan22rereco'),
-        (base, 'job_2muon_2012c_Jan22rereco'),
-        (base, 'job_2muon_2012d_Jan22rereco'),
-        (base, 'job_2electron_2012a_Jan22rereco'),
-        (base, 'job_2electron_2012b_Jan22rereco'),
-        (base, 'job_2electron_2012c_Jan22rereco'),
-        (base, 'job_2electron_2012d_Jan22rereco'),
+        (base, 'job_electron_2012a_Jan22rereco'),
+        (base, 'job_electron_2012b_Jan22rereco'),
+        (base, 'job_electron_2012c_Jan2012rereco'),
+        (base, 'job_electron_2012d_Jan22rereco'),
+        #(base, 'job_2muon_2012a_Jan22rereco'),
+        #(base, 'job_2muon_2012b_Jan22rereco'),
+        #(base, 'job_2muon_2012c_Jan22rereco'),
+        #(base, 'job_2muon_2012d_Jan22rereco'),
+        #(base, 'job_2electron_2012a_Jan22rereco'),
+        #(base, 'job_2electron_2012b_Jan22rereco'),
+        #(base, 'job_2electron_2012c_Jan22rereco'),
+        #(base, 'job_2electron_2012d_Jan22rereco'),
 ]
 jobs_mc = [
         #(base, 'job_NLO_WAA_FSR'),
         #(base, 'job_NLO_WAA_ISR'),
-        (base, 'job_NLO_WAA_FSR_PtG500MeV'),
-        (base, 'job_NLO_WAA_ISR_PtG500MeV'),
+        #(base, 'job_NLO_WAA_FSR_PtG500MeV'),
+        #(base, 'job_NLO_WAA_ISR_PtG500MeV'),
         #(base, 'job_summer12_Wgg_FSR'),
         #(base, 'job_summer12_WAA_ISR'),
-        (base, 'job_summer12_DYJetsToLL_s10PhOlap'),
-        (base, 'job_summer12_Wg'),
-        (base, 'job_summer12_Zg_s10'),
-        (base, 'job_summer12_Wjets'),
-        (base, 'job_summer12_WH_ZH_125'),
-        (base, 'job_summer12_WW_2l2nu'),
-        (base, 'job_summer12_WZ_2l2q'),
-        (base, 'job_summer12_WZ_3lnu'),
-        (base, 'llaa_nlo_ggNtuple' ),
+        #(base, 'job_summer12_DYJetsToLL_s10PhOlap'),
+        #(base, 'job_summer12_Wg'),
+        #(base, 'job_summer12_Zg_s10'),
+        #(base, 'job_summer12_Wjets'),
+        #(base, 'job_summer12_WH_ZH_125'),
+        #(base, 'job_summer12_WW_2l2nu'),
+        #(base, 'job_summer12_WZ_2l2q'),
+        #(base, 'job_summer12_WZ_3lnu'),
+        #(base, 'job_summer12_WZ_lljj'),
+        #(base, 'llaa_nlo_ggNtuple' ),
 
         ####(base, 'job_summer12_ttjets_1lPhOlap'),
         ####(base, 'job_summer12_ttjets_2lPhOlap'),
         ####(base, 'job_summer12_ttjets_1l'),
         ####(base, 'job_summer12_ttjets_2l'),
 
-        (base, 'job_summer12_WgPhOlap'),
-        (base, 'job_summer12_WjetsPhOlap'),
-        (base, 'job_summer12_ggZZ_2l2l'),
-        (base, 'job_summer12_ggZZ_4l'),
-        (base, 'job_summer12_ZZZ'),
-        (base, 'job_summer12_ZZ_2e2mu'),
-        (base, 'job_summer12_ZZ_2e2tau'),
-        (base, 'job_summer12_ZZ_2l2nu'),
-        (base, 'job_summer12_ZZ_2l2q'),
-        (base, 'job_summer12_ZZ_2mu2tau'),
-        (base, 'job_summer12_ZZ_2q2nu'),
-        (base, 'job_summer12_ZZ_4e'),
-        (base, 'job_summer12_ZZ_4mu'),
-        (base, 'job_summer12_ZZ_4tau'),
-        (base, 'job_summer12_WWg'),
-        (base, 'job_summer12_WZZ'),
-        (base, 'job_summer12_WWW'),
-        (base, 'job_summer12_WWZ'),
-        (base, 'job_summer12_ttg'),
-        (base, 'job_summer12_t_s'),
-        (base, 'job_summer12_t_t'),
-        (base, 'job_summer12_t_tW'),
-        (base, 'job_summer12_tbar_s'),
-        (base, 'job_summer12_tbar_t'),
-        (base, 'job_summer12_tbar_tW'),
-        (base, 'job_summer12_ttW'),
-        (base, 'job_summer12_ttZ'),
-        (base, 'job_jfaulkne_WZA'),
+        #(base, 'job_summer12_WgPhOlap'),
+        #(base, 'job_summer12_WjetsPhOlap'),
+        #(base, 'job_summer12_ggZZ_2l2l'),
+        #(base, 'job_summer12_ggZZ_4l'),
+        #(base, 'job_summer12_ZZZ'),
+        #(base, 'job_summer12_ZZ_2e2mu'),
+        #(base, 'job_summer12_ZZ_2e2tau'),
+        #(base, 'job_summer12_ZZ_2l2nu'),
+        #(base, 'job_summer12_ZZ_2l2q'),
+        #(base, 'job_summer12_ZZ_2mu2tau'),
+        #(base, 'job_summer12_ZZ_2q2nu'),
+        #(base, 'job_summer12_ZZ_4e'),
+        #(base, 'job_summer12_ZZ_4mu'),
+        #(base, 'job_summer12_ZZ_4tau'),
+        #(base, 'job_summer12_WWg'),
+        #(base, 'job_summer12_WZZ'),
+        #(base, 'job_summer12_WWW'),
+        #(base, 'job_summer12_WWZ'),
+        #(base, 'job_summer12_ttg'),
+        #(base, 'job_summer12_t_s'),
+        #(base, 'job_summer12_t_t'),
+        #(base, 'job_summer12_t_tW'),
+        #(base, 'job_summer12_tbar_s'),
+        #(base, 'job_summer12_tbar_t'),
+        #(base, 'job_summer12_tbar_tW'),
+        #(base, 'job_summer12_ttW'),
+        #(base, 'job_summer12_ttZ'),
+        #(base, 'job_jfaulkne_WZA'),
 
 
         ###(base, 'job_summer12_diphoton_box_10to25'),
@@ -134,23 +135,23 @@ top_configs = [
     # 'output_name' : 'LepGammaGammaFinalElPSVOldWindowUnblindAll_2015_12_11',
     # 'tag'         : 'elFinal'
     #},
-    #---------------------------------------
-    # ZGG nominal samples
-    #---------------------------------------
-    {   
-     'module'      : 'ConfFilter.py', 
-     'args'        : {'function' : 'make_final_mumu' },
-     'input_name'  : 'LepLepGammaGammaNoPhID_2015_11_09',
-     'output_name' : 'LepLepGammaGammaFinalMuMuUnblindAll_2015_12_12',
-     'tag'         : 'mumuFinal'
-    },
-    {   
-     'module'      : 'ConfFilter.py', 
-     'args'        : {'function' : 'make_final_elel' },
-     'input_name'  : 'LepLepGammaGammaNoPhID_2015_11_09',
-     'output_name' : 'LepLepGammaGammaFinalElElUnblindAll_2015_12_12',
-     'tag'         : 'elelFinal'
-    },
+    ##---------------------------------------
+    ## ZGG nominal samples
+    ##---------------------------------------
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_mumu' },
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_11_09',
+    # 'output_name' : 'LepLepGammaGammaFinalMuMuUnblindAll_2015_12_12',
+    # 'tag'         : 'mumuFinal'
+    #},
+    #{   
+    # 'module'      : 'ConfFilter.py', 
+    # 'args'        : {'function' : 'make_final_elel' },
+    # 'input_name'  : 'LepLepGammaGammaNoPhID_2015_11_09',
+    # 'output_name' : 'LepLepGammaGammaFinalElElUnblindAll_2015_12_12',
+    # 'tag'         : 'elelFinal'
+    #},
     #---------------------------------------
     # WGG samples for jet fakes
     #---------------------------------------
@@ -161,35 +162,35 @@ top_configs = [
     # 'output_name' : 'LepGammaGammaNoPhIDNoEleOlapRMVetoCSEVSeedBoth_2015_11_30',
     # 'tag'         : 'vetoBothloose'
     #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_looseID_invCSEVLead', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhIDNoEleOlapRM_2015_11_30',
-    # 'output_name' : 'LepGammaGammaNoPhIDNoEleOlapRMInvCSEVLead_2015_11_30',
-    # 'tag'         : 'invLeadloose'
-    #},
-    #{   
-    # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_looseID_invCSEVSubl', 'blind_pt' : 'None'},
-    # 'input_name'  : 'LepGammaGammaNoPhIDNoEleOlapRM_2015_11_30',
-    # 'output_name' : 'LepGammaGammaNoPhIDNoEleOlapRMInvCSEVSubl_2015_11_30',
-    # 'tag'         : 'invSublloose'
-    #},
-    #---------------------------------------
-    # WGG samples for final plots
-    #---------------------------------------
+    {   
+     'module'      : 'ConfFilter.py', 
+     'args'        : {'function' : 'make_looseID_invPSVLead', 'blind_pt' : 'None'},
+     'input_name'  : 'LepGammaGammaNoPhIDNoElOlapRm_2016_02_05',
+     'output_name' : 'LepGammaGammaNoPhIDNoElOlapRmInvPSVLead_2016_02_04',
+     'tag'         : 'invLeadloose'
+    },
+    {   
+     'module'      : 'ConfFilter.py', 
+     'args'        : {'function' : 'make_looseID_invPSVSubl', 'blind_pt' : 'None'},
+     'input_name'  : 'LepGammaGammaNoPhIDNoElOlapRm_2016_02_05',
+     'output_name' : 'LepGammaGammaNoPhIDNoElOlapRmInvPSVSubl_2016_02_04',
+     'tag'         : 'invSublloose'
+    },
+    ##---------------------------------------
+    ## WGG samples for final plots
+    ##---------------------------------------
     #{   
     # 'module'      : 'ConfFilter.py', 
     # 'args'        : {'function' : 'make_final_mu', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'mtvar' : 'mt_trigmu_met', 'phpt' : ' > 15 ', 'csev' : True },
     # 'input_name'  : 'LepGammaGammaNoPhID_2015_11_09',
-    # 'output_name' : 'LepGammaGammaFinalMuUnblindAllNoMtCutPt15_2015_11_11',
+    # 'output_name' : 'LepGammaGammaFinalMuUnblindAllNoMtCut_2015_11_11',
     # 'tag'         : 'muFinalloose'
     #},
     #{   
     # 'module'      : 'ConfFilter.py', 
-    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'nozmass' : True, 'phpt' : ' > 15 ', 'csev' : True },
-    # 'input_name'  : 'LepGammaGammaNoPhIDNoEleOlapRM_2015_11_30',
-    # 'output_name' : 'LepGammaGammaFinalElCSEVNoEleOlapRMNoZCutNoMtCutPt15_2015_11_11',
+    # 'args'        : {'function' : 'make_final_el', 'blind_pt' : 'None', 'mtcut' : ' > -1 ', 'nozmass' : True, 'phpt' : ' > 25 '},
+    # 'input_name'  : 'LepGammaGammaNoPhID_2015_11_09',
+    # 'output_name' : 'LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_11_11',
     # 'tag'         : 'elFinalLoose'
     #},
     #{   

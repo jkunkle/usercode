@@ -510,11 +510,11 @@ def make_final_mumu( alg_list, args ) :
 
     filter_event = Filter('FilterEvent')
     if looseobj :
-        filter_event.cut_nPh = ' == 2 '
-        filter_event.cut_nMu = ' == 2 '
-    else :
         filter_event.cut_nPh = ' > 1 '
         filter_event.cut_nMu = ' > 1 '
+    else :
+        filter_event.cut_nPh = ' == 2 '
+        filter_event.cut_nMu = ' == 2 '
 
     if not looseobj :
         filter_event.cut_dr_lep_ph1 = ' > 0.4 '

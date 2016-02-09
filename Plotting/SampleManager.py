@@ -76,6 +76,7 @@ class Sample :
 
         # if isSignal is true the sample will be drawn as a line and not stacked, default=False
         self.isSignal = kwargs.get('isSignal', False)
+        self.lineStyle = kwargs.get('sigLineStyle', 7 )
 
         # if the sample is to be used as a ratio
         self.isRatio = kwargs.get('isRatio', False)
@@ -188,6 +189,9 @@ class Sample :
     def reset_status( self ) :
         """ Reset sample to the initial status """
         self.isActive = self.isActiveReq
+
+    def getLineStyle( self ) :
+        return self.lineStyle
 
 class LegendConfig :
 
@@ -355,7 +359,8 @@ class DrawConfig :
             rootslabel .SetNDC()
             cmslabel   .SetNDC()
 
-            extlabel  .SetTextSize(0.045)
+            if not labelStyle.count( 'paper') :
+                extlabel  .SetTextSize(0.045)
             rootslabel .SetTextSize(0.045)
             cmslabel  .SetTextSize(0.055)
 
@@ -364,7 +369,8 @@ class DrawConfig :
             #rootslabel.SetText(0.65, 0.93, '#font[132]{#sqrt{s} = 8 TeV, L = 19.4 fb^{-1} }' )
             rootslabel.SetText(0.73, 0.93, '19.4 fb^{-1} (8 TeV)' )
 
-            labels.append(extlabel)
+            if not labelStyle.count('paper') :
+                labels.append(extlabel)
             labels.append(cmslabel)
             labels.append(rootslabel)
 
@@ -386,14 +392,11 @@ class DrawConfig :
 
         label = ROOT.TLatex()
         label.SetNDC()
-        label.SetTextSize( 0.05 )
+        label.SetTextSize( 0.045 )
         xval = 0.6
         yval = 0.7
         if location is None : 
-            if self.curr_legend is not None :
-                xval = self.curr_legend.GetX1()
-                yval = self.curr_legend.GetY1()
-                yval -= 0.1
+            print 'Please give a location for the label'
         elif isinstance(location, tuple) : 
             xval = location[0]
             yval = location[1]
@@ -865,6 +868,9 @@ class SampleManager :
         # a DrawConfig was associated to
         self.id = str(uuid.uuid4())
 
+        # keep track if a sample group has been added
+        self.added_sample_group=False
+
             
     #--------------------------------
     def create_sample( self, name, **kwargs ) :
@@ -1079,6 +1085,7 @@ class SampleManager :
         sel_samps = self.get_samples()
         for samp in sel_samps :
             samp.isActive=False
+            samp.isActiveReq=False
 
     #--------------------------------
     def clear_all(self) :
@@ -2076,8 +2083,11 @@ class SampleManager :
         self.ReadSamples(self.samples_conf )
 
     #--------------------------------
-    def AddSample(self, name, path=None, filekey=None, isData=False, scale=None, isSignal=False, drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, isActive=True, required=False, displayErrBand=False, useXSFile=False, XSName=None, legend_name=None) :
+    def AddSample(self, name, path=None, filekey=None, isData=False, scale=None, isSignal=False, sigLineStyle=7, drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, isActive=True, required=False, displayErrBand=False, useXSFile=False, XSName=None, legend_name=None) :
         """ Create an entry for this sample """
+
+        if self.added_sample_group :
+            print 'WARNING -- Please add all samples before adding a sample group, othwerise you may see funny behavior'
 
         # get all root files under this sample
         input_files = []
@@ -2122,7 +2132,7 @@ class SampleManager :
                     thisscale *= self.weightMap[xsname]
                     print 'Update scale for %s' %name
 
-            thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, displayErrBand=displayErrBand, color=plotColor, drawRatio=drawRatio, scale=thisscale, legendName=legend_name)
+            thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, sigLineStyle=sigLineStyle, displayErrBand=displayErrBand, color=plotColor, drawRatio=drawRatio, scale=thisscale, legendName=legend_name)
             thisSample.AddFiles( input_files, self.treeName, self.readHists )
 
             self.samples.append(thisSample)
@@ -2191,7 +2201,7 @@ class SampleManager :
         return input_files
 
     #--------------------------------
-    def AddSampleGroup(self, name, input_samples=[], isData=False, scale=None, isSignal=False, drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, legend_name=None, isActive=True, displayErrBand=False ) :
+    def AddSampleGroup(self, name, input_samples=[], isData=False, scale=None, isSignal=False, sigLineStyle=7,drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, legend_name=None, isActive=True, displayErrBand=False ) :
         """Make a new sample from any number of samples that have already been added via AddSample
 
            For example if a process is made of a number of individual samples that each have their
@@ -2200,6 +2210,7 @@ class SampleManager :
            Group Samples with the list of input samples and the new name.  
         """
 
+        self.added_sample_group=True
         #check if input samples actually exist
         available_samples = []
         for samp in input_samples :
@@ -2221,7 +2232,7 @@ class SampleManager :
             thisscale *= scale
         
         print 'Grouping %s' %name
-        thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, displayErrBand=displayErrBand, color=plotColor, drawRatio=drawRatio, scale=thisscale, legendName=legend_name)
+        thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, sigLineStyle=sigLineStyle, displayErrBand=displayErrBand, color=plotColor, drawRatio=drawRatio, scale=thisscale, legendName=legend_name)
 
         for samp in available_samples :
 
@@ -2354,7 +2365,7 @@ class SampleManager :
                 if samp.hist is not None :
                     samp.hist.Rebin(rebin)
 
-        draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel, 'ymin' : ymin, 'ymax' : ymax, 'logy' : logy} , label_config=label_config, legend_config=legend_config)
+        draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel, 'ymin' : ymin, 'ymax' : ymax, 'logy' : logy, 'rmin' : rmin, 'rmax' : rmax} , label_config=label_config, legend_config=legend_config)
         self.MakeStack(draw_config )
 
 
@@ -2448,8 +2459,8 @@ class SampleManager :
             print kstest
 
             label_style = label_config.get('labelStyle', '')
-            if not label_style.count( 'prelim' ) :
-                draw_config.label_config['statsLabel'] = '#chi^{2} = %.1f, p0 = %.3f, KS = %.3f ' %(chi2sum , pzero, kstest )
+            if not label_style.count( 'nostats' ) :
+                draw_config.label_config['statsLabel'] = '#chi^{2} = %.1f, p0 = %.3f ' %(chi2sum , pzero )
 
         self.DrawCanvas(self.curr_stack, draw_config, datahists=datahists, sighists=self.get_signal_samples(), errhists=['err_band']  )
 
@@ -2813,7 +2824,6 @@ class SampleManager :
         if sample.hist is not None :
             print 'Histogram already extracted for %s' %sampname
             return
-
 
         # Draw the histogram.  Use histpars as the bin limits if given
         if sample.IsGroupedSample() :
@@ -3599,7 +3609,7 @@ class SampleManager :
             for samp in sighists : 
                 if samp.isActive :
                     samp.hist.SetLineWidth(3)
-                    samp.hist.SetLineStyle(7)
+                    samp.hist.SetLineStyle(samp.getLineStyle())
                     samp.hist.Draw('HIST same')
 
         if errhists :
@@ -3794,286 +3804,6 @@ class SampleManager :
             legname = legend_entries[idx]
             self.curr_legend.AddEntry(samp.hist, legname,  drawopt)
             self.curr_legend.SetMargin(0.2)
-
-    def DrawDiPhotonParallel( self, varexp, selection, histpars=None, labelStyle=None )  :
-
-        doratio=False
-
-        self.clear_all()
-
-        for sample in list(self.get_samples()) :
-            if sample.isActive :
-                negsample = self.clone_sample( oldname=sample.name, newname='Neg%s' %sample.name, temporary=True )
-                negsample.isSignal=False
-                negsample.isData=False
-                self.create_hist( sample, varexp, selection, histpars )
-                self.create_hist( negsample, '-1*'+varexp.replace('[0]', '[1]'), selection, histpars )
-                sample.hist.Add( negsample.hist )
-
-        if len(histpars) == 4 :
-            self.variable_rebinning(histpars[3]) 
-
-        self.MakeStack(varexp, )
-
-        if doratio == True or doratio == 1 :
-            self.create_standard_ratio_canvas()
-        elif doratio == 2 :
-            self.create_large_ratio_canvas()
-        else :
-            self.create_standard_canvas() 
-
-        ymin = None
-        ymax = None
-        ymax_scale=None
-        (ymin, ymax) = self.calc_yaxis_limits( ymin, ymax, ymax_scale )
-        
-        topcan = self.curr_stack
-
-        if isinstance(topcan, ROOT.TCanvas ) :
-            self.set_canvas_default_formatting( topcan, doratio, logy=logy )
-            topcan.DrawClonePad()
-
-        elif isinstance(topcan, ROOT.THStack ) :
-            topcan.Draw('AH')
-            topcan.SetMinimum(ymin)
-            topcan.SetMaximum(ymax)
-            topcan.GetYaxis().SetTickLength(0)
-            topcan.GetXaxis().SetTickLength(0)
-
-            #position = (topcan.GetHistogram().GetXaxis().GetXmax() + topcan.GetHistogram().GetXaxis().GetXmin() )/2.
-            position=0
-
-            f1= ROOT.TF1('f1','-x',0,topcan.GetHistogram().GetXaxis().GetXmax() );
-            #newxaxis_pos = ROOT.TGaxis(topcan.GetHistogram().GetXaxis().GetXmin()  ,ROOT.gPad.GetUymin(),
-            #                      topcan.GetHistogram().GetXaxis().GetXmax() , ROOT.gPad.GetUymin(), 0,topcan.GetHistogram().GetXaxis().GetXmax() , 510, '+' )
-            newxaxis_pos = ROOT.TGaxis(0 ,ROOT.gPad.GetUymin(),
-                                  topcan.GetHistogram().GetXaxis().GetXmax() , ROOT.gPad.GetUymin(), 0,topcan.GetHistogram().GetXaxis().GetXmax() , 505, '+' )
-
-            newxaxis_neg = ROOT.TGaxis(topcan.GetHistogram().GetXaxis().GetXmin()  , ROOT.gPad.GetUymin(),
-                                  0, ROOT.gPad.GetUymin(), 'f1', 505, '+' )
-
-            newxaxis_pos.SetTitle( '#sigma i#etai#eta ' )
-
-            self.curr_decorations.append(newxaxis_pos)
-            self.curr_decorations.append(f1)
-            self.curr_decorations.append(newxaxis_neg)
-            newxaxis_pos.Draw()
-            newxaxis_neg.Draw()
-            newyaxis = ROOT.TGaxis( 0,ROOT.gPad.GetUymin(),
-                                   0,topcan.GetHistogram().GetMaximum(), 0, topcan.GetHistogram().GetMaximum(), 510, '+-' )
-            self.curr_decorations.append(newyaxis)
-            newyaxis.Draw()
-
-            alabel =  'Events'
-            axis_label_pos = 0.45
-            subl_label = ROOT.TLatex( 0.0, 0.85, 'Sublead Photon' )
-            lead_label = ROOT.TLatex( 0.7, 0.85, 'Lead Photon' )
-            axis_label = ROOT.TLatex( 0.5, 0.92, alabel)
-            lead_label.SetNDC()
-            axis_label.SetNDC()
-            subl_label.SetNDC()
-            lead_label.SetX(0.7)
-            lead_label.SetY(0.85)
-            subl_label.SetX(0.12)
-            subl_label.SetY(0.85)
-            axis_label.SetX(axis_label_pos)
-            axis_label.SetY(0.92)
-            subl_label.Draw()
-            lead_label.Draw()
-            axis_label.Draw()
-
-            self.curr_decorations.append(lead_label)
-            self.curr_decorations.append(subl_label)
-            self.curr_decorations.append(axis_label)
-
-            self.set_stack_default_formatting( topcan, doratio )
-
-
-        # draw the data
-        for dsamp in self.get_samples(isData=True):
-            dsamp.hist.Draw('PE same')
-
-        # draw the signals
-        sigsamps = self.get_samples(isSignal=True)
-        for samp in sigsamps : 
-            if samp.isActive :
-                samp.hist.SetLineWidth(2)
-                # LINE STYLE
-                samp.hist.SetLineStyle(7)
-                samp.hist.Draw('HIST same')
-
-        if doratio :
-            ratiosamps =  self.get_samples( isRatio=True )
-            self.set_ratio_default_formatting( self.curr_canvases['bottom'], ratiosamps, draw_config )
-
-            for idx, samp in enumerate(ratiosamps) :
-                drawopt = 'same'
-                if idx == 0 :
-                    drawopt = ''
-                if ratiosamp.isSignal :
-                    drawopt += 'HIST'
-
-                ratiosamp.hist.Draw(drawopt)
-
-        # draw the legend
-        if self.curr_legend is not None :
-            self.curr_legend.Draw()
-
-        # draw the plot status label
-        if labelStyle is None :
-            atlaslabel = ROOT.TLatex()
-            atlaslabel.SetNDC()
-            atlaslabel.SetTextSize( 0.04 )
-            atlaslabel.SetText(0.35, 0.85, 'CMS Internal')
-            atlaslabel.Draw()
-
-        xlabel=None
-        if xlabel is not None :
-            if doratio :
-                ratiosamp = self.get_samples(isRatio=True)[0]
-                ratiosamp.hist.GetXaxis().SetTitle(xlabel)
-            else :
-                if isinstance(topcan, ROOT.THStack ) :
-                    topcan.GetHistogram().GetXaxis().SetTitle(xlabel)
-
-                for samp in self.get_samples() :
-                    if samp.hist :
-                        samp.hist.GetXaxis().SetTitle(xlabel)
-
-
-        ylabel=None
-
-        if ylabel is not None :
-            if isinstance(topcan, ROOT.THStack ) :
-                topcan.GetHistogram().GetYaxis().SetTitle(ylabel)
-
-        logy=False
-        if logy :
-            self.curr_canvases['top'].SetLogy()
-
-    def CompareDiPhotonParallel( self, varexp, selections,samples, histpars=None )  :
-
-        doratio=False
-
-        if len(selections) != len(samples) :
-            print 'Size of selections list must be the same as the size of the samples list'
-
-        self.clear_all()
-
-        for selection, sname in zip(selections, samples) :
-            slist = self.get_samples( name=sname )
-            if not slist :
-                print 'Could not retrieve sample, %s' %sname
-            if len(slist) > 1 :
-                print 'Located multiple samples with name %s' %sname
-
-            sample = slist[0]
-
-            negsample = self.clone_sample( oldname=sname, newname='Neg%s' %sample, temporary=True )
-            self.create_hist( sample, varexp, selection, histpars )
-            self.create_hist( negsample, '-1*'+varexp.replace('[0]', '[1]'), selection, histpars )
-
-            sample.hist.Add( negsample.hist )
-            created_samples.append(sample)
-
-        #if len(histpars) == 4 :
-        #    self.variable_rebinning(histpars[3]) 
-
-        if doratio :
-            self.create_top_canvas_for_ratio('same')
-        else :
-            self.create_standard_canvas('same')
-
-        self.curr_canvases['same'].cd()
-
-        calcymax = 0
-        calcymin = 0.5
-        for samp in created_samples :
-            max = samp.hist.GetMaximum()
-            min = samp.hist.GetMaximum()
-            if normalize :
-                max = max / samp.hist.Integral()
-                min = min / samp.hist.Integral()
-            if max > calcymax :
-                calcymax = max
-            if min < calcymin :
-                calcymin = min
-
-        #if ymax is None :
-        #    ymax = calcymax
-        #if ymin is None :
-        #    ymin = calcymin
-        #if ymax_scale is not None :
-        #    ymax *= ymax_scale
-        #else :
-        #    ymax *= 1.2
-        #ymin *= 0.8
-
-        first = True
-
-        colors = [s.color for s in created_samples ]
-        drawHist = [0]*len(created_samples)
-
-        for samp, color, dh in zip(created_samples, colors, drawHist) :
-            drawcmd = 'same'
-            if first :
-                drawcmd = ''
-                first = False
-            if samp.isSignal or dh :
-                drawcmd+='hist'
-
-            if ylabel is not None :
-                samp.hist.GetYaxis().SetTitle( ylabel )
-            if not doratio and xlabel is not None :
-                samp.hist.GetXaxis().SetTitle( xlabel )
-
-            samp.hist.SetLineColor( color)
-            samp.hist.SetLineWidth( 2 )
-            samp.hist.SetMarkerSize( 1.1 )
-            samp.hist.SetMarkerStyle( 20 )
-            samp.hist.SetMarkerColor(color )
-            #samp.hist.GetXaxis().SetLabelSize(0.05)
-            #samp.hist.GetXaxis().SetTitleSize(0.05)
-            #samp.hist.GetYaxis().SetLabelSize(0.05)
-            #samp.hist.GetYaxis().SetTitleSize(0.05)
-            #samp.hist.GetYaxis().SetTitleOffset(2.0)
-            samp.hist.SetStats(0)
-
-            if normalize :
-                samp.hist.Scale(1.0/samp.hist.Integral())
-                #samp.hist.DrawNormalized(drawcmd+'goff')
-            #else :
-
-            samp.hist.GetYaxis().SetRangeUser(ymin, ymax)
-
-            samp.hist.Draw(drawcmd+'goff')
-
-        if doratio :
-            #rname = created_samples[0].name + '_ratio'
-            for samp, color in zip(created_samples[1:], colors[1:]) :
-                rcolor = color
-                if len( created_samples ) == 2 :
-                    rcolor = ROOT.kBlack
-
-                rname = 'ratio%s' %samp.name
-                self.create_ratio_sample( rname, num_sample = created_samples[0], den_sample=samp, color=rcolor)
-
-        self.curr_canvases['same'].Draw()
-
-        self.MakeStack(varexp, )
-
-        #if ylabel is None :
-        #    bin_width = ( histpars[2] - histpars[1] )/histpars[0]
-        #    bin_width_f = ( histpars[2] - histpars[1] )/float(histpars[0])
-        #    if math.fabs(bin_width_f - bin_width) != 0 :
-        #        ylabel = 'Events / %.1f GeV' %bin_width_f
-        #    else :
-        #        ylabel = 'Events / %d GeV' %bin_width
-        #if rlabel is None :
-        #    rlabel = 'Data / MC'
-            
-        self.DrawCanvas(self.curr_stack, sighists=self.get_signal_samples(), datahists=['Data'])
-
 
     def Draw2D( self, varexp, selections, sample_names, histpars=None, drawopts='', xlabel=None, ylabel=None) :
 

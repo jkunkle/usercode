@@ -70,9 +70,9 @@ def main() :
                 if var == 'sigmaIEIE' :
                     draw_str_fake = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIENoEleVeto_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %( ptmin, ptmax, eta, var, _sieie_cuts[eta][1] )
                 elif var == 'chIsoCorr' :
-                    draw_str_fake = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoChIso_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1  && ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %( ptmin, ptmax, eta, var, _chIso_cuts[eta][1] )
+                    draw_str_fake = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoChIsoNoEleVeto_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1  && ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %( ptmin, ptmax, eta, var, _chIso_cuts[eta][1] )
                 elif var == 'phoIsoCorr' :
-                    draw_str_fake = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoPhoIso_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1  && ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %( ptmin, ptmax, eta, var, _phoIso_cuts[eta][1] )
+                    draw_str_fake = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoPhoIsoNoEleVeto_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1  && ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %( ptmin, ptmax, eta, var, _phoIso_cuts[eta][1] )
 
 
                 samplesLLG.Draw('ph_%s[0]'%var, draw_str_fake, binning[var][eta] )

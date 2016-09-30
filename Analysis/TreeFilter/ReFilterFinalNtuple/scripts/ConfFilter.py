@@ -92,22 +92,28 @@ def make_final_mu( alg_list, args ) :
     alg_list.append( Filter('CalcEventVars') )
 
     filter_event = Filter('FilterEvent')
-    filter_event.cut_nPh = ' == 2 '
-    # remove the explicit cut on the number of electrons/muons
-    filter_event.cut_nMu = ' == 1 '
-    filter_event.cut_nEl = ' == 0 '
+    if looseobj :
+        filter_event.cut_nPh = ' > 1 '
+        filter_event.cut_nMu = ' > 0 '
+    else :
+        filter_event.cut_nPh = ' == 2 '
+        filter_event.cut_nMu = ' == 1 '
+        filter_event.cut_nEl = ' == 0 '
 
     if not notrig :
         filter_event.cut_nMuTrig = ' > 0 '
 
     #filter_event.cut_dr_lep_ph1 = ' > 0.4 '
     #filter_event.cut_dr_lep_ph2 = ' > 0.4 '
-    filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
-    filter_event.cut_leadPhot_trigMuDR = ' > 0.4 '
-    filter_event.cut_sublPhot_trigMuDR = ' > 0.4 '
 
-    filter_event.cut_MuTrig = ' == True '
-    filter_event.cut_isEEEE = ' == False '
+    if not looseobj :
+        filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
+        filter_event.cut_leadPhot_trigMuDR = ' > 0.4 '
+        filter_event.cut_sublPhot_trigMuDR = ' > 0.4 '
+
+    if not looseobj :
+        filter_event.cut_MuTrig = ' == True '
+        filter_event.cut_isEEEE = ' == False '
 
     # remove diphoton mass cut
     #filter_event.cut_mgg = ' > 15 '
@@ -141,6 +147,9 @@ def make_final_el( alg_list, args ) :
     notrig = args.get('notrig', False )
     print 'notrig = ', notrig
 
+    csev = args.get('csev', False )
+    print 'csev = ', csev
+
     invpixlead = args.get('invpixlead', False )
     print 'invpixlead = ', invpixlead
 
@@ -153,8 +162,14 @@ def make_final_el( alg_list, args ) :
     mtcut = args.get('mtcut', ' > 40')
     print 'mtcut = ', mtcut
 
+    mass_cut = args.get('mass_cut', 10)
+    print 'mass_cut = ', mass_cut
+
     phpt = args.get('phpt', ' > 25 ' )
     print 'phpt = ', phpt
+
+    nelcut = args.get('nelcut', ' == 1 ' )
+    print 'nelcut= ', nelcut
 
     filter_photon = Filter( 'FilterPhoton' )
     filter_photon.cut_ph_medium = ' == True '
@@ -175,41 +190,59 @@ def make_final_el( alg_list, args ) :
     alg_list.append( Filter('CalcEventVars') )
 
     filter_event = Filter('FilterEvent')
-    filter_event.cut_nPh = ' == 2 '
-    # remove the explicit cut on the number of electrons/muons
-    filter_event.cut_nMu = ' == 0 '
-    filter_event.cut_nEl = ' == 1 '
+    if looseobj :
+        filter_event.cut_nPh = ' > 1 '
+        filter_event.cut_nEl = ' > 0 '
+    else :
+        filter_event.cut_nPh = ' == 2 '
+        filter_event.cut_nMu = ' == 0 '
+        filter_event.cut_nEl = nelcut
 
     if not notrig :
         filter_event.cut_nElTrig = ' > 0 '
 
-    if invpixlead :
-        filter_event.cut_hasPixSeed_leadph12 = ' == True '
+    if csev :
+        if invpixlead :
+            filter_event.cut_csev_leadph12 = ' == True '
+        else :
+            filter_event.cut_csev_leadph12 = ' == False '
+        if invpixsubl :
+            filter_event.cut_csev_sublph12 = ' == True '
+        else :
+            filter_event.cut_csev_sublph12 = ' == False '
     else :
-        filter_event.cut_hasPixSeed_leadph12 = ' == False '
-    if invpixsubl :
-        filter_event.cut_hasPixSeed_sublph12 = ' == True '
-    else :
-        filter_event.cut_hasPixSeed_sublph12 = ' == False '
+
+        if invpixlead :
+            filter_event.cut_hasPixSeed_leadph12 = ' == True '
+        else :
+            filter_event.cut_hasPixSeed_leadph12 = ' == False '
+        if invpixsubl :
+            filter_event.cut_hasPixSeed_sublph12 = ' == True '
+        else :
+            filter_event.cut_hasPixSeed_sublph12 = ' == False '
 
     #filter_event.cut_dr_lep_ph1 = ' > 0.4 '
     #filter_event.cut_dr_lep_ph2 = ' > 0.4 '
     #filter_event.cut_dr_trigele_ph1 = ' > 0.4 '
     #filter_event.cut_dr_trigele_ph2 = ' > 0.4 '
-    filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
-    filter_event.cut_leadPhot_trigElDR = ' > 0.4 '
-    filter_event.cut_sublPhot_trigElDR = ' > 0.4 '
+    if not looseobj :
+        filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
+        filter_event.cut_leadPhot_trigElDR = ' > 0.4 '
+        filter_event.cut_sublPhot_trigElDR = ' > 0.4 '
 
-    filter_event.cut_ElTrig = ' == True '
-    filter_event.cut_isEEEE = ' == False '
+    if not looseobj :
+        filter_event.cut_ElTrig = ' == True '
+        filter_event.cut_isEEEE = ' == False '
 
     setattr( filter_event, 'cut_%s' %mtvar, mtcut )
     # remove mgg Cut
     #filter_event.cut_mgg = ' > 15 '
+    mass_min = 91.2 - mass_cut
+    mass_max = 91.2 + mass_cut
     if not nozmass :
         if zmasscr :
             #filter_event.cut_m_lepphph= ' > 86.2 & < 96.2  '
-            filter_event.cut_m_trigelphph= ' > 86.2 & < 96.2  '
+            filter_event.cut_m_trigelphph= ' > %.1f & < %.1f  ' %(mass_min, mass_max )
         else :
             #filter_event.cut_m_lepphph= ' > 86.2 & < 96.2  '
             #filter_event.cut_m_lepph1= ' > 86.2 & < 96.2  '
@@ -217,9 +250,9 @@ def make_final_el( alg_list, args ) :
             #filter_event.invert( 'cut_m_lepphph' )
             #filter_event.invert( 'cut_m_lepph1' )
             #filter_event.invert( 'cut_m_lepph2' )
-            filter_event.cut_m_trigelphph= ' > 86.2 & < 96.2  '
-            filter_event.cut_m_trigelph1= ' > 86.2 & < 96.2  '
-            filter_event.cut_m_trigelph2= ' > 86.2 & < 96.2  '
+            filter_event.cut_m_trigelphph = ' > %.1f & < %.1f  ' %(mass_min, mass_max )
+            filter_event.cut_m_trigelph1  = ' > %.1f & < %.1f  ' %(mass_min, mass_max )
+            filter_event.cut_m_trigelph2  = ' > %.1f & < %.1f  ' %(mass_min, mass_max )
             filter_event.invert( 'cut_m_trigelphph' )
             filter_event.invert( 'cut_m_trigelph1' )
             filter_event.invert( 'cut_m_trigelph2' )
@@ -345,7 +378,7 @@ def make_looseID_noEleVeto( alg_list, args ) :
     alg_list.append( filter_event )
 
 
-def make_looseID_bothEleVeto( alg_list, args ) :
+def make_looseID_bothVetoPSV( alg_list, args ) :
 
 
     filter_muon = Filter( 'FilterMuon' )
@@ -362,7 +395,7 @@ def make_looseID_bothEleVeto( alg_list, args ) :
     alg_list.append( filter_event )
 
 
-def make_looseID_invEleVetoSubl( alg_list, args ) :
+def make_looseID_invPSVSubl( alg_list, args ) :
 
 
     filter_muon = Filter( 'FilterMuon' )
@@ -378,7 +411,7 @@ def make_looseID_invEleVetoSubl( alg_list, args ) :
 
     alg_list.append( filter_event )
 
-def make_looseID_invEleVetoLead( alg_list, args ) :
+def make_looseID_invPSVLead( alg_list, args ) :
 
 
     filter_muon = Filter( 'FilterMuon' )
@@ -394,6 +427,55 @@ def make_looseID_invEleVetoLead( alg_list, args ) :
 
     alg_list.append( filter_event )
 
+def make_looseID_bothVetoCSEV( alg_list, args ) :
+
+
+    filter_muon = Filter( 'FilterMuon' )
+    filter_muon.cut_mu_pt = ' > 10 '
+    alg_list.append(filter_muon)
+
+    alg_list.append( Filter('CalcEventVars') )
+
+    filter_event = Filter('FilterEvent')
+    filter_event.cut_nPh = ' > 1 '
+    filter_event.cut_csev_leadph12 = ' == False '
+    filter_event.cut_csev_sublph12 = ' == False '
+
+    alg_list.append( filter_event )
+
+
+def make_looseID_invCSEVSubl( alg_list, args ) :
+
+
+    filter_muon = Filter( 'FilterMuon' )
+    filter_muon.cut_mu_pt = ' > 10 '
+    alg_list.append(filter_muon)
+
+    alg_list.append( Filter('CalcEventVars') )
+
+    filter_event = Filter('FilterEvent')
+    filter_event.cut_nPh = ' > 1 '
+    filter_event.cut_csev_leadph12 = ' == False '
+    filter_event.cut_csev_sublph12 = ' == True '
+
+    alg_list.append( filter_event )
+
+def make_looseID_invCSEVLead( alg_list, args ) :
+
+
+    filter_muon = Filter( 'FilterMuon' )
+    filter_muon.cut_mu_pt = ' > 10 '
+    alg_list.append(filter_muon)
+
+    alg_list.append( Filter('CalcEventVars') )
+
+    filter_event = Filter('FilterEvent')
+    filter_event.cut_nPh = ' > 1 '
+    filter_event.cut_csev_leadph12 = ' == True '
+    filter_event.cut_csev_sublph12 = ' == False '
+
+    alg_list.append( filter_event )
+
 def make_final_mumu( alg_list, args ) :
 
     invpixlead = args.get('invpixlead', False )
@@ -402,99 +484,105 @@ def make_final_mumu( alg_list, args ) :
     invpixsubl = args.get('invpixsubl', False )
     print 'invpixsubl = ', invpixsubl
 
+    looseobj = args.get('looseobj', False )
+    print 'looseobj = ', looseobj
+
+    notrig = args.get('notrig', False )
+    print 'notrig = ', notrig
+
     filter_photon = Filter( 'FilterPhoton' )
     filter_photon.cut_ph_medium = ' == True '
-    filter_photon.cut_ph_pt = ' > 15 '
+    if not looseobj :
+        filter_photon.cut_ph_pt = ' > 15 '
     filter_photon.cut_ph_csev = ' == False '
     alg_list.append(filter_photon)
 
-    filter_muon = Filter( 'FilterMuon' )
-    filter_muon.cut_mu_pt = ' > 10 '
-    alg_list.append(filter_muon)
+    if not looseobj :
+        filter_muon = Filter( 'FilterMuon' )
+        filter_muon.cut_mu_pt = ' > 10 '
+        alg_list.append(filter_muon)
 
-    filter_ele = Filter( 'FilterElectron' )
-    filter_ele.cut_el_pt = ' > 10 '
-    alg_list.append(filter_ele)
+        filter_ele = Filter( 'FilterElectron' )
+        filter_ele.cut_el_pt = ' > 10 '
+        alg_list.append(filter_ele)
 
     alg_list.append( Filter('CalcEventVars') )
 
     filter_event = Filter('FilterEvent')
-    filter_event.cut_nPh = ' == 2 '
-    filter_event.cut_nMu = ' == 2 '
-    #filter_event.cut_nEl = ' == 0 '
+    if looseobj :
+        filter_event.cut_nPh = ' > 1 '
+        filter_event.cut_nMu = ' > 1 '
+    else :
+        filter_event.cut_nPh = ' == 2 '
+        filter_event.cut_nMu = ' == 2 '
 
-    #filter_event.cut_dr_lep_ph1 = ' > 0.4 '
-    #filter_event.cut_dr_lep_ph2 = ' > 0.4 '
-    #filter_event.cut_dr_subllep_ph1 = ' > 0.4 '
-    #filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
-    #filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
+    if not looseobj :
+        filter_event.cut_dr_lep_ph1 = ' > 0.4 '
+        filter_event.cut_dr_lep_ph2 = ' > 0.4 '
+        filter_event.cut_dr_subllep_ph1 = ' > 0.4 '
+        filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
+        filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
 
-    filter_event.cut_DiMuTrig = ' == True '
-    filter_event.cut_isEEEE = ' == False '
+    if not notrig :
+        filter_event.cut_DiMuTrig = ' == True '
 
-    filter_event.cut_m_mumu = ' > 40 '
+    if not looseobj :
+        filter_event.cut_m_mumu = ' > 40 '
+        filter_event.cut_isEEEE = ' == False '
 
-    #if invpixlead :
-    #    filter_event.cut_hasPixSeed_leadph12 = ' == True '
-    #else :
-    #    filter_event.cut_hasPixSeed_leadph12 = ' == False '
-    #if invpixsubl :
-    #    filter_event.cut_hasPixSeed_sublph12 = ' == True '
-    #else :
-    #    filter_event.cut_hasPixSeed_sublph12 = ' == False '
 
     alg_list.append( filter_event )
 
 def make_final_elel( alg_list, args ) :
 
-    invpixlead = args.get('invpixlead', False )
-    print 'invpixlead = ', invpixlead
+    looseobj = args.get('looseobj', False )
+    print 'looseobj = ', looseobj
 
-    invpixsubl = args.get('invpixsubl', False )
-    print 'invpixsubl = ', invpixsubl
+    notrig = args.get('notrig', False )
+    print 'notrig = ', notrig
 
     filter_photon = Filter( 'FilterPhoton' )
     filter_photon.cut_ph_medium = ' == True '
-    filter_photon.cut_ph_pt = ' > 15 '
+    if not looseobj :
+        filter_photon.cut_ph_pt = ' > 15 '
     filter_photon.cut_ph_csev= ' == False '
     #filter_photon.cut_hasPixSeed = ' == False '
 
     alg_list.append(filter_photon)
 
-    filter_muon = Filter( 'FilterMuon' )
-    filter_muon.cut_mu_pt = ' > 10 '
-    alg_list.append(filter_muon)
-    
-    filter_ele = Filter( 'FilterElectron' )
-    filter_ele.cut_el_pt = ' > 10 '
-    alg_list.append(filter_ele)
+    if not looseobj :
+        filter_muon = Filter( 'FilterMuon' )
+        filter_muon.cut_mu_pt = ' > 10 '
+        alg_list.append(filter_muon)
+        
+        filter_ele = Filter( 'FilterElectron' )
+        filter_ele.cut_el_pt = ' > 10 '
+        alg_list.append(filter_ele)
 
     alg_list.append( Filter('CalcEventVars') )
 
     filter_event = Filter('FilterEvent')
-    filter_event.cut_nPh = ' == 2 '
-    filter_event.cut_nEl = ' == 2 '
+    if looseobj :
+        filter_event.cut_nPh = ' > 1 '
+        filter_event.cut_nEl = ' > 1 '
+    else :
+        filter_event.cut_nPh = ' == 2 '
+        filter_event.cut_nEl = ' == 2 '
     #filter_event.cut_nMu = ' == 0 '
 
-    #filter_event.cut_dr_lep_ph1 = ' > 0.4 '
-    #filter_event.cut_dr_lep_ph2 = ' > 0.4 '
-    #filter_event.cut_dr_subllep_ph1 = ' > 0.4 '
-    #filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
-    #filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
+    if not looseobj :
+        filter_event.cut_dr_lep_ph1 = ' > 0.4 '
+        filter_event.cut_dr_lep_ph2 = ' > 0.4 '
+        filter_event.cut_dr_subllep_ph1 = ' > 0.4 '
+        filter_event.cut_dr_subllep_ph2 = ' > 0.4 '
+        filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
 
-    filter_event.cut_DiElTrig = ' == True '
-    filter_event.cut_isEEEE = ' == False '
+    if not notrig :
+        filter_event.cut_DiElTrig = ' == True '
 
-    filter_event.cut_m_elel = ' > 40 '
-
-    #if invpixlead :
-    #    filter_event.cut_hasPixSeed_leadph12 = ' == True '
-    #else :
-    #    filter_event.cut_hasPixSeed_leadph12 = ' == False '
-    #if invpixsubl :
-    #    filter_event.cut_hasPixSeed_sublph12 = ' == True '
-    #else :
-    #    filter_event.cut_hasPixSeed_sublph12 = ' == False '
+    if not looseobj :
+        filter_event.cut_m_elel = ' > 40 '
+        filter_event.cut_isEEEE = ' == False '
 
     alg_list.append( filter_event )
 

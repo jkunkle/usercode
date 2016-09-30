@@ -96,7 +96,24 @@ def get_default_draw_commands( ) :
              'RR' :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_eta[0])<2.5 && fabs(ph_eta[1]) < 2.5',
            }
 
+def get_photon_vars( fittype, useCsev=False ) :
+
+    if fittype == 'nom' :
+        if useCsev :
+            return ('ph_mediumPassCSEV_n', 'ptSorted_ph_mediumPassCSEV_idx' )
+        else :
+            return ('ph_mediumPassPSV_n' , 'ptSorted_ph_mediumPassPSV_idx' )
+    if fittype == 'inv' :
+        if useCsev :
+            return ('ph_mediumFailCSEV_n', 'ptSorted_ph_mediumFailCSEV_idx' )
+        else :
+            return ('ph_mediumFailPSV_n' , 'ptSorted_ph_mediumFailPSV_idx' )
+
+
 def get_ratio_draw_commands( isConv=None, useCsev=False, useTAndP=False, mc=False ) :
+
+    phcutnom,phidxnom = get_photon_vars( 'nom', useCsev )
+    phcutinv,phidxinv = get_photon_vars( 'inv', useCsev )
 
     if isConv==False :
 
@@ -118,10 +135,15 @@ def get_ratio_draw_commands( isConv=None, useCsev=False, useTAndP=False, mc=Fals
                      'inv'  :'probe_isPhoton && probe_eleVeto == 1 ',
                    }
         else :
-            return { 
-                     'nom'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_eleVeto[0]==0 ',
-                     'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] && ph_eleVeto[0]==1 ',
-                   }
+
+            nom = 'el_passtrig_n==1 && el_n==1 && ph_mediumPassCSEV_n==1  && ph_eleVeto[ptSorted_ph_mediumPassCSEV_idx[0]]==0 && dr_ph1_trigEle > 0.4'
+            inv = 'el_passtrig_n==1 && el_n==1 && ph_mediumFailCSEV_n==1  && ph_eleVeto[ptSorted_ph_mediumFailCSEV_idx[0]]==1 && dr_ph1_trigEle > 0.4 '
+
+            if mc : 
+                return { 'nom' : nom + ' && ph_truthMatch_el[%s[0]] ' %phidxnom, 'inv' : inv +  ' && ph_truthMatch_el[%s[0]]' %phidxinv}
+            else :
+                return { 'nom'  : nom, 'inv'  : inv,}
+
     else :
         if useTAndP:
             return { 
@@ -130,13 +152,11 @@ def get_ratio_draw_commands( isConv=None, useCsev=False, useTAndP=False, mc=Fals
                    }
         else :
 
-            nom = 'el_passtrig_n==1 && el_n==1 && ph_mediumPassPSV_n==1  && ph_hasPixSeed[ptSorted_ph_mediumPassPSV_idx[0]]==0 && dr_ph1_trigEle > 0.4'
-            inv = 'el_passtrig_n==1 && el_n==1 && ph_mediumFailPSV_n==1  && ph_hasPixSeed[ptSorted_ph_mediumFailPSV_idx[0]]==1 && dr_ph1_trigEle > 0.4 '
-                     #'inv'  :'el_passtrig_n>0 && el_n==1 && ph_n==1 && leadPhot_leadLepDR>0.4 && ph_passMedium[0] ',
+            nom = 'el_passtrig_n>0 && el_n==1 && %s==1  && ph_hasPixSeed[%s[0]]==0 && dr_ph1_trigEle > 0.4' %( phcutnom, phidxnom )
+            inv = 'el_passtrig_n>0 && el_n==2 && %s==1  && ph_hasPixSeed[%s[0]]==1 && dr_ph1_trigEle > 0.4 '%( phcutinv, phidxinv )
 
             if mc : 
-
-                return { 'nom' : nom + ' && ph_truthMatch_el[ptSorted_ph_mediumPassPSV_idx[0]] ', 'inv' : inv +  ' && ph_truthMatch_el[ptSorted_ph_mediumFailPSV_idx[0]]' }
+                return { 'nom' : nom + ' && ph_truthMatch_el[%s[0]] ' %phidxnom, 'inv' : inv +  ' && ph_truthMatch_el[%s[0]]'%phidxinv }
             else :
                 return { 'nom'  : nom, 'inv'  : inv,}
 
@@ -334,7 +354,7 @@ def DoElectronFakeCountRatio( outputDir, sample, mode='reco_window' ) :
     pt_bins = [(15,25), (25,40), (40,70)]
     pt_bins_80 = [ (70, 1000000) ]
 
-    eta_bins = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5) ]
+    eta_bins    = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5) ]
     eta_bins_80 = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.4), (2.4, 2.5) ]
 
     pt_eta_bins = {}
@@ -517,7 +537,9 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
     if useCoarseEta :
         subdir += 'CoarseEta'
 
-    dy_sample ='DYJetsToLLPhOlap'
+    #dy_sample_inv ='job_summer12_DYJetsToLL_s10PhOlapRepeat'
+    dy_sample_nom ='job_summer12_DYJetsToLL_s10PhOlap'
+    dy_sample_inv ='job_summer12_DYJetsToLL_s10PhOlap'
 
     useCmsShapeBkg=True
     if usePolyBkg or useExpBkg or useChebyBkg or useBernsteinBkg or useMCTemplateBackground   :
@@ -539,6 +561,7 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
                      (15, 70) : [ (15, 25), (25, 30), (30, 35), (35, 40), (40,45), (45,50), (50,60), (60,70)],
                      (15, 1000000) : [ (15, 25), (25, 30), (30, 35), (35, 40), (40,45), (45,50), (50,60), (60,70), (70, 1000000)],
                      (25, 1000000) : [ (25, 30), (30, 35), (35, 40), (40,45), (45,50), (50,60), (60,70), (70, 1000000)],
+                     (40, 1000000) : [ (40,45), (45,50), (50,60), (60,70), (70, 1000000)],
                    }
     #subl_pt_bins = { (15, 40) : [(15,20),(20,25),(25,30),(30,35),(35,40) ], 
     #                (15, 70) : pt_bins[:-1] ,
@@ -569,6 +592,9 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
     draw_cmds = get_ratio_draw_commands(isConv=isConv, useCsev=useCsev, useTAndP=useTAndP )
     selection_nom = draw_cmds['nom'] 
     selection_inv = draw_cmds['inv'] 
+    
+    phidxnom = get_photon_vars( 'nom', useCsev=useCsev ) [1]
+    phidxinv = get_photon_vars( 'inv', useCsev=useCsev ) [1]
 
     hists = get_3d_mass_ratio_histograms( selection_nom, selection_inv, sample, mass_binning, useHist=useHist, useAbsEta=True, useTAndP=useTAndP )
 
@@ -581,15 +607,26 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
             draw_cmds_mc = get_ratio_draw_commands(isConv=isConv, useCsev=useCsev, useTAndP=useTAndP, mc=False )
             selection_mc_nom = draw_cmds_mc['nom'] 
             selection_mc_inv = draw_cmds_mc['inv'] 
+
+            selection_mc_nom +=  ' && fabs( ph_eta[%s[0]]) '%phidxnom + '> %(etamin)f' 
+            selection_mc_nom +=  ' && fabs(ph_eta[%s[0]]) '%phidxnom + ' < %(etamin)f'
+            selection_mc_nom +=  ' && ph_pt[%s[0]] '%phidxnom + '> %(ptmin)d'
+            selection_mc_nom +=  ' && ph_pt[%s[0]] '%phidxnom + '< %(ptmax)d'  
+
+            selection_mc_inv +=  ' && fabs( ph_eta[%s[0]]) '%phidxinv + '> %(etamin)f' 
+            selection_mc_inv +=  ' && fabs(ph_eta[%s[0]]) '%phidxinv + ' < %(etamin)f'
+            selection_mc_inv +=  ' && ph_pt[%s[0]] '%phidxinv + '> %(ptmin)d'
+            selection_mc_inv +=  ' && ph_pt[%s[0]] '%phidxinv + '< %(ptmax)d'  
+
             if useMCTemplateBackground :
                 bkg_str = '1.0/EffectiveLumi * '
-                results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample=dy_sample, ndKeysSampleBkg=extra_bkg_sample, ndKeysSelection=selection_mc_nom, ndKeysSelectionBkg=bkg_str, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, selType='nom' )
-                results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample=dy_sample, ndKeysSampleBkg=extra_bkg_sample, ndKeysSelection=selection_mc_inv, ndKeysSelectionBkg=bkg_str, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, selType='inv' )
+                results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample=dy_sample_nom, ndKeysSampleBkg=extra_bkg_sample, ndKeysSelection=selection_mc_nom, ndKeysSelectionBkg=bkg_str, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, selType='nom' )
+                results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample=dy_sample_inv, ndKeysSampleBkg=extra_bkg_sample, ndKeysSelection=selection_mc_inv, ndKeysSelectionBkg=bkg_str, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, selType='inv' )
             else :
-                results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample=dy_sample, ndKeysSelection=selection_mc_nom, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, selType='nom' )
-                results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample=dy_sample, ndKeysSelection=selection_mc_inv, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, selType='inv' )
+                results_inv = fit_pt_eta_bins( hists['inv'], pt_eta_bins, ndKeysSample=dy_sample_inv, ndKeysSelection=selection_mc_inv, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['inv'], useTAndP=options.useTAndP, outputDir =outputDir, selType='inv' )
+                results_nom = fit_pt_eta_bins( hists['nom'], pt_eta_bins, ndKeysSample=dy_sample_nom, ndKeysSelection=selection_mc_nom, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, extraBkgHist=hists_extra['nom'], useTAndP=options.useTAndP, outputDir =outputDir, selType='nom' )
         else :
-            template_hist = get_3d_mass_ratio_histograms( selection_nom, selection_inv, dy_sample, mass_binning, useHist=None, useAbsEta=True, useTAndP=useTAndP )
+            template_hist = get_3d_mass_ratio_histograms( selection_nom, selection_inv, dy_sample_nom, mass_binning, useHist=None, useAbsEta=True, useTAndP=useTAndP )
             template_hist_bkg_nom = None
             template_hist_bkg_inv = None
             if useMCTemplateBackground :
@@ -1271,6 +1308,7 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, mcTemplateBkg=None, use
                 fitname = 'fit_%s_eta_%.2f-%.2f_pt_%d-%d' %(selType, etamin, etamax, ptmin, ptmax)
 
             hist_proj = hist.ProjectionZ(fitname, eta_bin_min, eta_bin_max, pt_bin_min, pt_bin_max )
+            ROOT.SetOwnership( hist_proj, False )
 
             # don't rebin for high pt
             #if ptmax == last_pt and ptmin == nextlast_pt:
@@ -1282,6 +1320,7 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, mcTemplateBkg=None, use
 
             if mcTemplate is not None :
                 template_proj = mcTemplate.ProjectionZ(fitname+'_fit', eta_bin_min, eta_bin_max, pt_bin_min, pt_bin_max )
+                ROOT.SetOwnership( template_proj, False )
                 if mcTemplateBkg is not None :
                     template_proj_bkg = mcTemplateBkg.ProjectionZ(fitname+'_fitbkg', eta_bin_min, eta_bin_max, pt_bin_min, pt_bin_max )
                     results = fit_hist_mc_template( hist_proj, template_proj, mcTemplateBkg=template_proj_bkg, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useTAndP=useTAndP, label=hist_proj.GetName(), outputName=output_name, sampMan=sampMan )
@@ -1290,28 +1329,64 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, mcTemplateBkg=None, use
 
             elif ndKeysSample is not None :
 
-                if useTAndP :
-                    pt_eta_selection = ndKeysSelection + ' && fabs(probe_eta) > %f && fabs(probe_eta) < %f && probe_pt > %d && probe_pt < %d ' %( etamin, etamax, ptmin, ptmax )
-                    pt_eta_selection_bkg = '%s ( %s ) ' %( ndKeysSelectionBkg, pt_eta_selection )
-                else :
-                    pt_eta_selection = ndKeysSelection + ' && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d ' %( etamin, etamax, ptmin, ptmax )
-                    pt_eta_selection_bkg = '%s ( %s ) ' %( ndKeysSelectionBkg, pt_eta_selection )
+                if selType == 'nom' :
+                    #file_path = '%s/%s_filt_pt_%d-%d_eta_%.2f-%.2f/Job_0000/tree.root' %(sampMan.base_path, ndKeysSample, ptmin, ptmax, etamin, etamax  )
+                    file_path = '%s/%s_filt_pt_%d-%d_eta_%.2f-%.2f/Job_0000/tree.root' %(sampMan.base_path, ndKeysSample, ptmin, ptmax, etamin, etamax  )
+                if selType == 'inv' :
+                    file_path = '%s/%s_filt_pt_%d-%d_eta_%.2f-%.2f/Job_0000/tree.root' %(sampMan.base_path, ndKeysSample, ptmin, ptmax, etamin, etamax  )
+                open_file = ROOT.TFile.Open( file_path, 'READ') 
 
-                orig_tree = sampMan.get_samples( name=ndKeysSample )[0].chain
-                orig_tree.SetBranchStatus('*', 1)
-                tmpfile = ROOT.TFile.Open( '/tmp/jkunkle/tmp.root', 'RECREATE' )
+                new_tree = open_file.Get( 'ggNtuplizer/EventTree' )
+                print 'Tree has entries ', new_tree.GetEntries()
 
-                new_tree = orig_tree.CopyTree( pt_eta_selection)
-                nentries = new_tree.GetEntries()
-                if nentries < 5 :
-                    print 'WARNING : MC Sample has too few entries'
-                    continue
+                #if useTAndP :
+                #    #pt_eta_selection = ndKeysSelection + ' && fabs(probe_eta) > %f && fabs(probe_eta) < %f && probe_pt > %d && probe_pt < %d ' %( etamin, etamax, ptmin, ptmax )
+                #    pt_eta_selection = ndKeysSelection %{'etamin' : etamin, 'etamax' : etamax,'ptmin' : ptmin, 'ptmax' : ptmax }
+                #    pt_eta_selection_bkg = '%s ( %s ) ' %( ndKeysSelectionBkg, pt_eta_selection )
+                #else :
+                #    #pt_eta_selection = ndKeysSelection + ' && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d ' %( etamin, etamax, ptmin, ptmax )
+                #    pt_eta_selection = ndKeysSelection %{'etamin' : etamin, 'etamax' : etamax, 'ptmin' : ptmin, 'ptmax' : ptmax }
+                #    pt_eta_selection_bkg = '%s ( %s ) ' %( ndKeysSelectionBkg, pt_eta_selection )
 
-                if nentries > 10000 :
-                    filter_factor = int(math.floor(nentries/10000.))
-                    print 'Tree has too many entries will copy with fewer'
-                    print filter_factor
-                    new_tree = orig_tree.CopyTree( pt_eta_selection + ' && Entry$%' + '%d == 0 ' %filter_factor )
+                #orig_path = '%s/%s/Job_0000/tree.root' %(sampMan.base_path, ndKeysSample )
+                #orig_file = ROOT.TFile.Open( orig_path, 'READ' )
+                #orig_tree = orig_file.Get('ggNtuplizer/EventTree')
+                #ROOT.SetOwnership( orig_tree, False )
+                #orig_tree.SetBranchStatus('*', 1)
+                #tmpfile = ROOT.TFile.Open( '/tmp/jkunkle/tmp.root', 'RECREATE' )
+
+                ## start with a filter factor of 5
+                #filter_factor = 5
+                #new_tree = orig_tree.CopyTree( pt_eta_selection + ' && Entry$%' + '%d == 0 ' %filter_factor )
+                #new_tree.SetName( 'new_tree' )
+                #ROOT.SetOwnership( new_tree, False )
+                #nentries = new_tree.GetEntries()
+
+                ## determine a new scaling factor
+                ## if it is too small or too large
+                ## remake the sample with a new scaling factor
+                #new_factor = nentries/10000.
+                #print 'Factor with scaling of 5 = %f' %new_factor
+                #if new_factor < 1 or new_factor > 2 :
+                #    new_factor *= filter_factor
+                #    new_factor = math.floor( new_factor )
+                #    if new_factor == 0 :
+                #        new_factor = 1
+
+                #    print 'New factor = ', new_factor
+                #    new_tree = orig_tree.CopyTree( pt_eta_selection+ ' && Entry$%' + '%d == 0 ' %new_factor )
+
+                #ROOT.SetOwnership( new_tree, False )
+                #nentries = new_tree.GetEntries()
+                #if nentries < 5 :
+                #    print 'WARNING : MC Sample has too few entries'
+                #    continue
+
+                ##if nentries > 10000 :
+                ##    filter_factor = int(math.floor(nentries/10000.))
+                ##    print 'Tree has too many entries will copy with fewer'
+                ##    print filter_factor
+                ##    new_tree = orig_tree.CopyTree( pt_eta_selection + ' && Entry$%' + '%d == 0 ' %filter_factor )
 
                 if ndKeysSampleBkg is not None :
                     orig_tree_bkg = sampMan.get_samples( name=ndKeysSampleBkg )[0].chain
@@ -1353,6 +1428,7 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, mcTemplateBkg=None, use
                     el_n             = ROOT.RooRealVar( 'el_n', 'el_n', 0, 10 )
                     ph_n             = ROOT.RooRealVar( 'ph_n', 'ph_n', 0, 10 )
                     ph_hasPixSeed    = ROOT.RooRealVar( 'ph_hasPixSeed[0]', 'ph_hasPixSeed[0]', 0, 10 )
+                    ph_eleVeto       = ROOT.RooRealVar( 'ph_eleVeto[0]', 'ph_eleVeto[0]', 0, 10 )
                     ph_eta           = ROOT.RooRealVar( 'ph_eta[0]', 'ph_eta[0]', -5., 5. )
                     ph_pt            = ROOT.RooRealVar( 'ph_pt[0]', 'ph_pt[0]', 0, 1000. )
                     ph_truthMatch_ph = ROOT.RooRealVar( 'ph_truthMatch_ph[0]', 'ph_truthMatch_ph[0]', 0, 1. )
@@ -1364,7 +1440,7 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, mcTemplateBkg=None, use
                     results = fit_hist_ndkeys( hist_proj, signal_dataset=data_set, varname='m_trigelph1', bkg_dataset=None, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useCmsShapeBkg=useCmsShapeBkg, useTAndP=useTAndP, label=hist_proj.GetName(), outputName=output_name, sampMan=sampMan )
                     data_set.IsA().Destructor( data_set )
 
-                tmpfile.Close()
+                open_file.Close()
             else :
                 results = fit_hist_nominal( hist_proj, useLandauSig=useLandauSig, usePolyBkg=usePolyBkg, useExpBkg=useExpBkg, useChebyBkg=useChebyBkg, useBernsteinBkg=useBernsteinBkg, useTAndP=useTAndP, label=hist_proj.GetName(), outputName=output_name, sampMan=sampMan )
 

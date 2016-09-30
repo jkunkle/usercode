@@ -199,8 +199,6 @@ def config_and_run( options, package_name ) :
         print 'Will remove %d branches from output file : ' %( len(branches) - len(branches_to_keep))
         print '\n'.join( list( set( [ br['name'] for br in branches ] ) - set( branches_to_keep ) ) )
 
-    user_include_file_name = '%s/TreeFilter/%s/include/RunAnalysis.h' %( workarea, package_name )
-    out_branches = get_out_branches( user_include_file_name )
     # -------------------------------
     # gather module arguments
     # put outputDir into the arguments
@@ -231,6 +229,8 @@ def config_and_run( options, package_name ) :
 
         ImportedModule.config_analysis(alg_list)
 
+    user_include_file_name = '%s/TreeFilter/%s/include/RunAnalysis.h' %( workarea, package_name )
+    out_branches = get_out_branches( user_include_file_name, branches, alg_list )
 
     # get the executable name.  If .exe does not
     # appear as the extension, add it
@@ -791,21 +791,31 @@ def get_keep_branches( module, branches, enable_keep_filter, enable_remove_filte
             
     return branches_to_keep
 
-def get_out_branches( include_name ) :
-    """ Read include file to get the output branch names -- No Vectors for now!"""
+def get_out_branches( include_name, branches, alg_list ) :
+    """ Read include file to get the output branch names """
 
     ofile = open( include_name , 'r' )
     in_out_namespace = False
 
+    active_defs = get_active_defines( branches, alg_list )
+
     out_branches = []
 
+    in_defines = []
     remove_strings = ['extern', 'unsigned', 'int', 'bool', 'float', 'string', 'std::string', 'Int_t', 'Bool_t', 'Float_t', 'Double_t', '}', '', '*', ';' ]
     for line in ofile :
 
         linestr = line
         # ignore precompiler includes
-        if line.count('#') :
-            continue
+        if line.count('#') : 
+            if in_out_namespace :
+                if line.count( '#ifdef' ) :
+                    in_defines.append( line.split(' ')[1] )
+                if line.count( '#endif' ) :
+                    in_defines = in_defines[:-1]
+                continue
+            else :
+                continue
 
         # ignore comments
         if line.count('//') :
@@ -844,8 +854,17 @@ def get_out_branches( include_name ) :
                 print split_line
                 print 'Please check the format of the line and fix the code to read it properly'
                 raw_input('cont')
+
             if len( split_line) :
-                out_branches.append( {'full_entry' : full_line, 'branch' : split_line[0] })
+
+                save_entry = True
+                if in_defines :
+                    for define in in_defines :
+                        if define not in active_defs :
+                            save_entry = False
+                            break
+                if save_entry :
+                    out_branches.append( {'full_entry' : full_line, 'branch' : split_line[0] })
             
     # clean extra characters from names
     cleaned_branches = []
@@ -1281,27 +1300,10 @@ def write_header_files( brdefname, linkdefname, branches, out_branches=[], keep_
                         '//simply surround the offending code with #ifdef EXISTS_MYVAR ... #endif\n'
                         '//and if the variable does not exist the preprocessor will ignore that code\n')
 
-    #-----------------------
-    # Define a preprocessor variable
-    # for each input variable to
-    # allow the code to check if
-    # the variable exists
-    #-----------------------
-    for conf in branches :
-        name = conf['name']
-        branch_header.write('#define EXISTS_%s\n'%name)
+    active_defs = get_active_defines( branches, alg_list )
+    for define in active_defs :
+        branch_header.write('#define %s\n'%define)
 
-    #-----------------------
-    # Define a preprocessor variable
-    # for each module that is scheduled
-    # to allow the code to check
-    # if that module is used
-    #-----------------------
-    all_filters = [f.name for f in alg_list]
-    all_filters = list( set( all_filters ) ) 
-    for filter in all_filters :
-        branch_header.write( '#define MODULE_%s\n' %filter )
-    
     branch_header.write('//Define variables as extern below and declare them in the .cxx file to avoid multiple definitions\n')
     branch_header.write('namespace IN {\n');
 
@@ -1584,7 +1586,8 @@ def write_source_file(source_file_name, header_file_name, branches, out_branches
 
     valid_branches = []
     for conf in branches :
-        if not conf['type'].count('vector') :
+        nvec = conf['type'].count('vector')
+        if not nvec==1 :
             continue
 
         if not conf['type'].count('float') :
@@ -1726,6 +1729,30 @@ def write_source_file(source_file_name, header_file_name, branches, out_branches
 
     branch_setting.close()
 
+def get_active_defines( branches, alg_list ) :
+    #-----------------------
+    # Define a preprocessor variable
+    # for each input variable to
+    # allow the code to check if
+    # the variable exists
+    #-----------------------
+    defs = []
+    for conf in branches :
+        name = conf['name']
+        defs.append('EXISTS_%s\n'%name)
+
+    #-----------------------
+    # Define a preprocessor variable
+    # for each module that is scheduled
+    # to allow the code to check
+    # if that module is used
+    #-----------------------
+    all_filters = [f.name for f in alg_list]
+    all_filters = list( set( all_filters ) ) 
+    for filter in all_filters :
+        defs.append( 'MODULE_%s\n' %filter )
+    
+    return defs
 
 def generate_array_loop( array_sizes ) :
 

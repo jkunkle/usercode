@@ -25,8 +25,8 @@ def config_samples(samples) :
     samples.AddSample('ttjets_2lPhOlap'              , path='job_summer12_ttjets_2lPhOlap'      ,  isActive=False, required=False, useXSFile=True, XSName='ttjets_2l' )
     samples.AddSample('WAA_ISR'                      , path='job_summer12_WAA_ISR'              ,  isActive=False, required=False, useXSFile=True )
     samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  isActive=False, required=False, useXSFile=True )
-    samples.AddSample('NLO_WAA_ISR'                  , path='job_NLO_WAA_ISR'                   ,  isActive=False, required=False, useXSFile=True )
-    samples.AddSample('NLO_WAA_FSR'                  , path='job_NLO_WAA_FSR'                   ,  isActive=False, required=False, useXSFile=True )
+    samples.AddSample('NLO_WAA_ISR'                  , path='job_NLO_WAA_ISR_PtG500MeVWithSF'   ,  isActive=False, required=False, useXSFile=True )
+    samples.AddSample('NLO_WAA_FSR'                  , path='job_NLO_WAA_FSR_PtG500MeVWithSF'   ,  isActive=False, required=False, useXSFile=True )
     #samples.AddSample('WAA_ISR'                      , path='job_summer12_WAA_ISR'              ,  isActive=False, useXSFile=False, scale=1.0 )
     #samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  isActive=False, useXSFile=False, scale=1.0 )
     samples.AddSample('Wg'                           , path='job_summer12_Wg'                   ,  isActive=False, useXSFile=True )
@@ -83,7 +83,9 @@ def config_samples(samples) :
     samples.AddSample('ZZ_4muWithSF2PhFilt'                , path='job_summer12_ZZ_4muWithSF2PhFilt'        , isActive=False, useXSFile=True, XSName='ZZ_4mu')
     samples.AddSample('ZZ_4tauWithSF2PhFilt'               , path='job_summer12_ZZ_4tauWithSF2PhFilt'       , isActive=False, useXSFile=True, XSName='ZZ_4tau')
     samples.AddSample('ZZZWithSF2PhFilt'                   , path='job_summer12_ZZZWithSF2PhFilt'           , isActive=False, useXSFile=True, XSName='ZZZ')
-
+    samples.AddSample('WH_ZH_125WithSF2PhFilt'             , path='job_summer12_WH_ZH_125WithSF2PhFilt'     ,  isActive=False, useXSFile=True, XSName='WH_ZH_125' )
+    samples.AddSample('WZ_2l2qWithSF2PhFilt'               , path='job_summer12_WZ_2l2qWithSF2PhFilt'       ,  isActive=False, useXSFile=True, XSName='WZ_2l2q' )
+    samples.AddSample('WZ_3lnuWithSF2PhFilt'               , path='job_summer12_WZ_3lnuWithSF2PhFilt'       ,  isActive=False, useXSFile=True, XSName='WZ_3lnu' )
     #samples.AddSample('jfaulkne_WZAWithSF2PhFilt'          , path='job_jfaulkne_WZA2PhFilt'           , isActive=False, useXSFile=True, XSName='WZA' )
     #samples.AddSample('tbar_sWithSF2PhFilt'                , path='job_summer12_tbar_s2PhFilt'        , isActive=False, useXSFile=True, XSName='tbar_s')
     #samples.AddSample('tbar_tWithSF2PhFilt'                , path='job_summer12_tbar_t2PhFilt'        , isActive=False, useXSFile=True, XSName='tbar_t')
@@ -158,7 +160,8 @@ def config_samples(samples) :
                                              'NLO_WAA_FSR',
                                             ],
                            plotColor=ROOT.kRed,
-                           isSignal=True,
+                           isSignal=False,
+                           isActive=True
                           )
 
     samples.AddSampleGroup( 'Zgammagamma', legend_name='Z#gamma#gamma', 
@@ -234,33 +237,112 @@ def config_samples(samples) :
                            isSignal=False,
                           )
 
-    samples.AddSampleGroup( 'OtherDiPhoton', legend_name='other real diphoton', 
+    samples.AddSampleGroup( 'DiTopDiPhoton', legend_name='top real diphoton', 
                            input_samples = [
-                                            'ggZZ_2l2lWithSF2PhFilt',
-                                            'ggZZ_4lWithSF2PhFilt',
                                             'ttgWithSF2PhFilt',
+                           ],
+                               plotColor=ROOT.kBlue,
+                               isActive=True,
+                           )
+
+    samples.AddSampleGroup( 'SingleTopDiPhoton', legend_name='top real diphoton', 
+                           input_samples = [
                                             't_tWithSF2PhFilt',
                                             't_sWithSF2PhFilt',
                                             't_tWWithSF2PhFilt',
                                             'tbar_tWithSF2PhFilt',
                                             'tbar_sWithSF2PhFilt',
                                             'tbar_tWWithSF2PhFilt',
-                                            'WW_2l2nuWithSF2PhFilt',
-                                            'WWgWithSF2PhFilt',
+                           ],
+                               plotColor=ROOT.kBlue,
+                               isActive=True,
+                           )
+
+    samples.AddSampleGroup( 'TriBosonDiPhoton', legend_name='tri boson real diphoton', 
+                           input_samples = [
                                             'WWWWithSF2PhFilt',
                                             'WWZWithSF2PhFilt',
-                                            'jfaulkne_WZAWithSF2PhFilt',
                                             'WZZWithSF2PhFilt',
+                                            'ZZZWithSF2PhFilt',
+                           ],
+                               plotColor=ROOT.kBlue,
+                               isActive=True,
+                           )
+    samples.AddSampleGroup( 'TTVDiPhoton', legend_name='ttV real diphoton', 
+                           input_samples = [
+                                            'ttWWithSF2PhFilt',
+                                            'ttZWithSF2PhFilt',
+                           ],
+                               plotColor=ROOT.kBlue,
+                               isActive=True,
+                           )
+
+    samples.AddSampleGroup( 'WWDiPhoton', legend_name='WW real diphoton', 
+                            input_samples = ['WWgWithSF2PhFilt',],
+                               plotColor=ROOT.kBlue,
+                               isActive=True,
+                          )
+
+    samples.AddSampleGroup( 'WZlvjjDiPhoton', legend_name='WZ#rigtarrow l#nu jj real diphoton', 
+                            input_samples = ['jfaulkne_WZAWithSF2PhFilt',],
+                               plotColor=ROOT.kBlue,
+                               isActive=True,
+                          )
+
+    samples.AddSampleGroup( 'WZlvllDiPhoton', legend_name='WZ#rigtarrow l#nu ll real diphoton', 
+                            input_samples = ['WZ_3lnuWithSF2PhFilt',],
+                               plotColor=ROOT.kBlue,
+                               isActive=True,
+                          )
+    samples.AddSampleGroup( 'WZjjllDiPhoton', legend_name='WZ#rigtarrow jj ll real diphoton', 
+                            input_samples = ['WZ_2l2qWithSF2PhFilt',],
+                               plotColor=ROOT.kBlue,
+                               isActive=True,
+                          )
+
+    samples.AddSampleGroup( 'WZlvvvDiPhoton', legend_name='WZ#rigtarrow l#nu #nu#nu real diphoton', 
+                            input_samples = ['jfaulkne_WZAWithSF2PhFilt',],
+                            plotColor=ROOT.kBlue,
+                            isActive=True,
+                            scale=0.286,
+                          )
+
+    samples.AddSampleGroup( 'ZZDiPhoton', legend_name='ZZ real diphoton', 
+                           input_samples = [
                                             'ZZ_2e2muWithSF2PhFilt',
                                             'ZZ_2e2tauWithSF2PhFilt',
                                             'ZZ_2l2nuWithSF2PhFilt',
                                             'ZZ_2l2qWithSF2PhFilt',
                                             'ZZ_2mu2tauWithSF2PhFilt',
-                                            'ZZ_2q2nuWithSF2PhFilt',
                                             'ZZ_4eWithSF2PhFilt',
                                             'ZZ_4muWithSF2PhFilt',
                                             'ZZ_4tauWithSF2PhFilt',
-                                            'ZZZWithSF2PhFilt',
+                           ],
+                               plotColor=ROOT.kBlue,
+                               isActive=True,
+                           )
+
+    samples.AddSampleGroup( 'VHDiPhoton', legend_name='WH/ZH, m_{H} = 125 GeV', 
+                           input_samples = [
+                                           'WH_ZH_125WithSF2PhFilt'                     ,
+                           ],
+                           plotColor=ROOT.kRed+2,
+                           isActive=True,
+                          )
+
+    samples.AddSampleGroup( 'OtherDiPhoton', legend_name='other real diphoton', 
+                           input_samples = [
+                                            'DiTopDiPhoton',
+                                            'SingleTopDiPhoton',
+                                            'TriBosonDiPhoton',
+                                            'TTVDiPhoton'
+                                            'WWDiPhoton',
+                                            'WZlvjjDiPhoton',
+                                            'WZlvllDiPhoton',
+                                            'WZjjllDiPhoton',
+                                            'WZlvvvDiPhoton',
+                                            'ZZDiPhoton',
+
                            ],
                                plotColor=ROOT.kBlue,
                                isActive=True,

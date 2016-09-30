@@ -100,6 +100,8 @@ jobs = [
         #(base, 'job_summer12_ttgWithSF'),
         #(base, 'job_summer12_ttWWithSF'),
         #(base, 'job_summer12_ttZWithSF'),
+        #(base, 'job_summer12_WZ_3lnuWithSF'),
+        #(base, 'job_summer12_WZ_2l2qWithSF'),
         #(base, 'job_jfaulkne_WZAWithSF'),
 
         #(base, 'job_summer12_Wgg_FSR'),
@@ -116,10 +118,9 @@ jobs = [
 #module_mc   = 'ConfLepGammaFilter.py'
 #module_data = 'ConfLepGammaFilter_Data.py'
 #output_name = 'LepGamma_2013_11_04'
-#sub_base = ['LepLepGammaGammaFinalMuMuUnblindAll_2015_08_01','LepLepGammaGammaFinalElElUnblindAll_2015_08_01']
-#sub_base = ['LepGammaGammaFinalMuUnblindAllNoMtCut_2015_10_01', 'LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_10_01', 'LepGammaGammaFinalElNoZCutNoMtCutInvPixLead_2015_10_01', 'LepGammaGammaFinalElNoZCutNoMtCutInvPixSubl_2015_10_01' ]
-#sub_base = ['LepGammaGammaFinalMuUnblindAll_2015_10_01', 'LepGammaGammaFinalElUnblindAll_2015_10_01']
-sub_base = ['LepLepGammaGammaFinalElElUnblindAll_2015_10_01', 'LepLepGammaGammaFinalMuMuUnblindAll_2015_10_01']
+#sub_base = ['LepGammaGammaNoPhID_2015_11_09', 'LepGammaNoPhID_2015_11_09', 'LepLepGammaNoPhID_2015_11_09', 'LepGammaGammaFinalMuUnblindAllNoMtCut_2015_11_11', 'LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_11_11', 'LepGammaGammaNoPhIDInvPixSeedLead_2015_11_11', 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_11_11', 'LepGammaGammaNoPhIDVetoPixSeedBoth_2015_11_11' ]
+sub_base = [ 'LepGammaNoPhIDNoElOlapRm_2016_02_05']
+
 
 check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s/%(sub_base)s/%(job)s --filteredDS %(base)s/%(sub_base)s/%(job)s%(suffix)s --treeNameOrig ggNtuplizer/EventTree --histNameFilt ggNtuplizer/filter --fileKeyOrig tree.root --fileKeyFilt tree.root'
 

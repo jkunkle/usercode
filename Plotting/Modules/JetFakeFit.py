@@ -14,6 +14,7 @@ def config_samples(samples) :
     samples.AddSample('ttjets_1l'                    , path='job_summer12_ttjets_1lPhOlap'            ,  isActive=False, useXSFile=True )
     samples.AddSample('ttjets_2l'                    , path='job_summer12_ttjets_2lPhOlap'            ,  isActive=False, useXSFile=True )
     samples.AddSample('Wg'                           , path='job_summer12_Wg'                  ,  isActive=False, useXSFile=True )
+    #samples.AddSample('Wg'                           , path='job_summer12_Wg_sieieCorr'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('Wjets'                        , path='job_summer12_Wjets'               ,  isActive=False, useXSFile=True )
     samples.AddSample('WjetsPhOlap'                        , path='job_summer12_WjetsPhOlap'       ,  isActive=False, useXSFile=True, XSName='Wjets' )
     samples.AddSample('WW_2l2nu'                     , path='job_summer12_WW_2l2nu'             ,  isActive=False, useXSFile=True )
@@ -23,18 +24,6 @@ def config_samples(samples) :
     samples.AddSample('WZ_3lnu'                      , path='job_summer12_WZ_3lnu'              ,  isActive=False, useXSFile=True )
     samples.AddSample('WZZ'                          , path='job_summer12_WZZ'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('Zg'                           , path='job_summer12_Zg_s10'                   ,  isActive=False, useXSFile=True )
-
-    samples.AddSample('job_jetmon_2012b_Jan22rereco_pfJet40', path='job_jetmon_2012b_Jan22rereco_pfJet40', isActive=False )
-    samples.AddSample('job_jetmon_2012c_Jan22rereco_pfJet40', path='job_jetmon_2012c_Jan22rereco_pfJet40', isActive=False )
-    samples.AddSample('job_jetmon_2012d_Jan22rereco_pfJet40', path='job_jetmon_2012d_Jan22rereco_pfJet40', isActive=False )
-
-    samples.AddSampleGroup( 'jetmon', legend_name='JetMon',
-                           input_samples = [
-                                            'job_jetmon_2012b_Jan22rereco_pfJet40',
-                                            'job_jetmon_2012c_Jan22rereco_pfJet40',
-                                            'job_jetmon_2012d_Jan22rereco_pfJet40',
-                           ],
-                               plotColor=ROOT.kBlack )
 
     samples.AddSampleGroup( 'Muon', legend_name='Muon Data', 
                             input_samples = [

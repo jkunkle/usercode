@@ -55,21 +55,17 @@ subl_dr_cut = 0.4
 phot_dr_cut = 0.4
 m_ph1_ph2_cut = 0
 
-blind_lead_max = 40
+_z_mass_cut = 10
 
 _baseline_cuts_mgg = ' mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoEleVeto_n==2 && el_n==0 && dr_ph1_ph2>%(drgg).1f && dr_ph1_leadLep>%(drg1l).1f && dr_ph2_leadLep>%(drg2l).1f '%{'drgg' : phot_dr_cut, 'drg1l' : lead_dr_cut, 'drg2l' : subl_dr_cut}
 _baseline_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_mediumPassPSV_n==2 && mu_n==0 && dr_ph1_ph2>%(drgg).1f && dr_ph1_leadLep>%(drg1l).1f && dr_ph2_leadLep>%(drg2l).1f '%{'drgg' : phot_dr_cut, 'drg1l' : lead_dr_cut, 'drg2l' : subl_dr_cut}
-_zrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_mediumPassPSV_n==2 && mu_n==0 && dr_ph1_ph2>%(drgg).1f && dr_ph1_leadLep>%(drg1l).1f && dr_ph2_leadLep>%(drg2l).1f  && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) ' %{'drgg' : phot_dr_cut, 'drg1l' : lead_dr_cut, 'drg2l' : subl_dr_cut}
-_zcr_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_mediumPassPSV_n==2 && mu_n==0 && dr_ph1_ph2>%(drgg).1f && dr_ph1_leadLep>%(drg1l).1f && dr_ph2_leadLep>%(drg2l).1f && ( (fabs(m_leadLep_ph1_ph2-91.2) < 5) || (fabs(m_leadLep_ph1-91.2) < 5)  || (fabs(m_leadLep_ph2-91.2) < 5) ) '  %{'drgg' : phot_dr_cut, 'drg1l' : lead_dr_cut, 'drg2l' : subl_dr_cut}
+_zrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_mediumPassPSV_n==2 && mu_n==0 && dr_ph1_ph2>%(drgg).1f && dr_ph1_leadLep>%(drg1l).1f && dr_ph2_leadLep>%(drg2l).1f  && !(fabs(m_leadLep_ph1_ph2-91.2) < %(zcut)d) && !(fabs(m_leadLep_ph1-91.2) < %(zcut)d)  && !(fabs(m_leadLep_ph2-91.2) < %(zcut)d) ' %{'drgg' : phot_dr_cut, 'drg1l' : lead_dr_cut, 'drg2l' : subl_dr_cut, 'zcut' : _z_mass_cut}
+_zcr_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_mediumPassPSV_n==2 && mu_n==0 && dr_ph1_ph2>%(drgg).1f && dr_ph1_leadLep>%(drg1l).1f && dr_ph2_leadLep>%(drg2l).1f && ( (fabs(m_leadLep_ph1_ph2-91.2) < %(zcut)d) || (fabs(m_leadLep_ph1-91.2) < %(zcut)d)  || (fabs(m_leadLep_ph2-91.2) < %(zcut)d) ) '  %{'drgg' : phot_dr_cut, 'drg1l' : lead_dr_cut, 'drg2l' : subl_dr_cut, 'zcut' : _z_mass_cut}
 
-invPixLead_cuts_egg         = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
-invPixSubl_cuts_egg         = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
+invPixLead_cuts_egg         = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_eleVeto[0]==1 && ph_eleVeto[1]==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
+invPixSubl_cuts_egg         = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_eleVeto[0]==0 && ph_eleVeto[1]==1 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f '%(phot_dr_cut, lead_dr_cut, subl_dr_cut)
 
-invPixLead_zrej_cuts_egg    = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
-invPixSubl_zrej_cuts_egg    = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5)  && !(fabs(m_leadLep_ph2-91.2) < 5) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
 
-invPixLead_invzrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && ((fabs(m_leadLep_ph1_ph2-91.2) < 5) || (fabs(m_leadLep_ph1-91.2) < 5) || (fabs(m_leadLep_ph2-91.2) < 5) ) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
-invPixSubl_invzrej_cuts_egg = ' el_passtrig_n>0 && el_n==1 && ph_mediumNoEleVeto_n==2 && mu_n==0 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && dr_ph1_ph2>%.1f && dr_ph1_leadLep>%.1f && dr_ph2_leadLep>%.1f && ((fabs(m_leadLep_ph1_ph2-91.2) < 5) || (fabs(m_leadLep_ph1-91.2) < 5) || (fabs(m_leadLep_ph2-91.2) < 5) ) ' %(phot_dr_cut, lead_dr_cut, subl_dr_cut)
 
 #------------------------------
 # basic photon cuts
@@ -79,18 +75,23 @@ _photon_cuts_nopix_nochiso  = ' ph_mediumNoChIsoNoEleVeto_n==1 '
 _photon_cuts_nopix_noneuiso = ' ph_mediumNoNeuIsoNoEleVeto_n==1 '
 _photon_cuts_nopix_nophoiso = ' ph_mediumNoPhoIsoNoEleVeto_n==1 '
 
+_photon_idx_nopix_nosieie  = ' ptSorted_ph_mediumNoSIEIENoEleVeto_idx '
+_photon_idx_nopix_nochiso  = ' ptSorted_ph_mediumNoChIsoNoEleVeto_idx '
+_photon_idx_nopix_noneuiso = ' ptSorted_ph_mediumNoNeuIsoNoEleVeto_idx '
+_photon_idx_nopix_nophoiso = ' ptSorted_ph_mediumNoPhoIsoNoEleVeto_idx'
+
 #------------------------------
 # single photon cuts
 #------------------------------
 baseline_cuts_mg = ' mu_passtrig25_n>0  && ph_mediumNoEleVeto_n==1  && leadPhot_leadLepDR>%.1f '%(lead_dr_cut)
-baseline_cuts_mg_psv = ' mu_passtrig25_n>0  && ph_mediumPassPSV_n==1  && leadPhot_leadLepDR>%.1f '%(lead_dr_cut)
-baseline_cuts_eg = ' el_passtrig_n>0 && ph_mediumPassPSV_n==1  && leadPhot_leadLepDR>%.1f '%(lead_dr_cut)
+baseline_cuts_mg_psv = ' mu_passtrig25_n>0  && ph_mediumPassCSEV_n==1  && leadPhot_leadLepDR>%.1f '%(lead_dr_cut)
+baseline_cuts_eg = ' el_passtrig_n>0 && ph_mediumPassCSEV_n==1  && leadPhot_leadLepDR>%.1f '%(lead_dr_cut)
 baseline_cuts_eg_noPixVeto = ' el_passtrig_n>0 && ph_mediumNoEleVeto_n==1 && leadPhot_leadLepDR>%.1f  '%(lead_dr_cut)
-zcr_cuts_eg      = ' el_passtrig_n>0 && ph_mediumPassPSV_n==1 && leadPhot_leadLepDR>%.1f && m_lepph1 > 76 && m_lepph1 < 106 '%(lead_dr_cut)
+zcr_cuts_eg      = ' el_passtrig_n>0 && ph_mediumPassCSEV_n==1 && leadPhot_leadLepDR>%.1f && m_lepph1 > 76 && m_lepph1 < 106 '%(lead_dr_cut)
 
 baseline_cuts_mmg = ' mu_passtrig25_n>0 && mu_n>1 && ph_mediumNoEleVeto_n==1  && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f '%(lead_dr_cut, lead_dr_cut)
-baseline_cuts_mmg_psv = ' mu_passtrig25_n>0 && mu_n>1 && ph_mediumPassPSV_n==1  && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f '%(lead_dr_cut, lead_dr_cut)
-baseline_cuts_eeg = ' el_passtrig_n>0 && el_n>1 && ph_mediumPassPSV_n==1 && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f '%(lead_dr_cut, lead_dr_cut)
+baseline_cuts_mmg_psv = ' mu_passtrig25_n>0 && mu_n>1 && ph_mediumPassCSEV_n==1  && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f '%(lead_dr_cut, lead_dr_cut)
+baseline_cuts_eeg = ' el_passtrig_n>0 && el_n>1 && ph_mediumPassCSEV_n==1 && leadPhot_leadLepDR>%.1f && leadPhot_sublLepDR>%.1f '%(lead_dr_cut, lead_dr_cut)
 
 def main() :
 
@@ -102,13 +103,13 @@ def main() :
     global samplesLGG
     global samplesPhOlap
 
-    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_10_01'
+    baseDirWg  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_11_09'
     #baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNomUnblindAllNoEleVeto_2015_07_16'
-    baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_10_01'
-    baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllWithOlap_2015_10_01'
-    baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllWithOlap_2015_10_01'
-    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_10_01'
-    baseDirLGG = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_10_01'
+    baseDirWggSp = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_11_09'
+    baseDirWggMu = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllNoMtCutPt15_2015_11_11'
+    baseDirWggEl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllNoZCutNoMtCutPt15_2015_11_11'
+    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_11_09'
+    baseDirLGG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_11_09'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
@@ -235,9 +236,9 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
     # 2 object  mass (lep-lead)
     # electron + some Z rej cuts
     #-----------------------------------
-    samplesWggEl.Draw('m_leadLep_ph1', 'PUWeight * (  %s  && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) )' %( baseline_cuts_egg ), (40, 0, 200 ) , hist_config={'logy':0,  'ymin' : 0, 'ymax' : 80, 'xlabel':'M_{e, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':label_loc_d_el }, legend_config=legend_conf_d )
+    samplesWggEl.Draw('m_leadLep_ph1', 'PUWeight * (  %s  && !(fabs(m_leadLep_ph1_ph2-91.2) < %d) )' %( baseline_cuts_egg, _z_mass_cut ), (40, 0, 200 ) , hist_config={'logy':0,  'ymin' : 0, 'ymax' : 80, 'xlabel':'M_{e, lead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':label_loc_d_el }, legend_config=legend_conf_d )
     if save :
-        name = 'm_leadLep_ph1__egg__Cut_m_leadLep_ph1_ph2_10gevWindow'
+        name = 'm_leadLep_ph1__egg__Cut_m_leadLep_ph1_ph2_20gevWindow'
         samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
         samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
@@ -245,19 +246,19 @@ def MakeWggEventPlots( save=False, detail=100, ph_cuts='', dirPostfix='', activa
         raw_input('continue')
 
 
-    samplesWggEl.Draw('m_leadLep_ph2', 'PUWeight * ( %s && !(fabs(m_lepphph-91.2) < 5) )' %( baseline_cuts_egg), (40, 0, 200 ) , hist_config={'logy':0,  'ymin' : 0, 'ymax' : 100, 'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.2, 0.86) }, legend_config=samplesWggEl.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWggEl.Draw('m_leadLep_ph2', 'PUWeight * ( %s && !(fabs(m_lepphph-91.2) < %d) )' %( baseline_cuts_egg, _z_mass_cut), (40, 0, 200 ) , hist_config={'logy':0,  'ymin' : 0, 'ymax' : 100, 'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.2, 0.86) }, legend_config=samplesWggEl.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
 
     if save :
-        name = 'm_leadLep_ph2__egg__Cut_m_leadLep_ph1_ph2_10gevWindow'
+        name = 'm_leadLep_ph2__egg__Cut_m_leadLep_ph1_ph2_20gevWindow'
         samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
         samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
         samplesWggEl.DumpStack(options.outputDir+'/'+subdir, )
         raw_input('continue')
 
-    samplesWggEl.Draw('m_leadLep_ph2', 'PUWeight * ( %s && !(fabs(m_leadLep_ph1_ph2-91.2) < 5) && !(fabs(m_leadLep_ph1-91.2) < 5) )' %(baseline_cuts_egg), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.2, 0.86) }, legend_config=samplesWggEl.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
+    samplesWggEl.Draw('m_leadLep_ph2', 'PUWeight * ( %s && !(fabs(m_leadLep_ph1_ph2-91.2) < %d) && !(fabs(m_leadLep_ph1-91.2) < %d) )' %(baseline_cuts_egg, _z_mass_cut, _z_mass_cut), (40, 0, 200 ) , hist_config={'logy':0,  'xlabel':'M_{e, sublead #gamma} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'Electron Channel',   'extra_label_loc':(0.2, 0.86) }, legend_config=samplesWggEl.config_legend(legendWiden=1.3,legendCompress=1.3, ) )
     if save :
-        name = 'm_leadLep_ph2__egg__Cut_m_leadLep_ph1_ph2_10gevWindow__Cut_m_leadLep_ph1_10gevWindow'
+        name = 'm_leadLep_ph2__egg__Cut_m_leadLep_ph1_ph2_20gevWindow__Cut_m_leadLep_ph1_20gevWindow'
         samplesWggEl.DumpStack(options.outputDir+'/'+subdir, name)
         samplesWggEl.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
     else :
@@ -791,8 +792,8 @@ def MakeEleFakePlots( save=False, detail=100 ) :
     # ---------------------------------
     # Draw FF derivation control regions
     # ---------------------------------
-    draw_base_nom = 'el_passtrig_n>0 && el_n==1 && ph_mediumPassPSV_n==1 && leadPhot_leadLepDR>0.4 '
-    draw_base_inv = 'el_passtrig_n>0 && el_n==1 && ph_mediumFailPSV_n==1 && leadPhot_leadLepDR>0.4 '
+    draw_base_nom = 'el_passtrig_n>0 && el_n==1 && ph_mediumPassCSEV_n==1 && leadPhot_leadLepDR>0.4 '
+    draw_base_inv = 'el_passtrig_n>0 && el_n==1 && ph_mediumFailCSEV_n==1 && leadPhot_leadLepDR>0.4 '
 
     pt_bins = analysis_bins_egg[3:-1]
     eta_bins = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.44, 1.57), (1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5), (0.0, 1.44), (1.44, 1.57), (1.57,2.50) ]
@@ -822,26 +823,26 @@ def MakeEleFakePlots( save=False, detail=100 ) :
             if ptmin < 15 :
                 continue
 
-            samplesWg.Draw( 'm_lepph1', 'PUWeight * ( %s && fabs(ph_eta[ptSorted_ph_mediumPassPSV_idx[0]]) > %f && fabs(ph_eta[ptSorted_ph_mediumPassPSV_idx[0]]) < %f && ph_pt[ptSorted_ph_mediumPassPSV_idx[0]] > %d && ph_pt[ptSorted_ph_mediumPassPSV_idx[0]] < %d && m_lepph1 > 40 )' %( draw_base_nom, etamin, etamax, ptmin, ptmax ), mass_binning , hist_config={'logy':1, 'xlabel':'M_{e, #gamma} [GeV]'}, legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ), )
+            samplesWg.Draw( 'm_lepph1', 'PUWeight * ( %s && fabs(ph_eta[ptSorted_ph_mediumPassCSEV_idx[0]]) > %f && fabs(ph_eta[ptSorted_ph_mediumPassCSEV_idx[0]]) < %f && ph_pt[ptSorted_ph_mediumPassCSEV_idx[0]] > %d && ph_pt[ptSorted_ph_mediumPassCSEV_idx[0]] < %d && m_lepph1 > 40 )' %( draw_base_nom, etamin, etamax, ptmin, ptmax ), mass_binning , hist_config={'logy':1, 'xlabel':'M_{e, #gamma} [GeV]'}, legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ), )
 
             if save :
                 if ptmax == last_pt_bin :
-                    name = 'm_lepph1__eg__passPixSeed__eta_%.2f-%.2f__pt_%d-max'%(etamin, etamax, ptmin)
+                    name = 'm_lepph1__eg__passCSEV__eta_%.2f-%.2f__pt_%d-max'%(etamin, etamax, ptmin)
                 else :
-                    name = 'm_lepph1__eg__passPixSeed__eta_%.2f-%.2f__pt_%d-%d'%(etamin, etamax, ptmin, ptmax)
+                    name = 'm_lepph1__eg__passCSEV__eta_%.2f-%.2f__pt_%d-%d'%(etamin, etamax, ptmin, ptmax)
                 samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
                 samplesWg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
             else :
                 samplesWg.DumpStack()
                 raw_input('continue')
 
-            samplesWg.Draw( 'm_lepph1', 'PUWeight * ( %s && fabs(ph_eta[ptSorted_ph_mediumFailPSV_idx[0]]) > %f && fabs(ph_eta[ptSorted_ph_mediumFailPSV_idx[0]]) < %f && ph_pt[ptSorted_ph_mediumFailPSV_idx[0]] > %d && ph_pt[ptSorted_ph_mediumFailPSV_idx[0]] < %d && m_lepph1 > 40)' %( draw_base_inv, etamin, etamax, ptmin, ptmax ), mass_binning, hist_config={'logy':1, 'xlabel':'M_{e, #gamma} [GeV]'}, legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ), )
+            samplesWg.Draw( 'm_lepph1', 'PUWeight * ( %s && fabs(ph_eta[ptSorted_ph_mediumFailCSEV_idx[0]]) > %f && fabs(ph_eta[ptSorted_ph_mediumFailCSEV_idx[0]]) < %f && ph_pt[ptSorted_ph_mediumFailCSEV_idx[0]] > %d && ph_pt[ptSorted_ph_mediumFailCSEV_idx[0]] < %d && m_lepph1 > 40)' %( draw_base_inv, etamin, etamax, ptmin, ptmax ), mass_binning, hist_config={'logy':1, 'xlabel':'M_{e, #gamma} [GeV]'}, legend_config=samplesWg.config_legend(legendCompress=1.2,legendWiden=1.2, ), )
 
             if save :
                 if ptmax == last_pt_bin :
-                    name = 'm_lepph1__eg__failPixSeed__eta_%.2f-%.2f__pt_%d-max'%(etamin, etamax, ptmin)
+                    name = 'm_lepph1__eg__failCSEV__eta_%.2f-%.2f__pt_%d-max'%(etamin, etamax, ptmin)
                 else :
-                    name = 'm_lepph1__eg__failPixSeed__eta_%.2f-%.2f__pt_%d-%d'%(etamin, etamax, ptmin, ptmax)
+                    name = 'm_lepph1__eg__failCSEV__eta_%.2f-%.2f__pt_%d-%d'%(etamin, etamax, ptmin, ptmax)
                 samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
                 samplesWg.SaveStack( name, options.outputDir +'/' +subdir, 'base', write_command=True)
             else :
@@ -1106,10 +1107,10 @@ def MakeLepGammaPlots( save=False, detail=100) :
 
     binnings = [analysis_bins_mgg, analysis_bins_egg, eveto_bins, analysis_bins_mgg, analysis_bins_egg, analysis_bins_egg]
     cuts = [baseline_cuts_mg, baseline_cuts_eg_noPixVeto, baseline_cuts_eg+' && m_lepph1 > 105 ', baseline_cuts_mg+' && mt_lep_met > 60 ', baseline_cuts_mg_psv+' && mt_lep_met > 60 ', baseline_cuts_eg+' && mt_lep_met > 60  && m_lepph1 > 105', zcr_cuts_eg ]
-    ph_vars = ['ptSorted_ph_mediumNoEleVeto_idx[0]', 'ptSorted_ph_mediumNoEleVeto_idx[0]', 'ptSorted_ph_mediumPassPSV_idx[0]', 'ptSorted_ph_mediumNoEleVeto_idx[0]', 'ptSorted_ph_mediumPassPSV_idx[0]', 'ptSorted_ph_mediumPassPSV_idx[0]', 'ptSorted_ph_mediumPassPSV_idx[0]']
+    ph_vars = ['ptSorted_ph_mediumNoEleVeto_idx[0]', 'ptSorted_ph_mediumNoEleVeto_idx[0]', 'ptSorted_ph_mediumPassCSEV_idx[0]', 'ptSorted_ph_mediumNoEleVeto_idx[0]', 'ptSorted_ph_mediumPassCSEV_idx[0]', 'ptSorted_ph_mediumPassCSEV_idx[0]', 'ptSorted_ph_mediumPassCSEV_idx[0]']
     channels  =['Muon', 'Electron', 'Electron', 'Muon', 'Muon', 'Electron', 'Electron']
     tags = ['mg', 'eg', 'eg', 'mg', 'mg', 'eg', 'eg']
-    labels = ['baselineCuts', 'baselineCutsNoMassCut', 'baselineCuts', 'mtCut', 'mtCutPixSeedVeto', 'mtCut',  'ZCR']
+    labels = ['baselineCuts', 'baselineCutsNoMassCut', 'baselineCuts', 'mtCut', 'mtCutCSEV', 'mtCut',  'ZCR']
     eta_cuts = ['EB', 'EE']
     eta_labels = ['Barrel photon', 'Endcap photon']
 
@@ -1248,7 +1249,7 @@ def MakeLepLepGammaPlots( save=False, detail=100) :
                 samplesLLG.DumpStack( )
                 raw_input('continue')
 
-            samplesLLG.Draw('m_leplepph', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassPSV_idx[0]] && ph_pt[ptSorted_ph_mediumPassPSV_idx[0]] > %d && ph_pt[ptSorted_ph_mediumPassPSV_idx[0]] < %d && m_leplep > 15 && m_leplep < 80 )' %(baseline_cuts_mmg_psv, ec, ptmin, ptmax), (60, 0, 300 ) , hist_config={'logy':1,  'ymin' : 1, 'ymax' : 50000,  'xlabel':'M_{#mu#mu#gamma} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+            samplesLLG.Draw('m_leplepph', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassCSEV_idx[0]] && ph_pt[ptSorted_ph_mediumPassCSEV_idx[0]] > %d && ph_pt[ptSorted_ph_mediumPassCSEV_idx[0]] < %d && m_leplep > 15 && m_leplep < 80 )' %(baseline_cuts_mmg_psv, ec, ptmin, ptmax), (60, 0, 300 ) , hist_config={'logy':1,  'ymin' : 1, 'ymax' : 50000,  'xlabel':'M_{#mu#mu#gamma} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Muon Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
             if save :
                 name = 'm_leplepph__FSReveto__mmg__%s__pt_%s-%s' %(ec, ptmin, ptmax)
@@ -1258,7 +1259,7 @@ def MakeLepLepGammaPlots( save=False, detail=100) :
                 samplesLLG.DumpStack( )
                 raw_input('continue')
 
-        samplesLLG.Draw('ph_pt[ptSorted_ph_mediumPassPSV_idx[0]]', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassPSV_idx[0]] && m_leplep>60)' %(baseline_cuts_eeg, ec), (40, 0, 200 ) , hist_config={'logy':1,  'xlabel':'photon p_{T} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+        samplesLLG.Draw('ph_pt[ptSorted_ph_mediumPassCSEV_idx[0]]', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassCSEV_idx[0]] && m_leplep>60)' %(baseline_cuts_eeg, ec), (40, 0, 200 ) , hist_config={'logy':1,  'xlabel':'photon p_{T} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
         if save :
             name = 'ph_pt__eeg__%s__baselineCuts' %(ec)
@@ -1268,7 +1269,7 @@ def MakeLepLepGammaPlots( save=False, detail=100) :
             samplesLLG.DumpStack( )
             raw_input('continue')
 
-        samplesLLG.Draw('m_leplep', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassPSV_idx[0]] )' %(baseline_cuts_eeg, ec), (40, 0, 200 ) , hist_config={'logy':1,  'ymin' : 1, 'ymax' : 50000,  'xlabel':'M_{e e} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+        samplesLLG.Draw('m_leplep', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassCSEV_idx[0]] )' %(baseline_cuts_eeg, ec), (40, 0, 200 ) , hist_config={'logy':1,  'ymin' : 1, 'ymax' : 50000,  'xlabel':'M_{e e} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
         if save :
             name = 'm_leplep__eeg__%s__baselineCuts' %(ec)
@@ -1278,7 +1279,7 @@ def MakeLepLepGammaPlots( save=False, detail=100) :
             samplesLLG.DumpStack( )
             raw_input('continue')
 
-        samplesLLG.Draw('m_leplepph', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassPSV_idx[0]] && m_leplep>60)' %(baseline_cuts_eeg, ec), (60, 0, 300 ) , hist_config={'logy':1,  'ymin' : 1, 'ymax' : 50000,  'xlabel':'M_{e e #gamma} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+        samplesLLG.Draw('m_leplepph', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassCSEV_idx[0]] && m_leplep>60)' %(baseline_cuts_eeg, ec), (60, 0, 300 ) , hist_config={'logy':1,  'ymin' : 1, 'ymax' : 50000,  'xlabel':'M_{e e #gamma} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
         if save :
             name = 'm_leplepph__eeg__%s__baselineCuts' %(ec)
@@ -1298,7 +1299,7 @@ def MakeLepLepGammaPlots( save=False, detail=100) :
             samplesLLG.DumpStack( )
             raw_input('continue')
 
-        samplesLLG.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassPSV_idx[0]] && m_leplep>60 && m_leplepph > 76 && m_leplepph < 106)' %(baseline_cuts_eeg, ec), [15,25,40,70,100] , hist_config={'logy':1,  'ymin' : 1, 'ymax' : 50000,  'xlabel':'M_{e e #gamma} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+        samplesLLG.Draw('ph_pt[0]', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassCSEV_idx[0]] && m_leplep>60 && m_leplepph > 76 && m_leplepph < 106)' %(baseline_cuts_eeg, ec), [15,25,40,70,100] , hist_config={'logy':1,  'ymin' : 1, 'ymax' : 50000,  'xlabel':'M_{e e #gamma} [GeV]', 'doratio':1}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
         if save :
             name = 'ph_pt__eeg__%s__m_leplepphwindow__varBins' %(ec)
@@ -1326,7 +1327,7 @@ def MakeLepLepGammaPlots( save=False, detail=100) :
                 samplesLLG.DumpStack( )
                 raw_input('continue')
 
-            samplesLLG.Draw('ph_pt[ptSorted_ph_mediumPassPSV_idx[0]]', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassPSV_idx[0]] && ph_pt[ptSorted_ph_mediumPassPSV_idx[0]]>%d && ph_pt[ptSorted_ph_mediumPassPSV_idx[0]]<%d && m_leplep>60 )' %(baseline_cuts_eeg, ec, min, max), (40, 0, 200 ) , hist_config={'logy':1,  'xlabel':'photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
+            samplesLLG.Draw('ph_pt[ptSorted_ph_mediumPassCSEV_idx[0]]', ' PUWeight * ( %s && ph_Is%s[ptSorted_ph_mediumPassCSEV_idx[0]] && ph_pt[ptSorted_ph_mediumPassCSEV_idx[0]]>%d && ph_pt[ptSorted_ph_mediumPassCSEV_idx[0]]<%d && m_leplep>60 )' %(baseline_cuts_eeg, ec, min, max), (40, 0, 200 ) , hist_config={'logy':1,  'xlabel':'photon p_{T} [GeV]'}, label_config={'labelStyle':'fancy', 'extra_label':'#splitline{Electron Channel}{%s}'%( lab), 'extra_label_loc':(0.3, 0.86)},   legend_config=samplesLLG.config_legend(legendCompress=1.2,legendWiden=1.2, ) )
 
             if save :
                 if idx+2 == len(binning_mod) :
@@ -1479,13 +1480,16 @@ def MakePhotonJetFakePlots(save=False, detail=100 ) :
         raw_input('continue')
 
 
-    samplesWg.CompareSelections( 'ph_pt[0]', ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && fabs( m_leplepph-91.2 ) < 5 && leadPhot_leadLepDR>0.3 && leadPhot_sublLepDR > 0.3 && (leadPhot_leadLepDR < 1.0 || leadPhot_sublLepDR < 1.0 ) &&  %s  )'%_photon_cuts_nopix_nosieie]*2 + ['PUWeight * ( %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 )' %_photon_cuts_nopix_nosieie], ['Data', 'Zgamma', 'Wgamma'], (50, 0, 200 ), hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'photon p_{T} [GeV]', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config=samplesWg.config_legend(legendWiden=1.5, legend_entries=['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] ) )
+    print '*************************************FIX******************************'
+    #samplesLLG.CompareSelections( 'ph_pt[%s[0]]'%(_photon_idx_nopix_nosieie), ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && fabs( m_leplepph-91.2 ) < 5 && leadPhot_leadLepDR>0.3 && leadPhot_sublLepDR > 0.3 && (leadPhot_leadLepDR < 1.0 || leadPhot_sublLepDR < 1.0 )  &&  %s)'%(_photon_cuts_nopix_nosieie)]*2 + ['PUWeight * (mu_passtrig25_n>0 && mu_n==2 && ph_truthMatch_ph[%s[0]] && abs(ph_truthMatchMotherPID_ph[%s[0]]) <25 && leadPhot_leadLepDR>0.4 && %s )' %(_photon_idx_nopix_nosieie, _photon_idx_nopix_nosieie, _photon_cuts_nopix_nosieie)], ['Data', 'Zgamma', 'Zgamma'], (50,0,200), hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'photon p_{T} [GeV]', 'ylabel':'Normalized Events', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'Z#gamma, truth matched photons'] }, label_config={'labelStyle' : 'fancy', } )
+    ##samplesWg.CompareSelections( 'ph_pt[0]', ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && fabs( m_leplepph-91.2 ) < 5 && leadPhot_leadLepDR>0.3 && leadPhot_sublLepDR > 0.3 && (leadPhot_leadLepDR < 1.0 || leadPhot_sublLepDR < 1.0 ) &&  %s  )'%_photon_cuts_nopix_nosieie]*2 + ['PUWeight * ( %s && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) <25 )' %_photon_cuts_nopix_nosieie], ['Data', 'Zgamma', 'Wgamma'], (50, 0, 200 ), hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':'photon p_{T} [GeV]', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config=samplesWg.config_legend(legendWiden=1.5, legend_entries=['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] ) )
 
-    if save :
-        name = 'ph_pt__CompDataRealPhotonMCTruthMatchPhoton'
-        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-    else :
-        raw_input('continue')
+    #if save :
+    #    name = 'ph_pt__CompDataRealPhotonMCTruthMatchPhoton'
+    #    #samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+    #    samplesLLG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+    #else :
+    #    raw_input('continue')
 
     #------------------------------
     #------------------------------
@@ -1923,10 +1927,10 @@ def MakeJetFakeSystPlots(save=True ) :
 
     vars = ['sigmaIEIE', 'chIsoCorr', 'neuIsoCorr', 'phoIsoCorr']
     regions = ['EB', 'EE']
-    asym_isos = { 'sigmaIEIE' : [('5','3','3'), ('8','5','5'), ('10','7','7'), ('12','9','9'), ('15','11','11'), ('20','16','16')],
-                  'chIsoCorr' : [('None','3','3'), ('None','5','5'), ('None','7','7'), ('None','9','9'), ('None','11','11'), ('None','16','16')   ],
-                  'neuIsoCorr' : [('5','None','3'), ('8','None','5'), ('10','None','7'), ('12','None','9'), ('15','None','11'), ('20','None','16')],
-                  'phoIsoCorr' : [('5','3','None'), ('8','5','None'), ('10','7','None'), ('12','9','None'), ('15','11','None'), ('20','16','None')],
+    asym_isos = { 'sigmaIEIE'  : [('5','3','3'), ('8','5','5'), ('10','7','7'), ('12','9','9'), ('15','11','11'), ('20','16','16')],
+                  'chIsoCorr'  : [('NoSIEIE','3','3'),('None','3','3'), ('None','5','5'), ('None','7','7'), ('None','9','9'), ('None','11','11'), ('None','16','16')   ],
+                  'neuIsoCorr' : [('5','NoSIEIE','3'),('5','None','3'), ('8','None','5'), ('10','None','7'), ('12','None','9'), ('15','None','11'), ('20','None','16')],
+                  'phoIsoCorr' : [('5','3','NoSIEIE'),('5','3','None'), ('8','5','None'), ('10','7','None'), ('12','9','None'), ('15','11','None'), ('20','16','None')],
                 }
     binning = { 'sigmaIEIE'  : { 'EB' : (30, 0, 0.03), 'EE' : (200, 0, 0.1), 'EB__varBins' : [0, 0.011, 0.03], 'EE__varBins' : [0, 0.033, 0.1] },
                 'chIsoCorr'  : { 'EB' : (30, 0, 45)  , 'EE' : (35, 0, 42)  , 'EB__varBins' : [0, 1.5, 5.0]   , 'EE__varBins' : [0, 1.2, 5.0] },
@@ -1945,7 +1949,7 @@ def MakeJetFakeSystPlots(save=True ) :
                 'chIsoCorr'  : 'Charged Hadron Isolation', 
                 'neuIsoCorr' : 'Neutral Hadron Isolation', 
                 'phoIsoCorr' : 'Neutral EM Isolation' }
-
+    base_colors = [ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta, ROOT.kYellow-2]
     for var in vars :
         for reg in regions :
     
@@ -2034,16 +2038,17 @@ def MakeJetFakeSystPlots(save=True ) :
                     # comparison is done with Wgamma sample
                     #-----------------------------
 
-                    samplesWg.CompareSelections( 'ph_%s[%s]'%(var,phvar), ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && %s && fabs( m_leplepph-91.2 ) < 5  && %s && ph_Is%s[%s] && %s)'%(cuts_full, fsr_cut, reg, phvar, pt_str)]*2 + ['PUWeight * (mu_passtrig25_n>0 && mu_n==1 && %s && ph_truthMatch_ph[%s] && abs(ph_truthMatchMotherPID_ph[%s]) <25 && ph_Is%s[%s] && leadPhot_leadLepDR>0.4 && %s )' %(cuts_full, phvar, phvar, reg, phvar, pt_str)], ['Data', 'Zgamma', 'Wgamma'], binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':xlabels[var], 'ylabel':'Normalized Events', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] }, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{%s}{%s}' %(reglabels[reg],pt_lab), 'extra_label_loc':(0.2, 0.86)} )
+                    print '************************************FIX***************************'
+                    #samplesWg.CompareSelections( 'ph_%s[%s]'%(var,phvar), ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && %s && fabs( m_leplepph-91.2 ) < 5  && %s && ph_Is%s[%s] && %s)'%(cuts_full, fsr_cut, reg, phvar, pt_str)]*2 + ['PUWeight * (mu_passtrig25_n>0 && mu_n==1 && %s && ph_truthMatch_ph[%s] && abs(ph_truthMatchMotherPID_ph[%s]) <25 && ph_Is%s[%s] && leadPhot_leadLepDR>0.4 && %s )' %(cuts_full, phvar, phvar, reg, phvar, pt_str)], ['Data', 'Zgamma', 'Wgamma'], binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':xlabels[var], 'ylabel':'Normalized Events', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] }, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{%s}{%s}' %(reglabels[reg],pt_lab), 'extra_label_loc':(0.2, 0.86)} )
                     # for comparing to Zg
-                    #samplesLLG.CompareSelections( 'ph_%s[%s]'%(var,phvar), ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && %s && fabs( m_leplepph-91.2 ) < 5  && %s && ph_Is%s[%s] && %s)'%(cuts_full, fsr_cut, reg, phvar, pt_str)]*2 + ['PUWeight * (mu_passtrig25_n>0 && mu_n==2 && %s && ph_truthMatch_ph[%s] && abs(ph_truthMatchMotherPID_ph[%s]) <25 && ph_Is%s[%s] && leadPhot_leadLepDR>0.4 && %s )' %(cuts_full, phvar, phvar, reg, phvar, pt_str)], ['Data', 'Zgamma', 'Zgamma'], binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':xlabels[var], 'ylabel':'Normalized Events', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'Z#gamma, truth matched photons'] }, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{%s}{%s}' %(reglabels[reg],pt_lab), 'extra_label_loc':(0.2, 0.86)} )
+                    samplesLLG.CompareSelections( 'ph_%s[%s]'%(var,phvar), ['PUWeight * ( mu_passtrig25_n>0 && mu_n==2 && %s && fabs( m_leplepph-91.2 ) < 5  && %s && ph_Is%s[%s] && %s)'%(cuts_full, fsr_cut, reg, phvar, pt_str)]*2 + ['PUWeight * (mu_passtrig25_n>0 && mu_n==2 && %s && ph_truthMatch_ph[%s] && abs(ph_truthMatchMotherPID_ph[%s]) <25 && ph_Is%s[%s] && leadPhot_leadLepDR>0.4 && %s )' %(cuts_full, phvar, phvar, reg, phvar, pt_str)], ['Data', 'Zgamma', 'Zgamma'], binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':xlabels[var], 'ylabel':'Normalized Events', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'Z#gamma, truth matched photons'] }, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{%s}{%s}' %(reglabels[reg],pt_lab), 'extra_label_loc':(0.2, 0.86)} )
 
                     if save :
                         name = 'ph_%s__%s%s__CompDataRealPhotonMCTruthMatchPhoton%s'%(var, reg,pt_name, bin_type)
-                        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                        samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
-                        #samplesLLG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                        #samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
+                        #samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                        #samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
+                        samplesLLG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                        samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
                     else :
                         raw_input('continue')
 
@@ -2088,8 +2093,19 @@ def MakeJetFakeSystPlots(save=True ) :
                                 iso_cut = 'ph_noSIEIEiso%s%s%s_n==1' %( iso[0], iso[1], iso[2] )
                                 phvar = 'ptSorted_ph_noSIEIEiso%s%s%s_idx[0]' %( iso[0], iso[1], iso[2] )
                             else :
-                                iso_cut = 'ph_passSIEIEiso%s%s%s_n==1' %( iso[0], iso[1], iso[2] )
-                                phvar = 'ptSorted_ph_passSIEIEiso%s%s%s_idx[0]' %( iso[0], iso[1], iso[2] )
+                                if 'NoSIEIE' in iso :
+                                    if var == 'chIsoCorr' :
+                                        iso_cut = 'ph_mediumNoSIEIENoChIso_n==1 '
+                                        phvar = 'ptSorted_ph_mediumNoSIEIENoChIso_idx[0] ' 
+                                    if var == 'neuIsoCorr' :
+                                        iso_cut = 'ph_mediumNoSIEIENoNeuIso_n==1 '
+                                        phvar = 'ptSorted_ph_mediumNoSIEIENoNeuIso_idx[0] ' 
+                                    if var == 'phoIsoCorr' :
+                                        iso_cut = 'ph_mediumNoSIEIENoPhoIso_n==1 '
+                                        phvar = 'ptSorted_ph_mediumNoSIEIENoPhoIso_idx[0] ' 
+                                else :
+                                    iso_cut = 'ph_passSIEIEiso%s%s%s_n==1' %( iso[0], iso[1], iso[2] )
+                                    phvar = 'ptSorted_ph_passSIEIEiso%s%s%s_idx[0]' %( iso[0], iso[1], iso[2] )
 
                             pt_str  = ''
                             pt_str_def  = ''
@@ -2118,10 +2134,19 @@ def MakeJetFakeSystPlots(save=True ) :
                                 isostr1 = 'No Cut'
                             if iso[2] == 'None'  : 
                                 isostr2 = 'No Cut'
-                            iso_lab_strs.append( '%s,%s,%s (ch,neu,pho)' %( isostr0, isostr1, isostr2) )
+                            iso_lab = '%s,%s,%s (ch,neu,pho)' %( isostr0, isostr1, isostr2)
+                            if 'NoSIEIE' in iso :
+                                iso_lab = 'No SIEIE'
+                            iso_lab_strs.append( iso_lab )
+
+                        n_plots = len( asym_isos[var]) + 1
+                        colors = list(base_colors)
+
+                        if len( colors ) < n_plots :
+                            colors.append(ROOT.kGray)
 
                         samplesLLG.CompareSelections( 'ph_%s[0]' %(var ), iso_cut_strs, 
-                                     [samp]*7, binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kBlue, ROOT.kRed, ROOT.kOrange, ROOT.kGreen, ROOT.kMagenta, ROOT.kYellow-2] ,'doratio':2, 'xlabel':xlabels[var], 'ylabel':ylabels[var][reg], 'rlabel':'Loose Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.5}, legend_config={'legend_entries':iso_lab_strs})
+                                     [samp]*(n_plots), binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':colors ,'doratio':2, 'xlabel':xlabels[var], 'ylabel':ylabels[var][reg], 'rlabel':'Loose Cut / Nominal cut', 'rmin':0.6, 'rmax':1.4, 'ymin':0, 'ymax':0.5}, legend_config={'legend_entries':iso_lab_strs})
                         if save :
                             samplesLLG.SaveStack(name, options.outputDir+'/'+subdir, 'base')
                             samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
@@ -2140,13 +2165,26 @@ def MakeJetFakeSystPlots(save=True ) :
                         if iso[2] == 'None' : 
                             isostr2 = 'No Cut'
                         iso_lab = 'Loose Iso (%s,%s,%s) ' %(isostr0, isostr1, isostr2)
+                        if 'NoSIEIE' in iso :
+                            iso_lab = 'No SIEIE'
                     
                         if var == 'sigmaIEIE' :
                             iso_cut = 'ph_noSIEIEiso%s%s%s_n==1' %( iso[0], iso[1], iso[2] )
                             phvar = 'ptSorted_ph_noSIEIEiso%s%s%s_idx[0]' %( iso[0], iso[1], iso[2] )
                         else :
-                            iso_cut = 'ph_passSIEIEiso%s%s%s_n==1' %( iso[0], iso[1], iso[2] )
-                            phvar = 'ptSorted_ph_passSIEIEiso%s%s%s_idx[0]' %( iso[0], iso[1], iso[2] )
+                            if 'NoSIEIE' in iso :
+                                if var == 'chIsoCorr' :
+                                    iso_cut = 'ph_mediumNoSIEIENoChIso_n==1 '
+                                    phvar = 'ptSorted_ph_mediumNoSIEIENoChIso_idx[0] ' 
+                                if var == 'neuIsoCorr' :
+                                    iso_cut = 'ph_mediumNoSIEIENoNeuIso_n==1 '
+                                    phvar = 'ptSorted_ph_mediumNoSIEIENoNeuIso_idx[0] ' 
+                                if var == 'phoIsoCorr' :
+                                    iso_cut = 'ph_mediumNoSIEIENoPhoIso_n==1 '
+                                    phvar = 'ptSorted_ph_mediumNoSIEIENoPhoIso_idx[0] ' 
+                            else :
+                                iso_cut = 'ph_passSIEIEiso%s%s%s_n==1' %( iso[0], iso[1], iso[2] )
+                                phvar = 'ptSorted_ph_passSIEIEiso%s%s%s_idx[0]' %( iso[0], iso[1], iso[2] )
 
                         pt_str  = ''
                         pt_str_def  = ''
@@ -2179,22 +2217,23 @@ def MakeJetFakeSystPlots(save=True ) :
                         # Real photon template selections
                         # all vars, pt
                         #-----------------------------
+                        print '***************************FIX*******************************'
                         name = 'ph_%s__%s__iso%s-%s-%s%s__CompDataRealPhotonMCTruthMatchPhoton%s'%(var,reg,iso[0], iso[1], iso[2],pt_name, bin_type)
-                        samplesWg.CompareSelections( 'ph_%s[%s]'%(var,phvar), 
-                                                    ['PUWeight * (mu_passtrig25_n>0 && mu_n==2 && %s && fabs( m_leplepph-91.2 ) < 5  && %s && ph_Is%s[%s] && %s )'%(iso_cut, fsr_cut, reg, phvar, pt_str)]*2 
-                                                  + ['PUWeight * (mu_passtrig25_n>0 && mu_n==1 && %s && ph_truthMatch_ph[%s] && abs(ph_truthMatchMotherPID_ph[%s]) <25 && ph_Is%s[%s] && leadPhot_leadLepDR>0.4 && %s )' %(iso_cut, phvar, phvar, reg, phvar, pt_str)], 
-                                                    ['Data', 'Zgamma', 'Wgamma'], binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':xlabels[var], 'ylabel':'Normalized Events', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] }, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{#splitline{%s}{%s}}{%s}' %(reglabels[reg], iso_lab, pt_lab), 'extra_label_loc':(0.2, 0.75) } )
-                        # for comparing to zg
-                        #samplesLLG.CompareSelections( 'ph_%s[%s]'%(var,phvar), 
+                        #samplesWg.CompareSelections( 'ph_%s[%s]'%(var,phvar), 
                         #                            ['PUWeight * (mu_passtrig25_n>0 && mu_n==2 && %s && fabs( m_leplepph-91.2 ) < 5  && %s && ph_Is%s[%s] && %s )'%(iso_cut, fsr_cut, reg, phvar, pt_str)]*2 
-                        #                          + ['PUWeight * (mu_passtrig25_n>0 && mu_n==2 && %s && ph_truthMatch_ph[%s] && abs(ph_truthMatchMotherPID_ph[%s]) <25 && ph_Is%s[%s] && leadPhot_leadLepDR>0.4 && %s )' %(iso_cut, phvar, phvar, reg, phvar, pt_str)], 
-                        #                            ['Data', 'Zgamma', 'Zgamma'], binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':xlabels[var], 'ylabel':'Normalized Events', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'Z#gamma, truth matched photons'] }, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{#splitline{%s}{%s}}{%s}' %(reglabels[reg], iso_lab, pt_lab), 'extra_label_loc':(0.2, 0.75) } )
+                        #                          + ['PUWeight * (mu_passtrig25_n>0 && mu_n==1 && %s && ph_truthMatch_ph[%s] && abs(ph_truthMatchMotherPID_ph[%s]) <25 && ph_Is%s[%s] && leadPhot_leadLepDR>0.4 && %s )' %(iso_cut, phvar, phvar, reg, phvar, pt_str)], 
+                        #                            ['Data', 'Zgamma', 'Wgamma'], binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':xlabels[var], 'ylabel':'Normalized Events', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'W#gamma, truth matched photons'] }, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{#splitline{%s}{%s}}{%s}' %(reglabels[reg], iso_lab, pt_lab), 'extra_label_loc':(0.2, 0.75) } )
+                        # for comparing to zg
+                        samplesLLG.CompareSelections( 'ph_%s[%s]'%(var,phvar), 
+                                                    ['PUWeight * (mu_passtrig25_n>0 && mu_n==2 && %s && fabs( m_leplepph-91.2 ) < 5  && %s && ph_Is%s[%s] && %s )'%(iso_cut, fsr_cut, reg, phvar, pt_str)]*2 
+                                                  + ['PUWeight * (mu_passtrig25_n>0 && mu_n==2 && %s && ph_truthMatch_ph[%s] && abs(ph_truthMatchMotherPID_ph[%s]) <25 && ph_Is%s[%s] && leadPhot_leadLepDR>0.4 && %s )' %(iso_cut, phvar, phvar, reg, phvar, pt_str)], 
+                                                    ['Data', 'Zgamma', 'Zgamma'], binning[var][reg+bin_type], hist_config={'normalize':1, 'colors':[ROOT.kBlack, ROOT.kRed+2, ROOT.kBlue-3], 'doratio':1, 'xlabel':xlabels[var], 'ylabel':'Normalized Events', 'rlabel':'MC / Data', 'ymin':0.00001, 'ymax':5, 'logy':1, 'rmin':0.2, 'rmax':1.8}, legend_config={'legend_entries':['Data, FSR photons', 'Z#gamma, FSR photons', 'Z#gamma, truth matched photons'] }, label_config={'labelStyle' : 'fancy', 'extra_label' : '#splitline{#splitline{%s}{%s}}{%s}' %(reglabels[reg], iso_lab, pt_lab), 'extra_label_loc':(0.2, 0.75) } )
         
                         if save :
-                            samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                            samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
-                            #samplesLLG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
-                            #samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
+                            #samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                            #samplesWg.DumpStack(options.outputDir+'/'+subdir, name)
+                            samplesLLG.SaveStack( name, options.outputDir+'/'+subdir, 'base')
+                            samplesLLG.DumpStack(options.outputDir+'/'+subdir, name)
                         else :
                             raw_input('continue')
         
@@ -2519,806 +2558,809 @@ def MakeJetFakeSystPlots(save=True ) :
                 else :
                     raw_input('continue')
 
-def MakeJetFakeFactorPlots(save=False, detail=100) :
-
-    subdir = 'JetFakeFactorPlots'
-
-    cut_invsieie_eb = 0.013
-    cut_invsieie_ee = 0.035
-
-    #var_bins = (40, 0, 200, [0, 5, 10, 15, 20, 25, 30, 40, 60, 100, 200] )
-    var_bins = (40, 0, 200, [0, 5, 10, 15, 20, 25, 30, 40, 60,  200] )
-    bins = (40, 0, 200)
-
-    base_cuts = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0]<0.05 && ph_hasPixSeed[0]==0 '
-    fake_cr_cuts = 'fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 '
-
-    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0]  && ph_IsEE[0] && %s)' %( base_cuts, fake_cr_cuts) ,bins , xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Endcap photons', logy=1 )
-
-    #if save :
-    #    name = 'ph_pt__mmg__EE__Cut_passphoIso_passneuIso_chIsoWindow5-20_passSIEIE__ZjetsFakeCR'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEE[0] && %s )' %( base_cuts, cut_invsieie_ee, fake_cr_cuts ) , bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Endcap photons', logy=1  )
-
-    #if save :
-    #    name = 'ph_pt__mmg__EE__Cut_invphoIso_invneuIso_chIsoWindow5-20_invSIEIE__ZjetsFakeCR'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0]  && ph_IsEB[0] && %s)' %( base_cuts, fake_cr_cuts) , bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Barrel photons', logy=1 )
-
-    #if save :
-    #    name = 'ph_pt__mmg__EB__Cut_passphoIso_passneuIso_chIsoWindow5-20_passSIEIE__ZjetsFakeCR'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEB[0] && %s )' %( base_cuts, cut_invsieie_eb, fake_cr_cuts ) , bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Barrel photons', logy=1  )
-
-    #if save :
-    #    name = 'ph_pt__mmg__EB__Cut_invphoIso_invneuIso_chIsoWindow5-20_invSIEIE__ZjetsFakeCR'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0]  && ph_IsEE[0] && %s)' %( base_cuts, fake_cr_cuts) ,var_bins , xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Endcap photons', logy=1 )
-
-    #if save :
-    #    name = 'ph_pt__mmg__EE__Cut_passphoIso_passneuIso_chIsoWindow5-20_passSIEIE__ZjetsFakeCR__varBins'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEE[0] && %s )' %( base_cuts, cut_invsieie_ee, fake_cr_cuts ) , var_bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Endcap photons', logy=1  )
-
-    #if save :
-    #    name = 'ph_pt__mmg__EE__Cut_invphoIso_invneuIso_chIsoWindow5-20_invSIEIE__ZjetsFakeCR__varBins'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0]  && ph_IsEB[0] && %s)' %( base_cuts, fake_cr_cuts) , var_bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Barrel photons', logy=1 )
-
-    #if save :
-    #    name = 'ph_pt__mmg__EB__Cut_passphoIso_passneuIso_chIsoWindow5-20_passSIEIE__ZjetsFakeCR__varBins'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEB[0] && %s )' %( base_cuts, cut_invsieie_eb, fake_cr_cuts ) , var_bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Barrel photons', logy=1  )
-
-    #if save :
-    #    name = 'ph_pt__mmg__EB__Cut_invphoIso_invneuIso_chIsoWindow5-20_invSIEIE__ZjetsFakeCR__varBins'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #if detail < 1 :
-    #    return
-    #-------------------------
-    #-------------------------
-    # Look at chIso to determine window size
-    #-------------------------
-    #-------------------------
-
-    samplesWg.Draw( 'ph_chIsoCorr[0]', 'PUWeight * ( %s && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEB[0] && %s )' %( base_cuts, cut_invsieie_eb, fake_cr_cuts ) , (50, 0, 50), xlabel='Charged Hadron iso [GeV]', labelStyle='fancy', extra_label='Barrel photons', extra_label_loc=(0.45, 0.87), logy=1, ymax=5e4, legend_config=samplesWg.config_legend(legendLoc='Double')  )
-
-    if save :
-        name = 'ph_chIsoCorr__mmg__EB__Cut_invNeuPhoIso_invSIEIE__ZjetsFakeCR'
-        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    else :
-        raw_input('continue')
-
-
-    samplesWg.Draw( 'ph_chIsoCorr[0]', 'PUWeight * ( %s && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEE[0] && %s )' %( base_cuts, cut_invsieie_ee, fake_cr_cuts ) , (50, 0, 50), xlabel='Charged Hadron iso [GeV]', labelStyle='fancy', extra_label='Endcap photons', extra_label_loc=(0.6, 0.87), logy=1, legend_config=samplesWg.config_legend(legendLoc='Double')   )
-
-    if save :
-        name = 'ph_chIsoCorr__mmg__EE__Cut_invNeuPhoIso_invSIEIE__ZjetsFakeCR'
-        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    else :
-        raw_input('continue')
-
-    samplesWg.Draw( 'ph_chIsoCorr[0]', 'PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0] && ph_IsEB[0] && %s )' %( base_cuts, fake_cr_cuts ) , (50, 0, 50), xlabel='Charged Hadron iso [GeV]', labelStyle='fancy', extra_label='Barrel photons', extra_label_loc=(0.6, 0.87), logy=0 )
-
-    if save :
-        name = 'ph_chIsoCorr__mmg__EB__Cut_passNeuPhoIso_passSIEIE__ZjetsFakeCR'
-        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    else :
-        raw_input('continue')
-
-    samplesWg.Draw( 'ph_chIsoCorr[0]', 'PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0] && ph_IsEE[0] && %s )' %( base_cuts, fake_cr_cuts ) , (50, 0, 50), xlabel='Charged Hadron iso [GeV]', labelStyle='fancy', extra_label='Endcap photons', extra_label_loc=(0.6, 0.87), logy=0, legend_config=samplesWg.config_legend() )
-
-    if save :
-        name = 'ph_chIsoCorr__mmg__EE__Cut_passNeuPhoIso_passSIEIE__ZjetsFakeCR'
-        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    else :
-        raw_input('continue')
-
-    print detail
-
-    if detail < 2 :
-        print 'RETURN'
-        return
-
-    #-------------------------
-    #-------------------------
-    # Motivate choice of loose selection
-    #-------------------------
-    #-------------------------
-
-    base_cuts = 'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && dr_ph1_ph2>0.4 && ph_HoverE12[0]<0.05 && ph_HoverE12[1]<0.05 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 '
-
-
-    #-------------------------
-    # Full Iso -- EB EB
-    #-------------------------
-
-    ph_iso_cuts = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]  && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1]'
-
-    ## fake fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ##real fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ##fake real
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ##-------------------------
-    ## Full Iso -- EE EE
-    ##-------------------------
-
-    ##fake fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-    ##real fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-    ##fake real
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-    ##-------------------------
-    ## Full Iso -- EB EE
-    ##-------------------------
-
-
-    ## fake fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ## real fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ## fake real
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-    ##-------------------------
-    ## Full Iso -- EE EB
-    ##-------------------------
-
-
-    ## fake fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ## real fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ## fake real
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-
-    #-------------------------
-    # Inv Iso -- EB EB
-    #-------------------------
-
-    ph_iso_cuts_ff = '!ph_passChIsoCorrMedium[0] && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0]  && !ph_passChIsoCorrMedium[1] && !ph_passNeuIsoCorrMedium[1] && !ph_passPhoIsoCorrMedium[1]'
-    ph_iso_cuts_fr = '!ph_passChIsoCorrMedium[0] && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0]  && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1]'
-    ph_iso_cuts_rf = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]  && !ph_passChIsoCorrMedium[1] && !ph_passNeuIsoCorrMedium[1] && !ph_passPhoIsoCorrMedium[1]'
-
-    ## fake fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ##real fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ##fake real
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ##-------------------------
-    ## Inv Iso -- EE EE
-    ##-------------------------
-
-    ##fake fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-    ##real fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-    ##fake real
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-    ##-------------------------
-    ## Inv Iso -- EB EE
-    ##-------------------------
-
-
-    ## fake fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ## real fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ## fake real
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-    ##-------------------------
-    ## Inv Iso -- EE EB
-    ##-------------------------
-
-
-    ## fake fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ## real fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ## fake real
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
-
-    if save :
-        name = 'ph_pt_subl__mgg__EE_EB__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
-        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    else :
-        raw_input('continue')
-
-
-    ##-------------------------
-    ## Inv Iso, Ch iso window -- EB EB
-    ##-------------------------
-
-    #ph_iso_cuts_ff = '!ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0]  && !ph_passNeuIsoCorrMedium[1] && !ph_passPhoIsoCorrMedium[1] && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 20 && ph_chIsoCorr[1] > 5 && ph_chIsoCorr[1] < 20'
-    #ph_iso_cuts_fr = '!ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0]  && ph_passNeuIsoCorrMedium[1]  && ph_passPhoIsoCorrMedium[1]  && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 20 && ph_chIsoCorr[1] > 5 && ph_chIsoCorr[1] < 20'
-    #ph_iso_cuts_rf = 'ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]    && !ph_passNeuIsoCorrMedium[1] && !ph_passPhoIsoCorrMedium[1] && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 20 && ph_chIsoCorr[1] > 5 && ph_chIsoCorr[1] < 20'
-
-    ## fake fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ##real fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ##fake real
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ##-------------------------
-    ## Inv Iso, Ch iso window -- EE EE
-    ##-------------------------
-
-    ##fake fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-    ##real fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-    ##fake real
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-
-    ##-------------------------
-    ## Inv Iso, Ch iso window -- EB EE
-    ##-------------------------
-
-
-    ## fake fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ## real fake
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    ## fake real
-
-    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
-
-    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
-
-    #if save :
-    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
-    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
-    #else :
-    #    raw_input('continue')
+#------------------------------------------
+# DEPRICATED
+#------------------------------------------
+#def MakeJetFakeFactorPlots(save=False, detail=100) :
+#
+#    subdir = 'JetFakeFactorPlots'
+#
+#    cut_invsieie_eb = 0.013
+#    cut_invsieie_ee = 0.035
+#
+#    #var_bins = (40, 0, 200, [0, 5, 10, 15, 20, 25, 30, 40, 60, 100, 200] )
+#    var_bins = (40, 0, 200, [0, 5, 10, 15, 20, 25, 30, 40, 60,  200] )
+#    bins = (40, 0, 200)
+#
+#    base_cuts = 'mu_passtrig25_n>0 && mu_n==2 && ph_n==1 && ph_HoverE12[0]<0.05 && ph_hasPixSeed[0]==0 '
+#    fake_cr_cuts = 'fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 '
+#
+#    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0]  && ph_IsEE[0] && %s)' %( base_cuts, fake_cr_cuts) ,bins , xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Endcap photons', logy=1 )
+#
+#    #if save :
+#    #    name = 'ph_pt__mmg__EE__Cut_passphoIso_passneuIso_chIsoWindow5-20_passSIEIE__ZjetsFakeCR'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEE[0] && %s )' %( base_cuts, cut_invsieie_ee, fake_cr_cuts ) , bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Endcap photons', logy=1  )
+#
+#    #if save :
+#    #    name = 'ph_pt__mmg__EE__Cut_invphoIso_invneuIso_chIsoWindow5-20_invSIEIE__ZjetsFakeCR'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0]  && ph_IsEB[0] && %s)' %( base_cuts, fake_cr_cuts) , bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Barrel photons', logy=1 )
+#
+#    #if save :
+#    #    name = 'ph_pt__mmg__EB__Cut_passphoIso_passneuIso_chIsoWindow5-20_passSIEIE__ZjetsFakeCR'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEB[0] && %s )' %( base_cuts, cut_invsieie_eb, fake_cr_cuts ) , bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Barrel photons', logy=1  )
+#
+#    #if save :
+#    #    name = 'ph_pt__mmg__EB__Cut_invphoIso_invneuIso_chIsoWindow5-20_invSIEIE__ZjetsFakeCR'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0]  && ph_IsEE[0] && %s)' %( base_cuts, fake_cr_cuts) ,var_bins , xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Endcap photons', logy=1 )
+#
+#    #if save :
+#    #    name = 'ph_pt__mmg__EE__Cut_passphoIso_passneuIso_chIsoWindow5-20_passSIEIE__ZjetsFakeCR__varBins'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEE[0] && %s )' %( base_cuts, cut_invsieie_ee, fake_cr_cuts ) , var_bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Endcap photons', logy=1  )
+#
+#    #if save :
+#    #    name = 'ph_pt__mmg__EE__Cut_invphoIso_invneuIso_chIsoWindow5-20_invSIEIE__ZjetsFakeCR__varBins'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0]  && ph_IsEB[0] && %s)' %( base_cuts, fake_cr_cuts) , var_bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Barrel photons', logy=1 )
+#
+#    #if save :
+#    #    name = 'ph_pt__mmg__EB__Cut_passphoIso_passneuIso_chIsoWindow5-20_passSIEIE__ZjetsFakeCR__varBins'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw( 'ph_pt[0]', 'PUWeight * ( %s && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0]<20 && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEB[0] && %s )' %( base_cuts, cut_invsieie_eb, fake_cr_cuts ) , var_bins, xlabel='photon p_{T} [GeV]', labelStyle='fancy', extra_label='Barrel photons', logy=1  )
+#
+#    #if save :
+#    #    name = 'ph_pt__mmg__EB__Cut_invphoIso_invneuIso_chIsoWindow5-20_invSIEIE__ZjetsFakeCR__varBins'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #if detail < 1 :
+#    #    return
+#    #-------------------------
+#    #-------------------------
+#    # Look at chIso to determine window size
+#    #-------------------------
+#    #-------------------------
+#
+#    samplesWg.Draw( 'ph_chIsoCorr[0]', 'PUWeight * ( %s && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEB[0] && %s )' %( base_cuts, cut_invsieie_eb, fake_cr_cuts ) , (50, 0, 50), xlabel='Charged Hadron iso [GeV]', labelStyle='fancy', extra_label='Barrel photons', extra_label_loc=(0.45, 0.87), logy=1, ymax=5e4, legend_config=samplesWg.config_legend(legendLoc='Double')  )
+#
+#    if save :
+#        name = 'ph_chIsoCorr__mmg__EB__Cut_invNeuPhoIso_invSIEIE__ZjetsFakeCR'
+#        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    else :
+#        raw_input('continue')
+#
+#
+#    samplesWg.Draw( 'ph_chIsoCorr[0]', 'PUWeight * ( %s && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0] && ph_sigmaIEIE[0] > %f  && ph_IsEE[0] && %s )' %( base_cuts, cut_invsieie_ee, fake_cr_cuts ) , (50, 0, 50), xlabel='Charged Hadron iso [GeV]', labelStyle='fancy', extra_label='Endcap photons', extra_label_loc=(0.6, 0.87), logy=1, legend_config=samplesWg.config_legend(legendLoc='Double')   )
+#
+#    if save :
+#        name = 'ph_chIsoCorr__mmg__EE__Cut_invNeuPhoIso_invSIEIE__ZjetsFakeCR'
+#        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    else :
+#        raw_input('continue')
+#
+#    samplesWg.Draw( 'ph_chIsoCorr[0]', 'PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0] && ph_IsEB[0] && %s )' %( base_cuts, fake_cr_cuts ) , (50, 0, 50), xlabel='Charged Hadron iso [GeV]', labelStyle='fancy', extra_label='Barrel photons', extra_label_loc=(0.6, 0.87), logy=0 )
+#
+#    if save :
+#        name = 'ph_chIsoCorr__mmg__EB__Cut_passNeuPhoIso_passSIEIE__ZjetsFakeCR'
+#        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    else :
+#        raw_input('continue')
+#
+#    samplesWg.Draw( 'ph_chIsoCorr[0]', 'PUWeight * ( %s && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_passSIEIEMedium[0] && ph_IsEE[0] && %s )' %( base_cuts, fake_cr_cuts ) , (50, 0, 50), xlabel='Charged Hadron iso [GeV]', labelStyle='fancy', extra_label='Endcap photons', extra_label_loc=(0.6, 0.87), logy=0, legend_config=samplesWg.config_legend() )
+#
+#    if save :
+#        name = 'ph_chIsoCorr__mmg__EE__Cut_passNeuPhoIso_passSIEIE__ZjetsFakeCR'
+#        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    else :
+#        raw_input('continue')
+#
+#    print detail
+#
+#    if detail < 2 :
+#        print 'RETURN'
+#        return
+#
+#    #-------------------------
+#    #-------------------------
+#    # Motivate choice of loose selection
+#    #-------------------------
+#    #-------------------------
+#
+#    base_cuts = 'mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && dr_ph1_ph2>0.4 && ph_HoverE12[0]<0.05 && ph_HoverE12[1]<0.05 && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 '
+#
+#
+#    #-------------------------
+#    # Full Iso -- EB EB
+#    #-------------------------
+#
+#    ph_iso_cuts = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]  && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1]'
+#
+#    ## fake fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ##real fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ##fake real
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ##-------------------------
+#    ## Full Iso -- EE EE
+#    ##-------------------------
+#
+#    ##fake fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#    ##real fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#    ##fake real
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#    ##-------------------------
+#    ## Full Iso -- EB EE
+#    ##-------------------------
+#
+#
+#    ## fake fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ## real fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ## fake real
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#    ##-------------------------
+#    ## Full Iso -- EE EB
+#    ##-------------------------
+#
+#
+#    ## fake fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ## real fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_passAllIso_passSIEIE_lead__Cut_passAllIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ## fake real
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_passAllIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#
+#    #-------------------------
+#    # Inv Iso -- EB EB
+#    #-------------------------
+#
+#    ph_iso_cuts_ff = '!ph_passChIsoCorrMedium[0] && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0]  && !ph_passChIsoCorrMedium[1] && !ph_passNeuIsoCorrMedium[1] && !ph_passPhoIsoCorrMedium[1]'
+#    ph_iso_cuts_fr = '!ph_passChIsoCorrMedium[0] && !ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0]  && ph_passChIsoCorrMedium[1] && ph_passNeuIsoCorrMedium[1] && ph_passPhoIsoCorrMedium[1]'
+#    ph_iso_cuts_rf = 'ph_passChIsoCorrMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]  && !ph_passChIsoCorrMedium[1] && !ph_passNeuIsoCorrMedium[1] && !ph_passPhoIsoCorrMedium[1]'
+#
+#    ## fake fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ##real fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ##fake real
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ##-------------------------
+#    ## Inv Iso -- EE EE
+#    ##-------------------------
+#
+#    ##fake fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#    ##real fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#    ##fake real
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#    ##-------------------------
+#    ## Inv Iso -- EB EE
+#    ##-------------------------
+#
+#
+#    ## fake fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ## real fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ## fake real
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#    ##-------------------------
+#    ## Inv Iso -- EE EB
+#    ##-------------------------
+#
+#
+#    ## fake fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_invIso_invSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ## real fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_passAllIso_passSIEIE_lead__Cut_invIso_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ## fake real
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    if save :
+#        name = 'ph_pt_subl__mgg__EE_EB__Cut_invIso_invSIEIE_lead__Cut_passAllIso_passSIEIE_subl'
+#        samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    else :
+#        raw_input('continue')
+#
+#
+#    ##-------------------------
+#    ## Inv Iso, Ch iso window -- EB EB
+#    ##-------------------------
+#
+#    #ph_iso_cuts_ff = '!ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0]  && !ph_passNeuIsoCorrMedium[1] && !ph_passPhoIsoCorrMedium[1] && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 20 && ph_chIsoCorr[1] > 5 && ph_chIsoCorr[1] < 20'
+#    #ph_iso_cuts_fr = '!ph_passNeuIsoCorrMedium[0] && !ph_passPhoIsoCorrMedium[0]  && ph_passNeuIsoCorrMedium[1]  && ph_passPhoIsoCorrMedium[1]  && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 20 && ph_chIsoCorr[1] > 5 && ph_chIsoCorr[1] < 20'
+#    #ph_iso_cuts_rf = 'ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0]    && !ph_passNeuIsoCorrMedium[1] && !ph_passPhoIsoCorrMedium[1] && ph_chIsoCorr[0] > 5 && ph_chIsoCorr[0] < 20 && ph_chIsoCorr[1] > 5 && ph_chIsoCorr[1] < 20'
+#
+#    ## fake fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ##real fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ##fake real
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEB[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ##-------------------------
+#    ## Inv Iso, Ch iso window -- EE EE
+#    ##-------------------------
+#
+#    ##fake fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_ee, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#    ##real fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#    ##fake real
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#
+#    ##-------------------------
+#    ## Inv Iso, Ch iso window -- EB EE
+#    ##-------------------------
+#
+#
+#    ## fake fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_sigmaIEIE[0] > %f && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_ff, cut_invsieie_eb, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EB_EE__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ## real fake
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0] && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EB_EE__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEB[0] && ph_IsEE[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_ee ), (50, 0, 200) )
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[0]  && ph_sigmaIEIE[1] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_rf, cut_invsieie_eb ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_lead__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    ## fake real
+#
+#    #samplesWg.Draw('ph_pt[0]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1] && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_lead__mgg__EE_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
+#
+#    #samplesWg.Draw('ph_pt[1]', 'PUWeight * ( %s && %s && ph_passSIEIEMedium[1]  && ph_sigmaIEIE[0] > %f && ph_IsEE[0] && ph_IsEB[1] )' %( base_cuts, ph_iso_cuts_fr, cut_invsieie_ee ), (50, 0, 200) )
+#
+#    #if save :
+#    #    name = 'ph_pt_subl__mgg__EE_EB__Cut_invNeuPhoIso_chIsoWindow_invSIEIE_lead__Cut_passNeuPhoIso_chIsoWindow_passSIEIE_subl'
+#    #    samplesWg.SaveStack( name, options.outputDir+'/'+subdir, 'base', write_command=True)
+#    #else :
+#    #    raw_input('continue')
 
 main()

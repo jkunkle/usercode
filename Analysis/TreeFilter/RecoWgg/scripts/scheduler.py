@@ -47,7 +47,7 @@ jobs = [
         #(base_mc, 'job_summer12_Wg', 50),
         #(base_mc, 'job_summer12_ttjets_1l', 200),
         #(base_mc, 'job_summer12_ttjets_2l', 100),
-        (base_mc, 'job_summer12_Wjets', 400),
+        #(base_mc, 'job_summer12_Wjets', 400),
         #(base_mc, 'job_summer12_Zg_s10', 200),
 
         #(base_nlo, 'job_NLO_WAA_ISR_PtG500MeV', 20),
@@ -62,6 +62,7 @@ jobs = [
         #(base_mc, 'job_summer12_WZZ', 10),
         #(base_mc, 'job_summer12_WZ_2l2q', 50),
         #(base_mc, 'job_summer12_WZ_3lnu', 10),
+        (base_me, 'job_summer12_WZ_lljj', 20),
         #(base_mc, 'job_summer12_ZZZ', 10),
         #(base_mc, 'job_summer12_ZZ_2e2mu', 10),
         #(base_mc, 'job_summer12_ZZ_2e2tau', 10),
@@ -127,9 +128,9 @@ clean_command_base = ' python ../../Util/scripts/clean_conf_files.py --path /eos
 
 check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s --filteredDS /eos/cms/store/user/jkunkle/Wgamgam/%(output)s/%(job)s --treeNameOrig %(treename)s --histNameFilt ggNtuplizer/filter --fileKeyOrig %(job)s.root --fileKeyFilt tree.root'
 
-#module = 'ConfWgamgamReco.py'
-#module = 'ConfWgamgamRecoJetTrig.py'
 module = 'ConfWgamgamReco.py'
+#module = 'ConfWgamgamRecoJetTrig.py'
+#module = 'ConfWgamgamRecoNoTrig.py'
 #output = 'RecoOutput_2014_12_05'
 #output = 'RecoOutputDiMuon_2014_11_27'
 #output = 'LepGammaNoEleVetoNewVar_2014_05_02'

@@ -25,10 +25,9 @@ def main() :
     global samplesLLG
     global samplesLG
 
-    baseDirLGG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_09_28'
-    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_09_28'
-    #baseDirLG  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_09_28'
-    baseDirLG  = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhIDTEST_2015_09_30'
+    baseDirLGG = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaGammaNoPhID_2015_11_09'
+    baseDirLLG = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_11_09'
+    baseDirLG  = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_11_09'
 
     treename = 'ggNtuplizer/EventTree'
     filename = 'tree.root'
@@ -67,43 +66,43 @@ def main() :
         for eta in ['EB', 'EE'] :
             for ptmin, ptmax in pt_bins :
 
-                #draw_str_fake=None
-                #if var == 'sigmaIEIE' :
-                #    draw_str_fake = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIENoEleVeto_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %( ptmin, ptmax, eta, var, _sieie_cuts[eta][1] )
-                #elif var == 'chIsoCorr' :
-                #    draw_str_fake = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoChIso_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1  && ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %( ptmin, ptmax, eta, var, _chIso_cuts[eta][1] )
-                #elif var == 'phoIsoCorr' :
-                #    draw_str_fake = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoPhoIso_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1  && ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %( ptmin, ptmax, eta, var, _phoIso_cuts[eta][1] )
+                draw_str_fake=None
+                if var == 'sigmaIEIE' :
+                    draw_str_fake = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIENoEleVeto_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1 && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %( ptmin, ptmax, eta, var, _sieie_cuts[eta][1] )
+                elif var == 'chIsoCorr' :
+                    draw_str_fake = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoChIsoNoEleVeto_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1  && ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passPhoIsoCorrMedium[0] && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %( ptmin, ptmax, eta, var, _chIso_cuts[eta][1] )
+                elif var == 'phoIsoCorr' :
+                    draw_str_fake = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoPhoIsoNoEleVeto_n==1 && ph_HoverE12[0] < 0.05 && fabs( m_leplep-91.2 ) < 5 && leadPhot_sublLepDR >1 && leadPhot_leadLepDR>1  && ph_passSIEIEMedium[0] && ph_passNeuIsoCorrMedium[0] && ph_passChIsoCorrMedium[0] && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %( ptmin, ptmax, eta, var, _phoIso_cuts[eta][1] )
 
 
-                #samplesLLG.Draw('ph_%s[0]'%var, draw_str_fake, binning[var][eta] )
+                samplesLLG.Draw('ph_%s[0]'%var, draw_str_fake, binning[var][eta] )
 
 
-                #hist_data = samplesLLG.get_samples( name='Muon' )[0]
-                #hist_bkg = samplesLLG.get_samples( name='RealPhotonsZg' )[0]
+                hist_data = samplesLLG.get_samples( name='Muon' )[0]
+                hist_bkg = samplesLLG.get_samples( name='Zg' )[0]
 
-                #hist_subtracted = hist_data.hist.Clone( '%s_Subtracted_%s_%d-%d' %( var, eta, ptmin, ptmax ))
+                hist_subtracted = hist_data.hist.Clone( '%s_Subtracted_%s_%d-%d' %( var, eta, ptmin, ptmax ))
 
-                #hist_subtracted.Add( hist_bkg.hist, -1 )
+                hist_subtracted.Add( hist_bkg.hist, -1 )
 
-                #all_hists.append( hist_data.hist.Clone( '%s_Data_%s_%d-%d' %( var, eta, ptmin, ptmax ) ) )
-                #all_hists.append( hist_bkg.hist.Clone( '%s_Zg_%s_%d-%d' %( var, eta, ptmin, ptmax ) ) )
-                #all_hists.append( hist_subtracted)
+                all_hists.append( hist_data.hist.Clone( '%s_Data_%s_%d-%d' %( var, eta, ptmin, ptmax ) ) )
+                all_hists.append( hist_bkg.hist.Clone( '%s_Zg_%s_%d-%d' %( var, eta, ptmin, ptmax ) ) )
+                all_hists.append( hist_subtracted)
 
                 draw_str_real = None
                 if var=='sigmaIEIE' :
-                    draw_str_real = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIEPassCSEV_n==1  && m_elel > 40 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25  && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _sieie_cuts[eta][1]) 
-                    #draw_str_real = 'mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoSIEIENoEleVeto_n==1  && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && (fabs(ph_pt[0]-ph_truthMatchPt_ph[0])/ph_truthMatchPt_ph[0]) < 2 && (ph_truthMatchParentage_ph[0] & 4 ) == 0 && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _sieie_cuts[eta][1]) 
+                    #draw_str_real = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoSIEIEPassCSEV_n==1  && m_elel > 40 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25  && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _sieie_cuts[eta][1]) 
+                    draw_str_real = 'mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoSIEIENoEleVeto_n==1  && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && (fabs(ph_pt[0]-ph_truthMatchPt_ph[0])/ph_truthMatchPt_ph[0]) < 2 && (ph_truthMatchParentage_ph[0] & 4 ) == 0 && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _sieie_cuts[eta][1]) 
                 elif var == 'chIsoCorr' :                                                                            
-                    draw_str_real = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoChIsoPassCSEV_n==1  && m_elel > 40 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25  && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _chIso_cuts[eta][1]) 
-                    #draw_str_real = 'mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoChIsoNoEleVeto_n==1  && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && (fabs(ph_pt[0]-ph_truthMatchPt_ph[0])/ph_truthMatchPt_ph[0]) < 2 && (ph_truthMatchParentage_ph[0] & 4 ) == 0  && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _chIso_cuts[eta][1]) 
+                    #draw_str_real = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoChIsoPassCSEV_n==1  && m_elel > 40 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25  && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _chIso_cuts[eta][1]) 
+                    draw_str_real = 'mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoChIsoNoEleVeto_n==1  && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && (fabs(ph_pt[0]-ph_truthMatchPt_ph[0])/ph_truthMatchPt_ph[0]) < 2 && (ph_truthMatchParentage_ph[0] & 4 ) == 0  && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _chIso_cuts[eta][1]) 
                 elif var == 'phoIsoCorr' :                                                                            
-                    draw_str_real = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoPhoIsoPassCSEV_n==1 && m_elel > 40 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25  && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _phoIso_cuts[eta][1]) 
-                    #draw_str_real = 'mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoPhoIsoNoEleVeto_n==1 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0]  && (fabs(ph_pt[0]-ph_truthMatchPt_ph[0])/ph_truthMatchPt_ph[0]) < 2 && (ph_truthMatchParentage_ph[0] & 4 ) == 0  && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _phoIso_cuts[eta][1]) 
+                    #draw_str_real = 'mu_passtrig25_n>0 && mu_n==2 && ph_mediumNoPhoIsoPassCSEV_n==1 && m_elel > 40 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0] && abs(ph_truthMatchMotherPID_ph[0]) < 25  && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _phoIso_cuts[eta][1]) 
+                    draw_str_real = 'mu_passtrig25_n>0 && mu_n==1 && ph_mediumNoPhoIsoNoEleVeto_n==1 && leadPhot_leadLepDR>0.4 && ph_truthMatch_ph[0]  && (fabs(ph_pt[0]-ph_truthMatchPt_ph[0])/ph_truthMatchPt_ph[0]) < 2 && (ph_truthMatchParentage_ph[0] & 4 ) == 0  && ph_pt[0] > %d && ph_pt[0] < %d && ph_Is%s[0] && ph_%s[0] < %f ' %(ptmin, ptmax,eta, var, _phoIso_cuts[eta][1]) 
 
-                samplesLG.create_hist( 'Zg', 'ph_%s[0]' %var, draw_str_real, binning[var][eta],)
+                samplesLG.create_hist( 'Wg', 'ph_%s[0]' %var, draw_str_real, binning[var][eta],)
 
-                newhist = samplesLG.get_samples( name='Zg' )[0].hist.Clone( '%s_Zg_%s_%d-%d' %( var, eta, ptmin, ptmax ) )
+                newhist = samplesLG.get_samples( name='Wg' )[0].hist.Clone( '%s_Wg_%s_%d-%d' %( var, eta, ptmin, ptmax ) )
 
                 all_hists.append(newhist)
 

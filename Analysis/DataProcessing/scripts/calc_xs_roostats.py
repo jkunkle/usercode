@@ -26,32 +26,37 @@ def main() :
 
     #run_allbin_fit(lands=True) 
 
-    #signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_09_24'
-    #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_09_24'
-    #signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
-    #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
-    signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_10_08'
-    bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2015_10_08'
-    #run_full_fit( signal_base, bkg_base, lands=False, combine=True)
+    ##signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_09_24'
+    ##bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_09_24'
+    ##signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
+    ##bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlots_2014_10_06'
+    #signal_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsPSVTightMass_2015_12_01'
+    #bkg_base = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsPSVTightMass_2015_12_01'
+    ##run_full_fit( signal_base, bkg_base, lands=False, combine=True)
 
-    single_accept_results = ['electron_EB-EB', 'electron_EE-EB', 'electron_EB-EE', 'muon_EB-EB', 'muon_EE-EB', 'muon_EB-EE']
-    single_accept_ptbins = [ ['15', '25'], ['25', '40'], ['40', '70'], ['70', 'max'] ]
+    #single_accept_results = ['electron_EB-EB', 'electron_EE-EB', 'electron_EB-EE', 'muon_EB-EB', 'muon_EE-EB', 'muon_EB-EE']
+    ##single_accept_ptbins = [ ['15', '25'], ['25', '40'], ['40', '70'], ['70', 'max'] ]
+    #single_accept_ptbins = [ ['25', '40'], ['40', '70'], ['70', 'max'] ]
 
-    signif_single = {}
+    #signif_single = {}
 
-    #print run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_10_08/FinalPlotsManualWithPhoWithCorrNoDiffUnc/')
-    #print run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_10_08/FinalPlotsManualWithPhoWithCorrNoDiffUnc/', ptbins=['40','70','max'])
+    ##print run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_10_08/FinalPlotsManualWithPhoWithCorrNoDiffUnc/')
+    ##print run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_10_08/FinalPlotsManualWithPhoWithCorrNoDiffUnc/', ptbins=['40','70','max'])
 
-    baseDir = '/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_10_13/FinalPlotsPlotsUnblindMCNDWithPhoWithCorrNoDiffUncNewOneBin/'
-    baseDirZgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_10_15/FinalPlotsOneBin/'
-    print run_comb_fit(baseDir, mukey='muhighmt', elekey='elfullhighmt', signal='Wgg', backgrounds=['Zgg', 'jetfake', 'elefake'], ptbins=['25','max'])
-    #print run_comb_fit(baseDirZgg, mukey='muZgg', elekey='elZgg', signal='Zgg', backgrounds=['jetfake'], ptbins=['15','max'])
-    #for res in single_accept_results :
-    #    for ptbin in single_accept_ptbins :
-    #        signif_single[(res, ptbin[0], ptbin[1])] = run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_06_05/FinalPlots/', res, ptbin)
+    ##for res in single_accept_results :
+    ##    for ptbin in single_accept_ptbins :
+    ##        signif_single[(res, ptbin[0], ptbin[1])] = run_comb_fit('/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlots_2015_06_05/FinalPlots/', res, ptbin)
 
-    #print signif_single
+    ##print signif_single
             
+    baseDir = '/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlotsPSVTightMassOneBin_2015_12_01/FinalPlotsOneBin/'
+    baseDirZgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/ZggPlotsOneBin_2015_12_01/FinalPlotsOneBin/'
+    pt_bins_zgg = ['15','max']
+    pt_bins_wgg = ['25','max']
+    #pt_bins_zgg = ['15','25','40','max']
+    #pt_bins_wgg = ['25','40','70','max']
+    print run_comb_fit(baseDir, mukey='muhighmt', elekey='elfullhighmt', signal='Wgg', backgrounds=['Zgg', 'OtherDiPhoton', 'jetfake', 'elefake'], ptbins=pt_bins_wgg )
+    #print run_comb_fit(baseDirZgg, mukey='muZgg', elekey='elZgg', signal='Zgg', backgrounds=['jetfake', 'OtherDiPhoton'], ptbins=pt_bins_zgg)
 
 def run_onebin_fit(lands=False) :
 
@@ -124,9 +129,9 @@ def run_comb_fit( result_base, mukey='muhighmt', elekey='elfullhighmt', signal='
     #results['electron'] ='%s/pt_leadph12_egg.pickle' %result_base
     #results['muon'] ='%s/pt_leadph12_mgg.pickle' %result_base
 
-    results['electron_EB-EB'] = '%s/pt_leadph12_%s_EB-EB.pickle' %(result_base,elekey)
-    results['electron_EB-EE'] = '%s/pt_leadph12_%s_EB-EE.pickle' %(result_base,elekey)
-    results['electron_EE-EB'] = '%s/pt_leadph12_%s_EE-EB.pickle' %(result_base,elekey)
+    #results['electron_EB-EB'] = '%s/pt_leadph12_%s_EB-EB.pickle' %(result_base,elekey)
+    #results['electron_EB-EE'] = '%s/pt_leadph12_%s_EB-EE.pickle' %(result_base,elekey)
+    #results['electron_EE-EB'] = '%s/pt_leadph12_%s_EE-EB.pickle' %(result_base,elekey)
     results['muon_EB-EB']     = '%s/pt_leadph12_%s_EB-EB.pickle' %(result_base,mukey )
     results['muon_EB-EE']     = '%s/pt_leadph12_%s_EB-EE.pickle' %(result_base,mukey )
     results['muon_EE-EB']     = '%s/pt_leadph12_%s_EE-EB.pickle' %(result_base,mukey )
@@ -154,7 +159,7 @@ def run_comb_fit( result_base, mukey='muhighmt', elekey='elfullhighmt', signal='
 
             if 'Zgg' in backgrounds :
                 ch_bin.AddSample( 'Zgg'    , results[ch], ['detail', 'Zgg', 'bins', str(bidx+1), 'val'], err={'Lumi' : 1.1, 'Syst_Zgg' : ( results[ch], ['detail', 'Zgg', 'bins', str(bidx+1), 'val']  ) } )
-            #ch_bin.AddSample( 'OtherDiPhoton'    , results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+1), 'val'], err={'Lumi' : 1.1, 'Syst_OtherDiPhoton' : ( results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+1), 'val']  ) } )
+            ch_bin.AddSample( 'OtherDiPhoton'    , results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+1), 'val'], err={'Lumi' : 1.1, 'Syst_OtherDiPhoton' : ( results[ch], ['detail', 'OtherDiPhoton', 'bins', str(bidx+1), 'val']  ) } )
             if 'jetfake' in backgrounds :
                 ch_bin.AddSample( 'jetfake', results[ch], ['detail', 'JetFake', 'bins', str(bidx+1), 'val'], 
                                      err={

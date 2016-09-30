@@ -51,7 +51,6 @@ class FakeFactorManager :
             second_entries.append( float( bin[1] ) )
             fourth_entries.append( float( bin[3] ) )
 
-        print self.ff_dict
         max_second = max( second_entries )
         max_fourth = max( fourth_entries )
 

@@ -629,44 +629,55 @@ void RunModule::AddPhotonSF( ModuleConfig & /*config*/ ) const {
         }
 
 
+        if( OUT::ph_IsEB->at(idx) ) {
+            sfs_psv.push_back( 0.996 );
+            errs_psv.push_back( 0.013);
+        }
+        if( OUT::ph_IsEE->at(idx) ) {
+            sfs_psv.push_back( 0.971 );
+            errs_psv.push_back( 0.026 );
+        }
+        
+        // --------------------------------
+        // Use pT inclusive values
         // switch between highpt and lowpt
-        if( pt < 70 ) {
-            // FIX for hist only going to 2.4
-            if( feta > 2.4 && feta < 2.5 ) {
-                feta = 2.39;
-            }
+        //if( pt < 70 ) {
+        //    // FIX for hist only going to 2.4
+        //    if( feta > 2.4 && feta < 2.5 ) {
+        //        feta = 2.39;
+        //    }
 
-            if( _sfhist_ph_psv->GetBinContent( _sfhist_ph_psv->FindBin(feta, pt) ) == 0 ) {
-                if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
-            }
-            sfs_psv.push_back( _sfhist_ph_psv->GetBinContent( _sfhist_ph_psv->FindBin(feta, pt) ) );
-            errs_psv.push_back( _sfhist_ph_psv->GetBinError( _sfhist_ph_psv->FindBin(feta, pt) ) );
-        }
-        else {
-            
-            if( pt >= max_pt_highpt ) {
-                // FIX for hist only going to 2.4
-                if( feta > 2.4 && feta < 2.5 ) {
-                    feta = 2.39;
-                }
-                if( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, max_pt_highpt-1) ) == 0 ) {
-                    if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
-                }
-                sfs_psv.push_back( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, max_pt_highpt-1 )) );
-                errs_psv.push_back( _sfhist_ph_psv_highpt->GetBinError( _sfhist_ph_psv_highpt->FindBin(feta, max_pt_highpt-1 ) ));
-            }
-            else {
-                // FIX for hist only going to 2.4
-                if( feta > 2.4 && feta < 2.5 ) {
-                    feta = 2.39;
-                }
-                if( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, pt) ) == 0 ) {
-                    if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
-                }
-                sfs_psv.push_back( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, pt )) );
-                errs_psv.push_back( _sfhist_ph_psv_highpt->GetBinError( _sfhist_ph_psv_highpt->FindBin(feta, pt ) ));
-            }
-        }
+        //    if( _sfhist_ph_psv->GetBinContent( _sfhist_ph_psv->FindBin(feta, pt) ) == 0 ) {
+        //        if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
+        //    }
+        //    sfs_psv.push_back( _sfhist_ph_psv->GetBinContent( _sfhist_ph_psv->FindBin(feta, pt) ) );
+        //    errs_psv.push_back( _sfhist_ph_psv->GetBinError( _sfhist_ph_psv->FindBin(feta, pt) ) );
+        //}
+        //else {
+        //    
+        //    if( pt >= max_pt_highpt ) {
+        //        // FIX for hist only going to 2.4
+        //        if( feta > 2.4 && feta < 2.5 ) {
+        //            feta = 2.39;
+        //        }
+        //        if( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, max_pt_highpt-1) ) == 0 ) {
+        //            if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
+        //        }
+        //        sfs_psv.push_back( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, max_pt_highpt-1 )) );
+        //        errs_psv.push_back( _sfhist_ph_psv_highpt->GetBinError( _sfhist_ph_psv_highpt->FindBin(feta, max_pt_highpt-1 ) ));
+        //    }
+        //    else {
+        //        // FIX for hist only going to 2.4
+        //        if( feta > 2.4 && feta < 2.5 ) {
+        //            feta = 2.39;
+        //        }
+        //        if( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, pt) ) == 0 ) {
+        //            if( pt > 15 ) std::cout << " zero value for pt, eta = " << pt << " " << feta << std::endl;
+        //        }
+        //        sfs_psv.push_back( _sfhist_ph_psv_highpt->GetBinContent( _sfhist_ph_psv_highpt->FindBin(feta, pt )) );
+        //        errs_psv.push_back( _sfhist_ph_psv_highpt->GetBinError( _sfhist_ph_psv_highpt->FindBin(feta, pt ) ));
+        //    }
+        //}
     }
 
     if( sfs_id.size() == 1 ) {
@@ -1010,14 +1021,3 @@ ValWithErr RunModule::GetValsFromGraph( const TGraphAsymmErrors *graph, float pt
     return result;
 
 }
-
-
-
-
-
-
-   
-
-
-        
-

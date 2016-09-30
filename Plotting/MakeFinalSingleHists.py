@@ -116,7 +116,7 @@ def MakeEleValidationPlots(  outputDir, suffix='', ylabel='Events / bin', logy=0
 
     save = ( outputDir is not None )
 
-    samplesWg.DrawHist( 'pt_leadph12_elwzcr_EB', xlabel='p_{T}^{#gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : 'Barrel Photons', 'extra_label_loc' : (0.61, 0.48) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=False )
+    samplesWg.DrawHist( 'pt_leadph12_elwzcr_EB', xlabel='p_{T}^{#gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancynostats', 'extra_label' : 'Barrel Photons', 'extra_label_loc' : (0.61, 0.48) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=True, rmin = 0.68, rmax=1.32, logy=False )
 
     if save :
         name = 'pt_leadph12_elwzcr_EB%s' %suffix
@@ -126,10 +126,32 @@ def MakeEleValidationPlots(  outputDir, suffix='', ylabel='Events / bin', logy=0
         samplesWg.DumpStack(doRatio=options.doRatio, details=True )
         raw_input('continue')
 
-    samplesWg.DrawHist( 'pt_leadph12_elwzcr_EE', xlabel='p_{T}^{#gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancy', 'extra_label' : 'Endcap Photons', 'extra_label_loc' : (0.61, 0.48) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=options.doRatio, logy=False )
+    samplesWg.DrawHist( 'pt_leadph12_elwzcr_EE', xlabel='p_{T}^{#gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancynostats', 'extra_label' : 'Endcap Photons', 'extra_label_loc' : (0.61, 0.48) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=True, rmin = 0.68, rmax=1.32, logy=False )
 
     if save :
         name = 'pt_leadph12_elwzcr_EE%s' %suffix
+        samplesWg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
+        samplesWg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
+    else :
+        samplesWg.DumpStack(doRatio=options.doRatio, details=True )
+        raw_input('continue')
+
+
+
+    samplesWg.DrawHist( 'pt_leadph12_elwzcr_EB', xlabel='p_{T}^{#gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancyprelimnostats', 'extra_label' : 'Barrel Photons', 'extra_label_loc' : (0.61, 0.48) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=True, rmin = 0.68, rmax=1.32, logy=False )
+
+    if save :
+        name = 'pt_leadph12_elwzcr_EB%s_prelim' %suffix
+        samplesWg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
+        samplesWg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
+    else :
+        samplesWg.DumpStack(doRatio=options.doRatio, details=True )
+        raw_input('continue')
+
+    samplesWg.DrawHist( 'pt_leadph12_elwzcr_EE', xlabel='p_{T}^{#gamma} [GeV]',ylabel= ylabel, label_config={'labelStyle' : 'fancyprelimnostats', 'extra_label' : 'Endcap Photons', 'extra_label_loc' : (0.61, 0.48) }, legend_config={'legendWiden' : 1.2, 'legendCompress' : 1.5}, doratio=True, rmin = 0.68, rmax=1.32, logy=False )
+
+    if save :
+        name = 'pt_leadph12_elwzcr_EE%s_prelim' %suffix
         samplesWg.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
         samplesWg.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
     else :

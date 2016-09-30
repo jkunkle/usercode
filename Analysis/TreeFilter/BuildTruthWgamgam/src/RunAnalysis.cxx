@@ -69,20 +69,25 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::w_eta = 0;
     OUT::w_phi = 0;
     OUT::w_e = 0;
+    OUT::z_pt = 0;
+    OUT::z_eta = 0;
+    OUT::z_phi = 0;
+    OUT::z_e = 0;
     
     outtree->Branch("lep_n" , &OUT::lep_n  , "lep_n/I"   );
     outtree->Branch("phot_n", &OUT::phot_n , "phot_n/I" );
     outtree->Branch("nu_n"  , &OUT::nu_n   , "nu_n/I"   );
     outtree->Branch("w_n"   , &OUT::w_n    , "w_n/I"   );
+    outtree->Branch("z_n"   , &OUT::z_n    , "z_n/I"   );
 
     outtree->Branch("lep_pt"        , &OUT::lep_pt        );
     outtree->Branch("lep_eta"       , &OUT::lep_eta       );
     outtree->Branch("lep_phi"       , &OUT::lep_phi       );
     outtree->Branch("lep_e"         , &OUT::lep_e         );
-    outtree->Branch("lep_dressed_pt"        , &OUT::lep_dressed_pt        );
-    outtree->Branch("lep_dressed_eta"       , &OUT::lep_dressed_eta       );
-    outtree->Branch("lep_dressed_phi"       , &OUT::lep_dressed_phi       );
-    outtree->Branch("lep_dressed_e"         , &OUT::lep_dressed_e         );
+    //outtree->Branch("lep_dressed_pt"        , &OUT::lep_dressed_pt        );
+    //outtree->Branch("lep_dressed_eta"       , &OUT::lep_dressed_eta       );
+    //outtree->Branch("lep_dressed_phi"       , &OUT::lep_dressed_phi       );
+    //outtree->Branch("lep_dressed_e"         , &OUT::lep_dressed_e         );
     outtree->Branch("lep_motherPID" , &OUT::lep_motherPID );
     outtree->Branch("lep_isElec"    , &OUT::lep_isElec    );
     outtree->Branch("lep_isMuon"    , &OUT::lep_isMuon    );
@@ -94,11 +99,11 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("phot_e"         , &OUT::phot_e   );
     outtree->Branch("phot_motherPID" , &OUT::phot_motherPID );
     
-    outtree->Branch("phDress_pt"        , &OUT::phDress_pt  );
-    outtree->Branch("phDress_eta"       , &OUT::phDress_eta );
-    outtree->Branch("phDress_phi"       , &OUT::phDress_phi );
-    outtree->Branch("phDress_e"         , &OUT::phDress_e   );
-    outtree->Branch("phDress_motherPID" , &OUT::phDress_motherPID );
+    //outtree->Branch("phDress_pt"        , &OUT::phDress_pt  );
+    //outtree->Branch("phDress_eta"       , &OUT::phDress_eta );
+    //outtree->Branch("phDress_phi"       , &OUT::phDress_phi );
+    //outtree->Branch("phDress_e"         , &OUT::phDress_e   );
+    //outtree->Branch("phDress_motherPID" , &OUT::phDress_motherPID );
     
     outtree->Branch("nu_pt"        , &OUT::nu_pt      );
     outtree->Branch("nu_eta"       , &OUT::nu_eta     );
@@ -111,6 +116,11 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("w_phi"       , &OUT::w_phi     );
     outtree->Branch("w_e"         , &OUT::w_e       );
     outtree->Branch("w_isPos"     , &OUT::w_isPos   );
+
+    outtree->Branch("z_pt"        , &OUT::z_pt      );
+    outtree->Branch("z_eta"       , &OUT::z_eta     );
+    outtree->Branch("z_phi"       , &OUT::z_phi     );
+    outtree->Branch("z_e"         , &OUT::z_e       );
 
     outtree->Branch("leadPhot_pt" , &OUT::leadPhot_pt , "leadPhot_pt/F" );
     outtree->Branch("sublPhot_pt" , &OUT::sublPhot_pt , "sublPhot_pt/F" );
@@ -133,6 +143,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("sublLep_sublPhotDR", &OUT::sublLep_sublPhotDR, "sublLep_sublPhotDR/F");
 
     outtree->Branch("mt_lepnu"         , &OUT::mt_lepnu         , "mt_lepnu/F"          );
+    outtree->Branch("mt_lepnuz"         , &OUT::mt_lepnuz         , "mt_lepnuz/F"          );
     outtree->Branch("mt_lepphot1nu"    , &OUT::mt_lepphot1nu    , "mt_lepphot1nu/F"     );
     outtree->Branch("mt_lepphot2nu"    , &OUT::mt_lepphot2nu    , "mt_lepphot2nu/F"     );
     outtree->Branch("mt_lepphotphotnu" , &OUT::mt_lepphotphotnu , "mt_lepphotphotnu/F"  );
@@ -185,6 +196,9 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     }
     if( config.GetName() == "BuildWboson" ) {
         BuildWboson( config );
+    }
+    if( config.GetName() == "BuildZboson" ) {
+        BuildZboson( config );
     }
     if( config.GetName() == "BuildEvent" ) {
         BuildEvent( config );
@@ -306,124 +320,124 @@ void RunModule::BuildLepton( ModuleConfig & config ) const {
             
 }        
 
-void RunModule::BuildLeptonPhoton( ModuleConfig & config ) const {
-
-    OUT::lep_pt          -> clear();
-    OUT::lep_eta         -> clear();
-    OUT::lep_phi         -> clear();
-    OUT::lep_e           -> clear();
-    OUT::lep_dressed_pt  -> clear();
-    OUT::lep_dressed_eta -> clear();
-    OUT::lep_dressed_phi -> clear();
-    OUT::lep_dressed_e   -> clear();
-    OUT::lep_motherPID   -> clear();
-    OUT::lep_isElec      -> clear();
-    OUT::lep_isMuon      -> clear();
-    OUT::lep_isPos       -> clear();
-    OUT::lep_n          = 0;
-
-    OUT::phDressed_pt        -> clear();
-    OUT::phDressed_eta       -> clear();
-    OUT::phDressed_phi       -> clear();
-    OUT::phDressed_e         -> clear();
-    OUT::phDressed_motherPID -> clear();
-    OUT::phDressed_n          = 0;
-
-    std::vector<int> accept_pid;
-    std::vector<int> accept_pid_ph;
-    std::vector<int> accept_mother;
-
-    accept_pid.push_back(11);
-    accept_pid.push_back(13);
-
-    accept_pid_ph.push_back(22);
-
-    // don't use for now...must also require that taus have status==3 not 1
-    //if( config.PassBool("cut_incTau", true ) ) {
-    //    accept_pid.push_back(15);
-    //}
-
-    if( !config.PassBool("cut_incWMother", false ) ) {
-        accept_mother.push_back(24);
-    }
-    if( !config.PassBool("cut_incZMother", false ) ) {
-        accept_mother.push_back(23);
-    }
-    if( !config.PassBool("cut_incTauMother", false) ) {
-        accept_mother.push_back(15);
-    }
-    if( !config.PassBool("cut_incQMother", false ) ) {
-        accept_mother.push_back(1);
-        accept_mother.push_back(2);
-        accept_mother.push_back(3);
-        accept_mother.push_back(4);
-        accept_mother.push_back(5);
-        accept_mother.push_back(-1);
-        accept_mother.push_back(-2);
-        accept_mother.push_back(-3);
-        accept_mother.push_back(-4);
-        accept_mother.push_back(-5);
-        accept_mother.push_back(21);
-    }
-
-    //std::cout << "EVENT"<< std::endl;
-         
-    // dont know what this is for
-     //if( IN::mcStatus->size() - IN::nMC != 0 ) return;
-     
-    for( int idx = 0; idx < IN::nMC; ++idx ) {
-
-        if( IN::mcStatus->at(idx) != 1 ) continue;
-
-        if( std::find(accept_pid.begin(), 
-                      accept_pid.end(), abs(IN::mcPID->at(idx)) ) == accept_pid.end() ) continue;
-
-        if( accept_mother.size() > 0 && 
-            std::find(accept_mother.begin(), 
-                      accept_mother.end(), abs(IN::mcMomPID->at(idx))) == accept_mother.end() ) continue;
-
-        if( !config.PassFloat( "cut_pt", IN::mcPt->at(idx) ) ) continue;
-        if( !config.PassFloat( "cut_abseta", fabs(IN::mcEta->at(idx)) ) ) continue;
-
-        float lep_pt  = IN::mcPt->at(idx) ;
-        float lep_eta = IN::mcEta->at(idx);
-        float lep_phi = IN::mcPhi->at(idx);
-        float lep_e   = IN::mcE->at(idx)  ;
-
-        OUT::lep_pt        -> push_back( lep_pt  );
-        OUT::lep_eta       -> push_back( lep_eta );
-        OUT::lep_phi       -> push_back( lep_phi );
-        OUT::lep_e         -> push_back( lep_e   );
-        OUT::lep_motherPID -> push_back(IN::mcMomPID->at(idx) );
-
-        if( abs(IN::mcPID->at(idx)) == 11 ) {
-            OUT::lep_isElec->push_back(true);
-        }
-        else {                           
-            OUT::lep_isElec->push_back(false);
-        }
-
-        if( abs(IN::mcPID->at(idx)) == 13 ) {
-            OUT::lep_isMuon->push_back(true);
-        }
-        else {                           
-            OUT::lep_isMuon->push_back(false);
-        }
-
-        if( IN::mcPID->at(idx) > 0 ) {
-            OUT::lep_isPos->push_back(false);
-        }
-        else {
-            OUT::lep_isPos->push_back(true);
-        }
-
-        TLorentzVector dressed_lepton;
-        dressed_lepton.SetPtEtaPhiE( 
-
-        OUT::lep_n++;
-    }
-            
-}        
+//void RunModule::BuildLeptonPhoton( ModuleConfig & config ) const {
+//
+//    OUT::lep_pt          -> clear();
+//    OUT::lep_eta         -> clear();
+//    OUT::lep_phi         -> clear();
+//    OUT::lep_e           -> clear();
+//    //OUT::lep_dressed_pt  -> clear();
+//    //OUT::lep_dressed_eta -> clear();
+//    //OUT::lep_dressed_phi -> clear();
+//    //OUT::lep_dressed_e   -> clear();
+//    OUT::lep_motherPID   -> clear();
+//    OUT::lep_isElec      -> clear();
+//    OUT::lep_isMuon      -> clear();
+//    OUT::lep_isPos       -> clear();
+//    OUT::lep_n          = 0;
+//
+//    //OUT::phDressed_pt        -> clear();
+//    //OUT::phDressed_eta       -> clear();
+//    //OUT::phDressed_phi       -> clear();
+//    //OUT::phDressed_e         -> clear();
+//    //OUT::phDressed_motherPID -> clear();
+//    //OUT::phDressed_n          = 0;
+//
+//    std::vector<int> accept_pid;
+//    std::vector<int> accept_pid_ph;
+//    std::vector<int> accept_mother;
+//
+//    accept_pid.push_back(11);
+//    accept_pid.push_back(13);
+//
+//    accept_pid_ph.push_back(22);
+//
+//    // don't use for now...must also require that taus have status==3 not 1
+//    //if( config.PassBool("cut_incTau", true ) ) {
+//    //    accept_pid.push_back(15);
+//    //}
+//
+//    if( !config.PassBool("cut_incWMother", false ) ) {
+//        accept_mother.push_back(24);
+//    }
+//    if( !config.PassBool("cut_incZMother", false ) ) {
+//        accept_mother.push_back(23);
+//    }
+//    if( !config.PassBool("cut_incTauMother", false) ) {
+//        accept_mother.push_back(15);
+//    }
+//    if( !config.PassBool("cut_incQMother", false ) ) {
+//        accept_mother.push_back(1);
+//        accept_mother.push_back(2);
+//        accept_mother.push_back(3);
+//        accept_mother.push_back(4);
+//        accept_mother.push_back(5);
+//        accept_mother.push_back(-1);
+//        accept_mother.push_back(-2);
+//        accept_mother.push_back(-3);
+//        accept_mother.push_back(-4);
+//        accept_mother.push_back(-5);
+//        accept_mother.push_back(21);
+//    }
+//
+//    //std::cout << "EVENT"<< std::endl;
+//         
+//    // dont know what this is for
+//     //if( IN::mcStatus->size() - IN::nMC != 0 ) return;
+//     
+//    for( int idx = 0; idx < IN::nMC; ++idx ) {
+//
+//        if( IN::mcStatus->at(idx) != 1 ) continue;
+//
+//        if( std::find(accept_pid.begin(), 
+//                      accept_pid.end(), abs(IN::mcPID->at(idx)) ) == accept_pid.end() ) continue;
+//
+//        if( accept_mother.size() > 0 && 
+//            std::find(accept_mother.begin(), 
+//                      accept_mother.end(), abs(IN::mcMomPID->at(idx))) == accept_mother.end() ) continue;
+//
+//        if( !config.PassFloat( "cut_pt", IN::mcPt->at(idx) ) ) continue;
+//        if( !config.PassFloat( "cut_abseta", fabs(IN::mcEta->at(idx)) ) ) continue;
+//
+//        float lep_pt  = IN::mcPt->at(idx) ;
+//        float lep_eta = IN::mcEta->at(idx);
+//        float lep_phi = IN::mcPhi->at(idx);
+//        float lep_e   = IN::mcE->at(idx)  ;
+//
+//        OUT::lep_pt        -> push_back( lep_pt  );
+//        OUT::lep_eta       -> push_back( lep_eta );
+//        OUT::lep_phi       -> push_back( lep_phi );
+//        OUT::lep_e         -> push_back( lep_e   );
+//        OUT::lep_motherPID -> push_back(IN::mcMomPID->at(idx) );
+//
+//        if( abs(IN::mcPID->at(idx)) == 11 ) {
+//            OUT::lep_isElec->push_back(true);
+//        }
+//        else {                           
+//            OUT::lep_isElec->push_back(false);
+//        }
+//
+//        if( abs(IN::mcPID->at(idx)) == 13 ) {
+//            OUT::lep_isMuon->push_back(true);
+//        }
+//        else {                           
+//            OUT::lep_isMuon->push_back(false);
+//        }
+//
+//        if( IN::mcPID->at(idx) > 0 ) {
+//            OUT::lep_isPos->push_back(false);
+//        }
+//        else {
+//            OUT::lep_isPos->push_back(true);
+//        }
+//
+//        //TLorentzVector dressed_lepton;
+//        //dressed_lepton.SetPtEtaPhiE( 
+//
+//        OUT::lep_n++;
+//    }
+//            
+//}        
 
 void RunModule::BuildNeutrino( ModuleConfig & config ) const {
 
@@ -501,6 +515,27 @@ void RunModule::BuildWboson( ModuleConfig & /*config*/ ) const {
         else {
             OUT::w_isPos->push_back(false);
         }
+    }
+}
+
+void RunModule::BuildZboson( ModuleConfig & /*config*/ ) const {
+
+    OUT::z_pt        -> clear();
+    OUT::z_eta       -> clear();
+    OUT::z_phi       -> clear();
+    OUT::z_e         -> clear();
+    OUT::z_n          = 0;
+
+    for( int idx = 0; idx < IN::nMC; ++idx ) {
+        //if( abs(IN::mcPID->at(idx)) == 24 && IN::mcStatus->at(idx) == 3 ) {
+        if( abs(IN::mcPID->at(idx)) == 23 && IN::mcStatus->at(idx) == 3 ) {
+            OUT::z_pt        -> push_back(IN::mcPt->at(idx)     );
+            OUT::z_eta       -> push_back(IN::mcEta->at(idx)    );
+            OUT::z_phi       -> push_back(IN::mcPhi->at(idx)    );
+            OUT::z_e         -> push_back(IN::mcE->at(idx)      );
+            OUT::z_n++;
+        }
+
     }
 }
 
@@ -586,6 +621,7 @@ bool RunModule::FilterBasicEvent( ModuleConfig & config ) const {
 void RunModule::BuildEvent( ModuleConfig & /*config*/ ) const {
 
     std::vector<TLorentzVector> leptons;
+    std::vector<TLorentzVector> zs;
     std::vector<TLorentzVector> neutrinos;
     std::vector<TLorentzVector> photons;
 
@@ -608,6 +644,15 @@ void RunModule::BuildEvent( ModuleConfig & /*config*/ ) const {
                           OUT::nu_e->at(idx)
                         );
         neutrinos.push_back(nu);
+    }
+    for( int idx = 0; idx < OUT::z_n; ++idx ) {
+        TLorentzVector z;
+        z.SetPtEtaPhiE(   OUT::z_pt->at(idx), 
+                          OUT::z_eta->at(idx),
+                          OUT::z_phi->at(idx),
+                          OUT::z_e->at(idx)
+                        );
+        zs.push_back(z);
     }
 
     std::vector<std::pair<float, int> > sorted_photons;
@@ -722,6 +767,10 @@ void RunModule::BuildEvent( ModuleConfig & /*config*/ ) const {
 
 
         }
+        if(  zs.size() == 1 ) {
+            OUT::mt_lepnuz = Utils::calc_mt( leptons[0], neutrinos[0] + zs[0]);
+        }
+
     }
 
 }

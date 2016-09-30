@@ -14,11 +14,7 @@ def config_samples(samples) :
     samples.AddSample('DYJetsToLL_s10PhOlap'             , path='job_summer12_DYJetsToLLPhOlap'     ,  isActive=False, useXSFile=True, XSName='DYJetsToLL')
     samples.AddSample('Zg'                           , path='job_summer12_Zg'             ,  isActive=False, useXSFile=True, XSName='Zg' )
     samples.AddSample('ZgPhOlap'                           , path='job_summer12_ZgPhOlap'             ,  isActive=False, useXSFile=True, XSName='Zg' )
-    samples.AddSample('ZggFSR'                           , path='job_summer12_ZggFSR'             ,  isActive=False, useXSFile=True, XSName='Zg' )
-    samples.AddSample('ZggFSR2'                           , path='job_summer12_ZggFSR2'             ,  isActive=False, useXSFile=True, XSName='Zg' )
-    samples.AddSample('Zg2PhFilt'                           , path='job_summer12_Zg2PhFilt'             ,  isActive=False, useXSFile=True, XSName='Zg' )
-    samples.AddSample('Zgg'                          , path='job_summer12_Zgg'                  ,  isActive=False, useXSFile=True )
-    samples.AddSample('ZggNLO'                       , path='llaa_nlo_part1_ggNtupleWithSF'                  ,  isActive=False, useXSFile=True )
+    samples.AddSample('ZggNLO'                       , path='llaa_nlo_ggNtupleWithSF'                  ,  isActive=False, useXSFile=True )
 
     samples.AddSample('ttjets_1l'                    , path='job_summer12_ttjets_1lPhOlap'            ,  isActive=False, useXSFile=True )
     samples.AddSample('ttjets_2l'                    , path='job_summer12_ttjets_2lPhOlap'            ,  isActive=False, useXSFile=True )

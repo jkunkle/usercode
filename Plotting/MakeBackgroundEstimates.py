@@ -47,15 +47,8 @@ _ele_eta_bins_highpt = _ele_eta_bins_coarse
 
 _fakefactor_closure_syst = 0.1
 
-#_eta_pt_bin_map = { ('15', '25') : _ele_eta_bins, ('25', '40') : _ele_eta_bins, ('40', '70') : _ele_eta_bins, ('70', 'max') : _ele_eta_bins_highpt }
-#_eta_pt_bin_map_coarse = { ('15', '25') : _ele_eta_bins_coarse, ('25', '40') : _ele_eta_bins_coarse, ('40', '70') : _ele_eta_bins_coarse, ('70', 'max') : _ele_eta_bins_coarse}
-_eta_pt_bin_map = { ('25', '40') : _ele_eta_bins, ('40', '70') : _ele_eta_bins, ('70', 'max') : _ele_eta_bins_highpt }
-_eta_pt_bin_map_coarse = { ('25', '40') : _ele_eta_bins_coarse, ('40', '70') : _ele_eta_bins_coarse, ('70', 'max') : _ele_eta_bins_coarse}
-#_eta_pt_bin_map = { ('25', 'max') : _ele_eta_bins }
-#_eta_pt_bin_map_coarse = {('25', 'max') : _ele_eta_bins_coarse}
-#_eta_pt_bin_map = { ('15', '30') : _ele_eta_bins, ('30', '40') : _ele_eta_bins, ('40', '70') : _ele_eta_bins, ('70', 'max') : _ele_eta_bins_highpt }
-#_eta_pt_bin_map_coarse = { ('15', '30') : _ele_eta_bins_coarse, ('30', '40') : _ele_eta_bins_coarse, ('40', '70') : _ele_eta_bins_coarse, ('70', 'max') : _ele_eta_bins_coarse}
-
+_eta_pt_bin_map = { }
+_eta_pt_bin_map_coarse = { }
 
 def main() :
 
@@ -65,26 +58,48 @@ def main() :
     p.add_argument('--baseDir',     default=None,  type=str ,        dest='baseDir',  required=False,       help='Input directory base')
     p.add_argument('--plotDir',     default='Plots',  type=str ,        dest='plotDir',  required=False,       help='Directory where plots are written')
     p.add_argument('--ptbins',     default='15,25,40,70,1000000',  type=str ,        dest='ptbins',  required=False,       help='PT bins to use')
+    p.add_argument('--sublptbins',     default=None,  type=str ,        dest='sublptbins',  required=False,       help='subl PT bins to use')
+    p.add_argument('--zgg',        default=False,  action='store_true' ,        dest='zgg',  required=False,       help='do Zgg')
+    p.add_argument('--useSIEIE',        default=False,  action='store_true' ,        dest='useSIEIE',  required=False,       help='use jet fakes with looseened SIEIE')
+    p.add_argument('--lastBin',        default=100, type=int,        dest='lastBin',  required=False,       help='Last bin for plots')
     
     options = p.parse_args()
 
     ptmin = int(options.ptbins.split(',')[0])
 
+   # print '**************************LOOSE ELE INV CUTS************************'
     global el_cuts
     #el_base = 'el_passtrig_n==1 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_trigEle>%f && dr_ph2_trigEle>%f && m_ph1_ph2>%.1f && pt_leadph12 > %d && pt_sublph12 > %d %s ' %(lead_dr_cut, subl_dr_cut, _mgg_cut, ptmin, ptmin, ph_cuts)
-    el_base = 'el_passtrig_n>0 && el_n==1 && mu_n==0 && dr_ph1_ph2>0.4 && m_ph1_ph2>%.1f && pt_leadph12 > %d && pt_sublph12 > %d %s ' %(_mgg_cut, ptmin, ptmin, ph_cuts)
+    el_base = 'el_passtrig_n>0 && el_n==1 && mu_n==0 && dr_ph1_ph2>0.4 && m_ph1_ph2>%.1f && dr_ph1_trigEle>%f && dr_ph2_trigEle>%f && pt_leadph12 > %d && pt_sublph12 > %d %s ' %(_mgg_cut, lead_dr_cut, subl_dr_cut, ptmin, ptmin, ph_cuts)
+    #el_base_inv = 'el_passtrig_n>0 && el_n==2 && mu_n==0 && dr_ph1_ph2>0.4 && m_ph1_ph2>%.1f  && dr_ph1_trigEle>%f && dr_ph2_trigEle>%f && pt_leadph12 > %d && pt_sublph12 > %d %s ' %(_mgg_cut, lead_dr_cut, subl_dr_cut, ptmin, ptmin, ph_cuts)
+    el_base_inv = el_base
     #el_base = 'pt_leadph12 > %d && pt_sublph12 > %d %s ' %(ptmin, ptmin, ph_cuts)
 
+    zmasscut = 5
     el_cuts = {'elfull' : 
-                el_base + ' && !(fabs(m_trigelphph-91.2) < 5) && !(fabs(m_trigelph1-91.2) < 5)  && !(fabs(m_trigelph2-91.2) < 5) ',
+                el_base + ' && !(fabs(m_trigelphph-91.2) < %d) && !(fabs(m_trigelph1-91.2) < %d)  && !(fabs(m_trigelph2-91.2) < %d) ' %(zmasscut,zmasscut,zmasscut),
                'elloose' :
                 el_base,
                'elzcr' :
-                el_base + ' && (fabs(m_trigelphph-91.2) < 5) ',
+                el_base + ' && (fabs(m_trigelphph-91.2) < %d) ' %zmasscut,
                'elph1zcr' :
-                el_base + ' && (fabs(m_trigelph1-91.2) < 5) ',
+                el_base + ' && (fabs(m_trigelph1-91.2) < %d) '%zmasscut,
                'elph2zcr' :
-                el_base + ' && (fabs(m_trigelph2-91.2) < 5) ',
+                el_base + ' && (fabs(m_trigelph2-91.2) < %d) '%zmasscut,
+
+    }
+
+    el_cuts_inv = {'elfull' : 
+                    el_base_inv + ' && !(fabs(m_trigelphph-91.2) < %d) && !(fabs(m_trigelph1-91.2) < %d)  && !(fabs(m_trigelph2-91.2) < %d) ' %(zmasscut,zmasscut,zmasscut),
+                   'elloose' :
+                    el_base_inv,
+                   'elzcr' :
+                    el_base_inv + ' && (fabs(m_trigelphph-91.2) < %d) ' %zmasscut,
+                   'elph1zcr' :
+                    el_base_inv + ' && (fabs(m_trigelph1-91.2) < %d) '%zmasscut,
+                   'elph2zcr' :
+                    el_base_inv + ' && (fabs(m_trigelph2-91.2) < %d) '%zmasscut,
+
     }
 
     # add mT cuts 
@@ -92,13 +107,21 @@ def main() :
     for key in el_keys :
         el_cuts[key+'lowmt']  = el_cuts[key] + ' && mt_trigel_met < 40 '
         el_cuts[key+'highmt'] = el_cuts[key] + ' && mt_trigel_met > 40 '
+        el_cuts_inv[key+'lowmt']  = el_cuts_inv[key] + ' && mt_trigel_met < 40 '
+        el_cuts_inv[key+'highmt'] = el_cuts_inv[key] + ' && mt_trigel_met > 40 '
 
     # add inverted cuts
     el_keys = el_cuts.keys()
+    print '**************************USE PSV**************************'
     for key in el_keys :
         el_cuts[key+'invlead']  = el_cuts[key] + ' && ph_mediumNoEleVeto_n==2 && hasPixSeed_leadph12 == 1 && hasPixSeed_sublph12 == 0 '
         el_cuts[key+'invsubl']  = el_cuts[key] + ' && ph_mediumNoEleVeto_n==2 && hasPixSeed_leadph12 == 0 && hasPixSeed_sublph12 == 1 '
         el_cuts[key+'vetoboth'] = el_cuts[key] + ' && ph_mediumPassPSV_n==2 ' 
+
+    #for key in el_keys :
+    #    el_cuts[key+'invlead']  = el_cuts_inv[key] + ' && ph_mediumNoEleVeto_n==2 '
+    #    el_cuts[key+'invsubl']  = el_cuts_inv[key] + ' && ph_mediumNoEleVeto_n==2 '
+    #    el_cuts[key+'vetoboth'] = el_cuts[key] + ' && ph_mediumPassCSEV_n==2 ' 
 
     el_cuts['elZgg'] = 'el_n>1'
     el_cuts['elZggvetoboth'] = 'el_n>1'
@@ -120,20 +143,33 @@ def main() :
     #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAll_2015_10_01'
     #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAll_2015_10_01'
 
-    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_10_01'
-    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllNoMtCut_2015_10_01'
-    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixLead_2015_10_01'
-    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixSubl_2015_10_01'
+    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_11_11'
+    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllNoMtCut_2015_11_11'
+    baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixLead_2015_11_11'
+    baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixSubl_2015_11_11'
 
-    baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllWithOlapNoZCutNoMtCut_2015_10_01'
-    baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuWithOlapUnblindAllNoMtCut_2015_10_01'
-    baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElWithOlapNoZCutNoMtCutInvPixLead_2015_10_01'
-    baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElWithOlapNoZCutNoMtCutInvPixSubl_2015_10_01'
+    #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllNoMtCut_2015_11_11'
+    #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElCSEVUnblindAllNoZCutNoMtCut_2015_11_11'
+    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElCSEVNoZCutNoMtCutInvPixLead_2015_11_11'
+    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElCSEVNoZCutNoMtCutInvPixSubl_2015_11_11'
+    ##baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElCSEVNoEleOlapRMWithDRNoZCutNoMtCutInvPixLead_2015_11_11'
+    ##baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElCSEVNoEleOlapRMWithDRNoZCutNoMtCutInvPixSubl_2015_11_11'
 
-    #baseDirWmugg      = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaFinalMuMuUnblindAll_2015_10_01'
-    #baseDirWelgg      = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_10_01'
-    #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_10_01'
-    #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_10_01'
+    if options.sublptbins  is not None :
+        #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElCSEVUnblindAllNoZCutNoMtCutPt15_2015_11_11'
+        #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllNoMtCutPt15_2015_11_11'
+        #baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElCSEVNoZCutNoMtCutInvPixLeadPt15_2015_11_11'
+        #baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElCSEVNoZCutNoMtCutInvPixSublPt15_2015_11_11'
+        baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElUnblindAllNoZCutNoMtCutPt15_2015_11_11'
+        baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalMuUnblindAllNoMtCutPt15_2015_11_11'
+        baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixLeadPt15_2015_11_11'
+        baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaFinalElNoZCutNoMtCutInvPixSublPt15_2015_11_11'
+
+    if options.zgg :
+        baseDirWmugg      = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalMuMuUnblindAll_2015_12_12'
+        baseDirWelgg      = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_12_12'
+        baseDirWggInvLead = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_12_12'
+        baseDirWggInvSubl = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepLepGammaGammaFinalElElUnblindAll_2015_12_12'
 
     #baseDirWelgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaWithEleOlapFinalElUnblindAllNoZMassLowMt_2015_09_03'
     #baseDirWmugg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaGammaWithEleOlapFinalMuUnblindAllLowMt_2015_09_03'
@@ -157,7 +193,8 @@ def main() :
     filename = 'tree.root'
 
     sampleConfWgg = 'Modules/WgamgamForBkg.py'
-    #sampleConfWgg = 'Modules/ZgamgamForBkg.py'
+    if options.zgg :
+        sampleConfWgg = 'Modules/ZgamgamForBkg.py'
 
     samplesWelgg = SampleManager(baseDirWelgg, treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
     samplesWmugg = SampleManager(baseDirWmugg, treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
@@ -178,17 +215,26 @@ def main() :
     suffix = ''
     #suffix = 'TAndP'
 
+    print '***************************USE PSV************************'
+
     path_nom           = 'ElectronFakeFitsRatio%s' %suffix 
     path_nom_coarse    = 'ElectronFakeFitsRatio%sCoarseEta' %suffix 
     path_mctempnd        = 'ElectronFakeFitsRatio%sMCTemplateNDKeys' %suffix
     path_mctempnd_coarse = 'ElectronFakeFitsRatio%sMCTemplateNDKeysCoarseEta' %suffix
-    path_mctemp        = 'ElectronFakeFitsRatio%sMCTemplate' %suffix
-    path_mctemp_coarse = 'ElectronFakeFitsRatio%sMCTemplate' %suffix
+    #path_mctempnd        = 'ElectronFakeFitsRatioCSEV%sMCTemplateNDKeys' %suffix
+    #path_mctempnd_coarse = 'ElectronFakeFitsRatioCSEV%sMCTemplateNDKeysCoarseEta' %suffix
+    #path_mctempnd        = 'ElectronFakeFitsRatioMIXReqEleCSEVMCTemplateNDKeys' 
+    #path_mctempnd_coarse = 'ElectronFakeFitsRatioMIXReqEleCSEVMCTemplateNDKeys'
+    #path_mctemp        = 'ElectronFakeFitsRatio%sMCTemplate' %suffix
+    #path_mctemp_coarse = 'ElectronFakeFitsRatio%sMCTemplate' %suffix
     path_mctempmctempnd        = 'ElectronFakeFitsRatio%sMCTemplateBkgNDKeys' %suffix
     path_mctempmctempnd_coarse = 'ElectronFakeFitsRatio%sMCTemplateBkgNDKeys' %suffix
     path_manual = 'ElectronFakeManual'
     #path_manual = 'ElectronFakeManualWithOlap2'
     path_manualL = 'ElectronFakeManualLoose'
+
+    # SET TO CORRECT DIRECTORY!
+    ele_fake_dir = path_mctempnd
 
     # use orderedDict to keep things in pT order
     file_bin_map             = collections.OrderedDict()
@@ -230,59 +276,159 @@ def main() :
     #file_bin_map[(bins[-2], 'max')] = path_manualL
     #file_bin_map_syst[(bins[-2], 'max')  ] = path_manualL
 
-    print file_bin_map
-
     pt_bins = [int(x) for x in options.ptbins.split(',')]
+
+    kinevars_common = {
+                       'm_ph1_ph2'    : [(0, 60), (60, 120), (120, 240), (240, 1000000)], 
+                       'pt_ph1_ph2'   : [(0,20), (20,40), (40,60), (60,80), (80,1000000)],
+                      }
+
+    kinevars_ch_el  = { 'mt_trigel_met'  : [(40, 60), (60, 80), (80, 120), (120,1000000)] }
+    kinevars_ch_mu  = { 'mt_trigmu_met'  : [(40, 60), (60, 80), (80, 120), (120,1000000)] }
+
+    if options.zgg :
+        kinevars_common = {
+                           'm_ph1_ph2'    : [(0, 20), (20, 40), (40, 60), (60, 100), (100,160), (160, 1000000)], 
+                           'pt_ph1_ph2'   : [(0,20), (20,40), (40,60), (60,80), (80,1000000)],
+                           'm_leplepphph' : [(80,100), (100,150), (150,200), (200,250), (250,300), (300,1000000)],
+                          }
+        kinevars_ch_el = {'m_elel'   : [(40,60), (60,80), (80, 100), (100, 1000000)] }
+        kinevars_ch_mu = {'m_mumu'   : [(40,60), (60,80), (80, 100), (100, 1000000)] }
+
+    kinevars_el = dict( kinevars_common )
+    kinevars_el.update( kinevars_ch_el )
+
+    kinevars_mu = dict( kinevars_common )
+    kinevars_mu.update( kinevars_ch_mu  )
+
+    # disable kinematic variables if 
+    # binning in pT is requested
+    if len( pt_bins ) > 2 :
+        kinevars_el = {}
+        kinevars_mu = {}
+
+
+    for idx, ptmin in enumerate( pt_bins[:-1] )  :
+
+        ptmax = pt_bins[idx+1]
+
+        if ptmax == pt_bins[-1] :
+            ptmaxstr = 'max'
+        else :
+            ptmaxstr = str( pt_bins[idx+1] )
+        ptminstr = str( ptmin )
+
+        _eta_pt_bin_map[(ptminstr,ptmaxstr)] = _ele_eta_bins
+        _eta_pt_bin_map_coarse[(ptminstr,ptmaxstr)] = _ele_eta_bins_coarse
+            
+    subl_pt_bins = None
+    if options.sublptbins is not None :
+        binsplit = options.sublptbins.split(',')
+        subl_pt_bins = ( int(binsplit[0]), int(binsplit[1]) )
 
     if options.baseDir is not None :
         outputDirBase='%s/BackgroundEstimates/' %(options.baseDir )
         base_dir_ele = options.baseDir
         resultDir = '%s/%s' %( outputDirBase, options.plotDir )
         base_dir_jet = resultDir
+
+        channels_mu = [
+                       #'muhighmt',
+                       #'mulowmt',
+                      ]
+        channels_el = [
+            #'elfullhighmt'          , 
+            #'elfullhighmtinvpixlead', 
+            #'elfullhighmtinvpixsubl', 
+            #'elfulllowmt'           , 
+            #'elfulllowmtinvpixlead' , 
+            #'elfulllowmtinvpixsubl' , 
+            #'ellooselowmt'          , 
+            #'ellooselowmtinvpixlead', 
+            #'ellooselowmtinvpixsubl', 
+            #'elzcrhighmt'           , 
+            #'elzcrhighmtinvpixlead' , 
+            #'elzcrhighmtinvpixsubl' , 
+            #'elzcr'                 , 
+            #'elzcrinvpixlead'       , 
+            #'elzcrinvpixsubl'       , 
+        ]
+
+
+        if options.zgg :
+            channels_mu = [
+                #'muZgg'
+            ]
+            channels_el = [
+                #'elZgg'
+            ]
+
+        for ch in channels_mu :
+            MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel=ch, subl_pt_bins=subl_pt_bins, addtlVars=kinevars_mu, outputDir=resultDir, useSIEIE=options.useSIEIE)
+        for ch in channels_el :
+            MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel=ch, subl_pt_bins=subl_pt_bins, addtlVars=kinevars_el, outputDir=resultDir, useSIEIE=options.useSIEIE)
        
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muZgg', outputDir=resultDir)
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elZgg', outputDir=resultDir)
+        #ele_selections = ['elfullhighmt', 'elfulllowmt', 'elzcrhighmt', 'elzcr', 'ellooselowmt' ]
+        #ele_selections = ['elfullhighmt', 'elfulllowmt']
+        #ele_selections = ['elfullhighmt' ]
+        ele_selections = []
+        if options.zgg :
+            ele_selections = []
 
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='muhighmt'              , outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmt'          , outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmtinvpixlead', outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfullhighmtinvpixsubl', outputDir=resultDir )
+        for sel in ele_selections :
+            MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, subl_pt_bins=subl_pt_bins, el_selection=sel, fakeDir=ele_fake_dir, outputDir=resultDir )
 
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfulllowmt'           , outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfulllowmtinvpixlead' , outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elfulllowmtinvpixsubl' , outputDir=resultDir )
+            for var, cuts in kinevars_el.iteritems() :
+                for cut in cuts :
+                    MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, subl_pt_bins=subl_pt_bins, el_selection=sel, addtlVar=var, addtlVarCuts=cut, fakeDir=ele_fake_dir, outputDir=resultDir )
 
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='mulowmt'               , outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='ellooselowmt'          , outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='ellooselowmtinvpixlead', outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='ellooselowmtinvpixsubl', outputDir=resultDir )
 
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrhighmt'           , outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrhighmtinvpixlead' , outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrhighmtinvpixsubl' , outputDir=resultDir )
-
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcr'                 , outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixlead'       , outputDir=resultDir )
-        #MakeJetBkgEstimateNew( '%s/JetFakeResultsSyst'%options.baseDir, pt_bins, channel='elzcrinvpixsubl'       , outputDir=resultDir )
-
-        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfullhighmt', outputDir=resultDir )
-        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elfulllowmt' , outputDir=resultDir )
-        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcrhighmt' , outputDir=resultDir )
-        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='elzcr'       , outputDir=resultDir )
-        #MakeEleBkgEstimateNew( base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins=pt_bins, el_selection='ellooselowmt', outputDir=resultDir )
-
-        plot_binning = [25,40,70,100]
+        plot_binning = pt_bins
+        # last bin should be at 100
+        plot_binning[-1] = options.lastBin
         #plot_binning = [25,100]
 
-        MakeBkgEstimatePlots( resultDir, plot_binning, channelmu='muhighmt', channelel='elfullhighmt', minpt=pt_bins[0] )
-        #MakeBkgEstimatePlots( resultDir, plot_binning, channelmu='mulowmt' , channelel='elfulllowmt' , minpt=pt_bins[0] )
-        #MakeBkgEstimatePlots( resultDir, plot_binning, channelmu='muhighmt', channelel='elzcrhighmt' , minpt=pt_bins[0] )
-        #MakeBkgEstimatePlots( resultDir, plot_binning, channelmu='muhighmt', channelel='elzcr'       , minpt=pt_bins[0] )
-        #MakeBkgEstimatePlots( resultDir, plot_binning, channelmu='muhighmt', channelel='ellooselowmt', minpt=pt_bins[0] )
+        channels_el = [
+                        'elfullhighmt', 
+                        #'elfulllowmt', 
+                        #'elzcrhighmt',
+                        #'elzcr',
+                        #'ellooselowmt',
+                      ]
+        channels_mu = [
+                        'muhighmt',
+                        #'mulowmt',
+                      ]
 
-        #plot_binning_zgg = [15,25,40,100]
-        #plot_binning_zgg = [25,100]
-        #MakeBkgEstimatePlots( resultDir, plot_binning_zgg, channelmu='muZgg', channelel='elZgg', minpt=pt_bins[0] )
+        if options.zgg :
+            channels_el = ['elZgg']
+            channels_mu = ['muZgg']
+
+        for mu in channels_mu :
+            MakeBkgEstimatePlots( resultDir, plot_binning, channelmu=mu, channelel=None, minpt=pt_bins[0], subl_pt_bins=subl_pt_bins, zgg=options.zgg )
+            for var, cuts in kinevars_mu.iteritems() :
+                binning = []
+                varstrs = []
+                for cut in cuts :
+                    binning.append( cut[0] )
+                    varstrs.append( '__cut_%s_%d-%d' %( var, cut[0], cut[1] ) )
+                # make the last bin end above the last one by the previous bin boundary
+                binning.append( cuts[-1][0] + cuts[-2][0] )
+                MakeBkgEstimatePlots( resultDir, binning, channelmu=mu, channelel=None, minpt=pt_bins[0], subl_pt_bins=subl_pt_bins, varname=var, varstrs=varstrs, zgg=options.zgg  )
+
+        for el in channels_el :
+            MakeBkgEstimatePlots( resultDir, plot_binning, channelmu=None, channelel=el, minpt=pt_bins[0], subl_pt_bins=subl_pt_bins, zgg=options.zgg )
+            for var, cuts in kinevars_el.iteritems() :
+                binning = []
+                varstrs = []
+                for cut in cuts :
+                    binning.append( cut[0] )
+                    varstrs.append( '__cut_%s_%d-%d' %( var, cut[0], cut[1] ) )
+                # make the last bin end above the last one by the previous bin boundary
+                binning.append( cuts[-1][0] + cuts[-2][0] )
+                MakeBkgEstimatePlots( resultDir, binning, channelmu=None, channelel=el, minpt=pt_bins[0], subl_pt_bins=subl_pt_bins, varname=var, varstrs=varstrs, zgg=options.zgg  )
+
+        SumHists(resultDir)
 
  
     print '^_^ FINSISHED ^_^'
@@ -313,28 +459,48 @@ def make_fake_factor( numerator, denominator, min, max ) :
 
 
 
-def MakeJetBkgEstimateNew( base_dir_jet, pt_bins, channel, outputDir=None ) :
+def MakeJetBkgEstimateNew( base_dir_jet, pt_bins, channel, subl_pt_bins=None, addtlVars={}, outputDir=None, useSIEIE=True ) :
 
     print '--------------------------------------'
     print 'START JET FAKE ESTIMATE FOR CHANNEL %s' %channel
     print '--------------------------------------'
 
     #uncertainties = {'systTemp' : True, 'systBkg' : True, 'statTemp' : False, 'statData' : False}
-    uncertainties = {'systTemp' : False, 'systBkg' : True, 'statTempTight' : True, 'statTempLoose' : True, 'statData' : False, 'fakefake' : False, 'crossCorr' : True}
+    uncertainties = {'systTemp' : False, 'systBkg' : True, 'statTempTight' : True, 'statTempLoose' : True, 'statTempFF' : False, 'statDataSB' : False, 'statDataSR' : False, 'fakefake' : False, 'crossCorr' : True}
     #uncertainties = {'systTemp' : False, 'systBkg' : False, 'statTempTight' : False, 'statTempLoose' : False, 'statData' : False}
-    vars = ['SigmaIEIEFits', 'PhoIsoFits', 'ChHadIsoFits']
-    #vars = ['SigmaIEIEFits', 'ChHadIsoFits']
+    #vars = ['SigmaIEIEFits', 'PhoIsoFits', 'ChHadIsoFits']
+    if useSIEIE :
+        vars = ['SigmaIEIEFits']
+    else  :
+        vars = ['ChHadIsoFits']
 
     regions = [('EB', 'EB'), ('EB' , 'EE'), ('EE', 'EB')]
-
-    pt_bins_jetfile = [str(x) for x in pt_bins[:-1]]
-    pt_bins_jetfile.append( 'max')
 
     result_dic = {'stat' : {}, 'syst' : {}, 'stat+syst' : {}}
     for key in result_dic.keys() :
         result_dic[key] = {'rf' : {}, 'fr' : {}, 'ff' : {}, 'sum' : {} }
 
-    strsublptmin = pt_bins_jetfile[0]
+    result_dic_vars = {}
+    for v, cuts in addtlVars.iteritems() :
+        for cut in cuts :
+            varcut = '__cut_%s_%d-%d' %(v, cut[0], cut[1] )
+            result_dic_vars[varcut] = { 'stat' : {'rf' : {}, 'fr' : {}, 'ff' : {}, 'sum' : {} },
+                                        'syst' : {'rf' : {}, 'fr' : {}, 'ff' : {}, 'sum' : {} },
+                                        'stat+syst' : {'rf' : {}, 'fr' : {}, 'ff' : {}, 'sum' : {} },
+                                      }
+
+    pt_bins_jetfile = [str(x) for x in pt_bins[:-1]]
+    pt_bins_jetfile.append( 'max')
+
+    if subl_pt_bins is None :
+        strsublptmin = pt_bins_jetfile[0]
+        strsublptmax = 'max'
+    else :
+        strsublptmin = str( subl_pt_bins[0] )
+        strsublptmax = str( subl_pt_bins[1] )
+        if subl_pt_bins[1] > 10000 :
+            strsublptmax = 'max'
+
     for idx, strptmin in enumerate(pt_bins_jetfile[:-1]) :
         strptmax = pt_bins_jetfile[idx+1]
 
@@ -343,44 +509,11 @@ def MakeJetBkgEstimateNew( base_dir_jet, pt_bins, channel, outputDir=None ) :
 
             result_bin = ( r1, r2, strptmin, strptmax )
 
-            found_result_dirs = {}
-            ff_var_systs = {}
-            for var in vars :
+            get_jet_results_with_uncerts( result_dic, vars, channel, result_bin, base_dir_jet, uncertainties, strsublptmin, strsublptmax, useSIEIE=useSIEIE )
 
-                print 'var : %s, ptmin = %s, ptmax = %s, r1 = %s, r2 = %s ' %( var, strptmin, strptmax, r1, r2)
+            for varcut, dic in result_dic_vars.iteritems() :
+                get_jet_results_with_uncerts( dic, vars, channel, result_bin, base_dir_jet, uncertainties, strsublptmin, strsublptmax, addtl_var_cut=varcut, useSIEIE=useSIEIE )
 
-                file_key_generic = 'results__statData__ffcorr_nom__%s__%s-%s__pt_%s-%s__subpt_%s-max.pickle' %(  channel, r1, r2, strptmin, strptmax, strsublptmin )
-                #file_key_generic = 'results__statData__ffcorr_nom__%s__%s-%s__pt_%s-%s.pickle' %(  channel, r1, r2, strptmin, strptmax )
-                result_dir = select_result_dir( '%s/%s' %( base_dir_jet, var), file_key_generic )
-
-                found_result_dirs[var] = result_dir
-
-                # get the ff template variation
-                # uncertainties.  The uncertainty
-                # is a difference in the central values
-                # so any of the uncertainty files can be used
-                file_key_ffvar = 'results__%s__ffcorr_(?P<ffvar>\w+)__%s__%s-%s__pt_%s-%s__subpt_%s-max.pickle' %( uncertainties.keys()[0], channel, r1, r2, strptmin, strptmax, strsublptmin  )
-                #file_key_ffvar = 'results__%s__ffcorr_(?P<ffvar>\w+)__%s__%s-%s__pt_%s-%s.pickle' %( uncertainties.keys()[0], channel, r1, r2, strptmin, strptmax )
-                ff_var_unc = get_ff_var_uncertainties( '%s/%s/%s' %(base_dir_jet, var, result_dir), file_key_ffvar )
-                ff_var_systs[var] = ff_var_unc
-
-
-            # key to match all other uncertainty variations
-            file_key = 'results__(?P<uncertainty>\w+)__ffcorr_nom__%s__%s-%s__pt_%s-%s__subpt_%s-max.pickle' %(  channel, r1, r2, strptmin, strptmax, strsublptmin  )
-            #file_key = 'results__(?P<uncertainty>\w+)__%s__%s-%s__pt_%s-%s.pickle' %(  channel, r1, r2, strptmin, strptmax )
-
-            results = get_jet_fake_results_new( base_dir_jet, file_key, uncertainties, found_result_dirs, ff_var_systs )
-
-            result_dic['stat+syst']['sum'][result_bin] = {}
-            result_dic['stat+syst']['sum'][result_bin]['result'] = resolve_negatives( results['comb'] )
-
-            for unc, val in results.iteritems() :
-                if unc == 'comb' :
-                    continue
-                result_dic.setdefault( 'individual', {} )
-                result_dic['individual'].setdefault( unc , {} )
-                result_dic['individual'][unc].setdefault( 'sum' , {} )
-                result_dic['individual'][unc]['sum'][result_bin] = {'result' : val } 
 
     if outputDir is not None :
         if not os.path.isdir( outputDir ) :
@@ -389,7 +522,64 @@ def MakeJetBkgEstimateNew( base_dir_jet, pt_bins, channel, outputDir=None ) :
         pickle.dump( result_dic, file)
         file.close()
 
+        for varcut, dic in result_dic_vars.iteritems() :
+            file = open( outputDir + '/jet_fake_results__%s%s.pickle' %(channel,varcut), 'w' )
+            pickle.dump( dic, file )
+            file.close()
+
+
     return
+
+def get_jet_results_with_uncerts( result_dic, vars, channel, result_bin, base_dir_jet, uncertainties, sublptmin,sublptmax, addtl_var_cut='', useSIEIE=True ) :
+
+    r1 = result_bin[0]
+    r2 = result_bin[1]
+    strptmin = result_bin[2]
+    strptmax = result_bin[3]
+
+    found_result_dirs = {}
+    ff_var_systs = {}
+    for var in vars :
+
+        print 'var : %s, ptmin = %s, ptmax = %s, r1 = %s, r2 = %s ' %( var, strptmin, strptmax, r1, r2)
+
+        file_key_generic = 'results__statDataSB__ffcorr_nom__%s__%s-%s__pt_%s-%s__subpt_%s-%s%s.pickle' %(  channel, r1, r2, strptmin, strptmax, sublptmin, sublptmax, addtl_var_cut )
+        #file_key_generic = 'results__statData__ffcorr_nom__%s__%s-%s__pt_%s-%s.pickle' %(  channel, r1, r2, strptmin, strptmax )
+        result_dir = select_result_dir( '%s/%s' %( base_dir_jet, var), channel, file_key_generic, useSIEIE=useSIEIE )
+
+        found_result_dirs[var] = result_dir
+
+        # get the ff template variation
+        # uncertainties.  The uncertainty
+        # is a difference in the central values
+        # so any of the uncertainty files can be used
+        file_key_ffvar = 'results__%s__ffcorr_(?P<ffvar>\w+)__%s__%s-%s__pt_%s-%s__subpt_%s-%s%s.pickle' %( 'statDataSB', channel, r1, r2, strptmin, strptmax, sublptmin, sublptmax,addtl_var_cut  )
+        #file_key_ffvar = 'results__%s__ffcorr_(?P<ffvar>\w+)__%s__%s-%s__pt_%s-%s.pickle' %( uncertainties.keys()[0], channel, r1, r2, strptmin, strptmax )
+        print '%s/%s/%s' %(base_dir_jet, var, result_dir)
+        print file_key_ffvar
+        ff_var_unc = get_ff_var_uncertainties( '%s/%s/%s' %(base_dir_jet, var, result_dir), channel, file_key_ffvar )
+
+        ff_var_systs[var] = ff_var_unc
+
+
+    # key to match all other uncertainty variations
+    file_key = 'results__(?P<uncertainty>\w+)__ffcorr_nom__%s__%s-%s__pt_%s-%s__subpt_%s-%s%s.pickle' %(  channel, r1, r2, strptmin, strptmax, sublptmin, sublptmax, addtl_var_cut  )
+    #file_key = 'results__(?P<uncertainty>\w+)__%s__%s-%s__pt_%s-%s.pickle' %(  channel, r1, r2, strptmin, strptmax )
+
+    results = get_jet_fake_results_new( base_dir_jet, file_key, channel, uncertainties, found_result_dirs, ff_var_systs )
+
+    print 'addtl_var_cut = %s, comb_result = %s' %( addtl_var_cut, results['comb'])
+
+    result_dic['stat+syst']['sum'][result_bin] = {}
+    result_dic['stat+syst']['sum'][result_bin]['result'] = resolve_negatives( results['comb'] )
+
+    for unc, val in results.iteritems() :
+        if unc == 'comb' :
+            continue
+        result_dic.setdefault( 'individual', {} )
+        result_dic['individual'].setdefault( unc , {} )
+        result_dic['individual'][unc].setdefault( 'sum' , {} )
+        result_dic['individual'][unc]['sum'][result_bin] = {'result' : val } 
 
 def resolve_negatives( inval ) :
 
@@ -407,30 +597,38 @@ def resolve_negatives( inval ) :
         return inval
 
 
-def get_jet_fake_results_new( base_dir, file_key, uncertainties, result_dirs, ff_var_systs ) :
+def get_jet_fake_results_new( base_dir, file_key, channel, uncertainties, result_dirs, ff_var_systs ) :
 
     central_values = {}
     std_devs = {}
     for unc in uncertainties.keys() :
         std_devs[unc] = {}
 
+    data_values = {}
     for var, dir in result_dirs.iteritems() :
 
         # get the prediction and each systematic
-        matches = get_matching_regex( os.listdir( '%s/%s/%s' %(base_dir,var,dir)), file_key )
+        matches = get_matching_regex( os.listdir( '%s/%s/%s/%s' %(base_dir,var,dir, channel)), file_key )
 
         first = True
         for match_file, match_value in matches :
 
             if match_value['uncertainty'] in uncertainties.keys() :
 
-                ofile = open( '%s/%s/%s/%s' %( base_dir,var,dir, match_file), 'r')
+                ofile = open( '%s/%s/%s/%s/%s' %( base_dir,var,dir, channel,match_file), 'r')
 
                 this_result = pickle.load( ofile )
 
                 ofile.close()
 
                 bkg_sum = this_result['Npred_RF_TT'] + this_result['Npred_FR_TT'] + this_result['Npred_FF_TT']
+
+                if var not in data_values :
+                    data_values[var] = {}
+                    data_values[var]['Ndata_TT'] = this_result['Ndata_TT']
+                    data_values[var]['Ndata_TL'] = this_result['Ndata_TL']
+                    data_values[var]['Ndata_LT'] = this_result['Ndata_LT']
+                    data_values[var]['Ndata_LL'] = this_result['Ndata_LL']
 
                 if first :
                     central_values[var] = bkg_sum
@@ -441,23 +639,24 @@ def get_jet_fake_results_new( base_dir, file_key, uncertainties, result_dirs, ff
         # do ff var systs
         std_devs['fakefake'][var] = ufloat( central_values[var].n, ff_var_systs[var] )
 
-        print result_dirs[var]
-
         # do cross correlation systs
         resdirres = re.match( 'JetFakeTemplateFitPlotsCorr(\d+)-(\d+)-(\d+)AsymIso', result_dirs[var] )
         if resdirres is None :
+            if result_dirs[var].count('No SIEIE') :
+                std_devs['crossCorr'][var] = ufloat( central_values[var].n, math.fabs(central_values[var].n)*_asym_iso_syst[(5, 3, 3)] )
             print 'WARNING, could not parse iso values from directory'
         else :
 
             iso1 = int(resdirres.group(1) )
             iso2 = int(resdirres.group(2) )
             iso3 = int(resdirres.group(3) )
-            std_devs['crossCorr'][var] = ufloat( central_values[var].n, _asym_iso_syst[(iso1,iso2,iso3)] )
+            std_devs['crossCorr'][var] = ufloat( central_values[var].n, math.fabs(central_values[var].n)*_asym_iso_syst[(iso1,iso2,iso3)] )
+
+    for var, val in data_values.iteritems() :
+        print '%s, NTT = %s, NTL = %s, NLT = %s, NLL = %s'  %( var, val['Ndata_TT'], val['Ndata_TL'], val['Ndata_LT'], val['Ndata_LL'] )
 
     results = {}
 
-
-    print std_devs
 
     comb_std_devs = {}
     for key, uncert in std_devs.iteritems() :
@@ -471,97 +670,111 @@ def get_jet_fake_results_new( base_dir, file_key, uncertainties, result_dirs, ff
     # get a stable variable ordering
     variable_order = list( result_dirs.keys() )
 
-    # now do blue
-    calc_comb = blue.Calculator() 
+    if len( variable_order ) > 1 :
+        # now do blue
+        calc_comb = blue.Calculator() 
 
 
-    meas_values = [central_values[v].n for v in variable_order]
+        meas_values = [central_values[v].n for v in variable_order]
 
-    print 'Measured values :  ' + ', '.join( ['%s : %f +- %f' %( v, central_values[v].n, math.sqrt( comb_std_devs[v])) for v in variable_order ] )
+        print 'Measured values :  ' + ', '.join( ['%s : %f +- %f' %( v, central_values[v].n, math.sqrt( comb_std_devs[v])) for v in variable_order ] )
 
-    calc_comb.SetMeasurementValues( meas_values )
+        calc_comb.SetMeasurementValues( meas_values )
 
-    # make BLUE calculators for each separate uncertainty
-    calc_indiv = {}
-    for unc in std_devs.keys() :
-        calc_indiv[unc] = blue.Calculator()
-        calc_indiv[unc].SetMeasurementValues( meas_values )
+        # make BLUE calculators for each separate uncertainty
+        calc_indiv = {}
+        for unc in std_devs.keys() :
+            calc_indiv[unc] = blue.Calculator()
+            calc_indiv[unc].SetMeasurementValues( meas_values )
 
-    n_var = len( variable_order )
-    for unc, is_corr in uncertainties.iteritems() :
+        n_var = len( variable_order )
+        for unc, is_corr in uncertainties.iteritems() :
 
-        matrix = [ ]
-        for i in range(0, n_var) :
-            list_i = [0]*n_var
-            for j in range(0,n_var) :
+            matrix = [ ]
+            for i in range(0, n_var) :
+                list_i = [0]*n_var
+                for j in range(0,n_var) :
 
-                entry = std_devs[unc][variable_order[i]].s*std_devs[unc][variable_order[j]].s
-                if i != j and not is_corr :
-                    entry = 0
+                    entry = std_devs[unc][variable_order[i]].s*std_devs[unc][variable_order[j]].s
+                    if i != j and not is_corr :
+                        entry = 0
 
-                list_i[j] = entry
+                    list_i[j] = entry
 
-            matrix.append( list_i )
+                matrix.append( list_i )
 
-        calc_comb.AddErrorMatrix( matrix )
-        if unc in calc_indiv :
-            calc_indiv[unc].AddErrorMatrix( matrix)
+            calc_comb.AddErrorMatrix( matrix )
+            if unc in calc_indiv :
+                calc_indiv[unc].AddErrorMatrix( matrix)
 
-        print 'Error matrix : '
-        print matrix
+            print 'Error matrix : '
+            print matrix
 
-    central_value = calc_comb.CalculateCombinedValue()
-    combined_unc  = calc_comb.CalculateCombinedUncertainty()
+        central_value = calc_comb.CalculateCombinedValue()
+        combined_unc  = calc_comb.CalculateCombinedUncertainty()
 
-    # get the weights from the combined BLUE calculation
-    # and give them to the individual calculators
-    combined_alphas = calc_comb.GetAlphas()
-    for icalc in calc_indiv.values() :
-        icalc.SetAlphas( combined_alphas )
-    
-    # get the individual uncertainties and save them to a file
-    for unc, icalc in calc_indiv.iteritems() :
+        # get the weights from the combined BLUE calculation
+        # and give them to the individual calculators
+        combined_alphas = calc_comb.GetAlphas()
+        for icalc in calc_indiv.values() :
+            icalc.SetAlphas( combined_alphas )
+        
+        # get the individual uncertainties and save them to a file
+        for unc, icalc in calc_indiv.iteritems() :
 
-        value = icalc.CalculateCombinedValue()
-        uncert= icalc.CalculateCombinedUncertainty()
+            value = icalc.CalculateCombinedValue()
+            uncert= icalc.CalculateCombinedUncertainty()
 
-        results[unc] = ufloat( value, uncert )
+            results[unc] = ufloat( value, uncert )
 
-    max_diffs = []
-    for v1, m1 in central_values.iteritems() :
-        for v2,m2 in central_values.iteritems() :
-            #if comb_std_devs[v1] > 5*m1.n or comb_std_devs[v2] > 5*m2.n :
-            #    continue
-            max_diffs.append( math.fabs( m2.n - m1.n) )
+        max_diffs = []
+        for v1, m1 in central_values.iteritems() :
+            for v2,m2 in central_values.iteritems() :
+                #if comb_std_devs[v1] > 5*m1.n or comb_std_devs[v2] > 5*m2.n :
+                #    continue
+                max_diffs.append( math.fabs( m2.n - m1.n) )
 
-    max_diff = max( max_diffs )
+        max_diff = max( max_diffs )
 
-    diff_unc = 0.5 * max_diff
-    final_unc = math.sqrt( diff_unc*diff_unc + combined_unc*combined_unc)
+        diff_unc = 0.5 * max_diff
+        final_unc = math.sqrt( diff_unc*diff_unc + combined_unc*combined_unc)
 
-    results['diff'] = ufloat( central_value, diff_unc )
+        results['diff'] = ufloat( central_value, diff_unc )
 
-    #print 'Result = %f +- %f' %( central_value, 0.5*max_diff )
-    print 'Diff unc = %f, Combined unc = %f' %( diff_unc, combined_unc )
-    print 'Result = %f +- %f' %( central_value, final_unc ) 
-    print calc_comb.alpha_array
-    print calc_comb.err_matrix
+        #print 'Result = %f +- %f' %( central_value, 0.5*max_diff )
+        print 'Diff unc = %f, Combined unc = %f' %( diff_unc, combined_unc )
+        print 'Result = %f +- %f' %( central_value, final_unc ) 
+        print calc_comb.alpha_array
+        print calc_comb.err_matrix
 
-    print '***********************FIX********************'
-    #results['comb'] = ufloat(central_value, final_unc )
-    results['comb'] = ufloat(central_value, combined_unc )
+        print '***********************FIX********************'
+        #results['comb'] = ufloat(central_value, final_unc )
+        results['comb'] = ufloat(central_value, combined_unc )
+
+    else :
+
+        var = variable_order[0]
+        results['diff'] = ufloat( central_values[var].n, 0.0 )
+        sum_sq = 0
+        print std_devs
+        print results
+        for unc in std_devs.keys() :
+            results[unc] = std_devs[unc][var]
+            sum_sq += std_devs[unc][var].s * std_devs[unc][var].s
+        results['comb'] = ufloat( central_values[var].n, math.sqrt(sum_sq) )
 
     return results
 
                 
-def get_ff_var_uncertainties( result_dir,  file_key_ffvar) :
+def get_ff_var_uncertainties( result_dir,  channel, file_key_ffvar) :
 
-    matches = get_matching_regex( os.listdir( result_dir ), file_key_ffvar ) 
+
+    matches = get_matching_regex( os.listdir( '%s/%s' %(result_dir, channel) ), file_key_ffvar ) 
 
     bkg_sum = {}
     for match in matches :
 
-        file = '%s/%s' %( result_dir, match[0] )
+        file = '%s/%s/%s' %( result_dir, channel, match[0] )
 
         ofile = open( file, 'r')
         
@@ -584,25 +797,29 @@ def get_ff_var_uncertainties( result_dir,  file_key_ffvar) :
 
 
 
-def select_result_dir( base_dir, file_name ) :
+def select_result_dir( base_dir, channel, file_name, useSIEIE=True ) :
 
     jet_dirs_key = 'JetFakeTemplateFitPlotsCorr(\d+)-(\d+)-(\d+)AsymIso'
     jet_dirs_key_nom = 'JetFakeTemplateFitPlotsNomIso'
 
     jet_dir_key_map = get_mapped_directory( base_dir, jet_dirs_key )
-    jet_dir_key_map[(0,0,0)] = 'JetFakeTemplateFitPlotsNomIso'
+    if useSIEIE :
+        jet_dir_key_map[(0,0,0)] = jet_dirs_key_nom
+    else :
+        jet_dir_key_map[(0,0,0)] = 'JetFakeTemplateFitPlotsCorrNo SIEIEAsymIso'
 
     sorted_jet_dirs = jet_dir_key_map.keys()
     sorted_jet_dirs.sort()
 
-    #print '****************************FIX********************************'
-    #return jet_dir_key_map[(0,0,0)]
+    if not useSIEIE :
+        print 'USING NO SIEIE DIRECTORY'
+        return jet_dir_key_map[(0,0,0)]
 
     selected_dir = None
     results_store = {}
     for syst_type in sorted_jet_dirs[1:] :
 
-        result_file = '%s/%s/%s' % (base_dir, jet_dir_key_map[syst_type], file_name ) 
+        result_file = '%s/%s/%s/%s' % (base_dir, jet_dir_key_map[syst_type], channel, file_name ) 
 
         ofile = open( result_file, 'r')
 
@@ -682,9 +899,7 @@ def MakeJetBkgEstimate( base_dir_jet, pt_bins, channel, outputDir=None ) :
     jet_files_elph2zcr = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_elph1zcr  )
 
     jet_files_mu_nom   = get_dirs_and_files( base_dir_jet, jet_dirs_key_nom, file_key_mu     )
-    print jet_files_mu_nom
     jet_files_mu.update( jet_files_mu_nom )
-    print jet_files_mu
 
     jet_files_mu_syst       = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_mu_syst     )
     jet_files_elfull_syst   = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_elfull_syst )
@@ -828,16 +1043,12 @@ def MakeJetBkgEstimate( base_dir_jet, pt_bins, channel, outputDir=None ) :
     #    pickle.dump( pred_elph2zcr, file_elph2zcr)
     #    file_elph2zcr.close()
 
-def MakeBkgEstimatePlots( result_dir, plot_binning, channelmu='mu', channelel='elfull', minpt=15 ) :
+def MakeBkgEstimatePlots( result_dir, plot_binning, channelmu='mu', channelel='elfull', minpt=15, subl_pt_bins = None, varname='pt_leadph12', varstrs=[], zgg=False ) :
 
     # first make the nominal estimates
 
     regions = [('EB', 'EB'), ('EB' ,'EE'), ('EE', 'EB')]
 
-    if channelmu == 'mu' :
-        hist_tag = 'mgg'
-    else :
-        hist_tag = channelmu
 
     for reg in regions + [(None, None)] :
 
@@ -848,191 +1059,202 @@ def MakeBkgEstimatePlots( result_dir, plot_binning, channelmu='mu', channelel='e
             reg_str = ' !(isEE_leadph12 && isEE_sublph12 )'
             reg_tag = ''
 
-        weight_str = 'mu_idSF * mu_trigSF * mu_isoSF * el_trigSF * ph_idSF * '
         event_weight = ' ( 1.0 * ( LHEWeight_weights[0] > 0 ) - 1.0 * ( LHEWeight_weights[0] < 0 ) ) * '
         weight_aqgc_lm50 = 'LHEWeight_weights[8] * 58791 * '
-        weight_str_signal = weight_str + event_weight
-        weight_aqgc = weight_str + weight_aqgc_lm50
 
-        mu_base = mu_cuts[channelmu]
+
+        if subl_pt_bins is None :
+            subl_str = 'pt_sublph12 > %d ' %(minpt)
+        else :
+            subl_str = 'pt_sublph12 > %d && pt_sublph12 < %d ' %(subl_pt_bins[0], subl_pt_bins[1])
+
+        bkg_mc = [
+                  ('Wgg', 0.104 ),
+                  ('Zgg', 0.125 ),
+                  ('OtherDiPhoton',0.2 ),
+                  ('DiTopDiPhoton', 0.2),
+                  ('SingleTopDiPhoton', 0.2),
+                  ('TriBosonDiPhoton', 0.2),
+                  ('TTVDiPhoton', 0.2),
+                  ('WWDiPhoton', 0.2),
+                  ('WZlvjjDiPhoton', 0.2),
+                  ('WZlvllDiPhoton', 0.2),
+                  ('WZjjllDiPhoton', 0.2),
+                  ('WZlvvvDiPhoton', 0.2),
+                  ('ZZDiPhoton', 0.2),
+                 ]
     
-        #samplesWmugg.Draw( 'pt_leadph12', 'PUWeight * (mu_passtrig25_n>0 && mu_n==1 && ph_n==2 && m_ph1_ph2 > 15 && dr_ph1_ph2 > 0.4 && dr_ph1_leadLep > 0.4 && dr_ph2_leadLep > 0.4 %s  ) ' %(reg_str), plot_binning )
+        if channelmu is not None :
+            mu_base = mu_cuts[channelmu]
+            if zgg :
+                weight_str_mu = 'mu_idSF * mu_diTrigSF * mu_isoSF * ph_idSF * ph_csevSF * '
+            else :
+                weight_str_mu = 'mu_idSF * mu_trigSF * mu_isoSF * ph_idSF * '
+            draw_str_mu = 'PUWeight * ( %s && pt_leadph12 > %d && %s &&  %s )' %(mu_base, minpt, subl_str, reg_str)
+            hist_tag_mu = '%s%s' %( channelmu, reg_tag )
+            save_muon_hists( draw_str_mu    , weight_str_mu, event_weight, weight_aqgc_lm50, plot_binning, result_dir, reg_tag, channelmu,varname, bkg_hists=bkg_mc    )
 
-        # Draw without weight
-        samplesWmugg.create_hist( 'Muon', 'pt_leadph12', ' PUWeight  * ( %s && pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(mu_base, minpt, minpt, reg_str), plot_binning )
 
-        #----------------------------
-        # Data mgg
-        #----------------------------
-        hist_data_mgg = samplesWmugg.get_samples(name='Muon')[0].hist.Clone('pt_leadph12_%s%s'%(hist_tag, reg_tag))
-        save_hist( '%s/Data/hist.root' %(result_dir), hist_data_mgg )
+        if channelel is not None :
+            if zgg :
+                weight_str_el = ' el_diTrigSF * el_looseIDSF * ph_idSF * ph_csevSF * '
+            else :
+                weight_str_el = ' el_trigSF * el_mvaIDSF * ph_idSF * ph_psvSF * '
+            draw_str_el = 'PUWeight * ( %s && pt_leadph12 > %d && %s &&  %s )' %(el_cuts[channelel+'vetoboth'], minpt, subl_str, reg_str)
+            hist_tag_el = '%s%s' %( channelel, reg_tag )
+            save_electron_hists( draw_str_el    , weight_str_el, event_weight, weight_aqgc_lm50, plot_binning, result_dir, reg_tag, channelel,varname, bkg_hists=bkg_mc    )
 
-        hist_data_mgg_pergev = hist_data_mgg.Clone( hist_data_mgg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_data_mgg, hist_data_mgg_pergev)
-        save_hist( '%s/Data/hist.root' %(result_dir), hist_data_mgg_pergev )
+    jet_dir_mu = '%s/jet_fake_results__%s.pickle'%(result_dir, channelmu)
+    jet_dir_el = '%s/jet_fake_results__%s.pickle'%(result_dir,channelel)
+    ele_dir_el = '%s/electron_fake_results__%s.pickle'%(result_dir,channelel)
 
-        #----------------------------
-        # Data lgg
-        #----------------------------
-        hist_data_lgg = samplesWmugg.get_samples(name='Muon')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-        save_hist( '%s/Muon/Data/hist.root' %(result_dir), hist_data_lgg )
+    if varstrs : 
+        jet_dir_mu = [ '%s/jet_fake_results__%s%s.pickle'%(result_dir, channelmu, v) for v in varstrs ]
+        jet_dir_el = [ '%s/jet_fake_results__%s%s.pickle'%(result_dir,channelel, v) for v in varstrs ]
+        ele_dir_el = [ '%s/electron_fake_results__%s%s.pickle'%(result_dir,channelel, v) for v in varstrs ]
 
-        hist_data_lgg_pergev = hist_data_lgg.Clone( hist_data_lgg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_data_lgg, hist_data_lgg_pergev)
-        save_hist( '%s/Muon/Data/hist.root' %(result_dir), hist_data_lgg_pergev )
+    if channelmu is not None :
+        make_hist_from_pickle( samplesWmugg, jet_dir_mu, '%s/JetFake/hist.root' %(result_dir), tag=channelmu, regions=regions, plot_binning=plot_binning, varname=varname )
+        make_hist_from_pickle( samplesWmugg, jet_dir_mu, '%s/Muon/JetFake/hist.root' %(result_dir), tag='lgg', regions=regions, plot_binning=plot_binning, varname=varname  )
 
-        # Draw with weight
-        #----------------------------
-        # Wgg mgg
-        #----------------------------
-        success = samplesWmugg.create_hist( 'Wgg', 'pt_leadph12', weight_str_signal + ' PUWeight  * ( %s &&  pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(mu_base, minpt, minpt, reg_str), plot_binning )
-        if success : 
-            hist_sig_mgg  = samplesWmugg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_%s%s'%(hist_tag,reg_tag))
-            save_hist( '%s/Wgg/hist.root' %(result_dir), hist_sig_mgg )
+    if channelel is not None :
+        make_hist_from_pickle( samplesWelgg, jet_dir_el, '%s/JetFake/hist.root' %(result_dir), tag=channelel, regions=regions, plot_binning=plot_binning, varname=varname  )
+        make_hist_from_pickle( samplesWelgg, jet_dir_el, '%s/Electron/JetFake/hist.root' %(result_dir), tag='lgg', regions=regions, plot_binning=plot_binning, varname=varname  )
 
-            hist_sig_mgg_pergev = hist_sig_mgg.Clone( hist_sig_mgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_sig_mgg, hist_sig_mgg_pergev)
-            save_hist( '%s/Wgg/hist.root' %(result_dir), hist_sig_mgg_pergev )
+        if not channelel.count('Zgg') :
+            make_hist_from_pickle( samplesWelgg, ele_dir_el, '%s/EleFake/hist.root' %(result_dir), tag=channelel, regions=regions, plot_binning=plot_binning, varname=varname   )
+            make_hist_from_pickle( samplesWelgg, ele_dir_el, '%s/Electron/EleFake/hist.root' %(result_dir), tag='lgg', regions=regions, plot_binning=plot_binning, varname=varname   )
 
-            #----------------------------
-            # Wgg lgg
-            #----------------------------
-            hist_sig_lgg  = samplesWmugg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-            save_hist( '%s/Muon/Wgg/hist.root' %(result_dir), hist_sig_lgg )
+    # using summed hists
+    if channelmu is not None :
+        make_hist_from_pickle( samplesWmugg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelmu), '%s/Muon/JetFake/hist.root' %(result_dir), tag='lgg', regions=regions, plot_binning=plot_binning )
+    if channelel is not None :
+        make_hist_from_pickle( samplesWelgg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelel), '%s/Electron/JetFake/hist.root' %(result_dir), tag=channelel, regions=regions, plot_binning=plot_binning )
+        if not channelel.count('Zgg') :
+            make_hist_from_pickle( samplesWelgg, '%s/electron_fake_results__%s.pickle'%(result_dir,channelel), '%s/Electron/EleFake/hist.root' %(result_dir), tag=channelel, regions=regions, plot_binning=plot_binning  )
 
-            hist_sig_lgg_pergev = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev)
-            save_hist( '%s/Muon/Wgg/hist.root' %(result_dir), hist_sig_lgg_pergev )
 
-        # Draw with weight
-        #----------------------------
-        # Wgg aQGC mgg
-        #----------------------------
-        success = samplesWmugg.create_hist( 'WAAQGCLT', 'pt_leadph12', weight_aqgc + ' PUWeight  * ( %s &&  pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(mu_base, minpt, minpt, reg_str), plot_binning )
-        if success : 
-            hist_sig_mgg  = samplesWmugg.get_samples(name='WAAQGCLT')[0].hist.Clone('pt_leadph12_%s%s'%(hist_tag,reg_tag))
-            save_hist( '%s/WggAQGCLT50/hist.root' %(result_dir), hist_sig_mgg )
-
-            hist_sig_mgg_pergev = hist_sig_mgg.Clone( hist_sig_mgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_sig_mgg, hist_sig_mgg_pergev)
-            save_hist( '%s/WggAQGCLT50/hist.root' %(result_dir), hist_sig_mgg_pergev )
-
-            #----------------------------
-            # Wgg lgg
-            #----------------------------
-            hist_sig_lgg  = samplesWmugg.get_samples(name='WAAQGCLT')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-            save_hist( '%s/Muon/WggAQGCLT50/hist.root' %(result_dir), hist_sig_lgg )
-
-            hist_sig_lgg_pergev = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev)
-            save_hist( '%s/Muon/WggAQGCLT50/hist.root' %(result_dir), hist_sig_lgg_pergev )
-
-        #----------------------------
-        # Zgg mgg
-        #----------------------------
-        # Draw with weight
-        success = samplesWmugg.create_hist( 'Zgammagamma', 'pt_leadph12', weight_str_signal + ' PUWeight  * ( %s && pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(mu_base, minpt, minpt, reg_str), plot_binning )
-
-        if success : 
-            hist_ZggFSR_mgg  = samplesWmugg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_%s%s'%(hist_tag, reg_tag))
-            hist_ZggFSR_mgg_nosyst=hist_ZggFSR_mgg.Clone( 'pt_leadph12_%s%s'%(hist_tag, reg_tag) )
-            save_hist( '%s/ZggNoSyst/hist.root' %(result_dir), hist_ZggFSR_mgg_nosyst )
-            add_syst_to_hist( hist_ZggFSR_mgg, 0.1 )
-            save_hist( '%s/Zgg/hist.root' %(result_dir), hist_ZggFSR_mgg )
-
-            hist_ZggFSR_mgg_pergev = hist_ZggFSR_mgg.Clone( hist_ZggFSR_mgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_ZggFSR_mgg, hist_ZggFSR_mgg_pergev)
-            save_hist( '%s/Zgg/hist.root' %(result_dir), hist_ZggFSR_mgg_pergev )
-            #----------------------------
-            # Zgg lgg
-            #----------------------------
-            hist_ZggFSR_lgg  = samplesWmugg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-            hist_ZggFSR_lgg_nosyst = hist_ZggFSR_lgg.Clone( 'pt_leadph12_lgg%s'%(reg_tag) )
-            save_hist( '%s/Muon/ZggNoSyst/hist.root' %(result_dir), hist_ZggFSR_lgg_nosyst )
-            add_syst_to_hist( hist_ZggFSR_lgg, 0.1 )
-            save_hist( '%s/Muon/Zgg/hist.root' %(result_dir), hist_ZggFSR_lgg )
-
-            hist_ZggFSR_lgg_pergev = hist_ZggFSR_lgg.Clone( hist_ZggFSR_lgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_ZggFSR_lgg, hist_ZggFSR_lgg_pergev)
-            save_hist( '%s/Muon/Zgg/hist.root' %(result_dir), hist_ZggFSR_lgg_pergev )
-
-        #----------------------------
-        # Other Di Photon mgg
-        #----------------------------
-        success = samplesWmugg.create_hist( 'OtherDiPhoton', 'pt_leadph12', weight_str + ' PUWeight  * ( %s  && pt_leadph12 > %d && pt_sublph12 > %d && %s  ) ' %(mu_base, minpt, minpt, reg_str), plot_binning )
-        if success :
-            hist_dip_mgg  = samplesWmugg.get_samples(name='OtherDiPhoton')[0].hist.Clone('pt_leadph12_%s%s'%(hist_tag,reg_tag))
-            save_hist( '%s/OtherDiPhoton/hist.root' %(result_dir), hist_dip_mgg )
-
-            hist_dip_mgg_pergev = hist_dip_mgg.Clone( hist_dip_mgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_dip_mgg, hist_dip_mgg_pergev)
-            save_hist( '%s/OtherDiPhoton/hist.root' %(result_dir), hist_dip_mgg_pergev )
-            #----------------------------
-            # Other Di Photon lgg
-            #----------------------------
-            hist_dip_lgg  = samplesWmugg.get_samples(name='OtherDiPhoton')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-            save_hist( '%s/Muon/OtherDiPhoton/hist.root' %(result_dir), hist_dip_lgg )
-
-            hist_dip_lgg_pergev = hist_dip_lgg.Clone( hist_dip_lgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_dip_lgg, hist_dip_lgg_pergev)
-            save_hist( '%s/Muon/OtherDiPhoton/hist.root' %(result_dir), hist_dip_lgg_pergev )
-            #hist_Zgg_mgg     = samplesWmugg.get_samples(name='Zgg')[0].hist.Clone('pt_leadph12_mgg%s'%(reg_tag))
-            #hist_Zgg_mgg.Add(hist_ZggFSR_mgg)
-            #add_syst_to_hist( hist_Zgg_mgg, 0.15 )
-            #save_hist( '%s/%s/Zgg/hist.root' %(baseDir, plotDir), hist_Zgg_mgg )
-
-        draw_str_el = 'PUWeight * ( %s && pt_leadph12 > %d && pt_sublph12 > %d &&  %s )' %(el_cuts[channelel+'vetoboth'], minpt, minpt, reg_str)
-
-        hist_tag_el = '%s%s' %( channelel, reg_tag )
-
-        save_electron_hists( draw_str_el    , weight_str, event_weight, weight_aqgc_lm50, plot_binning, result_dir, reg_tag, channelel    )
-
-    make_hist_from_pickle( samplesWmugg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelmu), '%s/JetFake/hist.root' %(result_dir), tag=hist_tag, regions=regions )
-    make_hist_from_pickle( samplesWelgg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelel), '%s/JetFake/hist.root' %(result_dir), tag=channelel, regions=regions )
-    make_hist_from_pickle( samplesWelgg, '%s/electron_fake_results__%s.pickle'%(result_dir,channelel), '%s/EleFake/hist.root' %(result_dir), tag=channelel, regions=regions  )
-
-    make_hist_from_pickle( samplesWmugg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelmu), '%s/Muon/JetFake/hist.root' %(result_dir), tag='lgg', regions=regions )
-    make_hist_from_pickle( samplesWelgg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelel), '%s/Electron/JetFake/hist.root' %(result_dir), tag='lgg', regions=regions )
-
-    make_hist_from_pickle( samplesWelgg, '%s/electron_fake_results__%s.pickle'%(result_dir,channelel), '%s/Electron/EleFake/hist.root' %(result_dir), tag='lgg', regions=regions  )
-
-    # not using summed hists
-    #make_hist_from_pickle( samplesWmugg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelmu), '%s/Muon/JetFake/hist.root' %(result_dir), tag='lgg', regions=regions )
-    #make_hist_from_pickle( samplesWelgg, '%s/jet_fake_results__%s.pickle'%(result_dir, channelel), '%s/Electron/JetFake/hist.root' %(result_dir), tag=channelel, regions=regions )
-    #make_hist_from_pickle( samplesWelgg, '%s/electron_fake_results__%s.pickle'%(result_dir,channelel), '%s/Electron/EleFake/hist.root' %(result_dir), tag=channelel, regions=regions  )
-
-    #make_hist_from_pickle( samplesWelgg, baseDir + '/electron_fake_results.pickle'            , '%s/%s/EleFake/hist.root' %(baseDir, plotDir), tag='egg', regions=regions, sum_syst={4 : 0.39, 5 : 0.255, 6 : 0.41, 7 : 0.41}  )
+def SumHists( result_dir ) :
 
     # combine the electron and muon
     # directories into the Summed directory
     summed_dir = '%s/Summed' %(result_dir) 
     if not os.path.isdir( summed_dir ) :
         os.makedirs( summed_dir )
-    for dir in os.listdir( '%s/Electron' %(result_dir)  ) :
-        if not os.path.isdir( '%s/%s' %( summed_dir, dir ) ) :
-            os.makedirs( '%s/%s' %( summed_dir, dir ) )
-        os.system( 'hadd -f %s/%s/hist.root %s/Electron/%s/hist.root %s/Muon/%s/hist.root' %( summed_dir, dir, result_dir,dir, result_dir, dir)  )
-        os.system( 'cp %s/Electron/EleFake/hist.root %s/EleFake/hist.root ' %( result_dir, summed_dir ) )
+    if os.path.isdir( '%s/Electron' %(result_dir) ) :
+        for dir in os.listdir( '%s/Electron' %(result_dir)  ) :
+            if not os.path.isdir( '%s/%s' %( summed_dir, dir ) ) :
+                os.makedirs( '%s/%s' %( summed_dir, dir ) )
+            os.system( 'hadd -f %s/%s/hist.root %s/Electron/%s/hist.root %s/Muon/%s/hist.root' %( summed_dir, dir, result_dir,dir, result_dir, dir)  )
+            os.system( 'cp %s/Electron/EleFake/hist.root %s/EleFake/hist.root ' %( result_dir, summed_dir ) )
 
-def save_electron_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_binning, plot_dir, reg_tag, channel_tag ) :
+def save_muon_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_binning, plot_dir, reg_tag, channel_tag, varname, bkg_hists ) :
+
+    hist_tag = '%s%s' %(channel_tag, reg_tag)
+
+    # Draw without weight
+    samplesWmugg.create_hist( 'Muon', varname, draw_str, plot_binning )
+
+    #----------------------------
+    # Data mgg
+    #----------------------------
+    hist_data_mgg = samplesWmugg.get_samples(name='Muon')[0].hist.Clone('%s_%s'%(varname, hist_tag))
+    save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_mgg )
+
+    hist_data_mgg_pergev = hist_data_mgg.Clone( hist_data_mgg.GetName() + '_perGeV' )
+    make_pergev_hist( hist_data_mgg, hist_data_mgg_pergev)
+    save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_mgg_pergev )
+
+    #----------------------------
+    # Data lgg
+    #----------------------------
+    hist_data_lgg = samplesWmugg.get_samples(name='Muon')[0].hist.Clone('%s_lgg%s'%(varname, reg_tag))
+    save_hist( '%s/Muon/Data/hist.root' %(plot_dir), hist_data_lgg )
+
+    hist_data_lgg_pergev = hist_data_lgg.Clone( hist_data_lgg.GetName() + '_perGeV' )
+    make_pergev_hist( hist_data_lgg, hist_data_lgg_pergev)
+    save_hist( '%s/Muon/Data/hist.root' %(plot_dir), hist_data_lgg_pergev )
+
+    # Draw with weight
+    #----------------------------
+    # Wgg aQGC mgg
+    #----------------------------
+    success = samplesWmugg.create_hist( 'WAAQGCLT', varname, weight_str+aqgc_weight+draw_str , plot_binning )
+    if success : 
+        hist_sig_mgg  = samplesWmugg.get_samples(name='WAAQGCLT')[0].hist.Clone('%s_%s'%(varname, hist_tag))
+        save_hist( '%s/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_mgg )
+
+        hist_sig_mgg_pergev = hist_sig_mgg.Clone( hist_sig_mgg.GetName() + '_perGeV' )
+        make_pergev_hist( hist_sig_mgg, hist_sig_mgg_pergev)
+        save_hist( '%s/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_mgg_pergev )
+
+        #----------------------------
+        # Wgg lgg
+        #----------------------------
+        hist_sig_lgg  = samplesWmugg.get_samples(name='WAAQGCLT')[0].hist.Clone('%s_lgg%s'%(varname, reg_tag))
+        save_hist( '%s/Muon/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_lgg )
+
+        hist_sig_lgg_pergev = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV' )
+        make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev)
+        save_hist( '%s/Muon/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_lgg_pergev )
+
+
+
+    for mc, syst in bkg_hists :
+
+        if mc == 'Zgg' or mc == 'Wgg' :
+            total_weight = weight_str+event_weight+draw_str
+        else :
+            total_weight = weight_str+draw_str
+
+        success = samplesWmugg.create_hist( mc, varname, total_weight, plot_binning )
+        if success : 
+            #----------------------------
+            # mgg
+            #----------------------------
+            hist_mgg  = samplesWmugg.get_samples(name=mc)[0].hist.Clone('%s_%s'%(varname, hist_tag))
+            hist_mgg_nosyst=hist_mgg.Clone( '%s_%s'%(varname,hist_tag) )
+            save_hist( '%s/%sNoSyst/hist.root' %(plot_dir, mc), hist_mgg_nosyst )
+            add_syst_to_hist( hist_mgg, syst )
+            save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg )
+
+            hist_mgg_pergev = hist_mgg.Clone( hist_mgg.GetName() + '_perGeV' )
+            make_pergev_hist( hist_mgg, hist_mgg_pergev)
+            save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg_pergev )
+            #----------------------------
+            # lgg
+            #----------------------------
+            hist_lgg  = samplesWmugg.get_samples(name=mc)[0].hist.Clone('%s_lgg%s'%(varname,reg_tag))
+            hist_lgg_nosyst = hist_lgg.Clone( '%s_lgg%s'%(varname,reg_tag) )
+            save_hist( '%s/Muon/%sNoSyst/hist.root' %(plot_dir, mc), hist_lgg_nosyst )
+            add_syst_to_hist( hist_lgg, syst )
+            save_hist( '%s/Muon/%s/hist.root' %(plot_dir, mc), hist_lgg )
+
+            hist_lgg_pergev = hist_lgg.Clone( hist_lgg.GetName() + '_perGeV' )
+            make_pergev_hist( hist_lgg, hist_lgg_pergev)
+            save_hist( '%s/Muon/%s/hist.root' %(plot_dir, mc), hist_lgg_pergev )
+
+
+
+def save_electron_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_binning, plot_dir, reg_tag, channel_tag, varname, bkg_hists ) :
 
 
     hist_tag = '%s%s' %(channel_tag, reg_tag)
     
     # draw without weight
-    samplesWelgg.create_hist( 'Electron', 'pt_leadph12', draw_str, plot_binning )
+    samplesWelgg.create_hist( 'Electron', varname, draw_str, plot_binning )
 
     #---------------------------
     # Data egg
     #---------------------------
-    hist_data_egg = samplesWelgg.get_samples(name='Electron')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
+    hist_data_egg = samplesWelgg.get_samples(name='Electron')[0].hist.Clone('%s_%s'%(varname,hist_tag))
     save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_egg )
 
     hist_data_egg_pergev = hist_data_egg.Clone( hist_data_egg.GetName() + '_perGeV' )
     make_pergev_hist( hist_data_egg, hist_data_egg_pergev)
     save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_egg_pergev )
 
-    hist_data_lgg = samplesWelgg.get_samples(name='Electron')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
+    hist_data_lgg = samplesWelgg.get_samples(name='Electron')[0].hist.Clone('%s_lgg%s'%(varname,reg_tag))
     save_hist( '%s/Electron/Data/hist.root' %(plot_dir), hist_data_lgg )
 
     hist_data_lgg_pergev = hist_data_lgg.Clone( hist_data_lgg.GetName() + '_perGeV' )
@@ -1040,93 +1262,59 @@ def save_electron_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_
     save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_lgg_pergev )
 
     #---------------------------
-    # Wgg egg
-    #---------------------------
-    # draw with weight
-    success = samplesWelgg.create_hist( 'Wgg', 'pt_leadph12', weight_str+event_weight+draw_str, plot_binning )
-    if success :
-        hist_sig_egg  = samplesWelgg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
-        save_hist( '%s/Wgg/hist.root' %(plot_dir), hist_sig_egg )
-
-        hist_sig_egg_pergev = hist_sig_egg.Clone( hist_sig_egg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_sig_egg, hist_sig_egg_pergev)
-        save_hist( '%s/Wgg/hist.root' %(plot_dir), hist_sig_egg_pergev )
-
-        hist_sig_lgg  = samplesWelgg.get_samples(name='Wgg')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-        save_hist( '%s/Electron/Wgg/hist.root' %(plot_dir), hist_sig_lgg )
-
-        hist_sig_lgg_pergev = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev)
-        save_hist( '%s/Electron/Wgg/hist.root' %(plot_dir), hist_sig_lgg_pergev )
-
-    #---------------------------
     # Wgg aQGC egg
     #---------------------------
     # draw with weight
-    success = samplesWelgg.create_hist( 'WAAQGCLT', 'pt_leadph12', aqgc_weight+weight_str+draw_str, plot_binning )
+    success = samplesWelgg.create_hist( 'WAAQGCLT', varname,  aqgc_weight+weight_str+draw_str, plot_binning )
     if success :
-        hist_sig_egg  = samplesWelgg.get_samples(name='WAAQGCLT')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
+        hist_sig_egg  = samplesWelgg.get_samples(name='WAAQGCLT')[0].hist.Clone('%s_%s'%(varname,hist_tag))
         save_hist( '%s/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_egg )
 
         hist_sig_egg_pergev = hist_sig_egg.Clone( hist_sig_egg.GetName() + '_perGeV' )
         make_pergev_hist( hist_sig_egg, hist_sig_egg_pergev)
         save_hist( '%s/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_egg_pergev )
 
-        hist_sig_lgg  = samplesWelgg.get_samples(name='WAAQGCLT')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
+        hist_sig_lgg  = samplesWelgg.get_samples(name='WAAQGCLT')[0].hist.Clone('%s_lgg%s'%(varname,reg_tag))
         save_hist( '%s/Electron/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_lgg )
 
         hist_sig_lgg_pergev = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV' )
         make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev)
         save_hist( '%s/Electron/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_lgg_pergev )
 
-    #---------------------------
-    # Zgg egg
-    #---------------------------
-    success = samplesWelgg.create_hist( 'Zgammagamma', 'pt_leadph12', weight_str+event_weight+draw_str, plot_binning )
+    for mc, syst in bkg_hists :
 
-    if success :
-        hist_Zgg_egg  = samplesWelgg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
-        hist_Zgg_egg_nosyst= hist_Zgg_egg.Clone('pt_leadph12_%s'%(hist_tag) ) 
+        if mc == 'Zgg' or mc == 'Wgg' :
+            total_weight = weight_str+event_weight+draw_str
+        else :
+            total_weight = weight_str+draw_str
 
-        save_hist( '%s/ZggNoSyst/hist.root' %(plot_dir), hist_Zgg_egg_nosyst )
-        add_syst_to_hist( hist_Zgg_egg, 0.10 )
-        save_hist( '%s/Zgg/hist.root' %(plot_dir), hist_Zgg_egg )
+        success = samplesWelgg.create_hist( mc, varname, total_weight, plot_binning )
+        if success : 
+            #----------------------------
+            # mgg
+            #----------------------------
+            hist_mgg  = samplesWelgg.get_samples(name=mc)[0].hist.Clone('%s_%s'%(varname, hist_tag))
+            hist_mgg_nosyst=hist_mgg.Clone( '%s_%s'%(varname,hist_tag) )
+            save_hist( '%s/%sNoSyst/hist.root' %(plot_dir, mc), hist_mgg_nosyst )
+            add_syst_to_hist( hist_mgg, syst )
+            save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg )
 
-        hist_Zgg_egg_pergev = hist_Zgg_egg.Clone( hist_Zgg_egg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_Zgg_egg, hist_Zgg_egg_pergev)
-        save_hist( '%s/Zgg/hist.root' %(plot_dir), hist_Zgg_egg_pergev )
+            hist_mgg_pergev = hist_mgg.Clone( hist_mgg.GetName() + '_perGeV' )
+            make_pergev_hist( hist_mgg, hist_mgg_pergev)
+            save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg_pergev )
+            #----------------------------
+            # lgg
+            #----------------------------
+            hist_lgg  = samplesWelgg.get_samples(name=mc)[0].hist.Clone('%s_lgg%s'%(varname,reg_tag))
+            hist_lgg_nosyst = hist_lgg.Clone( '%s_lgg%s'%(varname,reg_tag) )
+            save_hist( '%s/Electron/%sNoSyst/hist.root' %(plot_dir, mc), hist_lgg_nosyst )
+            add_syst_to_hist( hist_lgg, syst )
+            save_hist( '%s/Electron/%s/hist.root' %(plot_dir, mc), hist_lgg )
 
+            hist_lgg_pergev = hist_lgg.Clone( hist_lgg.GetName() + '_perGeV' )
+            make_pergev_hist( hist_lgg, hist_lgg_pergev)
+            save_hist( '%s/Electron/%s/hist.root' %(plot_dir, mc), hist_lgg_pergev )
 
-        hist_Zgg_lgg  = samplesWelgg.get_samples(name='Zgammagamma')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-        hist_Zgg_lgg_nosyst= hist_Zgg_lgg.Clone('pt_leadph12_%s'%(hist_tag) ) 
-
-        save_hist( '%s/Electron/ZggNoSyst/hist.root' %(plot_dir), hist_Zgg_lgg_nosyst )
-        add_syst_to_hist( hist_Zgg_lgg, 0.10 )
-        save_hist( '%s/Electron/Zgg/hist.root' %(plot_dir), hist_Zgg_lgg )
-
-        hist_Zgg_lgg_pergev = hist_Zgg_lgg.Clone( hist_Zgg_lgg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_Zgg_lgg, hist_Zgg_lgg_pergev)
-        save_hist( '%s/Electron/Zgg/hist.root' %(plot_dir), hist_Zgg_lgg_pergev )
-
-
-    #---------------------------
-    # OtherDiPhoton egg
-    #---------------------------
-    success = samplesWelgg.create_hist( 'OtherDiPhoton', 'pt_leadph12', weight_str+draw_str, plot_binning )
-    if success :
-        hist_dip_egg  = samplesWelgg.get_samples(name='OtherDiPhoton')[0].hist.Clone('pt_leadph12_%s'%(hist_tag))
-        save_hist( '%s/OtherDiPhoton/hist.root' %(plot_dir), hist_dip_egg )
-
-        hist_dip_egg_pergev = hist_dip_egg.Clone( hist_dip_egg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_dip_egg, hist_dip_egg_pergev)
-        save_hist( '%s/OtherDiPhoton/hist.root' %(plot_dir), hist_dip_egg_pergev )
-
-        hist_dip_lgg  = samplesWelgg.get_samples(name='OtherDiPhoton')[0].hist.Clone('pt_leadph12_lgg%s'%(reg_tag))
-        save_hist( '%s/Electron/OtherDiPhoton/hist.root' %(plot_dir), hist_dip_lgg )
-
-        hist_dip_lgg_pergev = hist_dip_lgg.Clone( hist_dip_lgg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_dip_lgg, hist_dip_lgg_pergev)
-        save_hist( '%s/Electron/OtherDiPhoton/hist.root' %(plot_dir), hist_dip_lgg_pergev )
 
 def add_syst_to_hist( hist, syst, err_bin=[] ) :
 
@@ -1144,53 +1332,74 @@ def add_syst_to_hist( hist, syst, err_bin=[] ) :
 
         hist.SetBinError( bin, new_err )
 
-def make_hist_from_pickle( sampMan, input_file, output_hist, tag, regions, syst=None, sum_syst={} ) :
+def make_hist_from_pickle( sampMan, input_files, output_hist, tag, regions, plot_binning, varname='pt_leadph12', syst=None, sum_syst={} ) :
 
-    # get jet fake background estimate
-    if not os.path.isfile( input_file) :
-        print 'Could not find input file %s' %input_file
-        return
+    if not isinstance( input_files, list ) :
+        input_files = [input_files]
 
-    ofile = open( input_file, 'r' )
-
-
-    data = pickle.load(ofile)
-
-    ofile.close()
+    datas = []
+    for input_file in input_files :
+        if not os.path.isfile( input_file) :
+            print 'Could not find input file %s' %input_file
+            continue
+        ofile = open( input_file, 'r' )
+        datas.append(pickle.load(ofile) )
+        ofile.close()
 
     samp_list = sampMan.get_samples()
     sum_hist = None
     sum_data = {}
     for reg in regions :
-        hist = None
-        for s in samp_list :
-            if s.hist is not None :
-                hist = s.hist.Clone( 'pt_leadph12_%s_%s-%s' %(tag, reg[0], reg[1] ) )
-                sum_hist = s.hist.Clone( 'pt_leadph12_%s' %(tag ) )
-                break
+        hist_binning = array('f', plot_binning)
+        histname = '%s_%s_%s-%s' %(varname, tag, reg[0], reg[1] )
+        hist = ROOT.TH1F( histname, histname, len(plot_binning)-1, hist_binning )
+        sum_hist = hist.Clone( '%s_%s' %(varname, tag ) )
 
-        for ptbin in range( 1, hist.GetNbinsX()+1 ) :
-            min = int(hist.GetXaxis().GetBinLowEdge(ptbin))
-            max = int(hist.GetXaxis().GetBinUpEdge(ptbin))
-            sum_data.setdefault(ptbin, ufloat(0, 0) )
+        # handle the case where the
+        # histogram is the lead photon pT
+        # assume this happens when only one file is passed
+        if len( datas ) == 1 :
+            data = datas[0]
 
-            if max <= 15 :
-                continue
+            for ptbin in range( 1, hist.GetNbinsX()+1 ) :
+                min = int(hist.GetXaxis().GetBinLowEdge(ptbin))
+                max = int(hist.GetXaxis().GetBinUpEdge(ptbin))
+                sum_data.setdefault(ptbin, ufloat(0, 0) )
 
-            maxval = str(max)
-            if max >= 100 :
-                maxval = 'max'
+                if max <= 15 :
+                    continue
 
-            databin = ( reg[0] ,reg[1], str( min), maxval )
+                maxval = str(max)
+                if max >= 100 :
+                    maxval = 'max'
 
-            if databin not in data['stat+syst']['sum'] :
-                print 'Skipping bin %s that does not exist' %(str(databin))
-                continue 
+                databin = ( reg[0] ,reg[1], str( min), maxval )
 
-            hist.SetBinContent( ptbin, data['stat+syst']['sum'][databin]['result'].n )
-            hist.SetBinError( ptbin, data['stat+syst']['sum'][databin]['result'].s )
+                if databin not in data['stat+syst']['sum'] :
+                    print 'Skipping bin %s that does not exist' %(str(databin))
+                    continue 
 
-            sum_data[ptbin] = sum_data[ptbin] + data['stat+syst']['sum'][databin]['result']
+                hist.SetBinContent( ptbin, data['stat+syst']['sum'][databin]['result'].n )
+                hist.SetBinError( ptbin, data['stat+syst']['sum'][databin]['result'].s )
+
+                sum_data[ptbin] = sum_data[ptbin] + data['stat+syst']['sum'][databin]['result']
+
+        elif len(datas) > 1 :
+
+            # there should only be one pt bin
+            testbin = datas[0]['stat+syst']['sum'].keys()[0]
+            ptbin = (testbin[2], testbin[3])
+
+            for idx, data in enumerate( datas ) :
+                sum_data.setdefault(idx+1, ufloat(0, 0) )
+
+                databin = ( reg[0], reg[1], ptbin[0], ptbin[1] )
+
+                dataval = data['stat+syst']['sum'][databin]['result']
+                hist.SetBinContent(idx+1, dataval.n )
+                hist.SetBinError(idx+1, dataval.n )
+
+                sum_data[idx+1] = sum_data[idx+1] + dataval
 
         save_hist( output_hist, hist )
 
@@ -1242,7 +1451,6 @@ def make_pergev_hist( hist, hist_pergev ) :
 def save_hist( file, hist) :
 
     dirname = os.path.split( file)[0] 
-    print dirname
     if not os.path.isdir( dirname ) :
         os.makedirs( dirname ) 
     ofile = ROOT.TFile.Open( file, 'UPDATE' )
@@ -1281,9 +1489,7 @@ def get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key ) :
 
             jet_files[iso_key] = {}
 
-            print base_dir_jet+'/'+dir
             for file in os.listdir( base_dir_jet+'/'+dir  ) :
-                print file
                 fresl = re.match(file_key, file )
                 if fresl is not None :
                     if len(fresl.groups()) == 4 :
@@ -1301,7 +1507,7 @@ def get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key ) :
 
 
 
-def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins, outputDir=None, el_selection='elfull', coarse=False) :
+def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins, subl_pt_bins=None, fakeDir=None, outputDir=None, el_selection='elfull', addtlVar=None, addtlVarCuts=None, coarse=False) :
 
     print '-----------------------------------'
     print 'START NEW ELECTRON FAKE ESTMATE FOR %s' %el_selection
@@ -1319,11 +1525,17 @@ def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map
 
     regions = [('EB', 'EB'), ('EB' , 'EE'), ('EE', 'EB')]
 
+    addtl_cuts = ''
+    addtl_str = ''
+    if addtlVar is not None and addtlVarCuts is not None :
+        addtl_cuts = ' && %s > %d && %s < %d ' %( addtlVar, addtlVarCuts[0], addtlVar, addtlVarCuts[1] )
+        addtl_str = '__cut_%s_%d-%d' %( addtlVar, addtlVarCuts[0], addtlVarCuts[1] )
+
     # get fake factors from nominal fits
-    results_nom = get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, coarse=coarse )
+    results_nom = get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, subl_pt_bins=subl_pt_bins, addtl_cuts=addtl_cuts, coarse=coarse )
     # disable alternate fits
     # get fake factors from systematic fits
-    #results_syst = get_ele_fakefactors( base_dir_ele, file_bin_map_syst, regions, el_selection, coarse=coarse )
+    #results_syst = get_ele_fakefactors( base_dir_ele, file_bin_map_syst, regions, el_selection, addtl_cuts=addtl_cuts, coarse=coarse )
 
     results_comb = {'stat' : { 'lead' : {}, 'subl' : {}}, 'syst' : { 'lead' : {}, 'subl' : {}} , 'details' : { 'lead' : {}, 'subl' : {}} }
     for bin, res in results_nom['lead'].iteritems() :
@@ -1352,8 +1564,8 @@ def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map
 
         results_comb['syst']['subl'][bin] = ufloat( res['pred'].n, _fakefactor_closure_syst*res['pred'].n)
 
-    file_jet_invlead = '%s/jet_fake_results__%sinvpixlead.pickle' %( base_dir_jet, el_selection )
-    file_jet_invsubl = '%s/jet_fake_results__%sinvpixsubl.pickle' %( base_dir_jet, el_selection )
+    file_jet_invlead = '%s/jet_fake_results__%sinvpixlead%s.pickle' %( base_dir_jet, el_selection, addtl_str )
+    file_jet_invsubl = '%s/jet_fake_results__%sinvpixsubl%s.pickle' %( base_dir_jet, el_selection, addtl_str )
 
     print 'open invlead ', file_jet_invlead
     print 'open invsubl ', file_jet_invsubl
@@ -1367,10 +1579,7 @@ def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map
     ofile_subl.close()
 
     # get fake factors and binning from file
-    #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeManual/results.pickle' %base_dir_ele, ['fake_ratio'] )
-    ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatioMCTemplateNDKeys/results.pickle' %base_dir_ele, ['fake_ratio'] )
-    #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatioTAndP/results.pickle' %base_dir_ele, ['fake_ratio'] )
-    #ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatio/results.pickle' %base_dir_ele, ['fake_ratio'] )
+    ff_man_coarse = FakeFactorManager( '%s/%s/results.pickle' %(base_dir_ele,fakeDir), ['fake_ratio'] )
 
     pt_bins_jetfile = []
     for idx, ptmin in enumerate(pt_bins[:-1]) :
@@ -1385,6 +1594,13 @@ def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map
 
         for ptmin, ptmax in pt_bins_jetfile :
 
+            if subl_pt_bins is not None :
+                sublptmin = subl_pt_bins[0]
+                sublptmax = subl_pt_bins[1]
+            else :
+                sublptmin = ptmin
+                sublptmax = pt_bins_jetfile[-1][1]
+
 
             ff_lead = -1
             ff_subl = -1
@@ -1394,10 +1610,11 @@ def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map
                 ff_lead = ff_man_coarse.get_pt_eta_ff( ptmin, ptmax, 1.57, 2.5 )
 
             if r2 == 'EB' :
-                ff_subl = ff_man_coarse.get_pt_eta_ff( 15, ptmax, 0.0, 1.44 )
+                ff_subl = ff_man_coarse.get_pt_eta_ff( sublptmin, sublptmax, 0.0, 1.44 )
             if r2 == 'EE' :
-                ff_subl = ff_man_coarse.get_pt_eta_ff( 15, ptmax, 1.57, 2.50 )
+                ff_subl = ff_man_coarse.get_pt_eta_ff( sublptmin, sublptmax, 1.57, 2.50 )
 
+            print 'Jet Fakes -- Region : %s-%s, Lead pt range : %s-%s, Subl pt range : %s-%s, fflead = %s, ffsubl = %s ' %( r1,r2,ptmin, ptmax, sublptmin, sublptmax, ff_lead, ff_subl )
 
             bin = (r1,r2,ptmin,ptmax)
 
@@ -1485,11 +1702,11 @@ def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map
         if not os.path.isdir( outputDir ) :
             os.makedirs( outputDir )
 
-        file_raw = open( outputDir + '/electron_fake_results__%s__noJetFakeSubtraction.pickle' %el_selection, 'w' )
+        file_raw = open( outputDir + '/electron_fake_results__%s__noJetFakeSubtraction%s.pickle' %(el_selection, addtl_str), 'w' )
         pickle.dump( results_nom, file_raw )
         file_raw.close()
 
-        file_sub = open( outputDir + '/electron_fake_results__%s.pickle' %el_selection, 'w' )
+        file_sub = open( outputDir + '/electron_fake_results__%s%s.pickle' %(el_selection, addtl_str), 'w' )
         pickle.dump( results_subtracted, file_sub )
         file_sub.close()
 
@@ -1498,232 +1715,233 @@ def MakeEleBkgEstimateNew(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map
         #file_sub_syst.close()
 
 
-def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins, outputDir=None, el_selection='elfull', namePostfix='', coarse=False) :
+#Use MakeEleBkgEstimateNew
+#def MakeEleBkgEstimate(base_dir_ele, base_dir_jet, file_bin_map, file_bin_map_syst, pt_bins, outputDir=None, el_selection='elfull', namePostfix='', coarse=False) :
+#
+#    print '-----------------------------------'
+#    print 'START ELECTRON FAKE ESTMATE FOR %s' %el_selection
+#    print '-----------------------------------'
+#
+#    el_acc = ['elfull', 'elzcr', 'elph1zcr', 'elph2zcr']
+#    if el_selection not in el_acc :
+#        print 'Input region not recognized, must be %s' %(','.join(el_acc) )
+#        return
+#
+#    # Just use data samples
+#    samplesWggInvLead.deactivate_all_samples()
+#    samplesWggInvLead.activate_sample('Electron')
+#    samplesWggInvSubl.deactivate_all_samples()
+#    samplesWggInvSubl.activate_sample('Electron')
+#
+#    regions = [('EB', 'EB'), ('EB' , 'EE'), ('EE', 'EB')]
+#
+#    # get fake factors from nominal fits
+#    results_nom = get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, coarse=coarse )
+#    # get fake factors from systematic fits
+#    results_syst = get_ele_fakefactors( base_dir_ele, file_bin_map_syst, regions, el_selection, coarse=coarse )
+#
+#    results_comb = {'stat' : { 'lead' : {}, 'subl' : {}}, 'syst' : { 'lead' : {}, 'subl' : {}} , 'details' : { 'lead' : {}, 'subl' : {}} }
+#    for bin, res in results_nom['lead'].iteritems() :
+#        results_comb['stat']['lead'][bin] = res['pred']
+#        results_comb['details']['lead'][bin] = res
+#        # Calculate the systematic uncertainty 
+#        # as the difference between the nominal
+#        # and syst fake factor predictions
+#        if res['pred'] == 0 :
+#            results_comb['syst']['lead'][bin] = ufloat( res['pred'].n, res['pred'].n)
+#        else :
+#            results_comb['syst']['lead'][bin] = ufloat( res['pred'].n, math.fabs( (res['pred'].n - results_syst['lead'][bin]['pred'].n))/res['pred'].n)
+#
+#    for bin, res in results_nom['subl'].iteritems() :
+#        results_comb['stat']['subl'][bin] = res['pred']
+#        results_comb['details']['subl'][bin] = res
+#        # Calculate the systematic uncertainty 
+#        # as the difference between the nominal
+#        # and syst fake factor predictions
+#        if res['pred'] == 0 :
+#            results_comb['syst']['subl'][bin] = ufloat( res['pred'].n, res['pred'].n)
+#        else :
+#            results_comb['syst']['subl'][bin] = ufloat( res['pred'].n, math.fabs( (res['pred'].n - results_syst['subl'][bin]['pred'].n))/res['pred'].n)
+#
+#    file_key_lead = 'results__%sinvpixlead__(EB|EE)-(EB|EE)__pt_(\d+)-(\d+|max).pickle' %el_selection
+#    file_key_subl = 'results__%sinvpixsubl__(EB|EE)-(EB|EE)__pt_(\d+)-(\d+|max).pickle' %el_selection
+#    file_key_lead_syst = 'results__syst__%sinvpixlead__(EB|EE)-(EB|EE)__pt_(\d+)-(\d+|max).pickle' %el_selection
+#    file_key_subl_syst = 'results__syst__%sinvpixsubl__(EB|EE)-(EB|EE)__pt_(\d+)-(\d+|max).pickle' %el_selection
+#    jet_dir_key_map = {}
+#    jet_dirs_key = 'JetFakeTemplateFitPlotsCorr(\d+)-(\d+)-(\d+)AsymIso'
+#
+#    jet_dir_key_map = get_mapped_directory( base_dir_jet, jet_dirs_key )
+#
+#    jet_files_lead      = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_lead      )
+#    jet_files_subl      = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_subl      )
+#    jet_files_lead_syst = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_lead_syst )
+#    jet_files_subl_syst = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_subl_syst )
+#
+#    pt_bins_jetfile = [str(x) for x in pt_bins[:-1]]
+#    pt_bins_jetfile.append( 'max')
+#    #subl_ptbins = [ ( '70', 'max', '15', '25' ), ( '70', 'max', '25', 'max' ) ]
+#    subl_ptbins = [  ]
+#    pred_lead = get_jet_fake_results( jet_files_lead, jet_files_lead_syst, regions, pt_bins_jetfile, jet_dir_key_map, base_dir_jet,  pt_bins_subl=subl_ptbins ) 
+#    pred_subl = get_jet_fake_results( jet_files_subl, jet_files_subl_syst, regions, pt_bins_jetfile, jet_dir_key_map, base_dir_jet,  pt_bins_subl=subl_ptbins ) 
+#
+#    # get fake factors and binning from file
+#    ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatioCoarseEta/results.pickle' %base_dir_ele, ['fake_ratio'] )
+#
+#    jet_scaled = {'stat' : {}, 'syst' : {} }
+#    for r1, r2 in regions :
+#
+#        for idx, ptmin in enumerate(pt_bins_jetfile[:-1]) :
+#            ptmax = pt_bins_jetfile[idx+1]
+#
+#
+#            ff_lead = -1
+#            ff_subl = -1
+#            if r1 == 'EB' :
+#                ff_lead = ff_man_coarse.get_pt_eta_ff( ptmin, ptmax, 0.0, 1.44 )
+#            if r1 == 'EE' :
+#                ff_lead = ff_man_coarse.get_pt_eta_ff( ptmin, ptmax, 1.57, 2.5 )
+#
+#            if r2 == 'EB' :
+#                ff_subl = ff_man_coarse.get_pt_eta_ff( 15, ptmax, 0.0, 1.44 )
+#            if r2 == 'EE' :
+#                ff_subl = ff_man_coarse.get_pt_eta_ff( 15, ptmax, 1.57, 2.50 )
+#
+#
+#            bin = (r1,r2,ptmin,ptmax)
+#            jet_scaled['stat'][bin] = {'rf' : {}, 'fr' : {}, 'ff' : {} }
+#            jet_scaled['syst'][bin] = {'rf' : {}, 'fr' : {}, 'ff' : {} }
+#
+#             
+#            jet_scaled['stat'][ bin ]['rf']['pred_lead'] = pred_lead['stat']['rf'][bin]['result']
+#            jet_scaled['stat'][ bin ]['fr']['pred_lead'] = pred_lead['stat']['fr'][bin]['result']
+#            jet_scaled['stat'][ bin ]['ff']['pred_lead'] = pred_lead['stat']['ff'][bin]['result']
+#
+#            jet_scaled['stat'][ bin ]['rf']['pred_subl'] = pred_subl['stat']['rf'][bin]['result']
+#            jet_scaled['stat'][ bin ]['fr']['pred_subl'] = pred_subl['stat']['fr'][bin]['result']
+#            jet_scaled['stat'][ bin ]['ff']['pred_subl'] = pred_subl['stat']['ff'][bin]['result']
+#
+#            jet_scaled['syst'][ bin ]['rf']['pred_lead'] = pred_lead['syst']['rf'][bin]['result']
+#            jet_scaled['syst'][ bin ]['fr']['pred_lead'] = pred_lead['syst']['fr'][bin]['result']
+#            jet_scaled['syst'][ bin ]['ff']['pred_lead'] = pred_lead['syst']['ff'][bin]['result']
+#
+#            jet_scaled['syst'][ bin ]['rf']['pred_subl'] = pred_subl['syst']['rf'][bin]['result']
+#            jet_scaled['syst'][ bin ]['fr']['pred_subl'] = pred_subl['syst']['fr'][bin]['result']
+#            jet_scaled['syst'][ bin ]['ff']['pred_subl'] = pred_subl['syst']['ff'][bin]['result']
+#
+#            jet_scaled['stat'][ bin ]['rf']['ff_lead'] = ff_lead
+#            jet_scaled['stat'][ bin ]['fr']['ff_lead'] = ff_lead
+#            jet_scaled['stat'][ bin ]['ff']['ff_lead'] = ff_lead
+#
+#            jet_scaled['stat'][ bin ]['rf']['ff_subl'] = ff_subl
+#            jet_scaled['stat'][ bin ]['fr']['ff_subl'] = ff_subl
+#            jet_scaled['stat'][ bin ]['ff']['ff_subl'] = ff_subl
+#
+#            # no additional FF syst at this point
+#            jet_scaled['syst'][ bin ]['rf']['ff_lead'] = ff_lead
+#            jet_scaled['syst'][ bin ]['fr']['ff_lead'] = ff_lead
+#            jet_scaled['syst'][ bin ]['ff']['ff_lead'] = ff_lead
+#
+#            jet_scaled['syst'][ bin ]['rf']['ff_subl'] = ff_subl
+#            jet_scaled['syst'][ bin ]['fr']['ff_subl'] = ff_subl
+#            jet_scaled['syst'][ bin ]['ff']['ff_subl'] = ff_subl
+#
+#            jet_scaled['stat'][ bin ]['rf']['total'] = jet_scaled['stat'][ bin ]['rf']['pred_lead']*jet_scaled['stat'][ bin ]['rf']['ff_lead'] + jet_scaled['stat'][ bin ]['rf']['pred_subl']*jet_scaled['stat'][ bin ]['rf']['ff_subl']
+#            jet_scaled['stat'][ bin ]['fr']['total'] = jet_scaled['stat'][ bin ]['fr']['pred_lead']*jet_scaled['stat'][ bin ]['fr']['ff_lead'] + jet_scaled['stat'][ bin ]['fr']['pred_subl']*jet_scaled['stat'][ bin ]['fr']['ff_subl']
+#            jet_scaled['stat'][ bin ]['ff']['total'] = jet_scaled['stat'][ bin ]['ff']['pred_lead']*jet_scaled['stat'][ bin ]['ff']['ff_lead'] + jet_scaled['stat'][ bin ]['ff']['pred_subl']*jet_scaled['stat'][ bin ]['ff']['ff_subl']
+#
+#
+#            jet_scaled['syst'][ bin ]['rf']['total'] = jet_scaled['syst'][ bin ]['rf']['pred_lead']*jet_scaled['syst'][ bin ]['rf']['ff_lead'] + jet_scaled['syst'][ bin ]['rf']['pred_subl']*jet_scaled['syst'][ bin ]['rf']['ff_subl']
+#            jet_scaled['syst'][ bin ]['fr']['total'] = jet_scaled['syst'][ bin ]['fr']['pred_lead']*jet_scaled['syst'][ bin ]['fr']['ff_lead'] + jet_scaled['syst'][ bin ]['fr']['pred_subl']*jet_scaled['syst'][ bin ]['fr']['ff_subl']
+#            jet_scaled['syst'][ bin ]['ff']['total'] = jet_scaled['syst'][ bin ]['ff']['pred_lead']*jet_scaled['syst'][ bin ]['ff']['ff_lead'] + jet_scaled['syst'][ bin ]['ff']['pred_subl']*jet_scaled['syst'][ bin ]['ff']['ff_subl']
+#
+#
+#    for r1, r2 in regions :
+#
+#        for idx, ptmin in enumerate(pt_bins_jetfile[:-1]) :
+#            ptmax = pt_bins_jetfile[idx+1]
+#            print '%s-%s, pt %s-%s' %( r1, r2, ptmin, ptmax)
+#
+#            bin = (r1,r2,ptmin,ptmax)
+#
+#            print 'Jet fake, lead CR : rf = %s, fr = %s, ff = %s, sum = %s ' %( jet_scaled['stat'][bin]['rf']['pred_lead'], jet_scaled['stat'][bin]['fr']['pred_lead'], jet_scaled['stat'][bin]['ff']['pred_lead'], jet_scaled['stat'][bin]['rf']['pred_lead']+jet_scaled['stat'][bin]['fr']['pred_lead']+jet_scaled['stat'][bin]['ff']['pred_lead'])
+#            print 'Jet fake, subl CR : rf = %s, fr = %s, ff = %s, sum = %s ' %( jet_scaled['stat'][bin]['rf']['pred_subl'], jet_scaled['stat'][bin]['fr']['pred_subl'], jet_scaled['stat'][bin]['ff']['pred_subl'], jet_scaled['stat'][bin]['rf']['pred_subl']+jet_scaled['stat'][bin]['fr']['pred_subl']+jet_scaled['stat'][bin]['ff']['pred_subl'])
+#
+#            print 'N jet fake lead*ff = %s' %((jet_scaled['stat'][bin]['rf']['pred_lead']+jet_scaled['stat'][bin]['fr']['pred_lead']+jet_scaled['stat'][bin]['ff']['pred_lead']) * ff_lead )
+#            print 'N jet fake subl*ff = %s' %((jet_scaled['stat'][bin]['rf']['pred_subl']+jet_scaled['stat'][bin]['fr']['pred_subl']+jet_scaled['stat'][bin]['ff']['pred_subl']) * ff_subl )
+#            print 'N data lead*ff = %s' %results_comb['stat']['lead'][bin]
+#            print 'N data subl*ff = %s' %results_comb['stat']['subl'][bin]
+#    
+#    results_subtracted = {'stat' : {'sum' : {}}, 'elesyst' : {'sum' : {}}, 'jetsyst' : {'sum' : {}}, 'stat+syst' : {'sum' : {}}, 'details' : {}}
+#    results_subtracted['details'] = results_comb['details']
+#    for bin, info_stat_lead in results_comb['stat']['lead'].iteritems() :
+#        info_stat_subl = results_comb['stat']['subl'][bin]
+#        info_syst_lead = results_comb['syst']['lead'][bin]
+#        info_syst_subl = results_comb['syst']['subl'][bin]
+#
+#        results_subtracted['stat']['sum'][bin] = {}
+#        results_subtracted['elesyst']['sum'][bin] = {}
+#        results_subtracted['jetsyst']['sum'][bin] = {}
+#        results_subtracted['stat+syst']['sum'][bin] = {}
+#
+#        # add some additional information to the
+#        # stat+syst entries
+#        results_subtracted['stat+syst']['sum'][bin]['lead'] = info_stat_lead
+#        results_subtracted['stat+syst']['sum'][bin]['subl'] = info_stat_subl
+#        results_subtracted['stat+syst']['sum'][bin]['jet_rf'] = jet_scaled['stat'][bin]['rf']
+#        results_subtracted['stat+syst']['sum'][bin]['jet_fr'] = jet_scaled['stat'][bin]['fr']
+#        results_subtracted['stat+syst']['sum'][bin]['jet_ff'] = jet_scaled['stat'][bin]['ff']
+#
+#        # stat uncertainty is just the 
+#        # difference in the stat entries
+#        results_subtracted['stat']['sum'][bin]['result'] = info_stat_lead +info_stat_subl - ( jet_scaled['stat'][bin]['rf']['total'] + jet_scaled['stat'][bin]['fr']['total'] + jet_scaled['stat'][bin]['ff']['total'] )
+#
+#        # for elesyst set jet uncertainties to zero
+#        results_subtracted['elesyst']['sum'][bin]['result'] = info_syst_lead +info_syst_subl - ufloat( (jet_scaled['stat'][bin]['rf']['total'] + jet_scaled['stat'][bin]['fr']['total'] + jet_scaled['stat'][bin]['ff']['total']).n, 0.0 )
+#
+#        # for jetsyst set ele uncertainties to zero
+#        results_subtracted['jetsyst']['sum'][bin]['result'] = ufloat( (info_stat_lead +info_stat_subl).n, 0.0) - ( jet_scaled['syst'][bin]['rf']['total'] + jet_scaled['syst'][bin]['fr']['total'] + jet_scaled['syst'][bin]['ff']['total'] )
+#
+#        # for comb, set ele and jet values to zero but keep their uncertainties
+#        elesyst_to_add = ufloat( 0, results_subtracted['elesyst']['sum'][bin]['result'].s )
+#        jetsyst_to_add = ufloat( 0, results_subtracted['jetsyst']['sum'][bin]['result'].s )
+#        results_subtracted['stat+syst']['sum'][bin]['result']    = results_subtracted['stat']['sum'][bin]['result'] + elesyst_to_add + jetsyst_to_add
+#
+#        print 'Ele pred Final %s-%s pt %s-%s = %s' %( bin[0], bin[1], bin[2], bin[3], results_subtracted['stat+syst']['sum'][bin]['result'] )
+#
+#
+#
+#    #results_syst_subtracted = {}
+#    #results_syst_subtracted['stat+syst'] = {}
+#    #results_syst_subtracted['stat+syst']['sum'] = {}
+#    #for (r1,r2, ptmin, ptmax), val in results_syst.iteritems() :
+#
+#    #    results_syst_subtracted['stat+syst']['sum'][bin] = {}
+#
+#    #    results_syst_subtracted['stat+syst']['sum'][bin]['lead'] = info_lead
+#    #    results_syst_subtracted['stat+syst']['sum'][bin]['subl'] = info_subl
+#    #    results_syst_subtracted['stat+syst']['sum'][bin]['jet_rf'] = jet_scaled[bin]['rf']
+#    #    results_syst_subtracted['stat+syst']['sum'][bin]['jet_fr'] = jet_scaled[bin]['fr']
+#    #    results_syst_subtracted['stat+syst']['sum'][bin]['jet_ff'] = jet_scaled[bin]['ff']
+#    #    results_syst_subtracted['stat+syst']['sum'][bin]['result'] = info_lead['pred'] +info_subl['pred'] - ( jet_scaled[bin]['rf']['total'] + jet_scaled[bin]['fr']['total'] + jet_scaled[bin]['ff']['total'] )
+#
+#    if outputDir is not None :
+#        if not os.path.isdir( outputDir ) :
+#            os.makedirs( outputDir )
+#
+#        file_raw = open( outputDir + '/electron_fake_results%s__noJetFakeSubtraction.pickle' %namePostfix, 'w' )
+#        pickle.dump( results_nom, file_raw )
+#        file_raw.close()
+#
+#        file_sub = open( outputDir + '/electron_fake_results%s.pickle' %namePostfix, 'w' )
+#        pickle.dump( results_subtracted, file_sub )
+#        file_sub.close()
+#
+#        #file_sub_syst = open( outputDir + '/electron_fake_results_syst%s.pickle' %namePostfix, 'w' )
+#        #pickle.dump( results_syst_subtracted, file_sub_syst )
+#        #file_sub_syst.close()
 
-    print '-----------------------------------'
-    print 'START ELECTRON FAKE ESTMATE FOR %s' %el_selection
-    print '-----------------------------------'
 
-    el_acc = ['elfull', 'elzcr', 'elph1zcr', 'elph2zcr']
-    if el_selection not in el_acc :
-        print 'Input region not recognized, must be %s' %(','.join(el_acc) )
-        return
-
-    # Just use data samples
-    samplesWggInvLead.deactivate_all_samples()
-    samplesWggInvLead.activate_sample('Electron')
-    samplesWggInvSubl.deactivate_all_samples()
-    samplesWggInvSubl.activate_sample('Electron')
-
-    regions = [('EB', 'EB'), ('EB' , 'EE'), ('EE', 'EB')]
-
-    # get fake factors from nominal fits
-    results_nom = get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, coarse=coarse )
-    # get fake factors from systematic fits
-    results_syst = get_ele_fakefactors( base_dir_ele, file_bin_map_syst, regions, el_selection, coarse=coarse )
-
-    results_comb = {'stat' : { 'lead' : {}, 'subl' : {}}, 'syst' : { 'lead' : {}, 'subl' : {}} , 'details' : { 'lead' : {}, 'subl' : {}} }
-    for bin, res in results_nom['lead'].iteritems() :
-        results_comb['stat']['lead'][bin] = res['pred']
-        results_comb['details']['lead'][bin] = res
-        # Calculate the systematic uncertainty 
-        # as the difference between the nominal
-        # and syst fake factor predictions
-        if res['pred'] == 0 :
-            results_comb['syst']['lead'][bin] = ufloat( res['pred'].n, res['pred'].n)
-        else :
-            results_comb['syst']['lead'][bin] = ufloat( res['pred'].n, math.fabs( (res['pred'].n - results_syst['lead'][bin]['pred'].n))/res['pred'].n)
-
-    for bin, res in results_nom['subl'].iteritems() :
-        results_comb['stat']['subl'][bin] = res['pred']
-        results_comb['details']['subl'][bin] = res
-        # Calculate the systematic uncertainty 
-        # as the difference between the nominal
-        # and syst fake factor predictions
-        if res['pred'] == 0 :
-            results_comb['syst']['subl'][bin] = ufloat( res['pred'].n, res['pred'].n)
-        else :
-            results_comb['syst']['subl'][bin] = ufloat( res['pred'].n, math.fabs( (res['pred'].n - results_syst['subl'][bin]['pred'].n))/res['pred'].n)
-
-    file_key_lead = 'results__%sinvpixlead__(EB|EE)-(EB|EE)__pt_(\d+)-(\d+|max).pickle' %el_selection
-    file_key_subl = 'results__%sinvpixsubl__(EB|EE)-(EB|EE)__pt_(\d+)-(\d+|max).pickle' %el_selection
-    file_key_lead_syst = 'results__syst__%sinvpixlead__(EB|EE)-(EB|EE)__pt_(\d+)-(\d+|max).pickle' %el_selection
-    file_key_subl_syst = 'results__syst__%sinvpixsubl__(EB|EE)-(EB|EE)__pt_(\d+)-(\d+|max).pickle' %el_selection
-    jet_dir_key_map = {}
-    jet_dirs_key = 'JetFakeTemplateFitPlotsCorr(\d+)-(\d+)-(\d+)AsymIso'
-
-    jet_dir_key_map = get_mapped_directory( base_dir_jet, jet_dirs_key )
-
-    jet_files_lead      = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_lead      )
-    jet_files_subl      = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_subl      )
-    jet_files_lead_syst = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_lead_syst )
-    jet_files_subl_syst = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_subl_syst )
-
-    pt_bins_jetfile = [str(x) for x in pt_bins[:-1]]
-    pt_bins_jetfile.append( 'max')
-    #subl_ptbins = [ ( '70', 'max', '15', '25' ), ( '70', 'max', '25', 'max' ) ]
-    subl_ptbins = [  ]
-    pred_lead = get_jet_fake_results( jet_files_lead, jet_files_lead_syst, regions, pt_bins_jetfile, jet_dir_key_map, base_dir_jet,  pt_bins_subl=subl_ptbins ) 
-    pred_subl = get_jet_fake_results( jet_files_subl, jet_files_subl_syst, regions, pt_bins_jetfile, jet_dir_key_map, base_dir_jet,  pt_bins_subl=subl_ptbins ) 
-
-    # get fake factors and binning from file
-    ff_man_coarse = FakeFactorManager( '%s/ElectronFakeFitsRatioCoarseEta/results.pickle' %base_dir_ele, ['fake_ratio'] )
-
-    jet_scaled = {'stat' : {}, 'syst' : {} }
-    for r1, r2 in regions :
-
-        for idx, ptmin in enumerate(pt_bins_jetfile[:-1]) :
-            ptmax = pt_bins_jetfile[idx+1]
-
-
-            ff_lead = -1
-            ff_subl = -1
-            if r1 == 'EB' :
-                ff_lead = ff_man_coarse.get_pt_eta_ff( ptmin, ptmax, 0.0, 1.44 )
-            if r1 == 'EE' :
-                ff_lead = ff_man_coarse.get_pt_eta_ff( ptmin, ptmax, 1.57, 2.5 )
-
-            if r2 == 'EB' :
-                ff_subl = ff_man_coarse.get_pt_eta_ff( 15, ptmax, 0.0, 1.44 )
-            if r2 == 'EE' :
-                ff_subl = ff_man_coarse.get_pt_eta_ff( 15, ptmax, 1.57, 2.50 )
-
-
-            bin = (r1,r2,ptmin,ptmax)
-            jet_scaled['stat'][bin] = {'rf' : {}, 'fr' : {}, 'ff' : {} }
-            jet_scaled['syst'][bin] = {'rf' : {}, 'fr' : {}, 'ff' : {} }
-
-             
-            jet_scaled['stat'][ bin ]['rf']['pred_lead'] = pred_lead['stat']['rf'][bin]['result']
-            jet_scaled['stat'][ bin ]['fr']['pred_lead'] = pred_lead['stat']['fr'][bin]['result']
-            jet_scaled['stat'][ bin ]['ff']['pred_lead'] = pred_lead['stat']['ff'][bin]['result']
-
-            jet_scaled['stat'][ bin ]['rf']['pred_subl'] = pred_subl['stat']['rf'][bin]['result']
-            jet_scaled['stat'][ bin ]['fr']['pred_subl'] = pred_subl['stat']['fr'][bin]['result']
-            jet_scaled['stat'][ bin ]['ff']['pred_subl'] = pred_subl['stat']['ff'][bin]['result']
-
-            jet_scaled['syst'][ bin ]['rf']['pred_lead'] = pred_lead['syst']['rf'][bin]['result']
-            jet_scaled['syst'][ bin ]['fr']['pred_lead'] = pred_lead['syst']['fr'][bin]['result']
-            jet_scaled['syst'][ bin ]['ff']['pred_lead'] = pred_lead['syst']['ff'][bin]['result']
-
-            jet_scaled['syst'][ bin ]['rf']['pred_subl'] = pred_subl['syst']['rf'][bin]['result']
-            jet_scaled['syst'][ bin ]['fr']['pred_subl'] = pred_subl['syst']['fr'][bin]['result']
-            jet_scaled['syst'][ bin ]['ff']['pred_subl'] = pred_subl['syst']['ff'][bin]['result']
-
-            jet_scaled['stat'][ bin ]['rf']['ff_lead'] = ff_lead
-            jet_scaled['stat'][ bin ]['fr']['ff_lead'] = ff_lead
-            jet_scaled['stat'][ bin ]['ff']['ff_lead'] = ff_lead
-
-            jet_scaled['stat'][ bin ]['rf']['ff_subl'] = ff_subl
-            jet_scaled['stat'][ bin ]['fr']['ff_subl'] = ff_subl
-            jet_scaled['stat'][ bin ]['ff']['ff_subl'] = ff_subl
-
-            # no additional FF syst at this point
-            jet_scaled['syst'][ bin ]['rf']['ff_lead'] = ff_lead
-            jet_scaled['syst'][ bin ]['fr']['ff_lead'] = ff_lead
-            jet_scaled['syst'][ bin ]['ff']['ff_lead'] = ff_lead
-
-            jet_scaled['syst'][ bin ]['rf']['ff_subl'] = ff_subl
-            jet_scaled['syst'][ bin ]['fr']['ff_subl'] = ff_subl
-            jet_scaled['syst'][ bin ]['ff']['ff_subl'] = ff_subl
-
-            jet_scaled['stat'][ bin ]['rf']['total'] = jet_scaled['stat'][ bin ]['rf']['pred_lead']*jet_scaled['stat'][ bin ]['rf']['ff_lead'] + jet_scaled['stat'][ bin ]['rf']['pred_subl']*jet_scaled['stat'][ bin ]['rf']['ff_subl']
-            jet_scaled['stat'][ bin ]['fr']['total'] = jet_scaled['stat'][ bin ]['fr']['pred_lead']*jet_scaled['stat'][ bin ]['fr']['ff_lead'] + jet_scaled['stat'][ bin ]['fr']['pred_subl']*jet_scaled['stat'][ bin ]['fr']['ff_subl']
-            jet_scaled['stat'][ bin ]['ff']['total'] = jet_scaled['stat'][ bin ]['ff']['pred_lead']*jet_scaled['stat'][ bin ]['ff']['ff_lead'] + jet_scaled['stat'][ bin ]['ff']['pred_subl']*jet_scaled['stat'][ bin ]['ff']['ff_subl']
-
-
-            jet_scaled['syst'][ bin ]['rf']['total'] = jet_scaled['syst'][ bin ]['rf']['pred_lead']*jet_scaled['syst'][ bin ]['rf']['ff_lead'] + jet_scaled['syst'][ bin ]['rf']['pred_subl']*jet_scaled['syst'][ bin ]['rf']['ff_subl']
-            jet_scaled['syst'][ bin ]['fr']['total'] = jet_scaled['syst'][ bin ]['fr']['pred_lead']*jet_scaled['syst'][ bin ]['fr']['ff_lead'] + jet_scaled['syst'][ bin ]['fr']['pred_subl']*jet_scaled['syst'][ bin ]['fr']['ff_subl']
-            jet_scaled['syst'][ bin ]['ff']['total'] = jet_scaled['syst'][ bin ]['ff']['pred_lead']*jet_scaled['syst'][ bin ]['ff']['ff_lead'] + jet_scaled['syst'][ bin ]['ff']['pred_subl']*jet_scaled['syst'][ bin ]['ff']['ff_subl']
-
-
-    for r1, r2 in regions :
-
-        for idx, ptmin in enumerate(pt_bins_jetfile[:-1]) :
-            ptmax = pt_bins_jetfile[idx+1]
-            print '%s-%s, pt %s-%s' %( r1, r2, ptmin, ptmax)
-
-            bin = (r1,r2,ptmin,ptmax)
-
-            print 'Jet fake, lead CR : rf = %s, fr = %s, ff = %s, sum = %s ' %( jet_scaled['stat'][bin]['rf']['pred_lead'], jet_scaled['stat'][bin]['fr']['pred_lead'], jet_scaled['stat'][bin]['ff']['pred_lead'], jet_scaled['stat'][bin]['rf']['pred_lead']+jet_scaled['stat'][bin]['fr']['pred_lead']+jet_scaled['stat'][bin]['ff']['pred_lead'])
-            print 'Jet fake, subl CR : rf = %s, fr = %s, ff = %s, sum = %s ' %( jet_scaled['stat'][bin]['rf']['pred_subl'], jet_scaled['stat'][bin]['fr']['pred_subl'], jet_scaled['stat'][bin]['ff']['pred_subl'], jet_scaled['stat'][bin]['rf']['pred_subl']+jet_scaled['stat'][bin]['fr']['pred_subl']+jet_scaled['stat'][bin]['ff']['pred_subl'])
-
-            print 'N jet fake lead*ff = %s' %((jet_scaled['stat'][bin]['rf']['pred_lead']+jet_scaled['stat'][bin]['fr']['pred_lead']+jet_scaled['stat'][bin]['ff']['pred_lead']) * ff_lead )
-            print 'N jet fake subl*ff = %s' %((jet_scaled['stat'][bin]['rf']['pred_subl']+jet_scaled['stat'][bin]['fr']['pred_subl']+jet_scaled['stat'][bin]['ff']['pred_subl']) * ff_subl )
-            print 'N data lead*ff = %s' %results_comb['stat']['lead'][bin]
-            print 'N data subl*ff = %s' %results_comb['stat']['subl'][bin]
-    
-    results_subtracted = {'stat' : {'sum' : {}}, 'elesyst' : {'sum' : {}}, 'jetsyst' : {'sum' : {}}, 'stat+syst' : {'sum' : {}}, 'details' : {}}
-    results_subtracted['details'] = results_comb['details']
-    for bin, info_stat_lead in results_comb['stat']['lead'].iteritems() :
-        info_stat_subl = results_comb['stat']['subl'][bin]
-        info_syst_lead = results_comb['syst']['lead'][bin]
-        info_syst_subl = results_comb['syst']['subl'][bin]
-
-        results_subtracted['stat']['sum'][bin] = {}
-        results_subtracted['elesyst']['sum'][bin] = {}
-        results_subtracted['jetsyst']['sum'][bin] = {}
-        results_subtracted['stat+syst']['sum'][bin] = {}
-
-        # add some additional information to the
-        # stat+syst entries
-        results_subtracted['stat+syst']['sum'][bin]['lead'] = info_stat_lead
-        results_subtracted['stat+syst']['sum'][bin]['subl'] = info_stat_subl
-        results_subtracted['stat+syst']['sum'][bin]['jet_rf'] = jet_scaled['stat'][bin]['rf']
-        results_subtracted['stat+syst']['sum'][bin]['jet_fr'] = jet_scaled['stat'][bin]['fr']
-        results_subtracted['stat+syst']['sum'][bin]['jet_ff'] = jet_scaled['stat'][bin]['ff']
-
-        # stat uncertainty is just the 
-        # difference in the stat entries
-        results_subtracted['stat']['sum'][bin]['result'] = info_stat_lead +info_stat_subl - ( jet_scaled['stat'][bin]['rf']['total'] + jet_scaled['stat'][bin]['fr']['total'] + jet_scaled['stat'][bin]['ff']['total'] )
-
-        # for elesyst set jet uncertainties to zero
-        results_subtracted['elesyst']['sum'][bin]['result'] = info_syst_lead +info_syst_subl - ufloat( (jet_scaled['stat'][bin]['rf']['total'] + jet_scaled['stat'][bin]['fr']['total'] + jet_scaled['stat'][bin]['ff']['total']).n, 0.0 )
-
-        # for jetsyst set ele uncertainties to zero
-        results_subtracted['jetsyst']['sum'][bin]['result'] = ufloat( (info_stat_lead +info_stat_subl).n, 0.0) - ( jet_scaled['syst'][bin]['rf']['total'] + jet_scaled['syst'][bin]['fr']['total'] + jet_scaled['syst'][bin]['ff']['total'] )
-
-        # for comb, set ele and jet values to zero but keep their uncertainties
-        elesyst_to_add = ufloat( 0, results_subtracted['elesyst']['sum'][bin]['result'].s )
-        jetsyst_to_add = ufloat( 0, results_subtracted['jetsyst']['sum'][bin]['result'].s )
-        results_subtracted['stat+syst']['sum'][bin]['result']    = results_subtracted['stat']['sum'][bin]['result'] + elesyst_to_add + jetsyst_to_add
-
-        print 'Ele pred Final %s-%s pt %s-%s = %s' %( bin[0], bin[1], bin[2], bin[3], results_subtracted['stat+syst']['sum'][bin]['result'] )
-
-
-
-    #results_syst_subtracted = {}
-    #results_syst_subtracted['stat+syst'] = {}
-    #results_syst_subtracted['stat+syst']['sum'] = {}
-    #for (r1,r2, ptmin, ptmax), val in results_syst.iteritems() :
-
-    #    results_syst_subtracted['stat+syst']['sum'][bin] = {}
-
-    #    results_syst_subtracted['stat+syst']['sum'][bin]['lead'] = info_lead
-    #    results_syst_subtracted['stat+syst']['sum'][bin]['subl'] = info_subl
-    #    results_syst_subtracted['stat+syst']['sum'][bin]['jet_rf'] = jet_scaled[bin]['rf']
-    #    results_syst_subtracted['stat+syst']['sum'][bin]['jet_fr'] = jet_scaled[bin]['fr']
-    #    results_syst_subtracted['stat+syst']['sum'][bin]['jet_ff'] = jet_scaled[bin]['ff']
-    #    results_syst_subtracted['stat+syst']['sum'][bin]['result'] = info_lead['pred'] +info_subl['pred'] - ( jet_scaled[bin]['rf']['total'] + jet_scaled[bin]['fr']['total'] + jet_scaled[bin]['ff']['total'] )
-
-    if outputDir is not None :
-        if not os.path.isdir( outputDir ) :
-            os.makedirs( outputDir )
-
-        file_raw = open( outputDir + '/electron_fake_results%s__noJetFakeSubtraction.pickle' %namePostfix, 'w' )
-        pickle.dump( results_nom, file_raw )
-        file_raw.close()
-
-        file_sub = open( outputDir + '/electron_fake_results%s.pickle' %namePostfix, 'w' )
-        pickle.dump( results_subtracted, file_sub )
-        file_sub.close()
-
-        #file_sub_syst = open( outputDir + '/electron_fake_results_syst%s.pickle' %namePostfix, 'w' )
-        #pickle.dump( results_syst_subtracted, file_sub_syst )
-        #file_sub_syst.close()
-
-
-def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, coarse=False ) :
+def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, subl_pt_bins=None, addtl_cuts='', coarse=False ) :
 
     results = {}
     results['lead'] = {}
@@ -1740,6 +1958,15 @@ def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, coar
         # for all lead pt and eta
         # -----------------------------------
         draw_str = ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 )' %(el_cuts[el_selection+'invlead'], r1, r2)
+
+        if subl_pt_bins is not None :
+            if subl_pt_bins[1] is not None :
+                draw_str += ' && pt_sublph12 > %d && pt_sublph12 < %d ' %( subl_pt_bins )
+            else :
+                draw_str += ' && pt_sublph12 > %d ' %( subl_pt_bins[0] )
+
+        if addtl_cuts :
+            draw_str += addtl_cuts
 
         samplesWggInvLead.create_hist(data_samp_invlead, 'pt_leadph12:fabs(eta_leadph12)', draw_str, ( 250, 0, 2.5, 20, 0, 100) )
 
@@ -1799,7 +2026,6 @@ def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, coar
 
                 # sum the results
                 results['lead'][bin]['pred'] = results['lead'][bin]['pred'] + results['lead'][bin][ff_bin]['pred']
-                print 'Update results ', results['lead'][bin]['pred']
             # -----------------------------------------
             # Subl control region
             # Get data counts in each pt and eta region
@@ -1824,24 +2050,33 @@ def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, coar
             else :
                 draw_str = ' PUWeight * ( %s && is%s_leadph12 && is%s_sublph12 && pt_leadph12 > %s && pt_leadph12 < %s )' %(el_cuts[el_selection+'invsubl'], r1, r2, leadptmin, leadptmax)
 
+            if addtl_cuts :
+                draw_str += addtl_cuts
             samplesWggInvSubl.create_hist(data_samp_invsubl, 'pt_sublph12:fabs(eta_sublph12)', draw_str,  (250, 0, 2.5, 20, 0, 100) )
 
             hist_subl = data_samp_invsubl.hist.Clone('hist_subl__%s-%s_leadpt%s-%s' %(r1,r2, leadptmin, leadptmax))
 
-            for (sublptmin, sublptmax) in file_bin_map.keys() :
+            # if no sublead bin is given, 
+            # the sublead bins should go from
+            # the minimum lead bin to the max bin
+            sublbins = []
+            if subl_pt_bins is not None :
+                sublbins.append( (str(subl_pt_bins[0]), str(subl_pt_bins[1]) ) )
+            else :
+                for (sublptmin, sublptmax) in file_bin_map.keys() :
+                    if leadptmax == 'max' :
+                        # this includes all subl bins
+                        sublbins.append( (sublptmin, sublptmax) )
+                    else :
+                        # only include bins up the the max lead bin
+                        # if sublptmax is max and lead is not then don't include it
+                        if not sublptmax == 'max' :
+                            if int(sublptmax) <= int(leadptmax) :
+                                sublbins.append( (sublptmin, sublptmax) )
 
-                # the sublead photon pT will
-                # always be smaller than the lead pT
-                if sublptmax == 'max' :
-                    if leadptmax != 'max' :
-                        continue
-                else :
-                    if not leadptmax =='max' :
-                        if sublptmax > leadptmax :
-                            continue
 
-                # the sublead photon should run from 15 to the max lead pt bin
-                # use the global binning for this
+            for (sublptmin, sublptmax) in sublbins :
+
                 for subletamin, subletamax in eta_map[(sublptmin,sublptmax)][r2] :
 
 
@@ -1861,7 +2096,7 @@ def get_ele_fakefactors( base_dir_ele, file_bin_map, regions, el_selection, coar
 
                     ff = ff_man.get_pt_eta_ff( sublptmin, sublptmax, subletamin, subletamax )
 
-                    print 'Sublead : leadptmin = %s, leadptmax = %s, ptmin = %s, ptmax = %s, etamin = %f, etamax = %f, ptbinmin = %d, ptbinmax = %d, etabinmin = %d, etabinmax = %d, data = %s, ff= %s, pred = %s ' %(leadptmin, leadptmax, sublptmin, sublptmax, subletamin, subletamax, sublptbinmin, sublptbinmax, subletabinmin, subletabinmax, data, ff, data*ff )
+                    print 'SUBLEAD : leadptmin = %s, leadptmax = %s, ptmin = %s, ptmax = %s, etamin = %f, etamax = %f, ptbinmin = %d, ptbinmax = %d, etabinmin = %d, etabinmax = %d, data = %s, ff= %s, pred = %s ' %(leadptmin, leadptmax, sublptmin, sublptmax, subletamin, subletamax, sublptbinmin, sublptbinmax, subletabinmin, subletabinmax, data, ff, data*ff )
 
                     ff_bin = ( str(subletamin), str(subletamax), str(sublptmin), str(sublptmax) )
 

@@ -28,8 +28,8 @@ def config_samples(samples) :
     samples.AddSample('t_tW'                         , path='job_summer12_t_tW'                 ,  isActive=False, required=False, useXSFile=True )
     #samples.AddSample('WAA_ISR'                      , path='job_summer12_WAA_ISR'              ,  isActive=False, required=True, useXSFile=True )
     #samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  isActive=False, required=True, useXSFile=True )
-    samples.AddSample('WAA_ISR'                  , path='job_NLO_WAA_ISR_PtG500MeVWithSF'                   ,  isActive=False, required=False, useXSFile=True, XSName='NLO_WAA_ISR' )
-    samples.AddSample('WAA_FSR'                  , path='job_NLO_WAA_FSR_PtG500MeVWithSF'                   ,  isActive=False, required=False, useXSFile=True, XSName='NLO_WAA_FSR' )
+    samples.AddSample('WAA_ISR'                      , path='job_NLO_WAA_ISR_PtG500MeV'                   ,  isActive=False, required=False, useXSFile=True, XSName='NLO_WAA_ISR' )
+    samples.AddSample('WAA_FSR'                      , path='job_NLO_WAA_FSR_PtG500MeV'                   ,  isActive=False, required=False, useXSFile=True, XSName='NLO_WAA_FSR' )
     #samples.AddSample('WAA_ISR'                      , path='job_summer12_WAA_ISR'              ,  isActive=False, useXSFile=False, scale=1.0 )
     #samples.AddSample('Wgg_FSR'                      , path='job_summer12_Wgg_FSR'              ,  isActive=False, useXSFile=False, scale=1.0 )
     samples.AddSample('Wg'                           , path='job_summer12_Wg'                   ,  isActive=False, useXSFile=True )
@@ -48,7 +48,7 @@ def config_samples(samples) :
     #samples.AddSample('Zg'                           , path='job_summer12_ZgOnePhot'                   ,  isActive=False, useXSFile=True )
     samples.AddSample('Zg'                           , path='job_summer12_Zg_s10'                   ,  isActive=False, useXSFile=True, XSName='Zg' )
     samples.AddSample('Zg2PhFilt'                    , path='job_summer12_Zg_s102PhFilt'            ,  isActive=False, required=False, useXSFile=True, XSName='Zg' )
-    samples.AddSample('Zgg'                          , path='job_summer12_Zgg'                  ,  isActive=False, useXSFile=True )
+    samples.AddSample('ZggNLO'                          , path='llaa_nlo_ggNtuple'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2e2mu'                     , path='job_summer12_ZZ_2e2mu'             ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2e2tau'                    , path='job_summer12_ZZ_2e2tau'            ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2l2nu'                     , path='job_summer12_ZZ_2l2nu'             ,  isActive=False, useXSFile=True )
@@ -208,33 +208,52 @@ def config_samples(samples) :
                           )
     samples.AddSampleGroup( 'Zgammagamma', legend_name='Z#gamma#gamma', 
                            input_samples = [
-                                            'Zg2PhFilt',
+                                            'ZggNLO',
                            ],
                            plotColor=ROOT.kOrange+2,
-                           isActive=False,
+                           isActive=True,
                           )
 
     samples.AddSampleGroup( 'OtherDiPhoton', legend_name='other real diphoton', 
                            input_samples = [
-                                            'ggZZ_2l2l2PhFilt',
-                                            'ggZZ_4l2PhFilt',
-                                            'ttg2PhFilt',
-                                            'WW_2l2nu2PhFilt',
-                                            'WWg2PhFilt',
-                                            'WWW2PhFilt',
-                                            'WWZ2PhFilt',
-                                            'WZ_3lnu2PhFilt',
-                                            'WZZ2PhFilt',
-                                            'ZZ_2e2mu2PhFilt',
-                                            'ZZ_2e2tau2PhFilt',
-                                            'ZZ_2l2nu2PhFilt',
-                                            'ZZ_2l2q2PhFilt',
-                                            'ZZ_2mu2tau2PhFilt',
-                                            'ZZ_2q2nu2PhFilt',
-                                            'ZZ_4e2PhFilt',
-                                            'ZZ_4mu2PhFilt',
-                                            'ZZ_4tau2PhFilt',
-                                            'ZZZ2PhFilt',
+                                            #'ggZZ_2l2l2PhFilt',
+                                            #'ggZZ_4l2PhFilt',
+                                            #'ttg2PhFilt',
+                                            #'WW_2l2nu2PhFilt',
+                                            #'WWg2PhFilt',
+                                            #'WWW2PhFilt',
+                                            #'WWZ2PhFilt',
+                                            #'WZ_3lnu2PhFilt',
+                                            #'WZZ2PhFilt',
+                                            #'ZZ_2e2mu2PhFilt',
+                                            #'ZZ_2e2tau2PhFilt',
+                                            #'ZZ_2l2nu2PhFilt',
+                                            #'ZZ_2l2q2PhFilt',
+                                            #'ZZ_2mu2tau2PhFilt',
+                                            #'ZZ_2q2nu2PhFilt',
+                                            #'ZZ_4e2PhFilt',
+                                            #'ZZ_4mu2PhFilt',
+                                            #'ZZ_4tau2PhFilt',
+                                            #'ZZZ2PhFilt',
+                                            'ggZZ_2l2l',
+                                            'ggZZ_4l',
+                                            'ttg',
+                                            'WW_2l2nu',
+                                            'WWg',
+                                            'WWW',
+                                            'WWZ',
+                                            'WZ_3lnu',
+                                            'WZZ',
+                                            'ZZ_2e2mu',
+                                            'ZZ_2e2tau',
+                                            'ZZ_2l2nu',
+                                            'ZZ_2l2q',
+                                            'ZZ_2mu2tau',
+                                            'ZZ_2q2nu',
+                                            'ZZ_4e',
+                                            'ZZ_4mu',
+                                            'ZZ_4tau',
+                                            'ZZZ',
                            ],
                                plotColor=ROOT.kBlue,
                                isActive=False,

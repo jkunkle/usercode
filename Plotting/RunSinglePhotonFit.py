@@ -129,7 +129,7 @@ def get_default_draw_commands(ch='mu', csev=False, idxvar='' ) :
     elif ch == 'elwinvpixlead' :
         gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && %s==1  && mt_trigel_met > 60 '%eleveto_var,}
     elif ch == 'elwzcrinvpixlead' :
-        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && el_n==1 && %s==1  && m_trigelph1 > 76 && m_trigelph1 < 106 '%eleveto_var,}
+        gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && el_n>0 && %s==1  && m_trigelph1 > 76 && m_trigelph1 < 106 '%eleveto_var,}
     elif ch == 'elwzcrinvcsevlead' :
         gg_cmds = {'gg' : ' el_passtrig_n>0 && mu_n==0 && el_n==1 && %s==1  && m_trigelph1 > 76 && m_trigelph1 < 106 '%eleveto_var,}
     elif ch == 'elwzcrlooseinvpixlead' :
@@ -249,6 +249,8 @@ def main() :
     global sampManLLG
     global sampManFit
 
+    #base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_11_09/'
+    #base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhIDNoElOlapRm_2016_02_05/'
     base_dir_lg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_11_09/'
     #base_dir_lg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhIDLooseMuonID_2015_09_22/'
     base_dir_llg = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_11_09/'

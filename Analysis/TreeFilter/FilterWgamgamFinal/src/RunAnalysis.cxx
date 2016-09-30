@@ -14,6 +14,7 @@
 #include "include/BranchDefs.h"
 #include "include/BranchInit.h"
 #include "CalcWggEventVars.h"
+#include "MakePhotonSorting.h"
 
 #include "Core/Util.h"
 
@@ -1778,91 +1779,91 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     std::vector<TLorentzVector> photons;
     std::vector<std::pair<float, int> > sorted_photons;
 
-    std::vector<std::pair<float, int> > sorted_photons_iso533;
-    std::vector<std::pair<float, int> > sorted_photons_iso855;
-    std::vector<std::pair<float, int> > sorted_photons_iso1077;
-    std::vector<std::pair<float, int> > sorted_photons_iso1299;
-    std::vector<std::pair<float, int> > sorted_photons_iso151111;
-    std::vector<std::pair<float, int> > sorted_photons_iso201616;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso53None;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso85None;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso107None;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso129None;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso1511None;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso2016None;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso5None3;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso8None5;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso10None7;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso12None9;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso15None11;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso20None16;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone33;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone55;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone77;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone99;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone1111;
-    std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone1616;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso53None;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso85None;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso107None;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso129None;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso1511None;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso2016None;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso5None3;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso8None5;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso10None7;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso12None9;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso15None11;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso20None16;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone33;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone55;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone77;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone99;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone1111;
-    std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone1616;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoNoPhoIso;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoNoPhoIso;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoNoNeuIso;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoNoEleVeto;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoPassPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoPassPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoPassPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoFailPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoFailPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoFailPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoPassCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoFailCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoEleVeto;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIEPassPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIEFailPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIEPassCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIEFailCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoEleVeto;
-    std::vector<std::pair<float, int> > sorted_photons_mediumPassPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumFailPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumPassCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumFailCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoNoEleVeto;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoPassPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoFailPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoPassCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoFailCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoNoEleVeto;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoPassPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoFailPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoPassCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoFailCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoPhoIsoNoEleVeto;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoPhoIsoPassPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoPhoIsoFailPSV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoPhoIsoPassCSEV;
-    std::vector<std::pair<float, int> > sorted_photons_mediumNoPhoIsoFailCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_iso533;
+    //std::vector<std::pair<float, int> > sorted_photons_iso855;
+    //std::vector<std::pair<float, int> > sorted_photons_iso1077;
+    //std::vector<std::pair<float, int> > sorted_photons_iso1299;
+    //std::vector<std::pair<float, int> > sorted_photons_iso151111;
+    //std::vector<std::pair<float, int> > sorted_photons_iso201616;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso53None;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso85None;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso107None;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso129None;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso1511None;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso2016None;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso5None3;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso8None5;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso10None7;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso12None9;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso15None11;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEiso20None16;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone33;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone55;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone77;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone99;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone1111;
+    //std::vector<std::pair<float, int> > sorted_photons_passSIEIEisoNone1616;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso53None;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso85None;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso107None;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso129None;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso1511None;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso2016None;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso5None3;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso8None5;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso10None7;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso12None9;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso15None11;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEiso20None16;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone33;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone55;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone77;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone99;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone1111;
+    //std::vector<std::pair<float, int> > sorted_photons_failSIEIEisoNone1616;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoNoPhoIso;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoNoPhoIso;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoNoNeuIso;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoNoEleVeto;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoPassPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoPassPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoPassPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoFailPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoFailPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoFailPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoPassCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoChIsoFailCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIENoEleVeto;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIEPassPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIEFailPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIEPassCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoSIEIEFailCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoEleVeto;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumPassPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumFailPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumPassCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumFailCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoNoEleVeto;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoPassPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoFailPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoPassCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoChIsoFailCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoNoEleVeto;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoPassPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoFailPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoPassCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoNeuIsoFailCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoPhoIsoNoEleVeto;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoPhoIsoPassPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoPhoIsoFailPSV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoPhoIsoPassCSEV;
+    //std::vector<std::pair<float, int> > sorted_photons_mediumNoPhoIsoFailCSEV;
 
     for( int idx = 0; idx < OUT::ph_n; ++idx ) {
         TLorentzVector phot;
@@ -1874,466 +1875,8 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
         photons.push_back(phot);
 
         std::pair<float, int> sort_pair = std::make_pair( phot.Pt(), idx );
-
         sorted_photons.push_back( sort_pair );
 
-        if( OUT::ph_passHOverEMedium->at(idx)) {
-
-            if( OUT::ph_chIsoCorr->at(idx) < 5   && 
-                OUT::ph_neuIsoCorr->at(idx) < 3  && 
-                OUT::ph_phoIsoCorr->at(idx) < 3 ) {
-                OUT::ph_noSIEIEiso533_n++;
-                sorted_photons_iso533.push_back( sort_pair );
-            }
-            
-            if( OUT::ph_chIsoCorr->at(idx) < 8  && 
-                OUT::ph_neuIsoCorr->at(idx) < 5 && 
-                OUT::ph_phoIsoCorr->at(idx) < 5 ) {
-                OUT::ph_noSIEIEiso855_n++;
-                sorted_photons_iso855.push_back( sort_pair );
-            }
-            
-            if( OUT::ph_chIsoCorr->at(idx) < 10 && 
-                OUT::ph_neuIsoCorr->at(idx) < 7  && 
-                OUT::ph_phoIsoCorr->at(idx) < 7 ) {
-                OUT::ph_noSIEIEiso1077_n++;
-                sorted_photons_iso1077.push_back( sort_pair );
-            }
-            
-            if( OUT::ph_chIsoCorr->at(idx) < 12 && 
-                OUT::ph_neuIsoCorr->at(idx) < 9  && 
-                OUT::ph_phoIsoCorr->at(idx) < 9 ) {
-                OUT::ph_noSIEIEiso1299_n++;
-                sorted_photons_iso1299.push_back( sort_pair );
-            }
-            
-            if( OUT::ph_chIsoCorr->at(idx) < 15 && 
-                OUT::ph_neuIsoCorr->at(idx) < 11 && 
-                OUT::ph_phoIsoCorr->at(idx) < 11 ) {
-                OUT::ph_noSIEIEiso151111_n++;
-                sorted_photons_iso151111.push_back( sort_pair );
-            }
-            
-            if( OUT::ph_chIsoCorr->at(idx) < 20 && 
-                OUT::ph_neuIsoCorr->at(idx) < 16 && 
-                OUT::ph_phoIsoCorr->at(idx) < 16 ) {
-                OUT::ph_noSIEIEiso201616_n++;
-                sorted_photons_iso201616.push_back( sort_pair );
-            }
-            if( OUT::ph_passSIEIEMedium->at(idx) ) {
-
-                // For phoIsoCorr, passing SIEIE, loosen other isolations
-                if( OUT::ph_chIsoCorr->at(idx) < 5   && 
-                    OUT::ph_neuIsoCorr->at(idx) < 3 ) {
-                    OUT::ph_passSIEIEiso53None_n++;
-                    sorted_photons_passSIEIEiso53None.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 8  && 
-                    OUT::ph_neuIsoCorr->at(idx) < 5 ) {
-                    OUT::ph_passSIEIEiso85None_n++;
-                    sorted_photons_passSIEIEiso85None.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 10 && 
-                    OUT::ph_neuIsoCorr->at(idx) < 7 ) {
-                    OUT::ph_passSIEIEiso107None_n++;
-                    sorted_photons_passSIEIEiso107None.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 12 && 
-                    OUT::ph_neuIsoCorr->at(idx) < 9 ) {
-                    OUT::ph_passSIEIEiso129None_n++;
-                    sorted_photons_passSIEIEiso129None.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 15 && 
-                    OUT::ph_neuIsoCorr->at(idx) < 11 ) {
-                    OUT::ph_passSIEIEiso1511None_n++;
-                    sorted_photons_passSIEIEiso1511None.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 20 && 
-                    OUT::ph_neuIsoCorr->at(idx) < 16 ) {
-                    OUT::ph_passSIEIEiso2016None_n++;
-                    sorted_photons_passSIEIEiso2016None.push_back( sort_pair );
-                }
-
-                // For neuIsoCorr, passing SIEIE, loosen other isolations
-                if( OUT::ph_chIsoCorr->at(idx) < 5   && 
-                    OUT::ph_phoIsoCorr->at(idx) < 3 ) {
-                    OUT::ph_passSIEIEiso5None3_n++;
-                    sorted_photons_passSIEIEiso5None3.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 8  && 
-                    OUT::ph_phoIsoCorr->at(idx) < 5 ) {
-                    OUT::ph_passSIEIEiso8None5_n++;
-                    sorted_photons_passSIEIEiso8None5.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 10 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 7 ) {
-                    OUT::ph_passSIEIEiso10None7_n++;
-                    sorted_photons_passSIEIEiso10None7.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 12 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 9 ) {
-                    OUT::ph_passSIEIEiso12None9_n++;
-                    sorted_photons_passSIEIEiso12None9.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 15 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 11 ) {
-                    OUT::ph_passSIEIEiso15None11_n++;
-                    sorted_photons_passSIEIEiso15None11.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 20 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 16 ) {
-                    OUT::ph_passSIEIEiso20None16_n++;
-                    sorted_photons_passSIEIEiso20None16.push_back( sort_pair );
-                }
-
-                // For chIsoCorr, passing SIEIE, loosen other isolations
-                if( OUT::ph_neuIsoCorr->at(idx) < 3  && 
-                    OUT::ph_phoIsoCorr->at(idx) < 3 ) {
-                    OUT::ph_passSIEIEisoNone33_n++;
-                    sorted_photons_passSIEIEisoNone33.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_neuIsoCorr->at(idx) < 5 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 5 ) {
-                    OUT::ph_passSIEIEisoNone55_n++;
-                    sorted_photons_passSIEIEisoNone55.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_neuIsoCorr->at(idx) < 7  && 
-                    OUT::ph_phoIsoCorr->at(idx) < 7 ) {
-                    OUT::ph_passSIEIEisoNone77_n++;
-                    sorted_photons_passSIEIEisoNone77.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_neuIsoCorr->at(idx) < 9  && 
-                    OUT::ph_phoIsoCorr->at(idx) < 9 ) {
-                    OUT::ph_passSIEIEisoNone99_n++;
-                    sorted_photons_passSIEIEisoNone99.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_neuIsoCorr->at(idx) < 11 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 11 ) {
-                    OUT::ph_passSIEIEisoNone1111_n++;
-                    sorted_photons_passSIEIEisoNone1111.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_neuIsoCorr->at(idx) < 16 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 16 ) {
-                    OUT::ph_passSIEIEisoNone1616_n++;
-                    sorted_photons_passSIEIEisoNone1616.push_back( sort_pair );
-                }
-            }
-            else {
-                // For phoIsoCorr, failing SIEIE, loosen other isolations
-                if( OUT::ph_chIsoCorr->at(idx) < 5   && 
-                    OUT::ph_neuIsoCorr->at(idx) < 3 ) {
-                    OUT::ph_failSIEIEiso53None_n++;
-                    sorted_photons_failSIEIEiso53None.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 8  && 
-                    OUT::ph_neuIsoCorr->at(idx) < 5 ) {
-                    OUT::ph_failSIEIEiso85None_n++;
-                    sorted_photons_failSIEIEiso85None.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 10 && 
-                    OUT::ph_neuIsoCorr->at(idx) < 7 ) {
-                    OUT::ph_failSIEIEiso107None_n++;
-                    sorted_photons_failSIEIEiso107None.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 12 && 
-                    OUT::ph_neuIsoCorr->at(idx) < 9 ) {
-                    OUT::ph_failSIEIEiso129None_n++;
-                    sorted_photons_failSIEIEiso129None.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 15 && 
-                    OUT::ph_neuIsoCorr->at(idx) < 11 ) {
-                    OUT::ph_failSIEIEiso1511None_n++;
-                    sorted_photons_failSIEIEiso1511None.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 20 && 
-                    OUT::ph_neuIsoCorr->at(idx) < 16 ) {
-                    OUT::ph_failSIEIEiso2016None_n++;
-                    sorted_photons_failSIEIEiso2016None.push_back( sort_pair );
-                }
-
-                // For neuIsoCorr, failing SIEIE, loosen other isolations
-                if( OUT::ph_chIsoCorr->at(idx) < 5   && 
-                    OUT::ph_phoIsoCorr->at(idx) < 3 ) {
-                    OUT::ph_failSIEIEiso5None3_n++;
-                    sorted_photons_failSIEIEiso5None3.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 8  && 
-                    OUT::ph_phoIsoCorr->at(idx) < 5 ) {
-                    OUT::ph_failSIEIEiso8None5_n++;
-                    sorted_photons_failSIEIEiso8None5.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 10 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 7 ) {
-                    OUT::ph_failSIEIEiso10None7_n++;
-                    sorted_photons_failSIEIEiso10None7.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 12 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 9 ) {
-                    OUT::ph_failSIEIEiso12None9_n++;
-                    sorted_photons_failSIEIEiso12None9.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 15 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 11 ) {
-                    OUT::ph_failSIEIEiso15None11_n++;
-                    sorted_photons_failSIEIEiso15None11.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_chIsoCorr->at(idx) < 20 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 16 ) {
-                    OUT::ph_failSIEIEiso20None16_n++;
-                    sorted_photons_failSIEIEiso20None16.push_back( sort_pair );
-                }
-
-                // For chIsoCorr, failing SIEIE, loosen other isolations
-                if( OUT::ph_neuIsoCorr->at(idx) < 3  && 
-                    OUT::ph_phoIsoCorr->at(idx) < 3 ) {
-                    OUT::ph_failSIEIEisoNone33_n++;
-                    sorted_photons_failSIEIEisoNone33.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_neuIsoCorr->at(idx) < 5 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 5 ) {
-                    OUT::ph_failSIEIEisoNone55_n++;
-                    sorted_photons_failSIEIEisoNone55.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_neuIsoCorr->at(idx) < 7  && 
-                    OUT::ph_phoIsoCorr->at(idx) < 7 ) {
-                    OUT::ph_failSIEIEisoNone77_n++;
-                    sorted_photons_failSIEIEisoNone77.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_neuIsoCorr->at(idx) < 9  && 
-                    OUT::ph_phoIsoCorr->at(idx) < 9 ) {
-                    OUT::ph_failSIEIEisoNone99_n++;
-                    sorted_photons_failSIEIEisoNone99.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_neuIsoCorr->at(idx) < 11 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 11 ) {
-                    OUT::ph_failSIEIEisoNone1111_n++;
-                    sorted_photons_failSIEIEisoNone1111.push_back( sort_pair );
-                }
-                
-                if( OUT::ph_neuIsoCorr->at(idx) < 16 && 
-                    OUT::ph_phoIsoCorr->at(idx) < 16 ) {
-                    OUT::ph_failSIEIEisoNone1616_n++;
-                    sorted_photons_failSIEIEisoNone1616.push_back( sort_pair );
-                }
-            }
-        }
-        if( OUT::ph_passHOverEMedium->at(idx)) { 
-            if( OUT::ph_passSIEIEMedium->at(idx) ) { 
-                if( OUT::ph_passChIsoCorrMedium->at(idx) ) {
-                    OUT::ph_mediumNoNeuIsoNoPhoIso_n++;
-                    sorted_photons_mediumNoNeuIsoNoPhoIso.push_back( sort_pair );
-                }
-                if( OUT::ph_passNeuIsoCorrMedium->at(idx) ) {
-                    OUT::ph_mediumNoChIsoNoPhoIso_n++;
-                    sorted_photons_mediumNoChIsoNoPhoIso.push_back( sort_pair );
-                }
-                if( OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
-                    OUT::ph_mediumNoChIsoNoNeuIso_n++;
-                    sorted_photons_mediumNoChIsoNoNeuIso.push_back( sort_pair );
-                }
-            }
-            if( OUT::ph_passChIsoCorrMedium->at(idx) ) { 
-                if( OUT::ph_passNeuIsoCorrMedium->at(idx) ) {
-                    OUT::ph_mediumNoSIEIENoPhoIsoNoEleVeto_n++;
-                    sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.push_back( sort_pair );
-                    if( OUT::ph_hasPixSeed->at(idx)==0 ) {
-                        OUT::ph_mediumNoSIEIENoPhoIsoPassPSV_n++;
-                        sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.push_back( sort_pair );
-                    }
-                    if( OUT::ph_hasPixSeed->at(idx)==1 ) {
-                        OUT::ph_mediumNoSIEIENoPhoIsoFailPSV_n++;
-                        sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.push_back( sort_pair );
-                    }
-                    if( OUT::ph_eleVeto->at(idx)==0 ) {
-                        OUT::ph_mediumNoSIEIENoPhoIsoPassCSEV_n++;
-                        sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.push_back( sort_pair );
-                    }
-                    if( OUT::ph_eleVeto->at(idx)==1 ) {
-                        OUT::ph_mediumNoSIEIENoPhoIsoFailCSEV_n++;
-                        sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.push_back( sort_pair );
-                    }
-                }
-                if( OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
-                    OUT::ph_mediumNoSIEIENoNeuIsoNoEleVeto_n++;
-                    sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.push_back( sort_pair );
-                    if( OUT::ph_hasPixSeed->at(idx)==0 ) {
-                        OUT::ph_mediumNoSIEIENoNeuIsoPassPSV_n++;
-                        sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.push_back( sort_pair );
-                    }
-                    if( OUT::ph_hasPixSeed->at(idx)==1 ) {
-                        OUT::ph_mediumNoSIEIENoNeuIsoFailPSV_n++;
-                        sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.push_back( sort_pair );
-                    }
-                    if( OUT::ph_eleVeto->at(idx)==0 ) {
-                        OUT::ph_mediumNoSIEIENoNeuIsoPassCSEV_n++;
-                        sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.push_back( sort_pair );
-                    }
-                    if( OUT::ph_eleVeto->at(idx)==1 ) {
-                        OUT::ph_mediumNoSIEIENoNeuIsoFailCSEV_n++;
-                        sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.push_back( sort_pair );
-                    }
-                }
-            }
-            if( OUT::ph_passNeuIsoCorrMedium->at(idx) ) { 
-                if( OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
-                    OUT::ph_mediumNoSIEIENoChIsoNoEleVeto_n++;
-                    // for backwards compatibility
-                    OUT::ph_mediumNoSIEIENoChIso_n++;
-                    sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.push_back( sort_pair );
-                    if( OUT::ph_hasPixSeed->at(idx)==0 ) {
-                        OUT::ph_mediumNoSIEIENoChIsoPassPSV_n++;
-                        sorted_photons_mediumNoSIEIENoChIsoPassPSV.push_back( sort_pair );
-                    }
-                    if( OUT::ph_hasPixSeed->at(idx)==1 ) {
-                        OUT::ph_mediumNoSIEIENoChIsoFailPSV_n++;
-                        sorted_photons_mediumNoSIEIENoChIsoFailPSV.push_back( sort_pair );
-                    }
-                    if( OUT::ph_eleVeto->at(idx)==0 ) {
-                        OUT::ph_mediumNoSIEIENoChIsoPassCSEV_n++;
-                        sorted_photons_mediumNoSIEIENoChIsoPassCSEV.push_back( sort_pair );
-                    }
-                    if( OUT::ph_eleVeto->at(idx)==1 ) {
-                        OUT::ph_mediumNoSIEIENoChIsoFailCSEV_n++;
-                        sorted_photons_mediumNoSIEIENoChIsoFailCSEV.push_back( sort_pair );
-                    }
-                }
-            }
-        }
-        if( OUT::ph_passHOverEMedium->at(idx) && OUT::ph_passChIsoCorrMedium->at(idx)  && OUT::ph_passNeuIsoCorrMedium->at(idx) && OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
-            OUT::ph_mediumNoSIEIENoEleVeto_n++;
-            sorted_photons_mediumNoSIEIENoEleVeto.push_back( sort_pair );
-
-            if( OUT::ph_hasPixSeed->at(idx)==0 ) {
-                OUT::ph_mediumNoSIEIEPassPSV_n++;
-                sorted_photons_mediumNoSIEIEPassPSV.push_back( sort_pair );
-            }
-            if( OUT::ph_hasPixSeed->at(idx)==1 ) {
-                OUT::ph_mediumNoSIEIEFailPSV_n++;
-                sorted_photons_mediumNoSIEIEFailPSV.push_back( sort_pair );
-            }
-            if( OUT::ph_eleVeto->at(idx)==0 ) {
-                OUT::ph_mediumNoSIEIEPassCSEV_n++;
-                sorted_photons_mediumNoSIEIEPassCSEV.push_back( sort_pair );
-            }
-            if( OUT::ph_eleVeto->at(idx)==1 ) {
-                OUT::ph_mediumNoSIEIEFailCSEV_n++;
-                sorted_photons_mediumNoSIEIEFailCSEV.push_back( sort_pair );
-            }
-            if( OUT::ph_passSIEIEMedium->at(idx) ) {
-                OUT::ph_mediumNoEleVeto_n++;
-                sorted_photons_mediumNoEleVeto.push_back( sort_pair );
-            
-                if( OUT::ph_hasPixSeed->at(idx)==0 ) {
-                    OUT::ph_mediumPassPSV_n++;
-                    sorted_photons_mediumPassPSV.push_back( sort_pair );
-                }
-                if( OUT::ph_hasPixSeed->at(idx)==1 ) {
-                    OUT::ph_mediumFailPSV_n++;
-                    sorted_photons_mediumFailPSV.push_back( sort_pair );
-                }
-                if( OUT::ph_eleVeto->at(idx)==0 ) {
-                    OUT::ph_mediumPassCSEV_n++;
-                    sorted_photons_mediumPassCSEV.push_back( sort_pair );
-                }
-                if( OUT::ph_eleVeto->at(idx)==1 ) {
-                    OUT::ph_mediumFailCSEV_n++;
-                    sorted_photons_mediumFailCSEV.push_back( sort_pair );
-                }
-            }
-        }
-        if( OUT::ph_passHOverEMedium->at(idx) && OUT::ph_passSIEIEMedium->at(idx)  && OUT::ph_passNeuIsoCorrMedium->at(idx) && OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
-            OUT::ph_mediumNoChIsoNoEleVeto_n++;
-            sorted_photons_mediumNoChIsoNoEleVeto.push_back( sort_pair );
-
-            if( OUT::ph_hasPixSeed->at(idx)==0 ) {
-                OUT::ph_mediumNoChIsoPassPSV_n++;
-                sorted_photons_mediumNoChIsoPassPSV.push_back( sort_pair );
-            }
-            if( OUT::ph_hasPixSeed->at(idx)==1 ) {
-                OUT::ph_mediumNoChIsoFailPSV_n++;
-                sorted_photons_mediumNoChIsoFailPSV.push_back( sort_pair );
-            }
-            if( OUT::ph_eleVeto->at(idx)==0 ) {
-                OUT::ph_mediumNoChIsoPassCSEV_n++;
-                sorted_photons_mediumNoChIsoPassCSEV.push_back( sort_pair );
-            }
-            if( OUT::ph_eleVeto->at(idx)==1 ) {
-                OUT::ph_mediumNoChIsoFailCSEV_n++;
-                sorted_photons_mediumNoChIsoFailCSEV.push_back( sort_pair );
-            }
-        }
-        if( OUT::ph_passHOverEMedium->at(idx) && OUT::ph_passSIEIEMedium->at(idx)  && OUT::ph_passChIsoCorrMedium->at(idx) && OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
-            OUT::ph_mediumNoNeuIsoNoEleVeto_n++;
-            sorted_photons_mediumNoNeuIsoNoEleVeto.push_back( sort_pair );
-
-            if( OUT::ph_hasPixSeed->at(idx)==0 ) {
-                OUT::ph_mediumNoNeuIsoPassPSV_n++;
-                sorted_photons_mediumNoNeuIsoPassPSV.push_back( sort_pair );
-            }
-            if( OUT::ph_hasPixSeed->at(idx)==1 ) {
-                OUT::ph_mediumNoNeuIsoFailPSV_n++;
-                sorted_photons_mediumNoNeuIsoFailPSV.push_back( sort_pair );
-            }
-            if( OUT::ph_eleVeto->at(idx)==0 ) {
-                OUT::ph_mediumNoNeuIsoPassCSEV_n++;
-                sorted_photons_mediumNoNeuIsoPassCSEV.push_back( sort_pair );
-            }
-            if( OUT::ph_eleVeto->at(idx)==1 ) {
-                OUT::ph_mediumNoNeuIsoFailCSEV_n++;
-                sorted_photons_mediumNoNeuIsoFailCSEV.push_back( sort_pair );
-            }
-        }
-        if( OUT::ph_passHOverEMedium->at(idx) && OUT::ph_passSIEIEMedium->at(idx)  && OUT::ph_passChIsoCorrMedium->at(idx) && OUT::ph_passNeuIsoCorrMedium->at(idx) ) {
-            OUT::ph_mediumNoPhoIsoNoEleVeto_n++;
-            sorted_photons_mediumNoPhoIsoNoEleVeto.push_back( sort_pair );
-
-            if( OUT::ph_hasPixSeed->at(idx)==0 ) {
-                OUT::ph_mediumNoPhoIsoPassPSV_n++;
-                sorted_photons_mediumNoPhoIsoPassPSV.push_back( sort_pair );
-            }
-            if( OUT::ph_hasPixSeed->at(idx)==1 ) {
-                OUT::ph_mediumNoPhoIsoFailPSV_n++;
-                sorted_photons_mediumNoPhoIsoFailPSV.push_back( sort_pair );
-            }
-            if( OUT::ph_eleVeto->at(idx)==0 ) {
-                OUT::ph_mediumNoPhoIsoPassCSEV_n++;
-                sorted_photons_mediumNoPhoIsoPassCSEV.push_back( sort_pair );
-            }
-            if( OUT::ph_eleVeto->at(idx)==1 ) {
-                OUT::ph_mediumNoPhoIsoFailCSEV_n++;
-                sorted_photons_mediumNoPhoIsoFailCSEV.push_back( sort_pair );
-            }
-        }
-        
         bool match_eltrig = false;
         for( int elidx = 0; elidx < IN::el_n; elidx++ ) {
 
@@ -2369,6 +1912,823 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
         OUT::ph_elMinDR->push_back( min_dr );
     }
 
+
+    //for( int idx = 0; idx < OUT::ph_n; ++idx ) {
+    //    TLorentzVector phot;
+    //    phot.SetPtEtaPhiE(  OUT::ph_pt->at(idx), 
+    //                        OUT::ph_eta->at(idx),
+    //                        OUT::ph_phi->at(idx),
+    //                        OUT::ph_e->at(idx)
+    //                    );
+    //    photons.push_back(phot);
+
+    //    std::pair<float, int> sort_pair = std::make_pair( phot.Pt(), idx );
+
+    //    sorted_photons.push_back( sort_pair );
+
+    //    if( OUT::ph_passHOverEMedium->at(idx)) {
+
+    //        if( OUT::ph_chIsoCorr->at(idx) < 5   && 
+    //            OUT::ph_neuIsoCorr->at(idx) < 3  && 
+    //            OUT::ph_phoIsoCorr->at(idx) < 3 ) {
+    //            OUT::ph_noSIEIEiso533_n++;
+    //            sorted_photons_iso533.push_back( sort_pair );
+    //        }
+    //        
+    //        if( OUT::ph_chIsoCorr->at(idx) < 8  && 
+    //            OUT::ph_neuIsoCorr->at(idx) < 5 && 
+    //            OUT::ph_phoIsoCorr->at(idx) < 5 ) {
+    //            OUT::ph_noSIEIEiso855_n++;
+    //            sorted_photons_iso855.push_back( sort_pair );
+    //        }
+    //        
+    //        if( OUT::ph_chIsoCorr->at(idx) < 10 && 
+    //            OUT::ph_neuIsoCorr->at(idx) < 7  && 
+    //            OUT::ph_phoIsoCorr->at(idx) < 7 ) {
+    //            OUT::ph_noSIEIEiso1077_n++;
+    //            sorted_photons_iso1077.push_back( sort_pair );
+    //        }
+    //        
+    //        if( OUT::ph_chIsoCorr->at(idx) < 12 && 
+    //            OUT::ph_neuIsoCorr->at(idx) < 9  && 
+    //            OUT::ph_phoIsoCorr->at(idx) < 9 ) {
+    //            OUT::ph_noSIEIEiso1299_n++;
+    //            sorted_photons_iso1299.push_back( sort_pair );
+    //        }
+    //        
+    //        if( OUT::ph_chIsoCorr->at(idx) < 15 && 
+    //            OUT::ph_neuIsoCorr->at(idx) < 11 && 
+    //            OUT::ph_phoIsoCorr->at(idx) < 11 ) {
+    //            OUT::ph_noSIEIEiso151111_n++;
+    //            sorted_photons_iso151111.push_back( sort_pair );
+    //        }
+    //        
+    //        if( OUT::ph_chIsoCorr->at(idx) < 20 && 
+    //            OUT::ph_neuIsoCorr->at(idx) < 16 && 
+    //            OUT::ph_phoIsoCorr->at(idx) < 16 ) {
+    //            OUT::ph_noSIEIEiso201616_n++;
+    //            sorted_photons_iso201616.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_passSIEIEMedium->at(idx) ) {
+
+    //            // For phoIsoCorr, passing SIEIE, loosen other isolations
+    //            if( OUT::ph_chIsoCorr->at(idx) < 5   && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 3 ) {
+    //                OUT::ph_passSIEIEiso53None_n++;
+    //                sorted_photons_passSIEIEiso53None.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 8  && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 5 ) {
+    //                OUT::ph_passSIEIEiso85None_n++;
+    //                sorted_photons_passSIEIEiso85None.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 10 && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 7 ) {
+    //                OUT::ph_passSIEIEiso107None_n++;
+    //                sorted_photons_passSIEIEiso107None.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 12 && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 9 ) {
+    //                OUT::ph_passSIEIEiso129None_n++;
+    //                sorted_photons_passSIEIEiso129None.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 15 && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 11 ) {
+    //                OUT::ph_passSIEIEiso1511None_n++;
+    //                sorted_photons_passSIEIEiso1511None.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 20 && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 16 ) {
+    //                OUT::ph_passSIEIEiso2016None_n++;
+    //                sorted_photons_passSIEIEiso2016None.push_back( sort_pair );
+    //            }
+
+    //            // For neuIsoCorr, passing SIEIE, loosen other isolations
+    //            if( OUT::ph_chIsoCorr->at(idx) < 5   && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 3 ) {
+    //                OUT::ph_passSIEIEiso5None3_n++;
+    //                sorted_photons_passSIEIEiso5None3.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 8  && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 5 ) {
+    //                OUT::ph_passSIEIEiso8None5_n++;
+    //                sorted_photons_passSIEIEiso8None5.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 10 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 7 ) {
+    //                OUT::ph_passSIEIEiso10None7_n++;
+    //                sorted_photons_passSIEIEiso10None7.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 12 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 9 ) {
+    //                OUT::ph_passSIEIEiso12None9_n++;
+    //                sorted_photons_passSIEIEiso12None9.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 15 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 11 ) {
+    //                OUT::ph_passSIEIEiso15None11_n++;
+    //                sorted_photons_passSIEIEiso15None11.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 20 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 16 ) {
+    //                OUT::ph_passSIEIEiso20None16_n++;
+    //                sorted_photons_passSIEIEiso20None16.push_back( sort_pair );
+    //            }
+
+    //            // For chIsoCorr, passing SIEIE, loosen other isolations
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 3  && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 3 ) {
+    //                OUT::ph_passSIEIEisoNone33_n++;
+    //                sorted_photons_passSIEIEisoNone33.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 5 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 5 ) {
+    //                OUT::ph_passSIEIEisoNone55_n++;
+    //                sorted_photons_passSIEIEisoNone55.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 7  && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 7 ) {
+    //                OUT::ph_passSIEIEisoNone77_n++;
+    //                sorted_photons_passSIEIEisoNone77.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 9  && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 9 ) {
+    //                OUT::ph_passSIEIEisoNone99_n++;
+    //                sorted_photons_passSIEIEisoNone99.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 11 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 11 ) {
+    //                OUT::ph_passSIEIEisoNone1111_n++;
+    //                sorted_photons_passSIEIEisoNone1111.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 16 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 16 ) {
+    //                OUT::ph_passSIEIEisoNone1616_n++;
+    //                sorted_photons_passSIEIEisoNone1616.push_back( sort_pair );
+    //            }
+    //        }
+    //        else {
+    //            // For phoIsoCorr, failing SIEIE, loosen other isolations
+    //            if( OUT::ph_chIsoCorr->at(idx) < 5   && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 3 ) {
+    //                OUT::ph_failSIEIEiso53None_n++;
+    //                sorted_photons_failSIEIEiso53None.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 8  && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 5 ) {
+    //                OUT::ph_failSIEIEiso85None_n++;
+    //                sorted_photons_failSIEIEiso85None.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 10 && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 7 ) {
+    //                OUT::ph_failSIEIEiso107None_n++;
+    //                sorted_photons_failSIEIEiso107None.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 12 && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 9 ) {
+    //                OUT::ph_failSIEIEiso129None_n++;
+    //                sorted_photons_failSIEIEiso129None.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 15 && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 11 ) {
+    //                OUT::ph_failSIEIEiso1511None_n++;
+    //                sorted_photons_failSIEIEiso1511None.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 20 && 
+    //                OUT::ph_neuIsoCorr->at(idx) < 16 ) {
+    //                OUT::ph_failSIEIEiso2016None_n++;
+    //                sorted_photons_failSIEIEiso2016None.push_back( sort_pair );
+    //            }
+
+    //            // For neuIsoCorr, failing SIEIE, loosen other isolations
+    //            if( OUT::ph_chIsoCorr->at(idx) < 5   && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 3 ) {
+    //                OUT::ph_failSIEIEiso5None3_n++;
+    //                sorted_photons_failSIEIEiso5None3.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 8  && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 5 ) {
+    //                OUT::ph_failSIEIEiso8None5_n++;
+    //                sorted_photons_failSIEIEiso8None5.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 10 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 7 ) {
+    //                OUT::ph_failSIEIEiso10None7_n++;
+    //                sorted_photons_failSIEIEiso10None7.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 12 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 9 ) {
+    //                OUT::ph_failSIEIEiso12None9_n++;
+    //                sorted_photons_failSIEIEiso12None9.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 15 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 11 ) {
+    //                OUT::ph_failSIEIEiso15None11_n++;
+    //                sorted_photons_failSIEIEiso15None11.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_chIsoCorr->at(idx) < 20 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 16 ) {
+    //                OUT::ph_failSIEIEiso20None16_n++;
+    //                sorted_photons_failSIEIEiso20None16.push_back( sort_pair );
+    //            }
+
+    //            // For chIsoCorr, failing SIEIE, loosen other isolations
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 3  && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 3 ) {
+    //                OUT::ph_failSIEIEisoNone33_n++;
+    //                sorted_photons_failSIEIEisoNone33.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 5 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 5 ) {
+    //                OUT::ph_failSIEIEisoNone55_n++;
+    //                sorted_photons_failSIEIEisoNone55.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 7  && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 7 ) {
+    //                OUT::ph_failSIEIEisoNone77_n++;
+    //                sorted_photons_failSIEIEisoNone77.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 9  && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 9 ) {
+    //                OUT::ph_failSIEIEisoNone99_n++;
+    //                sorted_photons_failSIEIEisoNone99.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 11 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 11 ) {
+    //                OUT::ph_failSIEIEisoNone1111_n++;
+    //                sorted_photons_failSIEIEisoNone1111.push_back( sort_pair );
+    //            }
+    //            
+    //            if( OUT::ph_neuIsoCorr->at(idx) < 16 && 
+    //                OUT::ph_phoIsoCorr->at(idx) < 16 ) {
+    //                OUT::ph_failSIEIEisoNone1616_n++;
+    //                sorted_photons_failSIEIEisoNone1616.push_back( sort_pair );
+    //            }
+    //        }
+    //    }
+    //    if( OUT::ph_passHOverEMedium->at(idx)) { 
+    //        if( OUT::ph_passSIEIEMedium->at(idx) ) { 
+    //            if( OUT::ph_passChIsoCorrMedium->at(idx) ) {
+    //                OUT::ph_mediumNoNeuIsoNoPhoIso_n++;
+    //                sorted_photons_mediumNoNeuIsoNoPhoIso.push_back( sort_pair );
+    //            }
+    //            if( OUT::ph_passNeuIsoCorrMedium->at(idx) ) {
+    //                OUT::ph_mediumNoChIsoNoPhoIso_n++;
+    //                sorted_photons_mediumNoChIsoNoPhoIso.push_back( sort_pair );
+    //            }
+    //            if( OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
+    //                OUT::ph_mediumNoChIsoNoNeuIso_n++;
+    //                sorted_photons_mediumNoChIsoNoNeuIso.push_back( sort_pair );
+    //            }
+    //        }
+    //        if( OUT::ph_passChIsoCorrMedium->at(idx) ) { 
+    //            if( OUT::ph_passNeuIsoCorrMedium->at(idx) ) {
+    //                OUT::ph_mediumNoSIEIENoPhoIsoNoEleVeto_n++;
+    //                sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.push_back( sort_pair );
+    //                if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+    //                    OUT::ph_mediumNoSIEIENoPhoIsoPassPSV_n++;
+    //                    sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.push_back( sort_pair );
+    //                }
+    //                if( OUT::ph_hasPixSeed->at(idx)==1 ) {
+    //                    OUT::ph_mediumNoSIEIENoPhoIsoFailPSV_n++;
+    //                    sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.push_back( sort_pair );
+    //                }
+    //                if( OUT::ph_eleVeto->at(idx)==0 ) {
+    //                    OUT::ph_mediumNoSIEIENoPhoIsoPassCSEV_n++;
+    //                    sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.push_back( sort_pair );
+    //                }
+    //                if( OUT::ph_eleVeto->at(idx)==1 ) {
+    //                    OUT::ph_mediumNoSIEIENoPhoIsoFailCSEV_n++;
+    //                    sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.push_back( sort_pair );
+    //                }
+    //            }
+    //            if( OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
+    //                OUT::ph_mediumNoSIEIENoNeuIsoNoEleVeto_n++;
+    //                sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.push_back( sort_pair );
+    //                if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+    //                    OUT::ph_mediumNoSIEIENoNeuIsoPassPSV_n++;
+    //                    sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.push_back( sort_pair );
+    //                }
+    //                if( OUT::ph_hasPixSeed->at(idx)==1 ) {
+    //                    OUT::ph_mediumNoSIEIENoNeuIsoFailPSV_n++;
+    //                    sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.push_back( sort_pair );
+    //                }
+    //                if( OUT::ph_eleVeto->at(idx)==0 ) {
+    //                    OUT::ph_mediumNoSIEIENoNeuIsoPassCSEV_n++;
+    //                    sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.push_back( sort_pair );
+    //                }
+    //                if( OUT::ph_eleVeto->at(idx)==1 ) {
+    //                    OUT::ph_mediumNoSIEIENoNeuIsoFailCSEV_n++;
+    //                    sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.push_back( sort_pair );
+    //                }
+    //            }
+    //        }
+    //        if( OUT::ph_passNeuIsoCorrMedium->at(idx) ) { 
+    //            if( OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
+    //                OUT::ph_mediumNoSIEIENoChIsoNoEleVeto_n++;
+    //                // for backwards compatibility
+    //                OUT::ph_mediumNoSIEIENoChIso_n++;
+    //                sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.push_back( sort_pair );
+    //                if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+    //                    OUT::ph_mediumNoSIEIENoChIsoPassPSV_n++;
+    //                    sorted_photons_mediumNoSIEIENoChIsoPassPSV.push_back( sort_pair );
+    //                }
+    //                if( OUT::ph_hasPixSeed->at(idx)==1 ) {
+    //                    OUT::ph_mediumNoSIEIENoChIsoFailPSV_n++;
+    //                    sorted_photons_mediumNoSIEIENoChIsoFailPSV.push_back( sort_pair );
+    //                }
+    //                if( OUT::ph_eleVeto->at(idx)==0 ) {
+    //                    OUT::ph_mediumNoSIEIENoChIsoPassCSEV_n++;
+    //                    sorted_photons_mediumNoSIEIENoChIsoPassCSEV.push_back( sort_pair );
+    //                }
+    //                if( OUT::ph_eleVeto->at(idx)==1 ) {
+    //                    OUT::ph_mediumNoSIEIENoChIsoFailCSEV_n++;
+    //                    sorted_photons_mediumNoSIEIENoChIsoFailCSEV.push_back( sort_pair );
+    //                }
+    //            }
+    //        }
+    //    }
+    //    if( OUT::ph_passHOverEMedium->at(idx) && OUT::ph_passChIsoCorrMedium->at(idx)  && OUT::ph_passNeuIsoCorrMedium->at(idx) && OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
+    //        OUT::ph_mediumNoSIEIENoEleVeto_n++;
+    //        sorted_photons_mediumNoSIEIENoEleVeto.push_back( sort_pair );
+
+    //        if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+    //            OUT::ph_mediumNoSIEIEPassPSV_n++;
+    //            sorted_photons_mediumNoSIEIEPassPSV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_hasPixSeed->at(idx)==1 ) {
+    //            OUT::ph_mediumNoSIEIEFailPSV_n++;
+    //            sorted_photons_mediumNoSIEIEFailPSV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_eleVeto->at(idx)==0 ) {
+    //            OUT::ph_mediumNoSIEIEPassCSEV_n++;
+    //            sorted_photons_mediumNoSIEIEPassCSEV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_eleVeto->at(idx)==1 ) {
+    //            OUT::ph_mediumNoSIEIEFailCSEV_n++;
+    //            sorted_photons_mediumNoSIEIEFailCSEV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_passSIEIEMedium->at(idx) ) {
+    //            OUT::ph_mediumNoEleVeto_n++;
+    //            sorted_photons_mediumNoEleVeto.push_back( sort_pair );
+    //        
+    //            if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+    //                OUT::ph_mediumPassPSV_n++;
+    //                sorted_photons_mediumPassPSV.push_back( sort_pair );
+    //            }
+    //            if( OUT::ph_hasPixSeed->at(idx)==1 ) {
+    //                OUT::ph_mediumFailPSV_n++;
+    //                sorted_photons_mediumFailPSV.push_back( sort_pair );
+    //            }
+    //            if( OUT::ph_eleVeto->at(idx)==0 ) {
+    //                OUT::ph_mediumPassCSEV_n++;
+    //                sorted_photons_mediumPassCSEV.push_back( sort_pair );
+    //            }
+    //            if( OUT::ph_eleVeto->at(idx)==1 ) {
+    //                OUT::ph_mediumFailCSEV_n++;
+    //                sorted_photons_mediumFailCSEV.push_back( sort_pair );
+    //            }
+    //        }
+    //    }
+    //    if( OUT::ph_passHOverEMedium->at(idx) && OUT::ph_passSIEIEMedium->at(idx)  && OUT::ph_passNeuIsoCorrMedium->at(idx) && OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
+    //        OUT::ph_mediumNoChIsoNoEleVeto_n++;
+    //        sorted_photons_mediumNoChIsoNoEleVeto.push_back( sort_pair );
+
+    //        if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+    //            OUT::ph_mediumNoChIsoPassPSV_n++;
+    //            sorted_photons_mediumNoChIsoPassPSV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_hasPixSeed->at(idx)==1 ) {
+    //            OUT::ph_mediumNoChIsoFailPSV_n++;
+    //            sorted_photons_mediumNoChIsoFailPSV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_eleVeto->at(idx)==0 ) {
+    //            OUT::ph_mediumNoChIsoPassCSEV_n++;
+    //            sorted_photons_mediumNoChIsoPassCSEV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_eleVeto->at(idx)==1 ) {
+    //            OUT::ph_mediumNoChIsoFailCSEV_n++;
+    //            sorted_photons_mediumNoChIsoFailCSEV.push_back( sort_pair );
+    //        }
+    //    }
+    //    if( OUT::ph_passHOverEMedium->at(idx) && OUT::ph_passSIEIEMedium->at(idx)  && OUT::ph_passChIsoCorrMedium->at(idx) && OUT::ph_passPhoIsoCorrMedium->at(idx) ) {
+    //        OUT::ph_mediumNoNeuIsoNoEleVeto_n++;
+    //        sorted_photons_mediumNoNeuIsoNoEleVeto.push_back( sort_pair );
+
+    //        if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+    //            OUT::ph_mediumNoNeuIsoPassPSV_n++;
+    //            sorted_photons_mediumNoNeuIsoPassPSV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_hasPixSeed->at(idx)==1 ) {
+    //            OUT::ph_mediumNoNeuIsoFailPSV_n++;
+    //            sorted_photons_mediumNoNeuIsoFailPSV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_eleVeto->at(idx)==0 ) {
+    //            OUT::ph_mediumNoNeuIsoPassCSEV_n++;
+    //            sorted_photons_mediumNoNeuIsoPassCSEV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_eleVeto->at(idx)==1 ) {
+    //            OUT::ph_mediumNoNeuIsoFailCSEV_n++;
+    //            sorted_photons_mediumNoNeuIsoFailCSEV.push_back( sort_pair );
+    //        }
+    //    }
+    //    if( OUT::ph_passHOverEMedium->at(idx) && OUT::ph_passSIEIEMedium->at(idx)  && OUT::ph_passChIsoCorrMedium->at(idx) && OUT::ph_passNeuIsoCorrMedium->at(idx) ) {
+    //        OUT::ph_mediumNoPhoIsoNoEleVeto_n++;
+    //        sorted_photons_mediumNoPhoIsoNoEleVeto.push_back( sort_pair );
+
+    //        if( OUT::ph_hasPixSeed->at(idx)==0 ) {
+    //            OUT::ph_mediumNoPhoIsoPassPSV_n++;
+    //            sorted_photons_mediumNoPhoIsoPassPSV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_hasPixSeed->at(idx)==1 ) {
+    //            OUT::ph_mediumNoPhoIsoFailPSV_n++;
+    //            sorted_photons_mediumNoPhoIsoFailPSV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_eleVeto->at(idx)==0 ) {
+    //            OUT::ph_mediumNoPhoIsoPassCSEV_n++;
+    //            sorted_photons_mediumNoPhoIsoPassCSEV.push_back( sort_pair );
+    //        }
+    //        if( OUT::ph_eleVeto->at(idx)==1 ) {
+    //            OUT::ph_mediumNoPhoIsoFailCSEV_n++;
+    //            sorted_photons_mediumNoPhoIsoFailCSEV.push_back( sort_pair );
+    //        }
+    //    }
+        
+
+    //std::sort(sorted_photons_iso533.rbegin()                  , sorted_photons_iso533.rend());
+    //std::sort(sorted_photons_iso855.rbegin()                  , sorted_photons_iso855.rend());
+    //std::sort(sorted_photons_iso1077.rbegin()                 , sorted_photons_iso1077.rend());
+    //std::sort(sorted_photons_iso1299.rbegin()                 , sorted_photons_iso1299.rend());
+    //std::sort(sorted_photons_iso151111.rbegin()               , sorted_photons_iso151111.rend());
+    //std::sort(sorted_photons_iso201616.rbegin()               , sorted_photons_iso201616.rend());
+    //std::sort(sorted_photons_passSIEIEiso53None.rbegin()      , sorted_photons_passSIEIEiso53None.rend());
+    //std::sort(sorted_photons_passSIEIEiso85None.rbegin()      , sorted_photons_passSIEIEiso85None.rend());
+    //std::sort(sorted_photons_passSIEIEiso107None.rbegin()     , sorted_photons_passSIEIEiso107None.rend());
+    //std::sort(sorted_photons_passSIEIEiso129None.rbegin()     , sorted_photons_passSIEIEiso129None.rend());
+    //std::sort(sorted_photons_passSIEIEiso1511None.rbegin()    , sorted_photons_passSIEIEiso1511None.rend());
+    //std::sort(sorted_photons_passSIEIEiso2016None.rbegin()    , sorted_photons_passSIEIEiso2016None.rend());
+    //std::sort(sorted_photons_passSIEIEiso5None3.rbegin()       , sorted_photons_passSIEIEiso5None3.rend());
+    //std::sort(sorted_photons_passSIEIEiso8None5.rbegin()       , sorted_photons_passSIEIEiso8None5.rend());
+    //std::sort(sorted_photons_passSIEIEiso10None7.rbegin()      , sorted_photons_passSIEIEiso10None7.rend());
+    //std::sort(sorted_photons_passSIEIEiso12None9.rbegin()      , sorted_photons_passSIEIEiso12None9.rend());
+    //std::sort(sorted_photons_passSIEIEiso15None11.rbegin()    , sorted_photons_passSIEIEiso15None11.rend());
+    //std::sort(sorted_photons_passSIEIEiso20None16.rbegin()    , sorted_photons_passSIEIEiso20None16.rend());
+    //std::sort(sorted_photons_passSIEIEisoNone33.rbegin()      , sorted_photons_passSIEIEisoNone33.rend());
+    //std::sort(sorted_photons_passSIEIEisoNone55.rbegin()      , sorted_photons_passSIEIEisoNone55.rend());
+    //std::sort(sorted_photons_passSIEIEisoNone77.rbegin()      , sorted_photons_passSIEIEisoNone77.rend());
+    //std::sort(sorted_photons_passSIEIEisoNone99.rbegin()      , sorted_photons_passSIEIEisoNone99.rend());
+    //std::sort(sorted_photons_passSIEIEisoNone1111.rbegin()    , sorted_photons_passSIEIEisoNone1111.rend());
+    //std::sort(sorted_photons_passSIEIEisoNone1616.rbegin()    , sorted_photons_passSIEIEisoNone1616.rend());
+    //std::sort(sorted_photons_failSIEIEiso53None.rbegin()      , sorted_photons_failSIEIEiso53None.rend());
+    //std::sort(sorted_photons_failSIEIEiso85None.rbegin()      , sorted_photons_failSIEIEiso85None.rend());
+    //std::sort(sorted_photons_failSIEIEiso107None.rbegin()     , sorted_photons_failSIEIEiso107None.rend());
+    //std::sort(sorted_photons_failSIEIEiso129None.rbegin()     , sorted_photons_failSIEIEiso129None.rend());
+    //std::sort(sorted_photons_failSIEIEiso1511None.rbegin()    , sorted_photons_failSIEIEiso1511None.rend());
+    //std::sort(sorted_photons_failSIEIEiso2016None.rbegin()    , sorted_photons_failSIEIEiso2016None.rend());
+    //std::sort(sorted_photons_failSIEIEiso5None3.rbegin()       , sorted_photons_failSIEIEiso5None3.rend());
+    //std::sort(sorted_photons_failSIEIEiso8None5.rbegin()       , sorted_photons_failSIEIEiso8None5.rend());
+    //std::sort(sorted_photons_failSIEIEiso10None7.rbegin()      , sorted_photons_failSIEIEiso10None7.rend());
+    //std::sort(sorted_photons_failSIEIEiso12None9.rbegin()      , sorted_photons_failSIEIEiso12None9.rend());
+    //std::sort(sorted_photons_failSIEIEiso15None11.rbegin()    , sorted_photons_failSIEIEiso15None11.rend());
+    //std::sort(sorted_photons_failSIEIEiso20None16.rbegin()    , sorted_photons_failSIEIEiso20None16.rend());
+    //std::sort(sorted_photons_failSIEIEisoNone33.rbegin()      , sorted_photons_failSIEIEisoNone33.rend());
+    //std::sort(sorted_photons_failSIEIEisoNone55.rbegin()      , sorted_photons_failSIEIEisoNone55.rend());
+    //std::sort(sorted_photons_failSIEIEisoNone77.rbegin()      , sorted_photons_failSIEIEisoNone77.rend());
+    //std::sort(sorted_photons_failSIEIEisoNone99.rbegin()      , sorted_photons_failSIEIEisoNone99.rend());
+    //std::sort(sorted_photons_failSIEIEisoNone1111.rbegin()    , sorted_photons_failSIEIEisoNone1111.rend());
+    //std::sort(sorted_photons_failSIEIEisoNone1616.rbegin()    , sorted_photons_failSIEIEisoNone1616.rend());
+    //std::sort(sorted_photons_mediumNoNeuIsoNoPhoIso.rbegin()  , sorted_photons_mediumNoNeuIsoNoPhoIso.rend());
+    //std::sort(sorted_photons_mediumNoChIsoNoPhoIso.rbegin()   , sorted_photons_mediumNoChIsoNoPhoIso.rend());
+    //std::sort(sorted_photons_mediumNoChIsoNoNeuIso.rbegin()   , sorted_photons_mediumNoChIsoNoNeuIso.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoChIsoPassPSV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoPassPSV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoChIsoFailPSV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoFailPSV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoChIsoPassCSEV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoPassCSEV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoChIsoFailCSEV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoFailCSEV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIENoEleVeto.rbegin()  , sorted_photons_mediumNoSIEIENoEleVeto.rend());
+    //std::sort(sorted_photons_mediumNoSIEIEPassPSV.rbegin()    , sorted_photons_mediumNoSIEIEPassPSV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIEFailPSV.rbegin()    , sorted_photons_mediumNoSIEIEFailPSV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIEPassCSEV.rbegin()   , sorted_photons_mediumNoSIEIEPassCSEV.rend());
+    //std::sort(sorted_photons_mediumNoSIEIEFailCSEV.rbegin()   , sorted_photons_mediumNoSIEIEFailCSEV.rend());
+    //std::sort(sorted_photons_mediumNoEleVeto.rbegin()         , sorted_photons_mediumNoEleVeto.rend());
+    //std::sort(sorted_photons_mediumPassPSV.rbegin()           , sorted_photons_mediumPassPSV.rend());
+    //std::sort(sorted_photons_mediumFailPSV.rbegin()           , sorted_photons_mediumFailPSV.rend());
+    //std::sort(sorted_photons_mediumPassCSEV.rbegin()          , sorted_photons_mediumPassCSEV.rend());
+    //std::sort(sorted_photons_mediumFailCSEV.rbegin()          , sorted_photons_mediumFailCSEV.rend());
+    //std::sort(sorted_photons_mediumNoChIsoNoEleVeto.rbegin()  , sorted_photons_mediumNoChIsoNoEleVeto.rend());
+    //std::sort(sorted_photons_mediumNoChIsoPassPSV.rbegin()    , sorted_photons_mediumNoChIsoPassPSV.rend());
+    //std::sort(sorted_photons_mediumNoChIsoFailPSV.rbegin()    , sorted_photons_mediumNoChIsoFailPSV.rend());
+    //std::sort(sorted_photons_mediumNoChIsoPassCSEV.rbegin()   , sorted_photons_mediumNoChIsoPassCSEV.rend());
+    //std::sort(sorted_photons_mediumNoChIsoFailCSEV.rbegin()   , sorted_photons_mediumNoChIsoFailCSEV.rend());
+    //std::sort(sorted_photons_mediumNoNeuIsoNoEleVeto.rbegin() , sorted_photons_mediumNoNeuIsoNoEleVeto.rend());
+    //std::sort(sorted_photons_mediumNoNeuIsoPassPSV.rbegin()   , sorted_photons_mediumNoNeuIsoPassPSV.rend());
+    //std::sort(sorted_photons_mediumNoNeuIsoFailPSV.rbegin()   , sorted_photons_mediumNoNeuIsoFailPSV.rend());
+    //std::sort(sorted_photons_mediumNoNeuIsoPassCSEV.rbegin()  , sorted_photons_mediumNoNeuIsoPassCSEV.rend());
+    //std::sort(sorted_photons_mediumNoNeuIsoFailCSEV.rbegin()  , sorted_photons_mediumNoNeuIsoFailCSEV.rend());
+    //std::sort(sorted_photons_mediumNoPhoIsoNoEleVeto.rbegin() , sorted_photons_mediumNoPhoIsoNoEleVeto.rend());
+    //std::sort(sorted_photons_mediumNoPhoIsoPassPSV.rbegin()   , sorted_photons_mediumNoPhoIsoPassPSV.rend());
+    //std::sort(sorted_photons_mediumNoPhoIsoFailPSV.rbegin()   , sorted_photons_mediumNoPhoIsoFailPSV.rend());
+    //std::sort(sorted_photons_mediumNoPhoIsoPassCSEV.rbegin()  , sorted_photons_mediumNoPhoIsoPassCSEV.rend());
+    //std::sort(sorted_photons_mediumNoPhoIsoFailCSEV.rbegin()  , sorted_photons_mediumNoPhoIsoFailCSEV.rend());
+
+
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso533.begin() ; itr != sorted_photons_iso533.end(); ++itr ) {
+    //    OUT::ptSorted_ph_noSIEIEiso533_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso855.begin() ; itr != sorted_photons_iso855.end(); ++itr ) {
+    //    OUT::ptSorted_ph_noSIEIEiso855_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso1077.begin() ; itr != sorted_photons_iso1077.end(); ++itr ) {
+    //    OUT::ptSorted_ph_noSIEIEiso1077_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso1299.begin() ; itr != sorted_photons_iso1299.end(); ++itr ) {
+    //    OUT::ptSorted_ph_noSIEIEiso1299_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso151111.begin() ; itr != sorted_photons_iso151111.end(); ++itr ) {
+    //    OUT::ptSorted_ph_noSIEIEiso151111_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso201616.begin() ; itr != sorted_photons_iso201616.end(); ++itr ) {
+    //    OUT::ptSorted_ph_noSIEIEiso201616_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso53None.begin() ; itr != sorted_photons_passSIEIEiso53None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso53None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso85None.begin() ; itr != sorted_photons_passSIEIEiso85None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso85None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso107None.begin() ; itr != sorted_photons_passSIEIEiso107None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso107None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso129None.begin() ; itr != sorted_photons_passSIEIEiso129None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso129None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso1511None.begin() ; itr != sorted_photons_passSIEIEiso1511None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso1511None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso2016None.begin() ; itr != sorted_photons_passSIEIEiso2016None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso2016None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso5None3.begin() ; itr != sorted_photons_passSIEIEiso5None3.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso5None3_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso8None5.begin() ; itr != sorted_photons_passSIEIEiso8None5.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso8None5_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso10None7.begin() ; itr != sorted_photons_passSIEIEiso10None7.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso10None7_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso12None9.begin() ; itr != sorted_photons_passSIEIEiso12None9.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso12None9_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso15None11.begin() ; itr != sorted_photons_passSIEIEiso15None11.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso15None11_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso20None16.begin() ; itr != sorted_photons_passSIEIEiso20None16.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEiso20None16_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone33.begin() ; itr != sorted_photons_passSIEIEisoNone33.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEisoNone33_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone55.begin() ; itr != sorted_photons_passSIEIEisoNone55.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEisoNone55_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone77.begin() ; itr != sorted_photons_passSIEIEisoNone77.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEisoNone77_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone99.begin() ; itr != sorted_photons_passSIEIEisoNone99.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEisoNone99_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone1111.begin() ; itr != sorted_photons_passSIEIEisoNone1111.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEisoNone1111_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone1616.begin() ; itr != sorted_photons_passSIEIEisoNone1616.end(); ++itr ) {
+    //    OUT::ptSorted_ph_passSIEIEisoNone1616_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso53None.begin() ; itr != sorted_photons_failSIEIEiso53None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso53None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso85None.begin() ; itr != sorted_photons_failSIEIEiso85None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso85None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso107None.begin() ; itr != sorted_photons_failSIEIEiso107None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso107None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso129None.begin() ; itr != sorted_photons_failSIEIEiso129None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso129None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso1511None.begin() ; itr != sorted_photons_failSIEIEiso1511None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso1511None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso2016None.begin() ; itr != sorted_photons_failSIEIEiso2016None.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso2016None_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso5None3.begin() ; itr != sorted_photons_failSIEIEiso5None3.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso5None3_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso8None5.begin() ; itr != sorted_photons_failSIEIEiso8None5.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso8None5_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso10None7.begin() ; itr != sorted_photons_failSIEIEiso10None7.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso10None7_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso12None9.begin() ; itr != sorted_photons_failSIEIEiso12None9.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso12None9_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso15None11.begin() ; itr != sorted_photons_failSIEIEiso15None11.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso15None11_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso20None16.begin() ; itr != sorted_photons_failSIEIEiso20None16.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEiso20None16_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone33.begin() ; itr != sorted_photons_failSIEIEisoNone33.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEisoNone33_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone55.begin() ; itr != sorted_photons_failSIEIEisoNone55.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEisoNone55_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone77.begin() ; itr != sorted_photons_failSIEIEisoNone77.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEisoNone77_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone99.begin() ; itr != sorted_photons_failSIEIEisoNone99.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEisoNone99_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone1111.begin() ; itr != sorted_photons_failSIEIEisoNone1111.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEisoNone1111_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone1616.begin() ; itr != sorted_photons_failSIEIEisoNone1616.end(); ++itr ) {
+    //    OUT::ptSorted_ph_failSIEIEisoNone1616_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoNoPhoIso.begin() ; itr != sorted_photons_mediumNoNeuIsoNoPhoIso.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoNeuIsoNoPhoIso_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoNoPhoIso.begin() ; itr != sorted_photons_mediumNoChIsoNoPhoIso.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoChIsoNoPhoIso_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoNoNeuIso.begin() ; itr != sorted_photons_mediumNoChIsoNoNeuIso.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoChIsoNoNeuIso_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoNoEleVeto_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoNoEleVeto_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoChIsoNoEleVeto_idx->push_back( itr->second );
+    //    // for backwards compatibility
+    //    OUT::ptSorted_ph_mediumNoSIEIENoChIso_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoPassPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoPassPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoFailPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoFailPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoPassCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoFailCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoEleVeto.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIENoEleVeto_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIEPassPSV.begin() ; itr != sorted_photons_mediumNoSIEIEPassPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIEFailPSV.begin() ; itr != sorted_photons_mediumNoSIEIEFailPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIEFailPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIEPassCSEV.begin() ; itr != sorted_photons_mediumNoSIEIEPassCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIEPassCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIEFailCSEV.begin() ; itr != sorted_photons_mediumNoSIEIEFailCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoSIEIEFailCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoEleVeto.begin() ; itr != sorted_photons_mediumNoEleVeto.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoEleVeto_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumPassPSV.begin() ; itr != sorted_photons_mediumPassPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumPassPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumFailPSV.begin() ; itr != sorted_photons_mediumFailPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumFailPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumPassCSEV.begin() ; itr != sorted_photons_mediumPassCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumPassCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumFailCSEV.begin() ; itr != sorted_photons_mediumFailCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumFailCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoChIsoNoEleVeto.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoChIsoNoEleVeto_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoPassPSV.begin() ; itr != sorted_photons_mediumNoChIsoPassPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoChIsoPassPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoFailPSV.begin() ; itr != sorted_photons_mediumNoChIsoFailPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoChIsoFailPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoChIsoPassCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoChIsoPassCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoChIsoFailCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoChIsoFailCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoNeuIsoNoEleVeto.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoNeuIsoNoEleVeto_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoPassPSV.begin() ; itr != sorted_photons_mediumNoNeuIsoPassPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoNeuIsoPassPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoFailPSV.begin() ; itr != sorted_photons_mediumNoNeuIsoFailPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoNeuIsoFailPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoNeuIsoPassCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoNeuIsoPassCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoNeuIsoFailCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoNeuIsoFailCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoPhoIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoPhoIsoNoEleVeto.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoPhoIsoNoEleVeto_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoPhoIsoPassPSV.begin() ; itr != sorted_photons_mediumNoPhoIsoPassPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoPhoIsoPassPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoPhoIsoFailPSV.begin() ; itr != sorted_photons_mediumNoPhoIsoFailPSV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoPhoIsoFailPSV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoPhoIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoPhoIsoPassCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoPhoIsoPassCSEV_idx->push_back( itr->second );
+    //}
+    //for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoPhoIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoPhoIsoFailCSEV.end(); ++itr ) {
+    //    OUT::ptSorted_ph_mediumNoPhoIsoFailCSEV_idx->push_back( itr->second );
+    //}
+
     std::map<std::string, float> results;
     std::map<std::string, std::vector<float> > vector_results;
     Wgg::CalcEventVars( photons, electrons, muons, trigelectrons, trigmuons, metlv, results, vector_results );
@@ -2376,354 +2736,16 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
     CopyMapVarsToOut( results );
     CopyVectorMapVarsToOut( vector_results );
 
-    // sort the list of photon momenta in descending order
+    std::map<std::string, int> sort_results;
+    std::map<std::string, std::vector<int> > vector_sort_results;
+    Wgg::MakePhotonSorting( photons, OUT::ph_sigmaIEIE, OUT::ph_chIsoCorr, OUT::ph_phoIsoCorr, OUT::ph_neuIsoCorr, OUT::ph_passHOverEMedium, OUT::ph_passSIEIEMedium, OUT::ph_passChIsoCorrMedium, OUT::ph_passNeuIsoCorrMedium, OUT::ph_passPhoIsoCorrMedium, OUT::ph_hasPixSeed, OUT::ph_eleVeto, sort_results, vector_sort_results );
+
+    CopyIntMapVarsToOut( sort_results );
+    CopyIntVectorMapVarsToOut( vector_sort_results );
+
+    // sort the list of photon/lepton momenta in descending order
     std::sort(sorted_photons.rbegin(), sorted_photons.rend());
     std::sort(sorted_leptons.rbegin(), sorted_leptons.rend());
-
-    std::sort(sorted_photons_iso533.rbegin()                  , sorted_photons_iso533.rend());
-    std::sort(sorted_photons_iso855.rbegin()                  , sorted_photons_iso855.rend());
-    std::sort(sorted_photons_iso1077.rbegin()                 , sorted_photons_iso1077.rend());
-    std::sort(sorted_photons_iso1299.rbegin()                 , sorted_photons_iso1299.rend());
-    std::sort(sorted_photons_iso151111.rbegin()               , sorted_photons_iso151111.rend());
-    std::sort(sorted_photons_iso201616.rbegin()               , sorted_photons_iso201616.rend());
-    std::sort(sorted_photons_passSIEIEiso53None.rbegin()      , sorted_photons_passSIEIEiso53None.rend());
-    std::sort(sorted_photons_passSIEIEiso85None.rbegin()      , sorted_photons_passSIEIEiso85None.rend());
-    std::sort(sorted_photons_passSIEIEiso107None.rbegin()     , sorted_photons_passSIEIEiso107None.rend());
-    std::sort(sorted_photons_passSIEIEiso129None.rbegin()     , sorted_photons_passSIEIEiso129None.rend());
-    std::sort(sorted_photons_passSIEIEiso1511None.rbegin()    , sorted_photons_passSIEIEiso1511None.rend());
-    std::sort(sorted_photons_passSIEIEiso2016None.rbegin()    , sorted_photons_passSIEIEiso2016None.rend());
-    std::sort(sorted_photons_passSIEIEiso5None3.rbegin()       , sorted_photons_passSIEIEiso5None3.rend());
-    std::sort(sorted_photons_passSIEIEiso8None5.rbegin()       , sorted_photons_passSIEIEiso8None5.rend());
-    std::sort(sorted_photons_passSIEIEiso10None7.rbegin()      , sorted_photons_passSIEIEiso10None7.rend());
-    std::sort(sorted_photons_passSIEIEiso12None9.rbegin()      , sorted_photons_passSIEIEiso12None9.rend());
-    std::sort(sorted_photons_passSIEIEiso15None11.rbegin()    , sorted_photons_passSIEIEiso15None11.rend());
-    std::sort(sorted_photons_passSIEIEiso20None16.rbegin()    , sorted_photons_passSIEIEiso20None16.rend());
-    std::sort(sorted_photons_passSIEIEisoNone33.rbegin()      , sorted_photons_passSIEIEisoNone33.rend());
-    std::sort(sorted_photons_passSIEIEisoNone55.rbegin()      , sorted_photons_passSIEIEisoNone55.rend());
-    std::sort(sorted_photons_passSIEIEisoNone77.rbegin()      , sorted_photons_passSIEIEisoNone77.rend());
-    std::sort(sorted_photons_passSIEIEisoNone99.rbegin()      , sorted_photons_passSIEIEisoNone99.rend());
-    std::sort(sorted_photons_passSIEIEisoNone1111.rbegin()    , sorted_photons_passSIEIEisoNone1111.rend());
-    std::sort(sorted_photons_passSIEIEisoNone1616.rbegin()    , sorted_photons_passSIEIEisoNone1616.rend());
-    std::sort(sorted_photons_failSIEIEiso53None.rbegin()      , sorted_photons_failSIEIEiso53None.rend());
-    std::sort(sorted_photons_failSIEIEiso85None.rbegin()      , sorted_photons_failSIEIEiso85None.rend());
-    std::sort(sorted_photons_failSIEIEiso107None.rbegin()     , sorted_photons_failSIEIEiso107None.rend());
-    std::sort(sorted_photons_failSIEIEiso129None.rbegin()     , sorted_photons_failSIEIEiso129None.rend());
-    std::sort(sorted_photons_failSIEIEiso1511None.rbegin()    , sorted_photons_failSIEIEiso1511None.rend());
-    std::sort(sorted_photons_failSIEIEiso2016None.rbegin()    , sorted_photons_failSIEIEiso2016None.rend());
-    std::sort(sorted_photons_failSIEIEiso5None3.rbegin()       , sorted_photons_failSIEIEiso5None3.rend());
-    std::sort(sorted_photons_failSIEIEiso8None5.rbegin()       , sorted_photons_failSIEIEiso8None5.rend());
-    std::sort(sorted_photons_failSIEIEiso10None7.rbegin()      , sorted_photons_failSIEIEiso10None7.rend());
-    std::sort(sorted_photons_failSIEIEiso12None9.rbegin()      , sorted_photons_failSIEIEiso12None9.rend());
-    std::sort(sorted_photons_failSIEIEiso15None11.rbegin()    , sorted_photons_failSIEIEiso15None11.rend());
-    std::sort(sorted_photons_failSIEIEiso20None16.rbegin()    , sorted_photons_failSIEIEiso20None16.rend());
-    std::sort(sorted_photons_failSIEIEisoNone33.rbegin()      , sorted_photons_failSIEIEisoNone33.rend());
-    std::sort(sorted_photons_failSIEIEisoNone55.rbegin()      , sorted_photons_failSIEIEisoNone55.rend());
-    std::sort(sorted_photons_failSIEIEisoNone77.rbegin()      , sorted_photons_failSIEIEisoNone77.rend());
-    std::sort(sorted_photons_failSIEIEisoNone99.rbegin()      , sorted_photons_failSIEIEisoNone99.rend());
-    std::sort(sorted_photons_failSIEIEisoNone1111.rbegin()    , sorted_photons_failSIEIEisoNone1111.rend());
-    std::sort(sorted_photons_failSIEIEisoNone1616.rbegin()    , sorted_photons_failSIEIEisoNone1616.rend());
-    std::sort(sorted_photons_mediumNoNeuIsoNoPhoIso.rbegin()  , sorted_photons_mediumNoNeuIsoNoPhoIso.rend());
-    std::sort(sorted_photons_mediumNoChIsoNoPhoIso.rbegin()   , sorted_photons_mediumNoChIsoNoPhoIso.rend());
-    std::sort(sorted_photons_mediumNoChIsoNoNeuIso.rbegin()   , sorted_photons_mediumNoChIsoNoNeuIso.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoChIsoPassPSV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoPassPSV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoChIsoFailPSV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoFailPSV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoChIsoPassCSEV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoPassCSEV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.rbegin()   , sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoChIsoFailCSEV.rbegin()    , sorted_photons_mediumNoSIEIENoChIsoFailCSEV.rend());
-    std::sort(sorted_photons_mediumNoSIEIENoEleVeto.rbegin()  , sorted_photons_mediumNoSIEIENoEleVeto.rend());
-    std::sort(sorted_photons_mediumNoSIEIEPassPSV.rbegin()    , sorted_photons_mediumNoSIEIEPassPSV.rend());
-    std::sort(sorted_photons_mediumNoSIEIEFailPSV.rbegin()    , sorted_photons_mediumNoSIEIEFailPSV.rend());
-    std::sort(sorted_photons_mediumNoSIEIEPassCSEV.rbegin()   , sorted_photons_mediumNoSIEIEPassCSEV.rend());
-    std::sort(sorted_photons_mediumNoSIEIEFailCSEV.rbegin()   , sorted_photons_mediumNoSIEIEFailCSEV.rend());
-    std::sort(sorted_photons_mediumNoEleVeto.rbegin()         , sorted_photons_mediumNoEleVeto.rend());
-    std::sort(sorted_photons_mediumPassPSV.rbegin()           , sorted_photons_mediumPassPSV.rend());
-    std::sort(sorted_photons_mediumFailPSV.rbegin()           , sorted_photons_mediumFailPSV.rend());
-    std::sort(sorted_photons_mediumPassCSEV.rbegin()          , sorted_photons_mediumPassCSEV.rend());
-    std::sort(sorted_photons_mediumFailCSEV.rbegin()          , sorted_photons_mediumFailCSEV.rend());
-    std::sort(sorted_photons_mediumNoChIsoNoEleVeto.rbegin()  , sorted_photons_mediumNoChIsoNoEleVeto.rend());
-    std::sort(sorted_photons_mediumNoChIsoPassPSV.rbegin()    , sorted_photons_mediumNoChIsoPassPSV.rend());
-    std::sort(sorted_photons_mediumNoChIsoFailPSV.rbegin()    , sorted_photons_mediumNoChIsoFailPSV.rend());
-    std::sort(sorted_photons_mediumNoChIsoPassCSEV.rbegin()   , sorted_photons_mediumNoChIsoPassCSEV.rend());
-    std::sort(sorted_photons_mediumNoChIsoFailCSEV.rbegin()   , sorted_photons_mediumNoChIsoFailCSEV.rend());
-    std::sort(sorted_photons_mediumNoNeuIsoNoEleVeto.rbegin() , sorted_photons_mediumNoNeuIsoNoEleVeto.rend());
-    std::sort(sorted_photons_mediumNoNeuIsoPassPSV.rbegin()   , sorted_photons_mediumNoNeuIsoPassPSV.rend());
-    std::sort(sorted_photons_mediumNoNeuIsoFailPSV.rbegin()   , sorted_photons_mediumNoNeuIsoFailPSV.rend());
-    std::sort(sorted_photons_mediumNoNeuIsoPassCSEV.rbegin()  , sorted_photons_mediumNoNeuIsoPassCSEV.rend());
-    std::sort(sorted_photons_mediumNoNeuIsoFailCSEV.rbegin()  , sorted_photons_mediumNoNeuIsoFailCSEV.rend());
-    std::sort(sorted_photons_mediumNoPhoIsoNoEleVeto.rbegin() , sorted_photons_mediumNoPhoIsoNoEleVeto.rend());
-    std::sort(sorted_photons_mediumNoPhoIsoPassPSV.rbegin()   , sorted_photons_mediumNoPhoIsoPassPSV.rend());
-    std::sort(sorted_photons_mediumNoPhoIsoFailPSV.rbegin()   , sorted_photons_mediumNoPhoIsoFailPSV.rend());
-    std::sort(sorted_photons_mediumNoPhoIsoPassCSEV.rbegin()  , sorted_photons_mediumNoPhoIsoPassCSEV.rend());
-    std::sort(sorted_photons_mediumNoPhoIsoFailCSEV.rbegin()  , sorted_photons_mediumNoPhoIsoFailCSEV.rend());
-
-
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso533.begin() ; itr != sorted_photons_iso533.end(); ++itr ) {
-        OUT::ptSorted_ph_noSIEIEiso533_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso855.begin() ; itr != sorted_photons_iso855.end(); ++itr ) {
-        OUT::ptSorted_ph_noSIEIEiso855_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso1077.begin() ; itr != sorted_photons_iso1077.end(); ++itr ) {
-        OUT::ptSorted_ph_noSIEIEiso1077_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso1299.begin() ; itr != sorted_photons_iso1299.end(); ++itr ) {
-        OUT::ptSorted_ph_noSIEIEiso1299_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso151111.begin() ; itr != sorted_photons_iso151111.end(); ++itr ) {
-        OUT::ptSorted_ph_noSIEIEiso151111_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_iso201616.begin() ; itr != sorted_photons_iso201616.end(); ++itr ) {
-        OUT::ptSorted_ph_noSIEIEiso201616_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso53None.begin() ; itr != sorted_photons_passSIEIEiso53None.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso53None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso85None.begin() ; itr != sorted_photons_passSIEIEiso85None.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso85None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso107None.begin() ; itr != sorted_photons_passSIEIEiso107None.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso107None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso129None.begin() ; itr != sorted_photons_passSIEIEiso129None.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso129None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso1511None.begin() ; itr != sorted_photons_passSIEIEiso1511None.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso1511None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso2016None.begin() ; itr != sorted_photons_passSIEIEiso2016None.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso2016None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso5None3.begin() ; itr != sorted_photons_passSIEIEiso5None3.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso5None3_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso8None5.begin() ; itr != sorted_photons_passSIEIEiso8None5.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso8None5_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso10None7.begin() ; itr != sorted_photons_passSIEIEiso10None7.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso10None7_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso12None9.begin() ; itr != sorted_photons_passSIEIEiso12None9.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso12None9_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso15None11.begin() ; itr != sorted_photons_passSIEIEiso15None11.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso15None11_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEiso20None16.begin() ; itr != sorted_photons_passSIEIEiso20None16.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEiso20None16_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone33.begin() ; itr != sorted_photons_passSIEIEisoNone33.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEisoNone33_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone55.begin() ; itr != sorted_photons_passSIEIEisoNone55.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEisoNone55_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone77.begin() ; itr != sorted_photons_passSIEIEisoNone77.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEisoNone77_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone99.begin() ; itr != sorted_photons_passSIEIEisoNone99.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEisoNone99_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone1111.begin() ; itr != sorted_photons_passSIEIEisoNone1111.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEisoNone1111_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_passSIEIEisoNone1616.begin() ; itr != sorted_photons_passSIEIEisoNone1616.end(); ++itr ) {
-        OUT::ptSorted_ph_passSIEIEisoNone1616_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso53None.begin() ; itr != sorted_photons_failSIEIEiso53None.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso53None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso85None.begin() ; itr != sorted_photons_failSIEIEiso85None.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso85None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso107None.begin() ; itr != sorted_photons_failSIEIEiso107None.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso107None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso129None.begin() ; itr != sorted_photons_failSIEIEiso129None.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso129None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso1511None.begin() ; itr != sorted_photons_failSIEIEiso1511None.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso1511None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso2016None.begin() ; itr != sorted_photons_failSIEIEiso2016None.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso2016None_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso5None3.begin() ; itr != sorted_photons_failSIEIEiso5None3.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso5None3_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso8None5.begin() ; itr != sorted_photons_failSIEIEiso8None5.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso8None5_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso10None7.begin() ; itr != sorted_photons_failSIEIEiso10None7.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso10None7_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso12None9.begin() ; itr != sorted_photons_failSIEIEiso12None9.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso12None9_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso15None11.begin() ; itr != sorted_photons_failSIEIEiso15None11.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso15None11_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEiso20None16.begin() ; itr != sorted_photons_failSIEIEiso20None16.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEiso20None16_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone33.begin() ; itr != sorted_photons_failSIEIEisoNone33.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEisoNone33_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone55.begin() ; itr != sorted_photons_failSIEIEisoNone55.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEisoNone55_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone77.begin() ; itr != sorted_photons_failSIEIEisoNone77.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEisoNone77_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone99.begin() ; itr != sorted_photons_failSIEIEisoNone99.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEisoNone99_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone1111.begin() ; itr != sorted_photons_failSIEIEisoNone1111.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEisoNone1111_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_failSIEIEisoNone1616.begin() ; itr != sorted_photons_failSIEIEisoNone1616.end(); ++itr ) {
-        OUT::ptSorted_ph_failSIEIEisoNone1616_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoNoPhoIso.begin() ; itr != sorted_photons_mediumNoNeuIsoNoPhoIso.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoNeuIsoNoPhoIso_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoNoPhoIso.begin() ; itr != sorted_photons_mediumNoChIsoNoPhoIso.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoChIsoNoPhoIso_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoNoNeuIso.begin() ; itr != sorted_photons_mediumNoChIsoNoNeuIso.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoChIsoNoNeuIso_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoNoEleVeto.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoNoEleVeto_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoNoEleVeto.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoNoEleVeto_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoNoEleVeto.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoChIsoNoEleVeto_idx->push_back( itr->second );
-        // for backwards compatibility
-        OUT::ptSorted_ph_mediumNoSIEIENoChIso_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoPassPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoPassPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoPassPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoPassPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoFailPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoFailPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoFailPSV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoFailPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoPassCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoPassCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoPassCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoPassCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoPassCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoChIsoPassCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoPhoIsoFailCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoPhoIsoFailCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoNeuIsoFailCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoNeuIsoFailCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoChIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoSIEIENoChIsoFailCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoChIsoFailCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIENoEleVeto.begin() ; itr != sorted_photons_mediumNoSIEIENoEleVeto.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIENoEleVeto_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIEPassPSV.begin() ; itr != sorted_photons_mediumNoSIEIEPassPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIEFailPSV.begin() ; itr != sorted_photons_mediumNoSIEIEFailPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIEFailPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIEPassCSEV.begin() ; itr != sorted_photons_mediumNoSIEIEPassCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIEPassCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoSIEIEFailCSEV.begin() ; itr != sorted_photons_mediumNoSIEIEFailCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoSIEIEFailCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoEleVeto.begin() ; itr != sorted_photons_mediumNoEleVeto.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoEleVeto_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumPassPSV.begin() ; itr != sorted_photons_mediumPassPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumPassPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumFailPSV.begin() ; itr != sorted_photons_mediumFailPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumFailPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumPassCSEV.begin() ; itr != sorted_photons_mediumPassCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumPassCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumFailCSEV.begin() ; itr != sorted_photons_mediumFailCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumFailCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoChIsoNoEleVeto.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoChIsoNoEleVeto_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoPassPSV.begin() ; itr != sorted_photons_mediumNoChIsoPassPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoChIsoPassPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoFailPSV.begin() ; itr != sorted_photons_mediumNoChIsoFailPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoChIsoFailPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoChIsoPassCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoChIsoPassCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoChIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoChIsoFailCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoChIsoFailCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoNeuIsoNoEleVeto.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoNeuIsoNoEleVeto_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoPassPSV.begin() ; itr != sorted_photons_mediumNoNeuIsoPassPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoNeuIsoPassPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoFailPSV.begin() ; itr != sorted_photons_mediumNoNeuIsoFailPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoNeuIsoFailPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoNeuIsoPassCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoNeuIsoPassCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoNeuIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoNeuIsoFailCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoNeuIsoFailCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoPhoIsoNoEleVeto.begin() ; itr != sorted_photons_mediumNoPhoIsoNoEleVeto.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoPhoIsoNoEleVeto_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoPhoIsoPassPSV.begin() ; itr != sorted_photons_mediumNoPhoIsoPassPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoPhoIsoPassPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoPhoIsoFailPSV.begin() ; itr != sorted_photons_mediumNoPhoIsoFailPSV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoPhoIsoFailPSV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoPhoIsoPassCSEV.begin() ; itr != sorted_photons_mediumNoPhoIsoPassCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoPhoIsoPassCSEV_idx->push_back( itr->second );
-    }
-    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_photons_mediumNoPhoIsoFailCSEV.begin() ; itr != sorted_photons_mediumNoPhoIsoFailCSEV.end(); ++itr ) {
-        OUT::ptSorted_ph_mediumNoPhoIsoFailCSEV_idx->push_back( itr->second );
-    }
 
     if( sorted_photons.size() > 1 ) {
         int leadidx = sorted_photons[0].second;

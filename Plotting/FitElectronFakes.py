@@ -84,16 +84,16 @@ global_hists={}
 
 def get_default_draw_commands( ) :
 
-    #return { 'FF' :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==1 && ph_elMinDR[0]>0.2 && ph_elMinDR[1]>0.2 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_eta[0])<2.5 && fabs(ph_eta[1]) < 2.5' , 
-    #         'RF'  :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && ph_elMinDR[0]>0.2  && ph_elMinDR[1]>0.2 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_eta[0])<2.5 && fabs(ph_eta[1]) < 2.5',
-    #         'FR'  :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && ph_elMinDR[0]>0.2 && ph_elMinDR[1]>0.2 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_eta[0])<2.5 && fabs(ph_eta[1]) < 2.5',
-    #         'RR' :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_elMinDR[0]>0.2  && ph_elMinDR[1]>0.2  && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_eta[0])<2.5 && fabs(ph_eta[1]) < 2.5',
+    #return { 'FF' :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==1 && ph_elMinDR[0]>0.2 && ph_elMinDR[1]>0.2 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_sceta[0])<2.5 && fabs(ph_sceta[1]) < 2.5' , 
+    #         'RF'  :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && ph_elMinDR[0]>0.2  && ph_elMinDR[1]>0.2 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_sceta[0])<2.5 && fabs(ph_sceta[1]) < 2.5',
+    #         'FR'  :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && ph_elMinDR[0]>0.2 && ph_elMinDR[1]>0.2 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_sceta[0])<2.5 && fabs(ph_sceta[1]) < 2.5',
+    #         'RR' :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_elMinDR[0]>0.2  && ph_elMinDR[1]>0.2  && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_sceta[0])<2.5 && fabs(ph_sceta[1]) < 2.5',
     #       }
 
-    return { 'FF' :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==1 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_eta[0])<2.5 && fabs(ph_eta[1]) < 2.5' , 
-             'RF'  :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && ph_elMinDR[0]>0.2 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_eta[0])<2.5 && fabs(ph_eta[1]) < 2.5',
-             'FR'  :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && ph_elMinDR[1]>0.2 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_eta[0])<2.5 && fabs(ph_eta[1]) < 2.5',
-             'RR' :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_eta[0])<2.5 && fabs(ph_eta[1]) < 2.5',
+    return { 'FF' :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==1 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_sceta[0])<2.5 && fabs(ph_sceta[1]) < 2.5' , 
+             'RF'  :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==1 && ph_elMinDR[0]>0.2 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_sceta[0])<2.5 && fabs(ph_sceta[1]) < 2.5',
+             'FR'  :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==1 && ph_hasPixSeed[1]==0 && ph_elMinDR[1]>0.2 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_sceta[0])<2.5 && fabs(ph_sceta[1]) < 2.5',
+             'RR' :'ph_n==2 && ph_passMedium[0] && ph_passMedium[1] && ph_hasPixSeed[0]==0 && ph_hasPixSeed[1]==0 && ph_phDR>0.3 && ph_pt[0]>15 && ph_pt[1]>15 && fabs(ph_sceta[0])<2.5 && fabs(ph_sceta[1]) < 2.5',
            }
 
 def get_photon_vars( fittype, useCsev=False ) :
@@ -153,7 +153,8 @@ def get_ratio_draw_commands( isConv=None, useCsev=False, useTAndP=False, mc=Fals
         else :
 
             nom = 'el_passtrig_n>0 && el_n==1 && %s==1  && ph_hasPixSeed[%s[0]]==0 && dr_ph1_trigEle > 0.4' %( phcutnom, phidxnom )
-            inv = 'el_passtrig_n>0 && el_n==2 && %s==1  && ph_hasPixSeed[%s[0]]==1 && dr_ph1_trigEle > 0.4 '%( phcutinv, phidxinv )
+            #inv = 'el_passtrig_n>0 && el_n>0 && %s==1  && ph_hasPixSeed[%s[0]]==1 && dr_ph1_trigEle > 0.4 '%( phcutinv, phidxinv )
+            inv = 'el_passtrig_n>0 && el_n>0 && ph_n==1 '
 
             if mc : 
                 return { 'nom' : nom + ' && ph_truthMatch_el[%s[0]] ' %phidxnom, 'inv' : inv +  ' && ph_truthMatch_el[%s[0]]'%phidxinv }
@@ -505,7 +506,10 @@ def InvDoElectronFakeFit( outputDir=None, useHist=None) :
 
 def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=False, useTAndP=False, useHist=None, useCoarseEta=False, useMCTemplate=False, useMCTemplateBackground=False, useLandauSig=False, usePolyBkg=False, useExpBkg=False, useChebyBkg=False, useBernsteinBkg=False, doNDKeys=False, extra_bkg_sample=None) :
 
-    subdir = 'ElectronFakeFitsRatio'
+    print '**********************************************FIX*******************************************'
+    #subdir = 'ElectronFakeFitsRatioDupInvMatchEleNewFixEta'
+    subdir = 'ElectronFakeFitsRatioDupInvMatchEleNewFixEta24'
+
     if useCsev :
         subdir += 'CSEV'
     if useTAndP :
@@ -568,8 +572,15 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
     #                 (15, 1000000) : pt_bins,
     #               }
 
+    print '**********************************************FIX*******************************************'
+    raw_input('cont')
+
+    #coarse_eta_bins = { ('0.00', '1.44') : [ ('0.00', '0.10'), ('0.10', '0.50'), ('0.50', '1.00'), ('1.00', '1.44') ], 
+    #                    ('1.57', '2.50') : [ ('1.57', '2.10'), ('2.10', '2.20'), ('2.20', '2.40'), ('2.40', '2.50')],
+    #                  }
+
     coarse_eta_bins = { ('0.00', '1.44') : [ ('0.00', '0.10'), ('0.10', '0.50'), ('0.50', '1.00'), ('1.00', '1.44') ], 
-                        ('1.57', '2.50') : [ ('1.57', '2.10'), ('2.10', '2.20'), ('2.20', '2.40'), ('2.40', '2.50')],
+                        ('1.57', '2.50') : [ ('1.57', '2.10'), ('2.10', '2.20'), ('2.20', '2.40')],
                       }
 
     eta_bins = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5) ]
@@ -608,13 +619,13 @@ def DoElectronFakeFitRatio( outputDir=None, sample='Data', isConv=None, useCsev=
             selection_mc_nom = draw_cmds_mc['nom'] 
             selection_mc_inv = draw_cmds_mc['inv'] 
 
-            selection_mc_nom +=  ' && fabs( ph_eta[%s[0]]) '%phidxnom + '> %(etamin)f' 
-            selection_mc_nom +=  ' && fabs(ph_eta[%s[0]]) '%phidxnom + ' < %(etamin)f'
+            selection_mc_nom +=  ' && fabs( ph_sceta[%s[0]]) '%phidxnom + '> %(etamin)f' 
+            selection_mc_nom +=  ' && fabs(ph_sceta[%s[0]]) '%phidxnom + ' < %(etamin)f'
             selection_mc_nom +=  ' && ph_pt[%s[0]] '%phidxnom + '> %(ptmin)d'
             selection_mc_nom +=  ' && ph_pt[%s[0]] '%phidxnom + '< %(ptmax)d'  
 
-            selection_mc_inv +=  ' && fabs( ph_eta[%s[0]]) '%phidxinv + '> %(etamin)f' 
-            selection_mc_inv +=  ' && fabs(ph_eta[%s[0]]) '%phidxinv + ' < %(etamin)f'
+            selection_mc_inv +=  ' && fabs( ph_sceta[%s[0]]) '%phidxinv + '> %(etamin)f' 
+            selection_mc_inv +=  ' && fabs(ph_sceta[%s[0]]) '%phidxinv + ' < %(etamin)f'
             selection_mc_inv +=  ' && ph_pt[%s[0]] '%phidxinv + '> %(ptmin)d'
             selection_mc_inv +=  ' && ph_pt[%s[0]] '%phidxinv + '< %(ptmax)d'  
 
@@ -919,8 +930,8 @@ def DoElectronFakeRatioClosure( outputDir=None) :
 
     hist_nom_pt.Divide(hist_inv_pt)
 
-    hist_inv_eta = clone_sample_and_draw( target_samp_inv[0], 'ph_eta[0]', selection_inv, eta_bins )
-    hist_nom_eta = clone_sample_and_draw( target_samp_nom[0], 'ph_eta[0]', selection_nom, eta_bins )
+    hist_inv_eta = clone_sample_and_draw( target_samp_inv[0], 'ph_sceta[0]', selection_inv, eta_bins )
+    hist_nom_eta = clone_sample_and_draw( target_samp_nom[0], 'ph_sceta[0]', selection_nom, eta_bins )
 
     hist_nom_eta.Divide(hist_inv_eta)
 
@@ -998,11 +1009,11 @@ def get_mass_histograms( selection_2fake_taglead, selection_2fake_tagsubl, selec
     results['pt']['eg'] = eg_pt_lead
 
     # eta hists
-    ee_eta_lead = clone_sample_and_draw( target_samp[0], 'm_phph:ph_eta[0]', selection_2fake_tagsubl, (500, -2.5, 2.5, mass_binning[0], mass_binning[1], mass_binning[2]) )
-    ee_eta_subl = clone_sample_and_draw( target_samp[0], 'm_phph:ph_eta[1]', selection_2fake_taglead, (500, -2.5, 2.5, mass_binning[0], mass_binning[1], mass_binning[2]) )
+    ee_eta_lead = clone_sample_and_draw( target_samp[0], 'm_phph:ph_sceta[0]', selection_2fake_tagsubl, (500, -2.5, 2.5, mass_binning[0], mass_binning[1], mass_binning[2]) )
+    ee_eta_subl = clone_sample_and_draw( target_samp[0], 'm_phph:ph_sceta[1]', selection_2fake_taglead, (500, -2.5, 2.5, mass_binning[0], mass_binning[1], mass_binning[2]) )
 
-    eg_eta_lead = clone_sample_and_draw( target_samp[0], 'm_phph:ph_eta[0]', selection_1fake_tagsubl, (500, -2.5, 2.5, mass_binning[0], mass_binning[1], mass_binning[2]))
-    eg_eta_subl = clone_sample_and_draw( target_samp[0], 'm_phph:ph_eta[1]', selection_1fake_taglead, (500, -2.5, 2.5, mass_binning[0], mass_binning[1], mass_binning[2]))
+    eg_eta_lead = clone_sample_and_draw( target_samp[0], 'm_phph:ph_sceta[0]', selection_1fake_tagsubl, (500, -2.5, 2.5, mass_binning[0], mass_binning[1], mass_binning[2]))
+    eg_eta_subl = clone_sample_and_draw( target_samp[0], 'm_phph:ph_sceta[1]', selection_1fake_taglead, (500, -2.5, 2.5, mass_binning[0], mass_binning[1], mass_binning[2]))
 
     eg_eta_lead.Add(eg_eta_subl)
     ee_eta_lead.Add(ee_eta_subl)
@@ -1036,7 +1047,7 @@ def get_3d_mass_ratio_histograms( selection_nom, selection_inv, sample,  mass_bi
         if useTAndP :
             var_lead = 'm_tagprobe:probe_pt:fabs(probe_eta)'
         else :
-            var_lead = 'm_trigelph1:ph_pt[0]:fabs(ph_eta[0])' #z:y:x
+            var_lead = 'm_trigelph1:ph_pt[0]:fabs(ph_sceta[0])' #z:y:x
         eta_nbin = 250
         eta_min = 0
         eta_max = 2.5
@@ -1044,7 +1055,7 @@ def get_3d_mass_ratio_histograms( selection_nom, selection_inv, sample,  mass_bi
         if useTAndP :
             var_lead = 'm_tagprobe:probe_pt:probe_eta'
         else :
-            var_lead = 'm_trigelph1:ph_pt[0]:ph_eta[0]' #z:y:x
+            var_lead = 'm_trigelph1:ph_pt[0]:ph_sceta[0]' #z:y:x
         eta_nbin = 500
         eta_min = -2.5
         eta_max = 2.5
@@ -1090,14 +1101,14 @@ def get_3d_mass_histograms( selection_2fake_taglead, selection_2fake_tagsubl, se
     target_samp = sampMan.get_samples(name=sample)
 
     if useAbsEta :
-        var_lead = 'm_phph:ph_pt[0]:fabs(ph_eta[0])' #z:y:x
-        var_subl = 'm_phph:ph_pt[1]:fabs(ph_eta[1])' #z:y:x
+        var_lead = 'm_phph:ph_pt[0]:fabs(ph_sceta[0])' #z:y:x
+        var_subl = 'm_phph:ph_pt[1]:fabs(ph_sceta[1])' #z:y:x
         eta_nbin = 250
         eta_min = 0
         eta_max = 2.5
     else :
-        var_lead = 'm_phph:ph_pt[0]:ph_eta[0]' #z:y:x
-        var_subl = 'm_phph:ph_pt[1]:ph_eta[1]' #z:y:x
+        var_lead = 'm_phph:ph_pt[0]:ph_sceta[0]' #z:y:x
+        var_subl = 'm_phph:ph_pt[1]:ph_sceta[1]' #z:y:x
         eta_nbin = 500
         eta_min = -2.5
         eta_max = 2.5
@@ -1344,7 +1355,7 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, mcTemplateBkg=None, use
                 #    pt_eta_selection = ndKeysSelection %{'etamin' : etamin, 'etamax' : etamax,'ptmin' : ptmin, 'ptmax' : ptmax }
                 #    pt_eta_selection_bkg = '%s ( %s ) ' %( ndKeysSelectionBkg, pt_eta_selection )
                 #else :
-                #    #pt_eta_selection = ndKeysSelection + ' && fabs(ph_eta[0]) > %f && fabs(ph_eta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d ' %( etamin, etamax, ptmin, ptmax )
+                #    #pt_eta_selection = ndKeysSelection + ' && fabs(ph_sceta[0]) > %f && fabs(ph_sceta[0]) < %f && ph_pt[0] > %d && ph_pt[0] < %d ' %( etamin, etamax, ptmin, ptmax )
                 #    pt_eta_selection = ndKeysSelection %{'etamin' : etamin, 'etamax' : etamax, 'ptmin' : ptmin, 'ptmax' : ptmax }
                 #    pt_eta_selection_bkg = '%s ( %s ) ' %( ndKeysSelectionBkg, pt_eta_selection )
 
@@ -1429,7 +1440,7 @@ def fit_pt_eta_bins( hist, pt_eta_bins, mcTemplate=None, mcTemplateBkg=None, use
                     ph_n             = ROOT.RooRealVar( 'ph_n', 'ph_n', 0, 10 )
                     ph_hasPixSeed    = ROOT.RooRealVar( 'ph_hasPixSeed[0]', 'ph_hasPixSeed[0]', 0, 10 )
                     ph_eleVeto       = ROOT.RooRealVar( 'ph_eleVeto[0]', 'ph_eleVeto[0]', 0, 10 )
-                    ph_eta           = ROOT.RooRealVar( 'ph_eta[0]', 'ph_eta[0]', -5., 5. )
+                    ph_eta           = ROOT.RooRealVar( 'ph_sceta[0]', 'ph_sceta[0]', -5., 5. )
                     ph_pt            = ROOT.RooRealVar( 'ph_pt[0]', 'ph_pt[0]', 0, 1000. )
                     ph_truthMatch_ph = ROOT.RooRealVar( 'ph_truthMatch_ph[0]', 'ph_truthMatch_ph[0]', 0, 1. )
 

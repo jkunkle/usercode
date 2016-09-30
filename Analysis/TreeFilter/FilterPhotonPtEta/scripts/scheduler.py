@@ -14,11 +14,14 @@ if not options.run and not options.check :
     options.run = True
 
 #base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhIDNoEleOlapRM_2015_11_09'
-base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhIDNoElOlapRm_2016_02_05'
+#base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhIDNoElOlapRm_2016_02_05'
+base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaMediumPhIDNoTrigElOlapRmDupInvPSV_2016_03_10'
 #base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhID_2015_11_09'
 
 
 jobs = [
+        #(base, 'job_summer12_DYJetsToLL_s10PhOlapOnlyDup'),
+        #(base, 'job_summer12_DYJetsToLL_s10PhOlapNoDup'),
         (base, 'job_summer12_DYJetsToLL_s10PhOlap'),
 ]
 
@@ -33,7 +36,8 @@ else :
     #--------------------
     # not batch
     #--------------------
-    command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --outputDir %(base)s/%(job)s_filt_pt_%(ptmin)d-%(ptmax)d_eta_%(etamin).2f-%(etamax).2f --outputFile tree.root --treeName %(treename)s --fileKey tree.root --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --confFileName %(conf_file)s --nFilesPerJob %(nFilesPerJob)d --nproc %(nproc)d --exeName %(exename)s  '
+    #command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --outputDir %(base)s/%(job)s_filt_pt_%(ptmin)d-%(ptmax)d_eta_%(etamin).2f-%(etamax).2f --outputFile tree.root --treeName %(treename)s --fileKey tree.root --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --confFileName %(conf_file)s --nFilesPerJob %(nFilesPerJob)d --nproc %(nproc)d --exeName %(exename)s  '
+    command_base = 'python scripts/filter.py  --filesDir %(base)s/%(job)s --outputDir %(base)s/%(job)s_filt_pt_%(ptmin)d-%(ptmax)d_eta_%(etamin).2f-%(etamax).2f --outputFile tree.root --treeName %(treename)s --fileKey tree.root --module scripts/%(module)s --moduleArgs "%(moduleArgs)s" --confFileName %(conf_file)s  --exeName %(exename)s  '
     
 if options.resubmit :
     command_base += ' --resubmit '
@@ -53,9 +57,16 @@ pt_bins = [
            (60,70),
            (70,1000000) 
 ]
-eta_bins = [(0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 1.44), (1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5) ]
-#eta_bins = [(1.57, 2.1), (2.1, 2.2), (2.2, 2.4), (2.4, 2.5) ]
-#eta_bins = [(1.57, 2.1)]
+eta_bins = [
+            (0.0, 0.1), 
+            (0.1, 0.5), 
+            (0.5, 1.0), 
+            (1.0, 1.44), 
+            (1.57, 2.1), 
+            (2.1, 2.2), 
+            (2.2, 2.4), 
+            (2.4, 2.5) 
+]
 
 eveto = 'PSV'
 #types = [ 'inv', 'nom',]
@@ -72,7 +83,7 @@ for tp in types :
             configs.append(this_config)
 
 module = 'ConfFilter.py'
-nFilesPerJob = 1
+nFilesPerJob = 10
 nProc = 6
 exename='RunAnalysis'
 treename='ggNtuplizer/EventTree'

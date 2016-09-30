@@ -16,8 +16,8 @@ if not options.run and not options.check :
 #base = '/eos/cms/store/user/jkunkle/Wgamgam/RecoOutput_2013_12_07'
 #base = '/eos/cms/store/user/jkunkle/Wgamgam/GammaGammaMediumNoEleVetoNoEleIDOlapWithTrig_2014_07_31/'
 #base_tmp = '/tmp/tEST/RecoOutputTESTNoCorr_2014_02_05/'
-#base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/'
-base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
+base = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/'
+#base = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/'
 
 # ----------------------------
 # The suffix that appears on the 
@@ -28,14 +28,15 @@ suffix='PhOlap'
 #suffix='2PhFilt'
 
 jobs = [
-        (base, 'job_summer12_DYJetsToLL_s10'),
+        #(base, 'job_summer12_DYJetsToLL_s10'),
+        #(base, 'job_summer12_DYJetsToLL_s10_FullElOlapRm'),
         #(base, 'job_summer12_Wjets'),
         #(base, 'job_summer12_ttjets_1l'),
         #(base, 'job_summer12_ttjets_2l'),
 
         #(base, 'job_summer12_Wg'),
 
-        #(base, 'job_summer12_Zg'),
+        (base, 'job_summer12_Zg_s10'),
         #(base, 'job_summer12_ZgWithSF'),
 
         #(base, 'job_summer12_Zgg'),
@@ -119,7 +120,7 @@ jobs = [
 #module_data = 'ConfLepGammaFilter_Data.py'
 #output_name = 'LepGamma_2013_11_04'
 #sub_base = ['LepGammaGammaNoPhID_2015_11_09', 'LepGammaNoPhID_2015_11_09', 'LepLepGammaNoPhID_2015_11_09', 'LepGammaGammaFinalMuUnblindAllNoMtCut_2015_11_11', 'LepGammaGammaFinalElUnblindAllNoZCutNoMtCut_2015_11_11', 'LepGammaGammaNoPhIDInvPixSeedLead_2015_11_11', 'LepGammaGammaNoPhIDInvPixSeedSubl_2015_11_11', 'LepGammaGammaNoPhIDVetoPixSeedBoth_2015_11_11' ]
-sub_base = [ 'LepGammaNoPhIDNoElOlapRm_2016_02_05']
+sub_base = [ 'LepGammaNoPhID_2015_11_09']
 
 
 check_commands_base = 'python ../../Util/scripts/check_dataset_completion.py --originalDS %(base)s/%(sub_base)s/%(job)s --filteredDS %(base)s/%(sub_base)s/%(job)s%(suffix)s --treeNameOrig ggNtuplizer/EventTree --histNameFilt ggNtuplizer/filter --fileKeyOrig tree.root --fileKeyFilt tree.root'

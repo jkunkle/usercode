@@ -96,6 +96,13 @@ void Wgg::CalcEventVars(const std::vector<TLorentzVector> & photons,
             vector_results["m_leplep_phot"].push_back( ( photons[phidx] + leptons[0] + leptons[1] ).M() );
         }
 
+        if( leptons.size() > 0 ) {
+            vector_results["dr_leadLep_phot"].push_back( photons[phidx].DeltaR( leptons[sorted_leptons[0].second] ) );
+            if( leptons.size() > 1 ) { 
+                vector_results["dr_sublLep_phot"].push_back( photons[phidx].DeltaR( leptons[sorted_leptons[1].second] ) );
+            }
+        }
+
     }
     // fill di photon event variable vectors
     if( photons.size() > 1 ) {

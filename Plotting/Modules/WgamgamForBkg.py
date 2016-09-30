@@ -46,7 +46,7 @@ def config_samples(samples) :
     #samples.AddSample('Zg'                           , path='job_summer12_ZgOnePhot'                   ,  isActive=False, useXSFile=True )
     samples.AddSample('Zg'                           , path='job_summer12_Zg_s10'                   ,  isActive=False, useXSFile=True, XSName='Zg' )
     samples.AddSample('Zg2PhFilt'                    , path='job_summer12_Zg_s10WithSF2PhFilt'            ,  isActive=False, required=False, useXSFile=True, XSName='Zg' )
-    samples.AddSample('Zgg'                          , path='job_summer12_ZggWithSF'                  ,  isActive=False, useXSFile=True )
+    #samples.AddSample('Zgg'                          , path='job_summer12_ZggWithSF'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('ZggNLO'                       , path='llaa_nlo_ggNtupleWithSF'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2e2mu'                     , path='job_summer12_ZZ_2e2mu'             ,  isActive=False, useXSFile=True )
     samples.AddSample('ZZ_2e2tau'                    , path='job_summer12_ZZ_2e2tau'            ,  isActive=False, useXSFile=True )

@@ -193,6 +193,7 @@ struct CmdOptions {
     std::string storagePath;
     std::vector< FileEntry > files;
     int nevt;
+    int nPrint;
     bool transferToStorage;
     bool disableOutputTree;
     std::string sample;

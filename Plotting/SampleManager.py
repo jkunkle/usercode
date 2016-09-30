@@ -1293,7 +1293,7 @@ class SampleManager :
         self.draw_commands[-1].dump_stack( filename, outputDir )
 
     #---------------------------------------
-    def run_commands( self, nsplit=0, nFilesPerJob=5 ) :
+    def run_commands( self, nsplit=0, nFilesPerJob=5, treeName='' ) :
 
         self.collect_commands = False
 
@@ -1374,7 +1374,8 @@ class SampleManager :
         core.write_source_file(source_file_name, header_file_name, draw_branches )
 
         # compile
-        os.system( 'cd %s ; rm RunAnalysis ; make ; cd - '%compile_base )
+        exename= 'RunAnalysis.exe'
+        os.system( 'cd %s ; rm %s ; make EXENAME=%s; cd - '%(compile_base, exename, exename) )
 
         all_samples = []
         for sample in self.samples :
@@ -1395,32 +1396,35 @@ class SampleManager :
         for sample in all_samples :
             config_name = '%s/configs/config_%s.txt' %(compile_base, sample.name)
             entries = sample.chain.GetEntries()
-            file_evt_map = core.get_file_evt_map( [f.GetTitle() for f in sample.chain.GetListOfFiles()], nsplit=nsplit, nFilesPerJob=nFilesPerJob, totalEvents=None, treeName='ggNtuplizer/EventTree')
+            #file_evt_map = core.get_file_evt_map( [f.GetTitle() for f in sample.chain.GetListOfFiles()], nsplit=nsplit, nFilesPerJob=nFilesPerJob, totalEvents=None, treeName='ggNtuplizer/EventTree')
 
-            exe_path = '%s/RunAnalysis' %compile_base
+            #exe_path = '%s/RunAnalysis' %compile_base
 
-            options = {}
-            options['nproc']             = 6
-            options['outputDir']         = '%s/%s' %(output_loc, sample.name)
-            options['confFileName']      = 'config_%s.txt' %sample.name
-            options['treeName']          = sample.chain.GetName()
-            options['outputFile']        = output_file
-            options['storagePath']       = None
-            options['sample']            = sample.name
-            options['disableOutputTree'] = True
-            options['nPrint']            = 10000
+            #options = {}
+            #options['nproc']             = 6
+            #options['outputDir']         = '%s/%s' %(output_loc, sample.name)
+            #options['confFileName']      = 'config_%s.txt' %sample.name
+            #options['treeName']          = sample.chain.GetName()
+            #options['outputFile']        = output_file
+            #options['storagePath']       = None
+            #options['sample']            = sample.name
+            #options['disableOutputTree'] = True
+            #options['nPrint']            = 10000
 
-            commands_orig = core.generate_multiprocessing_commands( file_evt_map, [], exe_path, options )
+            #commands_orig = core.generate_multiprocessing_commands( file_evt_map, [], exe_path, options )
 
-            configs += commands_orig 
+            #configs += commands_orig 
 
-            #core.write_config([], config_name, sample.chain.GetName(), output_loc, '%s.root'%sample.name, file_evt_map, sample=sample.name, disableOutputTree=True )
-            #configs.append((entries, config_name))
+            ##core.write_config([], config_name, sample.chain.GetName(), output_loc, '%s.root'%sample.name, file_evt_map, sample=sample.name, disableOutputTree=True )
+            ##configs.append((entries, config_name))
+            file_evt_map = core.get_file_evt_map( [f.GetTitle() for f in sample.chain.GetListOfFiles()], nsplit=nsplit, nFilesPerJob=nFilesPerJob, totalEvents=None, treeName=treeName)
+            core.write_config([], config_name, sample.chain.GetName(), output_loc, '%s.root'%sample.name, file_evt_map, sample=sample.name, disableOutputTree=True )
+            configs.append((entries, config_name))
 
         
         #configs.sort(reverse=True)
 
-        run_cmds = ['%s/RunAnalysis --conf_file %s' %( compile_base, c[1] ) for c in configs ]
+        run_cmds = ['%s/%s --conf_file %s' %( compile_base,exename, c[1] ) for c in configs ]
         print run_cmds
 
         nproc = 6

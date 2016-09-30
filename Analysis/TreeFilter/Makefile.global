@@ -37,11 +37,11 @@ COREINC = -I$(WORK_AREA)/TreeFilter/Core/
 COMMONINC = -I$(WORK_AREA)/TreeFilter/Common/include
 COREOBJ = $(WORK_AREA)/TreeFilter/Core/obj/AnalysisBase.o $(WORK_AREA)/TreeFilter/Core/obj/Util.o
 
-# we need to link against an additional library if using root>5.24
-NEWROOTVERSION  = $(shell $(ROOTCONFIG) --version | grep -c "5.24" )
-ifeq ($(NEWROOTVERSION),1)
-	ROOTLIBS +=  -lRIO
-endif
+## we need to link against an additional library if using root>5.24
+#NEWROOTVERSION  = $(shell $(ROOTCONFIG) --version | grep -c "5.24" )
+#ifeq ($(NEWROOTVERSION),1)
+#	ROOTLIBS +=  -lRIO
+#endif
 
 ifeq ($(LOCATION), $(CERNLOC))
 	BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50 -L/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/lib
@@ -51,8 +51,8 @@ ifeq ($(LOCATION), $(CERNLOC))
 endif
 
 ifeq ($(LOCATION), $(UMDLOC))
-	BOOSTFLAGS   = -I/cvmfs/cms.cern.ch/slc5_amd64_gcc481/external/boost/1.51.0-cms/include  -L/cvmfs/cms.cern.ch/slc5_amd64_gcc481/external/boost/1.51.0-cms/lib
-	LIBS         = -L/cvmfs/cms.cern.ch/slc5_amd64_gcc462/lcg/roofit/5.34.01-cms9/lib $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem -lboost_system
+	BOOSTFLAGS   = -I/cvmfs/cms.cern.ch/slc6_amd64_gcc491/external/boost/1.57.0-cms/include  -L/cvmfs/cms.cern.ch/slc6_amd64_gcc491/external/boost/1.57.0-cms/lib
+	LIBS         = -L/cvmfs/cms.cern.ch/slc6_amd64_gcc491/lcg/roofit/5.34.22-cms4/lib -L/cvmfs/cms.cern.ch/slc6_amd64_gcc491/cms/cmssw/CMSSW_7_3_0/external/slc6_amd64_gcc491/lib $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem -lboost_system
 endif
 
 

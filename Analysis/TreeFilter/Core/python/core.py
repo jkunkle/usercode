@@ -60,6 +60,8 @@ def ParseArgs() :
 
     parser.add_argument('--loglevel', dest='loglevel', default='INFO', help='Log level, DEBUG, INFO, WARNING, ERROR, CRITICAL. Default is INFO')
 
+    parser.add_argument('--nPrint', dest='nPrint', default=10000, type=int, help='Frequency at which the event number is printed')
+
     #-----------------------------
     # Configure job splitting
     #-----------------------------
@@ -321,7 +323,7 @@ def config_and_run( options, package_name ) :
 
     if options.nproc > 1 and file_evt_list > 1: #multiprocessing!
 
-        commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
+        commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, vars(options) )
 
         if options.resubmit :
             commands = filter_jobs_for_resubmit( commands_orig, options.storagePath, options.outputDir, options.outputFile, options.treeName )
@@ -343,7 +345,7 @@ def config_and_run( options, package_name ) :
 
     elif options.batch :
 
-        commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
+        commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, vars(options) )
 
         # storagePath could have been passed as 'None'
         # make 'None' None
@@ -381,7 +383,7 @@ def config_and_run( options, package_name ) :
 
         output_file = '%s/%s' %(options.outputDir, options.outputFile )
         conf_file  = '%s/%s' %(options.outputDir, options.confFileName )
-        write_config( alg_list, conf_file, options.treeName, options.outputDir, options.outputFile, file_evt_list, options.storagePath, options.sample, options.disableOutputTree ) 
+        write_config( alg_list, conf_file, options.treeName, options.outputDir, options.outputFile, file_evt_list, options.storagePath, options.sample, options.disableOutputTree, options.nPrint ) 
         command = make_exe_command( exe_path, conf_file, options.outputDir  )
 
         # Stop here if not running
@@ -851,15 +853,15 @@ def make_exe_command( exe_path, conf_file, output_loc ) :
 
     return ' '.join(command)
 
-def generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options ) :
+def generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, kwargs ) :
 
     commands = []
     # if the number of files is less than 
     # nproc, split the list so that it can be
     # used for multiprocessing
     file_evt_list_mod = []
-    if options.nproc > 1 :
-        if len(file_evt_list) < options.nproc : 
+    if kwargs['nproc'] > 1 :
+        if len(file_evt_list) < kwargs['nproc'] : 
             for entry in file_evt_list :
                 file = entry[0]
                 for evtrange in entry[1] :
@@ -875,12 +877,12 @@ def generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, option
 
     for idx, file_split in enumerate(file_evt_list_mod) :
         jobid = 'Job_%04d' %idx
-        outputDir = options.outputDir
-        conf_file = '%s/%s_%s.%s' %(outputDir, options.confFileName.split('.')[0], jobid, '.'.join(options.confFileName.split('.')[1:]))
+        outputDir = kwargs['outputDir']
+        conf_file = '%s/%s_%s.%s' %(outputDir, kwargs['confFileName'].split('.')[0], jobid, '.'.join(kwargs['confFileName'].split('.')[1:]))
         if not os.path.isdir( outputDir ) :
             os.makedirs( outputDir )
         
-        write_config(alg_list, conf_file, options.treeName, outputDir, options.outputFile, [file_split], options.storagePath, options.sample, options.disableOutputTree, idx )
+        write_config(alg_list, conf_file, kwargs['treeName'], outputDir, kwargs['outputFile'], [file_split], kwargs['storagePath'], kwargs['sample'], kwargs['disableOutputTree'], kwargs['nPrint'], idx )
         commands.append( ( jobid, make_exe_command( exe_path, conf_file, outputDir+'/'+jobid ) ) )
 
     return commands
@@ -994,7 +996,7 @@ def get_file_evt_map( input_files, nsplit, nFilesPerJob, totalEvents, treeName )
 
     return split_files_evt_match
 
-def write_config( alg_list, filename, treeName, outputDir, outputFile, files_list, storage_path=None, sample=None, disableOutputTree=False, start_idx=0 ) :
+def write_config( alg_list, filename, treeName, outputDir, outputFile, files_list, storage_path=None, sample=None, disableOutputTree=False, nPrint=None, start_idx=0 ) :
 
     base_dir = os.path.split( filename )[0]
     if not os.path.isdir(base_dir ) :
@@ -1020,6 +1022,8 @@ def write_config( alg_list, filename, treeName, outputDir, outputFile, files_lis
     cfile.write( 'outputFile : %s\n' %( outputFile ) )
     if storage_path is not None :
         cfile.write( 'storagePath : %s\n' %storage_path )
+    if nPrint is not None :
+        cfile.write( 'nPrint : %d\n' %nPrint )
     if sample is not None :
         cfile.write( 'sample : %s\n' %sample )
     if disableOutputTree :
@@ -1166,6 +1170,8 @@ def write_source_file(source_file_name, header_file_name, branches, out_branches
     branch_header.write('void CopyPrefixIndexBranchesInToOut( const std::string & prefix, unsigned index, bool quiet=false, std::string veto = std::string() );\n')
     branch_header.write('void CopyMapVarsToOut( const std::map<std::string, float> & results);\n')
     branch_header.write('void CopyVectorMapVarsToOut( const std::map<std::string, std::vector< float> > & results);\n')
+    branch_header.write('void CopyIntMapVarsToOut( const std::map<std::string, int> & results);\n')
+    branch_header.write('void CopyIntVectorMapVarsToOut( const std::map<std::string, std::vector< int > > & results);\n')
     branch_header.write('void ClearOutputPrefix ( const std::string & prefix );\n')
     if write_expert_code:
         branch_header.write('void CheckVectorSize ( const std::string & prefix, unsigned expected );\n')
@@ -1385,6 +1391,83 @@ def write_source_file(source_file_name, header_file_name, branches, out_branches
         branch_setting.write( '    }\n' )
     branch_setting.write( '    if( filled_branches.size() < results.size() ) { \n' )
     branch_setting.write( '        for( std::map<std::string, std::vector<float> >::const_iterator mitr = results.begin(); mitr != results.end(); ++mitr ) { \n' )
+    branch_setting.write( '            if( std::find( filled_branches.begin(), filled_branches.end(), mitr->first ) == filled_branches.end()  ) { \n' )
+    branch_setting.write( '                std::cout << "Could not fill branch " << mitr->first << std::endl; \n '  )
+    branch_setting.write( '            }\n' )
+    branch_setting.write( '        }\n' )
+    branch_setting.write( '    }\n' )
+    branch_setting.write( '}\n' )
+
+    branch_setting.write('void CopyIntMapVarsToOut( const std::map<std::string, int> & results ) {\n')
+
+    valid_branches = []
+    for conf in branches :
+        if conf['type'].count('vector') :
+            continue
+        if conf['arrayStr'] :
+            continue
+
+        name = conf['name']
+        if name not in keep_branches :
+            continue
+
+
+        valid_branches.append( name )
+
+    for brdic in out_branches :
+
+        if not brdic['full_entry'].count('vector') :
+            valid_branches.append( brdic['branch'] )
+
+    branch_setting.write( '    std::vector<std::string> filled_branches;\n' )
+    branch_setting.write( '    std::map<std::string, int>::const_iterator mitr; \n'  )
+    for br in valid_branches :
+        branch_setting.write( '    mitr = results.find( "%s" ); \n' %br )
+        branch_setting.write( '    if( mitr != results.end() ) { \n' )
+        branch_setting.write( '        OUT::%s = mitr->second;\n' %br )
+        branch_setting.write( '        filled_branches.push_back( "%s" );\n' %(br) )
+        branch_setting.write( '    }\n' )
+    branch_setting.write( '    if( filled_branches.size() < results.size() ) { \n' )
+    branch_setting.write( '        for( std::map<std::string, int>::const_iterator mitr = results.begin(); mitr != results.end(); ++mitr ) { \n' )
+    branch_setting.write( '            if( std::find( filled_branches.begin(), filled_branches.end(), mitr->first ) == filled_branches.end()  ) { \n' )
+    branch_setting.write( '                std::cout << "Could not fill branch " << mitr->first << std::endl; \n '  )
+    branch_setting.write( '            }\n' )
+    branch_setting.write( '        }\n' )
+    branch_setting.write( '    }\n' )
+    branch_setting.write( '}\n' )
+
+    branch_setting.write('void CopyIntVectorMapVarsToOut( const std::map<std::string, std::vector<int> > & results ) {\n')
+
+    valid_branches = []
+    for conf in branches :
+        nvec = conf['type'].count('vector')
+        if not nvec==1 :
+            continue
+
+        if not conf['type'].count('int') :
+            continue
+
+        name = conf['name']
+        if name not in keep_branches :
+            continue
+
+        valid_branches.append( name )
+
+    for brdic in out_branches :
+
+        if brdic['full_entry'].count('vector') and brdic['full_entry'].count('int') :
+            valid_branches.append( brdic['branch'] )
+
+    branch_setting.write( '    std::vector<std::string> filled_branches;\n' )
+    branch_setting.write( '    std::map<std::string, std::vector<int> >::const_iterator mitr; \n' )
+    for br in valid_branches :
+        branch_setting.write( '    mitr = results.find( "%s" ); \n' %br )
+        branch_setting.write( '    if( mitr != results.end() ) { \n' )
+        branch_setting.write( '        OUT::%s->assign(mitr->second.begin(), mitr->second.end() );\n' %br )
+        branch_setting.write( '        filled_branches.push_back( "%s" );\n' %(br) )
+        branch_setting.write( '    }\n' )
+    branch_setting.write( '    if( filled_branches.size() < results.size() ) { \n' )
+    branch_setting.write( '        for( std::map<std::string, std::vector<int> >::const_iterator mitr = results.begin(); mitr != results.end(); ++mitr ) { \n' )
     branch_setting.write( '            if( std::find( filled_branches.begin(), filled_branches.end(), mitr->first ) == filled_branches.end()  ) { \n' )
     branch_setting.write( '                std::cout << "Could not fill branch " << mitr->first << std::endl; \n '  )
     branch_setting.write( '            }\n' )

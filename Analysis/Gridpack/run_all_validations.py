@@ -15,6 +15,8 @@ options = parser.parse_args()
 
 BASE_NAME = 'ChargedResonance'
 
+LOCATION = os.path.dirname(os.path.realpath(__file__))
+
 def main() :
 
     all_gridpacks = []
@@ -54,6 +56,7 @@ def main() :
 
         commands_lhe.append( 'mkdir -p %s/%s/Gridpack' %(options.outputDir, basename )  )
         commands_lhe.append( 'cp %s/%s %s/%s/Gridpack' %( options.base_dir, gp, options.outputDir, basename ) )
+        commands_lhe.append( 'scramv1 project CMSSW CMSSW_8_0_12' )
         commands_lhe.append( 'cd CMSSW_8_0_12/' )
         commands_lhe.append( 'eval `scram runtime -sh`' )
         commands_lhe.append( 'cd %s/%s/Gridpack' %(options.outputDir, basename ) )
@@ -66,12 +69,14 @@ def main() :
             print all_commands
             os.system( all_commands )
 
-        commands_convert.append( 'cd /afs/cern.ch/work/j/jkunkle/public/CMS/Gridpacks/GenerateChargedResonances/CMSSW_5_3_22_patch1 ' )
-        commands_convert.append( 'eval `scram runtime -sh`' )
-        commands_convert.append( 'cd .. ' )
-        commands_convert.append( './MadGraph/MG5_aMC_v2_3_3/ExRootAnalysis/ExRootLHEFConverter %s/%s/Gridpack/cmsgrid_final.lhe %s/%s/Gridpack/LHEevents.root ' %( options.outputDir, basename, options.outputDir, basename ) )
-        commands_convert.append( 'python scripts/make_valid_hists.py --input %s/%s/Gridpack/LHEevents.root --output %s/%s/validation.root ' %( options.outputDir, basename, options.outputDir, basename ) )
-        commands_convert.append( 'rm -rf %s/%s/Gridpack ' %( options.outputDir, basename ) )
+        #commands_convert.append( 'cd /afs/cern.ch/work/j/jkunkle/public/CMS/Gridpacks/GenerateChargedResonances/CMSSW_5_3_22_patch1 ' )
+        #commands_convert.append( 'scramv1 project CMSSW CMSSW_5_3_22_patch1' )
+        #commands_convert.append( 'cd CMSSW_5_3_22_patch1' )
+        #commands_convert.append( 'eval `scram runtime -sh`' )
+        #commands_convert.append( 'cd .. ' )
+        commands_convert.append( '/home/jkunkle/Programs/MG5_aMC_v2_4_3/ExRootAnalysis/ExRootLHEFConverter %s/%s/Gridpack/cmsgrid_final.lhe %s/%s/Gridpack/LHEevents.root ' %( options.outputDir, basename, options.outputDir, basename ) )
+        commands_convert.append( 'python %s/make_valid_hists.py --input %s/%s/Gridpack/LHEevents.root --output %s/%s/validation.root ' %( LOCATION, options.outputDir, basename, options.outputDir, basename ) )
+        #commands_convert.append( 'rm -rf %s/%s/Gridpack ' %( options.outputDir, basename ) )
         
         if not options.batch :
             all_commands = ' ; ' .join( commands_convert )

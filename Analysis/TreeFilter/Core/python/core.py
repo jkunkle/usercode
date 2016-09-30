@@ -332,7 +332,8 @@ def config_and_run( options, package_name ) :
 
         commands = []
         for jobid, info in command_info :
-            commands.append( (jobid, make_exe_command( info )) ) 
+            print info
+            commands.append( (jobid, make_exe_command( info[0], info[1], info[2] )) ) 
 
         # Stop here if not running
         logging.info('********************************')
@@ -363,7 +364,7 @@ def config_and_run( options, package_name ) :
 
         commands = []
         for jobid, info in command_info :
-            commands.append( (jobid, make_exe_command( info )) ) 
+            commands.append( (jobid, make_exe_command( info[0], info[1], info[2] )) ) 
 
         wrappers = []
         for jobid, cmd in commands :

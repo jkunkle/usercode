@@ -108,6 +108,7 @@ def main() :
 
         for job in range( 0, nJobs) :
             job_dir = 'Job_%04d' %( job )
+            scriptName = 'r%04d.sh' %( job )
             os.system( 'bsub -q %s %s/%s/%s -o %s/%s/stdout.txt -e %s/%s/stderr.txt ' %( options.lxqueue, options.prod_dir, job_dir, scriptName, options.prod_dir, job_dir, options.prod_dir, job_dir ) )
 
     else :

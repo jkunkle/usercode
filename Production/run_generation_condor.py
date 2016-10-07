@@ -26,7 +26,7 @@ def main() :
 
     # no longer need certificate
     if options.lxbatch :
-        print 'FIRST MAKE A GRID CERTIFICATE'
+        print 'FIRST MAKE A GRID PROXY'
         os.system( 'voms-proxy-init -voms cms -rfc ' )
 
     if not os.path.isdir( options.prod_dir ) :
@@ -53,8 +53,10 @@ def main() :
     # proxy to afs
     if options.lxbatch :
         username = getpass.getuser()
+        print 'Created proxy is at %s' %( proxy_path )
         new_proxy_path = '/afs/cern.ch/user/%s/%s' %( username[0], username )
 
+        print 'Copy proxy to %s' %( new_proxy_path )
         os.system( 'cp %s %s ' %( proxy_path, new_proxy_path ) )
 
             
@@ -73,6 +75,7 @@ def main() :
     # no longer need certificate
     #job_desc_text.append( 'transfer_input_files = %s' %proxy_path ) 
     job_desc_text.append( 'priority=0' ) 
+
 
     for job in range( 0, nJobs) :
 
@@ -101,19 +104,20 @@ def main() :
         job_desc_text.append( 'queue' )
 
 
-    job_desc_file_name = '%s/job_desc.txt' %( options.prod_dir )
-
-    job_desc_file = open( job_desc_file_name, 'w' )
-
-    for line in job_desc_text :
-        job_desc_file.write( '%s \n' %line )
-
-
-    job_desc_file.close()
-
     if options.lxbatch :
-        os.system( 'bsub -q %s %s/%s/%s -o %s/%s/stdout.txt -e %s/%s/stderr.txt ' %( options.lxqueue, options.prod_dir, job_dir, scriptName, options.prod_dir, job_dir, options.prod_dir, job_dir ) )
+
+        for job in range( 0, nJobs) :
+            job_dir = 'Job_%04d' %( job )
+            os.system( 'bsub -q %s %s/%s/%s -o %s/%s/stdout.txt -e %s/%s/stderr.txt ' %( options.lxqueue, options.prod_dir, job_dir, scriptName, options.prod_dir, job_dir, options.prod_dir, job_dir ) )
+
     else :
+
+        job_desc_file_name = '%s/job_desc.txt' %( options.prod_dir )
+        job_desc_file = open( job_desc_file_name, 'w' )
+        for line in job_desc_text :
+            job_desc_file.write( '%s \n' %line )
+
+        job_desc_file.close()
         os.system( 'condor_submit %s ' %( job_desc_file_name ) )
 
 

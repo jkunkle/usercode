@@ -203,7 +203,10 @@ def main() :
         proxy_commands.append( 'cp %s /tmp' %options.proxyName )
         #proxy_commands.append( 'voms-proxy-init -noregen' )
 
-    all_commands = lhe_commands + gs_commands + AOD_commands + miniAOD_commands
+    setup_commands = ['. /afs/cern.ch/sw/lcg/external/gcc/4.6/x86_64-slc6/setup.sh',
+                      'source /afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.07_python2.7/x86_64-slc6-gcc46-opt/root/bin/thisroot.sh' ]
+
+    all_commands = setup_commands + lhe_commands + gs_commands + AOD_commands + miniAOD_commands
 
     if options.writeShellScript :
         fname = '%s/%s' %(options.prod_dir, options.scriptName)

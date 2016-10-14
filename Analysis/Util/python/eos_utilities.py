@@ -3,7 +3,7 @@ import os
 import sys
 import time
 
-__EOS__ = '/afs/cern.ch/project/eos/installation/0.3.4/bin/eos.select'
+__EOS__ = '/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select'
 
 #---------------------------------------------------------
 def copy_eos_to_local(eos_path, local_path) :

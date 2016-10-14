@@ -24,6 +24,9 @@ def config_samples(samples) :
     samples.AddSample('WZZ'                          , path='job_summer12_WZZ'                  ,  isActive=False, useXSFile=True )
     samples.AddSample('Zg'                           , path='job_summer12_Zg'                   ,  isActive=False, useXSFile=True )
 
+    samples.AddSample('DYJetsToLL'                   , path='job_summer12_DYJetsToLL' ,  legend_name='Z/#gamma *'   ,  plotColor=ROOT.kCyan, useXSFile=True, isActive=False )
+    samples.AddSample('DYJetsToLLPhOlap'             , path='job_summer12_DYJetsToLLPhOlap'        ,  legend_name='Z/#gamma *', plotColor=ROOT.kCyan, useXSFile=True, XSName='DYJetsToLL', isActive=False)
+
     samples.AddSampleGroup( 'Muon', legend_name='Muon Data', 
                             input_samples = [
                                              'muon_2012a',
@@ -55,8 +58,6 @@ def config_samples(samples) :
     #                       plotColor=ROOT.kGray+2,
     #                       isSignal=False,
     #                      )
-    samples.AddSample('DYJetsToLL'                   , path='job_summer12_DYJetsToLL' ,  legend_name='Z/#gamma *'   ,  plotColor=ROOT.kCyan, useXSFile=True, isActive=False )
-    samples.AddSample('DYJetsToLLPhOlap'             , path='job_summer12_DYJetsToLLPhOlap'        ,  legend_name='Z/#gamma *', plotColor=ROOT.kCyan, useXSFile=True, XSName='DYJetsToLL', isActive=False)
 
     samples.AddSampleGroup( 'RealPhotonsZg', legend_name='Fake photons', 
                         input_samples = [

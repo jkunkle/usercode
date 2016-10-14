@@ -164,7 +164,7 @@ def config_samples(samples) :
                            isActive=True
                           )
 
-    samples.AddSampleGroup( 'Zgammagamma', legend_name='Z#gamma#gamma', 
+    samples.AddSampleGroup( 'Zgg', legend_name='Z#gamma#gamma', 
                             input_samples = [
                                              #'Zg2PhFilt',
                                              'ZggNLO',

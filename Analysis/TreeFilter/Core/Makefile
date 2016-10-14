@@ -15,12 +15,11 @@ CERNLOC=CERN
 UMDLOC=UMD
 
 HOSTNAME := $(shell hostname)
-ifneq (,$(findstring 'cern.ch',$(HOSTNAME))) #find cern.ch in host, if found result is non-empty
+ifneq (,$(findstring lxplus,$(HOSTNAME))) #find lxplus in host, if found result is non-empty
 	LOCATION=$(CERNLOC)
 else 
 	LOCATION=$(UMDLOC)
 endif 
-
 
 CXX     = g++
 LD      = g++
@@ -39,6 +38,7 @@ ROOTLIBS     = $(shell $(ROOTCONFIG) --libs) -lTreePlayer -lTMVA #-lBoost
 
 ifeq ($(LOCATION), $(CERNLOC))
 	BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50
+
 endif
 
 ifeq ($(LOCATION), $(UMDLOC))

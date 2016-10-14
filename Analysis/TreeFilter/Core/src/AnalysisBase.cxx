@@ -133,7 +133,7 @@ void AnaConfig::Run( RunModuleBase & runmod, const CmdOptions & options ) {
             for( int cidx = minevt; cidx < maxevt; cidx++ ) {
 
                 //if( n_evt == 0 ) time_start = boost::posix_time::microsec_clock::local_time();
-                if( n_evt % 10000 == 0 && n_evt > 0 ) {
+                if( n_evt % options.nPrint == 0 && n_evt > 0 ) {
                     boost::posix_time::ptime time_now = boost::posix_time::microsec_clock::local_time();
                     boost::posix_time::time_duration deltat = time_now - time_start;
                     std::cout << "Processed " << n_evt << " entries in " << std::fixed << std::setprecision(2) << deltat.total_milliseconds()/1000. << " seconds" << std::endl;
@@ -191,7 +191,7 @@ void AnaConfig::Run( RunModuleBase & runmod, const CmdOptions & options ) {
 
             if( options.transferToStorage ) {
                 std::string storage_dir = options.storagePath;
-                std::string eos = "/afs/cern.ch/project/eos/installation/0.3.4/bin/eos.select";
+                std::string eos = "/afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select";
 
                 if( jobidx == 0 ) { // make the directory the first time
                     std::string mkdir_cmd = eos + " mkdir " + options.storagePath;
@@ -1051,6 +1051,10 @@ void ReadHeaderLine( const std::string & line, CmdOptions & options ) {
         std::stringstream ss(header_val);
         ss >> options.nevt;
     }
+    else if( header_key.find("nPrint") != std::string::npos ) {
+        std::stringstream ss(header_val);
+        ss >> options.nPrint;
+    }
     else if( header_key.find("sample") != std::string::npos ) {
         std::stringstream ss(header_val);
         options.sample = header_val;
@@ -1142,7 +1146,7 @@ void ParseFiles( const std::string & files_val, CmdOptions & options ) {
     }
 }
 
-CmdOptions::CmdOptions() : nevt(-1), transferToStorage(false), disableOutputTree(false)
+CmdOptions::CmdOptions() : nevt(-1), nPrint(10000), transferToStorage(false), disableOutputTree(false)
 {
 }
 

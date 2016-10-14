@@ -11,6 +11,8 @@ def config_samples(samples) :
     samples.AddSample('muon_2012b_Jan22rereco'       , path='job_muon_2012b_Jan22rereco'        ,  isActive=False, scale=1.0 )
     samples.AddSample('muon_2012c_Jan22rereco'       , path='job_muon_2012c_Jan22rereco'        ,  isActive=False, scale=1.0 )
     samples.AddSample('muon_2012d_Jan22rereco'       , path='job_muon_2012d_Jan22rereco'        ,  isActive=False, scale=1.0 )
+    samples.AddSample('DYJetsToLL'                   , path='job_summer12_DYJetsToLL_s10'         ,  isActive=False, useXSFile=True )
+    samples.AddSample('DYJetsToLLPhOlap'             , path='job_summer12_DYJetsToLL_s10PhOlap'        ,  legend_name='Z/#gamma *', plotColor=ROOT.kCyan, useXSFile=True, XSName='DYJetsToLL', isActive=False)
     samples.AddSample('ttjets_1l'                    , path='job_summer12_ttjets_1lPhOlap'            ,  isActive=False, useXSFile=True )
     samples.AddSample('ttjets_2l'                    , path='job_summer12_ttjets_2lPhOlap'            ,  isActive=False, useXSFile=True )
     samples.AddSample('Wg'                           , path='job_summer12_Wg'                  ,  isActive=False, useXSFile=True )
@@ -56,8 +58,6 @@ def config_samples(samples) :
     #                       plotColor=ROOT.kGray+2,
     #                       isSignal=False,
     #                      )
-    samples.AddSample('DYJetsToLL'                   , path='job_summer12_DYJetsToLL' ,  legend_name='Z/#gamma *'   ,  plotColor=ROOT.kCyan, useXSFile=True, isActive=False )
-    samples.AddSample('DYJetsToLLPhOlap'             , path='job_summer12_DYJetsToLLPhOlap'        ,  legend_name='Z/#gamma *', plotColor=ROOT.kCyan, useXSFile=True, XSName='DYJetsToLL', isActive=False)
 
     samples.AddSampleGroup( 'RealPhotonsZg', legend_name='Fake photons', 
                         input_samples = [

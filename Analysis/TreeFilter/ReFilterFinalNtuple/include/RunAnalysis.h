@@ -82,6 +82,8 @@ namespace OUT {
     float dr_lep_j1;
     float dr_lep_j2;
 
+    //std::vector<Bool_t> * ph_eleMatch;
+
 };
 
 #endif

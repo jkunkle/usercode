@@ -30,6 +30,7 @@ ROOT.gROOT.SetBatch(True)
 
 samplesLLG = None
 samplesLG = None
+samplesInv = None
 
 _ptbins = [int(x) for x in options.ptbins.split(',')]
 
@@ -91,9 +92,11 @@ def main() :
 
     global samplesLLG
     global samplesLG
+    global samplesInv
 
     baseDirLLG  = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepLepGammaNoPhID_2015_11_09'
     baseDirLG   = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaNoPhID_2015_11_09'
+    baseDirInv   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhIDNoTrigOlapRmRmBranchesDup_2016_06_11/'
     #baseDirLG   = '/afs/cern.ch/work/j/jkunkle/private/CMS/Wgamgam/Output/LepGammaNoPhIDLooseMuonID_2015_09_22'
     #baseDirLG   = '/afs/cern.ch/work/j/jkunkle/public/CMS/Wgamgam/Output/LepGammaJJNoPhID_2015_05_05'
 
@@ -102,11 +105,15 @@ def main() :
 
     sampleConfLLG = 'Modules/WgamgamForBkg.py'
 
-    samplesLLG  = SampleManager(baseDirLLG,  treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
-    samplesLG   = SampleManager(baseDirLG ,  treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=19400)
+    lumi = 19400
+
+    samplesLLG  = SampleManager(baseDirLLG,  treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=lumi)
+    samplesLG   = SampleManager(baseDirLG ,  treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=lumi)
+    samplesInv   = SampleManager(baseDirInv ,  treename, filename=filename, xsFile='cross_sections/wgamgam.py', lumi=lumi)
 
     samplesLLG .ReadSamples( sampleConfLLG )
     samplesLG  .ReadSamples( sampleConfLLG )
+    samplesInv  .ReadSamples( sampleConfLLG )
 
     if options.wcr :
 
@@ -115,7 +122,8 @@ def main() :
         path_manual   = 'ElectronFakeManual' 
         path_manualL  = 'ElectronFakeManualLoose' 
         path_nom      = 'ElectronFakeFitsRatio%s' %suffix 
-        path_mctempnd = 'ElectronFakeFitsRatio%sMCTemplateNDKeys' %suffix
+        #path_mctempnd = 'ElectronFakeFitsRatio%sMCTemplateNDKeys' %suffix
+        path_mctempnd = 'ElectronFakeFitsRatioDupInvMatchEleNewFixEtaMCTemplateNDKeys'
         #path_mctempnd = 'ElectronFakeFitsRatioTruthMatchMCTemplateNDKeys'
         path_mctemp   = 'ElectronFakeFitsRatio%sMCTemplate' %suffix
         path_subtract = 'ElectronFakeFitsRatioMCTemplateNDKeysSubtractZgamma'
@@ -383,6 +391,10 @@ def MakeSingleJetBkgEstimate( base_dir_jet, channels=[], eta_bins={}, outputDir=
         file_key = 'results__%s__(EB|EE)__pt_(\d+)-(\d+|max).pickle' %channel
         file_key_syst = 'results__syst__%s__(EB|EE)__pt_(\d+)-(\d+|max).pickle' %channel
 
+        print 'Base Dir Jet = ', base_dir_jet
+        print 'jet_dirs_key = ', jet_dirs_key
+        print 'file_key = ', file_key
+
         jet_files_eta      = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_eta      )
         jet_files_eta_syst = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key_eta_syst )
         jet_files      = get_dirs_and_files( base_dir_jet, jet_dirs_key, file_key      )
@@ -522,12 +534,12 @@ def get_ele_single_fakefactors( base_dir_ele, file_bin_map, regions, eta_bins, e
         print 'Get fake factors from ', '%s/%s/results.pickle' %(base_dir_ele, file)
         ff_man = FakeFactorManager( '%s/%s/results.pickle' %(base_dir_ele, file), ['fake_ratio'] )
 
-        data_samp = samplesLG.get_samples( name='Electron' )[0]
+        data_samp = samplesInv.get_samples( name='Electron' )[0]
         # get data counts from inverted pixel seed 
         for r1 in regions :
             #invert lead, draw lead
             count_var, idx_var = get_ph_cuts( 'single'+el_selection )
-            samplesLG.create_hist(data_samp, 'fabs(ph_eta[%s[0]]):ph_pt[%s[0]]'%(idx_var,idx_var), ' PUWeight * ( %s && ph_Is%s[%s[0]] )' %(get_draw_strs('single'+el_selection), r1,idx_var ), (20, 0, 100, 250, 0, 2.5) )
+            samplesInv.create_hist(data_samp, 'fabs(ph_eta[%s[0]]):ph_pt[%s[0]]'%(idx_var,idx_var), ' PUWeight * ( %s && ph_Is%s[%s[0]] )' %(get_draw_strs('single'+el_selection), r1,idx_var ), (20, 0, 100, 250, 0, 2.5) )
 
             hist_lead = data_samp.hist.Clone('hist_lead__%s' %(r1))
 

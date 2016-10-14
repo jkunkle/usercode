@@ -43,7 +43,7 @@ jobs = [
         #(base_data, 'job_2electron_2012c_Jan22rereco', 100 ),
         #(base_data, 'job_2electron_2012d_Jan22rereco', 100 ),
 
-        #(base_mc, 'job_summer12_DYJetsToLL_s10', 300 ),
+        (base_mc, 'job_summer12_DYJetsToLL_s10', 300 ),
         #(base_mc, 'job_summer12_Wg', 50),
         #(base_mc, 'job_summer12_ttjets_1l', 200),
         #(base_mc, 'job_summer12_ttjets_2l', 100),
@@ -62,7 +62,7 @@ jobs = [
         #(base_mc, 'job_summer12_WZZ', 10),
         #(base_mc, 'job_summer12_WZ_2l2q', 50),
         #(base_mc, 'job_summer12_WZ_3lnu', 10),
-        (base_me, 'job_summer12_WZ_lljj', 20),
+        #(base_me, 'job_summer12_WZ_lljj', 20),
         #(base_mc, 'job_summer12_ZZZ', 10),
         #(base_mc, 'job_summer12_ZZ_2e2mu', 10),
         #(base_mc, 'job_summer12_ZZ_2e2tau', 10),

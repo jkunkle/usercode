@@ -108,85 +108,125 @@ syst_mmgg_scale_mu  = ufloat( 0.0, acc_mmgg.n*0.0160 )
 syst_mmgg_renorm_fact    = ufloat( 0.0, acc_mmgg.n*0.0068 )
 #syst_mmgg_fact      = ufloat( 0.0, acc_mmgg.n*0.0048 )
 
-comb_egg_stat      = acc_egg + stat_egg
-comb_egg_leptonID  = acc_egg + syst_egg_trig + syst_egg_ele 
-comb_egg_photonID  = acc_egg + syst_egg_phot 
-comb_egg_photonEV  = acc_egg + syst_egg_eveto
-comb_egg_egscale   = acc_egg + syst_egg_scale_eg
-comb_egg_muscale   = acc_egg
-comb_egg_met       = acc_egg + syst_egg_scale_met
-comb_egg_pu        = acc_egg + syst_egg_pu
-comb_egg_theory   = acc_egg + syst_egg_pdf + syst_egg_renorm_fact
+comb_egg_stat         = acc_egg + stat_egg
+comb_egg_leptonOnlyID = acc_egg + syst_egg_ele 
+comb_egg_leptonID     = acc_egg + syst_egg_trig + syst_egg_ele 
+comb_egg_trig         = acc_egg + syst_egg_trig
+comb_egg_photonID     = acc_egg + syst_egg_phot 
+comb_egg_photonEV     = acc_egg + syst_egg_eveto
+comb_egg_egscale      = acc_egg + syst_egg_scale_eg
+comb_egg_muscale      = acc_egg
+comb_egg_met          = acc_egg + syst_egg_scale_met
+comb_egg_pu           = acc_egg + syst_egg_pu
+comb_egg_theory       = acc_egg + syst_egg_pdf + syst_egg_renorm_fact
+comb_egg_theoryPDF    = acc_egg + syst_egg_pdf
+comb_egg_theoryRenorm = acc_egg + syst_egg_renorm_fact
 
-comb_mgg_stat     = acc_mgg + stat_mgg
-comb_mgg_leptonID = acc_mgg + syst_mgg_trig + syst_mgg_muonidiso
-comb_mgg_photonID = acc_mgg + syst_mgg_phot
-comb_mgg_photonEV = acc_mgg 
-comb_mgg_egscale  = acc_mgg + syst_mgg_scale_eg
-comb_mgg_muscale  = acc_mgg + syst_mgg_scale_mu
-comb_mgg_met      = acc_mgg + syst_mgg_scale_met
-comb_mgg_pu       = acc_mgg + syst_mgg_pu
-comb_mgg_theory   = acc_mgg + syst_mgg_pdf + syst_mgg_renorm_fact
+comb_mgg_stat         = acc_mgg + stat_mgg
+comb_mgg_leptonID     = acc_mgg + syst_mgg_trig + syst_mgg_muonidiso
+comb_mgg_leptonOnlyID = acc_mgg + syst_mgg_muonidiso
+comb_mgg_trig         = acc_mgg + syst_mgg_trig
+comb_mgg_photonID     = acc_mgg + syst_mgg_phot
+comb_mgg_photonEV     = acc_mgg 
+comb_mgg_egscale      = acc_mgg + syst_mgg_scale_eg
+comb_mgg_muscale      = acc_mgg + syst_mgg_scale_mu
+comb_mgg_met          = acc_mgg + syst_mgg_scale_met
+comb_mgg_pu           = acc_mgg + syst_mgg_pu
+comb_mgg_theory       = acc_mgg + syst_mgg_pdf + syst_mgg_renorm_fact
+comb_mgg_theoryPDF    = acc_mgg + syst_mgg_pdf
+comb_mgg_theoryRenorm = acc_mgg + syst_mgg_renorm_fact
 
-comb_eegg_stat     = acc_eegg + stat_eegg
-comb_eegg_leptonID = acc_eegg + syst_eegg_trig + syst_eegg_ele
-comb_eegg_photonID = acc_eegg + syst_eegg_phot + syst_eegg_eveto
-comb_eegg_egscale  = acc_eegg + syst_eegg_scale_eg
-comb_eegg_muscale  = acc_eegg
-comb_eegg_pu       = acc_eegg + syst_eegg_pu
-comb_eegg_theory   = acc_eegg + syst_eegg_pdf + syst_eegg_renorm_fact
+comb_eegg_stat         = acc_eegg + stat_eegg
+comb_eegg_leptonID     = acc_eegg + syst_eegg_trig + syst_eegg_ele
+comb_eegg_leptonOnlyID = acc_eegg + syst_eegg_ele
+comb_eegg_trig         = acc_eegg + syst_eegg_trig
+comb_eegg_photonID     = acc_eegg + syst_eegg_phot + syst_eegg_eveto
+comb_eegg_photonEV     = acc_eegg + syst_eegg_eveto
+comb_eegg_photonOnlyID = acc_eegg + syst_eegg_phot
+comb_eegg_egscale      = acc_eegg + syst_eegg_scale_eg
+comb_eegg_muscale      = acc_eegg
+comb_eegg_pu           = acc_eegg + syst_eegg_pu
+comb_eegg_theory       = acc_eegg + syst_eegg_pdf + syst_eegg_renorm_fact
+comb_eegg_theoryPDF    = acc_eegg + syst_eegg_pdf
+comb_eegg_theoryRenorm = acc_eegg + syst_eegg_renorm_fact
 
-comb_mmgg_stat     = acc_mmgg + stat_mmgg
-comb_mmgg_leptonID = acc_mmgg + syst_mmgg_trig + syst_mmgg_muonidiso
-comb_mmgg_photonID = acc_mmgg + syst_mmgg_phot + syst_mmgg_eveto
-comb_mmgg_egscale  = acc_mmgg + syst_mmgg_scale_eg
-comb_mmgg_muscale  = acc_mmgg + syst_mmgg_scale_mu
-comb_mmgg_pu       = acc_mmgg + syst_mmgg_pu
-comb_mmgg_theory   = acc_mmgg + syst_mmgg_pdf + syst_mmgg_renorm_fact
+comb_mmgg_stat         = acc_mmgg + stat_mmgg
+comb_mmgg_leptonID     = acc_mmgg + syst_mmgg_trig + syst_mmgg_muonidiso
+comb_mmgg_leptonOnlyID = acc_mmgg + syst_mmgg_muonidiso
+comb_mmgg_trig         = acc_mmgg + syst_mmgg_trig
+comb_mmgg_photonID     = acc_mmgg + syst_mmgg_phot + syst_mmgg_eveto
+comb_mmgg_photonEV     = acc_mmgg + syst_mmgg_eveto
+comb_mmgg_photonOnlyID = acc_mmgg + syst_mmgg_phot
+comb_mmgg_egscale      = acc_mmgg + syst_mmgg_scale_eg
+comb_mmgg_muscale      = acc_mmgg + syst_mmgg_scale_mu
+comb_mmgg_pu           = acc_mmgg + syst_mmgg_pu
+comb_mmgg_theory       = acc_mmgg + syst_mmgg_pdf + syst_mmgg_renorm_fact
+comb_mmgg_theoryPDF    = acc_mmgg + syst_mmgg_pdf
+comb_mmgg_theoryRenorm = acc_mmgg + syst_mmgg_renorm_fact
 
 comb_acceptance =     { 'muon' : {
-                                    'stat'     : comb_mgg_stat, 
-                                    'LeptonID' : comb_mgg_leptonID,
-                                    'PhotonID' : comb_mgg_photonID, 
-                                    'PhotonEV' : comb_mgg_photonEV, 
-                                    'EGScale'  : comb_mgg_egscale, 
-                                    'MuScale'  : comb_mgg_muscale, 
-                                    'MET'      : comb_mgg_met, 
-                                    'Pileup'   : comb_mgg_pu, 
-                                    'Theory'   : comb_mgg_theory, 
+                                    'stat'         : comb_mgg_stat, 
+                                    'LeptonID'     : comb_mgg_leptonID,
+                                    'LeptonOnlyID' : comb_mgg_leptonOnlyID,
+                                    'Trigger'      : comb_mgg_trig,
+                                    'PhotonID'     : comb_mgg_photonID, 
+                                    'PhotonEV'     : comb_mgg_photonEV, 
+                                    'EGScale'      : comb_mgg_egscale, 
+                                    'MuScale'      : comb_mgg_muscale, 
+                                    'MET'          : comb_mgg_met, 
+                                    'Pileup'       : comb_mgg_pu, 
+                                    'Theory'       : comb_mgg_theory, 
+                                    'PDF'          : comb_mgg_theoryPDF, 
+                                    'Renorm'       : comb_mgg_theoryRenorm, 
                                  },
                        'electron' : {
-                                    'stat'     : comb_egg_stat,
-                                    'LeptonID' : comb_egg_leptonID,
-                                    'PhotonID' : comb_egg_photonID, 
-                                    'PhotonEV' : comb_egg_photonEV, 
-                                    'EGScale'  : comb_egg_egscale, 
-                                    'MuScale'  : comb_egg_muscale, 
-                                    'MET'      : comb_egg_met, 
-                                    'Pileup'   : comb_egg_pu, 
-                                    'Theory'   : comb_egg_theory, 
+                                    'stat'         : comb_egg_stat,
+                                    'LeptonID'     : comb_egg_leptonID,
+                                    'LeptonOnlyID' : comb_egg_leptonOnlyID,
+                                    'Trigger'      : comb_egg_trig,
+                                    'PhotonID'     : comb_egg_photonID, 
+                                    'PhotonEV'     : comb_egg_photonEV, 
+                                    'EGScale'      : comb_egg_egscale, 
+                                    'MuScale'      : comb_egg_muscale, 
+                                    'MET'          : comb_egg_met, 
+                                    'Pileup'       : comb_egg_pu, 
+                                    'Theory'       : comb_egg_theory, 
+                                    'PDF'          : comb_egg_theoryPDF, 
+                                    'Renorm'       : comb_egg_theoryRenorm, 
                                     }
                      }
 
 
 
 comb_acceptance_zgg =  { 'muon' : {
-                                    'stat'     : comb_mmgg_stat, 
-                                    'LeptonID' : comb_mmgg_leptonID,
-                                    'PhotonID' : comb_mmgg_photonID, 
-                                    'EGScale'  : comb_mmgg_egscale, 
-                                    'MuScale'  : comb_mmgg_muscale, 
-                                    'Pileup'   : comb_mmgg_pu, 
-                                    'Theory'   : comb_mmgg_theory, 
+                                    'stat'          : comb_mmgg_stat, 
+                                    'LeptonID'     : comb_mmgg_leptonID,
+                                    'LeptonOnlyID' : comb_mmgg_leptonOnlyID,
+                                    'Trigger'      : comb_mmgg_trig,
+                                    'PhotonID'     : comb_mmgg_photonID, 
+                                    'PhotonEV'     : comb_mmgg_photonEV, 
+                                    'PhotonOnlyID' : comb_mmgg_photonOnlyID, 
+                                    'EGScale'      : comb_mmgg_egscale, 
+                                    'MuScale'      : comb_mmgg_muscale, 
+                                    'Pileup'       : comb_mmgg_pu, 
+                                    'Theory'       : comb_mmgg_theory, 
+                                    'PDF'          : comb_mmgg_theoryPDF, 
+                                    'Renorm'       : comb_mmgg_theoryRenorm, 
                                  },
                        'electron' : {
-                                    'stat'     : comb_eegg_stat, 
-                                    'LeptonID' : comb_eegg_leptonID,
-                                    'PhotonID' : comb_eegg_photonID, 
-                                    'EGScale'  : comb_eegg_egscale, 
-                                    'MuScale'  : comb_eegg_muscale, 
-                                    'Pileup'   : comb_eegg_pu, 
-                                    'Theory'   : comb_eegg_theory, 
+                                    'stat'         : comb_eegg_stat, 
+                                    'LeptonID'     : comb_eegg_leptonID,
+                                    'LeptonOnlyID' : comb_eegg_leptonOnlyID,
+                                    'Trigger'      : comb_eegg_trig,
+                                    'PhotonID'     : comb_eegg_photonID, 
+                                    'PhotonEV'     : comb_eegg_photonEV, 
+                                    'PhotonOnlyID' : comb_eegg_photonOnlyID, 
+                                    'EGScale'      : comb_eegg_egscale, 
+                                    'MuScale'      : comb_eegg_muscale, 
+                                    'Pileup'       : comb_eegg_pu, 
+                                    'Theory'       : comb_eegg_theory, 
+                                    'PDF'          : comb_eegg_theoryPDF, 
+                                    'Renorm'       : comb_eegg_theoryRenorm, 
                                     }
                      }
 
@@ -201,17 +241,22 @@ def main() :
     #plotDirZgg  = 'PlotsUnblindZggNewOneBin'
     #finalDirZgg = 'FinalPlotsOneBin'
 
-    baseDirWgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsPSVTightMassOneBin_2015_12_01/'
+    #baseDirWgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsPSVTightMassOneBin_2015_12_01/'
+    #baseDirWgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsOneBin_2016_03_01/'
+    #baseDirWgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsForPubLeadPt70_2016_06_08/'
+    baseDirWgg  = '/afs/cern.ch/user/j/jkunkle/Plots/WggPlotsForPubOneBin_2016_06_08/'
     plotDirWgg  = 'PlotsUnblind'
     finalDirWgg = 'FinalPlotsOneBin'
 
     baseDirZgg  = '/afs/cern.ch/user/j/jkunkle/Plots/ZggPlotsOneBin_2015_12_01/'
+    #baseDirZgg  = '/afs/cern.ch/user/j/jkunkle/Plots/ZggPlotsWgTempOneBin_2016_05_29/'
     plotDirZgg  = 'PlotsUnblind'
     finalDirZgg = 'FinalPlotsOneBin'
 
     #pt_bins = [('25', '40'), ('40', '70'), ('70', 'max') ]
     #pt_bins = [('40', '70'), ('70', 'max') ]
     pt_bins_wgg = [('25', 'max') ]
+    #pt_bins_wgg = [('70', 'max') ]
     pt_bins_zgg = [('15', 'max') ]
     #pt_bins_zgg = [('25', 'max') ]
 
@@ -292,8 +337,8 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, zgg=Fa
                         'crossCorr' : True,
                         'systBkg' : True,
                         'fakefake' : False, 
-                        'systTemp' : True, 
-                        'statTemp1D' : True, 
+                        'systTemp' : False, 
+                        'statTemp1D' : False, 
                         'statTempFF' : True, 
                         }
 
@@ -314,8 +359,8 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, zgg=Fa
         results_el = pickle.load( ofile_el )
         ofile_el.close()
 
-        file_jet_subl = '%s/jet_fake_results__elfullhighmtinvpixsubl.pickle' %(plotDir )
-        file_jet_lead = '%s/jet_fake_results__elfullhighmtinvpixlead.pickle' %(plotDir )
+        file_jet_subl = '%s/jet_fake_results__elfullinvpixsublhighmt.pickle' %(plotDir )
+        file_jet_lead = '%s/jet_fake_results__elfullinvpixleadhighmt.pickle' %(plotDir )
 
         ofile_subl = open( file_jet_subl )
         ofile_lead = open( file_jet_lead )
@@ -490,7 +535,11 @@ def calc_combined_xs_bins( results_final, results_jet, pt_bins, eta_bins, zgg=Fa
                         # set electron to zero , cv is jet only, with full uncertainty
                         comb = ufloat(jet_sum['nom'][eb][syst]['sum'].n, comb.s )
 
+                    ele_lead = ( ufloat( sb_data['lead'][eb].n, 0 ) - jet_sum['lead'][eb][syst]['sum'] ) * ufloat( ffs['lead'][eb].n, 0 )
+                    ele_subl = ( ufloat( sb_data['subl'][eb].n, 0 ) - jet_sum['subl'][eb][syst]['sum'] ) * ufloat( ffs['subl'][eb].n, 0 )
+
                     combined_fake[eb][syst]['sum']      = comb
+                    combined_fake[eb][syst]['ele']      = ele_lead + ele_subl
                     combined_fake[eb][syst]['jet']      = jet_sum['nom'][eb][syst]['sum']
                     combined_fake[eb][syst]['jetlead']  = jet_sum['lead'][eb][syst]['sum']
                     combined_fake[eb][syst]['jetsubl']  = jet_sum['subl'][eb][syst]['sum']
@@ -654,6 +703,8 @@ def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
 
 
     xs_mu['statData']    = ( numerator_mu_comb )                                       / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
+    xs_mu['statDataSR']  = ( numerator_mu_sr )                                         / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
+    xs_mu['statDataSB']  = ( summed_mu['statDataSB']['sum'])                           / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
     xs_mu['ZggStat']     = ( xs_mu_data_nounc - bkg_mu['ZggStat'])                     / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
     xs_mu['ZggSyst']     = ( xs_mu_data_nounc - bkg_mu['ZggSyst'])                     / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
     xs_mu['OtherDiPhotonStat']     = ( xs_mu_data_nounc - bkg_mu['OtherDiPhotonStat']) / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
@@ -666,6 +717,8 @@ def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     xs_mu['JetFakeFakefake'] = ( xs_mu_data_nounc - bkg_mu['JetFakeFakefake'])     / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
     xs_mu['lumi']        = ( xs_mu_data_nounc - bkg_mu['lumi'])                        / ( xs_mu_acc_nounc*lumi)
     xs_mu['AccStat']     = ( xs_mu_data_nounc - xs_mu_bkg_nounc)                       / ( comb_acceptance['muon']['stat']*xs_mu_lumi_nounc)
+    xs_mu['AccTrigger']  = ( xs_mu_data_nounc - xs_mu_bkg_nounc)                       / ( comb_acceptance['muon']['Trigger']*xs_mu_lumi_nounc)
+    xs_mu['AccLeptonOnlyID']  = ( xs_mu_data_nounc - xs_mu_bkg_nounc)                       / ( comb_acceptance['muon']['LeptonOnlyID']*xs_mu_lumi_nounc)
     xs_mu['AccLeptonID']  = ( xs_mu_data_nounc - xs_mu_bkg_nounc)                       / ( comb_acceptance['muon']['LeptonID']*xs_mu_lumi_nounc)
     xs_mu['AccPhotonID']   = ( xs_mu_data_nounc - xs_mu_bkg_nounc)                       / ( comb_acceptance['muon']['PhotonID']*xs_mu_lumi_nounc)
     xs_mu['AccPhotonEV']   = ( xs_mu_data_nounc - xs_mu_bkg_nounc)                       / ( comb_acceptance['muon']['PhotonEV']*xs_mu_lumi_nounc)
@@ -674,6 +727,8 @@ def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     xs_mu['AccMET']   = ( xs_mu_data_nounc - xs_mu_bkg_nounc)                       / ( comb_acceptance['muon']['MET']*xs_mu_lumi_nounc)
     xs_mu['AccPileup']   = ( xs_mu_data_nounc - xs_mu_bkg_nounc)                       / ( comb_acceptance['muon']['Pileup']*xs_mu_lumi_nounc)
     xs_mu['AccTheory']   = ( xs_mu_data_nounc - xs_mu_bkg_nounc)                       / ( comb_acceptance['muon']['Theory']*xs_mu_lumi_nounc)
+    xs_mu['AccPDF']   = ( xs_mu_data_nounc - xs_mu_bkg_nounc)                       / ( comb_acceptance['muon']['PDF']*xs_mu_lumi_nounc)
+    xs_mu['AccRenorm']   = ( xs_mu_data_nounc - xs_mu_bkg_nounc)                       / ( comb_acceptance['muon']['Renorm']*xs_mu_lumi_nounc)
     # copy the CV with no uncertainty
     xs_mu['EleFakeFF']  = ufloat( xs_mu['statData'].n, 0.0 )
 
@@ -692,6 +747,8 @@ def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     xs_el_lumi_nounc = ufloat( lumi.n, 0.0 )
 
     xs_el['statData']          = ( numerator_el_comb )                             / ( xs_el_acc_nounc*xs_el_lumi_nounc )
+    xs_el['statDataSR']        = ( numerator_el_sr   )                             / ( xs_el_acc_nounc*xs_el_lumi_nounc )
+    xs_el['statDataSB']        = ( bkg_el['statDataSB'])                           / ( xs_el_acc_nounc*xs_el_lumi_nounc )
     xs_el['ZggStat']           = ( xs_el_data_nounc - bkg_el['ZggStat'])           / ( xs_el_acc_nounc*xs_el_lumi_nounc )
     xs_el['ZggSyst']           = ( xs_el_data_nounc - bkg_el['ZggSyst'])           / ( xs_el_acc_nounc*xs_el_lumi_nounc )
     xs_el['OtherDiPhotonStat'] = ( xs_el_data_nounc - bkg_el['OtherDiPhotonStat']) / ( xs_el_acc_nounc*xs_el_lumi_nounc )
@@ -706,6 +763,8 @@ def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     xs_el['lumi']              = ( xs_el_data_nounc - bkg_el['lumi'])              / ( xs_el_acc_nounc*lumi)
     xs_el['AccStat']           = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['stat']   *xs_el_lumi_nounc)
     xs_el['AccLeptonID']        = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['LeptonID']*xs_el_lumi_nounc)
+    xs_el['AccTrigger']        = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['Trigger']*xs_el_lumi_nounc)
+    xs_el['AccLeptonOnlyID']        = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['LeptonOnlyID']*xs_el_lumi_nounc)
     xs_el['AccPhotonID']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['PhotonID'] *xs_el_lumi_nounc)
     xs_el['AccPhotonEV']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['PhotonEV'] *xs_el_lumi_nounc)
     xs_el['AccEGScale']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['EGScale'] *xs_el_lumi_nounc)
@@ -713,6 +772,8 @@ def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     xs_el['AccMET']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['MET'] *xs_el_lumi_nounc)
     xs_el['AccPileup']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['Pileup'] *xs_el_lumi_nounc)
     xs_el['AccTheory']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['Theory'] *xs_el_lumi_nounc)
+    xs_el['AccPDF']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['PDF'] *xs_el_lumi_nounc)
+    xs_el['AccRenorm']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance['electron']['Renorm'] *xs_el_lumi_nounc)
 
     print 'Muon, N Data = %d, N Sig = %f, n Bkg = %s '      %( summed_mu['Data']['sum'].n, summed_mu['Wgg']['sum'].n, bkg_mu )
     print 'Electron , N Data = %d, N Sig = %f, n Bkg = %s ' %( summed_el['Data']['sum'].n, summed_el['Wgg']['sum'].n, bkg_el )
@@ -732,6 +793,9 @@ def make_wgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     print 'Final xs_mu = %s' %comb_xs_mu
     print 'Individual xs mu'
     for key, val in xs_mu.iteritems() :
+        print '%s - %s' %( key, val )
+    print 'Individual xs el'
+    for key, val in xs_el.iteritems() :
         print '%s - %s' %( key, val )
     print 'Final xs_el = %s' %comb_xs_el
 
@@ -949,6 +1013,8 @@ def make_zgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     xs_mu_lumi_nounc  = ufloat( lumi.n, 0.0 )
 
     xs_mu['statData']          = ( numerator_mu_comb )                             / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
+    xs_mu['statDataSR']        = ( numerator_mu_sr   )                             / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
+    xs_mu['statDataSB']        = ( summed_mu['statDataSB']['sum'] )                / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
     xs_mu['OtherDiPhotonStat'] = ( xs_mu_data_nounc - bkg_mu['OtherDiPhotonStat']) / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
     xs_mu['OtherDiPhotonSyst'] = ( xs_mu_data_nounc - bkg_mu['OtherDiPhotonSyst']) / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
     xs_mu['JetFakeCrossCorr']  = ( xs_mu_data_nounc - bkg_mu['JetFakeCrossCorr'])  / ( xs_mu_acc_nounc*xs_mu_lumi_nounc )
@@ -960,11 +1026,17 @@ def make_zgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     xs_mu['lumi']              = ( xs_mu_data_nounc - bkg_mu['lumi'] )             / ( xs_mu_acc_nounc*lumi)
     xs_mu['AccStat']           = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['stat']   *xs_mu_lumi_nounc)
     xs_mu['AccLeptonID']        = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['LeptonID']*xs_mu_lumi_nounc)
+    xs_mu['AccTrigger']        = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['Trigger']*xs_mu_lumi_nounc)
+    xs_mu['AccLeptonOnlyID']        = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['LeptonOnlyID']*xs_mu_lumi_nounc)
     xs_mu['AccPhotonID']         = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['PhotonID']*xs_mu_lumi_nounc)
+    xs_mu['AccPhotonEV']         = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['PhotonEV']*xs_mu_lumi_nounc)
+    xs_mu['AccPhotonOnlyID']         = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['PhotonOnlyID']*xs_mu_lumi_nounc)
     xs_mu['AccEGScale']         = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['EGScale']*xs_mu_lumi_nounc)
     xs_mu['AccMuScale']         = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['MuScale']*xs_mu_lumi_nounc)
     xs_mu['AccPileup']         = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['Pileup']*xs_mu_lumi_nounc)
     xs_mu['AccTheory']         = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['Theory']*xs_mu_lumi_nounc)
+    xs_mu['AccPDF']         = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['PDF']*xs_mu_lumi_nounc)
+    xs_mu['AccRenorm']         = ( xs_mu_data_nounc - xs_mu_bkg_nounc)             / ( comb_acceptance_zgg['muon']['Renorm']*xs_mu_lumi_nounc)
 
     # combine the SR and SB uncertainties
     # the SR uncertainties are correlated
@@ -981,6 +1053,8 @@ def make_zgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     xs_el_lumi_nounc  = ufloat( lumi.n, 0.0 )
 
     xs_el['statData']          = ( numerator_el_comb )                             / ( xs_el_acc_nounc*xs_el_lumi_nounc )
+    xs_el['statDataSR']        = ( numerator_el_sr   )                             / ( xs_el_acc_nounc*xs_el_lumi_nounc )
+    xs_el['statDataSB']        = ( summed_el['statDataSB']['sum'] )                / ( xs_el_acc_nounc*xs_el_lumi_nounc )
     xs_el['OtherDiPhotonStat'] = ( xs_el_data_nounc - bkg_el['OtherDiPhotonStat']) / ( xs_el_acc_nounc*xs_el_lumi_nounc )
     xs_el['OtherDiPhotonSyst'] = ( xs_el_data_nounc - bkg_el['OtherDiPhotonSyst']) / ( xs_el_acc_nounc*xs_el_lumi_nounc )
     xs_el['JetFakeCrossCorr']  = ( xs_el_data_nounc - bkg_el['JetFakeCrossCorr'])  / ( xs_el_acc_nounc*xs_el_lumi_nounc )
@@ -992,11 +1066,17 @@ def make_zgg_combination( results_final, jet_sum_mu, jet_sum_el,summed_mu, summe
     xs_el['lumi']              = ( xs_el_data_nounc - bkg_el['lumi'] )             / ( xs_el_acc_nounc*lumi)
     xs_el['AccStat']           = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['stat']   *xs_el_lumi_nounc)
     xs_el['AccLeptonID']        = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['LeptonID']*xs_el_lumi_nounc)
+    xs_el['AccTrigger']        = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['Trigger']*xs_el_lumi_nounc)
+    xs_el['AccLeptonOnlyID']        = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['LeptonOnlyID']*xs_el_lumi_nounc)
     xs_el['AccPhotonID']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['PhotonID']*xs_el_lumi_nounc)
+    xs_el['AccPhotonEV']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['PhotonEV']*xs_el_lumi_nounc)
+    xs_el['AccPhotonOnlyID']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['PhotonOnlyID']*xs_el_lumi_nounc)
     xs_el['AccEGScale']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['EGScale']*xs_el_lumi_nounc)
     xs_el['AccMuScale']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['MuScale']*xs_el_lumi_nounc)
     xs_el['AccPileup']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['Pileup']*xs_el_lumi_nounc)
     xs_el['AccTheory']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['Theory']*xs_el_lumi_nounc)
+    xs_el['AccPDF']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['PDF']*xs_el_lumi_nounc)
+    xs_el['AccRenorm']         = ( xs_el_data_nounc - xs_el_bkg_nounc)             / ( comb_acceptance_zgg['electron']['Renorm']*xs_el_lumi_nounc)
 
 
     print 'Muon, N Data = %d, N Sig = %f, n Bkg = %s '      %( summed_mu['Data']['sum'].n, summed_mu['Zgg']['sum'].n, bkg_mu )
@@ -1246,6 +1326,7 @@ def get_summed_sample( hist_entries, sample, pt_bins, eta_bins, isCorr=False ) :
 
     # first get the maximum bin from the histogram for later use
     bin_maxs = []
+    print hist_entries
     for bidx, binfo in hist_entries.values()[0]['detail'][sample]['bins'].iteritems()  :
         bin_maxs.append( int( binfo['max'] ) )
     max_bin = max( bin_maxs )

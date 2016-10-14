@@ -202,9 +202,9 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
         photons.push_back(lv);
     }
 
-    if( trigele.size() > 0 && photons.size() > 0 ) {
-        OUT::m_trigelph1 = (trigele[0] + photons[0]).M();
-    }
+    //if( trigele.size() > 0 && photons.size() > 0 ) {
+    //    OUT::m_trigelph1 = (trigele[0] + photons[0]).M();
+    //}
 
     return keep_event;
     

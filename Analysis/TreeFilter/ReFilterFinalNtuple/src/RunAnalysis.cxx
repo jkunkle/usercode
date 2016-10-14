@@ -45,6 +45,8 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     InitINTree(chain);
     InitOUTTree( outtree );
 
+    //OUT::ph_eleMatch = 0;
+
 #ifdef MODULE_CalcDiJetVars
     outtree->Branch("zeppenfeld_w"         , &OUT::zeppenfeld_w         , "zeppenfeld_w/F"       );
     outtree->Branch("zeppenfeld_w_pos_desc"         , &OUT::zeppenfeld_w_pos_desc         , "zeppenfeld_w_pos_desc/O"       );
@@ -62,7 +64,10 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("dr_ph_j2"      , &OUT::dr_ph_j2      , "dr_ph_j2/F"      );
     outtree->Branch("dr_lep_j1"     , &OUT::dr_lep_j1     , "dr_lep_j1/F"      );
     outtree->Branch("dr_lep_j2"     , &OUT::dr_lep_j2     , "dr_lep_j2/F"      );
+
 #endif
+
+    //outtree->Branch("ph_eleMatch"   , &OUT::ph_eleMatch   );
     
     BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
         if( mod_conf.GetName() == "FilterBlind" ) { 
@@ -142,6 +147,7 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
 
     OUT::ph_n = 0;
     ClearOutputPrefix("ph_");
+    //OUT::ph_eleMatch -> clear();
 
     for( int idx = 0; idx < IN::ph_n ; ++idx ) {
 
@@ -150,27 +156,30 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
         if( !config.PassBool( "cut_hasPixSeed", IN::ph_hasPixSeed->at(idx) ) ) continue;
         if( !config.PassBool( "cut_ph_csev", IN::ph_eleVeto->at(idx) ) ) continue;
 
-        if( config.HasCut( "cut_el_ph_dr" ) ) { 
-            float min_el_dr = 100.0;
+        float min_el_dr = 100.0;
 
-            TLorentzVector phlv;
-            phlv.SetPtEtaPhiE( IN::ph_pt->at(idx), 
-                               IN::ph_eta->at(idx), 
-                               IN::ph_phi->at(idx), 
-                               IN::ph_e->at(idx) );
+        TLorentzVector phlv;
+        phlv.SetPtEtaPhiE( IN::ph_pt->at(idx), 
+                           IN::ph_eta->at(idx), 
+                           IN::ph_phi->at(idx), 
+                           IN::ph_e->at(idx) );
 
-            for( int eidx = 0; eidx < OUT::el_n; eidx++ ) {
-                TLorentzVector ellv;
-                ellv.SetPtEtaPhiE( OUT::el_pt->at(eidx), 
-                                   OUT::el_eta->at(eidx), 
-                                   OUT::el_phi->at(eidx), 
-                                   OUT::el_e->at(eidx) );
+        for( int eidx = 0; eidx < OUT::el_n; eidx++ ) {
+            TLorentzVector ellv;
+            ellv.SetPtEtaPhiE( OUT::el_pt->at(eidx), 
+                               OUT::el_eta->at(eidx), 
+                               OUT::el_phi->at(eidx), 
+                               OUT::el_e->at(eidx) );
 
-                float dr = phlv.DeltaR( ellv );
-                if( dr < min_el_dr ) {
-                    min_el_dr = dr;
-                }
+            float dr = phlv.DeltaR( ellv );
+            if( dr < min_el_dr ) {
+                min_el_dr = dr;
             }
+        }
+
+        //OUT::ph_eleMatch->push_back(  ( min_el_dr < 0.4 ) );
+
+        if( config.HasCut( "cut_el_ph_dr" ) ) { 
             if( !config.PassFloat( "cut_el_ph_dr", min_el_dr ) ) continue;
         }
 
@@ -411,12 +420,16 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
             if( !config.PassBool( "cut_hasPixSeed_sublph12", OUT::ph_hasPixSeed->at(1) ) ) keep_event = false;
             if( !config.PassBool( "cut_csev_leadph12", OUT::ph_eleVeto->at(0) ) ) keep_event = false;
             if( !config.PassBool( "cut_csev_sublph12", OUT::ph_eleVeto->at(1) ) ) keep_event = false;
+            //if( !config.PassBool( "cut_overlapVeto_leadph12", OUT::ph_eleMatch->at(0) ) ) keep_event = false;
+            //if( !config.PassBool( "cut_overlapVeto_sublph12", OUT::ph_eleMatch->at(1) ) ) keep_event = false;
         }
         else {
             if( !config.PassBool( "cut_hasPixSeed_leadph12", OUT::ph_hasPixSeed->at(1) ) ) keep_event = false;
             if( !config.PassBool( "cut_hasPixSeed_sublph12", OUT::ph_hasPixSeed->at(0) ) ) keep_event = false;
             if( !config.PassBool( "cut_csev_leadph12", OUT::ph_eleVeto->at(1) ) ) keep_event = false;
             if( !config.PassBool( "cut_csev_sublph12", OUT::ph_eleVeto->at(0) ) ) keep_event = false;
+            //if( !config.PassBool( "cut_overlapVeto_leadph12", OUT::ph_eleMatch->at(1) ) ) keep_event = false;
+            //if( !config.PassBool( "cut_overlapVeto_sublph12", OUT::ph_eleMatch->at(0) ) ) keep_event = false;
         }
     }
 

@@ -150,6 +150,9 @@ def make_final_el( alg_list, args ) :
     csev = args.get('csev', False )
     print 'csev = ', csev
 
+    overlap_veto = args.get('overlap_veto', False )
+    print 'overlap_veto = ', overlap_veto
+
     invpixlead = args.get('invpixlead', False )
     print 'invpixlead = ', invpixlead
 
@@ -210,8 +213,17 @@ def make_final_el( alg_list, args ) :
             filter_event.cut_csev_sublph12 = ' == True '
         else :
             filter_event.cut_csev_sublph12 = ' == False '
-    else :
+    elif overlap_veto :
+        if invpixlead :
+            filter_event.cut_overlapVeto_leadph12 = ' == True '
+        else :
+            filter_event.cut_overlapVeto_leadph12 = ' == False '
+        if invpixsubl :
+            filter_event.cut_overlapVeto_sublph12 = ' == True '
+        else :
+            filter_event.cut_overlapVeto_sublph12 = ' == False '
 
+    else :
         if invpixlead :
             filter_event.cut_hasPixSeed_leadph12 = ' == True '
         else :
@@ -227,8 +239,8 @@ def make_final_el( alg_list, args ) :
     #filter_event.cut_dr_trigele_ph2 = ' > 0.4 '
     if not looseobj :
         filter_event.cut_dr_ph1_ph2 = ' > 0.4 '
-        filter_event.cut_leadPhot_trigElDR = ' > 0.4 '
-        filter_event.cut_sublPhot_trigElDR = ' > 0.4 '
+        #filter_event.cut_leadPhot_trigElDR = ' > 0.4 '
+        #filter_event.cut_sublPhot_trigElDR = ' > 0.4 '
 
     if not looseobj :
         filter_event.cut_ElTrig = ' == True '

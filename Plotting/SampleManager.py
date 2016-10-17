@@ -356,6 +356,10 @@ class DrawConfig :
             if labelStyle.count('prelim') :
                 extText = 'Preliminary'
 
+            labeltext = '19.4 fb^{-1} (8 TeV)'
+            if labelStyle.count('13') :
+                labeltext = '30.0 fb^{-1} (13 TeV)'
+
             rootslabel = ROOT.TLatex()
             cmslabel = ROOT.TLatex()
             extlabel = ROOT.TLatex()
@@ -376,7 +380,8 @@ class DrawConfig :
             cmslabel.SetText( 0.18, 0.87, 'CMS' )
             extlabel.SetText( 0.18, 0.82, extText )
             #rootslabel.SetText(0.65, 0.93, '#font[132]{#sqrt{s} = 8 TeV, L = 19.4 fb^{-1} }' )
-            rootslabel.SetText(0.73, 0.93, '19.4 fb^{-1} (8 TeV)' )
+
+            rootslabel.SetText(0.73, 0.93, labeltext  )
 
             if not labelStyle.count('paper') :
                 labels.append(extlabel)

@@ -2,13 +2,17 @@
 from argparse import ArgumentParser
 
 import os
+import sys
 import eos_utilities as eosutil
-import ROOT
 
+
+import ROOT
+ROOT.PyConfig.IgnoreCommandLineOptions = True
 # disable file recovery
 ROOT.gEnv.SetValue('TFile.Recover', 'OFF' )
 #ROOT.gEnv.SaveLevel( ROOT.kEnvGlobal )
 
+print sys.argv
 
 
 def main() :
@@ -37,9 +41,10 @@ def main() :
         filt_nevt = filt_nevt_hist
 
 
-    print '%s : Orignal = %d events, filtered = %d events.  Difference = %d' %( options.filteredDS.split('/')[-1], orig_nevt, filt_nevt, orig_nevt-filt_nevt)
+    print '%s : Orignal = %d events, filtered = %d events.  \033[1mDifference = %d\033[0m' %( options.filteredDS.split('/')[-1], orig_nevt, filt_nevt, orig_nevt-filt_nevt)
 
 def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNameFilt=None, histNameOrig=None, histNameFilt=None, fileKeyOrig=None, fileKeyFilt=None ) :
+
 
     assert treeNameOrig is not None or histNameOrig is not None, 'Must provide a histogram or tree name for original samples'
     assert treeNameFilt is not None or histNameFilt is not None, 'Must provide a histogram or tree name for filtered samples'
@@ -47,76 +52,30 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
     #assert not (treeNameOrig is not None and histNameOrig is not None), 'Must provide a histogram or tree name for original samples, not both'
     #assert not (treeNameFilt is not None and histNameFilt is not None), 'Must provide a histogram or tree name for filtered samples, not both'
 
-    orig_nevt_tree = 0
-    orig_nevt_hist = 0
-    filt_nevt_tree = 0
+    filt_nevt_tree = 0 
     filt_nevt_hist = 0
 
-    if originalDS.count( '/eos/' ) :
-        for top, dirs, files, sizes in eosutil.walk_eos( originalDS ) :
-            for file in files :
-
-                if fileKeyOrig is not None and not file.count(fileKeyOrig) : continue
-
-                ofile = ROOT.TFile.Open( 'root://eoscms/' + top+'/'+file )
-                if treeNameOrig is not None :
-                    try :
-                        otree = ofile.Get(treeNameOrig)
-                    except ReferenceError :
-                        print 'Could not access file'
-                        continue
-
-                    try :
-                        orig_nevt_tree += otree.GetEntries()
-                    except AttributeError :
-                        print 'Could not access hist'
-                        continue
-
-                if histNameOrig is not None :
-                    try :
-                        ohist = ofile.Get(histNameOrig)
-                    except ReferenceError :
-                        print 'Could not access file'
-                        continue
-
-                    try  :
-                        orig_nevt_hist += ohist.GetBinContent(1)
-                    except AttributeError :
-                        print 'Could not access hist'
-                        continue
-    else :
-        for top, dirs, files in os.walk( originalDS ) :
-            for file in files :
-
-                if fileKeyOrig is not None and not file.count(fileKeyOrig) : continue
-
-                ofile = ROOT.TFile.Open( top+'/'+file )
-                if treeNameOrig is not None :
-                    try :
-                        otree = ofile.Get(treeNameOrig)
-                        orig_nevt_tree += otree.GetEntries()
-                    except ReferenceError :
-                        print 'Could not access file'
-
-                if histNameOrig is not None :
-                    try :
-                        ohist = ofile.Get(histNameOrig)
-                        orig_nevt_hist += ohist.GetBinContent(1)
-                    except ReferenceError :
-                        print 'Could not access file'
-
+    orig_nevt_tree, orig_nevt_hist  = get_dataset_counts( originalDS, fileKeyOrig, treeNameOrig, histNameOrig )
 
 
     if not orig_nevt_tree and not orig_nevt_hist  :
         print 'Did not get any original events.  Check the path'
         return orig_nevt_tree, orig_nevt_hist, filt_nevt_tree, filt_nevt_hist
         
+    filt_nevt_tree, filt_nevt_hist  = get_dataset_counts( filteredDS, fileKeyFilt, treeNameFilt, histNameFilt )
 
-    if filteredDS.count( '/eos/' ) :
-        for top, dirs, files, sizes in eosutil.walk_eos( filteredDS ) :
+    return orig_nevt_tree, orig_nevt_hist, filt_nevt_tree, filt_nevt_hist
+
+
+def get_dataset_counts( dataset, fileKey, treeName=None, histName=None ) :
+
+    nevt_tree = 0
+    nevt_hist = 0
+    if dataset.count( '/eos/' ) :
+        for top, dirs, files, sizes in eosutil.walk_eos( dataset ) :
             for file in files :
 
-                if fileKeyFilt is not None and not file.count(fileKeyFilt) : continue
+                if fileKey is not None and not file.count(fileKey) : continue
 
                 ofile = ROOT.TFile.Open( 'root://eoscms/' + top+'/'+file )
                 if ofile == None :
@@ -126,32 +85,32 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
                 if ofile.TestBit(ROOT.TFile.kRecovered) :
                     print 'File was recovered, and data is probably not available'
                     continue
-                if treeNameFilt is not None :
+                if treeName is not None :
                     try :
-                        otree = ofile.Get(treeNameFilt)
-                        filt_nevt_tree += otree.GetEntries()
+                        otree = ofile.Get(treeName)
+                        nevt_tree += otree.GetEntries()
                     except ReferenceError :
                         print 'Could not access file'
 
-                if histNameFilt is not None :
+                if histName is not None :
                     try :
-                        ohist = ofile.Get(histNameFilt)
+                        ohist = ofile.Get(histName)
                     except ReferenceError :
                         print 'Could not access file'
                         continue
 
                     try  :
-                        filt_nevt_hist += ohist.GetBinContent(1)
+                        nevt_hist += ohist.GetBinContent(1)
                     except AttributeError :
                         print 'Could not access hist'
                         continue
 
 
     else :
-        for top, dirs, files in os.walk( filteredDS ) :
+        for top, dirs, files in os.walk( dataset ) :
             for file in files :
 
-                if fileKeyFilt is not None and not file.count(fileKeyFilt) : continue
+                if fileKey is not None and not file.count(fileKey) : continue
 
                 ofile = ROOT.TFile.Open( top+'/'+file )
                 if ofile == None :
@@ -161,29 +120,26 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
                 if ofile.TestBit(ROOT.TFile.kRecovered) :
                     print 'File was recovered, and data is probably not available'
                     continue
-                if treeNameFilt is not None :
+                if treeName is not None :
                     try :
-                        otree = ofile.Get(treeNameFilt)
-                        filt_nevt_tree += otree.GetEntries()
+                        otree = ofile.Get(treeName)
+                        otree.GetName()
+                        nevt_tree += otree.GetEntries()
                     except ReferenceError :
-                        print 'Could not access file'
+                        print 'Could not access file with treename ', treeName
 
-                if histNameFilt is not None :
+                if histName is not None :
                     try :
-                        ohist = ofile.Get(histNameFilt)
+                        ohist = ofile.Get(histName)
                     except ReferenceError :
                         print 'Could not access file'
                     try :
-                        filt_nevt_hist += ohist.GetBinContent(1)
+                        nevt_hist += ohist.GetBinContent(1)
                     except AttributeError :
                         print 'Could not get hist from file %s' %(top+'/'+file)
 
 
-
-
-    return orig_nevt_tree, orig_nevt_hist, filt_nevt_tree, filt_nevt_hist
-
-
+    return (nevt_tree, nevt_hist )
 
 if __name__ == '__main__' :
     main()

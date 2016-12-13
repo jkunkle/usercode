@@ -24,18 +24,18 @@ class JobConf( ) :
 #base = '/data/users/jkunkle/Baobabs/'
 base = '/store/user/jkunkle/'
 base_signal = '/data/users/jkunkle/Samples/Signal/'
-version = 'Resonances_v1'
-version_sig = 'Resonances_v2'
+version = 'Resonances_v3'
+version_sig = 'Resonances_v3'
 
 jobs = [
         #JobConf(base, version_sig, 'DoubleMuon', False ),
         #JobConf(base, version_sig, 'DoubleEG', False ),
-        #JobConf(base, version_sig, 'SingleMuon', False ),
-        #JobConf(base, version_sig, 'SingleElectron', False ),
+        JobConf(base, version_sig, 'SingleMuon', False ),
+        JobConf(base, version_sig, 'SingleElectron', False ),
         #JobConf(base, version_sig, 'SinglePhoton', False ),
         #JobConf(base, version_sig, 'JetHT', False ),
-        JobConf(base, version, 'WGToLNuG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                         , False ),
-        JobConf(base, version_sig, 'WGToLNuG_PtG-500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                         , False ),
+        #JobConf(base, version, 'WGToLNuG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                         , False ),
+        #JobConf(base, version_sig, 'WGToLNuG_PtG-500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                         , False ),
         #JobConf(base, version, 'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                         , False ),
         #JobConf(base, version, 'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                         , False ),
         #JobConf(base, version, 'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8', True),
@@ -78,7 +78,7 @@ jobs = [
 
 #module = 'ConfPhotonReco.py'
 module = 'ConfTruthPhotonReco.py'
-output = 'RecoOutputTruth_2016_10_18'
+output = 'RecoOutput_2016_12_13'
 
 nFilesPerJob = 1
 nProc = 4

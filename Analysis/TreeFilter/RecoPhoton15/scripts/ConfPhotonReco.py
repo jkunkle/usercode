@@ -13,27 +13,27 @@ def get_keep_filter() :
 
 def config_analysis( alg_list, args ) :
 
-    alg_list.append( Filter( 'BuildMuon' ) )
-
-    alg_list.append( build_electron( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=False ) )
+    #alg_list.append( build_electron( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=False ) )
+    #alg_list.append( build_electron( do_cutflow=True, do_hists=False, evalPID='medium', applyCorrections=False ) )
 
     alg_list.append( build_muon( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=False ) )
 
-    alg_list.append( build_photon( do_cutflow=False, do_hists=False, evalPID=None, doEVeto=False, applyCorrections=False ) )
+    #alg_list.append( build_photon( do_cutflow=False, do_hists=False, evalPID=None, doEVeto=False, applyCorrections=False ) )
+    #alg_list.append( build_photon( do_cutflow=True, do_hists=False, evalPID='medium', doEVeto=False, applyCorrections=False ) )
 
-    alg_list.append( build_jet( do_cutflow=False, do_hists=False ) )
+    #alg_list.append( build_jet( do_cutflow=False, do_hists=False ) )
 
-    alg_list.append( Filter('BuildMET') )
+    #alg_list.append( Filter('BuildMET') )
 
-    alg_list.append( Filter('BuildTruth') )
+    #alg_list.append( Filter('BuildTruth') )
 
-    alg_list.append( weight_event(args) )
+    #alg_list.append( weight_event(args) )
 
-    alg_list.append( Filter( 'BuildTriggerBits' ) )
+    #alg_list.append( Filter( 'BuildTriggerBits' ) )
 
-    gph_filt = Filter( 'FilterGenPhoton' )
-    gph_filt.cut_pt = ' > 0.1 '
-    alg_list.append(gph_filt)
+    #gph_filt = Filter( 'FilterGenPhoton' )
+    #gph_filt.cut_pt = ' > 0.1 '
+    #alg_list.append(gph_filt)
 
     #trig_filt = Filter('FilterTrigger')
     ##trig_filt.cut_trigger = ' ==48 ' #HLT_Photon36_CaloId10_Iso50_Photon22_CaloId10_Iso50_v 
@@ -49,19 +49,21 @@ def build_muon( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections
 
     filt.cut_pt         = ' > 10 '
 
-    filt.cut_isGlobal   = ' == True '
-    filt.cut_isPF       = ' == True '
-    filt.cut_abseta     = ' < 2.4'
-    filt.cut_chi2       = ' < 10'
-    filt.cut_nMuonHits  = ' > 0 ' 
-    filt.cut_nTrkLayers = ' > 5 ' 
-    filt.cut_nStations  = ' > 1'
-    filt.cut_nPixelHits = ' > 0'
-    filt.cut_d0         = ' < 0.2'
-    filt.cut_z0         = ' < 0.5'
-    filt.cut_corriso    = ' < 0.25'
+    filt.cut_isPf_loose         = ' == True '
+    filt.cut_isGlobalOrTk_loose = ' == True '
 
-    filt.cut_trkiso     = ' < 0.05 '
+    filt.cut_isGlobal_tight   = ' == True '
+    filt.cut_isPF_tight       = ' == True '
+    filt.cut_abseta_tight     = ' < 2.4'
+    filt.cut_chi2_tight       = ' < 10'
+    filt.cut_nMuonHits_tight  = ' > 0 ' 
+    filt.cut_nStations_tight  = ' > 1'
+    filt.cut_nTrkLayers_tight = ' > 5 ' 
+    filt.cut_nPixelHits_tight = ' > 0'
+    filt.cut_d0_tight         = ' < 0.2'
+    filt.cut_z0_tight         = ' < 0.5'
+    filt.cut_corriso_tight    = ' < 0.25'
+    filt.cut_trkiso_tight     = ' < 0.05 '
 
     if evalPID is not None :
         filt.add_var( 'evalPID', evalPID )
@@ -88,105 +90,129 @@ def build_muon( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections
 
 def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None, applyCorrections=False ) :
 
+    print '**************************************FIX**************************************'
+    print 'Not applying electron misshits cut'
+
     filt = Filter('BuildElectron')
 
     filt.do_cutflow = do_cutflow
 
+    # using values here
+    #https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
+    # d0 and z0 cuts not recommeded
+    # as of Dec 2016
+
     filt.cut_pt = ' > 10'
-    filt.cut_abssceta       = ' <2.5 '
+    #filt.cut_abssceta       = ' <2.5 '
     #filt.cut_abssceta       = ' <1.479 '
-    #filt.cut_abssceta       = ' >= 1.479 & < 2.5'
+    filt.cut_abssceta       = ' >= 1.479 & < 2.5'
     # no crack for now
     #filt.cut_abssceta_crack = ' > 1.4442 & < 1.566 '
     #filt.invert('cut_abssceta_crack')
     #filt.invert('cut_abssceta')
 
-    filt.cut_sigmaIEIE_barrel_tight        = ' < 0.0101 '
-    filt.cut_absdEtaIn_barrel_tight        = ' < 0.00926 '
-    filt.cut_absdPhiIn_barrel_tight        = ' < 0.0336 '
-    filt.cut_hovere_barrel_tight           = ' < 0.0597 '
-    filt.cut_isoRho_barrel_tight           = ' < 0.0354 '
-    filt.cut_ooEmooP_barrel_tight          = ' < 0.012 '
-    filt.cut_d0_barrel_tight               = ' < 0.0111 '
-    filt.cut_z0_barrel_tight               = ' < 0.0466 '
-    filt.cut_misshits_barrel_tight         = ' < 3 '
+    filt.cut_sigmaIEIE_barrel_tight        = ' < 0.00998 '
+    filt.cut_absdEtaIn_barrel_tight        = ' < 0.00308 '
+    filt.cut_absdPhiIn_barrel_tight        = ' < 0.0816 '
+    filt.cut_hovere_barrel_tight           = ' < 0.0414 '
+    filt.cut_isoRho_barrel_tight           = ' < 0.0588 '
+    filt.cut_ooEmooP_barrel_tight          = ' < 0.0129 '
+    #filt.cut_d0_barrel_tight               = ' < 0.0111 '
+    #filt.cut_z0_barrel_tight               = ' < 0.0466 '
+    #FIX
+    #filt.cut_misshits_barrel_tight         = ' < 1 '
+    #FIX
     filt.cut_passConvVeto_barrel_tight     = ' == 1 '
 
-    filt.cut_sigmaIEIE_barrel_medium       = ' < 0.0101 '
-    filt.cut_absdEtaIn_barrel_medium       = ' < 0.0103 '
-    filt.cut_absdPhiIn_barrel_medium       = ' < 0.0336 '
-    filt.cut_hovere_barrel_medium          = ' < 0.0876 '
-    filt.cut_isoRho_barrel_medium          = ' < 0.0766 '
-    filt.cut_ooEmooP_barrel_medium         = ' < 0.0174 '
-    filt.cut_d0_barrel_medium              = ' < 0.0118 '
-    filt.cut_z0_barrel_medium              = ' < 0.373 '
-    filt.cut_misshits_barrel_medium        = ' < 3 '
+    filt.cut_sigmaIEIE_barrel_medium       = ' < 0.00998 '
+    filt.cut_absdEtaIn_barrel_medium       = ' < 0.00311 '
+    filt.cut_absdPhiIn_barrel_medium       = ' < 0.103 '
+    filt.cut_hovere_barrel_medium          = ' < 0.253 '
+    filt.cut_isoRho_barrel_medium          = ' < 0.0695 '
+    filt.cut_ooEmooP_barrel_medium         = ' < 0.134 '
+    #filt.cut_d0_barrel_medium              = ' < 0.0118 '
+    #filt.cut_z0_barrel_medium              = ' < 0.373 '
+    #FIX
+    #filt.cut_misshits_barrel_medium        = ' < 1 '
+    #FIX
     filt.cut_passConvVeto_barrel_medium    = ' == 1 '
 
-    filt.cut_sigmaIEIE_barrel_loose        = ' < 0.0103 '
-    filt.cut_absdEtaIn_barrel_loose        = ' < 0.0105 '
-    filt.cut_absdPhiIn_barrel_loose        = ' < 0.115 '
-    filt.cut_hovere_barrel_loose           = ' < 0.104 '
-    filt.cut_isoRho_barrel_loose           = ' < 0.0893 '
-    filt.cut_ooEmooP_barrel_loose          = ' < 0.102 '
-    filt.cut_d0_barrel_loose               = ' < 0.0261 '
-    filt.cut_z0_barrel_loose               = ' < 0.41 '
-    filt.cut_misshits_barrel_loose         = ' < 3 '
+    filt.cut_sigmaIEIE_barrel_loose        = ' < 0.011 '
+    filt.cut_absdEtaIn_barrel_loose        = ' < 0.00477 '
+    filt.cut_absdPhiIn_barrel_loose        = ' < 0.222 '
+    filt.cut_hovere_barrel_loose           = ' < 0.298 '
+    filt.cut_isoRho_barrel_loose           = ' < 0.0994 '
+    filt.cut_ooEmooP_barrel_loose          = ' < 0.241 '
+    #filt.cut_d0_barrel_loose               = ' < 0.0261 '
+    #filt.cut_z0_barrel_loose               = ' < 0.41 '
+    #FIX
+    #filt.cut_misshits_barrel_loose         = ' < 1 '
+    #FIX
     filt.cut_passConvVeto_barrel_loose     = ' == 1 '
 
-    filt.cut_sigmaIEIE_barrel_veryloose    = ' < 0.0114 '
-    filt.cut_absdEtaIn_barrel_veryloose    = ' < 0.0152 '
-    filt.cut_absdPhiIn_barrel_veryloose    = ' < 0.216 '
-    filt.cut_hovere_barrel_veryloose       = ' < 0.181 '
-    filt.cut_isoRho_barrel_veryloose       = ' < 0.126 '
-    filt.cut_ooEmooP_barrel_veryloose      = ' < 0.207 '
-    filt.cut_d0_barrel_veryloose           = ' < 0.0564 '
-    filt.cut_z0_barrel_veryloose           = ' < 0.472 '
-    filt.cut_misshits_barrel_veryloose     = ' < 3 '
+    filt.cut_sigmaIEIE_barrel_veryloose    = ' < 0.0115 '
+    filt.cut_absdEtaIn_barrel_veryloose    = ' < 0.00749 '
+    filt.cut_absdPhiIn_barrel_veryloose    = ' < 0.228 '
+    filt.cut_hovere_barrel_veryloose       = ' < 0.356 '
+    filt.cut_isoRho_barrel_veryloose       = ' < 0.175 '
+    filt.cut_ooEmooP_barrel_veryloose      = ' < 0.299 '
+    #filt.cut_d0_barrel_veryloose           = ' < 0.0564 '
+    #filt.cut_z0_barrel_veryloose           = ' < 0.472 '
+    #FIX
+    #filt.cut_misshits_barrel_veryloose     = ' < 2 '
+    #FIX
     filt.cut_passConvVeto_barrel_veryloose = ' == 1 '
 
-    filt.cut_sigmaIEIE_endcap_tight        = ' < 0.0279 '
-    filt.cut_absdEtaIn_endcap_tight        = ' < 0.00724 '
-    filt.cut_absdPhiIn_endcap_tight        = ' < 0.0918 '
-    filt.cut_hovere_endcap_tight           = ' < 0.0615 '
-    filt.cut_isoRho_endcap_tight           = ' < 0.0646 '
-    filt.cut_ooEmooP_endcap_tight          = ' < 0.00999 '
-    filt.cut_d0_endcap_tight               = ' < 0.0351 '
-    filt.cut_z0_endcap_tight               = ' < 0.417 '
-    filt.cut_misshits_endcap_tight         = ' < 2 '
+    filt.cut_sigmaIEIE_endcap_tight        = ' < 0.0292 '
+    filt.cut_absdEtaIn_endcap_tight        = ' < 0.00605 '
+    filt.cut_absdPhiIn_endcap_tight        = ' < 0.0394 '
+    filt.cut_hovere_endcap_tight           = ' < 0.0641 '
+    filt.cut_isoRho_endcap_tight           = ' < 0.0571 '
+    filt.cut_ooEmooP_endcap_tight          = ' < 0.0129 '
+    #filt.cut_d0_endcap_tight               = ' < 0.0351 '
+    #filt.cut_z0_endcap_tight               = ' < 0.417 '
+    #FIX
+    #filt.cut_misshits_endcap_tight         = ' < 1 '
+    #FIX
     filt.cut_passConvVeto_endcap_tight     = ' == 1 '
 
-    filt.cut_sigmaIEIE_endcap_medium       = ' < 0.0283 '
-    filt.cut_absdEtaIn_endcap_medium       = ' < 0.00733 '
-    filt.cut_absdPhiIn_endcap_medium       = ' < 0.114 '
-    filt.cut_hovere_endcap_medium          = ' < 0.0678 '
-    filt.cut_isoRho_endcap_medium          = ' < 0.0678 '
-    filt.cut_ooEmooP_endcap_medium         = ' < 0.0898 '
-    filt.cut_d0_endcap_medium              = ' < 0.0739 '
-    filt.cut_z0_endcap_medium              = ' < 0.602 '
-    filt.cut_misshits_endcap_medium        = ' <  2 '
+    filt.cut_sigmaIEIE_endcap_medium       = ' < 0.0298 '
+    filt.cut_absdEtaIn_endcap_medium       = ' < 0.00609 '
+    filt.cut_absdPhiIn_endcap_medium       = ' < 0.045 '
+    filt.cut_hovere_endcap_medium          = ' < 0.0878 '
+    filt.cut_isoRho_endcap_medium          = ' < 0.0821 '
+    filt.cut_ooEmooP_endcap_medium         = ' < 0.13 '
+    #filt.cut_d0_endcap_medium              = ' < 0.0739 '
+    #filt.cut_z0_endcap_medium              = ' < 0.602 '
+    #FIX
+    #filt.cut_misshits_endcap_medium        = ' <  1 '
+    #FIX
     filt.cut_passConvVeto_endcap_medium    = ' == 1 '
 
-    filt.cut_sigmaIEIE_endcap_loose        = ' < 0.0301 '
-    filt.cut_absdEtaIn_endcap_loose        = ' < 0.00814 '
-    filt.cut_absdPhiIn_endcap_loose        = ' < 0.182 '
-    filt.cut_hovere_endcap_loose           = ' < 0.0897 '
-    filt.cut_isoRho_endcap_loose           = ' < 0.121 '
-    filt.cut_ooEmooP_endcap_loose          = ' < 0.126 '
-    filt.cut_d0_endcap_loose               = ' < 0.118 '
-    filt.cut_z0_endcap_loose               = ' < 0.822 '
-    filt.cut_misshits_endcap_loose         = ' <  2 '
+    filt.cut_sigmaIEIE_endcap_loose        = ' < 0.0314 '
+    filt.cut_absdEtaIn_endcap_loose        = ' < 0.00868 '
+    filt.cut_absdPhiIn_endcap_loose        = ' < 0.213 '
+    filt.cut_hovere_endcap_loose           = ' < 0.101 '
+    filt.cut_isoRho_endcap_loose           = ' < 0.107 '
+    filt.cut_ooEmooP_endcap_loose          = ' < 0.14 '
+    #filt.cut_d0_endcap_loose               = ' < 0.118 '
+    #filt.cut_z0_endcap_loose               = ' < 0.822 '
+    #FIX
+    #filt.cut_misshits_endcap_loose         = ' <  1 '
+    #FIX
     filt.cut_passConvVeto_endcap_loose     = ' == 1 '
 
-    filt.cut_sigmaIEIE_endcap_veryloose    = ' < 0.0352 '
-    filt.cut_absdEtaIn_endcap_veryloose    = ' < 0.0113 '
-    filt.cut_absdPhiIn_endcap_veryloose    = ' < 0.237 '
-    filt.cut_hovere_endcap_veryloose       = ' < 0.116 '
-    filt.cut_isoRho_endcap_veryloose       = ' < 0.144 '
-    filt.cut_ooEmooP_endcap_veryloose      = ' < 0.174 '
-    filt.cut_d0_endcap_veryloose           = ' < 0.222 '
-    filt.cut_z0_endcap_veryloose           = ' < 0.921 '
-    filt.cut_misshits_endcap_veryloose     = ' < 4 '
+    filt.cut_sigmaIEIE_endcap_veryloose    = ' < 0.037 '
+    filt.cut_absdEtaIn_endcap_veryloose    = ' < 0.00895 '
+    filt.cut_absdPhiIn_endcap_veryloose    = ' < 0.213 '
+    filt.cut_hovere_endcap_veryloose       = ' < 0.211 '
+    filt.cut_isoRho_endcap_veryloose       = ' < 0.159 '
+    filt.cut_ooEmooP_endcap_veryloose      = ' < 0.15 '
+    #filt.cut_d0_endcap_veryloose           = ' < 0.222 '
+    #filt.cut_z0_endcap_veryloose           = ' < 0.921 '
+    #FIX
+    #filt.cut_misshits_endcap_veryloose     = ' < 3 '
+    #FIX
     filt.cut_passConvVeto_endcap_veryloose = ' == 1 '
 
 
@@ -231,41 +257,43 @@ def build_photon( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None, 
     filt.cut_abseta_crack = ' > 1.44 & < 1.57 '
     filt.invert('cut_abseta_crack')
 
-    filt.cut_sigmaIEIE_barrel_loose  = ' < 0.0103 '
-    filt.cut_chIsoCorr_barrel_loose  = ' < 2.44 '
-    filt.cut_neuIsoCorr_barrel_loose = ' < 2.57 '
-    filt.cut_phoIsoCorr_barrel_loose = ' < 1.92 '
-    filt.cut_hovere_barrel_loose = ' < 0.05 '
+    # taken from https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2#Recommended_Working_points_for_2
+    # Updated Dec 2016
+    filt.cut_sigmaIEIE_barrel_loose  = ' < 0.01031 '
+    filt.cut_chIsoCorr_barrel_loose  = ' < 1.295 '
+    filt.cut_neuIsoCorr_barrel_loose = ' < 10.910 '
+    filt.cut_phoIsoCorr_barrel_loose = ' < 3.630 '
+    filt.cut_hovere_barrel_loose = ' < 0.0597 '
 
-    filt.cut_sigmaIEIE_endcap_loose  = ' < 0.0277 '
-    filt.cut_chIsoCorr_endcap_loose  = ' < 1.84 '
-    filt.cut_neuIsoCorr_endcap_loose = ' < 4.00 '
-    filt.cut_phoIsoCorr_endcap_loose = ' < 2.15  '
-    filt.cut_hovere_endcap_loose = ' < 0.05 '
+    filt.cut_sigmaIEIE_endcap_loose  = ' < 0.03013 '
+    filt.cut_chIsoCorr_endcap_loose  = ' < 1.011 '
+    filt.cut_neuIsoCorr_endcap_loose = ' < 5.931 '
+    filt.cut_phoIsoCorr_endcap_loose = ' < 6.641 '
+    filt.cut_hovere_endcap_loose = ' < 0.0481 '
 
-    filt.cut_sigmaIEIE_barrel_medium  = ' < 0.010 '
-    filt.cut_chIsoCorr_barrel_medium  = ' < 1.31 '
-    filt.cut_neuIsoCorr_barrel_medium = ' < 0.60 '
-    filt.cut_phoIsoCorr_barrel_medium = ' < 1.33 '
-    filt.cut_hovere_barrel_medium = ' < 0.05 '
+    filt.cut_sigmaIEIE_barrel_medium  = ' < 0.01022 '
+    filt.cut_chIsoCorr_barrel_medium  = ' < 0.441 '
+    filt.cut_neuIsoCorr_barrel_medium = ' < 2.725 '
+    filt.cut_phoIsoCorr_barrel_medium = ' < 2.571 '
+    filt.cut_hovere_barrel_medium = ' < 0.0396 '
 
-    filt.cut_sigmaIEIE_endcap_medium  = ' < 0.0267 '
-    filt.cut_chIsoCorr_endcap_medium  = ' < 1.25 '
-    filt.cut_neuIsoCorr_endcap_medium = ' < 1.65 '
-    filt.cut_phoIsoCorr_endcap_medium = ' < 1.02 '
-    filt.cut_hovere_endcap_medium = ' < 0.05 '
+    filt.cut_sigmaIEIE_endcap_medium  = ' < 0.03001 '
+    filt.cut_chIsoCorr_endcap_medium  = ' < 0.442 '
+    filt.cut_neuIsoCorr_endcap_medium = ' < 1.715 '
+    filt.cut_phoIsoCorr_endcap_medium = ' < 3.863 '
+    filt.cut_hovere_endcap_medium = ' < 0.0219 '
 
-    filt.cut_sigmaIEIE_barrel_tight  = ' < 0.010 '
-    filt.cut_chIsoCorr_barrel_tight  = ' < 0.91 '
-    filt.cut_neuIsoCorr_barrel_tight = ' < 0.33 '
-    filt.cut_phoIsoCorr_barrel_tight = ' < 0.61 '
-    filt.cut_hovere_barrel_tight = ' < 0.05 '
+    filt.cut_sigmaIEIE_barrel_tight  = ' < 0.00994 '
+    filt.cut_chIsoCorr_barrel_tight  = ' < 0.202 '
+    filt.cut_neuIsoCorr_barrel_tight = ' < 0.264 '
+    filt.cut_phoIsoCorr_barrel_tight = ' < 2.362 '
+    filt.cut_hovere_barrel_tight = ' < 0.0269 '
 
-    filt.cut_sigmaIEIE_endcap_tight  = ' < 0.0267 '
-    filt.cut_chIsoCorr_endcap_tight  = ' < 0.55 '
-    filt.cut_neuIsoCorr_endcap_tight = ' < 0.93 '
-    filt.cut_phoIsoCorr_endcap_tight = ' < 0.54 '
-    filt.cut_hovere_endcap_tight = ' < 0.05 '
+    filt.cut_sigmaIEIE_endcap_tight  = ' < 0.0300 '
+    filt.cut_chIsoCorr_endcap_tight  = ' < 0.034 '
+    filt.cut_neuIsoCorr_endcap_tight = ' < 0.586 '
+    filt.cut_phoIsoCorr_endcap_tight = ' < 2.617 '
+    filt.cut_hovere_endcap_tight = ' < 0.0213 '
 
     if filtPID is not None :
         setattr(filt, 'cut_pid_%s' %filtPID, ' == True' )

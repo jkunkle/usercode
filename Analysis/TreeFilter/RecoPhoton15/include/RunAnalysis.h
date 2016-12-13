@@ -21,7 +21,7 @@ class RunModule : public virtual RunModuleBase {
 
     public :
 
-        RunModule() {}
+        RunModule();
 
         // The run function must exist and be defined exactly as this
         // because it is defined in RunModuleBase 
@@ -60,6 +60,8 @@ class RunModule : public virtual RunModuleBase {
 
     private :
 
+        bool eval_mu_loose    ;
+        bool eval_mu_medium   ;
         bool eval_mu_tight    ;
         bool eval_ph_tight    ;
         bool eval_ph_medium   ;

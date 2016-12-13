@@ -10,7 +10,7 @@ parser = ArgumentParser()
 parser.add_argument( '--version', dest='version', required=True, default=None, help='Name of processing version (subdirectory under sample directory)' )
 parser.add_argument( '--mcOnly', dest='mcOnly',  default=False, action='store_true', help='only process MC samples (check DATA_SAMPLES list)' )
 parser.add_argument( '--dataOnly', dest='dataOnly',  default=False, action='store_true', help='only process data samples (check DATA_SAMPLES list)' )
-parser.add_argument( '--dataEras', dest='dataEras',  default=None, help='List of data eras to expect.  This should be provided if you want to have correct event counting' )
+parser.add_argument( '--dataEras', dest='dataEras',  default=None, help='List of data eras to expect, should be a list of single letters.  This should be provided if you want to have correct event counting' )
 
 options = parser.parse_args()
 
@@ -132,7 +132,8 @@ def main() :
     local_events = {}
     for samp in found_samples :
 
-        tree_counts, hist_counts = get_dataset_counts( '%s/%s/%s' %( BASE_DIR, samp, options.version ), FILE_KEY, treeName=TREE_NAME )
+        #tree_counts, hist_counts = get_dataset_counts( '%s/%s/%s' %( BASE_DIR, samp, options.version ), FILE_KEY, treeName=TREE_NAME, vetoes='failed' )
+        tree_counts, hist_counts = get_dataset_counts( '%s/%s/%s' %( BASE_DIR, samp, options.version ), FILE_KEY, treeName=TREE_NAME)
 
         local_events[samp] = tree_counts
 

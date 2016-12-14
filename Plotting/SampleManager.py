@@ -279,6 +279,10 @@ class DrawConfig :
 
         return rlabel
 
+    def get_tick_x_format(self) :
+        return self.hist_config.get( 'ticks_x', None )
+    def get_tick_y_format(self) :
+        return self.hist_config.get( 'ticks_y', None )
     
 
     def get_legend_entries(self) :
@@ -2427,7 +2431,7 @@ class SampleManager :
             print 'WARNING - samplesConf does not implement a function called print_examples '
 
 
-    def DrawHist(self, histpath, rebin=None, varRebinThresh=None, doratio=False, subtract_bkg=False, ylabel=None, xlabel=None, rlabel=None, logy=False, ymin=None, ymax=None, rmin=None, rmax=None, xmin=None, xmax=None, label_config={}, legend_config={}) :
+    def DrawHist(self, histpath, rebin=None, varRebinThresh=None, doratio=False, subtract_bkg=False, ylabel=None, xlabel=None, rlabel=None, logy=False, ymin=None, ymax=None, rmin=None, rmax=None, xmin=None, xmax=None, normalize=False, ticks_x=None, ticks_y=None, label_config={}, legend_config={}) :
 
         self.clear_all()
         for sample in self.samples :
@@ -2441,7 +2445,7 @@ class SampleManager :
                 if samp.hist is not None :
                     samp.hist.Rebin(rebin)
 
-        draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel, 'ymin' : ymin, 'ymax' : ymax, 'logy' : logy, 'rmin' : rmin, 'rmax' : rmax} , label_config=label_config, legend_config=legend_config)
+        draw_config = DrawConfig( histpath, None, None, hist_config={'doratio' : doratio, 'xlabel' : xlabel, 'ylabel' : ylabel, 'ymin' : ymin, 'ymax' : ymax, 'logy' : logy, 'rmin' : rmin, 'rmax' : rmax, 'normalize' : normalize, 'ticks_x' : ticks_x, 'ticks_y' : ticks_y} , label_config=label_config, legend_config=legend_config)
 
         # make a stack if there are samples to be 
         # stacked.  If no stacked samples exist
@@ -2572,8 +2576,6 @@ class SampleManager :
             self.create_same_legend(legend_entries=legendOrder, created_samples=active_samps)
 
             self.curr_legend.Draw()
-
-
 
     def Draw(self, varexp, selection, histpars, hist_config={}, label_config={}, legend_config={}, treeHist=None, treeSelection=None, generate_data_from_sample=None, replace_selection_for_sample={} , useModel=False ) :
 
@@ -2810,6 +2812,8 @@ class SampleManager :
 
         self.curr_legend = self.create_standard_legend( step, draw_config=draw_config)
 
+        legendTextSize = draw_config.legend_config.get('legendTextSize', None )
+
         # format the entries
         tmp_legend_entries = []
         legend_entries = []
@@ -2852,7 +2856,9 @@ class SampleManager :
         else :
             legend_entries = tmp_legend_entries
         for le in legend_entries :
-            self.curr_legend.AddEntry(le[0], le[1], le[2])
+            entry = self.curr_legend.AddEntry(le[0], le[1], le[2])
+            if legendTextSize is not None :
+                entry.SetTextSize(legendTextSize)
 
 
     #----------------------------------------------------
@@ -3473,7 +3479,7 @@ class SampleManager :
                 if ymin is not None and ymax is not None :
                     prim.GetYaxis().SetRangeUser( ymin, ymax )
                 prim.SetTitle('')
-                offset = 1.25
+                offset = 1.15
                 if logy :
                     offset = 1.1
                 if doratio == True or doratio == 1 : # canvas sizes differ for ratio, so title, label sizes are different
@@ -3499,7 +3505,7 @@ class SampleManager :
     def set_stack_default_formatting(self, topcan, doratio, logy=False ) :
         if topcan.GetHists() != None :
             if topcan.GetHists().GetSize() > 0 :
-                offset = 1.25
+                offset = 1.15
                 if logy :
                     offset = 1.1
                 if doratio : # canvas sizes differ for ratio, so title, label sizes are different
@@ -3690,13 +3696,21 @@ class SampleManager :
         self.curr_canvases['top'].cd()
 
         ylabel = draw_config.get_ylabel()
+        ticksx = draw_config.get_tick_x_format()
+        ticksy = draw_config.get_tick_y_format()
+
         # in what cases is topcan 
         # an already filled TCanvas?
         if isinstance(topcan, ROOT.TCanvas ) :
-            if ylabel is not None :
-                for prim in topcan.GetListOfPrimitives() :
-                    if isinstance(prim, ROOT.TH1F) :
+            for prim in topcan.GetListOfPrimitives() :
+                if isinstance(prim, ROOT.TH1F) :
+                    if ylabel is not None :
                         prim.GetYaxis().SetTitle(ylabel)
+                    if ticksx is not None :
+                        prim.GetXaxis().SetNdivisions( ticksx[0],ticksx[1],ticksx[2] )
+                    if ticksy is not None :
+                        prim.GetYaxis().SetNdivisions( ticksy[0],ticksy[1],ticksy[2] )
+
 
 
             topcan.DrawClonePad()
@@ -3710,11 +3724,15 @@ class SampleManager :
             topcan.SetMaximum(ymax)
             self.set_stack_default_formatting( topcan, doratio, logy=draw_config.get_logy())
 
+        normalize = draw_config.get_normalize()
 
         # draw the data
         for dsamp in self.get_samples( name=datahists, isActive=True ):
             dsamp.hist.SetMarkerStyle(20)
-            dsamp.hist.Draw('PE same')
+            if normalize :
+                dsamp.hist.DrawNormalized('PE same')
+            else :
+                dsamp.hist.Draw('PE same')
 
         # draw the signals
         if sighists :
@@ -3726,16 +3744,22 @@ class SampleManager :
                     #samp.hist.SetLineWidth(3)
                     samp.hist.SetLineStyle(samp.getLineStyle())
                     samp.hist.SetStats(0)
-                    samp.hist.Draw('HIST same')
+                    if normalize :
+                        samp.hist.DrawNormalized('HIST same')
+                    else :
+                        samp.hist.Draw('HIST same')
 
         if errhists :
             errsamps = self.get_samples(name=errhists )
+            legendTextSize = draw_config.legend_config.get('legendTextSize', None )
             for samp in errsamps :
                 samp.graph.SetFillStyle(3004)
                 samp.graph.SetFillColor(ROOT.kBlack)
                 samp.graph.Draw('2same')
 
-                self.curr_legend.AddEntry( samp.graph, 'Total uncertainty' )
+                entry = self.curr_legend.AddEntry( samp.graph, 'Total uncertainty' )
+                if legendTextSize is not None :
+                    entry.SetTextSize( legendTextSize )
 
         if doratio :
             self.curr_canvases['bottom'].cd()
@@ -3761,6 +3785,7 @@ class SampleManager :
 
         # draw the legend
         if self.curr_legend is not None :
+            print 'Legend text size = ', self.curr_legend.GetTextSize()
             self.curr_legend.Draw()
 
         # draw the plot status label
@@ -3796,9 +3821,28 @@ class SampleManager :
                     if samp.hist :
                         samp.hist.GetXaxis().SetTitle(xlabel)
 
-        if ylabel is not None :
-            if isinstance(topcan, ROOT.THStack ) :
+        if isinstance(topcan, ROOT.THStack ) :
+            #print topcan.GetHistogram().GetNdivisions()
+            #raw_input('cont')
+            if ylabel is not None :
                 topcan.GetHistogram().GetYaxis().SetTitle(ylabel)
+            if ticksx is not None : 
+                topcan.GetHistogram().GetXaxis().SetNdivisions(ticksx[0], ticksx[1], ticksx[2],True)
+            if ticksy is not None : 
+                topcan.GetHistogram().GetYaxis().SetNdivisions(ticksy[0], ticksy[1], ticksy[2], True)
+
+
+            wh = self.curr_canvases['top'].GetWh()
+            ww = self.curr_canvases['top'].GetWw()
+
+            tl = 15.
+
+            tick_frac_y = tl / ( ww )
+            tick_frac_x = tl / ( wh )
+
+
+            topcan.GetHistogram().GetXaxis().SetTickLength(tick_frac_x)
+            topcan.GetHistogram().GetYaxis().SetTickLength(tick_frac_y)
 
         if draw_config.get_logy():
             self.curr_canvases['top'].SetLogy()

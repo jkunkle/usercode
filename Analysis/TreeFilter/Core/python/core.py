@@ -732,6 +732,9 @@ def check_and_filter_input_files( input_files, treename ) :
         if tree == None :
             pass_filter = False
             print 'Removed file %s that did not contain the input tree' %filename
+            print 'Existing top level objects : '
+            for obj in file.GetListOfKeys() :
+                print obj.GetName()
 
         if pass_filter :
             filtered_files.append(filename)

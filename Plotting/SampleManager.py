@@ -362,7 +362,7 @@ class DrawConfig :
 
             labeltext = '19.4 fb^{-1} (8 TeV)'
             if labelStyle.count('13') :
-                labeltext = '30.0 fb^{-1} (13 TeV)'
+                labeltext = '36.2 fb^{-1} (13 TeV)'
 
             rootslabel = ROOT.TLatex()
             cmslabel = ROOT.TLatex()

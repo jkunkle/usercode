@@ -99,9 +99,11 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::mu_passLoose              = 0;
     OUT::mu_passCustom             = 0;
     OUT::mu_passTight              = 0;
-    OUT::mu_passTightNoIso         = 0;
-    OUT::mu_passTightNoD0          = 0;
-    OUT::mu_passTightNoIsoNoD0     = 0;
+    OUT::mu_passMedium              = 0;
+    OUT::mu_passLoose              = 0;
+    //OUT::mu_passTightNoIso         = 0;
+    //OUT::mu_passTightNoD0          = 0;
+    //OUT::mu_passTightNoIsoNoD0     = 0;
     OUT::mu_truthMatch             = 0;
     OUT::mu_truthMinDR             = 0;
 
@@ -250,12 +252,12 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     //outtree->Branch("mu_nMuStations"            , &OUT::mu_nMuStations            );
     //outtree->Branch("mu_nPixHits"               , &OUT::mu_nPixHits               );
     //outtree->Branch("mu_nTrkLayers"             , &OUT::mu_nTrkLayers             );
-    //outtree->Branch("mu_d0"                     , &OUT::mu_d0                     );
-    //outtree->Branch("mu_z0"                     , &OUT::mu_z0                     );
+    outtree->Branch("mu_d0"                     , &OUT::mu_d0                     );
+    outtree->Branch("mu_z0"                     , &OUT::mu_z0                     );
     //outtree->Branch("mu_pfIso_ch"               , &OUT::mu_pfIso_ch               );
     //outtree->Branch("mu_pfIso_nh"               , &OUT::mu_pfIso_nh               );
     //outtree->Branch("mu_pfIso_pho"              , &OUT::mu_pfIso_pho              );
-    //outtree->Branch("mu_pfIso_db"               , &OUT::mu_pfIso_db               );
+    outtree->Branch("mu_pfIso_db"               , &OUT::mu_pfIso_db               );
     //outtree->Branch("mu_rhoIso"                 , &OUT::mu_rhoIso                 );
     //outtree->Branch("mu_corrIso"                , &OUT::mu_corrIso                );
     //outtree->Branch("mu_trkIso"                 , &OUT::mu_trkIso                 );
@@ -265,9 +267,11 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     //outtree->Branch("mu_passLoose"              , &OUT::mu_passLoose              );
     //outtree->Branch("mu_passCustom"             , &OUT::mu_passCustom             );
     outtree->Branch("mu_passTight"              , &OUT::mu_passTight              );
-    outtree->Branch("mu_passTightNoIso"         , &OUT::mu_passTightNoIso         );
-    outtree->Branch("mu_passTightNoD0"          , &OUT::mu_passTightNoD0          );
-    outtree->Branch("mu_passTightNoIsoNoD0"     , &OUT::mu_passTightNoIsoNoD0     );
+    outtree->Branch("mu_passMedium"              , &OUT::mu_passMedium                 );
+    outtree->Branch("mu_passLoose"              , &OUT::mu_passLoose                 );
+    //outtree->Branch("mu_passTightNoIso"         , &OUT::mu_passTightNoIso         );
+    //outtree->Branch("mu_passTightNoD0"          , &OUT::mu_passTightNoD0          );
+    //outtree->Branch("mu_passTightNoIsoNoD0"     , &OUT::mu_passTightNoIsoNoD0     );
     //outtree->Branch("mu_truthMatch"             , &OUT::mu_truthMatch             );
     //outtree->Branch("mu_truthMinDR"             , &OUT::mu_truthMinDR             );
     
@@ -433,6 +437,24 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 if( pid == "veryloose" ) eval_el_veryloose   = true;
             }
         }
+        if( mod_conf.GetName() == "BuildPhoton" ) { 
+            std::map<std::string, std::string>::const_iterator eitr = mod_conf.GetInitData().find( "evalPID" );
+            if( eitr != mod_conf.GetInitData().end() ) {
+                std::string pid = eitr->second;
+                if( pid == "tight"     ) eval_ph_tight       = true;
+                if( pid == "medium"    ) eval_ph_medium      = true;
+                if( pid == "loose"     ) eval_ph_loose       = true;
+            }
+        }
+        if( mod_conf.GetName() == "BuildMuon" ) { 
+            std::map<std::string, std::string>::const_iterator eitr = mod_conf.GetInitData().find( "evalPID" );
+            if( eitr != mod_conf.GetInitData().end() ) {
+                std::string pid = eitr->second;
+                if( pid == "tight"     ) eval_mu_tight       = true;
+                if( pid == "medium"    ) eval_mu_medium      = true;
+                if( pid == "loose"    ) eval_mu_loose      = true;
+            }
+        }
         if( mod_conf.GetName() == "WeightEvent" ) { 
             std::map<std::string, std::string>::const_iterator itr = mod_conf.GetInitData().find( "ApplyNLOWeight" );
             if( itr != mod_conf.GetInitData().end() ) {
@@ -520,12 +542,12 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
     //OUT::mu_nMuStations        -> clear();
     //OUT::mu_nPixHits           -> clear();
     //OUT::mu_nTrkLayers         -> clear();
-    //OUT::mu_d0                 -> clear();
-    //OUT::mu_z0                 -> clear();
+    OUT::mu_d0                 -> clear();
+    OUT::mu_z0                 -> clear();
     //OUT::mu_pfIso_ch           -> clear();
     //OUT::mu_pfIso_nh           -> clear();
     //OUT::mu_pfIso_pho          -> clear();
-    //OUT::mu_pfIso_db           -> clear();
+    OUT::mu_pfIso_db           -> clear();
     //OUT::mu_rhoIso             -> clear();
     //OUT::mu_corrIso            -> clear();
     //OUT::mu_trkIso             -> clear();
@@ -535,9 +557,11 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
     //OUT::mu_passLoose          -> clear();
     //OUT::mu_passCustom          -> clear();
     OUT::mu_passTight          -> clear();
-    OUT::mu_passTightNoIso     -> clear();
-    OUT::mu_passTightNoD0      -> clear();
-    OUT::mu_passTightNoIsoNoD0 -> clear();
+    OUT::mu_passMedium          -> clear();
+    OUT::mu_passLoose          -> clear();
+    //OUT::mu_passTightNoIso     -> clear();
+    //OUT::mu_passTightNoD0      -> clear();
+    //OUT::mu_passTightNoIsoNoD0 -> clear();
     //OUT::mu_truthMatch         -> clear();
     //OUT::mu_truthMinDR         -> clear();
     OUT::mu_n          = 0;
@@ -549,6 +573,15 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         float eta = IN::MuEta->at(idx);
         float phi = IN::MuPhi->at(idx);
         float en = IN::MuE->at(idx);
+
+        // MuID is filled with these bit shifts
+        //kGlobMu = 1 kTkMu = 2 kPfMu = 4
+        int type = IN::MuType->at(idx);
+
+        bool isGloMu = ( ( type  &  1 ) != 0  );
+        bool isTkMu  = ( ( type  &  2 ) != 0  );
+        bool isPfMu  = ( ( type  &  4 ) != 0  );
+
 
         float muPFIsoDBetaCorr  = IN::MuPfIso->at(idx);
         float muPFIsoCH  = IN::MuPfIsoChHad->at(idx);
@@ -569,85 +602,71 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         //int muID = IN::MuId->at(idx);
         
         bool pass_tight = true;
-        bool pass_tightNoIso = true;
-        bool pass_tightNoD0 = true;
-        bool pass_tightNoIsoNoD0 = true;
+        bool pass_loose = true;
+        bool pass_medium = true;
 
-        // No global or PF stored
-        //if( !config.PassBool ( "cut_isGlobal"   , is_global_muon ) ) {
-        //    pass_tight = false;
-        //    pass_tightNoIso = false;
-        //    pass_tightNoD0 = false;
-        //    pass_tightNoIsoNoD0 = false;
-        //    if( eval_mu_tight ) continue;
-        //}
-        //if( !config.PassBool ( "cut_isPF"       , is_pf_muon     ) ) {
-        //    pass_tight = false;
-        //    pass_tightNoIso = false;
-        //    pass_tightNoD0 = false;
-        //    pass_tightNoIsoNoD0 = false;
-        //    if( eval_mu_tight ) continue;
-        //}
-        if( !config.PassFloat( "cut_chi2"       , chi2           ) ) { 
-            pass_tight = false;
-            pass_tightNoIso = false;
-            pass_tightNoD0 = false;
-            pass_tightNoIsoNoD0 = false;
-            if( eval_mu_tight ) continue;
-        }
-        if( !config.PassFloat( "cut_nMuonHits"  , nMuHits          ) ) { 
-            pass_tight = false;
-            pass_tightNoIso = false;
-            pass_tightNoD0 = false;
-            pass_tightNoIsoNoD0 = false;
-            if( eval_mu_tight ) continue;
-        }
-        if( !config.PassFloat( "cut_nStations"  , muStations     ) ) { 
-            pass_tight = false;
-            pass_tightNoIso = false;
-            pass_tightNoD0 = false;
-            pass_tightNoIsoNoD0 = false;
-            if( eval_mu_tight ) continue;
-        }
-        if( !config.PassFloat( "cut_nPixelHits" , nPixHit        ) ) { 
-            pass_tight = false;
-            pass_tightNoIso = false;
-            pass_tightNoD0 = false;
-            pass_tightNoIsoNoD0 = false;
-            if( eval_mu_tight ) continue;
-        }
-        if( !config.PassFloat( "cut_nTrkLayers" , nTrkLayers     ) ) { 
-            pass_tight = false;
-            pass_tightNoIso = false;
-            pass_tightNoD0 = false;
-            pass_tightNoIsoNoD0 = false;
-            if( eval_mu_tight ) continue;
-        }
-        if( !config.PassFloat( "cut_d0"         , fabs(d0)       ) ) { 
-            pass_tight = false;
-            pass_tightNoIso = false;
-            if( eval_mu_tight ) continue;
-        }
-        if( !config.PassFloat( "cut_z0"         , fabs(z0)       ) ) { 
-            pass_tight = false;
-            pass_tightNoIso = false;
-            pass_tightNoD0 = false;
-            pass_tightNoIsoNoD0 = false;
-            if( eval_mu_tight ) continue;
-        }
-        if( !config.PassFloat( "cut_trkiso"     , tkIso/pt       ) ) { 
-            pass_tight = false;
-            pass_tightNoD0 = false;
-            if( eval_mu_tight ) continue;
-        }
-        if( !config.PassFloat( "cut_corriso"    , muPFIsoDBetaCorr     ) ) { 
-            pass_tight = false;
-            pass_tightNoD0 = false;
-            if( eval_mu_tight ) continue;
+        bool use_eval = eval_mu_tight || eval_mu_medium || eval_mu_loose;
+
+        // loose cuts
+        if( !use_eval || eval_mu_loose ) {
+            if( !config.PassBool ( "cut_isPf_loose"   , isPfMu ) ) {
+                pass_loose = false;
+                if( eval_mu_loose) continue;
+            }
+            if( !config.PassBool ( "cut_isGlobalOrTk_loose"   , (isGloMu || isTkMu ) ) ) {
+                pass_loose = false;
+                if( eval_mu_loose) continue;
+            }
         }
 
-        // evaluate tight cuts if requested
-        if( eval_mu_tight && !pass_tight ) continue;
+        // loose cuts
+        if( !use_eval || eval_mu_tight ) {
+            if( !config.PassBool ( "cut_isGlobal_tight"       , isGloMu     ) ) {
+                pass_tight = false;
+                if( eval_mu_tight ) continue;
+            }
+            if( !config.PassBool ( "cut_isPf_tight"       , isPfMu     ) ) {
+                pass_tight = false;
+                if( eval_mu_tight ) continue;
+            }
+
+            if( !config.PassFloat( "cut_chi2_tight"       , chi2           ) ) { 
+                pass_tight = false;
+                if( eval_mu_tight ) continue;
+            }
+            if( !config.PassFloat( "cut_nMuonHits_tight"  , nMuHits          ) ) { 
+                pass_tight = false;
+                if( eval_mu_tight ) continue;
+            }
+            if( !config.PassFloat( "cut_nStations_tight"  , muStations     ) ) { 
+                pass_tight = false;
+                if( eval_mu_tight ) continue;
+            }
+            if( !config.PassFloat( "cut_nPixelHits_tight" , nPixHit        ) ) { 
+                pass_tight = false;
+                if( eval_mu_tight ) continue;
+            }
+            if( !config.PassFloat( "cut_nTrkLayers_tight" , nTrkLayers     ) ) { 
+                pass_tight = false;
+                if( eval_mu_tight ) continue;
+            }
+            if( !config.PassFloat( "cut_d0_tight"         , fabs(d0)       ) ) { 
+                pass_tight = false;
+                if( eval_mu_tight ) continue;
+            }
+            if( !config.PassFloat( "cut_z0_tight"         , fabs(z0)       ) ) { 
+                pass_tight = false;
+                if( eval_mu_tight ) continue;
+            }
+            if( !config.PassFloat( "cut_trkiso_tight"     , tkIso/pt       ) ) { 
+                pass_tight = false;
+                if( eval_mu_tight ) continue;
+            }
+            if( !config.PassFloat( "cut_corriso_tight"    , muPFIsoDBetaCorr     ) ) { 
+                pass_tight = false;
+                if( eval_mu_tight ) continue;
+            }
+        }
 
         OUT::mu_n++;
 
@@ -657,11 +676,11 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         OUT::mu_e                  -> push_back(en );
         //OUT::mu_pfIso_ch           -> push_back(muPFIsoCH);
         //OUT::mu_pfIso_nh           -> push_back(muPFIsoNH);
-        //OUT::mu_pfIso_db           -> push_back(muPFIsoDBetaCorr);
+        OUT::mu_pfIso_db           -> push_back(muPFIsoDBetaCorr);
         //OUT::mu_rhoIso             -> push_back(muIsoRho);
         //OUT::mu_trkIso             -> push_back(tkIso);
-        //OUT::mu_d0                 -> push_back(d0);
-        //OUT::mu_z0                 -> push_back(z0);
+        OUT::mu_d0                 -> push_back(d0);
+        OUT::mu_z0                 -> push_back(z0);
         //OUT::mu_chi2               -> push_back(chi2);
         //OUT::mu_charge             -> push_back(charge);
         //OUT::mu_passLoose          -> push_back((muID==0));
@@ -672,13 +691,14 @@ void RunModule::BuildMuon( ModuleConfig & config ) const {
         //OUT::mu_nPixHits           -> push_back( nPixHit );
         //OUT::mu_nTrkLayers         -> push_back( nTrkLayers );
         ////OUT::mu_pfIso_pho          -> push_back(muPFIsoPho);
-        //OUT::mu_corrIso            -> push_back(muPFIsoDBetaCorr);
         ////OUT::mu_triggerMatch       -> push_back( trigMatch );
         ////OUT::mu_triggerMatchDiMu   -> push_back( trigMatchDiMu );
         OUT::mu_passTight          -> push_back( pass_tight );
-        OUT::mu_passTightNoIso     -> push_back( pass_tightNoIso );
-        OUT::mu_passTightNoD0      -> push_back( pass_tightNoD0 );
-        OUT::mu_passTightNoIsoNoD0 -> push_back( pass_tightNoIsoNoD0 );
+        OUT::mu_passMedium          -> push_back( pass_medium );
+        OUT::mu_passLoose          -> push_back( pass_loose );
+        //OUT::mu_passTightNoIso     -> push_back( pass_tightNoIso );
+        //OUT::mu_passTightNoD0      -> push_back( pass_tightNoD0 );
+        //OUT::mu_passTightNoIsoNoD0 -> push_back( pass_tightNoIsoNoD0 );
 
 
         //std::vector<int> matchPID;
@@ -1449,23 +1469,31 @@ void RunModule::BuildPhoton( ModuleConfig & config ) const {
         float pfNeuIso    = IN::PhotPfIsoNeutralHad->at(idx);
         float pfPhoIso    = IN::PhotPfIsoPhot->at(idx);
 
+
         float pfChIsoRhoCorr = 0.0;
         float pfNeuIsoRhoCorr = 0.0;
         float pfPhoIsoRhoCorr = 0.0;
         calc_corr_iso( pfChIso, pfPhoIso, pfNeuIso, rho, sceta, pfChIsoRhoCorr, pfPhoIsoRhoCorr, pfNeuIsoRhoCorr);
 
-        float slope = 0.0043;
-        float expslope = 0.0044;
-        float constant = 0.5809;
-        if( !iseb ) {
-            slope = 0.0041;
-            expslope = 0.004;
-            constant = 0.9402;
+        float p1_neu = 0;
+        float p2_neu = 0;
+        float p1_pho = 0;
+        // taken from https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2#Recommended_Working_points_for_2
+        // Updated Dec 2016
+        if( iseb ) {
+            p1_neu = 0.0148;
+            p2_neu = 0.000017;
+            p1_pho = 0.0047;
+        }
+        else {
+            p1_neu = 0.0163;
+            p2_neu = 0.000014;
+            p1_pho = 0.0034;
         }
 
         float pfChIsoPtRhoCorr  = pfChIsoRhoCorr;
-        float pfNeuIsoPtRhoCorr = pfNeuIsoRhoCorr-exp( expslope*pt + constant );
-        float pfPhoIsoPtRhoCorr = pfPhoIsoRhoCorr-slope*pt;
+        float pfNeuIsoPtRhoCorr = pfNeuIsoRhoCorr-p1_neu*pt-p2_neu*pt*pt;
+        float pfPhoIsoPtRhoCorr = pfPhoIsoRhoCorr-p1_pho*pt;
 
 
         if( !config.PassFloat( "cut_pt"    , pt       ) ) continue;
@@ -2061,44 +2089,47 @@ bool RunModule::HasTruthMatch( const TLorentzVector & objlv, const std::vector<i
 void RunModule::calc_corr_iso( float chIso, float phoIso, float neuIso, float rho, float eta, float &chIsoCorr, float &phoIsoCorr, float &neuIsoCorr )  const
 {
 
+    // from https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedPhotonIdentificationRun2#Selection_implementation_details
+    // updated Dec 2016
+    
     float ea_ch=0.0;
     float ea_pho=0.0;
     float ea_neu=0.0;
 
     if( fabs( eta ) < 1.0 ) {
-        ea_ch = 0.0157;
-        ea_neu = 0.0143;
-        ea_pho = 0.0725;
+        ea_ch = 0.0360;
+        ea_neu = 0.0597;
+        ea_pho = 0.1210;
     }
     else if( fabs(eta) >= 1.0 && fabs( eta ) < 1.479 ) {
-        ea_ch = 0.0143;
-        ea_neu = 0.021;
-        ea_pho = 0.0604;
+        ea_ch = 0.0377;
+        ea_neu = 0.0807;
+        ea_pho = 0.1107;
     }
     else if( fabs(eta) >= 1.479 && fabs( eta ) < 2.0 ) {
-        ea_ch = 0.0115;
-        ea_neu = 0.0147;
-        ea_pho = 0.0320;
+        ea_ch = 0.0306;
+        ea_neu = 0.0629;
+        ea_pho = 0.0699;
     }
     else if( fabs(eta) >= 2.0 && fabs( eta ) < 2.2 ) {
-        ea_ch = 0.0094;
-        ea_neu = 0.0082;
-        ea_pho = 0.0512;
+        ea_ch = 0.0283;
+        ea_neu = 0.0197;
+        ea_pho = 0.1056;
     }
     else if( fabs(eta) >= 2.2 && fabs( eta ) < 2.3 ) {
-        ea_ch = 0.0095;
-        ea_neu = 0.0082;
-        ea_pho = 0.0512;
+        ea_ch = 0.0254;
+        ea_neu = 0.0184;
+        ea_pho = 0.1457;
     }
     else if( fabs(eta) >= 2.3 && fabs( eta ) < 2.4 ) {
-        ea_ch = 0.0068;
-        ea_neu = 0.0186;
-        ea_pho = 0.0949;
+        ea_ch = 0.0217;
+        ea_neu = 0.0284;
+        ea_pho = 0.1719;
     }
     else if( fabs(eta) >= 2.4 ) {
-        ea_ch = 0.0053;
-        ea_neu = 0.0320;
-        ea_pho = 0.1160;
+        ea_ch = 0.0167;
+        ea_neu = 0.0591;
+        ea_pho = 0.1998;
     }
 
     chIsoCorr  = chIso  - rho*ea_ch;
@@ -2342,3 +2373,18 @@ void RunModule::BuildTriggerBits( ModuleConfig & config ) const {
 ////#endif
 //}
 
+RunModule::RunModule() : 
+    eval_mu_loose     ( 0),
+    eval_mu_medium     ( 0),
+    eval_mu_tight     ( 0),
+    eval_ph_tight     ( 0),
+    eval_ph_medium    ( 0),
+    eval_ph_loose     ( 0),
+    eval_el_tight     ( 0),
+    eval_el_medium    ( 0),
+    eval_el_loose     ( 0),
+    eval_el_veryloose ( 0),
+    _needs_nlo_weght  ( 0)
+{
+
+}

@@ -1,8 +1,8 @@
 setenv WorkArea ${PWD}/Analysis
 if( $?PYTHONPATH == 0 ) then
-   setenv PYTHONPATH ${PWD}/Analysis/TreeFilter/Core/python:${PWD}/Analysis/Util/python
+   setenv PYTHONPATH ${PWD}/Analysis/TreeFilter/Core/python:${PWD}/Analysis/Util/python:${PWD}/Plotting
 else 
-   setenv PYTHONPATH ${PWD}/Analysis/TreeFilter/Core/python:${PWD}/Analysis/Util/python:$PYTHONPATH
+   setenv PYTHONPATH ${PWD}/Analysis/TreeFilter/Core/python:${PWD}/Analysis/Util/python:${PWD}/Plotting:$PYTHONPATH
 endif
 
 if(`echo $HOSTNAME | awk -F "-" '{print $1}'` == "hepcms") then

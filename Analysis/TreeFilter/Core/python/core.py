@@ -325,8 +325,8 @@ def config_and_run( options, package_name ) :
 
     if options.nproc > 1 and file_evt_list > 1: #multiprocessing!
 
-        #commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, vars(options) )
-        command_info_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
+        command_info_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, vars(options) )
+        #command_info_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
 
         if options.resubmit :
             command_info = filter_jobs_for_resubmit( command_info_orig, options.storagePath, options.outputDir, options.outputFile, options.treeName )
@@ -353,8 +353,8 @@ def config_and_run( options, package_name ) :
 
     elif options.batch :
 
-        #commands_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, vars(options) )
-        command_info_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
+        command_info_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, vars(options) )
+        #command_info_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
 
         # storagePath could have been passed as 'None'
         # make 'None' None
@@ -391,7 +391,7 @@ def config_and_run( options, package_name ) :
 
     elif options.condor :
 
-        command_info_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, options )
+        command_info_orig = generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, vars(options) )
 
         # storagePath could have been passed as 'None'
         # make 'None' None
@@ -922,9 +922,9 @@ def generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, kwargs
         if not os.path.isdir( outputDir ) :
             os.makedirs( outputDir )
         
-        #write_config(alg_list, conf_file, kwargs['treeName'], outputDir, kwargs['outputFile'], [file_split], kwargs['storagePath'], kwargs['sample'], kwargs['disableOutputTree'], kwargs['nPrint'], idx )
+        write_config(alg_list, conf_file, kwargs['treeName'], outputDir, kwargs['outputFile'], [file_split], kwargs['storagePath'], kwargs['sample'], kwargs['disableOutputTree'], kwargs['nPrint'], idx )
         #commands.append( ( jobid, make_exe_command( exe_path, conf_file, outputDir+'/'+jobid ) ) )
-        write_config(alg_list, conf_file, options.treeName, outputDir, options.outputFile, [file_split], options.storagePath, options.sample, options.disableOutputTree, idx )
+        #write_config(alg_list, conf_file, options.treeName, outputDir, options.outputFile, [file_split], options.storagePath, options.sample, options.disableOutputTree, idx )
         #commands.append( ( jobid, make_exe_command( exe_path, conf_file, outputDir+'/'+jobid ) ) )
         commands.append( ( jobid, (exe_path, conf_file, outputDir+'/'+jobid) ) )
 

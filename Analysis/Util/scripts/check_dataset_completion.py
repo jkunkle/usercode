@@ -67,17 +67,32 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
     return orig_nevt_tree, orig_nevt_hist, filt_nevt_tree, filt_nevt_hist
 
 
-def get_dataset_counts( dataset, fileKey, treeName=None, histName=None ) :
+def get_dataset_counts( dataset, fileKey, treeName=None, histName=None, vetoes=[] ) :
+
+    if not isinstance( vetoes, list ) :
+        vetoes = [vetoes]
 
     nevt_tree = 0
     nevt_hist = 0
     if dataset.count( '/eos/' ) :
         for top, dirs, files, sizes in eosutil.walk_eos( dataset ) :
+
             for file in files :
+
+                filepath = top + '/' + file
+                if vetoes :
+                    match_veto = False
+                    for v in vetoes :
+                        if filepath.count(v) :
+                            match_veto = True
+                            break
+
+                    if match_veto :
+                        continue
 
                 if fileKey is not None and not file.count(fileKey) : continue
 
-                ofile = ROOT.TFile.Open( 'root://eoscms/' + top+'/'+file )
+                ofile = ROOT.TFile.Open( 'root://eoscms/' + filepath )
                 if ofile == None :
                     continue
                 if  ofile.IsZombie() :
@@ -110,9 +125,20 @@ def get_dataset_counts( dataset, fileKey, treeName=None, histName=None ) :
         for top, dirs, files in os.walk( dataset ) :
             for file in files :
 
+                filepath = top + '/' + file
+                if vetoes :
+                    match_veto = False
+                    for v in vetoes :
+                        if filepath.count(v) :
+                            match_veto = True
+                            break
+
+                    if match_veto :
+                        continue
+
                 if fileKey is not None and not file.count(fileKey) : continue
 
-                ofile = ROOT.TFile.Open( top+'/'+file )
+                ofile = ROOT.TFile.Open( filepath  )
                 if ofile == None :
                     continue
                 if ofile.IsZombie() :
@@ -136,7 +162,7 @@ def get_dataset_counts( dataset, fileKey, treeName=None, histName=None ) :
                     try :
                         nevt_hist += ohist.GetBinContent(1)
                     except AttributeError :
-                        print 'Could not get hist from file %s' %(top+'/'+file)
+                        print 'Could not get hist from file %s' %(filepath)
 
 
     return (nevt_tree, nevt_hist )

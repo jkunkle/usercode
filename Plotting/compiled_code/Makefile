@@ -9,35 +9,52 @@
 # Tasks : CLEANUP
 ################################################################################
 
-#BASE_DIR = /afs/cern.ch/user/j/jkunkle/usercode/Plotting/compiled_code
-BASE_DIR = ${PWD}
+CERNLOC=CERN
+UMDLOC=UMD
 
-EXE_DIR = ./
-OBJ_DIR = $(BASE_DIR)/obj/
-SRC_DIR = src/
-INC_DIR = ${PWD}
+HOSTNAME := $(shell hostname)
+ifneq (,$(findstring cern.ch,$(HOSTNAME))) #find cern.ch in host, if found result is non-empty
+	LOCATION=$(CERNLOC)
+else 
+	LOCATION=$(UMDLOC)
+endif 
 
 WORK_AREA = ${WorkArea}
+
+EXE_DIR = ${PWD}
+OBJ_DIR = $(EXE_DIR)/obj/
+SRC_DIR = src/
+INC_DIR = ${PWD}
 
 ROOTCONFIG   = root-config
 
 ROOTCXXFLAGS = $(shell $(ROOTCONFIG) --cflags)
-ROOTLIBS     = $(shell $(ROOTCONFIG) --libs) -lTreePlayer -lTMVA
-
-BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50 -L/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/lib
+ROOTLIBS     = $(shell $(ROOTCONFIG) --libs) -lTreePlayer -lTMVA -lRooFit
 
 COREINC = -I$(WORK_AREA)/TreeFilter/Core/
+COMMONINC = -I$(WORK_AREA)/TreeFilter/Common/include
 COREOBJ = $(WORK_AREA)/TreeFilter/Core/obj/AnalysisBase.o $(WORK_AREA)/TreeFilter/Core/obj/Util.o
 
-# we need to link against an additional library if using root>5.24
-NEWROOTVERSION  = $(shell $(ROOTCONFIG) --version | grep -c "5.24" )
-ifeq ($(NEWROOTVERSION),1)
-	ROOTLIBS +=  -lRIO
+## we need to link against an additional library if using root>5.24
+#NEWROOTVERSION  = $(shell $(ROOTCONFIG) --version | grep -c "5.24" )
+#ifeq ($(NEWROOTVERSION),1)
+#	ROOTLIBS +=  -lRIO
+#endif
+
+ifeq ($(LOCATION), $(CERNLOC))
+	BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50 -L/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/lib
+	#BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.55.0_python2.7/x86_64-slc6-gcc47-opt/include/boost-1_55 -L/afs/cern.ch/sw/lcg/external/Boost/1.55.0_python2.7/x86_64-slc6-gcc47-opt/lib
+	LIBS         = $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem-gcc43-mt-1_50 -lboost_system-gcc43-mt-1_50
 endif
 
-LIBS         = $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem-gcc43-mt-1_50 -lboost_system-gcc43-mt-1_50 
+ifeq ($(LOCATION), $(UMDLOC))
+	BOOSTFLAGS   = -I/cvmfs/cms.cern.ch/slc6_amd64_gcc491/external/boost/1.57.0-cms/include  -L/cvmfs/cms.cern.ch/slc6_amd64_gcc491/external/boost/1.57.0-cms/lib
+	LIBS         = -L/cvmfs/cms.cern.ch/slc6_amd64_gcc491/lcg/roofit/5.34.22-cms4/lib -L/cvmfs/cms.cern.ch/slc6_amd64_gcc491/cms/cmssw/CMSSW_7_3_0/external/slc6_amd64_gcc491/lib $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem -lboost_system
+endif
+
+
 DEBUG        = false
-INCLUDE      = $(ROOTCXXFLAGS) $(BOOSTFLAGS) $(COREINC)
+INCLUDE      = $(ROOTCXXFLAGS) $(BOOSTFLAGS) $(COREINC) $(COMMONINC)
 
 # do something like 
 #  make DEBUG=true
@@ -50,31 +67,76 @@ else
 	LDFLAGS      = -O2 -I$(INC_DIR) $(INCLUDE) 
 endif
 
-OBJECT_ANA = $(OBJ_DIR)/RunAnalysis.o 
-BRANCH_INIT = $(OBJ_DIR)/BranchInit.o
+OBJECT_INIT = $(OBJ_DIR)/BranchInit.o
+OBJECT_RUN = $(OBJ_DIR)/RunAnalysis.o
+
+SRC_INIT = $(SRC_DIR)/BranchInit.cxx
+SRC_RUN = $(SRC_DIR)/RunAnalysis.cxx
+
+OBJECT_ANA = $(OBJECT_INIT) $(OBJECT_RUN)
 LINKDEF = $(OBJ_DIR)/cintLib.so
 
-ifeq ($(strip ${EXENAME} ), )
-EXENAME=RunAnalysis
+ifneq  ($(ADDTL_OBJ),) 
+	OBJECT_ADDTL = $(OBJ_DIR)/$(ADDTL_OBJ)
 endif
 
-EXE = $(EXE_DIR)/$(EXENAME)
+ifneq  ($(ADDTL_INC),) 
+	INC_ADDTL = -I$(ADDTL_INC)
+endif
+
+ifneq  ($(ADDTL_LIB),) 
+	LIB_ADDTL = -L$(ADDTL_LIB)
+endif
+
+ifneq  ($(EXTERN_OBJ),) 
+	OBJ_EXTERN = $(EXTERN_OBJ)
+endif
+
+
+NEWEXENAME=$(EXENAME)
+
+ifeq ($(strip $(EXENAME) ), )
+	NEWEXENAME=RunAnalysis.exe
+endif
+
+#ifneq (, $(findstring x, $(EXENAME) ) )
+#	NEWEXENAME=$(EXENAME).exe
+#endif
+
+
+EXE = $(EXE_DIR)/$(NEWEXENAME)
 
 # Main targets
 
 all:   $(EXE) 
 
 $(SRC_DIR)/Dict.cxx: $(INC_DIR)/include/LinkDef.h
-	rootcint -f $@ -c $(CXXFLAGS) -p $^
+	rootcint -f $@ -c -p $^
 
 $(LINKDEF):  $(SRC_DIR)/Dict.cxx
 	g++ -shared -o$@ `root-config --ldflags` $(CXXFLAGS) -I$(ROOTSYS)/include $^
 
-$(OBJ_DIR)/%.o : $(SRC_DIR)/%.cxx
-	g++ $(CXXFLAGS) -c $^ -o $@ -I../$(INC_DIR)
+#$(OBJECT_INIT) :
+#	g++ $(CXXFLAGS) -c  $(SRC_INIT) -o $@ -I../$(INC_DIR)
+#
+#$(OBJECT_RUN) : 
+#	g++ $(CXXFLAGS) -c $(SRC_RUN) -o $@ -I../$(INC_DIR)
 
-$(EXE): $(OBJECT_ANA) $(BRANCH_INIT) $(LINKDEF) 
-	g++ $(CXXFLAGS) -o $@ -g $^ $(COREOBJ) $(LIBS) -I../$(INC_DIR)
+$(OBJ_DIR)/%.o : $(SRC_DIR)/%.cxx
+	mkdir -p $(OBJ_DIR)
+	g++ $(CXXFLAGS) -c $^ -o $@ -I../$(INC_DIR) $(INC_ADDTL) 
+
+$(EXE): $(OBJECT_ANA) $(OBJECT_ADDTL) $(LINKDEF) 
+	@echo "LOCATION IS " $(LOCATION)
+	g++ $(CXXFLAGS) -o $@ -g $^ $(COREOBJ) $(OBJ_EXTERN) $(LIBS) -I../$(INC_DIR) $(LIB_ADDTL)
 clean:
 	@echo -e "\n\n===> cleaning directories"
+	rm -f $(OBJ_DIR)/*.o ; rm -f $(SRC_DIR)/Dict.cxx
+
+veryclean : 
 	rm -f $(OBJ_DIR)/*.o 
+	rm -f $(SRC_DIR)/Dict.cxx
+	rm -f $(SRC_DIR)/BranchInit.cxx
+	rm -f $(INC_DIR)/LinkDef.h
+	rm -f $(INC_DIR)/BranchDefs.h
+	rm -f $(INC_DIR)/BranchInit.h

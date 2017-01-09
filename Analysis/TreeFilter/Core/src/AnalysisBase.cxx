@@ -7,6 +7,9 @@
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
+#include <boost/uuid/uuid.hpp>           
+#include <boost/uuid/uuid_generators.hpp> 
+#include <boost/uuid/uuid_io.hpp> 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctime>
@@ -56,14 +59,24 @@ void AnaConfig::Run( RunModuleBase & runmod, const CmdOptions & options ) {
     for( unsigned fidx = 0; fidx < options.files.size(); ++fidx ) {
         TChain *chain = new TChain(options.treeName.c_str() );
 
+        std::vector<std::string> copied_files;
         if( options.copyInputFiles ) {
+            boost::uuids::random_generator generator;
             BOOST_FOREACH( const std::string &fpath, options.files[fidx].files ) {
                 std::vector<std::string> filepath_split = Tokenize( fpath, "/" );
                 std::string fname = filepath_split[filepath_split.size()-1];
 
-                boost::filesystem::copy_file(fpath, fname);
-                chain->Add( fname.c_str() );
-                std::cout << "Add input file " << fname << std::endl;
+                boost::uuids::uuid file_uuid = generator();
+                std::stringstream file_uuid_ss;
+                file_uuid_ss << file_uuid << ".root";
+
+                std::string filename = file_uuid_ss.str();
+
+                copied_files.push_back( filename );
+
+                boost::filesystem::copy_file(fpath, filename);
+                chain->Add( filename.c_str() );
+                std::cout << "Add input file " << filename << std::endl;
             }
         }
         else {
@@ -237,9 +250,8 @@ void AnaConfig::Run( RunModuleBase & runmod, const CmdOptions & options ) {
             }
         }
         if( options.copyInputFiles ) {
-            BOOST_FOREACH( const std::string &fpath, options.files[fidx].files ) {
-                std::vector<std::string> filepath_split = Tokenize( fpath, "/" );
-                std::string fname = filepath_split[filepath_split.size()-1];
+
+            BOOST_FOREACH( const std::string &fname, copied_files ) {
                 boost::filesystem::remove( fname );
             }
         }

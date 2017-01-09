@@ -3134,7 +3134,7 @@ bool RunModule::FilterBlind( ModuleConfig & config ) const {
 
     bool pass_blind = true;
     if( !config.PassInt( "cut_nPhPassMedium", OUT::ph_mediumPassPSV_n ) ) pass_blind=false;
-    if( !config.PassInt( "cut_ph_pt_lead", OUT::pt_leadph12) ) pass_blind=false;
+    if( !config.PassFloat( "cut_ph_pt_lead", OUT::pt_leadph12) ) pass_blind=false;
 
     // electron channel mass
     if( OUT::el_passtrig_n > 0 ) {

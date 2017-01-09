@@ -11,6 +11,7 @@ parser.add_argument( '--version', dest='version', required=True, default=None, h
 parser.add_argument( '--mcOnly', dest='mcOnly',  default=False, action='store_true', help='only process MC samples (check DATA_SAMPLES list)' )
 parser.add_argument( '--dataOnly', dest='dataOnly',  default=False, action='store_true', help='only process data samples (check DATA_SAMPLES list)' )
 parser.add_argument( '--dataEras', dest='dataEras',  default=None, help='List of data eras to expect, should be a list of single letters.  This should be provided if you want to have correct event counting' )
+parser.add_argument( '--sampleKey', dest='sampleKey',  default=None, help='Filter samples based on this key' )
 
 options = parser.parse_args()
 
@@ -18,10 +19,10 @@ BASE_DIR   = '/store/user/jkunkle'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 DATA_SAMPLES = ['SingleElectron', 'SingleMuon', 'SinglePhoton']
 RUN_YEAR = 'Run2016'
-RECO_TYPE = 'PromptReco'
+RECO_TYPE = '23Sep2016'
 FILE_KEY = 'ntuple'
 TREE_NAME = 'tupel/EventTree'
-MC_CAMPAIGN_STR = 'RunIISpring16'
+MC_CAMPAIGN_STR = 'RunIISummer16'
 
 
 def main() :
@@ -39,6 +40,10 @@ def main() :
             continue
         if options.mcOnly and isData :
             continue
+
+        if options.sampleKey is not None :
+            if not sampdir.count( options.sampleKey ) :
+                continue
 
         for subdir in os.listdir( BASE_DIR + '/' + sampdir ) :
             if subdir == options.version :
@@ -65,9 +70,14 @@ def main() :
 
         json_name = '%s_step1.json' %( samp )
 
+        print 'python %s/das_client.py --query=%s --format=json --limit=0 ' %( SCRIPT_DIR, query )
+
         os.system( 'python %s/das_client.py --query=%s --format=json --limit=0 >& %s' %( SCRIPT_DIR, query, json_name ) )
+        
 
         ofile = open(  json_name )
+
+        print 'Open json %s' %json_name
 
         data = json.load( ofile )
 
@@ -105,6 +115,8 @@ def main() :
                 else :
                     if nevents_das > 0 :
                         print 'Found multiple MC campaigns that match! Using only the first'
+                        continue
+
 
 
             json_name = '%s_step2_%d.json' %( samp, idx )
@@ -116,6 +128,10 @@ def main() :
             data = json.load( ofile )
 
             ofile.close()
+
+            if 'data' not in data :
+                print 'Could not locate data!'
+                continue
 
             for dataset in data['data'][0]['dataset'] :
 

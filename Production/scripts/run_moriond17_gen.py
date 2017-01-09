@@ -152,15 +152,16 @@ def main() :
     AOD_commands = []
     AOD_commands = make_common_commands( options.prod_dir, AOD_DIR, cmssw_aod, arch_aod, proxyPath=options.proxyPath )
     #AOD_commands.append( 'cmsDriver.py step1 --filein file:../%s/%s --fileout file:%s --pileup_input "file:/data/users/jkunkle/Samples/MinBias_TuneCUETP8M1_13TeV-pythia8/GEN-SIM/MCRUN2_71_V1-v2/10000/004CC894-4877-E511-A11E-0025905C3DF8.root,file:/data/users/jkunkle/Samples/MinBias_TuneCUETP8M1_13TeV-pythia8/GEN-SIM/MCRUN2_71_V1-v2/10000/0063EDE9-2F77-E511-BAF6-0002C90B7F30.root,file:/data/users/jkunkle/Samples/MinBias_TuneCUETP8M1_13TeV-pythia8/GEN-SIM/MCRUN2_71_V1-v2/10000/0091527A-3E77-E511-B123-002590AC4BF6.root,file:/data/users/jkunkle/Samples/MinBias_TuneCUETP8M1_13TeV-pythia8/GEN-SIM/MCRUN2_71_V1-v2/10000/00BA861E-7779-E511-85DC-0024E85A3F69.root,file:/data/users/jkunkle/Samples/MinBias_TuneCUETP8M1_13TeV-pythia8/GEN-SIM/MCRUN2_71_V1-v2/10000/00F372BD-3C77-E511-8D36-0025901E4F3C.root,file:/data/users/jkunkle/Samples/MinBias_TuneCUETP8M1_13TeV-pythia8/GEN-SIM/MCRUN2_71_V1-v2/10000/00FCB56F-4377-E511-8F47-0025905C2CBC.root,file:/data/users/jkunkle/Samples/MinBias_TuneCUETP8M1_13TeV-pythia8/GEN-SIM/MCRUN2_71_V1-v2/10000/02310BE5-8F79-E511-AD22-02163E010E73.root,file:/data/users/jkunkle/Samples/MinBias_TuneCUETP8M1_13TeV-pythia8/GEN-SIM/MCRUN2_71_V1-v2/10000/023B5EF1-4177-E511-A3E7-00266CFFC7CC.root,file:/data/users/jkunkle/Samples/MinBias_TuneCUETP8M1_13TeV-pythia8/GEN-SIM/MCRUN2_71_V1-v2/10000/02469931-4377-E511-8A79-00259048AC98.root,file:/data/users/jkunkle/Samples/MinBias_TuneCUETP8M1_13TeV-pythia8/GEN-SIM/MCRUN2_71_V1-v2/10000/0275943C-5477-E511-A9C5-002481D24972.root" --mc --eventcontent RAWSIM --pileup 2016_25ns_SpringMC_PUScenarioV1_PoissonOOTPU --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_v3 --step DIGI,L1,DIGI2RAW,HLT:@frozen25ns --era Run2_25ns --python_filename %s --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n %d ' %( GENSIM_DIR, gs_output, step1_output, s1_cfg_name, options.nevt ) )
-    AOD_commands.append( 'cmsDriver.py step1 --filein file:../%s/%s --fileout file:%s --pileup_input "dbs:/Neutrino_E-10_gun/RunIISpring15PrePremix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v2-v2/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --datamix PreMix --era Run2_2016 --python_filename %s --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n %d ' %( GENSIM_DIR, gs_output, step1_output, s1_cfg_name, options.nevt ) )
+    #AOD_commands.append( 'cmsDriver.py step1 --filein file:../%s/%s --fileout file:%s --pileup_input "dbs:/Neutrino_E-10_gun/RunIISpring15PrePremix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v2-v2/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --datamix PreMix --era Run2_2016 --python_filename %s --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n %d ' %( GENSIM_DIR, gs_output, step1_output, s1_cfg_name, options.nevt ) )
     #AOD_commands.append( 'cmsDriver.py step1 --filein file:../%s/%s --fileout file:%s --pileup_input "root://cms-xrd-global.cern.ch//store/mc/RunIISpring15PrePremix/Neutrino_E-10_gun/GEN-SIM-DIGI-RAW/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v2-v2/100000/001EB167-3781-E611-BE3C-0CC47A4D75F4.root" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --datamix PreMix --era Run2_2016 --python_filename %s --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n %d ' %( GENSIM_DIR, gs_output, step1_output, s1_cfg_name, options.nevt ) )
-    #AOD_commands.append( 'cmsDriver.py step1 --filein file:../%s/%s --fileout file:%s --pileup_input "file:/afs/cern.ch/work/j/jkunkle/public/CMS/Samples/001EB167-3781-E611-BE3C-0CC47A4D75F4.root" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --datamix PreMix --era Run2_2016 --python_filename %s --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n %d ' %( GENSIM_DIR, gs_output, step1_output, s1_cfg_name, options.nevt ) )
+    AOD_commands.append( 'cmsDriver.py step1 --filein file:../%s/%s --fileout file:%s --pileup_input "file:/data/users/jkunkle/Samples/Neutrino_E-10_gun/E8AEC5B5-4C81-E611-BB77-0CC47A4C8ED8.root,file:/data/users/jkunkle/Samples/Neutrino_E-10_gun/EA0B03A7-4681-E611-8A76-0090FAA57E84.root,file:/data/users/jkunkle/Samples/Neutrino_E-10_gun/F442DD3E-B181-E611-AF62-0025905A48D8.root,file:/data/users/jkunkle/Samples/Neutrino_E-10_gun/E8CDD275-2981-E611-9F24-0CC47A78A2F6.root,file:/data/users/jkunkle/Samples/Neutrino_E-10_gun/F240535E-3481-E611-AE27-0025905C9740.root,file:/data/users/jkunkle/Samples/Neutrino_E-10_gun/F800C496-4281-E611-94ED-20CF3027A635.root" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --datamix PreMix --era Run2_2016 --python_filename %s --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n %d ' %( GENSIM_DIR, gs_output, step1_output, s1_cfg_name, options.nevt ) )
     AOD_commands.append( 'awk \'NR==58{$0="%s"$0}1\' %s >> tmp.py' %( r'\n'.join( random_gen_text_s1 ), s1_cfg_name ) )
     AOD_commands.append( 'cmsRun -e -j step1.xml %s ' %( s1_cfg_name ) )
 
     AOD_commands.append( 'cmsDriver.py step2 --filein file:%s --fileout file:%s --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --nThreads 4 --era Run2_2016 --python_filename %s_AOD_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n %d ' %( step1_output, aod_output, options.name, options.nevt ) )
     AOD_commands.append( 'cmsRun -e -j aod_step.xml %s_AOD_cfg.py' %( options.name ) ) ; 
     AOD_commands.append( 'cd ../..' )
+
 
     # ------------------------------------
     # START MINIAOD STEP
@@ -181,8 +182,9 @@ def main() :
         proxy_commands.append( 'cp %s /tmp' %options.proxyName )
         #proxy_commands.append( 'voms-proxy-init -noregen' )
 
-    setup_commands = ['. /afs/cern.ch/sw/lcg/external/gcc/4.6/x86_64-slc6/setup.sh',
-                      'source /afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.07_python2.7/x86_64-slc6-gcc46-opt/root/bin/thisroot.sh' ]
+    #setup_commands = ['. /afs/cern.ch/sw/lcg/external/gcc/4.6/x86_64-slc6/setup.sh',
+    #                  'source /afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.07_python2.7/x86_64-slc6-gcc46-opt/root/bin/thisroot.sh' ]
+    setup_commands = []
 
     all_commands = setup_commands + lhe_commands + gs_commands + AOD_commands + miniAOD_commands
 
@@ -210,8 +212,8 @@ def make_common_commands( prod_dir, sub_dir, cmssw_vers, arch, config_filename=N
     if proxyPath is not None :
         commands.append( 'export X509_USER_PROXY=%s' %proxyPath  ) 
     commands.append( 'cd %s/%s' %( prod_dir, sub_dir ) )
-    #commands.append( 'source  /sharesoft/cmssw/' )
-    commands.append( 'source /cvmfs/cms.cern.ch/cmsset_default.sh' )
+    commands.append( 'source  /sharesoft/cmssw/cmsset_default.sh' )
+    #commands.append( 'source /cvmfs/cms.cern.ch/cmsset_default.sh' )
     commands.append( 'export SCRAM_ARCH=%s' %arch )
     commands.append( 'scram p CMSSW %s' %cmssw_vers )
     commands.append( 'cd %s/src' %cmssw_vers )

@@ -85,7 +85,7 @@ def main() :
         if not os.path.isdir( '%s/%s' %( options.prod_dir, job_dir ) ) :
             os.makedirs( '%s/%s' %( options.prod_dir, job_dir ) ) 
 
-        generation_text = 'python %s/run_all_generation_steps.py  --prod_dir %s/%s --name %s --gridpack %s  --nevt %d --writeShellScript --scriptName %s ' %( PWD, options.prod_dir, job_dir, output_name, options.gridpack, options.nevtPerJob, scriptName)
+        generation_text = 'python %s/run_moriond17_gen.py --prod_dir %s/%s --name %s --gridpack %s  --nevt %d --writeShellScript --scriptName %s ' %( PWD, options.prod_dir, job_dir, output_name, options.gridpack, options.nevtPerJob, scriptName)
         if options.lxbatch :
             proxy_name = os.path.basename( proxy_path )
             username = getpass.getuser()

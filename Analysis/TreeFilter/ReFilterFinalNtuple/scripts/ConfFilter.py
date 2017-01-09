@@ -32,30 +32,6 @@ def config_analysis( alg_list, args ) :
             print '*********************************'
             s[1]( alg_list, args )
 
-
-
-    #make_nominal_unblind( alg_list, args, blind_pt=None )
-
-    #make_nominal_unblind_noEleVeto( alg_list, args, blind_pt=None )
-
-    #make_nominal_unbzrej( alg_list, args )
-
-    #make_final_mu( alg_list, args, blind_pt = None, loose=True )
-
-    #make_final_el( alg_list, args, blind_pt = None )
-
-    #make_looseID_noEleVeto( alg_list, args )
-
-    #make_looseID_bothEleVeto( alg_list, args )
-    
-    #make_looseID_invEleVetoLead( alg_list, args )
-    
-    #make_looseID_invEleVetoSubl( alg_list, args )
-
-    #make_wgjj( alg_list, args) 
-
-    #make_zgjj( alg_list, args) 
-
 def make_final_mu( alg_list, args ) :
 
     looseobj = args.get('looseobj', False )

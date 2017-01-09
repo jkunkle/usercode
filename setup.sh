@@ -1,3 +1,4 @@
+#if (`echo ${HOSTNAME}  | awk -F"-" '{print $1}'` -eq "hepcms") 
 export GCC_LIB=/afs/cern.ch/sw/lcg/contrib/gcc/4.6/x86_64-slc6-gcc46-opt/lib64
 export BOOST_LIB=/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/lib
 export PYTHONDIR=/afs/cern.ch/sw/lcg/external/Python/2.7.3/x86_64-slc6-gcc47-opt

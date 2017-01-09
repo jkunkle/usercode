@@ -78,6 +78,8 @@ class CutConfig {
 
         void SetIsInverted( bool in_is_inv ) { is_inv = in_is_inv; }
 
+        void SetCompOp( CutType::Comp in_comp ) { comp = in_comp; }
+
         CutType::Op attempt_logicalop_parse(const std::string & val, CutType::Type & type,
                                             int & cut_val_int, float &  cut_val_float);
 
@@ -90,6 +92,7 @@ class CutConfig {
         std::string name;
         std::vector<Cut> cuts;
         bool is_inv;
+        CutType::Comp comp;
 
 };
 
@@ -196,6 +199,7 @@ struct CmdOptions {
     int nPrint;
     bool transferToStorage;
     bool disableOutputTree;
+    bool copyInputFiles;
     std::string sample;
 
 };

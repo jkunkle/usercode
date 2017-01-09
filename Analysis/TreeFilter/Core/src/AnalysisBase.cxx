@@ -56,9 +56,21 @@ void AnaConfig::Run( RunModuleBase & runmod, const CmdOptions & options ) {
     for( unsigned fidx = 0; fidx < options.files.size(); ++fidx ) {
         TChain *chain = new TChain(options.treeName.c_str() );
 
-        BOOST_FOREACH( const std::string &fname, options.files[fidx].files ) {
-          chain->Add( fname.c_str() );
-          std::cout << "Add input file " << fname << std::endl;
+        if( options.copyInputFiles ) {
+            BOOST_FOREACH( const std::string &fpath, options.files[fidx].files ) {
+                std::vector<std::string> filepath_split = Tokenize( fpath, "/" );
+                std::string fname = filepath_split[filepath_split.size()-1];
+
+                boost::filesystem::copy_file(fpath, fname);
+                chain->Add( fname.c_str() );
+                std::cout << "Add input file " << fname << std::endl;
+            }
+        }
+        else {
+            BOOST_FOREACH( const std::string &fpath, options.files[fidx].files ) {
+              chain->Add( fpath.c_str() );
+              std::cout << "Add input file " << fpath << std::endl;
+            }
         }
 
         // Loop over job ranges
@@ -224,6 +236,13 @@ void AnaConfig::Run( RunModuleBase & runmod, const CmdOptions & options ) {
                 }
             }
         }
+        if( options.copyInputFiles ) {
+            BOOST_FOREACH( const std::string &fpath, options.files[fidx].files ) {
+                std::vector<std::string> filepath_split = Tokenize( fpath, "/" );
+                std::string fname = filepath_split[filepath_split.size()-1];
+                boost::filesystem::remove( fname );
+            }
+        }
     }
    
 }
@@ -244,7 +263,21 @@ Cut::Cut( CutType::Op in_op, CutType::Type in_type, CutType::Comp in_comp,
 }
 
 void Cut::Print() const{ 
-    std::cout << "op = " << op << " type = " << type << " bool val = " << val_bool << " int val = " << val_int << " float val = " << val_float << std::endl;
+
+    std::string op_str = "UNKNOWN";
+    if( op == CutType::EQUAL_TO ) op_str = "EQUAL_TO";
+    if( op == CutType::GREATER_THAN) op_str = "GREATER_THAN";
+    if( op == CutType::LESS_THAN) op_str = "LESS_THAN";
+    if( op == CutType::GREATER_THAN_OR_EQUAL_TO) op_str = "GREATER_THAN_OR_EQUAL_TO";
+    if( op == CutType::LESS_THAN_OR_EQUAL_TO) op_str = "LESS_THAN_OR_EQUAL_TO";
+    if( op == CutType::OTHER) op_str = "OTHER";
+
+    std::string type_str = "UNKNOWN";
+    if( type == CutType::BOOL ) type_str = "BOOL";
+    if( type == CutType::INT ) type_str = "INT";
+    if( type == CutType::FLOAT) type_str = "FLOAT";
+
+    std::cout << "op = " << op_str << " type = " << type_str << " bool val = " << val_bool << " int val = " << val_int << " float val = " << val_float << std::endl;
 }
 
 CutConfig::CutConfig( const std::string &cut_str ) {
@@ -278,6 +311,17 @@ CutConfig::CutConfig( const std::string &cut_str ) {
     // remove whitespace from the name
     boost::algorithm::trim(name);
 
+    // handle the case if a double & or | was used in the cut definition
+    // just remove one of them
+    size_t loc;
+    while( loc = val_str.find("&&"), loc != std::string::npos ) {
+        val_str.erase(loc, 1);
+    }
+    while( loc = val_str.find("||"), loc != std::string::npos ) {
+        val_str.erase(loc, 1);
+    }
+
+
     // treat a comma or & as an and operator
     bool has_comma_op = val_str.find(",") != std::string::npos;
     bool has_and_op   = val_str.find("&") != std::string::npos;
@@ -289,16 +333,6 @@ CutConfig::CutConfig( const std::string &cut_str ) {
         std::cout << "CutConfig - ERROR : both an AND operation and an OR operation are present in the cut.  This case is not yet handled" << std::endl;
     }
           
-    // handle the case if a double & or | was used in the cut definition
-    // just remove one of them
-    size_t loc;
-    while( loc = val_str.find("&&"), loc != std::string::npos ) {
-        val_str.erase(loc, 1);
-    }
-    while( loc = val_str.find("||"), loc != std::string::npos ) {
-        val_str.erase(loc, 1);
-    }
-
     std::vector<Cut> conf_cut;
 
     std::vector<std::string> each_cut; 
@@ -308,6 +342,11 @@ CutConfig::CutConfig( const std::string &cut_str ) {
     else if( has_and_op )   each_cut = Tokenize(val_str, "&");
     else if( has_or_op )    each_cut = Tokenize(val_str, "|");
     else                    each_cut.push_back(val_str);
+
+    CutType::Comp cut_comp = CutType::AND;
+    if( has_or_op ) {
+        cut_comp = CutType::OR;
+    }
     
     BOOST_FOREACH( const std::string & val_orig, each_cut ) {
       
@@ -336,17 +375,13 @@ CutConfig::CutConfig( const std::string &cut_str ) {
             cut_op = attempt_logicalop_parse( val, cut_type, cut_val_int, cut_val_float );
         }
 
-        CutType::Comp cut_comp = CutType::AND;
-        if( has_or_op ) {
-            cut_comp = CutType::OR;
-        }
-
         conf_cut.push_back( Cut(cut_op, cut_type, cut_comp, cut_val_bool, cut_val_int, cut_val_float) );
     }
 
     SetName( name );
     SetCuts( conf_cut );
     SetIsInverted( should_invert );
+    SetCompOp( cut_comp );
 
 }
 
@@ -421,55 +456,47 @@ CutType::Op CutConfig::attempt_logicalop_parse( const std::string & val, CutType
 
 bool CutConfig::PassFloat(const std::string &name, const float cutval ) const {
 
-    bool pass_cuts = true;
+    int n_pass = 0;
+    int n_cuts = 0;
     BOOST_FOREACH( const Cut & cut, GetCuts() ) {
-        bool pass = true;
-
-        //if( name == "cut_abseta_crack" ) {
-        //    std::cout << "val = " << cutval << std::endl;
-        //    cut.Print();
-        //}
+        n_cuts++;
 
         if( cut.type != CutType::FLOAT && cut.type != CutType::INT ) {
           std::cout << "CutConfig::PassFloat - ERROR : Float cut requested for cut " << name << " but cut was not configured as a float " << std::endl;
-          pass = false;
           continue;
         }
 
         if( cut.op == CutType::GREATER_THAN_OR_EQUAL_TO ) {
-          if( !(cutval >= cut.val_float) ) pass = false;
+          if( (cutval >= cut.val_float) ) n_pass++;
         }
         if( cut.op == CutType::LESS_THAN_OR_EQUAL_TO ) {
-          if( !(cutval <= cut.val_float) ) pass = false;
+          if( (cutval <= cut.val_float) ) n_pass++;
         }
         if( cut.op == CutType::GREATER_THAN ) {
-          if( !(cutval > cut.val_float) ) pass = false;
-          //if( name == "cut_abseta_crack" ) {
-          //  std::cout << "CutType::GREATER_THAN, pass? " << pass << std::endl;
-          //}
+          if( (cutval > cut.val_float) ) n_pass++;
         }
         if( cut.op == CutType::LESS_THAN ) {
-          if( !(cutval < cut.val_float) ) pass = false;
-          //if( name == "cut_abseta_crack" ) {
-          //  std::cout << "CutType::LESS_THAN, pass? " << pass << std::endl;
-          //}
+          if( (cutval < cut.val_float) ) n_pass++;
         }
         if( cut.op == CutType::EQUAL_TO ) {
-          if( !(cutval == cut.val_float) ) pass = false;
+          if( (cutval == cut.val_float) ) n_pass++;
           std::cout << "CutConfig::PassFloat - WARNING : EQUAL_TO operator used for float comparison for cut " << name << std::endl;
         }
 
-        // Handle AND vs OR
-        if( cut.comp == CutType::AND ) {
-            pass_cuts &= pass;
-        }
-        if( cut.comp == CutType::OR ) {
-            pass_cuts |= pass;
-        }
-        //if( name == "cut_abseta_crack" ) {
-        //    std::cout << "Pass cut? " << pass_cuts << std::endl;
-        //}
     }
+
+    // Handle AND vs OR
+    bool pass_cuts = false;
+    if( comp == CutType::AND ) {
+        pass_cuts = ( n_cuts == n_pass );
+    }
+    else if( comp == CutType::OR ) {
+        pass_cuts =(  n_pass > 0 );
+    }
+    else {
+        std::cout << "CutConfig::PassFloat - ERROR : Did not understand Comparison type!" << std::endl;
+    }
+
 
     if( GetIsInverted() ) {
       pass_cuts = !pass_cuts;
@@ -480,40 +507,43 @@ bool CutConfig::PassFloat(const std::string &name, const float cutval ) const {
         
 bool CutConfig::PassInt(const std::string &name, const int cutval ) const {
 
-    bool pass_cuts = true;
+    int n_pass = 0;
+    int n_cuts = 0;
     BOOST_FOREACH( const Cut & cut, GetCuts() ) {
-
-        bool pass = true;
+        n_cuts++;
 
         if( cut.type != CutType::INT ) {
           std::cout << "CutConfig::PassInt - ERROR : Int cut requested for cut " << name << " but cut was not configured as an int" << std::endl;
-          pass = false;
           continue;
         }
 
         if( cut.op == CutType::GREATER_THAN_OR_EQUAL_TO ) {
-          if( !(cutval >= cut.val_int) ) pass = false;
+          if( (cutval >= cut.val_int) ) n_pass++;
         }
         if( cut.op == CutType::LESS_THAN_OR_EQUAL_TO ) {
-          if( !(cutval <= cut.val_int) ) pass = false;
+          if( (cutval <= cut.val_int) ) n_pass++;
         }
         if( cut.op == CutType::GREATER_THAN ) {
-          if( !(cutval > cut.val_int) ) pass = false;
+          if( (cutval > cut.val_int) ) n_pass++;
         }
         if( cut.op == CutType::LESS_THAN ) {
-          if( !(cutval < cut.val_int) ) pass = false;
+          if( (cutval < cut.val_int) ) n_pass++;
         }
         if( cut.op == CutType::EQUAL_TO ) {
-          if( !(cutval == cut.val_int) ) pass = false;
+          if( (cutval == cut.val_int) ) n_pass++;
         }
+    }
 
-        // Handle AND vs OR
-        if( cut.comp == CutType::AND ) {
-            pass_cuts &= pass;
-        }
-        if( cut.comp == CutType::OR ) {
-            pass_cuts |= pass;
-        }
+    // Handle AND vs OR
+    bool pass_cuts = false;
+    if( comp == CutType::AND ) {
+        pass_cuts = ( n_cuts == n_pass );
+    }
+    else if( comp == CutType::OR ) {
+        pass_cuts =(  n_pass > 0 );
+    }
+    else {
+        std::cout << "CutConfig::PassInt - ERROR : Did not understand Comparison type!" << std::endl;
     }
 
     if( GetIsInverted() ) {
@@ -525,28 +555,32 @@ bool CutConfig::PassInt(const std::string &name, const int cutval ) const {
         
 bool CutConfig::PassBool(const std::string &name, const bool cutval ) const {
 
-    bool pass_cuts = true;
+    int n_pass = 0;
+    int n_cuts = 0;
     BOOST_FOREACH( const Cut & cut, GetCuts() ) {
 
-        bool pass = true;
+        n_cuts++;
 
         if( cut.type != CutType::BOOL ) {
           std::cout << "CutConfig::PassBool - ERROR : Boolean cut requested for cut " << name << " but cut was not configured as a bool " << std::endl;
-          pass = false;
           continue;
         }
 
         if( cut.op == CutType::EQUAL_TO ) {
-            if( !(cutval == cut.val_bool) ) pass = false;
+            if( (cutval == cut.val_bool) ) n_pass++;
         }
+    }
 
-        // Handle AND vs OR
-        if( cut.comp == CutType::AND ) {
-            pass_cuts &= pass;
-        }
-        if( cut.comp == CutType::OR ) {
-            pass_cuts |= pass;
-        }
+    // Handle AND vs OR
+    bool pass_cuts = false;
+    if( comp == CutType::AND ) {
+        pass_cuts = ( n_cuts == n_pass );
+    }
+    else if( comp == CutType::OR ) {
+        pass_cuts =(  n_pass > 0 );
+    }
+    else {
+        std::cout << "CutConfig::PassBool - ERROR : Did not understand Comparison type!" << std::endl;
     }
 
     if( GetIsInverted() ) {
@@ -1065,6 +1099,11 @@ void ReadHeaderLine( const std::string & line, CmdOptions & options ) {
             options.disableOutputTree = true;
         }
     }
+    else if( header_key.find("copyInputFiles") != std::string::npos ) {
+        if( header_val.find("true") != std::string::npos ) {
+            options.copyInputFiles = true;
+        }
+    }
 
 }
 
@@ -1146,7 +1185,7 @@ void ParseFiles( const std::string & files_val, CmdOptions & options ) {
     }
 }
 
-CmdOptions::CmdOptions() : nevt(-1), nPrint(10000), transferToStorage(false), disableOutputTree(false)
+CmdOptions::CmdOptions() : nevt(-1), nPrint(10000), transferToStorage(false), disableOutputTree(false), copyInputFiles(false)
 {
 }
 

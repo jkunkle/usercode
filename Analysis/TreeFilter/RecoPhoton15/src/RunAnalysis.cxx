@@ -49,146 +49,221 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     // *************************
     // Set defaults for added output variables
     // *************************
-    OUT::el_pt                     = 0;
-    OUT::el_eta                    = 0;
-    OUT::el_sceta                  = 0;
-    OUT::el_phi                    = 0;
-    OUT::el_e                      = 0;
-    OUT::el_d0pv                   = 0;
-    OUT::el_z0pv                   = 0;
-    OUT::el_sigmaIEIE              = 0;
-    OUT::el_sigmaIEIEFull5x5       = 0;
-    OUT::el_charge                 = 0;
-    OUT::el_ooEmooP                = 0;
-    OUT::el_passConvVeto           = 0;
-    OUT::el_chHadIso               = 0;
-    OUT::el_neuHadIso              = 0;
-    OUT::el_phoIso                 = 0;
-    OUT::el_chHadIsoPuCorr         = 0;
-    OUT::el_rawIso                 = 0;
-    OUT::el_dbIso                  = 0;
-    OUT::el_rhoIso                 = 0;
-    OUT::el_passTight              = 0;
-    OUT::el_passMedium             = 0;
-    OUT::el_passLoose              = 0;
-    OUT::el_passVeryLoose          = 0;
+    OUT::el_n                                                   = 0;
+    OUT::mu_n                                                   = 0;
+    OUT::ph_n                                                   = 0;
+    OUT::jet_n                                                  = 0;
+    OUT::vtx_n                                                  = 0;
+    OUT::trueph_n                                               = 0;
+    OUT::truephIPFS_n                                           = 0;
+    OUT::truelep_n                                              = 0;
+    OUT::el_pt                                                  = 0;
+    OUT::el_eta                                                 = 0;
+    OUT::el_sceta                                               = 0;
+    OUT::el_phi                                                 = 0;
+    OUT::el_e                                                   = 0;
+    OUT::el_d0pv                                                = 0;
+    OUT::el_z0pv                                                = 0;
+    OUT::el_sigmaIEIE                                           = 0;
+    OUT::el_sigmaIEIEFull5x5                                    = 0;
+    OUT::el_charge                                              = 0;
+    OUT::el_ooEmooP                                             = 0;
+    OUT::el_passConvVeto                                        = 0;
+    OUT::el_chHadIso                                            = 0;
+    OUT::el_neuHadIso                                           = 0;
+    OUT::el_phoIso                                              = 0;
+    OUT::el_chHadIsoPuCorr                                      = 0;
+    OUT::el_rawIso                                              = 0;
+    OUT::el_dbIso                                               = 0;
+    OUT::el_rhoIso                                              = 0;
+    OUT::el_passTight                                           = 0;
+    OUT::el_passMedium                                          = 0;
+    OUT::el_passLoose                                           = 0;
+    OUT::el_passVeryLoose                                       = 0;
 
-    OUT::mu_pt                     = 0;
-    OUT::mu_eta                    = 0;
-    OUT::mu_phi                    = 0;
-    OUT::mu_e                      = 0;
-    OUT::mu_isGlobal               = 0;
-    OUT::mu_isPF                   = 0;
-    OUT::mu_chi2                   = 0;
-    OUT::mu_nHits                  = 0;
-    OUT::mu_nMuStations            = 0;
-    OUT::mu_nPixHits               = 0;
-    OUT::mu_nTrkLayers             = 0;
-    OUT::mu_d0                     = 0;
-    OUT::mu_z0                     = 0;
-    OUT::mu_pfIso_ch               = 0;
-    OUT::mu_pfIso_nh               = 0;
-    OUT::mu_pfIso_pho              = 0;
-    OUT::mu_rhoIso                 = 0;
-    OUT::mu_pfIso_db               = 0;
-    OUT::mu_corrIso                = 0;
-    OUT::mu_trkIso                 = 0;
-    OUT::mu_charge                 = 0;
-    OUT::mu_triggerMatch           = 0;
-    OUT::mu_triggerMatchDiMu       = 0;
-    OUT::mu_passLoose              = 0;
-    OUT::mu_passCustom             = 0;
-    OUT::mu_passTight              = 0;
-    OUT::mu_passMedium              = 0;
-    OUT::mu_passLoose              = 0;
-    //OUT::mu_passTightNoIso         = 0;
-    //OUT::mu_passTightNoD0          = 0;
-    //OUT::mu_passTightNoIsoNoD0     = 0;
-    OUT::mu_truthMatch             = 0;
-    OUT::mu_truthMinDR             = 0;
+    OUT::mu_pt                                                  = 0;
+    OUT::mu_eta                                                 = 0;
+    OUT::mu_phi                                                 = 0;
+    OUT::mu_e                                                   = 0;
+    OUT::mu_isGlobal                                            = 0;
+    OUT::mu_isPF                                                = 0;
+    OUT::mu_chi2                                                = 0;
+    OUT::mu_nHits                                               = 0;
+    OUT::mu_nMuStations                                         = 0;
+    OUT::mu_nPixHits                                            = 0;
+    OUT::mu_nTrkLayers                                          = 0;
+    OUT::mu_d0                                                  = 0;
+    OUT::mu_z0                                                  = 0;
+    OUT::mu_pfIso_ch                                            = 0;
+    OUT::mu_pfIso_nh                                            = 0;
+    OUT::mu_pfIso_pho                                           = 0;
+    OUT::mu_rhoIso                                              = 0;
+    OUT::mu_pfIso_db                                            = 0;
+    OUT::mu_corrIso                                             = 0;
+    OUT::mu_trkIso                                              = 0;
+    OUT::mu_charge                                              = 0;
+    OUT::mu_triggerMatch                                        = 0;
+    OUT::mu_triggerMatchDiMu                                    = 0;
+    OUT::mu_passLoose                                           = 0;
+    OUT::mu_passCustom                                          = 0;
+    OUT::mu_passTight                                           = 0;
+    OUT::mu_passMedium                                          = 0;
+    OUT::mu_passLoose                                           = 0;
+    //OUT::mu_passTightNoIso                                    = 0;
+    //OUT::mu_passTightNoD0                                     = 0;
+    //OUT::mu_passTightNoIsoNoD0                                = 0;
+    OUT::mu_truthMatch                                          = 0;
+    OUT::mu_truthMinDR                                          = 0;
 
-    OUT::ph_pt                     = 0;
-    OUT::ph_eta                    = 0;
-    OUT::ph_sceta                  = 0;
-    OUT::ph_phi                    = 0;
-    OUT::ph_scphi                  = 0;
-    OUT::ph_e                      = 0;
-    OUT::ph_scE                    = 0;
-    OUT::ph_HoverE                 = 0;
-    OUT::ph_sigmaIEIE              = 0;
-    OUT::ph_sigmaIEIP              = 0;
-    OUT::ph_r9                     = 0;
-    OUT::ph_E3x3                   = 0;
-    OUT::ph_E1x5                   = 0;
-    OUT::ph_E2x5                   = 0;
-    OUT::ph_E5x5                   = 0;
-    //OUT::ph_E2x5Max                = 0;
-    OUT::ph_SCetaWidth             = 0;
-    OUT::ph_SCphiWidth             = 0;
-    //OUT::ph_ESEffSigmaRR           = 0;
-    //OUT::ph_hcalIsoDR03            = 0;
-    //OUT::ph_trkIsoHollowDR03       = 0;
-    //OUT::ph_chgpfIsoDR02           = 0;
-    //OUT::ph_pfChIsoWorst           = 0;
-    OUT::ph_chIso                  = 0;
-    OUT::ph_neuIso                 = 0;
-    OUT::ph_phoIso                 = 0;
-    OUT::ph_chIsoCorr              = 0;
-    OUT::ph_neuIsoCorr             = 0;
-    OUT::ph_phoIsoCorr             = 0;
-    OUT::ph_eleVeto                = 0;
-    OUT::ph_hasPixSeed             = 0;
-    //OUT::ph_drToTrk                = 0;
-    OUT::ph_isConv                 = 0;
-    OUT::ph_passTight              = 0;
-    OUT::ph_passMedium             = 0;
-    OUT::ph_passLoose              = 0;
-    OUT::ph_passLooseNoSIEIE       = 0;
-    OUT::ph_passHOverELoose        = 0;
-    OUT::ph_passHOverEMedium       = 0;
-    OUT::ph_passHOverETight        = 0;
-    OUT::ph_passSIEIELoose         = 0;
-    OUT::ph_passSIEIEMedium        = 0;
-    OUT::ph_passSIEIETight         = 0;
-    OUT::ph_passChIsoCorrLoose     = 0;
-    OUT::ph_passChIsoCorrMedium    = 0;
-    OUT::ph_passChIsoCorrTight     = 0;
-    OUT::ph_passNeuIsoCorrLoose    = 0;
-    OUT::ph_passNeuIsoCorrMedium   = 0;
-    OUT::ph_passNeuIsoCorrTight    = 0;
-    OUT::ph_passPhoIsoCorrLoose    = 0;
-    OUT::ph_passPhoIsoCorrMedium   = 0;
-    OUT::ph_passPhoIsoCorrTight    = 0;
-    OUT::ph_truthMatch_ph          = 0;
-    OUT::ph_truthMinDR_ph          = 0;
-    OUT::ph_truthMatchPt_ph        = 0;
-    OUT::ph_truthMatchMotherPID_ph = 0;
-    OUT::ph_truthMatchParentage_ph = 0;
-    OUT::ph_truthMatch_el          = 0;
-    OUT::ph_truthMinDR_el          = 0;
-    OUT::ph_truthMatchPt_el        = 0;
-    OUT::ph_truthMatch_jet         = 0;
-    OUT::ph_truthMinDR_jet         = 0;
-    OUT::ph_truthMatchPt_jet       = 0;
-    OUT::ph_hasSLConv              = 0;
-    OUT::ph_pass_mva_presel        = 0;
-    OUT::ph_mvascore               = 0;
-    OUT::ph_IsEB                   = 0;
-    OUT::ph_IsEE                   = 0;
+    OUT::ph_pt                                                  = 0;
+    OUT::ph_eta                                                 = 0;
+    OUT::ph_sceta                                               = 0;
+    OUT::ph_phi                                                 = 0;
+    OUT::ph_scphi                                               = 0;
+    OUT::ph_e                                                   = 0;
+    OUT::ph_scE                                                 = 0;
+    OUT::ph_HoverE                                              = 0;
+    OUT::ph_sigmaIEIE                                           = 0;
+    OUT::ph_sigmaIEIP                                           = 0;
+    OUT::ph_r9                                                  = 0;
+    OUT::ph_E3x3                                                = 0;
+    OUT::ph_E1x5                                                = 0;
+    OUT::ph_E2x5                                                = 0;
+    OUT::ph_E5x5                                                = 0;
+    //OUT::ph_E2x5Max                                           = 0;
+    OUT::ph_SCetaWidth                                          = 0;
+    OUT::ph_SCphiWidth                                          = 0;
+    //OUT::ph_ESEffSigmaRR                                      = 0;
+    //OUT::ph_hcalIsoDR03                                       = 0;
+    //OUT::ph_trkIsoHollowDR03                                  = 0;
+    //OUT::ph_chgpfIsoDR02                                      = 0;
+    //OUT::ph_pfChIsoWorst                                      = 0;
+    OUT::ph_chIso                                               = 0;
+    OUT::ph_neuIso                                              = 0;
+    OUT::ph_phoIso                                              = 0;
+    OUT::ph_chIsoCorr                                           = 0;
+    OUT::ph_neuIsoCorr                                          = 0;
+    OUT::ph_phoIsoCorr                                          = 0;
+    OUT::ph_eleVeto                                             = 0;
+    OUT::ph_hasPixSeed                                          = 0;
+    //OUT::ph_drToTrk                                           = 0;
+    OUT::ph_isConv                                              = 0;
+    OUT::ph_passTight                                           = 0;
+    OUT::ph_passMedium                                          = 0;
+    OUT::ph_passLoose                                           = 0;
+    OUT::ph_passLooseNoSIEIE                                    = 0;
+    OUT::ph_passHOverELoose                                     = 0;
+    OUT::ph_passHOverEMedium                                    = 0;
+    OUT::ph_passHOverETight                                     = 0;
+    OUT::ph_passSIEIELoose                                      = 0;
+    OUT::ph_passSIEIEMedium                                     = 0;
+    OUT::ph_passSIEIETight                                      = 0;
+    OUT::ph_passChIsoCorrLoose                                  = 0;
+    OUT::ph_passChIsoCorrMedium                                 = 0;
+    OUT::ph_passChIsoCorrTight                                  = 0;
+    OUT::ph_passNeuIsoCorrLoose                                 = 0;
+    OUT::ph_passNeuIsoCorrMedium                                = 0;
+    OUT::ph_passNeuIsoCorrTight                                 = 0;
+    OUT::ph_passPhoIsoCorrLoose                                 = 0;
+    OUT::ph_passPhoIsoCorrMedium                                = 0;
+    OUT::ph_passPhoIsoCorrTight                                 = 0;
+    OUT::ph_truthMatch_ph                                       = 0;
+    OUT::ph_truthMinDR_ph                                       = 0;
+    OUT::ph_truthMatchPt_ph                                     = 0;
+    OUT::ph_truthMatchMotherPID_ph                              = 0;
+    OUT::ph_truthMatchParentage_ph                              = 0;
+    OUT::ph_truthMatch_el                                       = 0;
+    OUT::ph_truthMinDR_el                                      = 0;
+    OUT::ph_truthMatchPt_el                                     = 0;
+    OUT::ph_truthMatch_jet                                      = 0;
+    OUT::ph_truthMinDR_jet                                      = 0;
+    OUT::ph_truthMatchPt_jet                                    = 0;
+    OUT::ph_hasSLConv                                           = 0;
+    OUT::ph_pass_mva_presel                                     = 0;
+    OUT::ph_mvascore                                            = 0;
+    OUT::ph_IsEB                                                = 0;
+    OUT::ph_IsEE                                                = 0;
 
-    OUT::jet_pt                    = 0;
-    OUT::jet_eta                   = 0;
-    OUT::jet_phi                   = 0;
-    OUT::jet_e                     = 0;
+    OUT::jet_pt                                                 = 0;
+    OUT::jet_eta                                                = 0;
+    OUT::jet_phi                                                = 0;
+    OUT::jet_e                                                  = 0;
 
-    OUT::trueph_pt                      = 0;
-    OUT::trueph_eta                     = 0;
-    OUT::trueph_phi                     = 0;
-    OUT::trueph_motherPID               = 0;
-    OUT::trueph_status               = 0;
+    OUT::met_pt                                                 = 0;
+    OUT::met_phi                                                = 0;
 
-    OUT::met_pt                    = 0;
-    OUT::met_phi                   = 0;
+    OUT::PassQuality                                            = 0;
+    OUT::trueph_pt                                              = 0;
+    OUT::trueph_eta                                             = 0;
+    OUT::trueph_phi                                             = 0;
+    OUT::trueph_motherPID                                       = 0;
+    OUT::trueph_status                                          = 0;
+    OUT::trueph_nMatchingLep                                    = 0;
+
+    OUT::truelep_pt                                             = 0;
+    OUT::truelep_eta                                            = 0;
+    OUT::truelep_phi                                            = 0;
+    OUT::truelep_motherPID                                      = 0;
+    OUT::truelep_status                                         = 0;
+    OUT::truelep_Id                                             = 0;
+
+    OUT::st3Lep_n                                               = 0;
+
+    OUT::truechlep_n                                            = 0;
+    OUT::truenu_n                                               = 0;
+    OUT::truelepnu_m                                            = 0;
+    OUT::truelepnuph_m                                          = 0;
+    OUT::truelepph_dr                                           = 0;
+
+    OUT::isWMuDecay                                             = 0;
+    OUT::isWElDecay                                             = 0;
+    OUT::isWTauDecay                                            = 0;
+
+    OUT::passTrig_HLT_Photon120_R9Id90_HE10_Iso40_EBOnly        = 0;
+    OUT::passTrig_HLT_Photon120_R9Id90_HE10_IsoM                = 0;
+    OUT::passTrig_HLT_Photon120                                 = 0;
+    OUT::passTrig_HLT_Photon135_PFMET100_JetIdCleaned           = 0;
+    OUT::passTrig_HLT_Photon165_HE10                            = 0;
+    OUT::passTrig_HLT_Photon165_R9Id90_HE10_IsoM                = 0;
+    OUT::passTrig_HLT_Photon175                                 = 0;
+    OUT::passTrig_HLT_Photon250_NoHE                            = 0;
+    OUT::passTrig_HLT_Photon300_NoHE                            = 0;
+    OUT::passTrig_HLT_Photon500                                 = 0;
+    OUT::passTrig_HLT_Photon600                                 = 0;
+    OUT::passTrig_HLT_IsoMu17_eta2p1                            = 0;
+    OUT::passTrig_HLT_IsoMu20                                   = 0;
+    OUT::passTrig_HLT_IsoMu20_eta2p1                            = 0;
+    OUT::passTrig_HLT_IsoMu24_eta2p1                            = 0;
+    OUT::passTrig_HLT_IsoMu27                                   = 0;
+    OUT::passTrig_HLT_IsoTkMu20                                 = 0;
+    OUT::passTrig_HLT_IsoTkMu20_eta2p1                          = 0;
+    OUT::passTrig_HLT_IsoTkMu24_eta2p1                          = 0;
+    OUT::passTrig_HLT_IsoTkMu27                                 = 0;
+    OUT::passTrig_HLT_Mu20                                      = 0;
+    OUT::passTrig_HLT_TkMu20                                    = 0;
+    OUT::passTrig_HLT_Mu24_eta2p1                               = 0;
+    OUT::passTrig_HLT_TkMu24_eta2p1                             = 0;
+    OUT::passTrig_HLT_Mu27                                      = 0;
+    OUT::passTrig_HLT_TkMu27                                    = 0;
+    OUT::passTrig_HLT_Mu50                                      = 0;
+    OUT::passTrig_HLT_Mu55                                      = 0;
+    OUT::passTrig_HLT_Mu45_eta2p1                               = 0;
+    OUT::passTrig_HLT_Mu50_eta2p1                               = 0;
+    OUT::passTrig_HLT_Mu24                                      = 0;
+    OUT::passTrig_HLT_Mu34                                      = 0;
+    OUT::passTrig_HLT_IsoMu22                                   = 0;
+    OUT::passTrig_HLT_IsoTkMu22                                 = 0;
+    OUT::passTrig_HLT_IsoTkMu24                                 = 0;
+    OUT::passTrig_HLT_Ele27_eta2p1_WPLoose_Gsf                  = 0;
+    OUT::passTrig_HLT_Ele27_eta2p1_WPTight_Gsf                  = 0;
+    OUT::passTrig_HLT_Ele32_eta2p1_WPLoose_Gsf                  = 0;
+    OUT::passTrig_HLT_Ele32_eta2p1_WPTight_Gsf                  = 0;
+    OUT::passTrig_HLT_Ele105_CaloIdVT_GsfTrkIdT                 = 0;
+    OUT::passTrig_HLT_Ele115_CaloIdVT_GsfTrkIdT                 = 0;
+    OUT::passTrig_HLT_Ele27_WPTight_Gsf                         = 0;
+    OUT::passTrig_HLT_Mu17_Photon30_CaloIdL_L1ISO               = 0;
+    OUT::NLOWeight                                              = 0;
+
 
     // *************************
     // Declare Branches
@@ -199,6 +274,8 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("jet_n"                     , &OUT::jet_n , "jet_n/I"         );
     outtree->Branch("vtx_n"                     , &OUT::vtx_n   , "vtx_n/I"       );
     outtree->Branch("trueph_n"                  , &OUT::trueph_n, "trueph_n/I"         );
+    outtree->Branch("truelep_n"                  , &OUT::truelep_n, "truelep_n/I"         );
+    outtree->Branch("truephIPFS_n"             , &OUT::truephIPFS_n, "truephIPFS_n/I"         );
 
     outtree->Branch("el_pt"                     , &OUT::el_pt                     );
     outtree->Branch("el_eta"                    , &OUT::el_eta                    );
@@ -363,61 +440,86 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("met_pt"                    , &OUT::met_pt , "met_pt/F"                   );
     outtree->Branch("met_phi"                   , &OUT::met_phi, "met_phi/F"                   );
 
-    outtree->Branch("trueph_pt"                 , &OUT::trueph_pt );
-    outtree->Branch("trueph_eta"                 , &OUT::trueph_eta );
-    outtree->Branch("trueph_phi"                 , &OUT::trueph_phi );
-    outtree->Branch("trueph_motherPID"                , &OUT::trueph_motherPID );
-    outtree->Branch("trueph_status"                , &OUT::trueph_status);
+    outtree->Branch("trueph_pt"           , &OUT::trueph_pt                        );
+    outtree->Branch("trueph_eta"          , &OUT::trueph_eta                       );
+    outtree->Branch("trueph_phi"          , &OUT::trueph_phi                       );
+    outtree->Branch("trueph_motherPID"    , &OUT::trueph_motherPID                 );
+    outtree->Branch("trueph_status"       , &OUT::trueph_status                    );
+    outtree->Branch("trueph_nMatchingLep" , &OUT::trueph_nMatchingLep              );
 
-    outtree->Branch("passTrig_Photon26_Photon16_Mass60", &OUT::passTrig_Photon26_Photon16_Mass60, "passTrig_Photon26_Photon16_Mass60/O" );
-    outtree->Branch("passTrig_Photon36_Photon22_Mass15", &OUT::passTrig_Photon36_Photon22_Mass15, "passTrig_Photon36_Photon22_Mass15/O" );
-    outtree->Branch("passTrig_Photon42_Photon25_Mass15", &OUT::passTrig_Photon42_Photon25_Mass15, "passTrig_Photon42_Photon25_Mass15/O" );
-    outtree->Branch("passTrig_DoublePhoton85"          , &OUT::passTrig_DoublePhoton85          , "passTrig_DoublePhoton85/O"           );
-    outtree->Branch("passTrig_Photon22Iso"             , &OUT::passTrig_Photon22Iso             , "passTrig_Photon22Iso/O"              );
-    outtree->Branch("passTrig_Photon22"                , &OUT::passTrig_Photon22                , "passTrig_Photon22/O"                 );
-    outtree->Branch("passTrig_Photon30Iso"             , &OUT::passTrig_Photon30Iso             , "passTrig_Photon30Iso/O"              );
-    outtree->Branch("passTrig_Photon30"                , &OUT::passTrig_Photon30                , "passTrig_Photon30/O"                 );
-    outtree->Branch("passTrig_Photon36Iso"             , &OUT::passTrig_Photon36Iso             , "passTrig_Photon36Iso/O"              );
-    outtree->Branch("passTrig_Photon36"                , &OUT::passTrig_Photon36                , "passTrig_Photon36/O"                 );
-    outtree->Branch("passTrig_Photon50Iso"             , &OUT::passTrig_Photon50Iso             , "passTrig_Photon50Iso/O"              );
-    outtree->Branch("passTrig_Photon50"                , &OUT::passTrig_Photon50                , "passTrig_Photon50/O"                 );
-    outtree->Branch("passTrig_Photon75Iso"             , &OUT::passTrig_Photon75Iso             , "passTrig_Photon75Iso/O"              );
-    outtree->Branch("passTrig_Photon75"                , &OUT::passTrig_Photon75                , "passTrig_Photon75/O"                 );
-    outtree->Branch("passTrig_Photon90Iso"             , &OUT::passTrig_Photon90Iso             , "passTrig_Photon90Iso/O"              );
-    outtree->Branch("passTrig_Photon90"                , &OUT::passTrig_Photon90                , "passTrig_Photon90/O"                 );
-    outtree->Branch("passTrig_Photon120Iso"            , &OUT::passTrig_Photon120Iso            , "passTrig_Photon120Iso/O"             );
-    outtree->Branch("passTrig_Photon120"               , &OUT::passTrig_Photon120               , "passTrig_Photon120/O"                );
-    outtree->Branch("passTrig_Photon165HE"             , &OUT::passTrig_Photon165HE             , "passTrig_Photon165HE/O"              );
-    outtree->Branch("passTrig_Photon165Iso"            , &OUT::passTrig_Photon165Iso            , "passTrig_Photon165Iso/O"             );
-    outtree->Branch("passTrig_Photon175"               , &OUT::passTrig_Photon175               , "passTrig_Photon175/O"                );
-    outtree->Branch("passTrig_Photon250"               , &OUT::passTrig_Photon250               , "passTrig_Photon250/O"                );
-    outtree->Branch("passTrig_Photon300"               , &OUT::passTrig_Photon300               , "passTrig_Photon300/O"                );
-    outtree->Branch("passTrig_Photon500"               , &OUT::passTrig_Photon500               , "passTrig_Photon500/O"                );
-    outtree->Branch("passTrig_Photon600"               , &OUT::passTrig_Photon600               , "passTrig_Photon600/O"                );
-    outtree->Branch("passTrig_Mu27_TkMu8"              , &OUT::passTrig_Mu27_TkMu8              , "passTrig_Mu27_TkMu8/O"               );
-    outtree->Branch("passTrig_Mu17_Mu8_DZ"             , &OUT::passTrig_Mu17_Mu8_DZ             , "passTrig_Mu17_Mu8_DZ/O"              );
-    outtree->Branch("passTrig_Mu17_TkMu8_DZ"           , &OUT::passTrig_Mu17_TkMu8_DZ           , "passTrig_Mu17_TkMu8_DZ/O"            );
-    outtree->Branch("passTrig_Mu27_eta2p1"             , &OUT::passTrig_Mu27_eta2p1             , "passTrig_Mu27_eta2p1/O"              );
-    outtree->Branch("passTrig_IsoMu27_eta2p1"          , &OUT::passTrig_IsoMu27_eta2p1          , "passTrig_IsoMu27_eta2p1/O"           );
-    outtree->Branch("passTrig_IsoTkMu27_eta2p1"        , &OUT::passTrig_IsoTkMu27_eta2p1        , "passTrig_IsoTkMu27_eta2p1/O"         );
-    outtree->Branch("passTrig_IsoMu17_eta2p1"          , &OUT::passTrig_IsoMu17_eta2p1          , "passTrig_IsoMu17_eta2p1/O"           );
-    outtree->Branch("passTrig_IsoMu20_eta2p1"          , &OUT::passTrig_IsoMu20_eta2p1          , "passTrig_IsoMu20_eta2p1/O"           );
-    outtree->Branch("passTrig_IsoMu24_eta2p1"          , &OUT::passTrig_IsoMu24_eta2p1          , "passTrig_IsoMu24_eta2p1/O"           );
-    outtree->Branch("passTrig_IsoTkMu20_eta2p1"        , &OUT::passTrig_IsoTkMu20_eta2p1        , "passTrig_IsoTkMu20_eta2p1/O"         );
-    outtree->Branch("passTrig_IsoTkMu24_eta2p1"        , &OUT::passTrig_IsoTkMu24_eta2p1        , "passTrig_IsoTkMu24_eta2p1/O"         );
-    outtree->Branch("passTrig_TkMu24_eta2p1"           , &OUT::passTrig_TkMu24_eta2p1           , "passTrig_TkMu24_eta2p1/O"            );
-    outtree->Branch("passTrig_Mu45_eta2p1"           , &OUT::passTrig_Mu45_eta2p1           , "passTrig_Mu45_eta2p1/O"            );
-    outtree->Branch("passTrig_Ele27_WPLoose_eta2p1"    , &OUT::passTrig_Ele27_WPLoose_eta2p1    , "passTrig_Ele27_WPLoose_eta2p1/O"             );
-    outtree->Branch("passTrig_Ele27_WPTight_eta2p1"    , &OUT::passTrig_Ele27_WPTight_eta2p1    , "passTrig_Ele27_WPTight_eta2p1/O"             );
-    outtree->Branch("passTrig_Ele32_WPLoose_eta2p1"    , &OUT::passTrig_Ele32_WPLoose_eta2p1    , "passTrig_Ele32_WPLoose_eta2p1/O"             );
-    outtree->Branch("passTrig_Ele32_WPTight_eta2p1"    , &OUT::passTrig_Ele32_WPTight_eta2p1    , "passTrig_Ele32_WPTight_eta2p1/O"             );
-    outtree->Branch("passTrig_Ele17_Ele12_DZ"          , &OUT::passTrig_Ele17_Ele12_DZ          , "passTrig_Ele17_Ele12_DZ/O"           );
-    outtree->Branch("passTrig_Ele17_Ele12"             , &OUT::passTrig_Ele17_Ele12             , "passTrig_Ele17_Ele12/O"              );
-    outtree->Branch("passTrig_Mu8_Ele23"               , &OUT::passTrig_Mu8_Ele23               , "passTrig_Mu8_Ele23/O"                );
-    outtree->Branch("passTrig_Mu8_Ele17"               , &OUT::passTrig_Mu8_Ele17               , "passTrig_Mu8_Ele17/O"                );
-    outtree->Branch("passTrig_Mu23_Ele12"              , &OUT::passTrig_Mu23_Ele12              , "passTrig_Mu23_Ele12/O"               );
-    outtree->Branch("passTrig_Mu17_Ele12"              , &OUT::passTrig_Mu17_Ele12              , "passTrig_Mu17_Ele12/O"               );
+    outtree->Branch("truelep_pt"          , &OUT::truelep_pt                       );
+    outtree->Branch("truelep_eta"         , &OUT::truelep_eta                      );
+    outtree->Branch("truelep_phi"         , &OUT::truelep_phi                      );
+    outtree->Branch("truelep_motherPID"   , &OUT::truelep_motherPID                );
+    outtree->Branch("truelep_status"      , &OUT::truelep_status                   );
+    outtree->Branch("truelep_Id"          , &OUT::truelep_Id                       );
+
+    outtree->Branch("st3Lep_n"            , &OUT::st3Lep_n, "st3Lep_n/I"           );
+
+    outtree->Branch("truechlep_n"         , &OUT::truechlep_n, "truechlep_n/I"     );
+    outtree->Branch("truenu_n"            , &OUT::truenu_n, "truenu_n/I"           );
+
+    outtree->Branch("truelepnu_m"         , &OUT::truelepnu_m, "truelepnu_m/F"     );
+    outtree->Branch("truelepnuph_m"       , &OUT::truelepnuph_m, "truelepnuph_m/F" );
+    outtree->Branch("truelepph_dr"        , &OUT::truelepph_dr, "truelepph_dr/F"   );
+
+    outtree->Branch("isWMuDecay"          , &OUT::isWMuDecay, "isWMuDecay/O"       );
+    outtree->Branch("isWElDecay"          , &OUT::isWElDecay, "isWElDecay/O"       );
+    outtree->Branch("isWTauDecay"         , &OUT::isWTauDecay, "isWTauDecay/O"     );
+
+    // Use scripts/write_trigger_code_from_ntuple.py
+    // to help generate the code 
+    //Set trigger branches for TrigHltPhot
+    outtree->Branch("passTrig_HLT_Photon120_R9Id90_HE10_Iso40_EBOnly", &OUT::passTrig_HLT_Photon120_R9Id90_HE10_Iso40_EBOnly, "passTrig_HLT_Photon120_R9Id90_HE10_Iso40_EBOnly/O" );
+    outtree->Branch("passTrig_HLT_Photon120_R9Id90_HE10_IsoM"        , &OUT::passTrig_HLT_Photon120_R9Id90_HE10_IsoM        , "passTrig_HLT_Photon120_R9Id90_HE10_IsoM/O"         );
+    outtree->Branch("passTrig_HLT_Photon120"                         , &OUT::passTrig_HLT_Photon120                         , "passTrig_HLT_Photon120/O"                          );
+    outtree->Branch("passTrig_HLT_Photon135_PFMET100_JetIdCleaned"   , &OUT::passTrig_HLT_Photon135_PFMET100_JetIdCleaned   , "passTrig_HLT_Photon135_PFMET100_JetIdCleaned/O"    );
+    outtree->Branch("passTrig_HLT_Photon165_HE10"                    , &OUT::passTrig_HLT_Photon165_HE10                    , "passTrig_HLT_Photon165_HE10/O"                     );
+    outtree->Branch("passTrig_HLT_Photon165_R9Id90_HE10_IsoM"        , &OUT::passTrig_HLT_Photon165_R9Id90_HE10_IsoM        , "passTrig_HLT_Photon165_R9Id90_HE10_IsoM/O"         );
+    outtree->Branch("passTrig_HLT_Photon175"                         , &OUT::passTrig_HLT_Photon175                         , "passTrig_HLT_Photon175/O"                          );
+    outtree->Branch("passTrig_HLT_Photon250_NoHE"                    , &OUT::passTrig_HLT_Photon250_NoHE                    , "passTrig_HLT_Photon250_NoHE/O"                     );
+    outtree->Branch("passTrig_HLT_Photon300_NoHE"                    , &OUT::passTrig_HLT_Photon300_NoHE                    , "passTrig_HLT_Photon300_NoHE/O"                     );
+    outtree->Branch("passTrig_HLT_Photon500"                         , &OUT::passTrig_HLT_Photon500                         , "passTrig_HLT_Photon500/O"                          );
+    outtree->Branch("passTrig_HLT_Photon600"                         , &OUT::passTrig_HLT_Photon600                         , "passTrig_HLT_Photon600/O"                          );
+    //Set trigger branches for TrigHltMu
+    outtree->Branch("passTrig_HLT_IsoMu17_eta2p1"                    , &OUT::passTrig_HLT_IsoMu17_eta2p1                    , "passTrig_HLT_IsoMu17_eta2p1/O"                     );
+    outtree->Branch("passTrig_HLT_IsoMu20"                           , &OUT::passTrig_HLT_IsoMu20                           , "passTrig_HLT_IsoMu20/O"                            );
+    outtree->Branch("passTrig_HLT_IsoMu20_eta2p1"                    , &OUT::passTrig_HLT_IsoMu20_eta2p1                    , "passTrig_HLT_IsoMu20_eta2p1/O"                     );
+    outtree->Branch("passTrig_HLT_IsoMu24_eta2p1"                    , &OUT::passTrig_HLT_IsoMu24_eta2p1                    , "passTrig_HLT_IsoMu24_eta2p1/O"                     );
+    outtree->Branch("passTrig_HLT_IsoMu27"                           , &OUT::passTrig_HLT_IsoMu27                           , "passTrig_HLT_IsoMu27/O"                            );
+    outtree->Branch("passTrig_HLT_IsoTkMu20"                         , &OUT::passTrig_HLT_IsoTkMu20                         , "passTrig_HLT_IsoTkMu20/O"                          );
+    outtree->Branch("passTrig_HLT_IsoTkMu20_eta2p1"                  , &OUT::passTrig_HLT_IsoTkMu20_eta2p1                  , "passTrig_HLT_IsoTkMu20_eta2p1/O"                   );
+    outtree->Branch("passTrig_HLT_IsoTkMu24_eta2p1"                  , &OUT::passTrig_HLT_IsoTkMu24_eta2p1                  , "passTrig_HLT_IsoTkMu24_eta2p1/O"                   );
+    outtree->Branch("passTrig_HLT_IsoTkMu27"                         , &OUT::passTrig_HLT_IsoTkMu27                         , "passTrig_HLT_IsoTkMu27/O"                          );
+    outtree->Branch("passTrig_HLT_Mu20"                              , &OUT::passTrig_HLT_Mu20                              , "passTrig_HLT_Mu20/O"                               );
+    outtree->Branch("passTrig_HLT_TkMu20"                            , &OUT::passTrig_HLT_TkMu20                            , "passTrig_HLT_TkMu20/O"                             );
+    outtree->Branch("passTrig_HLT_Mu24_eta2p1"                       , &OUT::passTrig_HLT_Mu24_eta2p1                       , "passTrig_HLT_Mu24_eta2p1/O"                        );
+    outtree->Branch("passTrig_HLT_TkMu24_eta2p1"                     , &OUT::passTrig_HLT_TkMu24_eta2p1                     , "passTrig_HLT_TkMu24_eta2p1/O"                      );
+    outtree->Branch("passTrig_HLT_Mu27"                              , &OUT::passTrig_HLT_Mu27                              , "passTrig_HLT_Mu27/O"                               );
+    outtree->Branch("passTrig_HLT_TkMu27"                            , &OUT::passTrig_HLT_TkMu27                            , "passTrig_HLT_TkMu27/O"                             );
+    outtree->Branch("passTrig_HLT_Mu50"                              , &OUT::passTrig_HLT_Mu50                              , "passTrig_HLT_Mu50/O"                               );
+    outtree->Branch("passTrig_HLT_Mu55"                              , &OUT::passTrig_HLT_Mu55                              , "passTrig_HLT_Mu55/O"                               );
+    outtree->Branch("passTrig_HLT_Mu45_eta2p1"                       , &OUT::passTrig_HLT_Mu45_eta2p1                       , "passTrig_HLT_Mu45_eta2p1/O"                        );
+    outtree->Branch("passTrig_HLT_Mu50_eta2p1"                       , &OUT::passTrig_HLT_Mu50_eta2p1                       , "passTrig_HLT_Mu50_eta2p1/O"                        );
+    outtree->Branch("passTrig_HLT_Mu24"                              , &OUT::passTrig_HLT_Mu24                              , "passTrig_HLT_Mu24/O"                               );
+    outtree->Branch("passTrig_HLT_Mu34"                              , &OUT::passTrig_HLT_Mu34                              , "passTrig_HLT_Mu34/O"                               );
+    outtree->Branch("passTrig_HLT_IsoMu22"                           , &OUT::passTrig_HLT_IsoMu22                           , "passTrig_HLT_IsoMu22/O"                            );
+    outtree->Branch("passTrig_HLT_IsoTkMu22"                         , &OUT::passTrig_HLT_IsoTkMu22                         , "passTrig_HLT_IsoTkMu22/O"                          );
+    outtree->Branch("passTrig_HLT_IsoTkMu24"                         , &OUT::passTrig_HLT_IsoTkMu24                         , "passTrig_HLT_IsoTkMu24/O"                          );
+    //Set trigger branches for TrigHltEl
+    outtree->Branch("passTrig_HLT_Ele27_eta2p1_WPLoose_Gsf"          , &OUT::passTrig_HLT_Ele27_eta2p1_WPLoose_Gsf          , "passTrig_HLT_Ele27_eta2p1_WPLoose_Gsf/O"           );
+    outtree->Branch("passTrig_HLT_Ele27_eta2p1_WPTight_Gsf"          , &OUT::passTrig_HLT_Ele27_eta2p1_WPTight_Gsf          , "passTrig_HLT_Ele27_eta2p1_WPTight_Gsf/O"           );
+    outtree->Branch("passTrig_HLT_Ele32_eta2p1_WPLoose_Gsf"          , &OUT::passTrig_HLT_Ele32_eta2p1_WPLoose_Gsf          , "passTrig_HLT_Ele32_eta2p1_WPLoose_Gsf/O"           );
+    outtree->Branch("passTrig_HLT_Ele32_eta2p1_WPTight_Gsf"          , &OUT::passTrig_HLT_Ele32_eta2p1_WPTight_Gsf          , "passTrig_HLT_Ele32_eta2p1_WPTight_Gsf/O"           );
+    outtree->Branch("passTrig_HLT_Ele105_CaloIdVT_GsfTrkIdT"         , &OUT::passTrig_HLT_Ele105_CaloIdVT_GsfTrkIdT         , "passTrig_HLT_Ele105_CaloIdVT_GsfTrkIdT/O"          );
+    outtree->Branch("passTrig_HLT_Ele115_CaloIdVT_GsfTrkIdT"         , &OUT::passTrig_HLT_Ele115_CaloIdVT_GsfTrkIdT         , "passTrig_HLT_Ele115_CaloIdVT_GsfTrkIdT/O"          );
+    outtree->Branch("passTrig_HLT_Ele27_WPTight_Gsf"                 , &OUT::passTrig_HLT_Ele27_WPTight_Gsf                 , "passTrig_HLT_Ele27_WPTight_Gsf/O"                  );
+    //Set trigger branches for TrigHltMuEl
+    outtree->Branch("passTrig_HLT_Mu17_Photon30_CaloIdL_L1ISO"       , &OUT::passTrig_HLT_Mu17_Photon30_CaloIdL_L1ISO       , "passTrig_HLT_Mu17_Photon30_CaloIdL_L1ISO/O"        );
+
+
     outtree->Branch("NLOWeight"              , &OUT::NLOWeight , "NLOWeight/F"               );
+    outtree->Branch("PassQuality"              , &OUT::PassQuality, "PassQuality/I"               );
 
     eval_ph_tight  = false;
     eval_ph_medium = false;
@@ -460,6 +562,63 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
             if( itr != mod_conf.GetInitData().end() ) {
                 if( itr->second == "true" ) {
                     _needs_nlo_weght = true;
+                }
+            }
+        }
+        if( mod_conf.GetName() == "FilterDataQuality" ) { 
+            std::map<std::string, std::string>::const_iterator itr = mod_conf.GetInitData().find( "jsonFile" );
+            if( itr != mod_conf.GetInitData().end() ) {
+                std::string jsonFile = itr->second;
+
+                std::string line;
+                std::ifstream infile( jsonFile );
+                if( infile.is_open() ) {
+                    while( getline( infile, line ) ) {
+                        std::vector<std::string> key_val_tok = Tokenize( line, ":" );
+                        std::vector<std::string> run_number_tok = Tokenize( key_val_tok[0], "\"" );
+                        // find first and last brackets
+                        std::string::size_type first_bracket = key_val_tok[1].find( "[" );
+                        std::string::size_type last_bracket  = key_val_tok[1].rfind( "]" );
+
+                        std::string rm_last = key_val_tok[1].substr( 0, last_bracket );
+                        std::string all_vals  = rm_last.substr( first_bracket+1 );
+
+                        int run_number;
+                        std::stringstream run_number_ss( run_number_tok[1] );
+                        run_number_ss >> run_number;
+
+                        std::cout << "Run = " << run_number_tok[1] << " values = " << all_vals << std::endl;
+
+                        std::vector<std::string> ranges_tok = Tokenize( all_vals, "[" );
+
+                        std::vector<int> full_range;
+                        for( std::vector<std::string>::const_iterator itr = ranges_tok.begin(); itr != ranges_tok.end(); ++itr ) {
+                            std::string range_str = *itr;
+                            std::string::size_type bracket_pos = range_str.find("]");
+                            std::string range = range_str.substr( 0, bracket_pos );
+
+                            std::vector<std::string> range_tok = Tokenize( range, "," );
+                            if( range_tok.size() != 2 ) {
+                                std::cout << "Expected two entries in the range.  String was " << range << std::endl;
+                                continue;
+                            }
+
+                            int range_begin;
+                            int range_end;
+
+                            std::stringstream range_begin_ss( range_tok[0] );
+                            std::stringstream range_end_ss  ( range_tok[1] );
+
+                            range_begin_ss >> range_begin;
+                            range_end_ss   >> range_end;
+
+                            for( int ls = range_begin ; ls <= range_end; ++ls ) {
+                                full_range.push_back(ls);
+                            }
+
+                        }
+                        quality_map[run_number] = full_range;
+                    }
                 }
             }
         }
@@ -513,6 +672,10 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
 
     if( config.GetName() == "FilterEvent" ) {
         keep_evt &= FilterEvent( config );
+    }
+
+    if( config.GetName() == "FilterDataQuality" ) {
+        keep_evt &= FilterDataQuality( config );
     }
     //if( config.GetName() == "FilterTrigger" ) {
     //    keep_evt &= FilterTrigger( config );
@@ -1846,8 +2009,53 @@ void RunModule::BuildTruth( ModuleConfig & config ) const {
     OUT::trueph_phi->clear();
     OUT::trueph_motherPID->clear();
     OUT::trueph_status->clear();
+    OUT::trueph_nMatchingLep->clear();
+
+    OUT::truelep_pt->clear();
+    OUT::truelep_eta->clear();
+    OUT::truelep_phi->clear();
+    OUT::truelep_motherPID->clear();
+    OUT::truelep_status->clear();
+    OUT::truelep_Id->clear();
 
     OUT::trueph_n = 0;
+    OUT::truephIPFS_n = 0;
+    OUT::truelep_n = 0;
+
+    std::vector<TLorentzVector> chleplvs;
+    std::vector<TLorentzVector> nulvs;
+    for( unsigned int idx = 0; idx < IN::GLepBarePt->size(); ++idx ) {
+
+        int truelep_motherId = IN::GLepBareMomId->at(idx);
+        int id = IN::GLepBareId->at(idx);
+
+        if( fabs( truelep_motherId ) <= 25 ) {
+
+            if( !config.PassInt( "cut_lep_mother", truelep_motherId ) ) continue;
+
+            TLorentzVector lv;
+            lv.SetPtEtaPhiE( IN::GLepBarePt->at(idx),
+                             IN::GLepBareEta->at(idx),
+                             IN::GLepBarePhi->at(idx),
+                             IN::GLepBareE->at(idx)
+                    );
+            OUT::truelep_pt->push_back(lv.Pt());
+            OUT::truelep_eta->push_back(lv.Eta());
+            OUT::truelep_phi->push_back(lv.Phi());
+            OUT::truelep_motherPID->push_back(IN::GLepBareMomId->at(idx));
+            OUT::truelep_status->push_back(IN::GLepBareSt->at(idx));
+            OUT::truelep_Id->push_back(IN::GLepBareId->at(idx));
+            OUT::truelep_n++;
+
+            if( abs(id) == 11 || abs(id) == 13 || abs(id) == 15 ) {
+                chleplvs.push_back( lv );
+            }
+            if( abs(id) == 12 || abs(id) == 14 || abs(id) == 16 ) {
+                nulvs.push_back( lv );
+            }
+        }
+    }
+
 
     // first sort by the photon pt. Apply the pt filter here
     std::vector<std::pair< float, unsigned > > sorted_photons;
@@ -1859,6 +2067,7 @@ void RunModule::BuildTruth( ModuleConfig & config ) const {
     }
 
     std::sort( sorted_photons.rbegin(), sorted_photons.rend() );
+    std::vector<TLorentzVector> photlvs;
 
     // now fill in order
     for( std::vector<std::pair<float, unsigned > >::const_iterator itr = sorted_photons.begin(); itr != sorted_photons.end(); ++itr ) {
@@ -1867,13 +2076,138 @@ void RunModule::BuildTruth( ModuleConfig & config ) const {
 
         if( !config.PassInt( "cut_ph_mother", abs(IN::GPhotMotherId->at(idx) ) ) ) continue;
         if( !config.PassInt( "cut_ph_status", IN::GPhotSt->at(idx) ) ) continue;
+        if( !config.PassBool( "cut_ph_IsPromptFinalState", IN::GPhotIsPromptFinalState->at(idx) ) ) continue;
+        if( !config.PassBool( "cut_ph_FromHardProcessFinalState", IN::GPhotFromHardProcessFinalState->at(idx) ) ) continue;
 
-        OUT::trueph_pt->push_back( IN::GPhotPt->at(idx) );
-        OUT::trueph_eta->push_back( IN::GPhotEta->at(idx) );
-        OUT::trueph_phi->push_back( IN::GPhotPhi->at(idx) );
+        TLorentzVector lv;
+        lv.SetPtEtaPhiM( IN::GPhotPt->at(idx),
+                         IN::GPhotEta->at(idx),
+                         IN::GPhotPhi->at(idx),
+                         0.0
+                );
+
+        photlvs.push_back(lv);
+
+        OUT::trueph_pt->push_back( lv.Pt() );
+        OUT::trueph_eta->push_back( lv.Eta() );
+        OUT::trueph_phi->push_back( lv.Phi() );
         OUT::trueph_motherPID->push_back( IN::GPhotMotherId->at(idx) );
         OUT::trueph_status->push_back( IN::GPhotSt->at(idx) );
         OUT::trueph_n++;
+
+        if( IN::GPhotIsPromptFinalState->at(idx) ) {
+            OUT::truephIPFS_n++;
+        }
+
+        int nMatchingLep = 0;
+        for( unsigned lepidx = 0; lepidx < chleplvs.size(); ++lepidx ) {
+
+            float dr = lv.DeltaR( chleplvs[lepidx] );
+
+            if( dr < 0.1 ) {
+                nMatchingLep++;
+            }
+        }
+
+        OUT::trueph_nMatchingLep->push_back(nMatchingLep);
+    }
+    OUT::truechlep_n = chleplvs.size();
+    OUT::truenu_n = nulvs.size();
+    OUT::truelepnu_m = 0.0;
+    OUT::truelepnuph_m = 0.0;
+    OUT::truelepph_dr = 0.0;
+
+    if( OUT::truechlep_n == 1 ) {
+        TLorentzVector wlv( chleplvs[0] );
+
+        for( unsigned i = 0 ; i < nulvs.size(); ++i) {
+            wlv = wlv + nulvs[i];
+        }
+        OUT::truelepnu_m = wlv.M();
+
+        if( photlvs.size() > 0 ) {
+            OUT::truelepnuph_m = (wlv + photlvs[0]).M();
+            OUT::truelepph_dr =  chleplvs[0].DeltaR( photlvs[0] );
+        }
+    }
+
+    OUT::st3Lep_n = IN::GLepSt3Pt->size();
+    OUT::isWMuDecay = false;
+    OUT::isWElDecay = false;
+    OUT::isWTauDecay = false;
+    bool found_w_mother = false;
+    for( unsigned int idx = 0; idx < IN::GLepSt3Pt->size(); ++idx ) {
+        if( fabs(IN::GLepSt3Mother0Id->at(idx)) == 24 ) {
+            found_w_mother = true;
+
+            int lep_st = IN::GLepSt3Id->at(idx);
+            if( fabs(lep_st) == 11 || fabs(lep_st) == 12 ) {
+                OUT::isWElDecay=true;
+            }
+            if( fabs(lep_st) == 13 || fabs(lep_st) == 14 ) {
+                OUT::isWMuDecay=true;
+            }
+            if( fabs(lep_st) == 15 || fabs(lep_st) == 16 ) {
+                OUT::isWTauDecay=true;
+            }
+        }
+    }
+
+    if( !found_w_mother ) {
+        for( unsigned int idx = 0; idx < IN::GLepBarePt->size(); ++idx ) {
+            if( fabs(IN::GLepBareMomId->at(idx)) == 24 ) {
+                found_w_mother = true;
+
+                int lep_st = IN::GLepBareId->at(idx);
+                if( fabs(lep_st) == 11 || fabs(lep_st) == 12 ) {
+                    OUT::isWElDecay=true;
+                }
+                if( fabs(lep_st) == 13 || fabs(lep_st) == 14 ) {
+                    OUT::isWMuDecay=true;
+                }
+                if( fabs(lep_st) == 15 || fabs(lep_st) == 16 ) {
+                    OUT::isWTauDecay=true;
+                }
+            }
+        }
+    }
+    if( !found_w_mother ) {
+        int n_el    = 0;
+        int n_mu    = 0;
+        int n_tau   = 0;
+        int n_elnu  = 0;
+        int n_munu  = 0;
+        int n_taunu = 0;
+        for( unsigned int idx = 0; idx < IN::GLepBarePt->size(); ++idx ) {
+
+            int momId = abs(IN::GLepBareMomId->at(idx));
+            int Id    = abs(IN::GLepBareId   ->at(idx));
+
+            if( ( Id == momId) || ( momId == 15 ) ) {
+
+                if( Id == 11 ) n_el++;
+                if( Id == 12 ) n_elnu++;
+                if( Id == 13 ) n_mu++;
+                if( Id == 14 ) n_munu++;
+                if( Id == 15 ) n_tau++;
+                if( Id == 16 ) n_taunu++;
+
+            }
+        }
+
+        // if anything tau-like is present then its a tau decay
+        if( n_taunu > 0 || n_tau > 0 ) {
+            found_w_mother = true;
+            OUT::isWTauDecay = true;
+        }
+        // otherwise the final state objects should be consistent with a W decay
+        else if( n_munu > 0 && n_mu > 0 ) {
+            OUT::isWMuDecay = true;
+        }
+        // otherwise the final state objects should be consistent with a W decay
+        else if( n_elnu > 0 && n_el > 0 ) {
+            OUT::isWElDecay = true;
+        }
     }
 
 #endif
@@ -2309,54 +2643,99 @@ void RunModule::BuildTriggerBits( ModuleConfig & config ) const {
 
   //std::cout << std::bitset<64>(IN::TrigHltPhot) << std::endl;
 
-  OUT::passTrig_Photon26_Photon16_Mass60 = ( (IN::TrigHltPhot & ( ULong64_t(1) << 1 ) ) == ( ULong64_t(1) << 1 ) );
-  OUT::passTrig_Photon36_Photon22_Mass15 = ( (IN::TrigHltPhot & ( ULong64_t(1) << 2 ) ) == ( ULong64_t(1) << 2 ) );
-  OUT::passTrig_Photon42_Photon25_Mass15 = ( (IN::TrigHltPhot & ( ULong64_t(1) << 29) ) == ( ULong64_t(1) << 29) );
-  OUT::passTrig_DoublePhoton85           = ( (IN::TrigHltPhot & ( ULong64_t(1) << 8 ) ) == ( ULong64_t(1) << 8 ) );
-  OUT::passTrig_Photon22Iso              = ( (IN::TrigHltPhot & ( ULong64_t(1) << 19) ) == ( ULong64_t(1) << 19) );
-  OUT::passTrig_Photon22                 = ( (IN::TrigHltPhot & ( ULong64_t(1) << 20) ) == ( ULong64_t(1) << 20) );
-  OUT::passTrig_Photon30Iso              = ( (IN::TrigHltPhot & ( ULong64_t(1) << 22) ) == ( ULong64_t(1) << 22) );
-  OUT::passTrig_Photon30                 = ( (IN::TrigHltPhot & ( ULong64_t(1) << 23) ) == ( ULong64_t(1) << 23) );
-  OUT::passTrig_Photon36Iso              = ( (IN::TrigHltPhot & ( ULong64_t(1) << 27) ) == ( ULong64_t(1) << 27) );
-  OUT::passTrig_Photon36                 = ( (IN::TrigHltPhot & ( ULong64_t(1) << 28) ) == ( ULong64_t(1) << 28) );
-  OUT::passTrig_Photon50Iso              = ( (IN::TrigHltPhot & ( ULong64_t(1) << 32) ) == ( ULong64_t(1) << 32) );
-  OUT::passTrig_Photon50                 = ( (IN::TrigHltPhot & ( ULong64_t(1) << 33) ) == ( ULong64_t(1) << 33) );
-  OUT::passTrig_Photon75Iso              = ( (IN::TrigHltPhot & ( ULong64_t(1) << 38) ) == ( ULong64_t(1) << 38) );
-  OUT::passTrig_Photon75                 = ( (IN::TrigHltPhot & ( ULong64_t(1) << 39) ) == ( ULong64_t(1) << 39) );
-  OUT::passTrig_Photon90Iso              = ( (IN::TrigHltPhot & ( ULong64_t(1) << 44) ) == ( ULong64_t(1) << 44) );
-  OUT::passTrig_Photon90                 = ( (IN::TrigHltPhot & ( ULong64_t(1) << 45) ) == ( ULong64_t(1) << 45) );
-  OUT::passTrig_Photon120Iso             = ( (IN::TrigHltPhot & ( ULong64_t(1) << 11) ) == ( ULong64_t(1) << 11) );
-  OUT::passTrig_Photon120                = ( (IN::TrigHltPhot & ( ULong64_t(1) << 12) ) == ( ULong64_t(1) << 12) );
-  OUT::passTrig_Photon165HE              = ( (IN::TrigHltPhot & ( ULong64_t(1) << 14) ) == ( ULong64_t(1) << 14) );
-  OUT::passTrig_Photon165Iso             = ( (IN::TrigHltPhot & ( ULong64_t(1) << 15) ) == ( ULong64_t(1) << 15) );
-  OUT::passTrig_Photon175                = ( (IN::TrigHltPhot & ( ULong64_t(1) << 16) ) == ( ULong64_t(1) << 16) );
-  OUT::passTrig_Photon250                = ( (IN::TrigHltPhot & ( ULong64_t(1) << 21) ) == ( ULong64_t(1) << 21) );
-  OUT::passTrig_Photon300                = ( (IN::TrigHltPhot & ( ULong64_t(1) << 24) ) == ( ULong64_t(1) << 24) );
-  OUT::passTrig_Photon500                = ( (IN::TrigHltPhot & ( ULong64_t(1) << 34) ) == ( ULong64_t(1) << 34) );
-  OUT::passTrig_Photon600                = ( (IN::TrigHltPhot & ( ULong64_t(1) << 35) ) == ( ULong64_t(1) << 35) );
-  OUT::passTrig_Mu27_TkMu8               = ( (IN::TrigHltDiMu & ( ULong64_t(1) << 14) ) == ( ULong64_t(1) << 14) );
-  OUT::passTrig_Mu17_Mu8_DZ              = ( (IN::TrigHltDiMu & ( ULong64_t(1) << 19) ) == ( ULong64_t(1) << 19) );
-  OUT::passTrig_Mu17_TkMu8_DZ            = ( (IN::TrigHltDiMu & ( ULong64_t(1) << 21) ) == ( ULong64_t(1) << 21) );
-  OUT::passTrig_Mu27_eta2p1              = ( (IN::TrigHltMu   & ( ULong64_t(1) << 32) ) == ( ULong64_t(1) << 32) );
-  OUT::passTrig_IsoMu27_eta2p1           = ( (IN::TrigHltMu   & ( ULong64_t(1) << 18) ) == ( ULong64_t(1) << 18) );
-  OUT::passTrig_IsoTkMu27_eta2p1         = ( (IN::TrigHltMu   & ( ULong64_t(1) << 22) ) == ( ULong64_t(1) << 22) );
-  OUT::passTrig_IsoMu17_eta2p1           = ( (IN::TrigHltMu   & ( ULong64_t(1) << 4 ) ) == ( ULong64_t(1) << 4 ) );
-  OUT::passTrig_IsoMu20_eta2p1           = ( (IN::TrigHltMu   & ( ULong64_t(1) << 13) ) == ( ULong64_t(1) << 13) );
-  OUT::passTrig_IsoMu24_eta2p1           = ( (IN::TrigHltMu   & ( ULong64_t(1) << 17) ) == ( ULong64_t(1) << 17) );
-  OUT::passTrig_IsoTkMu20_eta2p1         = ( (IN::TrigHltMu   & ( ULong64_t(1) << 20) ) == ( ULong64_t(1) << 20) );
-  OUT::passTrig_IsoTkMu24_eta2p1         = ( (IN::TrigHltMu   & ( ULong64_t(1) << 21) ) == ( ULong64_t(1) << 21) );
-  OUT::passTrig_TkMu24_eta2p1            = ( (IN::TrigHltMu   & ( ULong64_t(1) << 31) ) == ( ULong64_t(1) << 31) );
-  OUT::passTrig_Mu45_eta2p1              = ( (IN::TrigHltMu   & ( ULong64_t(1) << 36) ) == ( ULong64_t(1) << 36) );
-  OUT::passTrig_Ele27_WPLoose_eta2p1     = ( (IN::TrigHltEl   & ( ULong64_t(1) << 13) ) == ( ULong64_t(1) << 13) );
-  OUT::passTrig_Ele27_WPTight_eta2p1     = ( (IN::TrigHltEl   & ( ULong64_t(1) << 14) ) == ( ULong64_t(1) << 14) );
-  OUT::passTrig_Ele32_WPLoose_eta2p1     = ( (IN::TrigHltEl   & ( ULong64_t(1) << 20) ) == ( ULong64_t(1) << 20) );
-  OUT::passTrig_Ele32_WPTight_eta2p1     = ( (IN::TrigHltEl   & ( ULong64_t(1) << 21) ) == ( ULong64_t(1) << 21) );
-  OUT::passTrig_Ele17_Ele12_DZ           = ( (IN::TrigHltDiEl & ( ULong64_t(1) << 2 ) ) == ( ULong64_t(1) << 2 ) );
-  OUT::passTrig_Ele17_Ele12              = ( (IN::TrigHltDiEl & ( ULong64_t(1) << 5 ) ) == ( ULong64_t(1) << 5 ) );
-  OUT::passTrig_Mu8_Ele23                = ( (IN::TrigHltElMu & ( ULong64_t(1) << 1 ) ) == ( ULong64_t(1) << 1 ) );
-  OUT::passTrig_Mu8_Ele17                = ( (IN::TrigHltElMu & ( ULong64_t(1) << 2 ) ) == ( ULong64_t(1) << 2 ) );
-  OUT::passTrig_Mu23_Ele12               = ( (IN::TrigHltElMu & ( ULong64_t(1) << 3 ) ) == ( ULong64_t(1) << 3 ) );
-  OUT::passTrig_Mu17_Ele12               = ( (IN::TrigHltElMu & ( ULong64_t(1) << 4 ) ) == ( ULong64_t(1) << 4 ) );
+    // Use scripts/write_trigger_code_from_ntuple.py
+    // to help generate the code 
+
+    //Fill trigger branches for TrigHltPhot
+    OUT::passTrig_HLT_Photon120_R9Id90_HE10_Iso40_EBOnly = (IN::TrigHltPhot & ( ULong64_t(1) << 19 ) ) == ( ULong64_t(1) << 19 ) ; 
+    OUT::passTrig_HLT_Photon120_R9Id90_HE10_IsoM         = (IN::TrigHltPhot & ( ULong64_t(1) << 20 ) ) == ( ULong64_t(1) << 20 ) ; 
+    OUT::passTrig_HLT_Photon120                          = (IN::TrigHltPhot & ( ULong64_t(1) << 21 ) ) == ( ULong64_t(1) << 21 ) ; 
+    OUT::passTrig_HLT_Photon135_PFMET100_JetIdCleaned    = (IN::TrigHltPhot & ( ULong64_t(1) << 22 ) ) == ( ULong64_t(1) << 22 ) ; 
+    OUT::passTrig_HLT_Photon165_HE10                     = (IN::TrigHltPhot & ( ULong64_t(1) << 23 ) ) == ( ULong64_t(1) << 23 ) ; 
+    OUT::passTrig_HLT_Photon165_R9Id90_HE10_IsoM         = (IN::TrigHltPhot & ( ULong64_t(1) << 24 ) ) == ( ULong64_t(1) << 24 ) ; 
+    OUT::passTrig_HLT_Photon175                          = (IN::TrigHltPhot & ( ULong64_t(1) << 25 ) ) == ( ULong64_t(1) << 25 ) ; 
+    OUT::passTrig_HLT_Photon250_NoHE                     = (IN::TrigHltPhot & ( ULong64_t(1) << 30 ) ) == ( ULong64_t(1) << 30 ) ; 
+    OUT::passTrig_HLT_Photon300_NoHE                     = (IN::TrigHltPhot & ( ULong64_t(1) << 32 ) ) == ( ULong64_t(1) << 32 ) ; 
+    OUT::passTrig_HLT_Photon500                          = (IN::TrigHltPhot & ( ULong64_t(1) << 41 ) ) == ( ULong64_t(1) << 41 ) ; 
+    OUT::passTrig_HLT_Photon600                          = (IN::TrigHltPhot & ( ULong64_t(1) << 46 ) ) == ( ULong64_t(1) << 46 ) ; 
+    //Fill trigger branches for TrigHltMu
+    OUT::passTrig_HLT_IsoMu17_eta2p1                     = (IN::TrigHltMu & ( ULong64_t(1) << 4 ) ) == ( ULong64_t(1) << 4 ) ; 
+    OUT::passTrig_HLT_IsoMu20                            = (IN::TrigHltMu & ( ULong64_t(1) << 12 ) ) == ( ULong64_t(1) << 12 ) ; 
+    OUT::passTrig_HLT_IsoMu20_eta2p1                     = (IN::TrigHltMu & ( ULong64_t(1) << 13 ) ) == ( ULong64_t(1) << 13 ) ; 
+    OUT::passTrig_HLT_IsoMu24_eta2p1                     = (IN::TrigHltMu & ( ULong64_t(1) << 17 ) ) == ( ULong64_t(1) << 17 ) ; 
+    OUT::passTrig_HLT_IsoMu27                            = (IN::TrigHltMu & ( ULong64_t(1) << 18 ) ) == ( ULong64_t(1) << 18 ) ; 
+    OUT::passTrig_HLT_IsoTkMu20                          = (IN::TrigHltMu & ( ULong64_t(1) << 19 ) ) == ( ULong64_t(1) << 19 ) ; 
+    OUT::passTrig_HLT_IsoTkMu20_eta2p1                   = (IN::TrigHltMu & ( ULong64_t(1) << 20 ) ) == ( ULong64_t(1) << 20 ) ; 
+    OUT::passTrig_HLT_IsoTkMu24_eta2p1                   = (IN::TrigHltMu & ( ULong64_t(1) << 21 ) ) == ( ULong64_t(1) << 21 ) ; 
+    OUT::passTrig_HLT_IsoTkMu27                          = (IN::TrigHltMu & ( ULong64_t(1) << 22 ) ) == ( ULong64_t(1) << 22 ) ; 
+    OUT::passTrig_HLT_Mu20                               = (IN::TrigHltMu & ( ULong64_t(1) << 28 ) ) == ( ULong64_t(1) << 28 ) ; 
+    OUT::passTrig_HLT_TkMu20                             = (IN::TrigHltMu & ( ULong64_t(1) << 29 ) ) == ( ULong64_t(1) << 29 ) ; 
+    OUT::passTrig_HLT_Mu24_eta2p1                        = (IN::TrigHltMu & ( ULong64_t(1) << 30 ) ) == ( ULong64_t(1) << 30 ) ; 
+    OUT::passTrig_HLT_TkMu24_eta2p1                      = (IN::TrigHltMu & ( ULong64_t(1) << 31 ) ) == ( ULong64_t(1) << 31 ) ; 
+    OUT::passTrig_HLT_Mu27                               = (IN::TrigHltMu & ( ULong64_t(1) << 32 ) ) == ( ULong64_t(1) << 32 ) ; 
+    OUT::passTrig_HLT_TkMu27                             = (IN::TrigHltMu & ( ULong64_t(1) << 33 ) ) == ( ULong64_t(1) << 33 ) ; 
+    OUT::passTrig_HLT_Mu50                               = (IN::TrigHltMu & ( ULong64_t(1) << 34 ) ) == ( ULong64_t(1) << 34 ) ; 
+    OUT::passTrig_HLT_Mu55                               = (IN::TrigHltMu & ( ULong64_t(1) << 35 ) ) == ( ULong64_t(1) << 35 ) ; 
+    OUT::passTrig_HLT_Mu45_eta2p1                        = (IN::TrigHltMu & ( ULong64_t(1) << 36 ) ) == ( ULong64_t(1) << 36 ) ; 
+    OUT::passTrig_HLT_Mu50_eta2p1                        = (IN::TrigHltMu & ( ULong64_t(1) << 37 ) ) == ( ULong64_t(1) << 37 ) ; 
+    OUT::passTrig_HLT_Mu24                               = (IN::TrigHltMu & ( ULong64_t(1) << 44 ) ) == ( ULong64_t(1) << 44 ) ; 
+    OUT::passTrig_HLT_Mu34                               = (IN::TrigHltMu & ( ULong64_t(1) << 45 ) ) == ( ULong64_t(1) << 45 ) ; 
+    OUT::passTrig_HLT_IsoMu22                            = (IN::TrigHltMu & ( ULong64_t(1) << 46 ) ) == ( ULong64_t(1) << 46 ) ; 
+    OUT::passTrig_HLT_IsoTkMu24                          = (IN::TrigHltMu & ( ULong64_t(1) << 49 ) ) == ( ULong64_t(1) << 49 ) ; 
+    OUT::passTrig_HLT_IsoTkMu22                          = (IN::TrigHltMu & ( ULong64_t(1) << 50 ) ) == ( ULong64_t(1) << 50 ) ; 
+    //Fill trigger branches for TrigHltDiPhot
+    //Fill trigger branches for TrigHlt
+    //Fill trigger branches for TrigHltElMu
+    //Fill trigger branches for TrigHltEl
+    OUT::passTrig_HLT_Ele27_eta2p1_WPLoose_Gsf           = (IN::TrigHltEl & ( ULong64_t(1) << 13 ) ) == ( ULong64_t(1) << 13 ) ; 
+    OUT::passTrig_HLT_Ele27_eta2p1_WPTight_Gsf           = (IN::TrigHltEl & ( ULong64_t(1) << 14 ) ) == ( ULong64_t(1) << 14 ) ; 
+    OUT::passTrig_HLT_Ele32_eta2p1_WPLoose_Gsf           = (IN::TrigHltEl & ( ULong64_t(1) << 20 ) ) == ( ULong64_t(1) << 20 ) ; 
+    OUT::passTrig_HLT_Ele32_eta2p1_WPTight_Gsf           = (IN::TrigHltEl & ( ULong64_t(1) << 21 ) ) == ( ULong64_t(1) << 21 ) ; 
+    OUT::passTrig_HLT_Ele105_CaloIdVT_GsfTrkIdT          = (IN::TrigHltEl & ( ULong64_t(1) << 22 ) ) == ( ULong64_t(1) << 22 ) ; 
+    OUT::passTrig_HLT_Ele115_CaloIdVT_GsfTrkIdT          = (IN::TrigHltEl & ( ULong64_t(1) << 23 ) ) == ( ULong64_t(1) << 23 ) ; 
+    OUT::passTrig_HLT_Ele27_WPTight_Gsf                  = (IN::TrigHltEl & ( ULong64_t(1) << 42 ) ) == ( ULong64_t(1) << 42 ) ; 
+
+    //Fill trigger branches for TrigHltElMu
+    OUT::passTrig_HLT_Mu17_Photon30_CaloIdL_L1ISO        = (IN::TrigHltElMu & ( ULong64_t(1) << 6 ) ) == ( ULong64_t(1) << 6 ) ; 
+
+
+}
+
+bool RunModule::FilterDataQuality( ModuleConfig & config) const {
+
+    bool pass_quality = false;
+    OUT::PassQuality = -1;
+
+    bool isData = IN::EvtIsRealData;
+    int run = IN::EvtRunNum;
+    int ls  = IN::EvtLumiNum;
+
+    if( quality_map.size() > 0 && isData ) {
+
+        std::map<int, std::vector<int> >::const_iterator mitr = quality_map.find( run );
+        if( mitr != quality_map.end() ) {
+
+            std::vector<int>::const_iterator vitr = std::find( mitr->second.begin(), mitr->second.end(), ls );
+
+            if( vitr != mitr->second.end() ) {
+                pass_quality = true;
+                OUT::PassQuality = 1;
+            }
+            else {
+                pass_quality = false;
+                OUT::PassQuality = 0;
+            }
+        }
+        else {
+            pass_quality = false;
+            OUT::PassQuality = 0;
+        }
+    }
+    else {
+        pass_quality = true;
+    }
+
+    return pass_quality;
 
 }
 

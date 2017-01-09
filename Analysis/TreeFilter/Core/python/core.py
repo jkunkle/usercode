@@ -105,6 +105,8 @@ def ParseArgs() :
     parser.add_argument('--writeExpertCode', dest='writeExpertCode', default=False, action='store_true', help='Write additional functions for expert debugging')
     
     parser.add_argument('--disableOutputTree', dest='disableOutputTree', default=False, action='store_true', help='Do not write events to the output tree')
+
+    parser.add_argument('--copyInputFiles', dest='copyInputFiles', default=False, action='store_true', help='Transfer files to local directory. Only works with batch.')
     
     #-----------------------------
     # Occasionally used
@@ -139,6 +141,10 @@ def config_and_run( options, package_name ) :
     
     if options.batch and options.noCompileWithCheck :
         assert False, "Running noCompileWithCheck with batch mode can result in an executable not being created for a batch job!"
+
+    if options.copyInputFiles and not ( options.batch or options.condor ) :
+        print "Can only copy input files in batch mode"
+        options.copyInputFiles = False
 
     if options.loglevel.upper() not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] :
         print 'Loglevel must be one of DEBUG, INFO, WARNING, ERROR, CRITICAL.  Default to INFO'
@@ -283,6 +289,11 @@ def config_and_run( options, package_name ) :
             print 'Will use new code and will compile'
             print '--------------------------------------'
 
+            # If we need to recompile then a different executable should
+            # be made so as to not overwrite an existing one
+            # to be safe, use a random string
+            options.exeName = '.'.join(options.exeName.split('.')[0:-1]) + str( uuid.uuid4() ) + '.exe'
+
             comp_success = compile_code( alg_list, branches, out_branches, branches_to_keep, workarea, package_name, options.exeName, options.writeExpertCode)
 
             if not comp_success :
@@ -420,7 +431,7 @@ def config_and_run( options, package_name ) :
 
         output_file = '%s/%s' %(options.outputDir, options.outputFile )
         conf_file  = '%s/%s' %(options.outputDir, options.confFileName )
-        write_config( alg_list, conf_file, options.treeName, options.outputDir, options.outputFile, file_evt_list, options.storagePath, options.sample, options.disableOutputTree, options.nPrint ) 
+        write_config( alg_list, conf_file, options.treeName, options.outputDir, options.outputFile, file_evt_list, options.storagePath, options.sample, options.disableOutputTree, options.nPrint, options.copyInputFiles ) 
         command = make_exe_command( exe_path, conf_file, options.outputDir  )
 
         # Stop here if not running
@@ -717,7 +728,7 @@ def get_branch_map_from_tree( tree ) :
 #-----------------------------------------------------------
 def check_and_filter_input_files( input_files, treename ) :
 
-    logging.info('Find jobs without output files')
+    logging.info('Run input file checks')
     filtered_files = []
     if not isinstance(input_files, list) :
         input_files = [input_files]
@@ -742,7 +753,7 @@ def check_and_filter_input_files( input_files, treename ) :
         file.Close()
 
 
-    logging.info('Found %d jobs missing files' %len(filtered_files))
+    logging.info('Found %d input files.  %d Files were removed' %(len(filtered_files), len(input_files) - len(filtered_files) ) )
     return filtered_files
 
 def import_module( module ) :
@@ -922,7 +933,7 @@ def generate_multiprocessing_commands( file_evt_list, alg_list, exe_path, kwargs
         if not os.path.isdir( outputDir ) :
             os.makedirs( outputDir )
         
-        write_config(alg_list, conf_file, kwargs['treeName'], outputDir, kwargs['outputFile'], [file_split], kwargs['storagePath'], kwargs['sample'], kwargs['disableOutputTree'], kwargs['nPrint'], idx )
+        write_config(alg_list, conf_file, kwargs['treeName'], outputDir, kwargs['outputFile'], [file_split], kwargs['storagePath'], kwargs['sample'], kwargs['disableOutputTree'], kwargs['nPrint'], kwargs['copyInputFiles'], idx )
         #commands.append( ( jobid, make_exe_command( exe_path, conf_file, outputDir+'/'+jobid ) ) )
         #write_config(alg_list, conf_file, options.treeName, outputDir, options.outputFile, [file_split], options.storagePath, options.sample, options.disableOutputTree, idx )
         #commands.append( ( jobid, make_exe_command( exe_path, conf_file, outputDir+'/'+jobid ) ) )
@@ -1039,7 +1050,7 @@ def get_file_evt_map( input_files, nsplit, nFilesPerJob, totalEvents, treeName )
 
     return split_files_evt_match
 
-def write_config( alg_list, filename, treeName, outputDir, outputFile, files_list, storage_path=None, sample=None, disableOutputTree=False, nPrint=None, start_idx=0 ) :
+def write_config( alg_list, filename, treeName, outputDir, outputFile, files_list, storage_path=None, sample=None, disableOutputTree=False, nPrint=None, copyInputFiles=False, start_idx=0 ) :
 
     base_dir = os.path.split( filename )[0]
     if not os.path.isdir(base_dir ) :
@@ -1071,6 +1082,8 @@ def write_config( alg_list, filename, treeName, outputDir, outputFile, files_lis
         cfile.write( 'sample : %s\n' %sample )
     if disableOutputTree :
         cfile.write( 'disableOutputTree : true\n' )
+    if copyInputFiles :
+        cfile.write( 'copyInputFiles : true\n' )
 
     cfile.write( '__Modules__\n' )
 

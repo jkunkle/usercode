@@ -44,10 +44,12 @@ COREOBJ = $(WORK_AREA)/TreeFilter/Core/obj/AnalysisBase.o $(WORK_AREA)/TreeFilte
 #endif
 
 ifeq ($(LOCATION), $(CERNLOC))
-	BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50 -L/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/lib
+	#BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50 -L/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/lib
 	#BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.55.0_python2.7/x86_64-slc6-gcc47-opt/include/boost-1_55 -L/afs/cern.ch/sw/lcg/external/Boost/1.55.0_python2.7/x86_64-slc6-gcc47-opt/lib
-	LIBS         = $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem-gcc43-mt-1_50 -lboost_system-gcc43-mt-1_50
+	BOOSTFLAGS   = -I/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/boost/1.57.0-ikhhed2/include/boost -L/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/boost/1.57.0-ikhhed2/include/boost/lib
+	#LIBS         = $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem-gcc43-mt-1_50 -lboost_system-gcc43-mt-1_50
 	#LIBS         = $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem-gcc47-mt-1_55 -lboost_system-gcc47-mt-1_55
+	LIBS         = $(ROOTLIBS) $(BOOSTFLAGS) -lboost_filesystem -lboost_system
 endif
 
 ifeq ($(LOCATION), $(UMDLOC))

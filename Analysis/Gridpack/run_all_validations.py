@@ -8,6 +8,7 @@ parser = ArgumentParser()
 
 parser.add_argument( '--base_dir', dest='base_dir', required=True, help='path to gridpacks' )
 parser.add_argument( '--masses', dest='masses', default=None, help='comma separated list of masses to run on' )
+parser.add_argument( '--widths', dest='widths', default=None, help='comma separated list of widths to run on' )
 parser.add_argument( '--outputDir', dest='outputDir', default='/afs/cern.ch/work/j/jkunkle/public/CMS/Gridpacks/GenerateChargedResonances/Validation', help='Output directory' )
 parser.add_argument( '--batch', dest='batch', default=False, action='store_true', help='submit to batch' )
 
@@ -38,7 +39,7 @@ def main() :
 
         print gp
 
-        res = re.match( '(%s_(WGToLNu|WGToJJ)_M(\d{3,4})_width(\d{1,2}))_tarball.tar.xz' %( BASE_NAME ), gp )
+        res = re.match( '(%s_(WGToLNu|WGToJJ)_M(\d{3,4})_width(\d{1,2}|\d{1}p\d{2}))_tarball.tar.xz' %( BASE_NAME ), gp )
         basename = res.group(1)
         if os.path.isdir( '%s/%s'  %( options.outputDir, basename )) :
             print 'Skipping existing directory %s' %( basename )
@@ -49,6 +50,16 @@ def main() :
         if select_masses :
             if int( res.group(3) ) not in select_masses :
                 print 'Skipping gridpack ', gp
+                continue
+
+        if options.widths is not None :
+            match_width = False
+            for wid in options.widths.split(',') :
+                if res.group( 4) == wid :
+                    match_width = True
+                    break
+
+            if not match_width :
                 continue
 
         commands_lhe = []
@@ -70,13 +81,14 @@ def main() :
             os.system( all_commands )
 
         #commands_convert.append( 'cd /afs/cern.ch/work/j/jkunkle/public/CMS/Gridpacks/GenerateChargedResonances/CMSSW_5_3_22_patch1 ' )
-        #commands_convert.append( 'scramv1 project CMSSW CMSSW_5_3_22_patch1' )
-        #commands_convert.append( 'cd CMSSW_5_3_22_patch1' )
-        #commands_convert.append( 'eval `scram runtime -sh`' )
-        #commands_convert.append( 'cd .. ' )
-        commands_convert.append( '/home/jkunkle/Programs/MG5_aMC_v2_4_3/ExRootAnalysis/ExRootLHEFConverter %s/%s/Gridpack/cmsgrid_final.lhe %s/%s/Gridpack/LHEevents.root ' %( options.outputDir, basename, options.outputDir, basename ) )
-        commands_convert.append( 'python %s/make_valid_hists.py --input %s/%s/Gridpack/LHEevents.root --output %s/%s/validation.root ' %( LOCATION, options.outputDir, basename, options.outputDir, basename ) )
-        #commands_convert.append( 'rm -rf %s/%s/Gridpack ' %( options.outputDir, basename ) )
+        commands_convert.append( 'scramv1 project CMSSW CMSSW_5_3_22_patch1' )
+        commands_convert.append( 'cd CMSSW_5_3_22_patch1' )
+        commands_convert.append( 'eval `scram runtime -sh`' )
+        commands_convert.append( 'cd .. ' )
+        commands_convert.append( '/afs/cern.ch/user/j/jkunkle/Programs/MG5_aMC_v2_4_3/ExRootAnalysis/ExRootLHEFConverter %s/%s/Gridpack/cmsgrid_final.lhe %s/%s/Gridpack/LHEevents.root ' %( options.outputDir, basename, options.outputDir, basename ) )
+        #commands_convert.append( 'python %s/make_valid_hists.py --input %s/%s/Gridpack/LHEevents.root --output %s/%s/validation.root --makeTree ' %( LOCATION, options.outputDir, basename, options.outputDir, basename ) )
+        commands_convert.append( 'python %s/make_valid_hists.py --input %s/%s/Gridpack/LHEevents.root --output %s/%s/validation.root --makeTree ' %( LOCATION, options.outputDir, basename, options.outputDir, basename ) )
+        commands_convert.append( 'rm -rf %s/%s/Gridpack ' %( options.outputDir, basename ) )
         
         if not options.batch :
             all_commands = ' ; ' .join( commands_convert )
@@ -98,9 +110,6 @@ def main() :
             ofile.close()
 
             os.system( 'bsub -q 1nh %s ' %file_name )
-        break
-
-
 
 
 main()

@@ -73,10 +73,10 @@ def main() :
    # print '**************************LOOSE ELE INV CUTS************************'
     global el_cuts
     print '********************************************FIX***************************'
-    #el_base = 'el_passtrig_n>0 && el_n==1 && mu_n==0 && dr_ph1_ph2>0.4 && dr_ph1_trigEle>%f && dr_ph2_trigEle>%f && pt_leadph12 > %d && pt_sublph12 > 15 %s %s' %(lead_dr_cut, subl_dr_cut, ptmin, ph_cuts,_mgg_cut )
-    el_base = 'el_passtrig_n>0 && el_n==1 && mu_n==0 && dr_ph1_ph2>0.4 && dr_ph1_trigEle>%f && dr_ph2_trigEle>%f && pt_leadph12 > %d && pt_sublph12 > 15 && fabs( eta_leadph12 ) < 2.4 && fabs( eta_sublph12 ) < 2.4 %s %s ' %(lead_dr_cut, subl_dr_cut, ptmin, ph_cuts,_mgg_cut )
-    #el_base_inv = 'el_passtrig_n>0 && el_n>0 && mu_n==0 && dr_ph1_ph2>0.4 && pt_leadph12 > %d && pt_sublph12 > 15 %s %s ' %(ptmin, ph_cuts, _mgg_cut  )
-    el_base_inv = 'el_passtrig_n>0 && el_n>0 && mu_n==0 && dr_ph1_ph2>0.4 && pt_leadph12 > %d && pt_sublph12 > 15  && fabs( eta_leadph12 ) < 2.4 && fabs( eta_sublph12 ) < 2.4 %s %s ' %(ptmin, ph_cuts, _mgg_cut  )
+    el_base = 'el_passtrig_n>0 && el_n==1 && mu_n==0 && dr_ph1_ph2>0.4 && dr_ph1_trigEle>%f && dr_ph2_trigEle>%f && pt_leadph12 > %d && pt_sublph12 > 15 %s %s' %(lead_dr_cut, subl_dr_cut, ptmin, ph_cuts,_mgg_cut )
+    #el_base = 'el_passtrig_n>0 && el_n==1 && mu_n==0 && dr_ph1_ph2>0.4 && dr_ph1_trigEle>%f && dr_ph2_trigEle>%f && pt_leadph12 > %d && pt_sublph12 > 15 && fabs( eta_leadph12 ) < 2.4 && fabs( eta_sublph12 ) < 2.4 %s %s ' %(lead_dr_cut, subl_dr_cut, ptmin, ph_cuts,_mgg_cut )
+    el_base_inv = 'el_passtrig_n>0 && el_n>0 && mu_n==0 && dr_ph1_ph2>0.4 && pt_leadph12 > %d && pt_sublph12 > 15 %s %s ' %(ptmin, ph_cuts, _mgg_cut  )
+    #el_base_inv = 'el_passtrig_n>0 && el_n>0 && mu_n==0 && dr_ph1_ph2>0.4 && pt_leadph12 > %d && pt_sublph12 > 15  && fabs( eta_leadph12 ) < 2.4 && fabs( eta_sublph12 ) < 2.4 %s %s ' %(ptmin, ph_cuts, _mgg_cut  )
 
 
     #el_base = 'el_passtrig_n==1 && el_n==1 && ph_mediumNoEleVeto_n==2 && dr_ph1_ph2>0.4 && dr_ph1_trigEle>%f && dr_ph2_trigEle>%f && pt_leadph12 > %d && pt_sublph12 > %d %s %s' %(lead_dr_cut, subl_dr_cut, ptmin, ptmin, ph_cuts, _mgg_cut)
@@ -238,9 +238,8 @@ def main() :
     #path_mctempnd        = 'ElectronFakeFitsRatioDupInvFixMCTemplateNDKeys'
     #path_mctempnd        = 'ElectronFakeFitsRatioDupInvMatchEleNoDupMCTemplateNDKeys'
     #path_mctempnd        = 'ElectronFakeFitsRatioDupInvMatchEleNewMCTemplateNDKeys'
-    print '***********************************FIX************************'
-    #path_mctempnd        = 'ElectronFakeFitsRatioDupInvMatchEleNewFixEtaMCTemplateNDKeys'
-    path_mctempnd        = 'ElectronFakeFitsRatioDupInvMatchEleNewFixEta24MCTemplateNDKeys'
+    path_mctempnd        = 'ElectronFakeFitsRatioDupInvMatchEleNewFixEtaMCTemplateNDKeys'
+    #path_mctempnd        = 'ElectronFakeFitsRatioDupInvMatchEleNewFixEta24MCTemplateNDKeys'
     #path_mctempnd        = 'ElectronFakeFitsRatioDupInvFixRealMCTemplateNDKeys'
     #path_mctempnd        = 'ElectronFakeFitsRatioDupInvMCTemplateNDKeys'
     #path_mctempnd        = 'ElectronFakeFitsRatioDupInvMatchEleMCTemplateNDKeys'
@@ -375,12 +374,12 @@ def main() :
             #'elfullhighmt'          , 
             #'elfullinvpixleadhighmt', 
             #'elfullinvpixsublhighmt', 
-            'elfulllowmt'           , 
-            'elfullinvpixleadlowmt' , 
-            'elfullinvpixsubllowmt' , 
-            'ellooselowmt'          , 
-            'ellooseinvpixleadlowmt', 
-            'ellooseinvpixsubllowmt', 
+            #'elfulllowmt'           , 
+            #'elfullinvpixleadlowmt' , 
+            #'elfullinvpixsubllowmt' , 
+            #'ellooselowmt'          , 
+            #'ellooseinvpixleadlowmt', 
+            #'ellooseinvpixsubllowmt', 
             ##'elzcrhighmt'           , 
             ##'elzcrhighmtinvpixlead' , 
             ##'elzcrhighmtinvpixsubl' , 
@@ -405,8 +404,8 @@ def main() :
        
         ele_selections = [
                           #('elfull','highmt'), 
-                          ('elfull', 'lowmt'),
-                          ('elloose','lowmt'),
+                          #('elfull', 'lowmt'),
+                          #('elloose','lowmt'),
                           ##('elzcr','highmt'), 
                           ##('elzcr','') 
         ]
@@ -427,14 +426,14 @@ def main() :
         #plot_binning = [25,100]
 
         channels_el = [
-                        #('elfull','highmt'), 
-                        ('elfull','lowmt'), 
-                        ('elloose','lowmt'),
+                        ('elfull','highmt'), 
+                        #('elfull','lowmt'), 
+                        #('elloose','lowmt'),
                         ##('elzcr',''),
                         ##('elzcr','highmt'),
                       ]
         channels_mu = [
-                        #'muhighmt',
+                        'muhighmt',
                         #'mulowmt',
                       ]
 
@@ -452,6 +451,7 @@ def main() :
                     varstrs.append( '__cut_%s_%d-%d' %( var, cut[0], cut[1] ) )
                 # make the last bin end above the last one by the previous bin boundary
                 binning.append( cuts[-1][0] + cuts[-2][0] )
+                #binning.append( cuts[-1][0] + ( cuts[-1][0] - cuts[-2][0]) )
                 MakeBkgEstimatePlots( resultDir, binning, channelmu=mu, channelel=None, minpt=pt_bins[0], subl_pt_bins=subl_pt_bins, varname=var, varstrs=varstrs, zgg=options.zgg  )
 
         for el in channels_el :
@@ -464,6 +464,7 @@ def main() :
                     varstrs.append( '__cut_%s_%d-%d' %( var, cut[0], cut[1] ) )
                 # make the last bin end above the last one by the previous bin boundary
                 binning.append( cuts[-1][0] + cuts[-2][0] )
+                #binning.append( cuts[-1][0] + ( cuts[-1][0] - cuts[-2][0]) )
                 MakeBkgEstimatePlots( resultDir, binning, channelmu=None, channelel=el, minpt=pt_bins[0], subl_pt_bins=subl_pt_bins, varname=var, varstrs=varstrs, zgg=options.zgg  )
 
         SumHists(resultDir, zgg=options.zgg)
@@ -1210,9 +1211,17 @@ def save_muon_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_binn
     hist_data_mgg = samplesWmugg.get_samples(name='Muon')[0].hist.Clone('%s_%s'%(varname, hist_tag))
     save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_mgg )
 
-    hist_data_mgg_pergev = hist_data_mgg.Clone( hist_data_mgg.GetName() + '_perGeV' )
-    make_pergev_hist( hist_data_mgg, hist_data_mgg_pergev)
-    save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_mgg_pergev )
+    hist_data_mgg_pergev5 = hist_data_mgg.Clone( hist_data_mgg.GetName() + '_perGeV5' )
+    success5 = make_pergev_hist( hist_data_mgg, hist_data_mgg_pergev5, 5)
+
+    if success5 :
+        save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_mgg_pergev5 )
+
+    hist_data_mgg_pergev20 = hist_data_mgg.Clone( hist_data_mgg.GetName() + '_perGeV20' )
+    success20 = make_pergev_hist( hist_data_mgg, hist_data_mgg_pergev20, 20)
+
+    if success20 :
+        save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_mgg_pergev20 )
 
     #----------------------------
     # Data lgg
@@ -1220,9 +1229,15 @@ def save_muon_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_binn
     hist_data_lgg = samplesWmugg.get_samples(name='Muon')[0].hist.Clone('%s_lgg%s'%(varname, reg_tag))
     save_hist( '%s/%s/Data/hist.root' %(plot_dir,CombDir), hist_data_lgg )
 
-    hist_data_lgg_pergev = hist_data_lgg.Clone( hist_data_lgg.GetName() + '_perGeV' )
-    make_pergev_hist( hist_data_lgg, hist_data_lgg_pergev)
-    save_hist( '%s/%s/Data/hist.root' %(plot_dir,CombDir), hist_data_lgg_pergev )
+    hist_data_lgg_pergev5 = hist_data_lgg.Clone( hist_data_lgg.GetName() + '_perGeV5' )
+    success5 = make_pergev_hist( hist_data_lgg, hist_data_lgg_pergev5, 5)
+    if success5 :
+        save_hist( '%s/%s/Data/hist.root' %(plot_dir,CombDir), hist_data_lgg_pergev5 )
+
+    hist_data_lgg_pergev20 = hist_data_lgg.Clone( hist_data_lgg.GetName() + '_perGeV20' )
+    success20 = make_pergev_hist( hist_data_lgg, hist_data_lgg_pergev20, 20)
+    if success20 :
+        save_hist( '%s/%s/Data/hist.root' %(plot_dir,CombDir), hist_data_lgg_pergev20 )
 
     # Draw with weight
     #----------------------------
@@ -1233,9 +1248,15 @@ def save_muon_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_binn
         hist_sig_mgg  = samplesWmugg.get_samples(name='WAAQGCLT')[0].hist.Clone('%s_%s'%(varname, hist_tag))
         save_hist( '%s/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_mgg )
 
-        hist_sig_mgg_pergev = hist_sig_mgg.Clone( hist_sig_mgg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_sig_mgg, hist_sig_mgg_pergev)
-        save_hist( '%s/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_mgg_pergev )
+        hist_sig_mgg_pergev5 = hist_sig_mgg.Clone( hist_sig_mgg.GetName() + '_perGeV5' )
+        success5 = make_pergev_hist( hist_sig_mgg, hist_sig_mgg_pergev5, 5)
+        if success5 :
+            save_hist( '%s/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_mgg_pergev5 )
+
+        hist_sig_mgg_pergev20 = hist_sig_mgg.Clone( hist_sig_mgg.GetName() + '_perGeV20' )
+        success20 = make_pergev_hist( hist_sig_mgg, hist_sig_mgg_pergev20, 20)
+        if success20 :
+            save_hist( '%s/WggAQGCLT200/hist.root' %(plot_dir), hist_sig_mgg_pergev5 )
 
         #----------------------------
         # Wgg lgg
@@ -1243,9 +1264,15 @@ def save_muon_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_binn
         hist_sig_lgg  = samplesWmugg.get_samples(name='WAAQGCLT')[0].hist.Clone('%s_lgg%s'%(varname, reg_tag))
         save_hist( '%s/%s/WggAQGCLT50/hist.root' %(plot_dir,CombDir), hist_sig_lgg )
 
-        hist_sig_lgg_pergev = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev)
-        save_hist( '%s/%s/WggAQGCLT50/hist.root' %(plot_dir,CombDir), hist_sig_lgg_pergev )
+        hist_sig_lgg_pergev5 = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV5' )
+        success5 = make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev5, 5)
+        if success5 :
+            save_hist( '%s/%s/WggAQGCLT50/hist.root' %(plot_dir,CombDir), hist_sig_lgg_pergev5 )
+
+        hist_sig_lgg_pergev20 = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV20' )
+        success20 = make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev20, 20)
+        if success20 :
+            save_hist( '%s/%s/WggAQGCLT200/hist.root' %(plot_dir,CombDir), hist_sig_lgg_pergev5 )
 
 
 
@@ -1267,9 +1294,15 @@ def save_muon_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_binn
             add_syst_to_hist( hist_mgg, syst )
             save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg )
 
-            hist_mgg_pergev = hist_mgg.Clone( hist_mgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_mgg, hist_mgg_pergev)
-            save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg_pergev )
+            hist_mgg_pergev5 = hist_mgg.Clone( hist_mgg.GetName() + '_perGeV5' )
+            success5 = make_pergev_hist( hist_mgg, hist_mgg_pergev5, 5)
+            if success5 :
+                save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg_pergev5 )
+            #----------------------------
+            hist_mgg_pergev20 = hist_mgg.Clone( hist_mgg.GetName() + '_perGeV20' )
+            success20 = make_pergev_hist( hist_mgg, hist_mgg_pergev20, 20)
+            if success20 :
+                save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg_pergev20 )
             #----------------------------
             # lgg
             #----------------------------
@@ -1279,9 +1312,15 @@ def save_muon_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_binn
             add_syst_to_hist( hist_lgg, syst )
             save_hist( '%s/%s/%s/hist.root' %(plot_dir,CombDir, mc), hist_lgg )
 
-            hist_lgg_pergev = hist_lgg.Clone( hist_lgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_lgg, hist_lgg_pergev)
-            save_hist( '%s/%s/%s/hist.root' %(plot_dir,CombDir, mc), hist_lgg_pergev )
+            hist_lgg_pergev5 = hist_lgg.Clone( hist_lgg.GetName() + '_perGeV5' )
+            success5 = make_pergev_hist( hist_lgg, hist_lgg_pergev5, 5)
+            if success5 :
+                save_hist( '%s/%s/%s/hist.root' %(plot_dir,CombDir, mc), hist_lgg_pergev5 )
+
+            hist_lgg_pergev20 = hist_lgg.Clone( hist_lgg.GetName() + '_perGeV20' )
+            success20 = make_pergev_hist( hist_lgg, hist_lgg_pergev20, 20)
+            if success20 :
+                save_hist( '%s/%s/%s/hist.root' %(plot_dir,CombDir, mc), hist_lgg_pergev20 )
 
 
 
@@ -1301,16 +1340,28 @@ def save_electron_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_
     hist_data_egg = samplesWelgg.get_samples(name='Electron')[0].hist.Clone('%s_%s'%(varname,hist_tag))
     save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_egg )
 
-    hist_data_egg_pergev = hist_data_egg.Clone( hist_data_egg.GetName() + '_perGeV' )
-    make_pergev_hist( hist_data_egg, hist_data_egg_pergev)
-    save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_egg_pergev )
+    hist_data_egg_pergev5 = hist_data_egg.Clone( hist_data_egg.GetName() + '_perGeV5' )
+    success5 = make_pergev_hist( hist_data_egg, hist_data_egg_pergev5, 5)
+    if success5 :
+        save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_egg_pergev5 )
+
+    hist_data_egg_pergev20 = hist_data_egg.Clone( hist_data_egg.GetName() + '_perGeV20' )
+    success20 = make_pergev_hist( hist_data_egg, hist_data_egg_pergev20, 20)
+    if success20 :
+        save_hist( '%s/Data/hist.root' %(plot_dir), hist_data_egg_pergev20 )
 
     hist_data_lgg = samplesWelgg.get_samples(name='Electron')[0].hist.Clone('%s_lgg%s'%(varname,reg_tag))
     save_hist( '%s/%s/Data/hist.root' %(plot_dir, CombDir), hist_data_lgg )
 
-    hist_data_lgg_pergev = hist_data_lgg.Clone( hist_data_lgg.GetName() + '_perGeV' )
-    make_pergev_hist( hist_data_lgg, hist_data_lgg_pergev)
-    save_hist( '%s/%s/Data/hist.root' %(plot_dir, CombDir), hist_data_lgg_pergev )
+    hist_data_lgg_pergev5 = hist_data_lgg.Clone( hist_data_lgg.GetName() + '_perGeV5' )
+    success5 = make_pergev_hist( hist_data_lgg, hist_data_lgg_pergev5, 5)
+    if success5 :
+        save_hist( '%s/%s/Data/hist.root' %(plot_dir, CombDir), hist_data_lgg_pergev5 )
+
+    hist_data_lgg_pergev20 = hist_data_lgg.Clone( hist_data_lgg.GetName() + '_perGeV20' )
+    success20 = make_pergev_hist( hist_data_lgg, hist_data_lgg_pergev20, 20)
+    if success20 :
+        save_hist( '%s/%s/Data/hist.root' %(plot_dir, CombDir), hist_data_lgg_pergev20 )
 
     #---------------------------
     # Wgg aQGC egg
@@ -1321,16 +1372,28 @@ def save_electron_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_
         hist_sig_egg  = samplesWelgg.get_samples(name='WAAQGCLT')[0].hist.Clone('%s_%s'%(varname,hist_tag))
         save_hist( '%s/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_egg )
 
-        hist_sig_egg_pergev = hist_sig_egg.Clone( hist_sig_egg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_sig_egg, hist_sig_egg_pergev)
-        save_hist( '%s/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_egg_pergev )
+        hist_sig_egg_pergev5 = hist_sig_egg.Clone( hist_sig_egg.GetName() + '_perGeV5' )
+        success5 = make_pergev_hist( hist_sig_egg, hist_sig_egg_pergev5, 5)
+        if success5 :
+            save_hist( '%s/WggAQGCLT50/hist.root' %(plot_dir), hist_sig_egg_pergev5 )
+
+        hist_sig_egg_pergev20 = hist_sig_egg.Clone( hist_sig_egg.GetName() + '_perGeV20' )
+        success20 = make_pergev_hist( hist_sig_egg, hist_sig_egg_pergev20, 20)
+        if success20 :
+            save_hist( '%s/WggAQGCLT200/hist.root' %(plot_dir), hist_sig_egg_pergev5 )
 
         hist_sig_lgg  = samplesWelgg.get_samples(name='WAAQGCLT')[0].hist.Clone('%s_lgg%s'%(varname,reg_tag))
         save_hist( '%s/%s/WggAQGCLT50/hist.root' %(plot_dir, CombDir), hist_sig_lgg )
 
-        hist_sig_lgg_pergev = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV' )
-        make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev)
-        save_hist( '%s/%s/WggAQGCLT50/hist.root' %(plot_dir, CombDir), hist_sig_lgg_pergev )
+        hist_sig_lgg_pergev5 = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV5' )
+        success5 = make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev5, 5)
+        if success5 :
+            save_hist( '%s/%s/WggAQGCLT50/hist.root' %(plot_dir, CombDir), hist_sig_lgg_pergev5 )
+
+        hist_sig_lgg_pergev20 = hist_sig_lgg.Clone( hist_sig_lgg.GetName() + '_perGeV20' )
+        success20 = make_pergev_hist( hist_sig_lgg, hist_sig_lgg_pergev20, 20)
+        if success20 :
+            save_hist( '%s/%s/WggAQGCLT200/hist.root' %(plot_dir, CombDir), hist_sig_lgg_pergev5 )
 
     for mc, syst in bkg_hists :
 
@@ -1350,9 +1413,15 @@ def save_electron_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_
             add_syst_to_hist( hist_mgg, syst )
             save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg )
 
-            hist_mgg_pergev = hist_mgg.Clone( hist_mgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_mgg, hist_mgg_pergev)
-            save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg_pergev )
+            hist_mgg_pergev5 = hist_mgg.Clone( hist_mgg.GetName() + '_perGeV5' )
+            success5 = make_pergev_hist( hist_mgg, hist_mgg_pergev5, 5)
+            if success5 :
+                save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg_pergev5 )
+            #----------------------------
+            hist_mgg_pergev20 = hist_mgg.Clone( hist_mgg.GetName() + '_perGeV20' )
+            success20 = make_pergev_hist( hist_mgg, hist_mgg_pergev20, 20)
+            if success20 :
+                save_hist( '%s/%s/hist.root' %(plot_dir, mc), hist_mgg_pergev20 )
             #----------------------------
             # lgg
             #----------------------------
@@ -1362,9 +1431,15 @@ def save_electron_hists( draw_str, weight_str, event_weight, aqgc_weight,  plot_
             add_syst_to_hist( hist_lgg, syst )
             save_hist( '%s/%s/%s/hist.root' %(plot_dir, CombDir, mc), hist_lgg )
 
-            hist_lgg_pergev = hist_lgg.Clone( hist_lgg.GetName() + '_perGeV' )
-            make_pergev_hist( hist_lgg, hist_lgg_pergev)
-            save_hist( '%s/%s/%s/hist.root' %(plot_dir, CombDir, mc), hist_lgg_pergev )
+            hist_lgg_pergev5 = hist_lgg.Clone( hist_lgg.GetName() + '_perGeV5' )
+            success5 = make_pergev_hist( hist_lgg, hist_lgg_pergev5, 5)
+            if success5 :
+                save_hist( '%s/%s/%s/hist.root' %(plot_dir, CombDir, mc), hist_lgg_pergev5 )
+
+            hist_lgg_pergev20 = hist_lgg.Clone( hist_lgg.GetName() + '_perGeV20' )
+            success20 = make_pergev_hist( hist_lgg, hist_lgg_pergev20, 20)
+            if success20 :
+                save_hist( '%s/%s/%s/hist.root' %(plot_dir, CombDir, mc), hist_lgg_pergev20 )
 
 
 def add_syst_to_hist( hist, syst, err_bin=[] ) :
@@ -1463,10 +1538,17 @@ def make_hist_from_pickle( sampMan, input_files, output_hist, tag, regions, plot
 
         save_hist( output_hist, hist )
 
-        hist_pergev = hist.Clone( hist.GetName() + '_perGeV' )
-        make_pergev_hist( hist, hist_pergev )
+        hist_pergev5 = hist.Clone( hist.GetName() + '_perGeV5' )
+        success5 = make_pergev_hist( hist, hist_pergev5 , 5)
 
-        save_hist( output_hist, hist_pergev)
+        if success5 :
+            save_hist( output_hist, hist_pergev5)
+
+        hist_pergev20 = hist.Clone( hist.GetName() + '_perGeV20' )
+        success20 = make_pergev_hist( hist, hist_pergev20 , 20)
+
+        if success20 :
+            save_hist( output_hist, hist_pergev20)
 
     for ptbin in range( 1, hist.GetNbinsX()+1 ) :
         sum_hist.SetBinContent( ptbin, sum_data[ptbin].n )
@@ -1480,15 +1562,22 @@ def make_hist_from_pickle( sampMan, input_files, output_hist, tag, regions, plot
 
     save_hist( output_hist, sum_hist )
 
-    sum_hist_pergev = sum_hist.Clone( sum_hist.GetName() + '_perGeV' )
-    make_pergev_hist( sum_hist, sum_hist_pergev )
+    sum_hist_pergev5 = sum_hist.Clone( sum_hist.GetName() + '_perGeV5' )
+    success5 = make_pergev_hist( sum_hist, sum_hist_pergev5 , 5)
 
-    save_hist( output_hist, sum_hist_pergev )
+    if success5 :
+        save_hist( output_hist, sum_hist_pergev5 )
+    
+    sum_hist_pergev20 = sum_hist.Clone( sum_hist.GetName() + '_perGeV20' )
+    success20 = make_pergev_hist( sum_hist, sum_hist_pergev20 , 20)
+
+    if success20 :
+        save_hist( output_hist, sum_hist_pergev20 )
     
 
-def make_pergev_hist( hist, hist_pergev ) :
+def make_pergev_hist( hist, hist_pergev, val=5 ) :
 
-    hist_pergev.GetYaxis().SetTitle( 'Events / 5 GeV' )
+    hist_pergev.GetYaxis().SetTitle( 'Events / %s GeV' %val )
 
     for ptbin in range( 1, hist_pergev.GetNbinsX()+1 ) :
         min = int(hist.GetXaxis().GetBinLowEdge(ptbin))
@@ -1496,16 +1585,21 @@ def make_pergev_hist( hist, hist_pergev ) :
         if max <= 15 :
             continue
 
-        n_5gev = ( max - min ) / 5
+        n_5gev = ( max - min ) / val
+
+        if n_5gev == 0 :
+            return False
         
         val_orig = hist.GetBinContent( ptbin )
         err_orig = hist.GetBinError( ptbin )
 
-        val_new = val_orig/n_5gev
-        err_new = err_orig/n_5gev
+        val_new = float(val_orig)/n_5gev
+        err_new = float(err_orig)/n_5gev
 
         hist_pergev.SetBinContent( ptbin, val_new )
         hist_pergev.SetBinError( ptbin, err_new )
+
+    return True
 
 
 def save_hist( file, hist) :

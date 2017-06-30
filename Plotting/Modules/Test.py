@@ -10,5 +10,3 @@ def config_samples(samples) :
     samples.AddSample('WJetsToLNu_HT-800To1200'        , path='WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'  , isActive=True, isSignal=True, plotColor=6, useXSFile=True )
     samples.AddSample('WJetsToLNu_HT-1200To2500'        , path='WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8', isActive=True, isSignal=True, plotColor=7, useXSFile=True )
     samples.AddSample('WJetsToLNu_HT-2500ToInf'         , path='WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'  , isActive=True, isSignal=True, plotColor=8, useXSFile=True )
-
-

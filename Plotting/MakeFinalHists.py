@@ -38,6 +38,14 @@ ROOT.gROOT.SetBatch(False)
 
 samplesWgg = None
 
+_LABEL_MUCH = 'W(#rightarrow#mu#nu)#kern[0.1]{#gamma#gamma}'
+_LABEL_ELCH = 'W(#rightarrowe#nu)#kern[0.1]{#gamma#gamma}'
+_LABEL_COMB = 'W(#rightarrowl#nu)#kern[0.1]{#gamma#gamma}'
+
+_LABEL_MUMUCH = 'Z(#rightarrow#mu#mu)#kern[0.1]{#gamma#gamma}'
+_LABEL_ELELCH = 'Z(#rightarrowee)#kern[0.1]{#gamma#gamma}'
+_LABEL_ZGGCOMB= 'Z(#rightarrowll)#kern[0.1]{#gamma#gamma}'
+
 def main() :
 
     global samplesWgg
@@ -109,9 +117,9 @@ def main() :
     samplesWgg.deactivate_sample('WZlvvvDiPhoton')
     samplesWgg.deactivate_sample('ZZDiPhoton')
 
-    xlabel_ptg = 'p_{T}^{lead #gamma} [GeV]'
-    xlabel_ptgg = 'p_{T}^{#gamma #gamma} [GeV]'
-    xlabel_mgg = 'M_{#gamma #gamma} [GeV]'
+    xlabel_ptg = '#it{p}_{T}^{lead #gamma} [GeV]'
+    xlabel_ptgg = '#it{p}_{T}^{#gamma#gamma} [GeV]'
+    xlabel_mgg = 'M_{#gamma#gamma} [GeV]'
     xlabel_mee = 'M_{ee} [GeV]'
     xlabel_mmm = 'M_{#mu#mu} [GeV]'
     xlabel_meegg = 'M_{ee#gamma#gamma} [GeV]'
@@ -128,14 +136,14 @@ def main() :
         #------------------------------------
         # Nominal pT bins
         #------------------------------------
-        {'selection' : 'muhighmt'     , 'var' : 'pt_leadph12' , 'xlabel' : xlabel_ptg  , 'ymax' : 80, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
+        #{'selection' : 'muhighmt'     , 'var' : 'pt_leadph12' , 'xlabel' : xlabel_ptg  , 'ymax' : 80, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
         #{'selection' : 'mulowmt'      , 'var' : 'pt_leadph12' , 'xlabel' : xlabel_ptg  , 'ymax' : 40, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
 
         #------------------------------------
         # From OneBin 
         #------------------------------------
         #{'selection' : 'muhighmt'     , 'var' : 'm_ph1_ph2'   , 'xlabel' : xlabel_mgg  , 'ymax' : 60, 'ymax_pergev' : 5  , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
-        #{'selection' : 'muhighmt'     , 'var' : 'pt_ph1_ph2'  , 'xlabel' : xlabel_ptgg , 'ymax' : 45, 'ymax_pergev' : 7  , 'ymin_logy' : 0.5, 'ymax_logy' :30   },
+        {'selection' : 'muhighmt'     , 'var' : 'pt_ph1_ph2'  , 'xlabel' : xlabel_ptgg , 'ymax' : 40, 'ymax_pergev' : 7  , 'ymin_logy' : 0.5, 'ymax_logy' :30, 'legendTextSize' : 0.04   },
         #{'selection' : 'mulowmt'      , 'var' : 'm_ph1_ph2'   , 'xlabel' : xlabel_mgg  , 'ymax' : 40, 'ymax_pergev' : 4  , 'ymin_logy' : 0.01, 'ymax_logy' :20   },
         #{'selection' : 'mulowmt'      , 'var' : 'pt_ph1_ph2'  , 'xlabel' : xlabel_ptgg , 'ymax' : 45, 'ymax_pergev' : 7  , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
     ]
@@ -152,7 +160,7 @@ def main() :
         #------------------------------------
         # Nominal pT bins
         #------------------------------------
-        {'selection' : 'elfullhighmt' , 'var' : 'pt_leadph12' , 'xlabel' : xlabel_ptg  , 'ymax' : 50, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
+        #{'selection' : 'elfullhighmt' , 'var' : 'pt_leadph12' , 'xlabel' : xlabel_ptg  , 'ymax' : 50, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
         #{'selection' : 'elfulllowmt'  , 'var' : 'pt_leadph12' , 'xlabel' : xlabel_ptg  , 'ymax' : 50, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
         #{'selection' : 'ellooselowmt' , 'var' : 'pt_leadph12' , 'xlabel' : xlabel_ptg  , 'ymax' : 80, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
         ##{'selection' : 'elzcrhighmt'  , 'var' : 'pt_leadph12' , 'xlabel' : xlabel_ptg  , 'ymax' : 40, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
@@ -161,7 +169,7 @@ def main() :
         # From OneBin 
         #------------------------------------
         #{'selection' : 'elfullhighmt' , 'var' : 'm_ph1_ph2'   , 'xlabel' : xlabel_mgg  , 'ymax' : 30, 'ymax_pergev' : 2.5, 'ymin_logy' : 0.1, 'ymax_logy' :20   },
-        #{'selection' : 'elfullhighmt' , 'var' : 'pt_ph1_ph2'  , 'xlabel' : xlabel_ptgg , 'ymax' : 30, 'ymax_pergev' : 5  , 'ymin_logy' : 0.5, 'ymax_logy' :30   },
+        {'selection' : 'elfullhighmt' , 'var' : 'pt_ph1_ph2'  , 'xlabel' : xlabel_ptgg , 'ymax' : 30, 'ymax_pergev' : 5  , 'ymin_logy' : 0.5, 'ymax_logy' :30, 'legendTextSize' : 0.04   },
         #{'selection' : 'elfulllowmt'  , 'var' : 'm_ph1_ph2'   , 'xlabel' : xlabel_mgg  , 'ymax' : 30, 'ymax_pergev' : 3  , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
         #{'selection' : 'elfulllowmt'  , 'var' : 'pt_ph1_ph2'  , 'xlabel' : xlabel_ptgg , 'ymax' : 30, 'ymax_pergev' : 5  , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
         #{'selection' : 'ellooselowmt' , 'var' : 'm_ph1_ph2'   , 'xlabel' : xlabel_mgg  , 'ymax' : 50, 'ymax_pergev' : 5  , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
@@ -174,14 +182,14 @@ def main() :
         #{'selection' : 'elZgg'        , 'var' : 'pt_leadph12' , 'xlabel' : xlabel_ptg  , 'ymax' : 60, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
         #{'selection' : 'muZgg'        , 'var' : 'pt_leadph12' , 'xlabel' : xlabel_ptg  , 'ymax' : 60, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :20   },
 
-        {'selection' : 'elZgg'        , 'var' : 'm_ph1_ph2'   , 'xlabel' : xlabel_mgg   , 'ymax' : 40, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :30   },
-        {'selection' : 'elZgg'        , 'var' : 'pt_ph1_ph2'  , 'xlabel' : xlabel_ptgg  , 'ymax' : 50, 'ymax_pergev' : 13, 'ymin_logy' : 0.1, 'ymax_logy' :30   },
-        {'selection' : 'elZgg'        , 'var' : 'm_leplepphph', 'xlabel' : xlabel_meegg , 'ymax' : 50, 'ymax_pergev' : 5 , 'ymin_logy' : 0.1, 'ymax_logy' :10   },
-        {'selection' : 'elZgg'        , 'var' : 'm_elel'      , 'xlabel' : xlabel_mee   , 'ymax' : 50, 'ymax_pergev' : 12 , 'ymin_logy' : 0.1, 'ymax_logy' :30   },
-        {'selection' : 'muZgg'        , 'var' : 'm_ph1_ph2'   , 'xlabel' : xlabel_mgg   , 'ymax' : 50, 'ymax_pergev' : 12 , 'ymin_logy' : 0.1, 'ymax_logy' :30  },
-        {'selection' : 'muZgg'        , 'var' : 'pt_ph1_ph2'  , 'xlabel' : xlabel_ptgg  , 'ymax' : 60, 'ymax_pergev' : 15 , 'ymin_logy' : 0.1, 'ymax_logy' :30   },
-        {'selection' : 'muZgg'        , 'var' : 'm_leplepphph', 'xlabel' : xlabel_mmmgg , 'ymax' : 60, 'ymax_pergev' : 6 , 'ymin_logy' : 0.1, 'ymax_logy' :10   },
-        {'selection' : 'muZgg'        , 'var' : 'm_mumu'      , 'xlabel' : xlabel_mmm   , 'ymax' : 60, 'ymax_pergev' : 12 , 'ymin_logy' : 0.1, 'ymax_logy' :30   },
+        #{'selection' : 'elZgg'        , 'var' : 'm_ph1_ph2'   , 'xlabel' : xlabel_mgg   , 'ymax' : 40, 'ymax_pergev' : 10 , 'ymin_logy' : 0.1, 'ymax_logy' :30, 'legendTextSize' : 0.04   },
+        {'selection' : 'elZgg'        , 'var' : 'pt_ph1_ph2'  , 'xlabel' : xlabel_ptgg  , 'ymax' : 50, 'ymax_pergev' : 13, 'ymin_logy' : 0.1, 'ymax_logy' :30, 'legendTextSize' : 0.04   },
+        #{'selection' : 'elZgg'        , 'var' : 'm_leplepphph', 'xlabel' : xlabel_meegg , 'ymax' : 50, 'ymax_pergev' : 5 , 'ymin_logy' : 0.1, 'ymax_logy' :10, 'legendTextSize' : 0.04   },
+        #{'selection' : 'elZgg'        , 'var' : 'm_elel'      , 'xlabel' : xlabel_mee   , 'ymax' : 50, 'ymax_pergev' : 12 , 'ymin_logy' : 0.1, 'ymax_logy' :30, 'legendTextSize' : 0.04   },
+        #{'selection' : 'muZgg'        , 'var' : 'm_ph1_ph2'   , 'xlabel' : xlabel_mgg   , 'ymax' : 50, 'ymax_pergev' : 12 , 'ymin_logy' : 0.1, 'ymax_logy' :30, 'legendTextSize' : 0.04  },
+        {'selection' : 'muZgg'        , 'var' : 'pt_ph1_ph2'  , 'xlabel' : xlabel_ptgg  , 'ymax' : 60, 'ymax_pergev' : 15 , 'ymin_logy' : 0.1, 'ymax_logy' :30, 'legendTextSize' : 0.04   },
+        #{'selection' : 'muZgg'        , 'var' : 'm_leplepphph', 'xlabel' : xlabel_mmmgg , 'ymax' : 60, 'ymax_pergev' : 6 , 'ymin_logy' : 0.1, 'ymax_logy' :10, 'legendTextSize' : 0.04   },
+        #{'selection' : 'muZgg'        , 'var' : 'm_mumu'      , 'xlabel' : xlabel_mmm   , 'ymax' : 60, 'ymax_pergev' : 12 , 'ymin_logy' : 0.1, 'ymax_logy' :30, 'legendTextSize' : 0.04   },
     ]
 
     conf_wgg_mu =  make_full_configs( selections_wgg_mu, options.outputDir, dumpStack )
@@ -194,14 +202,14 @@ def main() :
         #MakeCombinedAQGCPlots( options.outputDir, var='m_ph1_ph2', dumpStack=dumpStack )
     elif options.money :
         if options.zgg :
-            MakeCombinedMoneyPlots( options.outputDir, var='pt_ph1_ph2', dumpStack=dumpStack, zgg=options.zgg, ymax=30)
-            MakeCombinedMoneyPlots( options.outputDir, var='m_ph1_ph2', dumpStack=dumpStack, zgg=options.zgg, ymax=20)
-            MakeCombinedMoneyPlots( options.outputDir, var='m_leplepphph', dumpStack=dumpStack, zgg=options.zgg, ymax=130)
+            MakeCombinedMoneyPlots( options.outputDir, var='pt_ph1_ph2', dumpStack=dumpStack, zgg=options.zgg, ymax=100)
+            MakeCombinedMoneyPlots( options.outputDir, var='m_ph1_ph2', dumpStack=dumpStack, zgg=options.zgg, ymax=80)
+            MakeCombinedMoneyPlots( options.outputDir, var='m_leplepphph', dumpStack=dumpStack, zgg=options.zgg, ymax=520)
             #MakeCombinedMoneyPlots( options.outputDir, var='m_elel', dumpStack=dumpStack, zgg=options.zgg, ymax=130)
             #MakeCombinedMoneyPlots( options.outputDir, var='m_mumu', dumpStack=dumpStack, zgg=options.zgg, ymax=130)
         else :
-            MakeCombinedMoneyPlots( options.outputDir, var='pt_ph1_ph2', dumpStack=dumpStack, zgg=options.zgg, ymax=13)
-            MakeCombinedMoneyPlots( options.outputDir, var='m_ph1_ph2', dumpStack=dumpStack, zgg=options.zgg, ymax=8)
+            MakeCombinedMoneyPlots( options.outputDir, var='pt_ph1_ph2', dumpStack=dumpStack, zgg=options.zgg, ymax=52)
+            MakeCombinedMoneyPlots( options.outputDir, var='m_ph1_ph2', dumpStack=dumpStack, zgg=options.zgg, ymax=32)
 
     elif options.zgg : 
         for conf in conf_zgg :
@@ -221,58 +229,87 @@ def main() :
 def make_full_configs( selections, outputDir, dumpStack ) :
 
     ylabel_perbin = 'Events / bin'
-    ylabel_pergev = 'Events / 5 GeV'
+    ylabel_pergev5 = 'Events / 5 GeV'
+    ylabel_pergev20 = 'Events / 20 GeV'
 
     out_configs = []
 
     for sel in selections :
 
         moddic = dict( sel )
-        ymax_pergev = moddic.pop( 'ymax_pergev', None )
+        ymax_pergev5 = moddic.pop( 'ymax_pergev', None )
         ymin_logy = moddic.pop( 'ymin_logy', None )
         ymax_logy = moddic.pop( 'ymax_logy', None )
         ymax        = moddic.pop( 'ymax'       , None )
 
+        ymax_pergev20 = ymax_pergev5 * 4
+
         info_nom        = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : ''       , 'name_suffix' : ''              , 'ylabel' : ylabel_perbin, 'ymax' : ymax,'label_style' : 'fancy' }
         info_nom_prelim = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : ''       , 'name_suffix' : '_prelim'       , 'ylabel' : ylabel_perbin, 'ymax' : ymax,'label_style' : 'fancyprelim' }
         info_nom_prelim_nostat = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : ''       , 'name_suffix' : '_prelim_nostat'       , 'ylabel' : ylabel_perbin, 'ymax' : ymax,'label_style' : 'fancyprelimnostats' }
-        info_gev        = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV', 'name_suffix' : '_perGeV'       , 'ylabel' : ylabel_pergev, 'ymax' : ymax_pergev,'label_style' : 'fancy' }
-        info_gev_prelim = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV', 'name_suffix' : '_perGeV_prelim', 'ylabel' : ylabel_pergev, 'ymax' : ymax_pergev,'label_style' : 'fancyprelim' }
-        info_gev_logy        = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV', 'name_suffix' : '_perGeV_logy'       , 'ylabel' : ylabel_pergev, 'ymin' : ymin_logy, 'ymax' : ymax_logy,'label_style' : 'fancy', 'logy' : 1 }
-        info_gev_prelim_logy = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV', 'name_suffix' : '_perGeV_logy_prelim', 'ylabel' : ylabel_pergev, 'ymin' : ymin_logy, 'ymax' : ymax_logy,'label_style' : 'fancyprelim', 'logy' : 1 }
-        info_gev_prelim_nostat = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV', 'name_suffix' : '_perGeV_prelim_nostats', 'ylabel' : ylabel_pergev, 'ymax' : ymax_pergev,'label_style' : 'fancyprelimnostats' }
+        info_gev5        = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV5', 'name_suffix' : '_perGeV5'       , 'ylabel' : ylabel_pergev5, 'ymax' : ymax_pergev5,'label_style' : 'fancy' }
+        info_gev5_prelim = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV5', 'name_suffix' : '_perGeV5_prelim', 'ylabel' : ylabel_pergev5, 'ymax' : ymax_pergev5,'label_style' : 'fancyprelim' }
+        info_gev5_logy        = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV5', 'name_suffix' : '_perGeV5_logy'       , 'ylabel' : ylabel_pergev5, 'ymin' : ymin_logy, 'ymax' : ymax_logy,'label_style' : 'fancy', 'logy' : 1 }
+        info_gev5_prelim_logy = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV5', 'name_suffix' : '_perGeV5_logy_prelim', 'ylabel' : ylabel_pergev5, 'ymin' : ymin_logy, 'ymax' : ymax_logy,'label_style' : 'fancyprelim', 'logy' : 1 }
+        info_gev5_prelim_nostat = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV5', 'name_suffix' : '_perGeV5_prelim_nostats', 'ylabel' : ylabel_pergev5, 'ymax' : ymax_pergev5,'label_style' : 'fancyprelimnostats' }
+        info_gev5_paper_nostat = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV5', 'name_suffix' : '_perGeV5_paper_nostats', 'ylabel' : ylabel_pergev5, 'ymax' : ymax_pergev5,'label_style' : 'fancypapernostats' }
+        info_gev20        = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV20', 'name_suffix' : '_perGeV20'       , 'ylabel' : ylabel_pergev20, 'ymax' : ymax_pergev20,'label_style' : 'fancy' }
+        info_gev20_prelim = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV20', 'name_suffix' : '_perGeV20_prelim', 'ylabel' : ylabel_pergev20, 'ymax' : ymax_pergev20,'label_style' : 'fancyprelim' }
+        info_gev20_logy        = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV20', 'name_suffix' : '_perGeV20_logy'       , 'ylabel' : ylabel_pergev20, 'ymin' : ymin_logy, 'ymax' : ymax_logy,'label_style' : 'fancy', 'logy' : 1 }
+        info_gev20_prelim_logy = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV20', 'name_suffix' : '_perGeV20_logy_prelim', 'ylabel' : ylabel_pergev20, 'ymin' : ymin_logy, 'ymax' : ymax_logy,'label_style' : 'fancyprelim', 'logy' : 1 }
+        info_gev20_prelim_nostat = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV20', 'name_suffix' : '_perGeV20_prelim_nostats', 'ylabel' : ylabel_pergev20, 'ymax' : ymax_pergev20,'label_style' : 'fancyprelimnostats' }
+        info_gev20_paper_nostat = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '_perGeV20', 'name_suffix' : '_perGeV20_paper_nostats', 'ylabel' : ylabel_pergev20, 'ymax' : ymax_pergev20,'label_style' : 'fancypapernostats' }
+        info_paper_nostat = {'outputDir' : outputDir, 'dumpStack' : dumpStack, 'suffix' : '', 'name_suffix' : '_paper_nostats', 'ylabel' : ylabel_perbin, 'ymax' : ymax,'label_style' : 'fancypapernostats' }
 
         info_nom               .update( moddic )
         info_nom_prelim        .update( moddic )
-        info_gev               .update( moddic )
-        info_gev_prelim        .update( moddic )
-        info_gev_logy          .update( moddic )
-        info_gev_prelim_logy   .update( moddic )
-        info_gev_prelim_nostat .update( moddic )
         info_nom_prelim_nostat .update( moddic )
+        info_gev5               .update( moddic )
+        info_gev5_prelim        .update( moddic )
+        info_gev5_logy          .update( moddic )
+        info_gev5_prelim_logy   .update( moddic )
+        info_gev5_prelim_nostat .update( moddic )
+        info_gev5_paper_nostat  .update( moddic )
+
+        info_gev20               .update( moddic )
+        info_gev20_prelim        .update( moddic )
+        info_gev20_logy          .update( moddic )
+        info_gev20_prelim_logy   .update( moddic )
+        info_gev20_prelim_nostat .update( moddic )
+        info_gev20_paper_nostat  .update( moddic )
+        info_paper_nostat  .update( moddic )
 
 
         out_configs.append( info_nom               )
         out_configs.append( info_nom_prelim        )
-        out_configs.append( info_gev               )
-        out_configs.append( info_gev_prelim        )
-        out_configs.append( info_gev_logy          )
-        out_configs.append( info_gev_prelim_logy   )
-        out_configs.append( info_gev_prelim_nostat )
         out_configs.append( info_nom_prelim_nostat )
+        out_configs.append( info_gev5               )
+        out_configs.append( info_gev5_prelim        )
+        out_configs.append( info_gev5_logy          )
+        out_configs.append( info_gev5_prelim_logy   )
+        out_configs.append( info_gev5_prelim_nostat )
+        out_configs.append( info_gev5_paper_nostat  )
+        out_configs.append( info_gev20               )
+        out_configs.append( info_gev20_prelim        )
+        out_configs.append( info_gev20_logy          )
+        out_configs.append( info_gev20_prelim_logy   )
+        out_configs.append( info_gev20_prelim_nostat )
+        out_configs.append( info_gev20_paper_nostat  )
+        out_configs.append( info_paper_nostat  )
 
     return out_configs
 
 
 #---------------------------------------
-def MakeMuonPlots( outputDir=None, selection='', var='pt_leadph12', suffix='', name_suffix='', ylabel='Events / bin', xlabel='', label_style='fancy', logy=0, ymin=0, ymax=60, dumpStack=True ) :
+def MakeMuonPlots( outputDir=None, selection='', var='pt_leadph12', suffix='', name_suffix='', ylabel='Events / bin', xlabel='', label_style='fancy', logy=0, ymin=0, ymax=60, legendTextSize=0.04, dumpStack=True ) :
 
-    print var
-    print suffix
 
     save = ( outputDir is not None )
 
-    samplesWgg.DrawHist( '%s_%s%s' %(var,selection, suffix), xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Muon Channel', 'extra_label_loc' : (0.66, 0.57) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07, 'legendTranslateX' : 0.045}, doratio=options.doRatio, logy=logy, ymin=ymin, ymax=ymax )
+    #label_loc = (0.66, 0.57)
+    label_loc = (0.18, 0.87)
+
+    samplesWgg.DrawHist( '%s_%s%s' %(var,selection, suffix), xlabel=xlabel,ylabel= ylabel, ticks_x=(7,1,0), ticks_y=(10,1,0), label_config={'labelStyle' : label_style, 'extra_label' : _LABEL_MUCH, 'extra_label_loc' : label_loc }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.082, 'legendTranslateX' : 0.045, 'legendTextSize' : legendTextSize}, doratio=options.doRatio, logy=logy, ymin=ymin, ymax=ymax )
 
     if save :
         name = '%s_%s%s' %(var,selection, name_suffix)
@@ -316,11 +353,14 @@ def MakeMuonPlots( outputDir=None, selection='', var='pt_leadph12', suffix='', n
         raw_input('continue')
 
 #---------------------------------------
-def MakeElectronPlots( outputDir=None, selection='', var='pt_leadph12', suffix='', name_suffix='', ylabel='Events / bin', xlabel='', label_style='fancy', logy=0, ymin=0, ymax=50, dumpStack=True  ) :
+def MakeElectronPlots( outputDir=None, selection='', var='pt_leadph12', suffix='', name_suffix='', ylabel='Events / bin', xlabel='', label_style='fancy', logy=0, ymin=0, ymax=50, legendTextSize=0.04, dumpStack=True  ) :
 
     save = ( outputDir is not None )
 
-    samplesWgg.DrawHist( '%s_%s%s'%(var,selection,suffix), xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.66, 0.50) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.07, 'legendTranslateX' : 0.045, }, doratio=options.doRatio, logy=logy, ymin=ymin, ymax=ymax )
+    #label_loc = (0.66, 0.50)
+    label_loc = (0.18, 0.87)
+
+    samplesWgg.DrawHist( '%s_%s%s'%(var,selection,suffix), xlabel=xlabel,ylabel= ylabel, ticks_x=(7,1,0), ticks_y=(10,1,0), label_config={'labelStyle' : label_style, 'extra_label' : _LABEL_ELCH, 'extra_label_loc' : label_loc }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.08, 'legendTranslateX' : -0.005, 'legendTextSize' : legendTextSize, }, doratio=options.doRatio, logy=logy, ymin=ymin, ymax=ymax )
     #samplesWgg.DrawHist( '%s_%s%s'%(var,selection,suffix), xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : 'Electron Channel', 'extra_label_loc' : (0.16, 0.50) }, legend_config={'legendLoc' : 'Double','legendWiden' : 1.0, 'legendCompress' : 0.7, 'entryWidth' : 0.07, 'legendTranslateX' : 0.045, }, doratio=options.doRatio, logy=logy, ymin=ymin, ymax=ymax )
 
     if save :
@@ -503,15 +543,19 @@ def MakeElectronPlots( outputDir=None, selection='', var='pt_leadph12', suffix='
 
 
 #---------------------------------------
-def MakeZggPlots( outputDir=None, selection='', var='', suffix='', name_suffix='', ylabel='Events / bin',xlabel='', label_style='fancy', logy=0, ymin=0, ymax=50, dumpStack=True  ) :
+def MakeZggPlots( outputDir=None, selection='', var='', suffix='', name_suffix='', ylabel='Events / bin',xlabel='', label_style='fancy', logy=0, ymin=0, ymax=50, legendTextSize=0.04, dumpStack=True  ) :
 
     save = ( outputDir is not None )
 
-    chlabel = 'Muon Channel'
+    chlabel = _LABEL_MUMUCH
     if selection.count('el') :
-        chlabel = 'Electron Channel'
+        chlabel = _LABEL_ELELCH
 
-    samplesWgg.DrawHist( '%s_%s%s' %(var,selection,suffix), xlabel=xlabel,ylabel= ylabel, label_config={'labelStyle' : label_style, 'extra_label' : chlabel, 'extra_label_loc' : (0.61, 0.53) }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.1}, doratio=options.doRatio, logy=logy, ymin=ymin, ymax=ymax )
+    #label_loc = (0.61, 0.53)
+    label_loc = (0.18, 0.87)
+
+    print '%s_%s%s' %(var,selection,suffix)
+    samplesWgg.DrawHist( '%s_%s%s' %(var,selection,suffix), xlabel=xlabel,ylabel= ylabel, ticks_x=(7,1,0), ticks_y=(10,1,0), label_config={'labelStyle' : label_style, 'extra_label' : chlabel, 'extra_label_loc' : label_loc }, legend_config={'legendWiden' : 1.2, 'entryWidth' : 0.11, 'legendTextSize' : legendTextSize}, doratio=options.doRatio, logy=logy, ymin=ymin, ymax=ymax )
 
     if save :
         name = '%s_%s%s' %(var,selection,name_suffix)
@@ -612,12 +656,28 @@ def MakeCombinedAQGCPlots( outputDir, var='pt_leadph12', dumpStack=True  ) :
 
     save = ( outputDir is not None )
 
-    samplesWggComb.DrawHist( '%s_lgg'%(var), xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancyprelimnostats', 'extra_label' : 'Electron + Muon Channels', 'extra_label_loc' : (0.38, 0.6) }, legend_config={'legendLoc' : 'Double', 'legendWiden' : 1.1, 'legendCompress' : 1.2, 'legendTranslateX' : 0.22, 'legendTranslateY' : 0.06 }, doratio=options.doRatio, ymin = 0, ymax = 130 )
-    #samplesWggComb.DrawHist( '%s_lgg'%(var), xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancyprelimnostats', 'extra_label' : 'Electron + Muon Channels', 'extra_label_loc' : (0.38, 0.6) }, legend_config={'legendLoc' : 'Double', 'legendWiden' : 1.1, 'legendCompress' : 1.2, 'legendTranslateX' : 0.22, 'legendTranslateY' : 0.06 }, doratio=options.doRatio, ymin = 0, ymax = 60 )
-    #samplesWggComb.DrawHist( '%s_lgg'%(var), xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancyprelimnostats', 'extra_label' : 'Muon Channel', 'extra_label_loc' : (0.65, 0.57) }, legend_config={ 'legendWiden' : 1.2, 'entryWidth' : 0.07, 'legendTranslateX' : 0.035  }, doratio=options.doRatio, ymin = 0, ymax = 100 )
+    #samplesWggComb.DrawHist( '%s_lgg'%(var), xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancyprelimnostats', 'extra_label' : 'Electron + Muon Channels', 'extra_label_loc' : (0.38, 0.6) }, legend_config={'legendLoc' : 'Double', 'legendWiden' : 1.1, 'legendCompress' : 1.2, 'legendTranslateX' : 0.22, 'legendTranslateY' : 0.06 }, doratio=options.doRatio, ymin = 0, ymax = 130 )
+    ##samplesWggComb.DrawHist( '%s_lgg'%(var), xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancyprelimnostats', 'extra_label' : 'Electron + Muon Channels', 'extra_label_loc' : (0.38, 0.6) }, legend_config={'legendLoc' : 'Double', 'legendWiden' : 1.1, 'legendCompress' : 1.2, 'legendTranslateX' : 0.22, 'legendTranslateY' : 0.06 }, doratio=options.doRatio, ymin = 0, ymax = 60 )
+    ##samplesWggComb.DrawHist( '%s_lgg'%(var), xlabel='p_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', label_config={'labelStyle' : 'fancyprelimnostats', 'extra_label' : 'Muon Channel', 'extra_label_loc' : (0.65, 0.57) }, legend_config={ 'legendWiden' : 1.2, 'entryWidth' : 0.07, 'legendTranslateX' : 0.035  }, doratio=options.doRatio, ymin = 0, ymax = 100 )
+
+    #if save :
+    #    name = '%s_lgg'%(var)
+    #    samplesWggComb.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
+    #    if dumpStack : 
+    #        samplesWggComb.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
+    #else :
+    #    samplesWggComb.DumpStack(doRatio=options.doRatio, details=True )
+    #    raw_input('continue')
+
+    #label_loc = (0.26, 0.58)
+    label_loc = (0.18, 0.87)
+
+    samplesWggComb.DrawHist( '%s_lgg'%(var), xlabel='#it{p}_{T}^{lead #gamma} [GeV]',ylabel= 'Events / bin', ticks_x=(10,1,0), ticks_y=(10,1,0), label_config={'labelStyle' : 'fancypapernostats', 'extra_label' : _LABEL_COMB, 'extra_label_loc' : label_loc }, legend_config={'legendLoc' : 'Double', 'legendWiden' : 1.2, 'legendCompress' : 1.4, 'legendTranslateX' : 0.165, 'legendTranslateY' : 0.06, 'legendTextSize' : 0.036 }, doratio=options.doRatio, ymin = 0, ymax = 130 )
+
+    dumpStack = True
 
     if save :
-        name = '%s_lgg'%(var)
+        name = '%s_lgg_paper'%(var)
         samplesWggComb.SaveStack( '%s%s' %(name,options.savePostfix), outputDir, 'base' )
         if dumpStack : 
             samplesWggComb.DumpStack( outputDir, name, doRatio=options.doRatio, details=True )
@@ -626,19 +686,29 @@ def MakeCombinedAQGCPlots( outputDir, var='pt_leadph12', dumpStack=True  ) :
         raw_input('continue')
 
 
-
 #---------------------------------------
 def MakeCombinedMoneyPlots( outputDir, var='pt_ph1_ph2', dumpStack=True, zgg=False, ymax=10  ) :
 
     save = ( outputDir is not None )
 
     addtl_label = 'wgg'
-    entry_width = 0.06
+    entry_width = 0.08
+    legendTranslateX = -0.025
     if zgg :
         addtl_label = 'zgg'
-        entry_width = 0.08
+        entry_width = 0.11
+        legendTranslateX = 0
 
-    samplesWgg.DrawHist( '%s_lgg_perGeV'%(var), xlabel='p_{T}^{#gamma #gamma} [GeV]',ylabel= 'Events / 5 GeV', label_config={'labelStyle' : 'fancypapernostats', 'extra_label' : '#splitline{combined muon and}{electron channels}', 'extra_label_loc' : (0.18, 0.8) }, legend_config={'legendWiden' : 1.1, 'entryWidth' : entry_width }, doratio=options.doRatio, ymin = 0, ymax = ymax )
+    if zgg :
+        label = _LABEL_ZGGCOMB
+    else :
+        label = _LABEL_COMB
+
+    #label_loc = (0.26, 0.58)
+    label_loc = (0.18, 0.87)
+
+    samplesWgg.DrawHist( '%s_lgg_perGeV20'%(var), xlabel='#it{p}_{T}^{#gamma#gamma} [GeV]',ylabel= 'Events / 20 GeV', ticks_x=(7,1,0), ticks_y=(10,1,0), label_config={'labelStyle' : 'fancypapernostats', 'extra_label' : label, 'extra_label_loc' : label_loc }, legend_config={'legendWiden' : 1.1, 'entryWidth' : entry_width, 'legendTextSize' : 0.04, 'legendTranslateX' : legendTranslateX }, doratio=options.doRatio, ymin = 0, ymax = ymax )
+    #samplesWgg.DrawHist( '%s_lgg'%(var), xlabel='#it{p}_{T}^{#gamma#gamma} [GeV]',ylabel= 'Events / bin', ticks_x=(7,1,0), ticks_y=(10,1,0), label_config={'labelStyle' : 'fancypapernostats', 'extra_label' : label, 'extra_label_loc' : label_loc }, legend_config={'legendWiden' : 1.1, 'entryWidth' : entry_width, 'legendTextSize' : 0.04, 'legendTranslateX' : legendTranslateX }, doratio=options.doRatio, ymin = 0, ymax = ymax )
 
     if save :
         name = '%s_lgg_%s'%(var, addtl_label)

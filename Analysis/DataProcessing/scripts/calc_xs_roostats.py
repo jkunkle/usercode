@@ -49,7 +49,7 @@ def main() :
 
     ##print signif_single
             
-    baseDir = '/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlotsPSVTightMassOneBin_2015_12_01/FinalPlotsOneBin/'
+    baseDir = '/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/WggPlotsForPubOneBin_2016_06_08/FinalPlotsOneBin/'
     baseDirZgg = '/afs/cern.ch/work/j/jkunkle/private/CMS/Plots/ZggPlotsOneBin_2015_12_01/FinalPlotsOneBin/'
     pt_bins_zgg = ['15','max']
     pt_bins_wgg = ['25','max']
@@ -129,9 +129,9 @@ def run_comb_fit( result_base, mukey='muhighmt', elekey='elfullhighmt', signal='
     #results['electron'] ='%s/pt_leadph12_egg.pickle' %result_base
     #results['muon'] ='%s/pt_leadph12_mgg.pickle' %result_base
 
-    #results['electron_EB-EB'] = '%s/pt_leadph12_%s_EB-EB.pickle' %(result_base,elekey)
-    #results['electron_EB-EE'] = '%s/pt_leadph12_%s_EB-EE.pickle' %(result_base,elekey)
-    #results['electron_EE-EB'] = '%s/pt_leadph12_%s_EE-EB.pickle' %(result_base,elekey)
+    results['electron_EB-EB'] = '%s/pt_leadph12_%s_EB-EB.pickle' %(result_base,elekey)
+    results['electron_EB-EE'] = '%s/pt_leadph12_%s_EB-EE.pickle' %(result_base,elekey)
+    results['electron_EE-EB'] = '%s/pt_leadph12_%s_EE-EB.pickle' %(result_base,elekey)
     results['muon_EB-EB']     = '%s/pt_leadph12_%s_EB-EB.pickle' %(result_base,mukey )
     results['muon_EB-EE']     = '%s/pt_leadph12_%s_EB-EE.pickle' %(result_base,mukey )
     results['muon_EE-EB']     = '%s/pt_leadph12_%s_EE-EB.pickle' %(result_base,mukey )

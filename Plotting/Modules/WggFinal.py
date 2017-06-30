@@ -5,8 +5,9 @@ def config_samples(samples) :
     import ROOT
     samples.AddSample('Data'          , path='Data'          ,legend_name='Data'                       ,isActive=True, plotColor=ROOT.kBlack, isData=True )
     samples.AddSample('Wgg'           , path='Wgg'           ,legend_name='W#gamma#gamma'       ,isActive=True, plotColor=ROOT.kRed-3, scale=1.0, isSignal=False )
-    samples.AddSample('Zgg'           , path='Zgg'           ,legend_name='Z#gamma#gamma'              ,isActive=True, plotColor=ROOT.kOrange-2, displayErrBand=True)
-    samples.AddSample('OtherDiPhoton' , path='OtherDiPhoton' ,legend_name='Other Multiboson'            ,isActive=True, plotColor=ROOT.kGray, displayErrBand=True )
+    #samples.AddSample('Zgg'           , path='Zgg'           ,legend_name='Z#gamma#gamma'              ,isActive=True, plotColor=ROOT.kOrange-2, displayErrBand=True)
+    samples.AddSample('ZggPlusOtherDiPhoton' , path='ZggPlusOtherDiPhoton' ,legend_name='Prompt diphoton'            ,isActive=True, plotColor=ROOT.kOrange-2, displayErrBand=True )
+    #samples.AddSample('OtherDiPhoton' , path='OtherDiPhoton' ,legend_name='Prompt diphoton'            ,isActive=True, plotColor=ROOT.kGray, displayErrBand=True )
     samples.AddSample('Top'           , path='Top'           ,legend_name='Top'                        ,isActive=True, plotColor=ROOT.kGreen, displayErrBand=True )
     samples.AddSample('MultiBoson'    , path='MultiBoson'    ,legend_name='Multi Boson'                ,isActive=True, plotColor=ROOT.kBlue, displayErrBand=True )
     #samples.AddSample('EleFake'       , path='EleFake'       ,legend_name='e#rightarrow#gamma fakes'   ,isActive=True, plotColor=ROOT.kGreen+1, displayErrBand=True )
@@ -30,7 +31,8 @@ def config_samples(samples) :
     samples.AddSample('ZZDiPhoton', path='ZZDiPhoton', isActive=False, displayErrBand=False)
     samples.AddSampleGroup('AllBkg' , legend_name = 'AllBkg' ,input_samples = ['Zgg', 'OtherDiPhoton', 'EleFake', 'JetFake'],   isActive=False, plotColor=ROOT.kBlue-7, displayErrBand=False)
     samples.AddSampleGroup('AllBkgPlusSig' , legend_name = 'AllBkg' ,input_samples = ['Zgg', 'OtherDiPhoton', 'EleFake', 'JetFake', 'Wgg'],   isActive=False, plotColor=ROOT.kBlue-7, displayErrBand=False)
-    samples.AddSampleGroup('AllBkgPlusQGC' , legend_name = 'Expected, #frac{f_{T0}}{#Lambda^{4}} = 50 TeV^{-4}' ,input_samples = ['Zgg', 'OtherDiPhoton', 'EleFake', 'JetFake', 'WAAQGCLT'], isActive=False, isSignal=True, plotColor=ROOT.kMagenta+2)
+    #samples.AddSampleGroup('AllBkgPlusQGC' , legend_name = 'Expected, #frac{f_{T0}}{#Lambda^{4}} = 50 TeV^{-4}' ,input_samples = ['Zgg', 'OtherDiPhoton', 'EleFake', 'JetFake', 'WAAQGCLT'], isActive=False, isSignal=True, plotColor=ROOT.kMagenta+2)
+    samples.AddSampleGroup('AllBkgPlusQGC' , legend_name = 'Expected, #frac{f_{T0}}{#Lambda^{4}} = 50 TeV^{-4}' ,input_samples = ['ZggPlusOtherDiPhoton', 'EleFake', 'JetFake', 'WAAQGCLT'], isActive=False, isSignal=True, plotColor=ROOT.kMagenta+2)
 
 
 def print_examples() :

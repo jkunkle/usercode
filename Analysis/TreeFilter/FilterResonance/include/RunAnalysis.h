@@ -33,7 +33,7 @@ class RunModule : public virtual RunModuleBase {
         // The ApplyModule function calls any other module defined below
         // in src/RunModule.cxx.  This funciton is not strictly required
         // but its a consistent way to apply modules
-        bool ApplyModule         ( ModuleConfig & config ) const;
+        bool ApplyModule         ( ModuleConfig & config ) ;
 
 
         // Define modules below.
@@ -41,10 +41,12 @@ class RunModule : public virtual RunModuleBase {
         // return values, or inputs to these functions, but
         // you must of course handle them in the source file
         // Examples :
-        void FilterMuon         ( ModuleConfig & config ) const;
-        void FilterElectron     ( ModuleConfig & config ) const;
-        void FilterPhoton       ( ModuleConfig & config ) const;
+        void FilterMuon         ( ModuleConfig & config );
+        void FilterElectron     ( ModuleConfig & config );
+        void FilterPhoton       ( ModuleConfig & config );
+        void FilterJet          ( ModuleConfig & config ) const;
         bool FilterEvent        ( ModuleConfig & config ) const;
+        bool FilterBlind        ( ModuleConfig & config ) const;
         void BuildEventVars     ( ModuleConfig & config ) const;
 
 
@@ -55,6 +57,10 @@ class RunModule : public virtual RunModuleBase {
 
     private :
         float _m_w;
+        bool _isData;
+        std::vector<TLorentzVector> _selectedMuons;
+        std::vector<TLorentzVector> _selectedElectrons;
+        std::vector<TLorentzVector> _selectedPhotons;
 
 
 };
@@ -66,6 +72,10 @@ namespace OUT {
     Float_t m_lep_ph;
     Float_t m_lep_met_ph;
     Float_t m_mt_lep_met_ph;
+    Float_t m_mt_lep_met_ph_forcewmass;
+    Float_t mt_w;
+    Float_t mt_res;
+    Float_t mt_lep_ph;
     Float_t dphi_lep_ph;
     Float_t dr_lep_ph;
     Float_t m_lep_met;
@@ -73,9 +83,25 @@ namespace OUT {
     Float_t pt_lep_met;
     Float_t dphi_lep_met;
     Float_t mt_lep_met_ph;
+    Float_t mt_lep_met_ph_inv;
     Float_t RecoWMass;
     Float_t recoM_lep_nu_ph;
+    Float_t recoMet_eta;
+    Float_t recoW_pt;
+    Float_t recoW_eta;
+    Float_t recoW_phi;
+    Float_t m_ll;
     Bool_t nu_z_solution_success;
+    Bool_t isBlinded;
+
+    Float_t leadjet_pt;
+    Float_t subljet_pt;
+    Float_t leaddijet_m;
+    Float_t leaddijet_pt;
+    Float_t massdijet_m;
+    Float_t massdijet_pt;
+ 
+
 };
 
 #endif

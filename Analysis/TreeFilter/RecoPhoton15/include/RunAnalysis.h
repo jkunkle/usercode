@@ -52,6 +52,7 @@ class RunModule : public virtual RunModuleBase {
         bool FilterMuon          ( ModuleConfig & config ) const;
         bool FilterEvent         ( ModuleConfig & config ) const;
         bool FilterTrigger       ( ModuleConfig & config ) const;
+        bool FilterDataQuality   ( ModuleConfig & config ) const;
 
         bool HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR ) const;
         bool HasTruthMatch( const TLorentzVector & objlv, const std::vector<int> & matchPID, float maxDR, float &minDR ) const;
@@ -71,6 +72,8 @@ class RunModule : public virtual RunModuleBase {
         bool eval_el_loose    ;
         bool eval_el_veryloose;
         bool _needs_nlo_weght ;
+
+        std::map<int, std::vector<int> > quality_map;
 };
 
 // Ouput namespace 
@@ -83,6 +86,8 @@ namespace OUT {
     Int_t              jet_n;
     Int_t              vtx_n;
     Int_t              trueph_n;
+    Int_t              truephIPFS_n;
+    Int_t              truelep_n;
 
 
     std::vector<float> *el_pt;
@@ -141,9 +146,7 @@ namespace OUT {
     std::vector<Bool_t> *mu_passLoose;
     std::vector<Bool_t> *mu_passCustom;
     std::vector<Bool_t> *mu_passTight;
-    std::vector<Bool_t> *mu_passTightNoIso;
-    std::vector<Bool_t> *mu_passTightNoD0;
-    std::vector<Bool_t> *mu_passTightNoIsoNoD0;
+    std::vector<Bool_t> *mu_passMedium;
     std::vector<Bool_t> *mu_truthMatch;
     std::vector<float>  *mu_truthMinDR;
 
@@ -234,60 +237,85 @@ namespace OUT {
     std::vector<float>  *trueph_phi;
     std::vector<int>  *trueph_motherPID;
     std::vector<int>  *trueph_status;
+    std::vector<int>  *trueph_nMatchingLep;
+
+    std::vector<float>  *truelep_pt;
+    std::vector<float>  *truelep_eta;
+    std::vector<float>  *truelep_phi;
+    std::vector<int>  *truelep_motherPID;
+    std::vector<int>  *truelep_status;
+    std::vector<int>  *truelep_Id;
+
+    Int_t   truechlep_n;
+    Int_t   truenu_n;
+    Float_t truelepnu_m;
+    Float_t truelepnuph_m;
+    Float_t truelepph_dr;
+
+    Int_t st3Lep_n;
+    Bool_t isWMuDecay;
+    Bool_t isWElDecay;
+    Bool_t isWTauDecay;
 
     Float_t met_pt;
     Float_t met_phi;
 
-    Bool_t passTrig_Photon26_Photon16_Mass60;
-    Bool_t passTrig_Photon36_Photon22_Mass15;
-    Bool_t passTrig_Photon42_Photon25_Mass15;
-    Bool_t passTrig_DoublePhoton85          ;
-    Bool_t passTrig_Photon22Iso             ;
-    Bool_t passTrig_Photon22                ;
-    Bool_t passTrig_Photon30Iso             ;
-    Bool_t passTrig_Photon30                ;
-    Bool_t passTrig_Photon36Iso             ;
-    Bool_t passTrig_Photon36                ;
-    Bool_t passTrig_Photon50Iso             ;
-    Bool_t passTrig_Photon50                ;
-    Bool_t passTrig_Photon75Iso             ;
-    Bool_t passTrig_Photon75                ;
-    Bool_t passTrig_Photon90Iso             ;
-    Bool_t passTrig_Photon90                ;
-    Bool_t passTrig_Photon120Iso            ;
-    Bool_t passTrig_Photon120               ;
-    Bool_t passTrig_Photon165HE             ;
-    Bool_t passTrig_Photon165Iso            ;
-    Bool_t passTrig_Photon175               ;
-    Bool_t passTrig_Photon250               ;
-    Bool_t passTrig_Photon300               ;
-    Bool_t passTrig_Photon500               ;
-    Bool_t passTrig_Photon600               ;
-    Bool_t passTrig_Mu27_TkMu8              ;
-    Bool_t passTrig_Mu17_Mu8_DZ             ;
-    Bool_t passTrig_Mu17_TkMu8_DZ           ;
-    Bool_t passTrig_Mu27_eta2p1             ;
-    Bool_t passTrig_IsoMu27_eta2p1          ;
-    Bool_t passTrig_IsoTkMu27_eta2p1        ;
-    Bool_t passTrig_IsoMu17_eta2p1          ;
-    Bool_t passTrig_IsoMu20_eta2p1          ;
-    Bool_t passTrig_IsoMu24_eta2p1          ;
-    Bool_t passTrig_IsoTkMu20_eta2p1        ;
-    Bool_t passTrig_IsoTkMu24_eta2p1        ;
-    Bool_t passTrig_TkMu24_eta2p1           ;
-    Bool_t passTrig_Mu45_eta2p1           ;
-    Bool_t passTrig_Ele27_WPLoose_eta2p1    ;
-    Bool_t passTrig_Ele27_WPTight_eta2p1    ;
-    Bool_t passTrig_Ele32_WPLoose_eta2p1    ;
-    Bool_t passTrig_Ele32_WPTight_eta2p1    ;
-    Bool_t passTrig_Ele17_Ele12_DZ          ;
-    Bool_t passTrig_Ele17_Ele12             ;
-    Bool_t passTrig_Mu8_Ele23               ;
-    Bool_t passTrig_Mu8_Ele17               ;
-    Bool_t passTrig_Mu23_Ele12              ;
-    Bool_t passTrig_Mu17_Ele12              ;
+    // Use scripts/write_trigger_code_from_ntuple.py
+    // to help generate the code 
+
+    //Declare triggers for TrigHltPhot
+    Bool_t passTrig_HLT_Photon120_R9Id90_HE10_Iso40_EBOnly;
+    Bool_t passTrig_HLT_Photon120_R9Id90_HE10_IsoM;
+    Bool_t passTrig_HLT_Photon120;
+    Bool_t passTrig_HLT_Photon135_PFMET100_JetIdCleaned;
+    Bool_t passTrig_HLT_Photon165_HE10;
+    Bool_t passTrig_HLT_Photon165_R9Id90_HE10_IsoM;
+    Bool_t passTrig_HLT_Photon175;
+    Bool_t passTrig_HLT_Photon250_NoHE;
+    Bool_t passTrig_HLT_Photon300_NoHE;
+    Bool_t passTrig_HLT_Photon500;
+    Bool_t passTrig_HLT_Photon600;
+
+    //Declare triggers for TrigHltMu
+    Bool_t passTrig_HLT_IsoMu17_eta2p1;
+    Bool_t passTrig_HLT_IsoMu20;
+    Bool_t passTrig_HLT_IsoMu20_eta2p1;
+    Bool_t passTrig_HLT_IsoMu24_eta2p1;
+    Bool_t passTrig_HLT_IsoMu27;
+    Bool_t passTrig_HLT_IsoTkMu20;
+    Bool_t passTrig_HLT_IsoTkMu20_eta2p1;
+    Bool_t passTrig_HLT_IsoTkMu24_eta2p1;
+    Bool_t passTrig_HLT_IsoTkMu27;
+    Bool_t passTrig_HLT_Mu20;
+    Bool_t passTrig_HLT_TkMu20;
+    Bool_t passTrig_HLT_Mu24_eta2p1;
+    Bool_t passTrig_HLT_TkMu24_eta2p1;
+    Bool_t passTrig_HLT_Mu27;
+    Bool_t passTrig_HLT_TkMu27;
+    Bool_t passTrig_HLT_Mu50;
+    Bool_t passTrig_HLT_Mu55;
+    Bool_t passTrig_HLT_Mu45_eta2p1;
+    Bool_t passTrig_HLT_Mu50_eta2p1;
+    Bool_t passTrig_HLT_Mu24;
+    Bool_t passTrig_HLT_Mu34;
+    Bool_t passTrig_HLT_IsoMu22;
+    Bool_t passTrig_HLT_IsoTkMu22;
+    Bool_t passTrig_HLT_IsoTkMu24;
+
+    //Declare triggers for TrigHltEl
+    Bool_t passTrig_HLT_Ele27_eta2p1_WPLoose_Gsf;
+    Bool_t passTrig_HLT_Ele27_eta2p1_WPTight_Gsf;
+    Bool_t passTrig_HLT_Ele32_eta2p1_WPLoose_Gsf;
+    Bool_t passTrig_HLT_Ele32_eta2p1_WPTight_Gsf;
+    Bool_t passTrig_HLT_Ele105_CaloIdVT_GsfTrkIdT;
+    Bool_t passTrig_HLT_Ele115_CaloIdVT_GsfTrkIdT;
+    Bool_t passTrig_HLT_Ele27_WPTight_Gsf;
+    //Declare triggers for TrigHltEl
+    Bool_t passTrig_HLT_Mu17_Photon30_CaloIdL_L1ISO;
+
 
     Float_t NLOWeight;
+    Int_t PassQuality;
 };
 
 #endif

@@ -4,32 +4,43 @@ import sys
 
 def get_remove_filter() :
 
-    return ['.*']
+    return ['EvtWeights']
 
 def get_keep_filter() :
 
     #return ['Evt.*', 'MET.*', 'GPdf.*', 'GPhotPt', 'GPhotEta', 'GPhotPhi', 'GPhotE' ,'GPhotSt', 'GPhotMotherId']
-    return ['Evt.*', 'GPdf.*', 'GPhot.*']
+    return ['Evt.*', 'GPdf.*']
 
 def config_analysis( alg_list, args ) :
 
-    #alg_list.append( build_electron( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=False ) )
-    #alg_list.append( build_electron( do_cutflow=True, do_hists=False, evalPID='medium', applyCorrections=False ) )
+    isData = args.pop('isData', False)
+
+    print 'isData = ', isData
+
+    if str(isData) =='true' :
+        workarea = os.getenv('WorkArea')
+        dq_filter = Filter( 'FilterDataQuality' )
+        dq_filter.add_var( 'jsonFile', '%s/TreeFilter/RecoPhoton15/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt' %workarea)
+        alg_list.append( dq_filter )
+
+    alg_list.append( build_electron( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=False ) )
+    #alg_list.append( build_electron( do_cutflow=True, do_hists=False, evalPID='tight', applyCorrections=False ) )
 
     alg_list.append( build_muon( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=False ) )
+    #alg_list.append( build_muon( do_cutflow=True, do_hists=False, evalPID='tight', applyCorrections=False ) )
 
-    #alg_list.append( build_photon( do_cutflow=False, do_hists=False, evalPID=None, doEVeto=False, applyCorrections=False ) )
-    #alg_list.append( build_photon( do_cutflow=True, do_hists=False, evalPID='medium', doEVeto=False, applyCorrections=False ) )
+    alg_list.append( build_photon( do_cutflow=False, do_hists=False, evalPID=None, doEVeto=False, applyCorrections=False ) )
+    #alg_list.append( build_photon( do_cutflow=True, do_hists=True, evalPID='medium', doEVeto=False, applyCorrections=False ) )
 
-    #alg_list.append( build_jet( do_cutflow=False, do_hists=False ) )
+    alg_list.append( build_jet( do_cutflow=False, do_hists=False ) )
 
-    #alg_list.append( Filter('BuildMET') )
+    alg_list.append( Filter('BuildMET') )
 
-    #alg_list.append( Filter('BuildTruth') )
+    alg_list.append( build_truth( args ) )
 
-    #alg_list.append( weight_event(args) )
+    alg_list.append( weight_event(args) )
 
-    #alg_list.append( Filter( 'BuildTriggerBits' ) )
+    alg_list.append( Filter( 'BuildTriggerBits' ) )
 
     #gph_filt = Filter( 'FilterGenPhoton' )
     #gph_filt.cut_pt = ' > 0.1 '
@@ -90,9 +101,6 @@ def build_muon( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections
 
 def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None, applyCorrections=False ) :
 
-    print '**************************************FIX**************************************'
-    print 'Not applying electron misshits cut'
-
     filt = Filter('BuildElectron')
 
     filt.do_cutflow = do_cutflow
@@ -103,9 +111,9 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     # as of Dec 2016
 
     filt.cut_pt = ' > 10'
-    #filt.cut_abssceta       = ' <2.5 '
+    filt.cut_abssceta       = ' <2.5 '
     #filt.cut_abssceta       = ' <1.479 '
-    filt.cut_abssceta       = ' >= 1.479 & < 2.5'
+    #filt.cut_abssceta       = ' >= 1.479 & < 2.5'
     # no crack for now
     #filt.cut_abssceta_crack = ' > 1.4442 & < 1.566 '
     #filt.invert('cut_abssceta_crack')
@@ -119,9 +127,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_ooEmooP_barrel_tight          = ' < 0.0129 '
     #filt.cut_d0_barrel_tight               = ' < 0.0111 '
     #filt.cut_z0_barrel_tight               = ' < 0.0466 '
-    #FIX
-    #filt.cut_misshits_barrel_tight         = ' < 1 '
-    #FIX
+    filt.cut_misshits_barrel_tight         = ' < 1 '
     filt.cut_passConvVeto_barrel_tight     = ' == 1 '
 
     filt.cut_sigmaIEIE_barrel_medium       = ' < 0.00998 '
@@ -132,9 +138,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_ooEmooP_barrel_medium         = ' < 0.134 '
     #filt.cut_d0_barrel_medium              = ' < 0.0118 '
     #filt.cut_z0_barrel_medium              = ' < 0.373 '
-    #FIX
-    #filt.cut_misshits_barrel_medium        = ' < 1 '
-    #FIX
+    filt.cut_misshits_barrel_medium        = ' < 1 '
     filt.cut_passConvVeto_barrel_medium    = ' == 1 '
 
     filt.cut_sigmaIEIE_barrel_loose        = ' < 0.011 '
@@ -145,9 +149,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_ooEmooP_barrel_loose          = ' < 0.241 '
     #filt.cut_d0_barrel_loose               = ' < 0.0261 '
     #filt.cut_z0_barrel_loose               = ' < 0.41 '
-    #FIX
-    #filt.cut_misshits_barrel_loose         = ' < 1 '
-    #FIX
+    filt.cut_misshits_barrel_loose         = ' < 1 '
     filt.cut_passConvVeto_barrel_loose     = ' == 1 '
 
     filt.cut_sigmaIEIE_barrel_veryloose    = ' < 0.0115 '
@@ -158,9 +160,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_ooEmooP_barrel_veryloose      = ' < 0.299 '
     #filt.cut_d0_barrel_veryloose           = ' < 0.0564 '
     #filt.cut_z0_barrel_veryloose           = ' < 0.472 '
-    #FIX
-    #filt.cut_misshits_barrel_veryloose     = ' < 2 '
-    #FIX
+    filt.cut_misshits_barrel_veryloose     = ' < 2 '
     filt.cut_passConvVeto_barrel_veryloose = ' == 1 '
 
     filt.cut_sigmaIEIE_endcap_tight        = ' < 0.0292 '
@@ -171,9 +171,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_ooEmooP_endcap_tight          = ' < 0.0129 '
     #filt.cut_d0_endcap_tight               = ' < 0.0351 '
     #filt.cut_z0_endcap_tight               = ' < 0.417 '
-    #FIX
-    #filt.cut_misshits_endcap_tight         = ' < 1 '
-    #FIX
+    filt.cut_misshits_endcap_tight         = ' < 1 '
     filt.cut_passConvVeto_endcap_tight     = ' == 1 '
 
     filt.cut_sigmaIEIE_endcap_medium       = ' < 0.0298 '
@@ -184,9 +182,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_ooEmooP_endcap_medium         = ' < 0.13 '
     #filt.cut_d0_endcap_medium              = ' < 0.0739 '
     #filt.cut_z0_endcap_medium              = ' < 0.602 '
-    #FIX
-    #filt.cut_misshits_endcap_medium        = ' <  1 '
-    #FIX
+    filt.cut_misshits_endcap_medium        = ' <  1 '
     filt.cut_passConvVeto_endcap_medium    = ' == 1 '
 
     filt.cut_sigmaIEIE_endcap_loose        = ' < 0.0314 '
@@ -197,9 +193,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_ooEmooP_endcap_loose          = ' < 0.14 '
     #filt.cut_d0_endcap_loose               = ' < 0.118 '
     #filt.cut_z0_endcap_loose               = ' < 0.822 '
-    #FIX
-    #filt.cut_misshits_endcap_loose         = ' <  1 '
-    #FIX
+    filt.cut_misshits_endcap_loose         = ' <  1 '
     filt.cut_passConvVeto_endcap_loose     = ' == 1 '
 
     filt.cut_sigmaIEIE_endcap_veryloose    = ' < 0.037 '
@@ -210,9 +204,7 @@ def build_electron( do_cutflow=False, do_hists=False, filtPID=None, evalPID=None
     filt.cut_ooEmooP_endcap_veryloose      = ' < 0.15 '
     #filt.cut_d0_endcap_veryloose           = ' < 0.222 '
     #filt.cut_z0_endcap_veryloose           = ' < 0.921 '
-    #FIX
-    #filt.cut_misshits_endcap_veryloose     = ' < 3 '
-    #FIX
+    filt.cut_misshits_endcap_veryloose     = ' < 3 '
     filt.cut_passConvVeto_endcap_veryloose = ' == 1 '
 
 
@@ -343,6 +335,21 @@ def build_jet( do_cutflow=False, do_hists=False ) :
         filt.add_hist( 'cut_abseta', 50, 0, 5 )
 
     return filt
+
+def build_truth( args ) :
+
+    truth_filt = Filter('BuildTruth') 
+
+    truth_filt.cut_lep_mother = ' == 24 || == -24 ||  == 11 || == -11 || == 12 || == -12 || == 13 || == -13 || == 14 || == -14 || == 15 || == -15 || == 16 || == -16 '
+
+    truth_filt.cut_ph_pt = ' > 5 '
+    truth_filt.cut_ph_IsPromptFinalState = ' == True '
+
+    doFHPFS = args.get( 'doFHPFS', False )
+    if doFHPFS == 'true' :
+        truth_filt.cut_ph_FromHardProcessFinalState = ' == True '
+
+    return truth_filt 
 
 def weight_event( args ) :
 

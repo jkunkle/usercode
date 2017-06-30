@@ -4,7 +4,7 @@ import sys
 
 def get_remove_filter() :
 
-    return ['.*']
+    return ['EvtWeights']
 
 def get_keep_filter() :
 
@@ -14,9 +14,11 @@ def get_keep_filter() :
 def config_analysis( alg_list, args ) :
 
     truth_filt = Filter('BuildTruth') 
-    truth_filt.cut_ph_pt = ' > 5 '
+    #truth_filt.cut_ph_pt = ' > 5 '
     truth_filt.cut_ph_status = ' == 1 '
-    truth_filt.cut_ph_mother = ' <= 25 '
+    #truth_filt.cut_ph_mother = ' <= 25 '
+    truth_filt.cut_ph_IsPromptFinalState = ' == True '
+    #truth_filt.cut_ph_FromHardProcessFinalState = ' == True '
 
     alg_list.append( truth_filt )
 

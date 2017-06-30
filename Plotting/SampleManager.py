@@ -780,10 +780,10 @@ class DrawConfig :
                 hist= ROOT.TH3F( histname, '',self.histpars[0], self.histpars[1], self.histpars[2], self.histpars[3], self.histpars[4], self.histpars[5], self.histpars[6], self.histpars[7], self.histpars[8] )
             else : # 1-d histogram
 
-                hist= ROOT.TH1F( histname, '', self.histpars[0], self.histpars[1], self.histpars[2])
+                hist= ROOT.TH1D( histname, '', self.histpars[0], self.histpars[1], self.histpars[2])
 
         elif type( self.histpars ) is list :
-            hist = ROOT.TH1F( histname, '', len(self.histpars)-1, array('f', self.histpars))
+            hist = ROOT.TH1D( histname, '', len(self.histpars)-1, array('f', self.histpars))
         else :
             print 'No histogram parameters were passed'
 
@@ -3125,7 +3125,6 @@ class SampleManager :
 
         else :
             if sample.chain is not None :
-                #self.draw_hist( sample, varexp, histname, full_selection, draw_opt='goff' )
                 res = sample.chain.Draw(varexp + ' >> ' + sample.hist.GetName(), selection , 'goff' )
                 if res < 0 :
                     sample.failed_draw=True

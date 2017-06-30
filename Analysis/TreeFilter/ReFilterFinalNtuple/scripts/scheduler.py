@@ -2,7 +2,6 @@ import os
 from argparse import ArgumentParser
 
 p = ArgumentParser()
-p.add_argument( '--run'     , dest='run'     , default=False, action='store_true', help='Run filtering'              )
 p.add_argument( '--check'   , dest='check'   , default=False, action='store_true', help='Run check of completion'    )
 p.add_argument( '--clean'   , dest='clean'   , default=False, action='store_true', help='Run cleanup of extra files' )
 p.add_argument( '--resubmit', dest='resubmit', default=False, action='store_true', help='Only submit missing output' )

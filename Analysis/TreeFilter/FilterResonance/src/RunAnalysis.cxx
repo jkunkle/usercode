@@ -58,9 +58,16 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::pt_lep_met      = 0;
     OUT::dphi_lep_met      = 0;
     OUT::mt_lep_met_ph   = 0;
+    OUT::mt_lep_met_ph_inv   = 0;
     OUT::RecoWMass       = 0;
     OUT::recoM_lep_nu_ph = 0;
+    OUT::recoMet_eta= 0;
+    OUT::recoW_pt= 0;
+    OUT::recoW_eta= 0;
+    OUT::recoW_phi= 0;
     OUT::nu_z_solution_success = 0;
+    OUT::m_ll = 0;
+    OUT::isBlinded = 0;
 
     // *************************
     // Declare Branches
@@ -69,6 +76,10 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("m_lep_ph"        , &OUT::m_lep_ph        , "m_lep_ph/F"  );
     outtree->Branch("m_lep_met_ph"        , &OUT::m_lep_met_ph        , "m_lep_met_ph/F"  );
     outtree->Branch("m_mt_lep_met_ph"        , &OUT::m_mt_lep_met_ph        , "m_mtlep_met_ph/F"  );
+    outtree->Branch("m_mt_lep_met_ph_forcewmass"        , &OUT::m_mt_lep_met_ph_forcewmass        , "m_mt_lep_met_ph_forcewmass/F"  );
+    outtree->Branch("mt_w"        , &OUT::mt_w        , "mt_w/F"  );
+    outtree->Branch("mt_res"        , &OUT::mt_res        , "mt_res/F"  );
+    outtree->Branch("mt_lep_ph"        , &OUT::mt_lep_ph        , "mt_lep_ph/F"  );
     outtree->Branch("dphi_lep_ph"        , &OUT::dphi_lep_ph        , "dphi_lep_ph/F"  );
     outtree->Branch("dr_lep_ph"        , &OUT::dr_lep_ph        , "dr_lep_ph/F"  );
     outtree->Branch("mt_lep_met"      , &OUT::mt_lep_met      , "mt_lep_met/F" );
@@ -76,13 +87,48 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("pt_lep_met"      , &OUT::pt_lep_met      , "pt_lep_met/F" );
     outtree->Branch("dphi_lep_met"    , &OUT::dphi_lep_met    , "dphi_lep_met/F" );
     outtree->Branch("mt_lep_met_ph"   , &OUT::mt_lep_met_ph   , "mt_lep_met_ph/F");
+    outtree->Branch("mt_lep_met_ph_inv"   , &OUT::mt_lep_met_ph_inv   , "mt_lep_met_ph_inv/F");
     outtree->Branch("RecoWMass"       , &OUT::RecoWMass       , "RecoWMass/F");
     outtree->Branch("recoM_lep_nu_ph" , &OUT::recoM_lep_nu_ph , "recoM_lep_nu_ph/F");
+    outtree->Branch("recoMet_eta" , &OUT::recoMet_eta, "recoMet_eta/F");
+    outtree->Branch("recoW_pt" , &OUT::recoW_pt, "recoW_pt/F");
+    outtree->Branch("recoW_eta" , &OUT::recoW_eta, "recoW_eta/F");
+    outtree->Branch("recoW_phi" , &OUT::recoW_phi, "recoW_phi/F");
+    outtree->Branch("m_ll" , &OUT::m_ll, "m_ll/F");
     outtree->Branch("nu_z_solution_success" , &OUT::nu_z_solution_success, "nu_z_solution_success/O");
+
+    outtree->Branch("leadjet_pt", &OUT::leadjet_pt, "leadjet_pt/F" );
+    outtree->Branch("subljet_pt", &OUT::subljet_pt, "subljet_pt/F" );
+    outtree->Branch("leaddijet_m", &OUT::leaddijet_m, "leaddijet_m/F" );
+    outtree->Branch("leaddijet_pt", &OUT::leaddijet_pt, "leaddijet_pt/F" );
+    outtree->Branch("massdijet_m", &OUT::massdijet_m, "massdijet_m/F" );
+    outtree->Branch("massdijet_pt", &OUT::massdijet_pt, "massdijet_pt/F" );
+
+
+
+
+    outtree->Branch("isBlinded" , &OUT::isBlinded, "isBlinded/O");
+
+    BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
+    
+        if( mod_conf.GetName() == "FilterBlind" ) { 
+            std::map<std::string, std::string>::const_iterator eitr = mod_conf.GetInitData().find( "isData" );
+            if( eitr != mod_conf.GetInitData().end() ) {
+                std::string data = eitr->second;
+                std::transform(data.begin(), data.end(), data.begin(), ::tolower);
+                if( data=="true") _isData=true;
+                else              _isData=false;
+            }
+        }
+    }
 
 }
 
 bool RunModule::execute( std::vector<ModuleConfig> & configs ) {
+
+    _selectedMuons.clear();
+    _selectedElectrons.clear();
+    _selectedPhotons.clear();
 
     // In BranchInit
     CopyInputVarsToOutput();
@@ -97,7 +143,7 @@ bool RunModule::execute( std::vector<ModuleConfig> & configs ) {
 
 }
 
-bool RunModule::ApplyModule( ModuleConfig & config ) const {
+bool RunModule::ApplyModule( ModuleConfig & config ) {
 
     bool keep_evt = true;
 
@@ -110,27 +156,50 @@ bool RunModule::ApplyModule( ModuleConfig & config ) const {
     if( config.GetName() == "FilterPhoton" ) {
         FilterPhoton( config );
     }
+    if( config.GetName() == "FilterJet" ) {
+        FilterJet( config );
+    }
     if( config.GetName() == "BuildEventVars" ) {
         BuildEventVars( config );
     }
     if( config.GetName() == "FilterEvent" ) {
         keep_evt &= FilterEvent( config );
     }
+    if( config.GetName() == "FilterBlind" ) {
+        keep_evt &= FilterBlind( config );
+    }
 
     return keep_evt;
 
 }
 
-void RunModule::FilterMuon( ModuleConfig & config ) const {
+void RunModule::FilterMuon( ModuleConfig & config ) {
 
     OUT::mu_n          = 0;
     ClearOutputPrefix("mu_");
 
     for( int idx = 0; idx < IN::mu_n; ++idx ) {
 
-        if( !config.PassFloat( "cut_pt", IN::mu_pt->at(idx) ) ) continue;
+        //std::cout << "Muon pt = " << IN::mu_pt->at(idx) << std::endl;
+
+        if( !config.PassFloat( "cut_pt", IN::mu_pt->at(idx) ) ) {
+            //std::cout << "FAIL" << std::endl;
+            continue;
+        } 
+       // else {
+       //     std::cout << "PASS" << std::endl;
+       // }
         if( !config.PassFloat( "cut_eta", fabs(IN::mu_eta->at(idx)) ) ) continue;
         if( !config.PassBool( "cut_tight", IN::mu_passTight->at(idx) ) ) continue;
+
+        TLorentzVector mulv;
+        mulv.SetPtEtaPhiE( IN::mu_pt->at(idx), 
+                           IN::mu_eta->at(idx),
+                           IN::mu_phi->at(idx),
+                           IN::mu_e->at(idx)
+                           );
+
+        _selectedMuons.push_back( mulv );
 
         CopyPrefixIndexBranchesInToOut( "mu_", idx );
         OUT::mu_n++;
@@ -140,7 +209,7 @@ void RunModule::FilterMuon( ModuleConfig & config ) const {
 
 }
 
-void RunModule::FilterElectron( ModuleConfig & config ) const {
+void RunModule::FilterElectron( ModuleConfig & config ) {
 
     OUT::el_n          = 0;
     ClearOutputPrefix("el_");
@@ -151,15 +220,35 @@ void RunModule::FilterElectron( ModuleConfig & config ) const {
         if( !config.PassFloat( "cut_eta", fabs(IN::el_eta->at(idx)) ) ) continue;
         if( !config.PassBool( "cut_tight", IN::el_passTight->at(idx) ) ) continue;
 
+        TLorentzVector ellv;
+        ellv.SetPtEtaPhiE( IN::el_pt->at(idx), 
+                           IN::el_eta->at(idx),
+                           IN::el_phi->at(idx),
+                           IN::el_e->at(idx)
+                           );
+
+        float min_mu_dr = 100.0;
+        for( unsigned muidx=0; muidx < _selectedMuons.size(); ++muidx ) {
+
+            float dr = _selectedMuons[muidx].DeltaR( ellv );
+
+            if( dr < min_mu_dr ) {
+                min_mu_dr = dr;
+            }
+        }
+
+        if( !config.PassFloat( "cut_muon_dr", min_mu_dr ) ) continue;
+
+        _selectedElectrons.push_back( ellv );
+
         CopyPrefixIndexBranchesInToOut( "el_", idx );
         OUT::el_n++;
 
     }
 
-
 }
 
-void RunModule::FilterPhoton( ModuleConfig & config ) const {
+void RunModule::FilterPhoton( ModuleConfig & config ) {
 
     OUT::ph_n          = 0;
     ClearOutputPrefix("ph_");
@@ -172,22 +261,137 @@ void RunModule::FilterPhoton( ModuleConfig & config ) const {
         if( !config.PassBool( "cut_medium", IN::ph_passMedium->at(idx) ) ) continue;
         if( !config.PassBool( "cut_tight", IN::ph_passTight->at(idx) ) ) continue;
 
+        TLorentzVector phlv;
+        phlv.SetPtEtaPhiE( IN::ph_pt->at(idx), 
+                           IN::ph_eta->at(idx),
+                           IN::ph_phi->at(idx),
+                           IN::ph_e->at(idx) 
+                           );
+
+        float min_mu_dr = 100.0;
+        for( unsigned muidx=0; muidx < _selectedMuons.size(); ++muidx ) {
+
+            float dr = _selectedMuons[muidx].DeltaR( phlv );
+
+            if( dr < min_mu_dr ) {
+                min_mu_dr = dr;
+            }
+        }
+
+        if( !config.PassFloat( "cut_muon_dr", min_mu_dr ) ) continue;
+
+        float min_el_dr = 100.0;
+        for( unsigned elidx=0; elidx < _selectedElectrons.size(); ++elidx ) {
+
+            float dr = _selectedElectrons[elidx].DeltaR( phlv );
+
+            if( dr < min_el_dr ) {
+                min_el_dr = dr;
+            }
+        }
+
+        if( !config.PassFloat( "cut_electron_dr", min_el_dr ) ) continue;
+
+
+        _selectedPhotons.push_back( phlv );
+
         CopyPrefixIndexBranchesInToOut( "ph_", idx );
         OUT::ph_n++;
 
     }
+}
+
+void RunModule::FilterJet( ModuleConfig & config ) const {
+
+    OUT::jet_n          = 0;
+    ClearOutputPrefix("jet_");
+
+    for( int idx = 0; idx < IN::jet_n; ++idx ) {
+
+        TLorentzVector jetlv;
+        jetlv.SetPtEtaPhiE( IN::jet_pt->at(idx), 
+                            IN::jet_eta->at(idx),
+                            IN::jet_phi->at(idx),
+                            IN::jet_e->at(idx) 
+                            );
+
+        if( !config.PassFloat( "cut_pt", IN::jet_pt->at(idx) ) ) continue;
+
+        float min_mu_dr = 100.0;
+        for( unsigned muidx=0; muidx < _selectedMuons.size(); ++muidx ) {
+
+            float dr = _selectedMuons[muidx].DeltaR( jetlv );
+
+            if( dr < min_mu_dr ) {
+                min_mu_dr = dr;
+            }
+        }
+
+        if( !config.PassFloat( "cut_muon_dr", min_mu_dr ) ) continue;
+
+        float min_el_dr = 100.0;
+        for( unsigned elidx=0; elidx < _selectedElectrons.size(); ++elidx ) {
+
+            float dr = _selectedElectrons[elidx].DeltaR( jetlv );
+
+            if( dr < min_el_dr ) {
+                min_el_dr = dr;
+            }
+        }
+
+        if( !config.PassFloat( "cut_electron_dr", min_el_dr ) ) continue;
+
+        float min_ph_dr = 100.0;
+        for( unsigned phidx=0; phidx < _selectedPhotons.size(); ++phidx ) {
+
+            float dr = _selectedPhotons[phidx].DeltaR( jetlv );
+
+            if( dr < min_ph_dr ) {
+                min_ph_dr = dr;
+            }
+        }
+
+        if( !config.PassFloat( "cut_photon_dr", min_ph_dr ) ) continue;
 
 
+        CopyPrefixIndexBranchesInToOut( "jet_", idx );
+        OUT::jet_n++;
 
+    }
 }
 
 bool RunModule::FilterEvent( ModuleConfig & config ) const {
 
     bool keep_event = true;
 
-    if( !config.PassInt( "cut_el_n", OUT::el_n ) ) keep_event=false;
-    if( !config.PassInt( "cut_mu_n", OUT::mu_n ) ) keep_event=false;
-    if( !config.PassInt( "cut_ph_n", OUT::ph_n ) ) keep_event=false;
+    int n_mu = 0;
+    int n_mu_pt30 = 0;
+    for( int midx = 0; midx < OUT::mu_n; ++midx ) {
+        n_mu++;
+        if( OUT::mu_pt->at(midx) > 30 ) {
+            n_mu_pt30++;
+        }
+    }
+
+    int n_el = 0;
+    int n_el_pt30 = 0;
+    for( int eidx = 0; eidx < OUT::el_n; ++eidx ) {
+        n_el++;
+        if( OUT::el_pt->at(eidx) > 30 ) {
+            n_el_pt30++;
+        }
+    }
+
+
+    if( !config.PassInt( "cut_el_n", n_el   ) ) keep_event=false;
+    if( !config.PassInt( "cut_el_pt30_n", n_el_pt30   ) ) keep_event=false;
+    if( !config.PassInt( "cut_mu_n", n_mu   ) ) keep_event=false;
+    if( !config.PassInt( "cut_mu_pt30_n", n_mu_pt30   ) ) keep_event=false;
+    if( !config.PassInt( "cut_ph_n", OUT::ph_n   ) ) keep_event=false;
+    if( !config.PassInt( "cut_jet_n", OUT::jet_n ) ) keep_event=false;
+    
+    if( !config.PassBool( "cut_trig_Ele27_eta2p1_tight", IN::passTrig_HLT_Ele27_eta2p1_WPTight_Gsf) ) keep_event=false;
+    if( !config.PassBool( "cut_trig_Mu27_IsoORIsoTk", (IN::passTrig_HLT_IsoMu27 | IN::passTrig_HLT_IsoTkMu27) ) ) keep_event=false;
 
     return keep_event;
     
@@ -199,6 +403,10 @@ void RunModule::BuildEventVars( ModuleConfig & config ) const {
     OUT::m_lep_ph = 0;
     OUT::m_lep_met_ph = 0;
     OUT::m_mt_lep_met_ph = 0;
+    OUT::m_mt_lep_met_ph_forcewmass = 0;
+    OUT::mt_w = 0;
+    OUT::mt_res = 0;
+    OUT::mt_lep_ph = 0;
     OUT::dphi_lep_ph = 0;
     OUT::dr_lep_ph = 0;
     OUT::m_lep_met = 0;
@@ -206,8 +414,21 @@ void RunModule::BuildEventVars( ModuleConfig & config ) const {
     OUT::pt_lep_met = 0;
     OUT::dphi_lep_met = 0;
     OUT::mt_lep_met_ph = 0;
+    OUT::mt_lep_met_ph_inv = 0;
     OUT::RecoWMass = 0;
     OUT::recoM_lep_nu_ph = 0;
+    OUT::recoMet_eta= 0;
+    OUT::recoW_pt= 0;
+    OUT::recoW_eta= 0;
+    OUT::recoW_phi= 0;
+    OUT::m_ll = 0;
+
+    OUT::leadjet_pt = 0;
+    OUT::subljet_pt = 0;
+    OUT::leaddijet_m = 0;
+    OUT::leaddijet_pt = 0;
+    OUT::massdijet_m = 0;
+    OUT::massdijet_pt = 0;
 
     std::vector<TLorentzVector> leptons;
     std::vector<TLorentzVector> photons;
@@ -222,15 +443,15 @@ void RunModule::BuildEventVars( ModuleConfig & config ) const {
         leptons.push_back(tlv);
     }
 
-    //for( int idx = 0; idx < OUT::el_n; ++idx ) {
-    //    TLorentzVector tlv;
-    //    tlv.SetPtEtaPhiE( OUT::el_pt->at(idx), 
-    //                      OUT::el_eta->at(idx), 
-    //                      OUT::el_phi->at(idx), 
-    //                      OUT::el_e->at(idx) );
+    for( int idx = 0; idx < OUT::el_n; ++idx ) {
+        TLorentzVector tlv;
+        tlv.SetPtEtaPhiE( OUT::el_pt->at(idx), 
+                          OUT::el_eta->at(idx), 
+                          OUT::el_phi->at(idx), 
+                          OUT::el_e->at(idx) );
 
-    //    leptons.push_back(tlv);
-    //}
+        leptons.push_back(tlv);
+    }
 
 
     for( int idx = 0; idx < OUT::ph_n; ++idx ) {
@@ -258,6 +479,10 @@ void RunModule::BuildEventVars( ModuleConfig & config ) const {
 
         OUT::RecoWMass = ( leptons[0] + metlv ).M();
 
+        if( leptons.size() > 1 ) {
+            OUT::m_ll = (leptons[0] + leptons[1]).M();
+        }
+
     }
 
     if( photons.size() > 0 ) {
@@ -269,19 +494,122 @@ void RunModule::BuildEventVars( ModuleConfig & config ) const {
             OUT::dphi_lep_ph = leptons[0].DeltaPhi(photons[0] );
             OUT::dr_lep_ph = leptons[0].DeltaR(photons[0] );
             OUT::recoM_lep_nu_ph = ( leptons[0] + metlv + photons[0] ).M();
-            //OUT::mt_lep_met_ph = Utils::calc_mt( leptons[0] + metlvOrig, photons[0]);
-            OUT::mt_lep_met_ph = Utils::calc_mt( leptons[0] + photons[0], metlvOrig);
+            OUT::recoMet_eta = metlv.Eta() ;
+            OUT::mt_lep_met_ph = Utils::calc_mt( leptons[0] + metlvOrig, photons[0]);
+            OUT::mt_lep_met_ph_inv = Utils::calc_mt( leptons[0] + photons[0], metlvOrig);
+
+            TLorentzVector recoW = leptons[0] + metlv;
+
+            OUT::recoW_pt = recoW.Pt() ;
+            OUT::recoW_eta = recoW.Eta() ;
+            OUT::recoW_phi = recoW.Phi() ;
 
             float mt = Utils::calc_mt( leptons[0], metlvOrig );
 
             TLorentzVector wlv;
             wlv.SetXYZM( leptons[0].Px() + metlvOrig.Px(), leptons[0].Py() + metlvOrig.Py(), leptons[0].Pz(), mt );
 
+            TLorentzVector wlv_force;
+            wlv_force.SetXYZM( leptons[0].Px() + metlvOrig.Px(), leptons[0].Py() + metlvOrig.Py(), leptons[0].Pz(), _m_w );
             OUT::m_mt_lep_met_ph = ( wlv + photons[0] ).M();
+            OUT::m_mt_lep_met_ph_forcewmass = ( wlv_force + photons[0] ).M();
+            OUT::mt_w = mt;
+
+            
+            TLorentzVector lep_trans; 
+            TLorentzVector ph_trans; 
+            lep_trans.SetPtEtaPhiM( leptons[0].Pt(), 0.0, leptons[0].Phi(), leptons[0].M() );
+            ph_trans.SetPtEtaPhiM( photons[0].Pt(), 0.0, photons[0].Phi(), photons[0].M() );
+
+            OUT::mt_res = ( lep_trans + ph_trans + metlvOrig ).M();
+            OUT::mt_lep_ph = ( lep_trans + ph_trans ).M();
+            
 
         }
     }
+
+    std::vector<std::pair<float, int> > sorted_jets;
+    std::vector<TLorentzVector> jet_lvs;
+
+    for( int jeti = 0; jeti < OUT::jet_n; ++jeti ) {
+        sorted_jets.push_back( std::make_pair( OUT::jet_pt->at(jeti ), jeti ) );
+
+        TLorentzVector lv;
+        lv.SetPtEtaPhiE( OUT::jet_pt->at(jeti),
+                        OUT::jet_eta->at(jeti),
+                        OUT::jet_phi->at(jeti),
+                        OUT::jet_e->at(jeti)
+                );
+        jet_lvs.push_back( lv );
+    }
+
+
+    std::sort(sorted_jets.rbegin(), sorted_jets.rend());
+
+    if( OUT::jet_n > 0 ) {
+        OUT::leadjet_pt = OUT::jet_pt->at(0);
+
+        if( OUT::jet_n > 1 ) {
+            OUT::leadjet_pt = OUT::jet_pt->at(sorted_jets[0].second);
+            OUT::subljet_pt = OUT::jet_pt->at(sorted_jets[1].second);
+
+            OUT::leaddijet_m  = (jet_lvs[sorted_jets[0].second]+jet_lvs[sorted_jets[1].second]).M();
+            OUT::leaddijet_pt = (jet_lvs[sorted_jets[0].second]+jet_lvs[sorted_jets[1].second]).Pt();
+
+            float min_mass = 100000000.;
+            int min_idx1 = -1;
+            int min_idx2 = -1;
+            for( unsigned i = 0 ; i < jet_lvs.size(); ++i ) {
+                for( unsigned j = i+1 ; j < jet_lvs.size(); ++j ) {
+
+                    float mass = ( jet_lvs[i] + jet_lvs[j] ).M();
+                    float diff = fabs( 91.2 - mass );
+
+                    if( diff < min_mass ) {
+                        min_mass = diff;
+                        min_idx1 = i;
+                        min_idx2 = j;
+                    }
+                }
+            }
+
+            OUT::massdijet_m  = ( jet_lvs[min_idx1] + jet_lvs[min_idx2] ).M();
+            OUT::massdijet_pt = ( jet_lvs[min_idx1] + jet_lvs[min_idx2] ).Pt();
+        }
+
+    }
+
 }
+
+bool RunModule::FilterBlind( ModuleConfig & config ) const {
+
+    bool keep_event = true;
+
+    bool pass_blind = true;
+    if( OUT::ph_n > 0 ) {
+        if( !config.PassFloat( "cut_ph_pt_lead", OUT::ph_pt->at(0)) ) pass_blind=false;
+    }
+    if( !config.PassFloat( "cut_mt_lep_met_ph", OUT::mt_lep_met_ph) ) pass_blind=false;
+    if( !config.PassFloat( "cut_mt_res", OUT::mt_res) ) pass_blind=false;
+
+    if( OUT::jet_n > 1 ) {
+        if( !config.PassFloat( "cut_abs_dijet_m_from_z", fabs(OUT::leaddijet_m-91.2)) ) pass_blind=false;
+    }
+
+
+
+    if( !pass_blind ) {
+        OUT::isBlinded=true;
+        if( OUT::EvtIsRealData ) keep_event=false;
+    }
+    else {
+        OUT::isBlinded=false;
+    }
+
+    return keep_event;
+
+}
+
 
 bool RunModule::get_constriained_nu_pz( const TLorentzVector lepton, TLorentzVector &metlv ) const {
 
@@ -405,5 +733,6 @@ bool RunModule::solve_quadratic( float Aval, float Bval, float Cval, float & sol
 
 RunModule::RunModule() {
     _m_w = 80.385;
+    _isData = false;
 }
 

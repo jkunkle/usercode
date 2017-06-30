@@ -35,9 +35,9 @@ def main() :
         return
 
 
-    #doVarScaleComparison( sampMan )
+    doVarScaleComparison( sampMan )
 
-    doPhiCutComparison( sampMan )
+    #doPhiCutComparison( sampMan )
 
 def doPhiCutComparison( sampMan ) :
 
@@ -85,7 +85,7 @@ def doPhiCutComparison( sampMan ) :
 def doVarScaleComparison( sampMan ) :
 
 
-    signal = 'ResonanceMass400Width1'
+    signal = 'ResonanceMass200'
     background = 'MCBackground'
     selection = 'mu_n==1 && ph_pt[0] > 50 && fabs(dphi_lep_ph) > 1.5 && fabs(dphi_lep_met) < 1.5 '
 
@@ -96,14 +96,17 @@ def doVarScaleComparison( sampMan ) :
 
 
     theta = math.atan(1./1.96)
-    results_comb = MakeChi2Comparison( sampMan, var='ph_pt[0] *sin( %f ) + mt_lep_met_ph*cos(%f)' %(theta,theta), selection = selection, binning=binning,signal=signal, background=background, fit_min=60, fit_max=600, sig_min=0.01, sig_max = 10, nsteps = 1000 )
-    results_pt = MakeChi2Comparison( sampMan, var='ph_pt[0]', selection = selection, signal=signal, background=background, binning=binning_pt, fit_min=50, fit_max=400, sig_min=0.01, sig_max = 10, nsteps = 1000 )
-    results_mt = MakeChi2Comparison( sampMan, var='mt_lep_met_ph', selection = selection, signal=signal, background=background, binning=binning, fit_min=60, fit_max=600, sig_min=0.01, sig_max = 10, nsteps = 1000 )
+    results_comb = MakeChi2Comparison( sampMan, var='ph_pt[0] *sin( %f ) + mt_lep_met_ph*cos(%f)' %(theta,theta), selection = selection, binning=binning,signal=signal, background=background, fit_min=60, fit_max=600, sig_min=0.01, sig_max = 100, nsteps = 1000 )
+    results_pt = MakeChi2Comparison( sampMan, var='ph_pt[0]', selection = selection, signal=signal, background=background, binning=binning_pt, fit_min=50, fit_max=400, sig_min=0.01, sig_max = 100, nsteps = 1000 )
+    results_mt = MakeChi2Comparison( sampMan, var='mt_lep_met_ph', selection = selection, signal=signal, background=background, binning=binning, fit_min=60, fit_max=600, sig_min=0.01, sig_max = 100, nsteps = 1000 )
+    results_m_mt = MakeChi2Comparison( sampMan, var='ph_pt[0] *sin( %f ) + mt_res*cos(%f)' %(theta,theta), selection = selection, signal=signal, background=background, binning=binning, fit_min=60, fit_max=600, sig_min=0.01, sig_max = 100, nsteps = 1000 )
 
     graph_pt = ROOT.TGraph( len( results_pt ) )
     graph_pt.SetName( 'graph_pt' )
     graph_mt = ROOT.TGraph( len( results_mt ) )
     graph_mt.SetName( 'graph_mt' )
+    graph_m_mt = ROOT.TGraph( len( results_m_mt ) )
+    graph_m_mt.SetName( 'graph_m_mt' )
     graph_comb = ROOT.TGraph( len( results_comb ) )
     graph_comb.SetName( 'graph_comb' )
 
@@ -111,6 +114,8 @@ def doVarScaleComparison( sampMan ) :
         graph_pt.SetPoint( idx, point[0], point[1] )
     for idx, point in enumerate(results_mt) :
         graph_mt.SetPoint( idx, point[0], point[1] )
+    for idx, point in enumerate(results_m_mt) :
+        graph_m_mt.SetPoint( idx, point[0], point[1] )
     for idx, point in enumerate(results_comb) :
         graph_comb.SetPoint( idx, point[0], point[1] )
 
@@ -122,13 +127,26 @@ def doVarScaleComparison( sampMan ) :
     graph_mt.SetMarkerColor( ROOT.kBlue)
     graph_mt.SetMarkerStyle( 20 )
 
+    graph_m_mt.SetLineColor( ROOT.kGreen)
+    graph_m_mt.SetMarkerColor( ROOT.kGreen)
+    graph_m_mt.SetMarkerStyle( 20 )
+
     graph_comb.SetLineColor( ROOT.kMagenta)
     graph_comb.SetMarkerColor( ROOT.kMagenta)
     graph_comb.SetMarkerStyle( 20 )
 
     graph_pt.Draw('AP')
     graph_mt.Draw('Psame')
+    graph_m_mt.Draw('Psame')
     graph_comb.Draw('Psame')
+
+    leg = ROOT.TLegend( 0.5, 0.5, 0.9, 0.9)
+    leg.AddEntry( graph_pt  , 'pT'   )
+    leg.AddEntry( graph_mt  , 'mT'   )
+    leg.AddEntry( graph_m_mt, 'mT_res' )
+    leg.AddEntry( graph_comb, 'Comb' )
+
+    leg.Draw()
 
     raw_input('comb')
 

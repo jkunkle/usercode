@@ -41,9 +41,9 @@ def main() :
 
 def doPhiCutComparison( sampMan ) :
 
-    signal = 'ResonanceMass400Width1'
+    signal = 'ResonanceMass400'
     background = 'MCBackground'
-    selection = 'mu_n==1 && ph_pt[0] > 50  '
+    selection = 'mu_n==1 && ph_pt[0] > 30  '
 
     nsteps = 20
 
@@ -85,9 +85,9 @@ def doPhiCutComparison( sampMan ) :
 def doVarScaleComparison( sampMan ) :
 
 
-    signal = 'ResonanceMass200'
+    signal = 'ResonanceMass400'
     background = 'MCBackground'
-    selection = 'mu_n==1 && ph_pt[0] > 50 && fabs(dphi_lep_ph) > 1.5 && fabs(dphi_lep_met) < 1.5 '
+    selection = 'mu_n==1 && ph_pt[0] > 30 && fabs(dphi_lep_ph) > 1.5 && fabs(dphi_lep_met) < 1.5 '
 
     bin_width = 20
     binning = range( 60, 600, 20 ) 
@@ -186,7 +186,8 @@ def MakeChi2Comparison( sampMan, var, selection, binning, signal, background, fi
     #data_hist = ROOT.RooDataHist( 'data_hist', 'data_hist', ROOT.RooArgList( x_var ), data)
     #data_pdf= ROOT.RooHistPdf( 'data_pdf', 'data_pdf', ROOT.RooArgSet( x_var ), data_hist )
 
-    chi2 = bkg_hist.Chi2Test( data , 'WWCHI2/NDF')
+    #chi2 = bkg_hist.Chi2Test( data , 'WWCHI2/NDF')
+    chi2 = bkg_hist.Chi2Test( data , 'WWCHI2')
 
     #mychi2 = calc_chi_2( bkg_hist, data)
 
@@ -233,7 +234,8 @@ def MakeChi2Comparison( sampMan, var, selection, binning, signal, background, fi
         #model.Draw()
         #raw_input('cont')
 
-        chi2 = model.Chi2Test( data, 'WWCHI2/NDF' )
+        #chi2 = model.Chi2Test( data, 'WWCHI2/NDF' )
+        chi2 = model.Chi2Test( data, 'WWCHI2' )
         
         #chi2 = model.createChi2( data_hist )
         this_chi2 = chi2/(data.GetNbinsX() -1 )

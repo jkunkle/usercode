@@ -43,13 +43,24 @@ def RunJobs( jobs, configs, options, dry_run=False ) :
     enableKeepFilter   = options.get('enableKeepFilter'   , False         )
     enableRemoveFilter = options.get('enableRemoveFilter' , False         ) 
     disableOutputTree  = options.get('disableOutputTree'  , False         )
+    PUPath             = options.get('PUPath'             , None          )
 
     if run :
         for config in configs :
             first_data = True
             first_mc = True
+
+            select_dataset = config.get('dataset', [] )
+            if not isinstance( select_dataset, list ) :
+                select_dataset = [select_dataset]
     
             for job in jobs_data :
+
+                if select_dataset :
+                    if job.sample not in select_dataset :
+                        print 'Skipping data sample %s that is not requested for this configuration' %job.sample
+                        continue
+
                 job_exename = '%s_Data_%s' %(exename, config['tag'] )
     
                 module_arg = dict(config.get('args', {}))
@@ -111,6 +122,10 @@ def RunJobs( jobs, configs, options, dry_run=False ) :
                         module_str += '\'%s\' : \'%s\',' %( key, val)
                     else :
                         module_str += '\'%s\' : %s,' %( key, val)
+
+                if PUPath is not None :
+
+                    module_str += '\'sampleFile\' : \'%s/%s/hist.root\', ' %( PUPath, job.sample ) 
     
                 module_str += '}'
     
@@ -153,9 +168,17 @@ def RunJobs( jobs, configs, options, dry_run=False ) :
     
     if check :
         for config in configs :
+            select_dataset = config.get('dataset', [] )
+            if not isinstance( select_dataset, list ) :
+                select_dataset = [select_dataset]
         
             for  job in (jobs_data + jobs_mc) :
         
+                if job.isData and select_dataset :
+                    if job.sample not in select_dataset :
+                        print 'Skipping data sample %s that is not requested for this configuration' %job.sample
+                        continue
+
                 outsample = job.sample
                 suffix = getattr(job, 'suffix', None )
                 if suffix is not None :

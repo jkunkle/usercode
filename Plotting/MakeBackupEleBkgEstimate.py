@@ -1,6 +1,8 @@
 import pickle
 import os
 from uncertainties import ufloat
+import ROOT
+ROOT.PyConfig.IgnoreCommandLineOptions = True
 from SampleManager import SampleManager
 from MakeBackgroundEstimates import get_dirs_and_files, get_mapped_directory, save_hist, add_syst_to_hist
 
@@ -13,7 +15,6 @@ p.add_argument('--baseDir',     default=None,  type=str ,        dest='baseDir',
 
 options = p.parse_args()
 
-import ROOT
 
 lead_dr_cut = 0.4
 

@@ -13,6 +13,7 @@ import eos_utilities
 import random
 from array import array
 import time
+import analysis_utils
 
 from uncertainties import ufloat
 from uncertainties import umath
@@ -25,29 +26,6 @@ import collections
 ROOT.gROOT.SetBatch(False)
 
 ROOT.gStyle.SetPalette(1)
-
-class Printer() :
-
-    def __init__ (self) :
-        self.entries = []
-
-    def AddLine( self, line ) :
-        self.entries.append( line )
-
-    def Print(self) :
-
-        # get number of columns
-        max_cols = max( [len(line) for line in self.entries ] )
-        colwidths = [0]*max_cols
-
-        # collect max length of each column
-        for line in self.entries :
-            for idx, col in enumerate(line) :
-                if len(col) > colwidths[idx] :
-                    colwidths[idx] = len(col)
-
-        for line in self.entries :
-            print ' '.join( [col.ljust(colwidths[idx]) for idx, col in enumerate(line) ] )
 
 class Sample :
     """ Store information about one sample """
@@ -100,7 +78,12 @@ class Sample :
         self.drawRatio = kwargs.get('drawRatio', False)
 
         # scale is the weight applied to this sample, default=1.0
-        self.scale = kwargs.get('scale', 1.0)
+        self.scale         = kwargs.get('scale', 1.0)
+
+        # hold the cross section info
+        self.cross_section = kwargs.get('cross_section', 0.0)
+
+        self.averageSamples = kwargs.get('averageSamples', False )
 
         # groupedSamples is filled if this is a grouping of other samples.
         # if a sample is grouped, it is drawn as the sum of all entries
@@ -127,6 +110,7 @@ class Sample :
         self.hist.SetMarkerColor( self.color )
         self.hist.SetTitle('')
         self.hist.Scale( self.scale )
+        print 'Scale %s by %f' %( self.name, self.scale )
         if self.isData :
             self.hist.SetMarkerStyle( 20 )
             self.hist.SetMarkerSize( 1.15 )
@@ -342,18 +326,18 @@ class DrawConfig :
         labelLoc = self.label_config.get('labelLoc', None)
         if labelStyle is None:
 
-            text_x = 0.35
-            text_y = 0.85
+            text_x = 0.18
+            text_y = 0.93
 
             if labelLoc == 'topright' :
                 text_x = 0.75
                 text_y = 0.93
-            atlaslabel = ROOT.TLatex()
-            atlaslabel.SetNDC()
-            atlaslabel.SetTextSize( 0.04 )
-            atlaslabel.SetText(text_x, text_y, 'CMS Internal')
+            cmslabel = ROOT.TLatex()
+            cmslabel.SetNDC()
+            cmslabel.SetTextSize( 0.04 )
+            cmslabel.SetText(text_x, text_y, 'CMS Internal')
 
-            labels.append(atlaslabel)
+            labels.append(cmslabel)
 
         elif labelStyle.count('fancy') :
             extText = 'Internal'
@@ -362,7 +346,7 @@ class DrawConfig :
 
             labeltext = '19.4 fb^{-1} (8 TeV)'
             if labelStyle.count('13') :
-                labeltext = '36.2 fb^{-1} (13 TeV)'
+                labeltext = '36 fb^{-1} (13 TeV)'
 
             rootslabel = ROOT.TLatex()
             cmslabel = ROOT.TLatex()
@@ -381,8 +365,8 @@ class DrawConfig :
             rootslabel .SetTextSize(0.045)
             cmslabel  .SetTextSize(0.055)
 
-            cmslabel.SetText( 0.18, 0.87, 'CMS' )
-            extlabel.SetText( 0.18, 0.82, extText )
+            cmslabel.SetText( 0.15, 0.93, 'CMS' )
+            extlabel.SetText( 0.25, 0.93, extText )
             #rootslabel.SetText(0.65, 0.93, '#font[132]{#sqrt{s} = 8 TeV, L = 19.4 fb^{-1} }' )
 
             rootslabel.SetText(0.73, 0.93, labeltext  )
@@ -851,7 +835,7 @@ class SampleManager :
 
         # if the cross section file is given, open it
         # and grab the cross section map out of it
-        self.weightMap = self.read_xsfile( xsFile, lumi )
+        self.weightMap = analysis_utils.read_xsfile( xsFile, lumi, print_values=True )
 
         self.curr_hists            = {}
         self.curr_canvases         = {}
@@ -1185,6 +1169,34 @@ class SampleManager :
             
 
     #--------------------------------
+
+    def get_sample_branch_minmax( self, samp, branch ) :
+
+        print 'Get %s, %s' %( samp, branch)
+
+        if isinstance( samp, str ) :
+            samp = self.get_samples(name=samp)[0]
+
+        if samp.groupedSamples :
+            min_val_tot = None
+            max_val_tot = None
+            for subsampname in samp.groupedSamples :
+                min_val, max_val = self.get_sample_branch_minmax(subsampname, branch )
+                if min_val_tot is None or min_val_tot < min_val :
+                    min_val_tot = min_val
+                if max_val_tot is None or max_val_tot > max_val :
+                    max_val_tot = max_val
+            return (min_val_tot, max_val_tot )
+
+        else :
+
+            samp.chain.SetBranchStatus(branch, 1)
+            max_val = samp.chain.GetMaximum(branch)
+            min_val = samp.chain.GetMinimum(branch)
+
+            return (min_val, max_val)
+
+    #--------------------------------
     def add_temp_sample(self, samp) :
         samp.temporary = True
         self.samples.append(samp)
@@ -1201,43 +1213,6 @@ class SampleManager :
                 out_order.append( samp.name )
 
         return out_order
-
-    #--------------------------------
-    def read_xsfile( self, file, lumi ) :
-        print '-------------------------------------'
-        print ' LOAD CROSS SECTION INFO'
-        print '-------------------------------------'
-        weightMap = {}
-        if file is None :
-            return weightMap
-        if lumi is None :
-            print 'Cannot calculate weights without a luminosity'
-            return weightMap
-        if not os.path.isfile( file ) :
-            print 'Could not locate cross section file.  No values will be loaded.'
-            return weightMap
-
-        ofile = open( file )
-        xsdict = eval( ofile.read() )
-        xs_printer = Printer()
-        for name, values in xsdict.iteritems() :
-
-            lumi_sample_den = values['cross_section']*values['gen_eff']*values['k_factor']
-            if lumi_sample_den == 0 :
-                print 'Cannot calculate cross section for %s.  It will receive a weight of 1.' %name
-                lumi_sample = lumi
-                xs_printer.AddLine( ['Sample %s ' %name, 'cross section : %f pb' %values['cross_section'], 'N Events : %d' %(values['n_evt']), 'sample lumi : %f' %(lumi_sample), 'Scale : ERROR' ] )
-            else :
-                lumi_sample = values['n_evt']/float(lumi_sample_den)
-
-            lumi_scale = float(lumi)/lumi_sample;
-            xs_printer.AddLine( ['Sample %s ' %name, 'cross section : %f pb' %values['cross_section'], 'N Events : %d' %(values['n_evt']), 'sample lumi : %f' %(lumi_sample), 'Scale : %f' %lumi_scale ] )
-
-            weightMap[name] = lumi_scale
-
-        xs_printer.Print()
-
-        return weightMap
 
     #---------------------------------------
     def GetLowestGroupedSamples( self, sample ) :
@@ -2204,15 +2179,17 @@ class SampleManager :
             if scale is not None :
                 thisscale *= scale
 
+            thisxs = 0
             if useXSFile :
                 xsname = name
                 if XSName is not None :
                     xsname = XSName
                 if xsname in self.weightMap  :
-                    thisscale *= self.weightMap[xsname]
+                    thisscale *= self.weightMap[xsname]['scale']
+                    thisxs = self.weightMap[xsname]['cross_section']
                     print 'Update scale for %s' %name
 
-            thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, sigLineStyle=sigLineStyle, sigLineWidth=sigLineWidth, displayErrBand=displayErrBand, color=plotColor, drawRatio=drawRatio, scale=thisscale, legendName=legend_name)
+            thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, sigLineStyle=sigLineStyle, sigLineWidth=sigLineWidth, displayErrBand=displayErrBand, color=plotColor, drawRatio=drawRatio, scale=thisscale, cross_section=thisxs, legendName=legend_name)
             thisSample.AddFiles( input_files, self.treeName, self.readHists )
 
             self.samples.append(thisSample)
@@ -2281,7 +2258,7 @@ class SampleManager :
         return input_files
 
     #--------------------------------
-    def AddSampleGroup(self, name, input_samples=[], isData=False, scale=None, isSignal=False, sigLineStyle=7,drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, legend_name=None, isActive=True, displayErrBand=False ) :
+    def AddSampleGroup(self, name, input_samples=[], isData=False, scale=None, isSignal=False, sigLineStyle=7,drawRatio=False, plotColor=ROOT.kBlack, lineColor=None, legend_name=None, isActive=True, displayErrBand=False, averageSamples=False ) :
         """Make a new sample from any number of samples that have already been added via AddSample
 
            For example if a process is made of a number of individual samples that each have their
@@ -2312,7 +2289,7 @@ class SampleManager :
             thisscale *= scale
         
         print 'Grouping %s' %name
-        thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, sigLineStyle=sigLineStyle, displayErrBand=displayErrBand, color=plotColor, drawRatio=drawRatio, scale=thisscale, legendName=legend_name)
+        thisSample = Sample(name, isActive=isActive, isData=isData, isSignal=isSignal, sigLineStyle=sigLineStyle, displayErrBand=displayErrBand, color=plotColor, drawRatio=drawRatio, scale=thisscale, legendName=legend_name, averageSamples=averageSamples)
 
         for samp in available_samples :
 
@@ -2818,7 +2795,7 @@ class SampleManager :
         tmp_legend_entries = []
         legend_entries = []
 
-        if data_samp :
+        if data_samp and data_samp[0].isActive :
             tmp_legend_entries.append(  (data_samp[0].hist, data_samp[0].legendName, 'PE') )
 
         for samp in drawn_samples :
@@ -3404,6 +3381,10 @@ class SampleManager :
             model_subsamps = self.get_model_samples(subsamp_names)
             sample.hist = model_subsamps[0].hist.Clone()
             for msamp in model_subsamps[1:] :
+
+                if sample.averageSamples : 
+                    self.addHistsWeightedAvg( sample.hist, samp.hist )
+
                 sample.hist.Add( msamp.hist )
                 sample.hist.Draw()
             #sample.hist.Scale(sample.scale)
@@ -3419,6 +3400,10 @@ class SampleManager :
 
             sample.hist = valid_samps[0].hist.Clone()
             for samp in valid_samps[1:] :
+
+                if sample.averageSamples : 
+                    self.addHistsWeightedAvg( sample.hist, samp.hist )
+
                 sample.hist.Add( samp.hist )
                 #sample.hist.Draw()
             #sample.hist.Scale(sample.scale)
@@ -4598,4 +4583,67 @@ class SampleManager :
                     exists=True
 
         return exists
+
+    # ----------------------------------------------------------------------------
+    def addHistsWeightedAvg( self, dest_hist, add_hist ) :
+
+        def _add_generic_bin( dest_hist, add_hist, ibin ) :
+            dest_val = dest_hist.GetBinContent( ibin )
+            dest_err = dest_hist.GetBinError( ibin )
+
+            add_val  = add_hist.GetBinContent( ibin )
+            add_err  = add_hist.GetBinError( ibin )
+
+            if dest_val == 0 :
+                avg = ufloat( add_val, add_err )
+            elif add_val == 0 :
+                avg = ufloat( dest_val, dest_err )
+            else :
+                dest_uf = ufloat( dest_val, dest_err )
+                add_uf  = ufloat( add_val , add_err )
+
+                dest_w = 1./( dest_err * dest_err )
+                add_w   = 1./( add_err * add_err )
+
+                avg = (dest_w * dest_uf + add_w * add_uf) / ( dest_w + add_w )
+
+                print 'bin = ', ibin
+                print 'dest = ${:.2ufL}$' .format( dest_uf )
+                print 'add = ${:.2ufL}$' .format( add_uf )
+                print 'avg = ${:.2ufL}$' .format( avg )
+
+            dest_hist.SetBinContent( ibin, avg.n )
+            dest_hist.SetBinError( ibin, avg.s )
+
+
+
+        if isinstance( dest_hist, ROOT.TH3 ) :
+            if dest_hist.GetNbinsX() != add_hist.GetNbinsX() or dest_hist.GetNbinsY() != add_hist.GetNbinsY() or dest_hist.GetNbinsZ() != add_hist.GetNbinsZ() :
+                print 'addHistsWeightedAvg: ERROR Bins must have the same lengths!  Exiting!'
+                return
+
+            for xbin in range( 1, dest_hist.GetNbinsX()+1 ) :
+                for ybin in range( 1, dest_hist.GetNbinsY()+1 ) :
+                    for zbin in range( 1, dest_hist.GetNbinsZ()+1 ) :
+                        ibin = dest_hist.GetBin( xbin, ybin, zbin )
+                        _add_generic_bin( dest_hist, add_hist, ibin )
+
+        elif isinstance( dest_hist, ROOT.TH2 ) :
+            if dest_hist.GetNbinsX() != add_hist.GetNbinsX() or dest_hist.GetNbinsY() != add_hist.GetNbinsY() :
+                print 'addHistsWeightedAvg: ERROR Bins must have the same lengths!  Exiting!'
+                return
+
+            for xbin in range( 1, dest_hist.GetNbinsX()+1 ) :
+                for ybin in range( 1, dest_hist.GetNbinsY()+1 ) :
+                    ibin = dest_hist.GetBin( xbin, ybin )
+                    _add_generic_bin( dest_hist, add_hist, ibin )
+
+        elif isinstance( dest_hist, ROOT.TH1 ) :
+            if dest_hist.GetNbinsX() != add_hist.GetNbinsX() :
+                print 'addHistsWeightedAvg: ERROR Bins must have the same lengths!  Exiting!'
+                return
+
+            for xbin in range( 1, dest_hist.GetNbinsX()+1 ) :
+                ibin = dest_hist.GetBin( xbin )
+                _add_generic_bin( dest_hist, add_hist, ibin )
 

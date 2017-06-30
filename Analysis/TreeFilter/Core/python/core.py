@@ -191,7 +191,7 @@ def config_and_run( options, package_name ) :
         if input_files :
             options.outputFile = input_files[0].split('/')[-1]
 
-    logging.info('Get Branch mapping')
+    logging.info('Get Branch mapping from file %s'%input_files[0])
     branches = get_branch_mapping(input_files[0], options.treeName )
 
     ImportedModule = import_module( options.module )
@@ -275,7 +275,8 @@ def config_and_run( options, package_name ) :
         # Write all output branches in the 
         # header file so that the code will compile
         # only the keep branches will be saved, however
-        write_header_files(new_brdef_file_name, new_linkdef_file_name, branches,out_branches, [ br['name'] for br in branches ], alg_list )
+        #write_header_files(new_brdef_file_name, new_linkdef_file_name, branches,out_branches, [ br['name'] for br in branches ], alg_list )
+        write_header_files(new_brdef_file_name, new_linkdef_file_name, branches,out_branches, branches_to_keep, alg_list )
 
         write_source_file(new_source_file_name, new_header_file_name, branches, out_branches, branches_to_keep, write_expert_code=options.writeExpertCode )
 
@@ -528,7 +529,8 @@ def compile_code( alg_list, branches, out_branches, branches_to_keep, workarea, 
     # Write all output branches in the 
     # header file so that the code will compile
     # only the keep branches will be saved, however
-    write_header_files(brdef_file_name, linkdef_file_name, branches,out_branches, [ br['name'] for br in branches ], alg_list )
+    #write_header_files(brdef_file_name, linkdef_file_name, branches,out_branches, [ br['name'] for br in branches ], alg_list )
+    write_header_files(brdef_file_name, linkdef_file_name, branches,out_branches, branches_to_keep, alg_list )
 
     write_source_file(source_file_name, header_file_name, branches, out_branches, branches_to_keep, write_expert_code=writeExpertCode )
 
@@ -1474,8 +1476,8 @@ def write_source_file(source_file_name, header_file_name, branches, out_branches
 
         name = conf['name']
 
-        #if name not in keep_branches :
-        #    continue
+        if name not in keep_branches :
+            continue
 
         if conf['type'].count('vector') :
             modtype = conf['type'].replace('vector', 'std::vector')

@@ -49,6 +49,7 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     // Set defaults for added output variables
     // *************************
     // Examples :
+
     OUT::m_lep_ph        = 0;
     OUT::m_lep_met_ph        = 0;
     OUT::dphi_lep_ph        = 0;
@@ -59,6 +60,8 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::dphi_lep_met      = 0;
     OUT::mt_lep_met_ph   = 0;
     OUT::mt_lep_met_ph_inv   = 0;
+    OUT::dphi_ph_w   = 0;
+    OUT::pt_lep_met_ph   = 0;
     OUT::RecoWMass       = 0;
     OUT::recoM_lep_nu_ph = 0;
     OUT::recoMet_eta= 0;
@@ -68,10 +71,97 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::nu_z_solution_success = 0;
     OUT::m_ll = 0;
     OUT::isBlinded = 0;
+    OUT::SampleWeight = 0;
+
+    OUT::ph_hasTruthMatchPh = 0;
+    OUT::ph_truthMatchPh_dr = 0;
+    OUT::ph_truthMatchPh_pt = 0;
+
+    OUT::mu_hasTruthMatchMu = 0;
+    OUT::mu_truthMatchMu_dr = 0;
+    OUT::mu_truthMatchMu_pt = 0;
+
+    OUT::el_hasTruthMatchEl = 0;
+    OUT::el_truthMatchEl_dr = 0;
+    OUT::el_truthMatchEl_pt = 0;
+
+    OUT::ph_medium_n = 0;
+
+    OUT::ph_mediumPassPSV_n = 0;
+    OUT::ph_mediumFailPSV_n = 0;
+    OUT::ph_mediumPassCSEV_n = 0;
+    OUT::ph_mediumFailCSEV_n = 0;
+
+    OUT::ph_mediumNoSIEIE_n = 0;
+    OUT::ph_mediumNoChIso_n = 0;
+    OUT::ph_mediumNoNeuIso_n = 0;
+    OUT::ph_mediumNoPhoIso_n = 0;
+
+    OUT::ph_mediumNoSIEIEPassPSV_n = 0;
+    OUT::ph_mediumNoChIsoPassPSV_n = 0;
+    OUT::ph_mediumNoNeuIsoPassPSV_n = 0;
+    OUT::ph_mediumNoPhoIsoPassPSV_n = 0;
+
+    OUT::ph_mediumNoSIEIEFailPSV_n = 0;
+    OUT::ph_mediumNoChIsoFailPSV_n = 0;
+    OUT::ph_mediumNoNeuIsoFailPSV_n = 0;
+    OUT::ph_mediumNoPhoIsoFailPSV_n = 0;
+
+    OUT::ph_mediumNoSIEIEPassCSEV_n = 0;
+    OUT::ph_mediumNoChIsoPassCSEV_n = 0;
+    OUT::ph_mediumNoNeuIsoPassCSEV_n = 0;
+    OUT::ph_mediumNoPhoIsoPassCSEV_n = 0;
+
+    OUT::ph_mediumNoSIEIEFailCSEV_n = 0;
+    OUT::ph_mediumNoChIsoFailCSEV_n = 0;
+    OUT::ph_mediumNoNeuIsoFailCSEV_n = 0;
+    OUT::ph_mediumNoPhoIsoFailCSEV_n = 0;
+
+    OUT::ptSorted_ph_loose_idx = 0;
+    OUT::ptSorted_ph_medium_idx = 0;
+    OUT::ptSorted_ph_tight_idx = 0;
+
+    OUT::ptSorted_ph_mediumPassPSV_idx = 0;
+    OUT::ptSorted_ph_mediumFailPSV_idx = 0;
+    OUT::ptSorted_ph_mediumPassCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumFailCSEV_idx = 0;
+
+    OUT::ptSorted_ph_mediumNoSIEIE_idx = 0;
+    OUT::ptSorted_ph_mediumNoChIso_idx = 0;
+    OUT::ptSorted_ph_mediumNoNeuIso_idx = 0;
+    OUT::ptSorted_ph_mediumNoPhoIso_idx = 0;
+
+    OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoChIsoPassPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoNeuIsoPassPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoPhoIsoPassPSV_idx = 0;
+
+    OUT::ptSorted_ph_mediumNoSIEIEFailPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoChIsoFailPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoNeuIsoFailPSV_idx = 0;
+    OUT::ptSorted_ph_mediumNoPhoIsoFailPSV_idx = 0;
+
+    OUT::ptSorted_ph_mediumNoSIEIEPassCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumNoChIsoPassCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumNoNeuIsoPassCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumNoPhoIsoPassCSEV_idx = 0;
+
+    OUT::ptSorted_ph_mediumNoSIEIEFailCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumNoChIsoFailCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumNoNeuIsoFailCSEV_idx = 0;
+    OUT::ptSorted_ph_mediumNoPhoIsoFailCSEV_idx = 0;
 
     // *************************
     // Declare Branches
     // *************************
+
+    outtree->Branch("el_pt30_n", &OUT::el_pt30_n, "el_pt30_n/I"  );
+    outtree->Branch("mu_pt20_n", &OUT::mu_pt20_n, "mu_pt20_n/I"  );
+    outtree->Branch("mu_pt30_n", &OUT::mu_pt30_n, "mu_pt30_n/I"  );
+
+    outtree->Branch("jet_CSVLoose_n", &OUT::jet_CSVLoose_n, "jet_CSVLoose_n/I"  );
+    outtree->Branch("jet_CSVMedium_n", &OUT::jet_CSVMedium_n, "jet_CSVMedium_n/I"  );
+    outtree->Branch("jet_CSVTight_n", &OUT::jet_CSVTight_n, "jet_CSVTight_n/I"  );
 
     outtree->Branch("m_lep_ph"        , &OUT::m_lep_ph        , "m_lep_ph/F"  );
     outtree->Branch("m_lep_met_ph"        , &OUT::m_lep_met_ph        , "m_lep_met_ph/F"  );
@@ -88,6 +178,8 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("dphi_lep_met"    , &OUT::dphi_lep_met    , "dphi_lep_met/F" );
     outtree->Branch("mt_lep_met_ph"   , &OUT::mt_lep_met_ph   , "mt_lep_met_ph/F");
     outtree->Branch("mt_lep_met_ph_inv"   , &OUT::mt_lep_met_ph_inv   , "mt_lep_met_ph_inv/F");
+    outtree->Branch("dphi_ph_w"   , &OUT::dphi_ph_w   , "dphi_ph_w/F");
+    outtree->Branch("pt_lep_met_ph"   , &OUT::pt_lep_met_ph   , "pt_lep_met_ph/F");
     outtree->Branch("RecoWMass"       , &OUT::RecoWMass       , "RecoWMass/F");
     outtree->Branch("recoM_lep_nu_ph" , &OUT::recoM_lep_nu_ph , "recoM_lep_nu_ph/F");
     outtree->Branch("recoMet_eta" , &OUT::recoMet_eta, "recoMet_eta/F");
@@ -97,6 +189,27 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("m_ll" , &OUT::m_ll, "m_ll/F");
     outtree->Branch("nu_z_solution_success" , &OUT::nu_z_solution_success, "nu_z_solution_success/O");
 
+    outtree->Branch("truemt_lep_met_ph" , &OUT::truemt_lep_met_ph, "truemt_lep_met_ph/F");
+    outtree->Branch("truemt_res" , &OUT::truemt_res, "truemt_res/F");
+
+    outtree->Branch("ph_hasTruthMatchPh", &OUT::ph_hasTruthMatchPh );
+    outtree->Branch("ph_truthMatchPh_dr", &OUT::ph_truthMatchPh_dr);
+    outtree->Branch("ph_truthMatchPh_pt", &OUT::ph_truthMatchPh_pt);
+
+    outtree->Branch("mu_hasTruthMatchMu", &OUT::mu_hasTruthMatchMu );
+    outtree->Branch("mu_truthMatchMu_dr", &OUT::mu_truthMatchMu_dr);
+    outtree->Branch("mu_truthMatchMu_pt", &OUT::mu_truthMatchMu_pt);
+
+    outtree->Branch("el_hasTruthMatchEl", &OUT::el_hasTruthMatchEl );
+    outtree->Branch("el_truthMatchEl_dr", &OUT::el_truthMatchEl_dr);
+    outtree->Branch("el_truthMatchEl_pt", &OUT::el_truthMatchEl_pt);
+
+    outtree->Branch("mu_hasTrigMatch", &OUT::mu_hasTrigMatch );
+    outtree->Branch("mu_trigMatchMinDr", &OUT::mu_trigMatchMinDr);
+
+    outtree->Branch("el_hasTrigMatch", &OUT::el_hasTrigMatch );
+    outtree->Branch("el_trigMatchMinDr", &OUT::el_trigMatchMinDr);
+
     outtree->Branch("leadjet_pt", &OUT::leadjet_pt, "leadjet_pt/F" );
     outtree->Branch("subljet_pt", &OUT::subljet_pt, "subljet_pt/F" );
     outtree->Branch("leaddijet_m", &OUT::leaddijet_m, "leaddijet_m/F" );
@@ -104,10 +217,81 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("massdijet_m", &OUT::massdijet_m, "massdijet_m/F" );
     outtree->Branch("massdijet_pt", &OUT::massdijet_pt, "massdijet_pt/F" );
 
-
-
-
     outtree->Branch("isBlinded" , &OUT::isBlinded, "isBlinded/O");
+    outtree->Branch("SampleWeight" , &OUT::SampleWeight, "SampleWeight/F");
+
+#ifdef MODULE_MakePhotonCountVars
+
+    outtree->Branch("ph_loose_n"           , &OUT::ph_loose_n           , "ph_loose_n/I"           );
+    outtree->Branch("ph_medium_n"           , &OUT::ph_medium_n           , "ph_medium_n/I"           );
+    outtree->Branch("ph_tight_n"           , &OUT::ph_tight_n           , "ph_tight_n/I"           );
+
+    outtree->Branch("ph_mediumPassPSV_n"           , &OUT::ph_mediumPassPSV_n           , "ph_mediumPassPSV_n/I"           );
+    outtree->Branch("ph_mediumFailPSV_n"           , &OUT::ph_mediumFailPSV_n           , "ph_mediumFailPSV_n/I"           );
+    outtree->Branch("ph_mediumPassCSEV_n"          , &OUT::ph_mediumPassCSEV_n          , "ph_mediumPassCSEV_n/I"          );
+    outtree->Branch("ph_mediumFailCSEV_n"          , &OUT::ph_mediumFailCSEV_n          , "ph_mediumFailCSEV_n/I"          );
+
+    outtree->Branch("ph_mediumNoSIEIE_n"           , &OUT::ph_mediumNoSIEIE_n           , "ph_mediumNoSIEIE_n/I"           );
+    outtree->Branch("ph_mediumNoChIso_n"           , &OUT::ph_mediumNoChIso_n           , "ph_mediumNoChIso_n/I"           );
+    outtree->Branch("ph_mediumNoNeuIso_n"          , &OUT::ph_mediumNoNeuIso_n          , "ph_mediumNoNeuIso_n/I"          );
+    outtree->Branch("ph_mediumNoPhoIso_n"          , &OUT::ph_mediumNoPhoIso_n          , "ph_mediumNoPhoIso_n/I"          );
+
+    outtree->Branch("ph_mediumNoSIEIEPassPSV_n"           , &OUT::ph_mediumNoSIEIEPassPSV_n           , "ph_mediumNoSIEIEPassPSV_n/I"           );
+    outtree->Branch("ph_mediumNoChIsoPassPSV_n"           , &OUT::ph_mediumNoChIsoPassPSV_n           , "ph_mediumNoChIsoPassPSV_n/I"           );
+    outtree->Branch("ph_mediumNoNeuIsoPassPSV_n"          , &OUT::ph_mediumNoNeuIsoPassPSV_n          , "ph_mediumNoNeuIsoPassPSV_n/I"          );
+    outtree->Branch("ph_mediumNoPhoIsoPassPSV_n"          , &OUT::ph_mediumNoPhoIsoPassPSV_n          , "ph_mediumNoPhoIsoPassPSV_n/I"          );
+
+    outtree->Branch("ph_mediumNoSIEIEFailPSV_n"           , &OUT::ph_mediumNoSIEIEFailPSV_n           , "ph_mediumNoSIEIEFailPSV_n/I"           );
+    outtree->Branch("ph_mediumNoChIsoFailPSV_n"           , &OUT::ph_mediumNoChIsoFailPSV_n           , "ph_mediumNoChIsoFailPSV_n/I"           );
+    outtree->Branch("ph_mediumNoNeuIsoFailPSV_n"          , &OUT::ph_mediumNoNeuIsoFailPSV_n          , "ph_mediumNoNeuIsoFailPSV_n/I"          );
+    outtree->Branch("ph_mediumNoPhoIsoFailPSV_n"          , &OUT::ph_mediumNoPhoIsoFailPSV_n          , "ph_mediumNoPhoIsoFailPSV_n/I"          );
+
+    outtree->Branch("ph_mediumNoSIEIEPassCSEV_n"           , &OUT::ph_mediumNoSIEIEPassCSEV_n           , "ph_mediumNoSIEIEPassCSEV_n/I"           );
+    outtree->Branch("ph_mediumNoChIsoPassCSEV_n"           , &OUT::ph_mediumNoChIsoPassCSEV_n           , "ph_mediumNoChIsoPassCSEV_n/I"           );
+    outtree->Branch("ph_mediumNoNeuIsoPassCSEV_n"          , &OUT::ph_mediumNoNeuIsoPassCSEV_n          , "ph_mediumNoNeuIsoPassCSEV_n/I"          );
+    outtree->Branch("ph_mediumNoPhoIsoPassCSEV_n"          , &OUT::ph_mediumNoPhoIsoPassCSEV_n          , "ph_mediumNoPhoIsoPassCSEV_n/I"          );
+
+    outtree->Branch("ph_mediumNoSIEIEFailCSEV_n"           , &OUT::ph_mediumNoSIEIEFailCSEV_n           , "ph_mediumNoSIEIEFailCSEV_n/I"           );
+    outtree->Branch("ph_mediumNoChIsoFailCSEV_n"           , &OUT::ph_mediumNoChIsoFailCSEV_n           , "ph_mediumNoChIsoFailCSEV_n/I"           );
+    outtree->Branch("ph_mediumNoNeuIsoFailCSEV_n"          , &OUT::ph_mediumNoNeuIsoFailCSEV_n          , "ph_mediumNoNeuIsoFailCSEV_n/I"          );
+    outtree->Branch("ph_mediumNoPhoIsoFailCSEV_n"          , &OUT::ph_mediumNoPhoIsoFailCSEV_n          , "ph_mediumNoPhoIsoFailCSEV_n/I"          );
+
+    outtree->Branch("ptSorted_ph_loose_idx"  , &OUT::ptSorted_ph_loose_idx );
+    outtree->Branch("ptSorted_ph_medium_idx"  , &OUT::ptSorted_ph_medium_idx );
+    outtree->Branch("ptSorted_ph_tight_idx"  , &OUT::ptSorted_ph_tight_idx );
+
+    outtree->Branch("ptSorted_ph_mediumPassPSV_idx"   , &OUT::ptSorted_ph_mediumPassPSV_idx );
+    outtree->Branch("ptSorted_ph_mediumFailPSV_idx"   , &OUT::ptSorted_ph_mediumFailPSV_idx );
+    outtree->Branch("ptSorted_ph_mediumPassCSEV_idx"  , &OUT::ptSorted_ph_mediumPassCSEV_idx );
+    outtree->Branch("ptSorted_ph_mediumFailCSEV_idx"  , &OUT::ptSorted_ph_mediumFailCSEV_idx );
+
+    outtree->Branch("ptSorted_ph_mediumNoSIEIE_idx"   , &OUT::ptSorted_ph_mediumNoSIEIE_idx );
+    outtree->Branch("ptSorted_ph_mediumNoChIso_idx"   , &OUT::ptSorted_ph_mediumNoChIso_idx );
+    outtree->Branch("ptSorted_ph_mediumNoNeuIso_idx"  , &OUT::ptSorted_ph_mediumNoNeuIso_idx );
+    outtree->Branch("ptSorted_ph_mediumNoPhoIso_idx"  , &OUT::ptSorted_ph_mediumNoPhoIso_idx );
+
+    outtree->Branch("ptSorted_ph_mediumNoSIEIEPassPSV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoChIsoPassPSV_idx"   , &OUT::ptSorted_ph_mediumNoChIsoPassPSV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoNeuIsoPassPSV_idx"  , &OUT::ptSorted_ph_mediumNoNeuIsoPassPSV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoPhoIsoPassPSV_idx"  , &OUT::ptSorted_ph_mediumNoPhoIsoPassPSV_idx );
+
+    outtree->Branch("ptSorted_ph_mediumNoSIEIEFailPSV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIEFailPSV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoChIsoFailPSV_idx"   , &OUT::ptSorted_ph_mediumNoChIsoFailPSV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoNeuIsoFailPSV_idx"  , &OUT::ptSorted_ph_mediumNoNeuIsoFailPSV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoPhoIsoFailPSV_idx"  , &OUT::ptSorted_ph_mediumNoPhoIsoFailPSV_idx );
+
+    outtree->Branch("ptSorted_ph_mediumNoSIEIEPassCSEV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIEPassCSEV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoChIsoPassCSEV_idx"   , &OUT::ptSorted_ph_mediumNoChIsoPassCSEV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoNeuIsoPassCSEV_idx"  , &OUT::ptSorted_ph_mediumNoNeuIsoPassCSEV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoPhoIsoPassCSEV_idx"  , &OUT::ptSorted_ph_mediumNoPhoIsoPassCSEV_idx );
+
+    outtree->Branch("ptSorted_ph_mediumNoSIEIEFailCSEV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIEFailCSEV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoChIsoFailCSEV_idx"   , &OUT::ptSorted_ph_mediumNoChIsoFailCSEV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoNeuIsoFailCSEV_idx"  , &OUT::ptSorted_ph_mediumNoNeuIsoFailCSEV_idx );
+    outtree->Branch("ptSorted_ph_mediumNoPhoIsoFailCSEV_idx"  , &OUT::ptSorted_ph_mediumNoPhoIsoFailCSEV_idx );
+
+#endif
+
 
     BOOST_FOREACH( ModuleConfig & mod_conf, configs ) {
     
@@ -120,8 +304,31 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
                 else              _isData=false;
             }
         }
+        if( mod_conf.GetName() == "FilterMuon" ) { 
+            std::map<std::string, std::string>::const_iterator eitr = mod_conf.GetInitData().find( "triggerBits" );
+            if( eitr != mod_conf.GetInitData().end() ) {
+                std::vector<std::string> trigger_bit_list = Tokenize( eitr->second, "," );
+                for( std::vector<std::string>::const_iterator bitr = trigger_bit_list.begin(); bitr != trigger_bit_list.end(); ++bitr ) {
+                    std::stringstream ss( *bitr );
+                    int bit;
+                    ss >> bit;
+                    _muonTrigMatchBits.push_back(  bit );
+                }
+            }
+        }
+        if( mod_conf.GetName() == "FilterElectron" ) { 
+            std::map<std::string, std::string>::const_iterator eitr = mod_conf.GetInitData().find( "triggerBits" );
+            if( eitr != mod_conf.GetInitData().end() ) {
+                std::vector<std::string> trigger_bit_list = Tokenize( eitr->second, "," );
+                for( std::vector<std::string>::const_iterator bitr = trigger_bit_list.begin(); bitr != trigger_bit_list.end(); ++bitr ) {
+                    std::stringstream ss( *bitr );
+                    int bit;
+                    ss >> bit;
+                    _electronTrigMatchBits.push_back(  bit );
+                }
+            }
+        }
     }
-
 }
 
 bool RunModule::execute( std::vector<ModuleConfig> & configs ) {
@@ -132,6 +339,9 @@ bool RunModule::execute( std::vector<ModuleConfig> & configs ) {
 
     // In BranchInit
     CopyInputVarsToOutput();
+
+    // set as a default
+    OUT::SampleWeight = 1.0;
 
     // loop over configured modules
     bool save_event = true;
@@ -162,12 +372,19 @@ bool RunModule::ApplyModule( ModuleConfig & config ) {
     if( config.GetName() == "BuildEventVars" ) {
         BuildEventVars( config );
     }
+    if( config.GetName() == "MakePhotonCountVars" ) {
+        MakePhotonCountVars( config );
+    }
+    if( config.GetName() == "BuildTruth" ) {
+        BuildTruth( config );
+    }
     if( config.GetName() == "FilterEvent" ) {
         keep_evt &= FilterEvent( config );
     }
     if( config.GetName() == "FilterBlind" ) {
         keep_evt &= FilterBlind( config );
     }
+
 
     return keep_evt;
 
@@ -176,19 +393,18 @@ bool RunModule::ApplyModule( ModuleConfig & config ) {
 void RunModule::FilterMuon( ModuleConfig & config ) {
 
     OUT::mu_n          = 0;
+    OUT::mu_pt20_n          = 0;
+    OUT::mu_pt30_n          = 0;
+    OUT::mu_hasTrigMatch->clear();
+    OUT::mu_trigMatchMinDr->clear();
+
     ClearOutputPrefix("mu_");
 
     for( int idx = 0; idx < IN::mu_n; ++idx ) {
 
-        //std::cout << "Muon pt = " << IN::mu_pt->at(idx) << std::endl;
-
         if( !config.PassFloat( "cut_pt", IN::mu_pt->at(idx) ) ) {
-            //std::cout << "FAIL" << std::endl;
             continue;
         } 
-       // else {
-       //     std::cout << "PASS" << std::endl;
-       // }
         if( !config.PassFloat( "cut_eta", fabs(IN::mu_eta->at(idx)) ) ) continue;
         if( !config.PassBool( "cut_tight", IN::mu_passTight->at(idx) ) ) continue;
 
@@ -201,8 +417,52 @@ void RunModule::FilterMuon( ModuleConfig & config ) {
 
         _selectedMuons.push_back( mulv );
 
+        float mindr = 101.0;
+        for( unsigned hltidx = 0 ; hltidx < IN::HLTObjPt->size(); ++hltidx ) {
+
+            ULong64_t mubits = IN::HLTObjMuTriggers->at(hltidx);
+
+            if( mubits == 0 ) continue;
+
+            TLorentzVector hltlv;
+            hltlv.SetPtEtaPhiM( IN::HLTObjPt->at(hltidx),
+                                IN::HLTObjEta->at(hltidx),
+                                IN::HLTObjPhi->at(hltidx),
+                                IN::HLTObjM->at(hltidx)
+                              );
+
+
+            for( std::vector<int>::const_iterator bitr = _muonTrigMatchBits.begin(); bitr != _muonTrigMatchBits.end(); ++bitr ) {
+
+               ULong64_t bitcheck(1);
+               bitcheck = bitcheck << ( *bitr );
+
+               if( (mubits & bitcheck) == bitcheck ) {
+
+                   float dr = mulv.DeltaR( hltlv );
+                   if( dr < mindr ) {
+                       mindr = dr;
+                   }
+               }
+            }
+        }
+
+        bool matchTrig = false;
+        if( mindr < 0.2 ) {
+            matchTrig = true;
+        }
+        OUT::mu_hasTrigMatch->push_back(matchTrig);
+        OUT::mu_trigMatchMinDr->push_back(mindr);
+
         CopyPrefixIndexBranchesInToOut( "mu_", idx );
         OUT::mu_n++;
+
+        if( IN::mu_pt->at(idx) > 20 ) {
+            OUT::mu_pt20_n++;
+        }
+        if( IN::mu_pt->at(idx) > 30 ) {
+            OUT::mu_pt30_n++;
+        }
 
     }
 
@@ -212,6 +472,10 @@ void RunModule::FilterMuon( ModuleConfig & config ) {
 void RunModule::FilterElectron( ModuleConfig & config ) {
 
     OUT::el_n          = 0;
+    OUT::el_pt30_n          = 0;
+    OUT::el_hasTrigMatch->clear();
+    OUT::el_trigMatchMinDr->clear();
+
     ClearOutputPrefix("el_");
 
     for( int idx = 0; idx < IN::el_n; ++idx ) {
@@ -219,6 +483,8 @@ void RunModule::FilterElectron( ModuleConfig & config ) {
         if( !config.PassFloat( "cut_pt", IN::el_pt->at(idx) ) ) continue;
         if( !config.PassFloat( "cut_eta", fabs(IN::el_eta->at(idx)) ) ) continue;
         if( !config.PassBool( "cut_tight", IN::el_passTight->at(idx) ) ) continue;
+        if( !config.PassBool( "cut_medium", IN::el_passMedium->at(idx) ) ) continue;
+        if( !config.PassBool( "cut_vid_medium", IN::el_passVIDMedium->at(idx) ) ) continue;
 
         TLorentzVector ellv;
         ellv.SetPtEtaPhiE( IN::el_pt->at(idx), 
@@ -241,8 +507,49 @@ void RunModule::FilterElectron( ModuleConfig & config ) {
 
         _selectedElectrons.push_back( ellv );
 
+        float mindr = 101.0;
+        for( unsigned hltidx = 0; hltidx < IN::HLTObjPt->size(); ++hltidx ) {
+
+            ULong64_t elbits = IN::HLTObjElTriggers->at(hltidx);
+
+            if( elbits == 0 ) continue;
+
+            TLorentzVector hltlv;
+            hltlv.SetPtEtaPhiM( IN::HLTObjPt->at(hltidx),
+                                IN::HLTObjEta->at(hltidx),
+                                IN::HLTObjPhi->at(hltidx),
+                                IN::HLTObjM->at(hltidx)
+                              );
+
+
+            for( std::vector<int>::const_iterator bitr = _electronTrigMatchBits.begin(); bitr != _electronTrigMatchBits.end(); ++bitr ) {
+
+               ULong64_t bitcheck(1);
+               bitcheck = bitcheck << ( *bitr );
+
+               if( (elbits & bitcheck) == bitcheck ) {
+
+                   float dr = ellv.DeltaR( hltlv );
+                   if( dr < mindr ) {
+                       mindr = dr;
+                   }
+               }
+            }
+        }
+
+        bool matchTrig = false;
+        if( mindr < 0.2 ) {
+            matchTrig = true;
+        }
+        OUT::el_hasTrigMatch->push_back(matchTrig);
+        OUT::el_trigMatchMinDr->push_back(mindr);
+
         CopyPrefixIndexBranchesInToOut( "el_", idx );
         OUT::el_n++;
+
+        if( IN::el_pt->at(idx) > 30 ) {
+            OUT::el_pt30_n++;
+        }
 
     }
 
@@ -304,6 +611,9 @@ void RunModule::FilterPhoton( ModuleConfig & config ) {
 void RunModule::FilterJet( ModuleConfig & config ) const {
 
     OUT::jet_n          = 0;
+    OUT::jet_CSVLoose_n          = 0;
+    OUT::jet_CSVMedium_n          = 0;
+    OUT::jet_CSVTight_n          = 0;
     ClearOutputPrefix("jet_");
 
     for( int idx = 0; idx < IN::jet_n; ++idx ) {
@@ -353,9 +663,20 @@ void RunModule::FilterJet( ModuleConfig & config ) const {
 
         if( !config.PassFloat( "cut_photon_dr", min_ph_dr ) ) continue;
 
-
         CopyPrefixIndexBranchesInToOut( "jet_", idx );
         OUT::jet_n++;
+
+        float jet_csv = IN::jet_bTagCSVV2->at(idx);
+
+        if( config.PassFloat( "cut_jet_CSV_Loose",  jet_csv ) ) {
+            OUT::jet_CSVLoose_n++;
+        }
+        if( config.PassFloat( "cut_jet_CSV_Medium",  jet_csv ) ) {
+            OUT::jet_CSVMedium_n++;
+        }
+        if( config.PassFloat( "cut_jet_CSV_Tight",  jet_csv ) ) {
+            OUT::jet_CSVTight_n++;
+        }
 
     }
 }
@@ -364,34 +685,19 @@ bool RunModule::FilterEvent( ModuleConfig & config ) const {
 
     bool keep_event = true;
 
-    int n_mu = 0;
-    int n_mu_pt30 = 0;
-    for( int midx = 0; midx < OUT::mu_n; ++midx ) {
-        n_mu++;
-        if( OUT::mu_pt->at(midx) > 30 ) {
-            n_mu_pt30++;
-        }
-    }
-
-    int n_el = 0;
-    int n_el_pt30 = 0;
-    for( int eidx = 0; eidx < OUT::el_n; ++eidx ) {
-        n_el++;
-        if( OUT::el_pt->at(eidx) > 30 ) {
-            n_el_pt30++;
-        }
-    }
-
-
-    if( !config.PassInt( "cut_el_n", n_el   ) ) keep_event=false;
-    if( !config.PassInt( "cut_el_pt30_n", n_el_pt30   ) ) keep_event=false;
-    if( !config.PassInt( "cut_mu_n", n_mu   ) ) keep_event=false;
-    if( !config.PassInt( "cut_mu_pt30_n", n_mu_pt30   ) ) keep_event=false;
-    if( !config.PassInt( "cut_ph_n", OUT::ph_n   ) ) keep_event=false;
-    if( !config.PassInt( "cut_jet_n", OUT::jet_n ) ) keep_event=false;
+    if( !config.PassInt( "cut_el_n"     , OUT::el_n        ) ) keep_event=false;
+    if( !config.PassInt( "cut_el_pt30_n", OUT::el_pt30_n   ) ) keep_event=false;
+    if( !config.PassInt( "cut_mu_n"     , OUT::mu_n        ) ) keep_event=false;
+    if( !config.PassInt( "cut_mu_pt30_n", OUT::mu_pt30_n   ) ) keep_event=false;
+    if( !config.PassInt( "cut_mu_pt20_n", OUT::mu_pt20_n   ) ) keep_event=false;
+    if( !config.PassInt( "cut_ph_n"     , OUT::ph_n   ) ) keep_event=false;
+    if( !config.PassInt( "cut_jet_n"    , OUT::jet_n  ) ) keep_event=false;
     
     if( !config.PassBool( "cut_trig_Ele27_eta2p1_tight", IN::passTrig_HLT_Ele27_eta2p1_WPTight_Gsf) ) keep_event=false;
     if( !config.PassBool( "cut_trig_Mu27_IsoORIsoTk", (IN::passTrig_HLT_IsoMu27 | IN::passTrig_HLT_IsoTkMu27) ) ) keep_event=false;
+    if( !config.PassBool( "cut_trig_Mu24_IsoORIsoTk", (IN::passTrig_HLT_IsoMu24 | IN::passTrig_HLT_IsoTkMu24) ) ) keep_event=false;
+    if( !config.PassBool( "cut_trig_Mu24_IsoORIsoTk", (IN::passTrig_HLT_IsoMu24 | IN::passTrig_HLT_IsoTkMu24) ) ) keep_event=false;
+    if( !config.PassBool( "cut_trig_Mu17_Photon30", (IN::passTrig_HLT_Mu17_Photon30_CaloIdL_L1ISO) ) ) keep_event=false;
 
     return keep_event;
     
@@ -497,6 +803,8 @@ void RunModule::BuildEventVars( ModuleConfig & config ) const {
             OUT::recoMet_eta = metlv.Eta() ;
             OUT::mt_lep_met_ph = Utils::calc_mt( leptons[0] + metlvOrig, photons[0]);
             OUT::mt_lep_met_ph_inv = Utils::calc_mt( leptons[0] + photons[0], metlvOrig);
+            OUT::dphi_ph_w = ( metlvOrig + leptons[0] ).DeltaPhi( photons[0] );
+            OUT::pt_lep_met_ph = ( metlvOrig + leptons[0] + photons[0]).Pt();
 
             TLorentzVector recoW = leptons[0] + metlv;
 
@@ -578,6 +886,564 @@ void RunModule::BuildEventVars( ModuleConfig & config ) const {
         }
 
     }
+
+}
+
+void RunModule::MakePhotonCountVars( ModuleConfig & config ) const { 
+
+    OUT::ph_loose_n = 0;
+    OUT::ph_medium_n = 0;
+    OUT::ph_tight_n = 0;
+
+    OUT::ph_mediumPassPSV_n = 0;
+    OUT::ph_mediumFailPSV_n = 0;
+    OUT::ph_mediumPassCSEV_n = 0;
+    OUT::ph_mediumFailCSEV_n = 0;
+
+    OUT::ph_mediumNoSIEIE_n = 0;
+    OUT::ph_mediumNoChIso_n = 0;
+    OUT::ph_mediumNoNeuIso_n = 0;
+    OUT::ph_mediumNoPhoIso_n = 0;
+
+    OUT::ph_mediumNoSIEIEPassPSV_n = 0;
+    OUT::ph_mediumNoChIsoPassPSV_n = 0;
+    OUT::ph_mediumNoNeuIsoPassPSV_n = 0;
+    OUT::ph_mediumNoPhoIsoPassPSV_n = 0;
+
+    OUT::ph_mediumNoSIEIEFailPSV_n = 0;
+    OUT::ph_mediumNoChIsoFailPSV_n = 0;
+    OUT::ph_mediumNoNeuIsoFailPSV_n = 0;
+    OUT::ph_mediumNoPhoIsoFailPSV_n = 0;
+
+    OUT::ph_mediumNoSIEIEPassCSEV_n = 0;
+    OUT::ph_mediumNoChIsoPassCSEV_n = 0;
+    OUT::ph_mediumNoNeuIsoPassCSEV_n = 0;
+    OUT::ph_mediumNoPhoIsoPassCSEV_n = 0;
+
+    OUT::ph_mediumNoSIEIEFailCSEV_n = 0;
+    OUT::ph_mediumNoChIsoFailCSEV_n = 0;
+    OUT::ph_mediumNoNeuIsoFailCSEV_n = 0;
+    OUT::ph_mediumNoPhoIsoFailCSEV_n = 0;
+
+    OUT::ptSorted_ph_loose_idx->clear();
+    OUT::ptSorted_ph_medium_idx->clear();
+    OUT::ptSorted_ph_tight_idx->clear();
+
+    OUT::ptSorted_ph_mediumPassPSV_idx->clear();
+    OUT::ptSorted_ph_mediumFailPSV_idx->clear();
+    OUT::ptSorted_ph_mediumPassCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumFailCSEV_idx->clear();
+
+    OUT::ptSorted_ph_mediumNoSIEIE_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIso_idx->clear();
+    OUT::ptSorted_ph_mediumNoNeuIso_idx->clear();
+    OUT::ptSorted_ph_mediumNoPhoIso_idx->clear();
+
+    OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIsoPassPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoNeuIsoPassPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoPhoIsoPassPSV_idx->clear();
+
+    OUT::ptSorted_ph_mediumNoSIEIEFailPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIsoFailPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoNeuIsoFailPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoPhoIsoFailPSV_idx->clear();
+
+    OUT::ptSorted_ph_mediumNoSIEIEPassCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIsoPassCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoNeuIsoPassCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoPhoIsoPassCSEV_idx->clear();
+
+    OUT::ptSorted_ph_mediumNoSIEIEFailCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIsoFailCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoNeuIsoFailCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoPhoIsoFailCSEV_idx->clear();
+
+
+    std::vector<std::pair<float, int> > sorted_ph_loose;
+    std::vector<std::pair<float, int> > sorted_ph_medium;
+    std::vector<std::pair<float, int> > sorted_ph_tight;
+
+    std::vector<std::pair<float, int> > sorted_ph_mediumPassPSV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumFailPSV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumPassCSEV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumFailCSEV;
+
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoSIEIE;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoChIso;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoNeuIso;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoPhoIso;
+
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoSIEIEPassPSV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoChIsoPassPSV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoNeuIsoPassPSV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoPhoIsoPassPSV;
+
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoSIEIEFailPSV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoChIsoFailPSV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoNeuIsoFailPSV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoPhoIsoFailPSV;
+
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoSIEIEPassCSEV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoChIsoPassCSEV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoNeuIsoPassCSEV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoPhoIsoPassCSEV;
+
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoSIEIEFailCSEV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoChIsoFailCSEV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoNeuIsoFailCSEV;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoPhoIsoFailCSEV;
+
+
+    std::vector<TLorentzVector> photons;
+    std::vector<std::pair<float, int> > sorted_photons;
+    for( int idx = 0; idx < OUT::ph_n; ++idx ) {
+        TLorentzVector phot;
+        phot.SetPtEtaPhiM(  OUT::ph_pt->at(idx), 
+                            OUT::ph_eta->at(idx),
+                            OUT::ph_phi->at(idx),
+                            0.0
+                        );
+        photons.push_back(phot);
+
+        std::pair<float, int> sort_pair = std::make_pair( phot.Pt(), idx );
+
+        sorted_photons.push_back( sort_pair );
+
+        bool passHOverEMedium = OUT::ph_passHOverEMedium->at(idx);
+        bool passSIEIEMedium  = OUT::ph_passSIEIEMedium->at(idx);
+        bool passChIsoMedium  = OUT::ph_passChIsoCorrMedium->at(idx);
+        bool passNeuIsoMedium = OUT::ph_passNeuIsoCorrMedium->at(idx);
+        bool passPhoIsoMedium = OUT::ph_passPhoIsoCorrMedium->at(idx);
+        bool passLoose        = OUT::ph_passLoose->at(idx);
+        bool passTight        = OUT::ph_passTight->at(idx);
+
+        bool eleVeto          = OUT::ph_eleVeto->at(idx);
+        bool hasPixSeed       = OUT::ph_hasPixSeed->at(idx);
+
+        if( passHOverEMedium ) {
+            
+            if( passChIsoMedium && 
+                passNeuIsoMedium &&  
+                passPhoIsoMedium    ) {
+                sorted_ph_mediumNoSIEIE.push_back( sort_pair );
+                if( eleVeto ) {
+                    sorted_ph_mediumNoSIEIEPassCSEV.push_back(sort_pair);
+                }
+                else {
+                    sorted_ph_mediumNoSIEIEFailCSEV.push_back(sort_pair);
+                }
+                if( hasPixSeed ) {
+                    sorted_ph_mediumNoSIEIEFailPSV.push_back(sort_pair);
+                }
+                else {
+                    sorted_ph_mediumNoSIEIEPassPSV.push_back(sort_pair);
+                }
+            }
+            if( passSIEIEMedium && 
+                passNeuIsoMedium &&  
+                passPhoIsoMedium    ) {
+                sorted_ph_mediumNoChIso.push_back( sort_pair );
+                if( eleVeto ) {
+                    sorted_ph_mediumNoChIsoPassCSEV.push_back(sort_pair);
+                }
+                else {
+                    sorted_ph_mediumNoChIsoFailCSEV.push_back(sort_pair);
+                }
+                if( hasPixSeed ) {
+                    sorted_ph_mediumNoChIsoFailPSV.push_back(sort_pair);
+                }
+                else {
+                    sorted_ph_mediumNoChIsoPassPSV.push_back(sort_pair);
+                }
+            }
+            if( passSIEIEMedium && 
+                passChIsoMedium &&  
+                passPhoIsoMedium    ) {
+                sorted_ph_mediumNoNeuIso.push_back( sort_pair );
+                if( eleVeto ) {
+                    sorted_ph_mediumNoNeuIsoPassCSEV.push_back(sort_pair);
+                }
+                else {
+                    sorted_ph_mediumNoNeuIsoFailCSEV.push_back(sort_pair);
+                }
+                if( hasPixSeed ) {
+                    sorted_ph_mediumNoNeuIsoFailPSV.push_back(sort_pair);
+                }
+                else {
+                    sorted_ph_mediumNoNeuIsoPassPSV.push_back(sort_pair);
+                }
+            }
+            if( passSIEIEMedium && 
+                passChIsoMedium &&  
+                passNeuIsoMedium    ) {
+                sorted_ph_mediumNoPhoIso.push_back( sort_pair );
+                if( eleVeto ) {
+                    sorted_ph_mediumNoPhoIsoPassCSEV.push_back(sort_pair);
+                }
+                else {
+                    sorted_ph_mediumNoPhoIsoFailCSEV.push_back(sort_pair);
+                }
+                if( hasPixSeed ) {
+                    sorted_ph_mediumNoPhoIsoFailPSV.push_back(sort_pair);
+                }
+                else {
+                    sorted_ph_mediumNoPhoIsoPassPSV.push_back(sort_pair);
+                }
+            }
+            if( passSIEIEMedium && 
+                passChIsoMedium &&  
+                passNeuIsoMedium &&
+                passPhoIsoMedium     ) {
+                sorted_ph_medium.push_back( sort_pair );
+                if( eleVeto ) {
+                    sorted_ph_mediumPassCSEV.push_back(sort_pair);
+                }
+                else {
+                    sorted_ph_mediumFailCSEV.push_back(sort_pair);
+                }
+                if( hasPixSeed ) {
+                    sorted_ph_mediumFailPSV.push_back(sort_pair);
+                }
+                else {
+                    sorted_ph_mediumPassPSV.push_back(sort_pair);
+                }
+            }
+        }
+        if( passLoose )  {
+            sorted_ph_loose.push_back( sort_pair );
+        }
+        if( passTight )  {
+            sorted_ph_tight.push_back( sort_pair );
+        }
+    }
+
+    std::sort(sorted_ph_loose.rbegin(),sorted_ph_loose.rend()) ;
+    std::sort(sorted_ph_medium.rbegin(),sorted_ph_medium.rend()) ;
+    std::sort(sorted_ph_tight.rbegin(),sorted_ph_tight.rend()) ;
+
+    std::sort(sorted_ph_mediumPassPSV.rbegin(),sorted_ph_mediumPassPSV.rend()) ;
+    std::sort(sorted_ph_mediumFailPSV.rbegin(),sorted_ph_mediumFailPSV.rend()) ;
+    std::sort(sorted_ph_mediumPassCSEV.rbegin(),sorted_ph_mediumPassCSEV.rend()) ;
+    std::sort(sorted_ph_mediumFailCSEV.rbegin(),sorted_ph_mediumFailCSEV.rend()) ;
+
+    std::sort(sorted_ph_mediumNoSIEIE.rbegin(),sorted_ph_mediumNoSIEIE.rend()) ;
+    std::sort(sorted_ph_mediumNoChIso.rbegin(),sorted_ph_mediumNoChIso.rend()) ;
+    std::sort(sorted_ph_mediumNoNeuIso.rbegin(),sorted_ph_mediumNoNeuIso.rend()) ;
+    std::sort(sorted_ph_mediumNoPhoIso.rbegin(),sorted_ph_mediumNoPhoIso.rend()) ;
+
+    std::sort(sorted_ph_mediumNoSIEIEPassPSV.rbegin(),sorted_ph_mediumNoSIEIEPassPSV.rend()) ;
+    std::sort(sorted_ph_mediumNoChIsoPassPSV.rbegin(),sorted_ph_mediumNoChIsoPassPSV.rend()) ;
+    std::sort(sorted_ph_mediumNoNeuIsoPassPSV.rbegin(),sorted_ph_mediumNoNeuIsoPassPSV.rend()) ;
+    std::sort(sorted_ph_mediumNoPhoIsoPassPSV.rbegin(),sorted_ph_mediumNoPhoIsoPassPSV.rend()) ;
+
+    std::sort(sorted_ph_mediumNoSIEIEFailPSV.rbegin(),sorted_ph_mediumNoSIEIEFailPSV.rend()) ;
+    std::sort(sorted_ph_mediumNoChIsoFailPSV.rbegin(),sorted_ph_mediumNoChIsoFailPSV.rend()) ;
+    std::sort(sorted_ph_mediumNoNeuIsoFailPSV.rbegin(),sorted_ph_mediumNoNeuIsoFailPSV.rend()) ;
+    std::sort(sorted_ph_mediumNoPhoIsoFailPSV.rbegin(),sorted_ph_mediumNoPhoIsoFailPSV.rend()) ;
+
+    std::sort(sorted_ph_mediumNoSIEIEPassCSEV.rbegin(),sorted_ph_mediumNoSIEIEPassCSEV.rend()) ;
+    std::sort(sorted_ph_mediumNoChIsoPassCSEV.rbegin(),sorted_ph_mediumNoChIsoPassCSEV.rend()) ;
+    std::sort(sorted_ph_mediumNoNeuIsoPassCSEV.rbegin(),sorted_ph_mediumNoNeuIsoPassCSEV.rend()) ;
+    std::sort(sorted_ph_mediumNoPhoIsoPassCSEV.rbegin(),sorted_ph_mediumNoPhoIsoPassCSEV.rend()) ;
+
+    std::sort(sorted_ph_mediumNoSIEIEFailCSEV.rbegin(),sorted_ph_mediumNoSIEIEFailCSEV.rend()) ;
+    std::sort(sorted_ph_mediumNoChIsoFailCSEV.rbegin(),sorted_ph_mediumNoChIsoFailCSEV.rend()) ;
+    std::sort(sorted_ph_mediumNoNeuIsoFailCSEV.rbegin(),sorted_ph_mediumNoNeuIsoFailCSEV.rend()) ;
+    std::sort(sorted_ph_mediumNoPhoIsoFailCSEV.rbegin(),sorted_ph_mediumNoPhoIsoFailCSEV.rend()) ;
+
+
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_loose.begin(); itr != sorted_ph_loose.end(); ++itr ) {
+        OUT::ptSorted_ph_loose_idx->push_back( itr->second );
+        OUT::ph_loose_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_medium.begin(); itr != sorted_ph_medium.end(); ++itr ) {
+        OUT::ptSorted_ph_medium_idx->push_back( itr->second );
+        OUT::ph_medium_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_tight.begin(); itr != sorted_ph_tight.end(); ++itr ) {
+        OUT::ptSorted_ph_tight_idx->push_back( itr->second );
+        OUT::ph_tight_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumPassPSV.begin(); itr != sorted_ph_mediumPassPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumPassPSV_idx->push_back( itr->second );
+        OUT::ph_mediumPassPSV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumFailPSV.begin(); itr != sorted_ph_mediumFailPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumFailPSV_idx->push_back( itr->second );
+        OUT::ph_mediumFailPSV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumPassCSEV.begin(); itr != sorted_ph_mediumPassCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumPassCSEV_idx->push_back( itr->second );
+        OUT::ph_mediumPassCSEV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumFailCSEV.begin(); itr != sorted_ph_mediumFailCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumFailCSEV_idx->push_back( itr->second );
+        OUT::ph_mediumFailCSEV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoSIEIE.begin(); itr != sorted_ph_mediumNoSIEIE.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIE_idx->push_back( itr->second );
+        OUT::ph_mediumNoSIEIE_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoChIso.begin(); itr != sorted_ph_mediumNoChIso.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoChIso_idx->push_back( itr->second );
+        OUT::ph_mediumNoChIso_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoNeuIso.begin(); itr != sorted_ph_mediumNoNeuIso.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoNeuIso_idx->push_back( itr->second );
+        OUT::ph_mediumNoNeuIso_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoPhoIso.begin(); itr != sorted_ph_mediumNoPhoIso.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoPhoIso_idx->push_back( itr->second );
+        OUT::ph_mediumNoPhoIso_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoSIEIEPassPSV.begin(); itr != sorted_ph_mediumNoSIEIEPassPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx->push_back( itr->second );
+        OUT::ph_mediumNoSIEIEPassPSV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoChIsoPassPSV.begin(); itr != sorted_ph_mediumNoChIsoPassPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoChIsoPassPSV_idx->push_back( itr->second );
+        OUT::ph_mediumNoChIsoPassPSV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoNeuIsoPassPSV.begin(); itr != sorted_ph_mediumNoNeuIsoPassPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoNeuIsoPassPSV_idx->push_back( itr->second );
+        OUT::ph_mediumNoNeuIsoPassPSV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoPhoIsoPassPSV.begin(); itr != sorted_ph_mediumNoPhoIsoPassPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoPhoIsoPassPSV_idx->push_back( itr->second );
+        OUT::ph_mediumNoPhoIsoPassPSV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoSIEIEFailPSV.begin(); itr != sorted_ph_mediumNoSIEIEFailPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIEFailPSV_idx->push_back( itr->second );
+        OUT::ph_mediumNoSIEIEFailPSV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoChIsoFailPSV.begin(); itr != sorted_ph_mediumNoChIsoFailPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoChIsoFailPSV_idx->push_back( itr->second );
+        OUT::ph_mediumNoChIsoFailPSV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoNeuIsoFailPSV.begin(); itr != sorted_ph_mediumNoNeuIsoFailPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoNeuIsoFailPSV_idx->push_back( itr->second );
+        OUT::ph_mediumNoNeuIsoFailPSV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoPhoIsoFailPSV.begin(); itr != sorted_ph_mediumNoPhoIsoFailPSV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoPhoIsoFailPSV_idx->push_back( itr->second );
+        OUT::ph_mediumNoPhoIsoFailPSV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoSIEIEPassCSEV.begin(); itr != sorted_ph_mediumNoSIEIEPassCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIEPassCSEV_idx->push_back( itr->second );
+        OUT::ph_mediumNoSIEIEPassCSEV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoChIsoPassCSEV.begin(); itr != sorted_ph_mediumNoChIsoPassCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoChIsoPassCSEV_idx->push_back( itr->second );
+        OUT::ph_mediumNoChIsoPassCSEV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoNeuIsoPassCSEV.begin(); itr != sorted_ph_mediumNoNeuIsoPassCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoNeuIsoPassCSEV_idx->push_back( itr->second );
+        OUT::ph_mediumNoNeuIsoPassCSEV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoPhoIsoPassCSEV.begin(); itr != sorted_ph_mediumNoPhoIsoPassCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoPhoIsoPassCSEV_idx->push_back( itr->second );
+        OUT::ph_mediumNoPhoIsoPassCSEV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoSIEIEFailCSEV.begin(); itr != sorted_ph_mediumNoSIEIEFailCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIEFailCSEV_idx->push_back( itr->second );
+        OUT::ph_mediumNoSIEIEFailCSEV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoChIsoFailCSEV.begin(); itr != sorted_ph_mediumNoChIsoFailCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoChIsoFailCSEV_idx->push_back( itr->second );
+        OUT::ph_mediumNoChIsoFailCSEV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoNeuIsoFailCSEV.begin(); itr != sorted_ph_mediumNoNeuIsoFailCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoNeuIsoFailCSEV_idx->push_back( itr->second );
+        OUT::ph_mediumNoNeuIsoFailCSEV_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoPhoIsoFailCSEV.begin(); itr != sorted_ph_mediumNoPhoIsoFailCSEV.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoPhoIsoFailCSEV_idx->push_back( itr->second );
+        OUT::ph_mediumNoPhoIsoFailCSEV_n++;
+    }
+
+
+}
+
+void RunModule::BuildTruth( ModuleConfig & config ) const {
+
+    OUT::ph_hasTruthMatchPh->clear();
+    OUT::ph_truthMatchPh_pt->clear();
+    OUT::ph_truthMatchPh_dr->clear();
+
+    OUT::el_hasTruthMatchEl->clear();
+    OUT::el_truthMatchEl_pt->clear();
+    OUT::el_truthMatchEl_dr->clear();
+
+    OUT::mu_hasTruthMatchMu->clear();
+    OUT::mu_truthMatchMu_pt->clear();
+    OUT::mu_truthMatchMu_dr->clear();
+
+    for( int phidx = 0; phidx < OUT::ph_n; ++phidx ) {
+
+        TLorentzVector phlv;
+        phlv.SetPtEtaPhiE( OUT::ph_pt->at(phidx),
+                           OUT::ph_eta->at(phidx),
+                           OUT::ph_phi->at(phidx),
+                           OUT::ph_e->at(phidx)
+                         );
+
+
+        float mindr = 101.;
+        float matchPt = 0;
+        for( int tphidx = 0; tphidx < OUT::trueph_n; ++tphidx ) {
+
+            TLorentzVector tphlv;
+            tphlv.SetPtEtaPhiM( OUT::trueph_pt->at(tphidx),
+                                OUT::trueph_eta->at(tphidx),
+                                OUT::trueph_phi->at(tphidx),
+                                0.0
+                              );
+
+            float dr = phlv.DeltaR( tphlv );
+
+            if( dr < mindr ) {
+                mindr = dr;
+                matchPt = tphlv.Pt();
+            }
+
+        }
+
+        OUT::ph_hasTruthMatchPh->push_back( ( mindr < 100 ) );
+        OUT::ph_truthMatchPh_pt->push_back( matchPt );
+        OUT::ph_truthMatchPh_dr->push_back( mindr );
+
+    }
+
+    for( int muidx = 0; muidx < OUT::mu_n; ++muidx ) {
+
+        TLorentzVector mulv;
+        mulv.SetPtEtaPhiE( OUT::mu_pt->at(muidx),
+                           OUT::mu_eta->at(muidx),
+                           OUT::mu_phi->at(muidx),
+                           OUT::mu_e->at(muidx)
+                         );
+
+
+        float mindr = 101.;
+        float matchPt = 0;
+        for( int tlepidx = 0; tlepidx < OUT::truelep_n; ++tlepidx ) {
+
+            if( abs( OUT::truelep_Id->at(tlepidx) ) != 13 ) continue;
+
+            TLorentzVector tleplv;
+            tleplv.SetPtEtaPhiE( OUT::truelep_pt->at(tlepidx),
+                                 OUT::truelep_eta->at(tlepidx),
+                                 OUT::truelep_phi->at(tlepidx),
+                                 OUT::truelep_e->at(tlepidx)
+                               );
+
+            float dr = mulv.DeltaR( tleplv );
+
+            if( dr < mindr ) {
+                mindr = dr;
+                matchPt = tleplv.Pt();
+            }
+
+        }
+
+        OUT::mu_hasTruthMatchMu->push_back( ( mindr < 100 ) );
+        OUT::mu_truthMatchMu_pt->push_back( matchPt );
+        OUT::mu_truthMatchMu_dr->push_back( mindr );
+
+    }
+
+    for( int elidx = 0; elidx < OUT::el_n; ++elidx ) {
+
+        TLorentzVector ellv;
+        ellv.SetPtEtaPhiE( OUT::el_pt->at(elidx),
+                           OUT::el_eta->at(elidx),
+                           OUT::el_phi->at(elidx),
+                           OUT::el_e->at(elidx)
+                         );
+
+
+        float mindr = 101.;
+        float matchPt = 0;
+        for( int tlepidx = 0; tlepidx < OUT::truelep_n; ++tlepidx ) {
+
+            if( abs( OUT::truelep_Id->at(tlepidx) ) != 11 ) continue;
+
+            TLorentzVector tleplv;
+            tleplv.SetPtEtaPhiE( OUT::truelep_pt->at(tlepidx),
+                                 OUT::truelep_eta->at(tlepidx),
+                                 OUT::truelep_phi->at(tlepidx),
+                                 OUT::truelep_e->at(tlepidx)
+                               );
+
+            float dr = ellv.DeltaR( tleplv );
+
+            if( dr < mindr ) {
+                mindr = dr;
+                matchPt = tleplv.Pt();
+            }
+
+        }
+
+        OUT::el_hasTruthMatchEl->push_back( ( mindr < 100 ) );
+        OUT::el_truthMatchEl_pt->push_back( matchPt );
+        OUT::el_truthMatchEl_dr->push_back( mindr );
+
+    }
+
+    TLorentzVector nu_sum;
+    std::vector<TLorentzVector> trueleps;
+    std::vector<std::pair<float, unsigned> >  sorted_tleps;
+
+    for( int tlepidx = 0; tlepidx < OUT::truelep_n; ++tlepidx ) {
+        int absid = abs(OUT::truelep_Id->at(tlepidx));
+
+        if( absid == 12 || absid == 14 || absid == 16 ) {
+
+            TLorentzVector nulv;
+            nulv.SetPtEtaPhiM( OUT::truelep_pt->at(tlepidx),
+                               OUT::truelep_eta->at(tlepidx),
+                               OUT::truelep_phi->at(tlepidx),
+                               0.0
+                             );
+
+            nu_sum += nulv;
+        }
+        if( absid == 11 || absid == 13 ) {
+            TLorentzVector leplv;
+            leplv.SetPtEtaPhiE( OUT::truelep_pt->at(tlepidx),
+                                OUT::truelep_eta->at(tlepidx),
+                                OUT::truelep_phi->at(tlepidx),
+                                OUT::truelep_e->at(tlepidx)
+                              );
+
+            trueleps.push_back( leplv );
+            sorted_tleps.push_back( std::make_pair( leplv.Pt(), trueleps.size()-1) );
+        }
+
+    }
+
+    OUT::truemt_lep_met_ph = 0;
+    OUT::truemt_res = 0;
+    if( trueleps.size() > 0 && OUT::trueph_n>0) {
+   
+        TLorentzVector lep_trans;
+        TLorentzVector ph_trans;
+        lep_trans.SetPtEtaPhiM( trueleps[sorted_tleps[0].second].Pt(), 0.0, trueleps[sorted_tleps[0].second].Phi(), trueleps[sorted_tleps[0].second].M() );
+        ph_trans.SetPtEtaPhiM( OUT::trueph_pt->at(0), 0.0, OUT::trueph_phi->at(0), 0.0 );
+
+        TLorentzVector metlv;
+        metlv.SetPtEtaPhiM( nu_sum.Pt(), 0.0, nu_sum.Phi(), 0.0 );
+
+        OUT::truemt_res = ( lep_trans + ph_trans + metlv ).M();
+           
+
+        OUT::mt_res = ( lep_trans + ph_trans + metlv ).M();
+        std::sort(sorted_tleps.rbegin(), sorted_tleps.rend());
+        OUT::truemt_lep_met_ph = Utils::calc_mt( trueleps[sorted_tleps[0].second], nu_sum);
+    }
+
+
 
 }
 

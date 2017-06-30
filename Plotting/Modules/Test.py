@@ -2,13 +2,13 @@ def config_samples(samples) :
 
     import ROOT
 
-    samples.AddSample('WW'    , path='job_summer12_WW_2l2nu'  , scale=1.0, plotColor=ROOT.kBlue )
-    #samples.AddSample('WWg'   , path='job_summer12_WWg'    ,  scale=2.26, plotColor=ROOT.kRed )
-    samples.AddSample('WWg'   , path='job_summer12_WWg'    ,  scale=1.0, plotColor=ROOT.kRed )
-    samples.AddSample('TT1L'    , path='job_summer12_ttjets_1l'  , scale=1.0, plotColor=ROOT.kBlue )
-    samples.AddSample('TT2L'    , path='job_summer12_ttjets_2l'  , scale=1.0, plotColor=ROOT.kBlue )
-    #samples.AddSample('TTg'   , path='job_summer12_ttg'    ,  scale=2.32, plotColor=ROOT.kRed )
-    samples.AddSample('TTg'   , path='job_summer12_ttg'    ,  scale=1.0, plotColor=ROOT.kRed )
-
+    samples.AddSample('WJetsToLNu'                    , path='WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               , isActive=True, isSignal=True, plotColor=1, useXSFile=True )
+    samples.AddSample('WJetsToLNu_HT-100To200'         , path='WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'   , isActive=True, isSignal=True, plotColor=2, useXSFile=True )
+    samples.AddSample('WJetsToLNu_HT-200To400'         , path='WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'   , isActive=True, isSignal=True, plotColor=3, useXSFile=True )
+    samples.AddSample('WJetsToLNu_HT-400To600'         , path='WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'   , isActive=True, isSignal=True, plotColor=4, useXSFile=True )
+    samples.AddSample('WJetsToLNu_HT-600To800'         , path='WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'   , isActive=True, isSignal=True, plotColor=5, useXSFile=True )
+    samples.AddSample('WJetsToLNu_HT-800To1200'        , path='WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'  , isActive=True, isSignal=True, plotColor=6, useXSFile=True )
+    samples.AddSample('WJetsToLNu_HT-1200To2500'        , path='WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8', isActive=True, isSignal=True, plotColor=7, useXSFile=True )
+    samples.AddSample('WJetsToLNu_HT-2500ToInf'         , path='WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'  , isActive=True, isSignal=True, plotColor=8, useXSFile=True )
 
 

@@ -42,7 +42,8 @@ ifeq ($(LOCATION), $(CERNLOC))
 endif
 
 ifeq ($(LOCATION), $(UMDLOC))
-	BOOSTFLAGS   = -I/cvmfs/cms.cern.ch/slc6_amd64_gcc491/external/boost/1.57.0-cms/include
+	#BOOSTFLAGS   = -I/cvmfs/cms.cern.ch/slc6_amd64_gcc491/external/boost/1.57.0-cms/include
+	BOOSTFLAGS   = -I/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/boost/1.57.0-ikhhed/include
 endif
 
 # we need to link against an additional library if using root>5.24

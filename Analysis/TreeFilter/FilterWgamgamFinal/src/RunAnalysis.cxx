@@ -1778,6 +1778,37 @@ void RunModule::CalcEventVars( ModuleConfig & config ) const {
 
     std::vector<TLorentzVector> photons;
     std::vector<std::pair<float, int> > sorted_photons;
+    OUT::ptSorted_ph_medium_idx->clear();
+
+    OUT::ptSorted_ph_mediumPassPSV_idx->clear();
+    OUT::ptSorted_ph_mediumFailPSV_idx->clear();
+    OUT::ptSorted_ph_mediumPassCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumFailCSEV_idx->clear();
+
+    OUT::ptSorted_ph_mediumNoSIEIE_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIso_idx->clear();
+    OUT::ptSorted_ph_mediumNoNeuIso_idx->clear();
+    OUT::ptSorted_ph_mediumNoPhoIso_idx->clear();
+
+    OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIsoPassPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoNeuIsoPassPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoPhoIsoPassPSV_idx->clear();
+
+    OUT::ptSorted_ph_mediumNoSIEIEFailPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIsoFailPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoNeuIsoFailPSV_idx->clear();
+    OUT::ptSorted_ph_mediumNoPhoIsoFailPSV_idx->clear();
+
+    OUT::ptSorted_ph_mediumNoSIEIEPassCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIsoPassCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoNeuIsoPassCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoPhoIsoPassCSEV_idx->clear();
+
+    OUT::ptSorted_ph_mediumNoSIEIEFailCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIsoFailCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoNeuIsoFailCSEV_idx->clear();
+    OUT::ptSorted_ph_mediumNoPhoIsoFailCSEV_idx->clear();
 
     //std::vector<std::pair<float, int> > sorted_photons_iso533;
     //std::vector<std::pair<float, int> > sorted_photons_iso855;

@@ -6,7 +6,10 @@ import getpass
 parser = ArgumentParser( )
 
 parser.add_argument('--prod_dir', dest='prod_dir', required=True, help='path to processing directory' )
-parser.add_argument('--gridpack', dest='gridpack', required=True, help='path to gridpack' )
+parser.add_argument('--gridpack', dest='gridpack', default=None, help='path to gridpack' )
+parser.add_argument('--mass', dest='mass', type=int, default=None, help='mass of pythia resonance' )
+parser.add_argument('--width', dest='width', type=float, default=None, help='width of pythia resonance' )
+parser.add_argument('--pythia', dest='pythia', default=False, action='store_true', help='run pythia generation' )
 parser.add_argument('--nevt', dest='nevt', type=int, default=20000, help='number of events to run.  Each job will contain 1000 events' )
 parser.add_argument('--nevtPerJob', dest='nevtPerJob', type=int, default=1000, help='number of events to run per job default = 1000' )
 parser.add_argument('--lxbatch', dest='lxbatch', default=False, action='store_true', help='submit to lxbatch' )
@@ -19,9 +22,19 @@ PWD = os.path.dirname(os.path.realpath(__file__))
 
 def main() :
 
-    if not os.path.isfile( options.gridpack ) :
-        print 'Gridpack does not exist! Exiting!'
-        return
+    if options.pythia :
+        if options.mass is None or options.width is None :
+            print 'Must provide a mass and width! Exiting!'
+            return
+    else :
+
+        if options.gridpack is None :
+            print 'Must provide a gridpack! Exiting!'
+            return
+
+        if not os.path.isfile( options.gridpack ) :
+            print 'Gridpack does not exist! Exiting!'
+            return
 
 
     # no longer need certificate
@@ -85,7 +98,10 @@ def main() :
         if not os.path.isdir( '%s/%s' %( options.prod_dir, job_dir ) ) :
             os.makedirs( '%s/%s' %( options.prod_dir, job_dir ) ) 
 
-        generation_text = 'python %s/run_moriond17_gen.py --prod_dir %s/%s --name %s --gridpack %s  --nevt %d --writeShellScript --scriptName %s ' %( PWD, options.prod_dir, job_dir, output_name, options.gridpack, options.nevtPerJob, scriptName)
+        if options.pythia :
+            generation_text = 'python %s/run_pythia_gen.py --prod_dir %s/%s --name %s --mass %d --width %f  --nevt %d --writeShellScript --scriptName %s ' %( PWD, options.prod_dir, job_dir, output_name, options.mass, options.width, options.nevtPerJob, scriptName)
+        else :
+            generation_text = 'python %s/run_moriond17_gen.py --prod_dir %s/%s --name %s --gridpack %s  --nevt %d --writeShellScript --scriptName %s ' %( PWD, options.prod_dir, job_dir, output_name, options.gridpack, options.nevtPerJob, scriptName)
         if options.lxbatch :
             proxy_name = os.path.basename( proxy_path )
             username = getpass.getuser()

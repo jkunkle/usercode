@@ -7,9 +7,10 @@ endif
 
 if(`echo $HOSTNAME | awk -F "-" '{print $1}'` == "hepcms") then
     if( $?LD_LIBRARY_PATH == 0 ) then 
-        setenv LD_LIBRARY_PATH /cvmfs/cms.cern.ch/slc6_amd64_gcc491/external/boost/1.57.0-cms/lib
+    #setenv LD_LIBRARY_PATH /cvmfs/cms.cern.ch/slc6_amd64_gcc491/external/boost/1.57.0-cms/lib
+        setenv LD_LIBRARY_PATH /cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/boost/1.57.0-ikhhed/lib
     else 
-        setenv LD_LIBRARY_PATH /cvmfs/cms.cern.ch/slc6_amd64_gcc491/external/boost/1.57.0-cms/lib:$LD_LIBRARY_PATH
+        setenv LD_LIBRARY_PATH /cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/boost/1.57.0-ikhhed/lib:$LD_LIBRARY_PATH
 endif
 
 

@@ -9,7 +9,7 @@ def get_remove_filter() :
 def get_keep_filter() :
 
     #return ['Evt.*', 'MET.*', 'GPdf.*', 'GPhotPt', 'GPhotEta', 'GPhotPhi', 'GPhotE' ,'GPhotSt', 'GPhotMotherId']
-    return ['Evt.*', 'GPdf.*']
+    return ['Evt.*', 'GPdf.*', 'HLTObj.*', 'GenHT']
 
 def config_analysis( alg_list, args ) :
 
@@ -23,8 +23,10 @@ def config_analysis( alg_list, args ) :
         dq_filter.add_var( 'jsonFile', '%s/TreeFilter/RecoPhoton15/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt' %workarea)
         alg_list.append( dq_filter )
 
+    alg_list.append( build_truth( args ) )
+
     alg_list.append( build_electron( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=False ) )
-    #alg_list.append( build_electron( do_cutflow=True, do_hists=False, evalPID='tight', applyCorrections=False ) )
+    #alg_list.append( build_electron( do_cutflow=True, do_hists=False, evalPID='medium', applyCorrections=False ) )
 
     alg_list.append( build_muon( do_cutflow=False, do_hists=False, evalPID=None, applyCorrections=False ) )
     #alg_list.append( build_muon( do_cutflow=True, do_hists=False, evalPID='tight', applyCorrections=False ) )
@@ -35,8 +37,6 @@ def config_analysis( alg_list, args ) :
     alg_list.append( build_jet( do_cutflow=False, do_hists=False ) )
 
     alg_list.append( Filter('BuildMET') )
-
-    alg_list.append( build_truth( args ) )
 
     alg_list.append( weight_event(args) )
 
@@ -326,6 +326,37 @@ def build_jet( do_cutflow=False, do_hists=False ) :
 
     filt.cut_pt = ' > 30 '
     filt.cut_abseta = ' < 4.5 '
+    #filt.cut_idloose = ' == True '
+
+    filt.cut_jet_nhf_central_loose = ' < 0.99 '
+    filt.cut_jet_nemf_central_loose = ' < 0.99 '
+    filt.cut_jet_nconst_central_loose = ' > 1'
+    filt.cut_jet_nhf_central_tight = ' < 0.90 '
+    filt.cut_jet_nemf_central_tight = ' < 0.90 '
+    filt.cut_jet_nconst_central_tight = ' > 1'
+    filt.cut_jet_nhf_central_tightlep = ' < 0.9 '
+    filt.cut_jet_nemf_central_tightlep = ' < 0.9 '
+    filt.cut_jet_nconst_central_tightlep = '> 1 '
+    filt.cut_jet_muf_central_tightlep = '< 0.8 '
+    filt.cut_jet_chf_central_loose = ' > 0'
+    filt.cut_jet_cmult_central_loose = ' > 0 '
+    filt.cut_jet_cemf_central_loose = ' < 0.99 '
+    filt.cut_jet_chf_central_tight = ' > 0 '
+    filt.cut_jet_cmult_central_tight = ' > 0'
+    filt.cut_jet_cemf_central_tight = ' < 0.99 '
+    filt.cut_jet_chf_central_tightlep = ' > 0'
+    filt.cut_jet_cmult_central_tightlep = ' > 0'
+    filt.cut_jet_cemf_central_tightlep = ' < 0.90'
+    filt.cut_jet_nhf_transition_loose = ' > 0.01 '
+    filt.cut_jet_nemf_transition_loose = ' < 0.98 '
+    filt.cut_jet_nmult_transition_loose = ' > 2 '
+    filt.cut_jet_nhf_transition_tight = ' > 0.01 '
+    filt.cut_jet_nemf_transition_tight = ' < 0.98 '
+    filt.cut_jet_nmult_transition_tight = ' > 2 '
+    filt.cut_jet_nemf_forward_loose = ' < 0.90 '
+    filt.cut_jet_nmult_forward_loose = '> 10 '
+    filt.cut_jet_nemf_forward_tight = ' < 0.90 '
+    filt.cut_jet_nmult_forward_tight = ' > 10 '
 
     #filt.cut_jet_el_dr = ' > 0.4 '
     #filt.cut_jet_ph_dr = ' > 0.4 '
@@ -358,6 +389,16 @@ def weight_event( args ) :
     filt_str = args.get( 'ApplyNLOWeight', 'false' )
 
     filt.add_var( 'ApplyNLOWeight', filt_str )
+
+    if 'sampleFile' in args :
+
+        workarea = os.getenv('WorkArea')
+        filt.add_var( 'sample_file', args['sampleFile'])
+        filt.add_var( 'data_file', '%s/TreeFilter/RecoPhoton15/data/MyDataPileupHistogram.root' %workarea )
+        filt.add_var( 'sample_hist', 'pileup_true' )
+        filt.add_var('data_hist', 'pileup')
+    else :
+        print 'weight_event requires as a command line argument like --moduleArgs " { \'sampleFile\' : \'/path/histograms.root\'} "'
 
     return filt
 

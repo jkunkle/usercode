@@ -12,9 +12,6 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gEnv.SetValue('TFile.Recover', 'OFF' )
 #ROOT.gEnv.SaveLevel( ROOT.kEnvGlobal )
 
-print sys.argv
-
-
 def main() :
 
     parser = ArgumentParser()
@@ -63,6 +60,7 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
         return orig_nevt_tree, orig_nevt_hist, filt_nevt_tree, filt_nevt_hist
         
     filt_nevt_tree, filt_nevt_hist  = get_dataset_counts( filteredDS, fileKeyFilt, treeNameFilt, histNameFilt )
+
 
     return orig_nevt_tree, orig_nevt_hist, filt_nevt_tree, filt_nevt_hist
 
@@ -119,6 +117,7 @@ def get_dataset_counts( dataset, fileKey, treeName=None, histName=None, vetoes=[
                     except AttributeError :
                         print 'Could not access hist'
                         continue
+                ofile.Close()
 
 
     else :
@@ -163,6 +162,7 @@ def get_dataset_counts( dataset, fileKey, treeName=None, histName=None, vetoes=[
                         nevt_hist += ohist.GetBinContent(1)
                     except AttributeError :
                         print 'Could not get hist from file %s' %(filepath)
+                ofile.Close()
 
 
     return (nevt_tree, nevt_hist )

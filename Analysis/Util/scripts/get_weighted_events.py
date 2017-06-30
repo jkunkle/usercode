@@ -12,7 +12,8 @@ parser.add_argument( '--weightBranch', dest='weightBranch', default='EvtWeights'
 
 options = parser.parse_args()
 
-ROOT.gROOT.SetBatch(True)
+print '*************************FIX*********************'
+ROOT.gROOT.SetBatch(False)
 
 def main () :
 
@@ -27,43 +28,36 @@ def main () :
     n_weighted = []
 
 
-    #for i in range( 1, 118 ) :
-
-    #    print 'ntuple_%d.root' %i
-
     mychain = ROOT.TChain( options.treeName )
     for f in ntuple_files :
-        mychain.AddFile( f )
+        #mychain.AddFile( f )
     #mychain.AddFile( '/data/users/jkunkle/Baobabs/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/ntuple_%d.root' %i)
+        myfile = ROOT.TFile.Open( f )
 
-    #mychain.SetBranchStatus('*', 0 )
-    #mychain.SetBranchStatus( options.weightBranch, 1 )
+        mychain = myfile.Get( options.treeName )
 
-    totalEvents = 0
-    weightedEvents = 0
+        mychain.SetBranchStatus('*', 0 )
+        mychain.SetBranchStatus( options.weightBranch, 1 )
 
-    weighthist = ROOT.TH1F( 'weighthist', 'weighthist', 2, -100000, 100000 )
+        totalEvents = 0
+        weightedEvents = 0
 
-    print mychain.GetEntries()
-    n_raw.append(  mychain.GetEntries() )
+        weighthist = ROOT.TH1F( 'weighthist', 'weighthist', 2, -100000, 100000 )
 
-    mychain.Draw( 'EvtRunNum >> weighthist' )
+        print mychain.GetEntries()
+        n_raw.append(  mychain.GetEntries() )
 
-    print weighthist.Integral()
-    print weighthist.GetBinContent(0)
-    print weighthist.GetBinContent(1)
-    print weighthist.GetBinContent(2)
-    print weighthist.GetBinContent(3)
-    print weighthist.GetBinContent(4)
+        mychain.Draw( '%s[0] >> weighthist' %options.weightBranch )
 
-    neg_events  = weighthist.GetBinContent(0) + weighthist.GetBinContent(1)
-    pos_events  = weighthist.GetBinContent(2) + weighthist.GetBinContent(3)
 
-    total_events = neg_events + pos_events
-    weighted_events = pos_events - neg_events 
+        neg_events  = weighthist.GetBinContent(0) + weighthist.GetBinContent(1)
+        pos_events  = weighthist.GetBinContent(2) + weighthist.GetBinContent(3)
 
-    n_total .append( total_events )
-    n_weighted.append( weighted_events)
+        total_events = neg_events + pos_events
+        weighted_events = pos_events - neg_events 
+
+        n_total .append( total_events )
+        n_weighted.append( weighted_events)
 
     print 'Total Events = %d, Weighted events = %d' %( total_events, weighted_events)
 

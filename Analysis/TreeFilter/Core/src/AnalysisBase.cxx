@@ -1143,7 +1143,7 @@ void ParseFiles( const std::string & files_val, CmdOptions & options ) {
         
         // split by "][" to get individual entries.  There should be 2
         std::vector<std::string> file_map_split = Tokenize( file_map_mod, "][" );
-        if( !file_map_split.size() == 2 ) {
+        if( !(file_map_split.size() == 2) ) {
             std::cout << "ParseFiles - ERROR : File entry should have a list of files and a list of events" << std::endl;
             continue;
         }
@@ -1169,7 +1169,7 @@ void ParseFiles( const std::string & files_val, CmdOptions & options ) {
 
             // Split the values by "-" there should be two entries
             std::vector<std::string> vals = Tokenize( event_vals_mod, "-");
-            if( !vals.size() == 2 ) {
+            if( !(vals.size() == 2) ) {
                 std::cout << "ParseFiles - ERROR : Events entry should have a size 2 tuple of integers" << std::endl;
                 continue;
             }

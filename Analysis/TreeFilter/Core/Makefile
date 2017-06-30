@@ -35,9 +35,11 @@ ROOTCINT     = rootcint
 ROOTCONFIG   = root-config
 ROOTCXXFLAGS = $(shell $(ROOTCONFIG) --cflags)
 ROOTLIBS     = $(shell $(ROOTCONFIG) --libs) -lTreePlayer -lTMVA #-lBoost
+GCCLIBS      = -l/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/gcc/5.3.0/lib64
 
 ifeq ($(LOCATION), $(CERNLOC))
-	BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50
+	#BOOSTFLAGS   = -I/afs/cern.ch/sw/lcg/external/Boost/1.50.0_python2.7/x86_64-slc5-gcc43-opt/include/boost-1_50
+	BOOSTFLAGS   = -I/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/boost/1.57.0-ikhhed2/include/boost 
 
 endif
 

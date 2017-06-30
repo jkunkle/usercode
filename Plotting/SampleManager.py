@@ -381,7 +381,7 @@ class DrawConfig :
             rootslabel .SetTextSize(0.045)
             cmslabel  .SetTextSize(0.055)
 
-            cmslabel.SetText( 0.18, 0.87, 'CMS' )
+            cmslabel.SetText( 0.15, 0.93, 'CMS' )
             extlabel.SetText( 0.18, 0.82, extText )
             #rootslabel.SetText(0.65, 0.93, '#font[132]{#sqrt{s} = 8 TeV, L = 19.4 fb^{-1} }' )
 
@@ -2812,7 +2812,7 @@ class SampleManager :
 
         self.curr_legend = self.create_standard_legend( step, draw_config=draw_config)
 
-        legendTextSize = draw_config.legend_config.get('legendTextSize', None )
+        legendTextSize = draw_config.legend_config.get('legendTextSize', 0.04 )
 
         # format the entries
         tmp_legend_entries = []
@@ -2824,9 +2824,10 @@ class SampleManager :
         for samp in drawn_samples :
             tmp_legend_entries.append( ( samp.hist, samp.legendName,  'F') )
 
-        for samp in self.get_signal_samples() :
-            if samp.isActive :
-                tmp_legend_entries.append( ( samp.hist, samp.legendName, 'L') )
+        print '********************NOT FILLING SIGNAL ENTRY IN LEGEND**********************'
+        #for samp in self.get_signal_samples() :
+        #    if samp.isActive :
+        #        tmp_legend_entries.append( ( samp.hist, samp.legendName, 'L') )
 
         if self.legendLoc=='Double' :
             legend_entries = [None]*len(tmp_legend_entries)
@@ -3734,13 +3735,16 @@ class SampleManager :
             else :
                 dsamp.hist.Draw('PE same')
 
+
         # draw the signals
+        legendTextSize = draw_config.legend_config.get('legendTextSize', 0.04 )
+        print legendTextSize
         if sighists :
             sigsamps = self.get_samples(name=sighists)
             for samp in sighists : 
                 print samp.isActive
                 if samp.isActive :
-                    print 'Draw hist ', samp.name
+                    print 'Draw Signal hist ', samp.name
                     #samp.hist.SetLineWidth(3)
                     samp.hist.SetLineStyle(samp.getLineStyle())
                     samp.hist.SetStats(0)
@@ -3748,18 +3752,19 @@ class SampleManager :
                         samp.hist.DrawNormalized('HIST same')
                     else :
                         samp.hist.Draw('HIST same')
+                    entry = self.curr_legend.AddEntry( samp.hist, samp.legendName, 'L')
+                    entry.SetTextSize(legendTextSize)
 
         if errhists :
             errsamps = self.get_samples(name=errhists )
-            legendTextSize = draw_config.legend_config.get('legendTextSize', None )
             for samp in errsamps :
                 samp.graph.SetFillStyle(3004)
                 samp.graph.SetFillColor(ROOT.kBlack)
                 samp.graph.Draw('2same')
 
-                entry = self.curr_legend.AddEntry( samp.graph, 'Total uncertainty' )
-                if legendTextSize is not None :
-                    entry.SetTextSize( legendTextSize )
+                entry = self.curr_legend.AddEntry( samp.graph, 'Total uncertainty', 'F')
+                entry.SetTextSize(legendTextSize)
+
 
         if doratio :
             self.curr_canvases['bottom'].cd()
@@ -3785,7 +3790,6 @@ class SampleManager :
 
         # draw the legend
         if self.curr_legend is not None :
-            print 'Legend text size = ', self.curr_legend.GetTextSize()
             self.curr_legend.Draw()
 
         # draw the plot status label

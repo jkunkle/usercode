@@ -10,7 +10,14 @@ def main() :
 
     tot_size, subdir_sizes = get_eos_tot_size( options.dir )
 
+    sorted_sizes = []
     for dir, size in subdir_sizes.iteritems( ) :
+        sorted_sizes.append( (size, dir) )
+
+    sorted_sizes.sort()
+
+    for size, dir in reversed(sorted_sizes) :
+
         conv_size = size/(1024*1024*1024.0)
 
         print 'Size for %s is %f Gb' %( dir, conv_size )

@@ -255,7 +255,8 @@ def main() :
 
     #pt_bins = [('25', '40'), ('40', '70'), ('70', 'max') ]
     #pt_bins = [('40', '70'), ('70', 'max') ]
-    pt_bins_wgg = [('25', 'max') ]
+    #pt_bins_wgg = [('25', 'max') ]
+    pt_bins_wgg = [('25', '40') ]
     #pt_bins_wgg = [('70', 'max') ]
     pt_bins_zgg = [('15', 'max') ]
     #pt_bins_zgg = [('25', 'max') ]

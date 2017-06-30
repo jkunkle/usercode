@@ -1,5 +1,5 @@
 #OUTPUTMAIN=~/Plots/WggPlotsForPub_2016_06_08/
-OUTPUTMAIN=~/Plots/WggPlotsForPubSublPtCR_2016_06_08/
+#OUTPUTMAIN=~/Plots/WggPlotsForPubSublPtCR_2016_06_08/
 #OUTPUTMAIN=~/Plots/WggPlotsForPubOneBin_2016_06_08/
 #OUTPUTMAIN=~/Plots/WggPlotsForPubLeadPt70_2016_06_08
 #OUTPUTMAIN=~/Plots/WggPlots_2016_05_29
@@ -12,11 +12,11 @@ OUTPUTMAIN=~/Plots/WggPlotsForPubSublPtCR_2016_06_08/
 #OUTPUTMAIN=~/Plots/ZggPlotsWgTemp_2016_05_29
 #OUTPUTMAIN=~/Plots/ZggPlotsWgTempOneBin_2016_05_29
 #OUTPUTMAIN=~/Plots/ZggPlotsOneBin_2016_05_29
-#OUTPUTMAIN=~/Plots/ZggPlotsOneBin_2015_12_01
+OUTPUTMAIN=~/Plots/ZggPlotsOneBin_2015_12_01
 #OUTPUTMAIN=~/Plots/ZggPlots_2015_12_01
 #OUTPUTMAIN=~/Plots/WggPlotsZgTemp_2016_05_29
 SYSTFILE=$(OUTPUTMAIN)/JetFakeTemplatePlots/systematics.pickle
-PLOTDIR=PlotsUnblindEta24
+PLOTDIR=PlotsUnblind
 
 JETFITVARS=sigmaIEIE chIsoCorr
 #JETFITVARS=chIsoCorr
@@ -120,10 +120,10 @@ plots :
 background :
 	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 25,40,70,1000000 --plotDir $(PLOTDIR)
 	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 15,25,40,1000000 --plotDir $(PLOTDIR) --zgg
-	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 15,1000000 --plotDir $(PLOTDIR) --zgg
+	python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 15,1000000 --plotDir $(PLOTDIR) --zgg
 	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 25,1000000 --plotDir $(PLOTDIR)
 	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 70,1000000 --plotDir $(PLOTDIR) --disableDistributions --sublptbins 25,1000000
-	python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 15,25,40,1000000 --sublptbins 15,25 --plotDir $(PLOTDIR)
+	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 15,25,40,1000000 --sublptbins 15,25 --plotDir $(PLOTDIR)
 	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 15,25,40,1000000 --sublptbins 15,25 --plotDir $(PLOTDIR)SIEIE --useSIEIE
 	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 25,1000000 --plotDir $(PLOTDIR)
 	#python MakeBackgroundEstimates.py --baseDir $(OUTPUTMAIN) --ptbins 25,1000000 --plotDir $(PLOTDIR)SIEIE --useSIEIE
@@ -141,7 +141,7 @@ finalplots :
 	#python MakeFinalHists.py  --baseDirComb $(OUTPUTMAIN)/BackgroundEstimates/$(PLOTDIR)/Summed --outputDir $(OUTPUTMAIN)/FinalPlotsOneBin  --aqgc
 	#python MakeFinalHists.py  --baseDir $(OUTPUTMAIN)/BackgroundEstimates/$(PLOTDIR) --outputDir $(OUTPUTMAIN)/FinalPlotsOneBin  --muon --electron 
 	#python MakeFinalHists.py  --baseDir $(OUTPUTMAIN)LowMt/BackgroundEstimates/$(PLOTDIR) --baseDirComb $(OUTPUTMAIN)LowMt/BackgroundEstimates/$(PLOTDIR)Summed --outputDir $(OUTPUTMAIN)LowMt/FinalPlots --muon --electron 
-	#python MakeFinalHists.py  --baseDir $(OUTPUTMAIN)/BackgroundEstimates/$(PLOTDIR)  --outputDir $(OUTPUTMAIN)/FinalPlotsOneBin --zgg
+	python MakeFinalHists.py  --baseDir $(OUTPUTMAIN)/BackgroundEstimates/$(PLOTDIR)  --outputDir $(OUTPUTMAIN)/FinalPlotsOneBin --zgg
 	#python MakeFinalHists.py  --baseDir $(OUTPUTMAIN)/BackgroundEstimates/$(PLOTDIR)/Summed  --outputDir $(OUTPUTMAIN)/MoneyPlots --money
 	python MakeFinalHists.py  --baseDir $(OUTPUTMAIN)/BackgroundEstimates/$(PLOTDIR)/Summed  --outputDir $(OUTPUTMAIN)/MoneyPlots --money --zgg
 

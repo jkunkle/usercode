@@ -97,6 +97,13 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::ph_mediumNoNeuIso_n = 0;
     OUT::ph_mediumNoPhoIso_n = 0;
 
+    OUT::ph_mediumNoSIEIENoChIso_n = 0;
+    OUT::ph_mediumNoSIEIENoNeuIso_n = 0;
+    OUT::ph_mediumNoSIEIENoPhoIso_n = 0;
+    OUT::ph_mediumNoChIsoNoPhoIso_n = 0;
+    OUT::ph_mediumNoChIsoNoNeuIso_n = 0;
+    OUT::ph_mediumNoPhoIsoNoNeuIso_n = 0;
+
     OUT::ph_mediumNoSIEIEPassPSV_n = 0;
     OUT::ph_mediumNoChIsoPassPSV_n = 0;
     OUT::ph_mediumNoNeuIsoPassPSV_n = 0;
@@ -130,6 +137,13 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     OUT::ptSorted_ph_mediumNoChIso_idx = 0;
     OUT::ptSorted_ph_mediumNoNeuIso_idx = 0;
     OUT::ptSorted_ph_mediumNoPhoIso_idx = 0;
+
+    OUT::ptSorted_ph_mediumNoSIEIENoChIso_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIso_idx = 0;
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIso_idx = 0;
+    OUT::ptSorted_ph_mediumNoChIsoNoPhoIso_idx = 0;
+    OUT::ptSorted_ph_mediumNoChIsoNoNeuIso_idx = 0;
+    OUT::ptSorted_ph_mediumNoPhoIsoNoNeuIso_idx = 0;
 
     OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx = 0;
     OUT::ptSorted_ph_mediumNoChIsoPassPSV_idx = 0;
@@ -236,6 +250,14 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("ph_mediumNoNeuIso_n"          , &OUT::ph_mediumNoNeuIso_n          , "ph_mediumNoNeuIso_n/I"          );
     outtree->Branch("ph_mediumNoPhoIso_n"          , &OUT::ph_mediumNoPhoIso_n          , "ph_mediumNoPhoIso_n/I"          );
 
+    outtree->Branch("ph_mediumNoSIEIENoChIso_n", &OUT::ph_mediumNoSIEIENoChIso_n, "ph_mediumNoSIEIENoChIso_n/I" );
+    outtree->Branch("ph_mediumNoSIEIENoNeuIso_n", &OUT::ph_mediumNoSIEIENoNeuIso_n, "ph_mediumNoSIEIENoNeuIso_n/I" );
+    outtree->Branch("ph_mediumNoSIEIENoPhoIso_n", &OUT::ph_mediumNoSIEIENoPhoIso_n, "ph_mediumNoSIEIENoPhoIso_n/I" );
+    outtree->Branch("ph_mediumNoChIsoNoPhoIso_n", &OUT::ph_mediumNoChIsoNoPhoIso_n, "ph_mediumNoChIsoNoPhoIso_n/I" );
+    outtree->Branch("ph_mediumNoChIsoNoNeuIso_n", &OUT::ph_mediumNoChIsoNoNeuIso_n, "ph_mediumNoChIsoNoNeuIso_n/I" );
+    outtree->Branch("ph_mediumNoPhoIsoNoNeuIso_n", &OUT::ph_mediumNoPhoIsoNoNeuIso_n, "ph_mediumNoPhoIsoNoNeuIso_n/I" );
+
+
     outtree->Branch("ph_mediumNoSIEIEPassPSV_n"           , &OUT::ph_mediumNoSIEIEPassPSV_n           , "ph_mediumNoSIEIEPassPSV_n/I"           );
     outtree->Branch("ph_mediumNoChIsoPassPSV_n"           , &OUT::ph_mediumNoChIsoPassPSV_n           , "ph_mediumNoChIsoPassPSV_n/I"           );
     outtree->Branch("ph_mediumNoNeuIsoPassPSV_n"          , &OUT::ph_mediumNoNeuIsoPassPSV_n          , "ph_mediumNoNeuIsoPassPSV_n/I"          );
@@ -269,6 +291,13 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     outtree->Branch("ptSorted_ph_mediumNoChIso_idx"   , &OUT::ptSorted_ph_mediumNoChIso_idx );
     outtree->Branch("ptSorted_ph_mediumNoNeuIso_idx"  , &OUT::ptSorted_ph_mediumNoNeuIso_idx );
     outtree->Branch("ptSorted_ph_mediumNoPhoIso_idx"  , &OUT::ptSorted_ph_mediumNoPhoIso_idx );
+
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoChIso_idx", &OUT::ptSorted_ph_mediumNoSIEIENoChIso_idx );
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoNeuIso_idx", &OUT::ptSorted_ph_mediumNoSIEIENoNeuIso_idx );
+    outtree->Branch("ptSorted_ph_mediumNoSIEIENoPhoIso_idx", &OUT::ptSorted_ph_mediumNoSIEIENoPhoIso_idx );
+    outtree->Branch("ptSorted_ph_mediumNoChIsoNoPhoIso_idx", &OUT::ptSorted_ph_mediumNoChIsoNoPhoIso_idx );
+    outtree->Branch("ptSorted_ph_mediumNoChIsoNoNeuIso_idx", &OUT::ptSorted_ph_mediumNoChIsoNoNeuIso_idx );
+    outtree->Branch("ptSorted_ph_mediumNoPhoIsoNoNeuIso_idx", &OUT::ptSorted_ph_mediumNoPhoIsoNoNeuIso_idx );
 
     outtree->Branch("ptSorted_ph_mediumNoSIEIEPassPSV_idx"   , &OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx );
     outtree->Branch("ptSorted_ph_mediumNoChIsoPassPSV_idx"   , &OUT::ptSorted_ph_mediumNoChIsoPassPSV_idx );
@@ -905,6 +934,13 @@ void RunModule::MakePhotonCountVars( ModuleConfig & config ) const {
     OUT::ph_mediumNoNeuIso_n = 0;
     OUT::ph_mediumNoPhoIso_n = 0;
 
+    OUT::ph_mediumNoSIEIENoChIso_n = 0;
+    OUT::ph_mediumNoSIEIENoNeuIso_n = 0;
+    OUT::ph_mediumNoSIEIENoPhoIso_n = 0;
+    OUT::ph_mediumNoChIsoNoPhoIso_n = 0;
+    OUT::ph_mediumNoChIsoNoNeuIso_n = 0;
+    OUT::ph_mediumNoPhoIsoNoNeuIso_n = 0;
+
     OUT::ph_mediumNoSIEIEPassPSV_n = 0;
     OUT::ph_mediumNoChIsoPassPSV_n = 0;
     OUT::ph_mediumNoNeuIsoPassPSV_n = 0;
@@ -938,6 +974,13 @@ void RunModule::MakePhotonCountVars( ModuleConfig & config ) const {
     OUT::ptSorted_ph_mediumNoChIso_idx->clear();
     OUT::ptSorted_ph_mediumNoNeuIso_idx->clear();
     OUT::ptSorted_ph_mediumNoPhoIso_idx->clear();
+
+    OUT::ptSorted_ph_mediumNoSIEIENoChIso_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoNeuIso_idx->clear();
+    OUT::ptSorted_ph_mediumNoSIEIENoPhoIso_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIsoNoPhoIso_idx->clear();
+    OUT::ptSorted_ph_mediumNoChIsoNoNeuIso_idx->clear();
+    OUT::ptSorted_ph_mediumNoPhoIsoNoNeuIso_idx->clear();
 
     OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx->clear();
     OUT::ptSorted_ph_mediumNoChIsoPassPSV_idx->clear();
@@ -973,6 +1016,13 @@ void RunModule::MakePhotonCountVars( ModuleConfig & config ) const {
     std::vector<std::pair<float, int> > sorted_ph_mediumNoChIso;
     std::vector<std::pair<float, int> > sorted_ph_mediumNoNeuIso;
     std::vector<std::pair<float, int> > sorted_ph_mediumNoPhoIso;
+
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoSIEIENoChIso;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoSIEIENoNeuIso;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoSIEIENoPhoIso;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoChIsoNoPhoIso;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoChIsoNoNeuIso;
+    std::vector<std::pair<float, int> > sorted_ph_mediumNoPhoIsoNoNeuIso;
 
     std::vector<std::pair<float, int> > sorted_ph_mediumNoSIEIEPassPSV;
     std::vector<std::pair<float, int> > sorted_ph_mediumNoChIsoPassPSV;
@@ -1022,6 +1072,25 @@ void RunModule::MakePhotonCountVars( ModuleConfig & config ) const {
         bool hasPixSeed       = OUT::ph_hasPixSeed->at(idx);
 
         if( passHOverEMedium ) {
+
+            if( passNeuIsoMedium && passPhoIsoMedium ) {
+                sorted_ph_mediumNoSIEIENoChIso.push_back( sort_pair );
+            }
+            if( passChIsoMedium && passPhoIsoMedium ) {
+                sorted_ph_mediumNoSIEIENoNeuIso.push_back( sort_pair );
+            }
+            if( passChIsoMedium && passNeuIsoMedium ) {
+                sorted_ph_mediumNoSIEIENoPhoIso.push_back( sort_pair );
+            }
+            if( passSIEIEMedium && passNeuIsoMedium ) {
+                sorted_ph_mediumNoChIsoNoPhoIso.push_back( sort_pair );
+            }
+            if( passSIEIEMedium && passPhoIsoMedium ) {
+                sorted_ph_mediumNoChIsoNoNeuIso.push_back( sort_pair );
+            }
+            if( passSIEIEMedium && passChIsoMedium ) {
+                sorted_ph_mediumNoPhoIsoNoNeuIso.push_back( sort_pair );
+            }
             
             if( passChIsoMedium && 
                 passNeuIsoMedium &&  
@@ -1132,6 +1201,13 @@ void RunModule::MakePhotonCountVars( ModuleConfig & config ) const {
     std::sort(sorted_ph_mediumNoNeuIso.rbegin(),sorted_ph_mediumNoNeuIso.rend()) ;
     std::sort(sorted_ph_mediumNoPhoIso.rbegin(),sorted_ph_mediumNoPhoIso.rend()) ;
 
+    std::sort(sorted_ph_mediumNoSIEIENoChIso.rbegin(),sorted_ph_mediumNoSIEIENoChIso.rend());
+    std::sort(sorted_ph_mediumNoSIEIENoNeuIso.rbegin(),sorted_ph_mediumNoSIEIENoNeuIso.rend());
+    std::sort(sorted_ph_mediumNoSIEIENoPhoIso.rbegin(),sorted_ph_mediumNoSIEIENoPhoIso.rend());
+    std::sort(sorted_ph_mediumNoChIsoNoPhoIso.rbegin(),sorted_ph_mediumNoChIsoNoPhoIso.rend());
+    std::sort(sorted_ph_mediumNoChIsoNoNeuIso.rbegin(),sorted_ph_mediumNoChIsoNoNeuIso.rend());
+    std::sort(sorted_ph_mediumNoPhoIsoNoNeuIso.rbegin(),sorted_ph_mediumNoPhoIsoNoNeuIso.rend());
+
     std::sort(sorted_ph_mediumNoSIEIEPassPSV.rbegin(),sorted_ph_mediumNoSIEIEPassPSV.rend()) ;
     std::sort(sorted_ph_mediumNoChIsoPassPSV.rbegin(),sorted_ph_mediumNoChIsoPassPSV.rend()) ;
     std::sort(sorted_ph_mediumNoNeuIsoPassPSV.rbegin(),sorted_ph_mediumNoNeuIsoPassPSV.rend()) ;
@@ -1196,6 +1272,30 @@ void RunModule::MakePhotonCountVars( ModuleConfig & config ) const {
     for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoPhoIso.begin(); itr != sorted_ph_mediumNoPhoIso.end(); ++itr ) {
         OUT::ptSorted_ph_mediumNoPhoIso_idx->push_back( itr->second );
         OUT::ph_mediumNoPhoIso_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoSIEIENoChIso.begin(); itr != sorted_ph_mediumNoSIEIENoChIso.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoChIso_idx->push_back( itr->second );
+        OUT::ph_mediumNoSIEIENoChIso_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoSIEIENoNeuIso.begin(); itr != sorted_ph_mediumNoSIEIENoNeuIso.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoNeuIso_idx->push_back( itr->second );
+        OUT::ph_mediumNoSIEIENoNeuIso_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoSIEIENoPhoIso.begin(); itr != sorted_ph_mediumNoSIEIENoPhoIso.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoSIEIENoPhoIso_idx->push_back( itr->second );
+        OUT::ph_mediumNoSIEIENoPhoIso_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoChIsoNoPhoIso.begin(); itr != sorted_ph_mediumNoChIsoNoPhoIso.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoChIsoNoPhoIso_idx->push_back( itr->second );
+        OUT::ph_mediumNoChIsoNoPhoIso_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoChIsoNoNeuIso.begin(); itr != sorted_ph_mediumNoChIsoNoNeuIso.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoChIsoNoNeuIso_idx->push_back( itr->second );
+        OUT::ph_mediumNoChIsoNoNeuIso_n++;
+    }
+    for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoPhoIsoNoNeuIso.begin(); itr != sorted_ph_mediumNoPhoIsoNoNeuIso.end(); ++itr ) {
+        OUT::ptSorted_ph_mediumNoPhoIsoNoNeuIso_idx->push_back( itr->second );
+        OUT::ph_mediumNoPhoIsoNoNeuIso_n++;
     }
     for( std::vector<std::pair<float, int> >::const_iterator itr = sorted_ph_mediumNoSIEIEPassPSV.begin(); itr != sorted_ph_mediumNoSIEIEPassPSV.end(); ++itr ) {
         OUT::ptSorted_ph_mediumNoSIEIEPassPSV_idx->push_back( itr->second );
@@ -1437,8 +1537,6 @@ void RunModule::BuildTruth( ModuleConfig & config ) const {
 
         OUT::truemt_res = ( lep_trans + ph_trans + metlv ).M();
            
-
-        OUT::mt_res = ( lep_trans + ph_trans + metlv ).M();
         std::sort(sorted_tleps.rbegin(), sorted_tleps.rend());
         OUT::truemt_lep_met_ph = Utils::calc_mt( trueleps[sorted_tleps[0].second], nu_sum);
     }

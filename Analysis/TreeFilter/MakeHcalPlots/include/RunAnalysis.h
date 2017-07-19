@@ -12,6 +12,24 @@
 #include "TChain.h"
 #include "TLorentzVector.h"
 
+class RunLsOrn {
+
+    public :
+
+        RunLsOrn(int, int, int);
+
+        bool operator==( const RunLsOrn &B ) const { return ( (run==B.run) && (orn == B.orn ) ); }
+        bool operator<( const RunLsOrn& B ) const;
+
+
+    public :
+
+        int run;
+        int ls;
+        int orn;
+};
+
+
 // The RunModule inherits from RunModuleBase (an Abstract Base Class )
 // defined in the Core package so that all
 // RunModules present a common interface in a Run function
@@ -45,19 +63,41 @@ class RunModule : public virtual RunModuleBase {
         TH1F * avg_adc_HBHE;
         TH1F * avg_adc_HF;
         TH2F * adc_depth_highadc;
+        TH2F * adc_depth_bxadc;
         TH2F * adc_depth;
         TH1F * adc_HBHE;
         TH1F * adc_HF;
+        TH1F * totdiff_HF;
+        TH1F * totdiff_HBHE;
 
         TH1F * bx_HBHE_highadc;
         TH1F * bx_HF_highadc;
+
+        TH1F * n_fires_orn_hf;
+        TH1F * n_fires_orn_hbhe;
 
         TFile * _outfile;
 
         int _evn;
 
+        std::map<std::pair<int, int>, TH1F > ch_bxadc_map;
         std::map<std::pair<int, int>, TH1F > ch_adc_map;
         std::map<std::pair<int, int>, TH1F > ch_highadc_map;
+
+        std::vector<TH2F> adc_depth_highadc_outbx_list;
+
+        std::map<int, TH1F> orn_ls_run296609_HBHE;
+        std::map<int, TH1F> orn_ls_run296609_HF;
+
+        std::vector<std::pair<unsigned,unsigned> > match_list_hf;
+        std::vector<std::pair<unsigned,unsigned> > match_list_hbhe;
+
+        std::map<std::pair<unsigned,unsigned>, TH1F> runorn_bx_hists_hf;
+        std::map<std::pair<unsigned,unsigned>, TH1F> runorn_bx_hists_hbhe;
+
+        unsigned _lastLS;
+        int _lastORN;
+        int _lastBX;
 };
 
 // Ouput namespace 

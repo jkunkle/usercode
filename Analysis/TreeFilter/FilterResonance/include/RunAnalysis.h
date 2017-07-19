@@ -157,6 +157,13 @@ namespace OUT {
     Int_t ph_mediumNoNeuIso_n;
     Int_t ph_mediumNoPhoIso_n;
 
+    Int_t ph_mediumNoSIEIENoChIso_n;
+    Int_t ph_mediumNoSIEIENoNeuIso_n;
+    Int_t ph_mediumNoSIEIENoPhoIso_n;
+    Int_t ph_mediumNoChIsoNoPhoIso_n;
+    Int_t ph_mediumNoChIsoNoNeuIso_n;
+    Int_t ph_mediumNoPhoIsoNoNeuIso_n;
+
     Int_t ph_mediumNoSIEIEPassPSV_n;
     Int_t ph_mediumNoChIsoPassPSV_n;
     Int_t ph_mediumNoNeuIsoPassPSV_n;
@@ -190,6 +197,13 @@ namespace OUT {
     std::vector<int> *ptSorted_ph_mediumNoChIso_idx;
     std::vector<int> *ptSorted_ph_mediumNoNeuIso_idx;
     std::vector<int> *ptSorted_ph_mediumNoPhoIso_idx;
+
+    std::vector<int> *ptSorted_ph_mediumNoSIEIENoChIso_idx;
+    std::vector<int> *ptSorted_ph_mediumNoSIEIENoNeuIso_idx;
+    std::vector<int> *ptSorted_ph_mediumNoSIEIENoPhoIso_idx;
+    std::vector<int> *ptSorted_ph_mediumNoChIsoNoPhoIso_idx;
+    std::vector<int> *ptSorted_ph_mediumNoChIsoNoNeuIso_idx;
+    std::vector<int> *ptSorted_ph_mediumNoPhoIsoNoNeuIso_idx;
 
     std::vector<int> *ptSorted_ph_mediumNoSIEIEPassPSV_idx;
     std::vector<int> *ptSorted_ph_mediumNoChIsoPassPSV_idx;

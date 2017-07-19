@@ -69,7 +69,7 @@ options.enableKeepFilter=False
 
 #input_dirs = ['SingleLepNoPhID_el_2017_02_03', 'SingleLepNoPhID_mu_2017_02_03']
 #input_dirs = ['SingleLepNoPhID_mu_2017_04_12', 'SingleLepNoPhID_el_2017_04_12','LepGamma_mug_2017_04_12', 'LepGamma_elg_2017_04_12', 'LepLep_mumu_2017_04_12', 'LepLep_elel_2017_04_12', 'LepLep_muel_2017_04_12']
-input_dirs = ['LepGamma_mug_2017_04_17', 'LepGamma_elg_2017_04_17']
+input_dirs = ['SingleLepNoPhID_mu_2017_07_18', 'SingleLepNoPhID_el_2017_07_18']
 module = 'Conf.py'
 
 for input_dir in input_dirs :
@@ -108,7 +108,4 @@ for input_dir in input_dirs :
     
         scheduler_base.RunJobs( job, config_ph, options)
 
-    
-    
-    
     

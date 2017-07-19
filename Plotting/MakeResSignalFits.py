@@ -56,18 +56,18 @@ def main() :
         print samp.name
         if samp.name.count('ResonanceMass') > 0 :
 
-            res = re.match('ResonanceMass(\d+)_width(\w+|\d+)', samp.name )
+            res = re.match('(MadGraph|Pythia)ResonanceMass(\d+)_width(\w+|\d+)', samp.name )
 
-            sig_samples.append( ( samp.name, int(res.group(1)), res.group(2) ) )
+            sig_samples.append( ( samp.name, res.group(1), int(res.group(2)), res.group(3) ) )
 
 
     for conf in configs :
 
-        for samp, mass, width in sig_samples :
+        for samp, samptype, mass, width in sig_samples :
 
             suffix = '_m%d_width%s' %( mass, width )
 
-            fit_xmin = 100
+            fit_xmin = int(mass*0.6)
             xmax = mass * 1.5
             nbins = 100 
 
@@ -99,17 +99,29 @@ def main() :
             #    model = ROOT.RooCBShape('sig_model%s'%suffix, 'A  Crystal Ball Lineshape', var, cb_m0, cb_sigma,cb_cut,cb_power)
             #else :
 
-            #------------------------------
-            # Breit-Wigner, has two parameters, the resonance mass and the width
+            ##------------------------------
+            ## Breit-Wigner, has two parameters, the resonance mass and the width
             #------------------------------
             bw_width_val = mass*0.01*width_factor
             #if bw_width_val < 2. :
-            #    bw_width_val = 2.0
+            bw_width_val = 2.
             bw_m = ROOT.RooRealVar('bw_mass' , 'Resonance  Mass', mass, mass*0.8, mass*1.2,'GeV')
             bw_w = ROOT.RooRealVar('bw_width', 'Breit-Wigner width',bw_width_val , -100, 100,'GeV')
             bw_m.setConstant()
             bw_w.setConstant()
             bw = ROOT.RooBreitWigner('bw%s' %suffix,'A Breit-Wigner Distribution', var, bw_m,bw_w)
+
+            ##------------------------------
+            ## Gaussian, has two parameters, the resonance mass and the width
+            ##------------------------------
+            #gaus_width_val = mass*0.01*width_factor
+            #if gaus_width_val < 2. :
+            #    gaus_width_val = 2.0
+            #gaus_m = ROOT.RooRealVar('bw_mass' , 'Resonance  Mass', mass, mass*0.8, mass*1.2,'GeV')
+            #gaus_w = ROOT.RooRealVar('bw_width', 'Breit-Wigner width',gaus_width_val , -100, 100,'GeV')
+            #gaus_m.setConstant()
+            ##gaus_w.setConstant()
+            #gaus = ROOT.RooGaussian('gaus%s' %suffix,'A Gaussian Distribution', var, gaus_m,gaus_w)
 
 
             #------------------------------
@@ -176,8 +188,10 @@ def main() :
             result_dic['cb_m0'] = ( cb_m0.getValV(), cb_m0.getErrorHi(), cb_m0.getErrorLo() )
             result_dic['chi2'] = chi2
 
+            
+
             if options.outputDir is not None :
-                name = 'SignalFit_%s_M%d_width%s' %( conf['tag'], mass, width )
+                name = 'SignalFit_%s_%s_M%d_width%s' %( samptype, conf['tag'], mass, width )
                 can.SaveAs( '%s/%s.pdf' %( options.outputDir, name ) )
                 opfile = open( '%s/%s.pickle' %(options.outputDir, name ) ,'w')
                 pickle.dump( result_dic, opfile )

@@ -56,17 +56,24 @@ class RunModule : public virtual RunModuleBase {
 
 
         void PlotHBHE     ( ModuleConfig & config ) ;
-        void PlotHF       ( ModuleConfig & config ) ;
 
-        TH1F * avg_adc_event_HBHE;
-        TH1F * avg_adc_event_HF;
         TH1F * avg_adc_HBHE;
         TH1F * avg_adc_HF;
+        TH1F * laser_user_word;
+        TH2F * avg_adc_HF_vs_umnqie1;
+        TH2F * avg_adc_HF_vs_umnqie2;
+        TH2F * avg_adc_umnqie1_vs_umnqie2;
+        TH2F * avg_adc_HBHE_vs_umnqie1;
+        TH2F * avg_adc_HBHE_vs_umnqie2;
+        TH2F * adc_umnqie1_vs_umnqie2_laserHF;
+        TH2F * adc_umnqie1_vs_umnqie2_laserHBHE;
         TH2F * adc_depth_highadc;
         TH2F * adc_depth_bxadc;
         TH2F * adc_depth;
         TH1F * adc_HBHE;
         TH1F * adc_HF;
+        TH1F * adc_umnqie1;
+        TH1F * adc_umnqie2;
         TH1F * totdiff_HF;
         TH1F * totdiff_HBHE;
 
@@ -85,6 +92,7 @@ class RunModule : public virtual RunModuleBase {
         std::map<std::pair<int, int>, TH1F > ch_highadc_map;
 
         std::vector<TH2F> adc_depth_highadc_outbx_list;
+        std::vector<TH2F> umnqie_highadc_outbx_list;
 
         std::map<int, TH1F> orn_ls_run296609_HBHE;
         std::map<int, TH1F> orn_ls_run296609_HF;

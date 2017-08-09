@@ -1,5 +1,6 @@
 import os
 from argparse import Namespace
+from check_dataset_completion import check_dataset_completion
 
 hostname = os.getenv('HOSTNAME')
 
@@ -167,6 +168,8 @@ def RunJobs( jobs, configs, options, dry_run=False ) :
                     first_mc = False
     
     if check :
+
+        check_results = {}
         for config in configs :
             select_dataset = config.get('dataset', [] )
             if not isinstance( select_dataset, list ) :
@@ -184,9 +187,51 @@ def RunJobs( jobs, configs, options, dry_run=False ) :
                 if suffix is not None :
                     outsample = outsample+suffix
 
-                command = check_base%{ 'base': job.base , 'sample' : job.sample, 'outsample' : outsample, 'output' : config['output'], 'input' : config['input'], 'treename' : treename, 'version' : job.version, 'filekey' : filekey}
-                print command                                                                               
-                os.system(command)                                                                          
+#python ../../Util/scripts/check_dataset_completion.py --originalDS /data/users/jkunkle/Resonances//RecoOutput_2017_04_12/MadGraphChargedResonance_WGToLNu_M300_width5/ --filteredDS /data/users/jkunkle/Resonances/LepGammaSigOnly_elgEB_2017_07_27/MadGraphChargedResonance_WGToLNu_M300_width5 --treeNameOrig tupel/EventTree --histNameFilt tupel/filter --fileKeyOrig tree.root --fileKeyFilt tree.root
+
+                job_info_dic = {  'base': job.base , 'sample' : job.sample, 'outsample' : outsample, 'output' : config['output'], 'input' : config['input'], 'treename' : treename, 'version' : job.version, 'filekey' : filekey }
+
+                originalDS = '%(base)s/%(input)s/%(sample)s/%(version)s'%job_info_dic
+                filteredDS = '%(output)s/%(outsample)s' %job_info_dic
+                treeNameOrig  = '%(treename)s' %job_info_dic
+                histNameFilt = 'tupel/filter' 
+                fileKeyOrig = '%(filekey)s' %job_info_dic 
+                fileKeyFilt  = 'tree.root'
+
+                this_result = check_dataset_completion( originalDS, filteredDS, treeNameOrig, None, None, histNameFilt, fileKeyOrig, fileKeyFilt, quiet=True )
+
+                check_results[filteredDS] = {'res' : this_result, 'origDS' : originalDS }
+
+                #command = check_base%{ 'base': job.base , 'sample' : job.sample, 'outsample' : outsample, 'output' : config['output'], 'input' : config['input'], 'treename' : treename, 'version' : job.version, 'filekey' : filekey}
+                #print command                                                                               
+                #os.system(command)                                                                          
+
+        good_ds = []
+        missing_ds = []
+        bad_ds = []
+        for ds, res in check_results.iteritems() :
+
+            if res['res'][0] == 0 :
+                missing_ds.append(ds)
+            elif res['res'][0] != res['res'][3] :
+                bad_ds.append(ds)
+            elif res['res'][0] == res['res'][3] :
+                good_ds.append(ds)
+            else :
+                print 'Could not categorize dataset %s with results:' %ds
+                print res
+
+        print '%d filtered datasets are missing events : ' %len( bad_ds )
+        for ds in bad_ds :
+            nevt_orig = check_results[ds]['res'][0]
+            nevt_filt = check_results[ds]['res'][3]
+            print '%s : Original has %d events, Filtered has %d events.  Difference = %d' %( ds, nevt_orig, nevt_filt, nevt_orig-nevt_filt )
+        print '%d Original datasets do not have events : ' %len( missing_ds )
+        for ds in missing_ds :
+            print check_results[ds]['origDS']
+        print '%d datasets have matching events ' %len( good_ds )
+
+
 
 class JobConf( ) :
 

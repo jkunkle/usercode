@@ -2372,9 +2372,12 @@ class SampleManager :
                 print print_prefix + " [ \033[1;32mSuccess\033[0m ]" 
 
 
-    def ReadSamples(self, conf) :
+    def ReadSamples(self, conf, expected=[], failOnMissing=False ) :
 
         self.samples_conf = conf
+
+        self.expected_samples = expected
+        self.fail_on_missing = failOnMissing
 
         ImportedModule=None
 

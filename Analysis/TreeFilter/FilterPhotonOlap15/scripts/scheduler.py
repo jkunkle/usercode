@@ -61,7 +61,7 @@ jobs_mtres = [
 ]
 
 options.nFilesPerJob = 1
-options.nproc = 6
+options.nproc = 2
 options.treename='tupel/EventTree'
 options.exename='RunAnalysis'
 options.copyInputFiles=True
@@ -69,7 +69,7 @@ options.enableKeepFilter=False
 
 #input_dirs = ['SingleLepNoPhID_el_2017_02_03', 'SingleLepNoPhID_mu_2017_02_03']
 #input_dirs = ['SingleLepNoPhID_mu_2017_04_12', 'SingleLepNoPhID_el_2017_04_12','LepGamma_mug_2017_04_12', 'LepGamma_elg_2017_04_12', 'LepLep_mumu_2017_04_12', 'LepLep_elel_2017_04_12', 'LepLep_muel_2017_04_12']
-input_dirs = ['SingleLepNoPhID_mu_2017_07_18', 'SingleLepNoPhID_el_2017_07_18']
+input_dirs = ['LepGammaNoPhId_elg_2017_07_20', 'LepGammaNoPhId_mug_2017_07_20']
 module = 'Conf.py'
 
 for input_dir in input_dirs :

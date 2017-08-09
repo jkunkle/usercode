@@ -40,7 +40,7 @@ def main() :
 
     print '%s : Orignal = %d events, filtered = %d events.  \033[1mDifference = %d\033[0m' %( options.filteredDS.split('/')[-1], orig_nevt, filt_nevt, orig_nevt-filt_nevt)
 
-def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNameFilt=None, histNameOrig=None, histNameFilt=None, fileKeyOrig=None, fileKeyFilt=None ) :
+def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNameFilt=None, histNameOrig=None, histNameFilt=None, fileKeyOrig=None, fileKeyFilt=None, quiet=False ) :
 
 
     assert treeNameOrig is not None or histNameOrig is not None, 'Must provide a histogram or tree name for original samples'
@@ -56,7 +56,8 @@ def check_dataset_completion( originalDS, filteredDS, treeNameOrig=None, treeNam
 
 
     if not orig_nevt_tree and not orig_nevt_hist  :
-        print 'Did not get any original events.  Check the path'
+        if not quiet :
+            print 'Did not get any original events.  Check the path'
         return orig_nevt_tree, orig_nevt_hist, filt_nevt_tree, filt_nevt_hist
         
     filt_nevt_tree, filt_nevt_hist  = get_dataset_counts( filteredDS, fileKeyFilt, treeNameFilt, histNameFilt )

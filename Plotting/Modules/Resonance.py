@@ -55,10 +55,12 @@ def config_samples(samples) :
 
     samples.AddSample('WGToLNuG-amcatnloFXFXPhCut', 
                       path='WGToLNuG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8PhCutMaxMTResCut', 
+                      #path='WGToLNuG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8PhCutMax', 
                       isActive=False, useXSFile=True, plotColor=ROOT.kOrange, XSName='WGToLNuG-amcatnloFXFX')
 
     samples.AddSample('WGToLNuG_PtG-130-amcatnloFXFXPhCut', 
                       path='WGToLNuG_PtG-130_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8PhCutMaxPhCutMinMTResCut', 
+                      #path='WGToLNuG_PtG-130_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8PhCutMaxPhCutMin', 
                       isActive=False, useXSFile=True, plotColor=ROOT.kViolet, XSName='WGToLNuG_PtG-130-amcatnloFXFX' )
 
     samples.AddSample('WGToLNuG_PtG-500-amcatnloFXFXPhCut', 
@@ -67,10 +69,12 @@ def config_samples(samples) :
 
     samples.AddSample('WGToLNuG-madgraphMLMPhCut', 
                       path='WGToLNuG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8PhCutMaxMTResCut', 
+                      #path='WGToLNuG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8PhCutMax', 
                       isActive=False, useXSFile=True, plotColor=ROOT.kOrange, XSName='WGToLNuG-madgraphMLM' )
 
     samples.AddSample('WGToLNuG_PtG-130-madgraphMLMPhCut', 
                       path='WGToLNuG_PtG-130_TuneCUETP8M1_13TeV-madgraphMLM-pythia8PhCutMaxPhCutMinMTResCut', 
+                      #path='WGToLNuG_PtG-130_TuneCUETP8M1_13TeV-madgraphMLM-pythia8PhCutMaxPhCutMin', 
                       isActive=False, useXSFile=True, plotColor=ROOT.kViolet, XSName='WGToLNuG_PtG-130-madgraphMLM' )
 
     samples.AddSample('WGToLNuG_PtG-500-madgraphMLMPhCut', 

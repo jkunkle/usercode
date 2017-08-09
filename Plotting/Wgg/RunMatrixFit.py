@@ -3808,7 +3808,6 @@ def solve_matrix_eq( matrix_ntries, vector_entries ) :
 
 def clone_sample_and_draw( samp, var, sel, binning, useSampMan=None ) :
 
-
     if useSampMan is not None :
         newSamp = useSampMan.clone_sample( oldname=samp.name, newname=samp.name+str(uuid.uuid4()), temporary=True ) 
         useSampMan.create_hist( newSamp, var, sel, binning )

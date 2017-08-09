@@ -66,6 +66,10 @@ def main() :
 
     #MakeSignalTruthPlots( sampManNoFilt )
 
+    MakeWJetsPlots( sampManMuGNoId, sampManElGNoId )
+
+def MakeWJetsPlots( sampMan
+
 def MakeBkgTruthPlots( sampManReco ) :
 
     name = 'BkgTruthPlots'

@@ -66,6 +66,8 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     adc_umnqie2 = new TH1F( "adc_umnqie2", "adc_umnqie2", 128, 0, 500 );
     bx_HBHE_highadc = new TH1F( "bx_HBHE_highadc", "bx_HBHE_highadc", 3600, 0, 3600 );
     bx_HF_highadc = new TH1F( "bx_HF_highadc", "bx_HF_highadc", 3600, 0, 3600 );
+    adc_umnqie1_vs_evt = new TH2F( "adc_umnqie1_vs_evt", "adc_umnqie1_vs_evt", 50000, 0, 50000, 3, 0, 3 );
+    adc_umnqie2_vs_evt = new TH2F( "adc_umnqie2_vs_evt", "adc_umnqie2_vs_evt", 50000, 0, 50000, 3, 0, 3 );
 
     totdiff_HBHE = new TH1F( "totdiff_HBHE", "totdiff_HBHE", 35640, 0, 356400 );
     totdiff_HF = new TH1F( "totdiff_HF", "totdiff_HF", 35640, 0, 356400 );
@@ -82,41 +84,41 @@ void RunModule::initialize( TChain * chain, TTree * outtree, TFile *outfile,
     _lastORN = 0;
     _lastBX = 0;
 
-    match_list_hbhe.push_back(std::make_pair(296593, 70317338) );
-    match_list_hbhe.push_back(std::make_pair(296593, 70317338) );
-    match_list_hbhe.push_back(std::make_pair(296593, 70285976) );
-    match_list_hbhe.push_back(std::make_pair(296593, 71551580) );
-    match_list_hf.push_back(std::make_pair(296608, 13481597) );
-    match_list_hf.push_back(std::make_pair(296608, 14010238) );
-    match_list_hf.push_back(std::make_pair(296608, 14010238) );
-    match_list_hf.push_back(std::make_pair(296608, 13976637) );
-    match_list_hf.push_back(std::make_pair(296608, 13929597) );
-    match_list_hf.push_back(std::make_pair(296608, 14252156) );
-    match_list_hbhe.push_back(std::make_pair(296609, 5774) );
-    match_list_hbhe.push_back(std::make_pair(296609, 5774) );
-    match_list_hbhe.push_back(std::make_pair(296609, 279042) );
-    match_list_hbhe.push_back(std::make_pair(296609, 279042) );
-    match_list_hbhe.push_back(std::make_pair(296609, 5488559) );
-    match_list_hbhe.push_back(std::make_pair(296609, 5488559) );
-    match_list_hf.push_back(std::make_pair(296623, 42831539) );
-    match_list_hf.push_back(std::make_pair(296623, 42990576) );
-    match_list_hf.push_back(std::make_pair(296623, 42990576) );
-    match_list_hf.push_back(std::make_pair(296623, 43057803) );
-    match_list_hf.push_back(std::make_pair(296623, 43245940) );
-    match_list_hf.push_back(std::make_pair(296623, 43151855) );
-    match_list_hf.push_back(std::make_pair(296623, 43499065) );
-    match_list_hf.push_back(std::make_pair(296623, 43508016) );
-    match_list_hf.push_back(std::make_pair(296623, 43521455) );
-    match_list_hf.push_back(std::make_pair(296623, 43543855) );
-    match_list_hf.push_back(std::make_pair(296623, 43543855) );
-    match_list_hf.push_back(std::make_pair(296623, 43604334) );
-    match_list_hf.push_back(std::make_pair(296623, 43667069) );
-    match_list_hf.push_back(std::make_pair(296623, 43541613) );
-    match_list_hf.push_back(std::make_pair(296623, 43709628) );
-    match_list_hf.push_back(std::make_pair(296623, 43516976) );
-    match_list_hf.push_back(std::make_pair(296625, 19899249) );
-    match_list_hf.push_back(std::make_pair(296625, 20418360) );
-    match_list_hf.push_back(std::make_pair(296625, 20418360) );
+    //match_list_hbhe.push_back(std::make_pair(296593, 70317338) );
+    //match_list_hbhe.push_back(std::make_pair(296593, 70317338) );
+    //match_list_hbhe.push_back(std::make_pair(296593, 70285976) );
+    //match_list_hbhe.push_back(std::make_pair(296593, 71551580) );
+    //match_list_hf.push_back(std::make_pair(296608, 13481597) );
+    //match_list_hf.push_back(std::make_pair(296608, 14010238) );
+    //match_list_hf.push_back(std::make_pair(296608, 14010238) );
+    //match_list_hf.push_back(std::make_pair(296608, 13976637) );
+    //match_list_hf.push_back(std::make_pair(296608, 13929597) );
+    //match_list_hf.push_back(std::make_pair(296608, 14252156) );
+    //match_list_hbhe.push_back(std::make_pair(296609, 5774) );
+    //match_list_hbhe.push_back(std::make_pair(296609, 5774) );
+    //match_list_hbhe.push_back(std::make_pair(296609, 279042) );
+    //match_list_hbhe.push_back(std::make_pair(296609, 279042) );
+    //match_list_hbhe.push_back(std::make_pair(296609, 5488559) );
+    //match_list_hbhe.push_back(std::make_pair(296609, 5488559) );
+    //match_list_hf.push_back(std::make_pair(296623, 42831539) );
+    //match_list_hf.push_back(std::make_pair(296623, 42990576) );
+    //match_list_hf.push_back(std::make_pair(296623, 42990576) );
+    //match_list_hf.push_back(std::make_pair(296623, 43057803) );
+    //match_list_hf.push_back(std::make_pair(296623, 43245940) );
+    //match_list_hf.push_back(std::make_pair(296623, 43151855) );
+    //match_list_hf.push_back(std::make_pair(296623, 43499065) );
+    //match_list_hf.push_back(std::make_pair(296623, 43508016) );
+    //match_list_hf.push_back(std::make_pair(296623, 43521455) );
+    //match_list_hf.push_back(std::make_pair(296623, 43543855) );
+    //match_list_hf.push_back(std::make_pair(296623, 43543855) );
+    //match_list_hf.push_back(std::make_pair(296623, 43604334) );
+    //match_list_hf.push_back(std::make_pair(296623, 43667069) );
+    //match_list_hf.push_back(std::make_pair(296623, 43541613) );
+    //match_list_hf.push_back(std::make_pair(296623, 43709628) );
+    //match_list_hf.push_back(std::make_pair(296623, 43516976) );
+    //match_list_hf.push_back(std::make_pair(296625, 19899249) );
+    //match_list_hf.push_back(std::make_pair(296625, 20418360) );
+    //match_list_hf.push_back(std::make_pair(296625, 20418360) );
 
     for( unsigned i =0; i < match_list_hbhe.size(); ++i ) {
         std::stringstream name;
@@ -185,20 +187,23 @@ void RunModule::PlotHBHE( ModuleConfig & config ) {
         int iphi = IN::QIE10DigiIPhi->at(ich);
         int depth = IN::QIE10DigiDepth->at(ich);
 
-        if( depth == 5 ) {
+        if( depth == 5 || depth == 6 ) {
 
             int ch_sum = 0;
             for( unsigned its = 0; its < nts; its++ ) {
 
-                ch_sum += IN::QIE10DigiADC->at(ich)[its];
+                int adc = IN::QIE10DigiADC->at(ich)[its];
+                ch_sum += adc;
 
-                if( ieta < 0 ) {
+                if( ieta > 0 && depth == 5 ) {
                     adc_umnqie1->Fill( ch_sum );
                     adc_sum_umnqie1 = ch_sum;
+                    adc_umnqie1_vs_evt->SetBinContent( _evn, its+1, adc );
                 }
-                else {
+                if( ieta > 0 && depth == 6 ) {
                     adc_umnqie2->Fill( ch_sum );
                     adc_sum_umnqie2 = ch_sum;
+                    adc_umnqie2_vs_evt->SetBinContent( _evn, its+1, adc );
                 }
             }
         }
@@ -560,6 +565,8 @@ void RunModule::finalize() {
     avg_adc_HBHE_vs_umnqie2->Write();
     adc_umnqie1_vs_umnqie2_laserHBHE->Write();
     adc_umnqie1_vs_umnqie2_laserHF->Write();
+    adc_umnqie1_vs_evt->Write();
+    adc_umnqie2_vs_evt->Write();
     adc_depth_highadc->Write();
     adc_depth_bxadc->Write();
     adc_depth->Write();

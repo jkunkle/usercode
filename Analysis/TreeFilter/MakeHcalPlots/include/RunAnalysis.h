@@ -63,6 +63,8 @@ class RunModule : public virtual RunModuleBase {
         TH2F * avg_adc_HF_vs_umnqie1;
         TH2F * avg_adc_HF_vs_umnqie2;
         TH2F * avg_adc_umnqie1_vs_umnqie2;
+        TH2F * adc_umnqie1_vs_evt;
+        TH2F * adc_umnqie2_vs_evt;
         TH2F * avg_adc_HBHE_vs_umnqie1;
         TH2F * avg_adc_HBHE_vs_umnqie2;
         TH2F * adc_umnqie1_vs_umnqie2_laserHF;

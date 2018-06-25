@@ -2516,10 +2516,12 @@ class SampleManager :
                     chi2sum += math.pow( (exp_bkg-data_val) / tot_err, 2 )
 
             pzero = ROOT.TMath.Prob( chi2sum, nbins )
-            print pzero
+            print 'pzero = ', pzero
 
             kstest = dataSamp.hist.KolmogorovTest( errSamp.hist  )
-            print kstest
+            print 'kstest = ', kstest
+
+            print 'chi2 = ', chi2sum
 
             label_style = label_config.get('labelStyle', '')
             if not label_style.count( 'nostats' ) :
